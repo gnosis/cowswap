@@ -9,14 +9,11 @@ module.exports = function() {
       plugins: [],
 
       // https://webpack.js.org/configuration
-      configure: (webpackConfig) => ({
+      configure: webpackConfig => ({
         ...webpackConfig,
         resolve: {
           ...webpackConfig.resolve,
-          modules: [
-            path.resolve(__dirname, 'src/custom'),              
-            ...webpackConfig.resolve.modules,            
-          ]
+          modules: [path.resolve(__dirname, 'src/custom'), ...webpackConfig.resolve.modules]
         }
       })
     }
