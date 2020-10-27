@@ -34,6 +34,10 @@ before_deploy:
       cat RELEASE_NOTES.md;
     fi
 after_success:
+  # add storybook to build
+  # - if [[ $TRAVIS_TAG != "" || $TRAVIS_PULL_REQUEST != "false" || $TRAVIS_BRANCH = master || $TRAVIS_BRANCH = develop ]]; then
+  #     yarn build-storybook -o dist/storybook;
+  #   fi
   # Pull Request - Deploy it to a review environment
   # Travis doesn't do deploy step with pull requests builds
   # - ./travis/deploy_pull_request.sh
