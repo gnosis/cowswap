@@ -264,7 +264,7 @@ const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
   [ChainId.KOVAN]: 'Kovan'
 }
 
-export default function HeaderMod() {
+export default function HeaderMod(props: { className?: string }) {
   const { account, chainId } = useActiveWeb3React()
   const { t } = useTranslation()
 
@@ -286,7 +286,7 @@ export default function HeaderMod() {
   // const countUpValuePrevious = usePrevious(countUpValue) ?? '0'
 
   return (
-    <HeaderFrame>
+    <HeaderFrame className={props.className}>
       {/*<ClaimModal />*/}
       <Modal isOpen={showUniBalanceModal} onDismiss={() => setShowUniBalanceModal(false)}>
         <UniBalanceContent setShowUniBalanceModal={setShowUniBalanceModal} />
