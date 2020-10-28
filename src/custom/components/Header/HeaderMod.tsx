@@ -30,7 +30,7 @@ import Web3Status from 'components/Web3Status'
 import Modal from 'components/Modal'
 import UniBalanceContent from 'components/Header/UniBalanceContent'
 // import usePrevious from 'hooks/usePrevious'
-import { WithClassName } from '../../types'
+import { WithClassName } from 'types'
 
 const HeaderFrame = styled.div`
   display: grid;
