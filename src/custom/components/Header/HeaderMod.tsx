@@ -30,6 +30,7 @@ import Web3Status from 'components/Web3Status'
 import Modal from 'components/Modal'
 import UniBalanceContent from 'components/Header/UniBalanceContent'
 // import usePrevious from 'hooks/usePrevious'
+import { WithClassName } from '../../types'
 
 const HeaderFrame = styled.div`
   display: grid;
@@ -264,7 +265,7 @@ const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
   [ChainId.KOVAN]: 'Kovan'
 }
 
-export default function HeaderMod(props: { className?: string }) {
+export default function HeaderMod(props: WithClassName) {
   const { account, chainId } = useActiveWeb3React()
   const { t } = useTranslation()
 
