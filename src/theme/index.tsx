@@ -79,7 +79,8 @@ export function colors(darkMode: boolean): Colors {
     green1: '#27AE60',
     yellow1: '#FFE270',
     yellow2: '#F3841E',
-    blue1: '#2172E5',
+    blue1: '#3F77FF',
+    purple: '#8958FF',
     border: darkMode ? '#3a3b5a' : 'rgb(58 59 90 / 10%)'
 
     // dont wanna forget these blue yet
