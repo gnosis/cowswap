@@ -32,7 +32,7 @@ import UniBalanceContent from 'components/Header/UniBalanceContent'
 // import usePrevious from 'hooks/usePrevious'
 import { WithClassName } from 'types'
 
-const HeaderFrame = styled.div`
+export const HeaderFrame = styled.div`
   display: grid;
   grid-template-columns: 1fr 120px;
   align-items: center;
@@ -191,7 +191,7 @@ const Title = styled.a`
   }
 `
 
-const UniIcon = styled.div`
+export const UniIcon = styled.div`
   transition: transform 0.3s ease;
   :hover {
     transform: rotate(-5deg);
