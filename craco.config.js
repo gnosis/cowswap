@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const path = require('path')
 
 // see https://github.com/gsoft-inc/craco/blob/master/packages/craco/README.md#configuration-overview
