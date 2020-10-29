@@ -32,7 +32,7 @@ import UniBalanceContent from 'components/Header/UniBalanceContent'
 // import usePrevious from 'hooks/usePrevious'
 import { WithClassName } from 'types'
 
-export const HeaderFrame = styled.div`
+const HeaderFrame = styled.div`
   display: grid;
   grid-template-columns: 1fr 120px;
   align-items: center;

@@ -1,15 +1,11 @@
-import HeaderMod, { UniIcon, HeaderFrame } from './HeaderMod'
+import HeaderMod, { UniIcon } from './HeaderMod'
 import styled from 'styled-components'
 
 export const Header = styled(HeaderMod)`
-  // CSS Override
+  border-bottom: 1px solid #3a3b5a;
 
   ${UniIcon} {
     display: flex;
-  }
-
-  ${HeaderFrame} {
-    border-bottom: 1px solid #3A3B5A;
   }
 `
 
