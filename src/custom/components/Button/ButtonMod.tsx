@@ -222,7 +222,7 @@ export const ButtonWhite = styled(Base)`
   }
 `
 
-const ButtonConfirmedStyle = styled(Base)`
+export const ButtonConfirmedStyle = styled(Base)`
   background-color: ${({ theme }) => lighten(0.5, theme.green1)};
   color: ${({ theme }) => theme.green1};
   border: 1px solid ${({ theme }) => theme.green1};
@@ -233,7 +233,7 @@ const ButtonConfirmedStyle = styled(Base)`
   }
 `
 
-const ButtonErrorStyle = styled(Base)`
+export const ButtonErrorStyle = styled(Base)`
   background-color: ${({ theme }) => theme.red1};
   border: 1px solid ${({ theme }) => theme.red1};
 
