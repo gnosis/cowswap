@@ -6,7 +6,9 @@ const path = require('path')
 module.exports = function() {
   return {
     webpack: {
-      alias: {},
+      alias: {
+        constants: path.resolve(__dirname, 'src/custom/constants')
+      },
       plugins: [],
 
       // https://webpack.js.org/configuration
