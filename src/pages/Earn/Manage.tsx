@@ -28,7 +28,7 @@ import { useTotalSupply } from '../../data/TotalSupply'
 import { usePair } from '../../data/Reserves'
 import usePrevious from '../../hooks/usePrevious'
 import useUSDCPrice from '../../utils/useUSDCPrice'
-import { BIG_INT_ZERO } from '../../constants'
+import { BIG_INT_ZERO } from 'constants'
 
 const PageWrapper = styled(AutoColumn)`
   max-width: 640px;

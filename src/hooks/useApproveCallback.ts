@@ -2,7 +2,7 @@ import { MaxUint256 } from '@ethersproject/constants'
 import { TransactionResponse } from '@ethersproject/providers'
 import { Trade, TokenAmount, CurrencyAmount, ETHER } from '@uniswap/sdk'
 import { useCallback, useMemo } from 'react'
-import { ROUTER_ADDRESS } from '../constants'
+import { ROUTER_ADDRESS } from 'constants'
 import { useTokenAllowance } from '../data/Allowances'
 import { getTradeVersion, useV1TradeExchangeAddress } from '../data/V1'
 import { Field } from '../state/swap/actions'
@@ -107,5 +107,7 @@ export function useApproveCallbackFromTrade(trade?: Trade, allowedSlippage = 0) 
   )
   const tradeIsV1 = getTradeVersion(trade) === Version.v1
   const v1ExchangeAddress = useV1TradeExchangeAddress(trade)
+  // Approve token call is made with spender either ROUTER_ADDRESS for uniswapv2 (default)
+  // or with exchangeAddress that is fetched from ExchangeFactory.getExchange(tokenAddress)
   return useApproveCallback(amountToApprove, tradeIsV1 ? v1ExchangeAddress : ROUTER_ADDRESS)
 }

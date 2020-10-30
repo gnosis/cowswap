@@ -13,7 +13,7 @@ import { isAddress } from 'ethers/lib/utils'
 import useENS from '../../hooks/useENS'
 import { useDelegateCallback } from '../../state/governance/hooks'
 import { useTokenBalance } from '../../state/wallet/hooks'
-import { UNI } from '../../constants'
+import { UNI } from 'constants'
 import { LoadingView, SubmittedView } from '../ModalViews'
 
 const ContentWrapper = styled(AutoColumn)`
