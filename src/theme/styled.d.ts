@@ -46,6 +46,7 @@ export interface Colors {
   blue1: Color
   purple: Color
   border: Color
+  disabled: Color
 }
 
 export interface Grids {

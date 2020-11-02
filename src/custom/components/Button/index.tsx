@@ -22,48 +22,38 @@ import {
 
 export const ButtonPrimary = styled(ButtonPrimaryMod)`
   // CSS overrides
+  background-color: transparent;
+  background-image: ${({ theme }) => `linear-gradient(270deg, ${theme.purple} 30%, ${theme.blue1} 70%);`};
+  border: 0;
+
   &:focus,
   &:hover,
   &:active {
     background-color: transparent;
-    background-image: ${({ theme }) => `linear-gradient(270deg, ${theme.purple} 0%, ${theme.blue1} 100%);`};
+    background-image: ${({ theme }) => `linear-gradient(270deg, ${theme.purple} 30%, ${theme.blue1} 70%);`};
+    border: 0;
+  }
+  &:disabled {
+    background-image: none;
+    background-color: ${({ theme }) => theme.disabled};
+    border: 0;
   }
 `
 
 export const ButtonLight = styled(ButtonLightMod)`
-  // CSS overrides
-  &:focus,
-  &:hover,
-  &:active {
-    background-color: transparent;
-    background-image: ${({ theme }) => `linear-gradient(270deg, ${theme.purple} 0%, ${theme.blue1} 100%);`};
-  }
+  // CSS override
 `
 
 export const ButtonGray = styled(ButtonGrayMod)`
   // CSS overrides
-  background-color: transparent;
-  background-image: ${({ theme }) => `linear-gradient(270deg, ${theme.purple} 0%, ${theme.blue1} 100%);`};
 `
 
 export const ButtonSecondary = styled(ButtonSecondaryMod)`
   // CSS overrides
-  &:focus,
-  &:hover,
-  &:active {
-    background-color: transparent;
-    background-image: ${({ theme }) => `linear-gradient(270deg, ${theme.purple} 0%, ${theme.blue1} 100%);`};
-  }
 `
 
 export const ButtonPink = styled(ButtonPinkMod)`
   // CSS overrides
-  &:focus,
-  &:hover,
-  &:active {
-    background-color: transparent;
-    background-image: ${({ theme }) => `linear-gradient(270deg, ${theme.purple} 0%, ${theme.blue1} 100%);`};
-  }
 `
 
 export const ButtonOutlined = styled(ButtonOutlinedMod)`
