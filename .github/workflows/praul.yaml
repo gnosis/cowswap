@@ -1,8 +1,7 @@
 name: PRaul
 on:
   pull_request:
-    types: [ opened ]
-  push:
+    types: [ opened, synchronize ]
 jobs:
   publish-praul:
     runs-on: ubuntu-latest
