@@ -53,6 +53,8 @@ function publish_pull_request_urls_in_github {
 # - Security env variables are available. PRs created from forks don't have them.
 if [ "$PULL_REQUEST" != "false" ] && [ -n "$AWS_ACCESS_KEY_ID" ]
 then
+  echo $PULL_REQUEST
+  echo $REPO_SLUG
   deploy_pull_request
   publish_pull_request_urls_in_github
 fi
