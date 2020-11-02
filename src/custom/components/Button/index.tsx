@@ -23,14 +23,19 @@ import {
 export const ButtonPrimary = styled(ButtonPrimaryMod)`
   // CSS overrides
   background-color: transparent;
-  background-image: ${({ theme }) => `linear-gradient(270deg, ${theme.purple} 30%, ${theme.blue1} 70%);`};
   border: 0;
+
+  &,
+  &:focus,
+  &:hover,
+  &:active {
+    background-image: ${({ theme }) => `linear-gradient(270deg, ${theme.purple} 30%, ${theme.blue1} 70%);`};
+  }
 
   &:focus,
   &:hover,
   &:active {
     background-color: transparent;
-    background-image: ${({ theme }) => `linear-gradient(270deg, ${theme.purple} 30%, ${theme.blue1} 70%);`};
     border: 0;
   }
   &:disabled {
