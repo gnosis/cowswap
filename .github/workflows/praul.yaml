@@ -9,7 +9,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Set environment variables
-        run: echo "PULL_REQUEST=$(jq --raw-output .number "$GITHUB_EVENT_PATH")" >> $GITHUB_ENV
+        run: |
+          cat $GITHUB_EVENT_PATH
+          echo "PULL_REQUEST=$(jq --raw-output .number "$GITHUB_EVENT_PATH")" >> $GITHUB_ENV
       - name: Run build script
         run: ./.github/scripts/deploy_pull_request.sh
         shell: bash
