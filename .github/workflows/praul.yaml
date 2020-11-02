@@ -7,6 +7,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - name: Set environment variables
+        run: echo "PULL_REQUEST=$(jq --raw-output .number "$GITHUB_EVENT_PATH")" >> $GITHUB_ENV
       - name: Run build script
         run: ./.github/scripts/deploy_pull_request.sh
         shell: bash
@@ -15,5 +17,4 @@ jobs:
           GITHUB_GNOSIS_INFO_API_TOKEN: ${{ secrets.GITHUB_TOKEN }} #${{ secrets.GITHUB_GNOSIS_INFO_API_TOKEN }}
           AWS_ACCESS_KEY_ID: "dummy_key" #${{ secrets.AWS_ACCESS_KEY_ID }}
           REVIEW_BUCKET_NAME: "dummy_bucket" #${{ secrets.REVIEW_BUCKET_NAME }}
-          PULL_REQUEST: ${{jq --raw-output .number "$GITHUB_EVENT_PATH"}}
           REPO_SLUG: ${{ github.repository }}
