@@ -2,6 +2,7 @@ name: PRaul
 on:
   pull_request:
     types: [ opened ]
+  push:
 jobs:
   publish-praul:
     runs-on: ubuntu-latest
