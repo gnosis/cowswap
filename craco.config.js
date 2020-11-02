@@ -7,7 +7,7 @@ module.exports = function() {
   return {
     webpack: {
       alias: {
-        '@': path.resolve(__dirname, 'src/custom')
+        '@': path.resolve(__dirname, 'src')
       },
       plugins: [],
 
