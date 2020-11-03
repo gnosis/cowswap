@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React, { PropsWithChildren, useRef } from 'react'
 // import { BookOpen, Code, Info, MessageCircle, PieChart } from 'react-feather'
 import styled from 'styled-components'
 import { ReactComponent as MenuIcon } from 'assets/images/menu.svg'
@@ -8,7 +8,6 @@ import { ApplicationModal } from 'state/application/actions'
 import { useModalOpen, useToggleModal } from 'state/application/hooks'
 
 import { ExternalLink } from 'theme'
-import { WithChildren } from 'types'
 // import { ButtonPrimary } from 'Button'
 
 const StyledMenuIcon = styled(MenuIcon)`
@@ -88,7 +87,7 @@ export const MenuItem = styled(ExternalLink)`
 
 // const CODE_LINK = 'https://github.com/Uniswap/uniswap-interface'
 
-export default function Menu(props?: WithChildren) {
+export default function Menu(props?: PropsWithChildren<void>) {
   // const { account } = useActiveWeb3React()
 
   const node = useRef<HTMLDivElement>()
