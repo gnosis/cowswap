@@ -98,7 +98,7 @@ export const ThemedGlobalStyle = createGlobalStyle`
 
   html {
     /* background-color: ${({ theme }) => theme.bg2}; */
-    background-color: initial; // TODO: Why?? actually does some weird effect
+    background-color: initial; // TODO: Why?? actually does some weird effect. Not part of this PR address this
     background-image: ${({ theme }) => `linear-gradient(0deg, ${theme.bg1} 0%, ${theme.bg2} 100%)`};
   }
 `
