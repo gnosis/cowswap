@@ -68,13 +68,14 @@ export function colors(darkMode: boolean): Colors {
 }
 
 export function theme(darkmode: boolean): DefaultTheme {
+  const colorsTheme = colors(darkmode)
   return {
     ...themeUniswap(darkmode),
-    ...colors(darkmode),
+    ...colorsTheme,
 
     // Overide Theme
     linearGradient: css`
-      background-image: ${({ theme }) => `linear-gradient(270deg, ${theme.purple} 30%, ${theme.blue1} 70%);`};
+      background-image: linear-gradient(270deg, ${colorsTheme.purple} 30%, ${colorsTheme.blue1} 70%);
     `
   }
 }
