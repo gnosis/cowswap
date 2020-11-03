@@ -7,7 +7,7 @@ import CurrencySearchModal from '../SearchModal/CurrencySearchModal'
 import CurrencyLogo from '../CurrencyLogo'
 import DoubleCurrencyLogo from '../DoubleLogo'
 import { RowBetween } from '../Row'
-import { TYPE } from '../../theme'
+import { TYPE } from 'theme'
 import { Input as NumericalInput } from '../NumericalInput'
 import { ReactComponent as DropDown } from '../../assets/images/dropdown.svg'
 
