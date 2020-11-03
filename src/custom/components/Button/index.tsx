@@ -22,14 +22,14 @@ import {
 
 export const ButtonPrimary = styled(ButtonPrimaryMod)`
   // CSS overrides
-  ${({ theme }) => theme.linearGradient}
+  ${({ theme }) => theme.bgLinearGradient}
   background-color: transparent;
   border: 0;
 
   &:focus,
   &:hover,
   &:active {
-    ${({ theme }) => theme.linearGradient}
+    ${({ theme }) => theme.bgLinearGradient}
     background-color: transparent;
     border: 0;
   }

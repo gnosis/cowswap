@@ -74,7 +74,7 @@ export function theme(darkmode: boolean): DefaultTheme {
     ...colorsTheme,
 
     // Overide Theme
-    linearGradient: css`
+    bgLinearGradient: css`
       background-image: linear-gradient(270deg, ${colorsTheme.purple} 30%, ${colorsTheme.blue1} 70%);
     `
   }

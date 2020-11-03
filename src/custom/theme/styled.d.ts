@@ -32,6 +32,6 @@ declare module 'styled-components' {
   // Override theme
   export interface DefaultTheme extends DefaultThemeUniswap, Colors {
     // css snippets
-    linearGradient: FlattenSimpleInterpolation
+    bgLinearGradient: FlattenSimpleInterpolation
   }
 }
