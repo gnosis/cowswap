@@ -22,20 +22,20 @@ import {
 
 export const ButtonPrimary = styled(ButtonPrimaryMod)`
   // CSS overrides
+  ${({ theme }) => theme.bgLinearGradient}
   background-color: transparent;
-  background-image: ${({ theme }) => `linear-gradient(270deg, ${theme.purple} 30%, ${theme.blue1} 70%);`};
   border: 0;
 
   &:focus,
   &:hover,
   &:active {
+    ${({ theme }) => theme.bgLinearGradient}
     background-color: transparent;
-    background-image: ${({ theme }) => `linear-gradient(270deg, ${theme.purple} 30%, ${theme.blue1} 70%);`};
     border: 0;
   }
   &:disabled {
-    background-image: none;
     background-color: ${({ theme }) => theme.disabled};
+    background-image: none;
     border: 0;
   }
 `
