@@ -1,6 +1,7 @@
 import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit'
 import { save, load } from 'redux-localstorage-simple'
 
+// UNI REDUCERS
 import application from '@src/state/application/reducer'
 import { updateVersion } from '@src/state/global/actions'
 import user from '@src/state/user/reducer'
@@ -10,6 +11,8 @@ import mint from '@src/state/mint/reducer'
 import lists from '@src/state/lists/reducer'
 import burn from '@src/state/burn/reducer'
 import multicall from '@src/state/multicall/reducer'
+
+// CUSTOM REDUCERS
 import operator from './operator/reducer'
 
 const PERSISTED_KEYS: string[] = ['user', 'transactions', 'lists']

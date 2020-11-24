@@ -4,26 +4,26 @@ import { AppDispatch, AppState } from 'state/'
 import { updateTip, clearTip, SerializedToken, Tip } from './actions'
 import { OperatorState } from './reducer'
 
+interface AddTipParams extends ClearTipParams {
+  tip: Tip
+}
+interface ClearTipParams {
+  token: SerializedToken
+}
+
+type AddTipCallback = (addTokenParams: AddTipParams) => void
+type ClearTipCallback = (clearTokenParams: ClearTipParams) => void
+
 export const useTip = (tokenAddress: string): Tip | undefined => {
   const { tipsMap } = useSelector<AppState, OperatorState>(state => state.operator)
 
   return tipsMap[tokenAddress]?.tip
 }
 
-interface AddTipParams extends ClearTipParams {
-  tip: Tip
-}
-type AddTipCallback = (addTokenParams: AddTipParams) => void
-
 export const useAddTip = (): AddTipCallback => {
   const dispatch = useDispatch<AppDispatch>()
   return (addTokenParams: AddTipParams) => dispatch(updateTip(addTokenParams))
 }
-
-interface ClearTipParams {
-  token: SerializedToken
-}
-type ClearTipCallback = (clearTokenParams: ClearTipParams) => void
 
 export const useClearTip = (): ClearTipCallback => {
   const dispatch = useDispatch<AppDispatch>()
