@@ -1,14 +1,14 @@
 import { useDispatch, useSelector } from 'react-redux'
 
 import { AppDispatch, AppState } from 'state'
-import { updateTip, clearTip, SerializedToken, Tip } from './actions'
+import { updateTip, clearTip, Tip } from './actions'
 import { OperatorState } from './reducer'
 
 interface AddTipParams extends ClearTipParams {
   tip: Tip
 }
 interface ClearTipParams {
-  token: SerializedToken
+  token: string // token address
 }
 
 type AddTipCallback = (addTokenParams: AddTipParams) => void
