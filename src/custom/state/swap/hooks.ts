@@ -100,9 +100,7 @@ const useTradeWithTip = ({
 
   return {
     bestTradeExactIn,
-    bestTradeExactOut,
-    feeForTradeExactIn,
-    feeForTradeExactOut
+    bestTradeExactOut
   }
 }
 
@@ -143,66 +141,13 @@ export function useDerivedSwapInfo(): {
 
   const parsedAmount = tryParseAmount(typedValue, currencyByInput)
 
-  const { bestTradeExactIn, bestTradeExactOut, feeForTradeExactIn, feeForTradeExactOut } = useTradeWithTip({
+  const { bestTradeExactIn, bestTradeExactOut } = useTradeWithTip({
     isExactIn,
     currencyByInput,
     inputCurrency,
     outputCurrency,
     parsedAmount
   })
-
-  const bestTradeExactInBeforeFee = useTradeExactIn(isExactIn ? parsedAmount : undefined, outputCurrency ?? undefined)
-  const bestTradeExactOutBeforeFee = useTradeExactOut(inputCurrency ?? undefined, !isExactIn ? parsedAmount : undefined)
-
-  console.log(
-    '[LOGGING BEST TRADE] RAW PRICES',
-    `
-      [IN]
-      BEFORE FEE: ${bestTradeExactInBeforeFee?.inputAmount.toSignificant(
-        bestTradeExactInBeforeFee.inputAmount.currency.decimals
-      )}
-      FEE: ${feeForTradeExactIn?.toSignificant(feeForTradeExactIn.currency.decimals)}
-      PARSED AMT: ${parsedAmount?.toSignificant(feeForTradeExactIn?.currency.decimals)}
-      TRY PARSE AMT: ${parsedAmount &&
-        feeForTradeExactIn &&
-        tryValueToCurrency(
-          // INPUTAMOUNT
-          JSBI.subtract(parsedAmount.raw, feeForTradeExactIn.raw).toString(),
-          currencyByInput
-        )?.toSignificant(feeForTradeExactIn.currency.decimals)}
-      `,
-    tryParseAmount(
-      // INPUTAMOUNT
-      parsedAmount && feeForTradeExactIn && JSBI.subtract(parsedAmount.raw, feeForTradeExactIn.raw).toString(),
-      currencyByInput
-    )
-  )
-  console.log(
-    '[LOGGING BEST TRADE] RAW PRICES',
-    `
-      [OUT]
-      BEFORE FEE: ${bestTradeExactOutBeforeFee?.inputAmount.toSignificant(
-        bestTradeExactOutBeforeFee.inputAmount.currency.decimals
-      )}
-      FEE: ${feeForTradeExactOut?.toSignificant(feeForTradeExactOut.currency.decimals)}
-      PARSED AMT: ${parsedAmount?.toSignificant(currencyByInput?.decimals)}
-      TRY PARSE AMT: ${parsedAmount &&
-        feeForTradeExactOut &&
-        tryValueToCurrency(
-          // INPUTAMOUNT
-          JSBI.subtract(parsedAmount.raw, feeForTradeExactOut.raw).toString(),
-          currencyByInput
-        )?.toSignificant(feeForTradeExactOut.currency.decimals)}
-      `
-  )
-  // console.log('[LOGGING BEST TRADE] ===============================================')
-  // console.log('[LOGGING BEST TRADE IN] BEFORE FEE', bestTradeExactIn?.executionPrice.toFixed())
-  console.log('[LOGGING BEST TRADE IN] FEE', feeForTradeExactIn?.toSignificant(currencyByInput?.decimals))
-  // console.log('[LOGGING BEST TRADE IN] AFTER FEE', bestTradeExactIn)
-  // console.log('[LOGGING BEST TRADE] ===============================================')
-  // console.log('[LOGGING BEST TRADE OUT] BEFORE FEE', bestTradeExactOut?.executionPrice.toFixed())
-  console.log('[LOGGING BEST TRADE OUT] FEE', feeForTradeExactOut?.toSignificant(currencyByInput?.decimals))
-  // console.log('[LOGGING BEST TRADE OUT] AFTER FEE', bestTradeExactOut)
 
   const v2Trade = isExactIn ? bestTradeExactIn : bestTradeExactOut
 
