@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux'
 
-import { AppDispatch, AppState } from 'state/'
+import { AppDispatch, AppState } from 'state'
 import { updateTip, clearTip, SerializedToken, Tip } from './actions'
 import { OperatorState } from './reducer'
 
