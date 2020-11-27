@@ -11,6 +11,8 @@ import mint from '@src/state/mint/reducer'
 import lists from '@src/state/lists/reducer'
 import burn from '@src/state/burn/reducer'
 import multicall from '@src/state/multicall/reducer'
+// CUSTOM REDUCERS
+import operator from './operator/reducer'
 
 const UNISWAP_REDUCERS = {
   application,
@@ -22,9 +24,6 @@ const UNISWAP_REDUCERS = {
   multicall,
   lists
 }
-
-// CUSTOM REDUCERS
-import operator from './operator/reducer'
 
 const PERSISTED_KEYS: string[] = ['user', 'transactions', 'lists']
 
