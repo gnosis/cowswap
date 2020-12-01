@@ -1,23 +1,25 @@
+import { ChainId } from '@uniswap/sdk'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { AppDispatch, AppState } from 'state'
-import { addOrder, removeOrder, OrderCreation, UUID } from './actions'
+import { addOrder, removeOrder, Order, UUID } from './actions'
 import { OrdersState } from './reducer'
 
-interface AddOrderParams extends RemoveOrderParams {
-  order: OrderCreation
+interface AddOrderParams extends GetRemoveOrderParams {
+  order: Order
 }
-interface RemoveOrderParams {
+interface GetRemoveOrderParams {
   id: UUID
+  chainId: ChainId
 }
 
 type AddOrderCallback = (addOrderParams: AddOrderParams) => void
-type RemoveOrderCallback = (clearOrderParams: RemoveOrderParams) => void
+type RemoveOrderCallback = (clearOrderParams: GetRemoveOrderParams) => void
 
-export const useOrder = (orderId: UUID): OrderCreation | undefined => {
-  const { orderMap } = useSelector<AppState, OrdersState>(state => state.orders)
+export const useOrder = ({ id, chainId }: GetRemoveOrderParams): Order | undefined => {
+  const state = useSelector<AppState, OrdersState>(state => state.orders)
 
-  return orderMap[orderId]?.order
+  return state[chainId]?.[id]?.order
 }
 
 export const useAddOrder = (): AddOrderCallback => {
@@ -27,5 +29,5 @@ export const useAddOrder = (): AddOrderCallback => {
 
 export const useRemoveOrder = (): RemoveOrderCallback => {
   const dispatch = useDispatch<AppDispatch>()
-  return (removeOrderParams: RemoveOrderParams) => dispatch(removeOrder(removeOrderParams))
+  return (removeOrderParams: GetRemoveOrderParams) => dispatch(removeOrder(removeOrderParams))
 }
