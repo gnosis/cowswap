@@ -1,4 +1,5 @@
 import { createReducer } from '@reduxjs/toolkit'
+import { ChainId } from '@uniswap/sdk'
 import { addOrder, removeOrder, OrderCreation, UUID } from './actions'
 
 interface OrderObject {
@@ -9,22 +10,27 @@ interface OrderObject {
 // {order uuid => OrderObject} mapping
 type OrdersMap = Record<UUID, OrderObject>
 
-export interface OrdersState {
-  readonly orderMap: Partial<OrdersMap>
+export type OrdersState = {
+  readonly [chainId in ChainId]?: Partial<OrdersMap>
 }
 
-const initialState: OrdersState = {
-  orderMap: {}
-}
+const initialState: OrdersState = {}
 
 export default createReducer(initialState, builder =>
   builder
     .addCase(addOrder, (state, action) => {
-      const { order, id } = action.payload
-      state.orderMap[id] = { order, id }
+      const { order, id, chainId } = action.payload
+
+      const orderMap = state[chainId] ?? {}
+
+      orderMap[id] = { order, id }
+      state[chainId] = orderMap
     })
     .addCase(removeOrder, (state, action) => {
-      const { id } = action.payload
-      delete state.orderMap[id]
+      const { id, chainId } = action.payload
+
+      const orderMap = state[chainId] ?? {}
+
+      delete orderMap[id]
     })
 )

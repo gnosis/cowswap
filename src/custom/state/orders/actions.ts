@@ -1,4 +1,5 @@
 import { createAction } from '@reduxjs/toolkit'
+import { ChainId } from '@uniswap/sdk'
 
 const enum OrderKind {
   SELL,
@@ -24,5 +25,5 @@ export interface OrderCreation {
  */
 export type UUID = string
 
-export const addOrder = createAction<{ id: UUID; order: OrderCreation }>('operator/updateTip')
-export const removeOrder = createAction<{ id: UUID }>('operator/clearTip')
+export const addOrder = createAction<{ id: UUID; chainId: ChainId; order: OrderCreation }>('order/updateTip')
+export const removeOrder = createAction<{ id: UUID; chainId: ChainId }>('order/clearTip')
