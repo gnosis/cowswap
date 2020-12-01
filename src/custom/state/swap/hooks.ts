@@ -1,10 +1,8 @@
 import { getTip } from '@src/custom/utils/price'
-import { useV1Trade } from '@src/data/V1'
 import { useActiveWeb3React } from '@src/hooks'
 import { useCurrency } from '@src/hooks/Tokens'
 import { useTradeExactIn, useTradeExactOut } from '@src/hooks/Trades'
 import useENS from '@src/hooks/useENS'
-import useToggledVersion, { Version } from '@src/hooks/useToggledVersion'
 import { Field } from '@src/state/swap/actions'
 import { tryParseAmount, useSwapState } from '@src/state/swap/hooks'
 import { useUserSlippageTolerance } from '@src/state/user/hooks'
@@ -114,18 +112,20 @@ const useTradeWithTip = ({
   }
 }
 
-// from the current swap inputs, compute the best trade and return it.
-export function useDerivedSwapInfo(): {
+interface DerivedSwapInfo {
   currencies: { [field in Field]?: Currency }
   currencyBalances: { [field in Field]?: CurrencyAmount }
   parsedAmount: CurrencyAmount | undefined
   v2Trade: Trade | undefined
+  // TODO: review this - we don't use a v1 trade but changing all code
+  // or extending whole swap comp for only removing v1trade is a lot
+  v1Trade: undefined
   inputError?: string
-  v1Trade: Trade | undefined
-} {
-  const { account } = useActiveWeb3React()
+}
 
-  const toggledVersion = useToggledVersion()
+// from the current swap inputs, compute the best trade and return it.
+export function useDerivedSwapInfo(): DerivedSwapInfo {
+  const { account } = useActiveWeb3React()
 
   const {
     independentField,
@@ -159,7 +159,7 @@ export function useDerivedSwapInfo(): {
     parsedAmount
   })
 
-  const v2Trade = isExactIn ? bestTradeExactIn : bestTradeExactOut
+  const trade = isExactIn ? bestTradeExactIn : bestTradeExactOut
 
   const currencyBalances = {
     [Field.INPUT]: relevantTokenBalances[0],
@@ -170,9 +170,6 @@ export function useDerivedSwapInfo(): {
     [Field.INPUT]: inputCurrency ?? undefined,
     [Field.OUTPUT]: outputCurrency ?? undefined
   }
-
-  // get link to trade on v1, if a better rate exists
-  const v1Trade = useV1Trade(isExactIn, currencies[Field.INPUT], currencies[Field.OUTPUT], parsedAmount)
 
   let inputError: string | undefined
   if (!account) {
@@ -202,21 +199,12 @@ export function useDerivedSwapInfo(): {
 
   const [allowedSlippage] = useUserSlippageTolerance()
 
-  const slippageAdjustedAmounts = v2Trade && allowedSlippage && computeSlippageAdjustedAmounts(v2Trade, allowedSlippage)
-
-  const slippageAdjustedAmountsV1 =
-    v1Trade && allowedSlippage && computeSlippageAdjustedAmounts(v1Trade, allowedSlippage)
+  const slippageAdjustedAmounts = trade && allowedSlippage && computeSlippageAdjustedAmounts(trade, allowedSlippage)
 
   // compare input balance to max input based on version
   const [balanceIn, amountIn] = [
     currencyBalances[Field.INPUT],
-    toggledVersion === Version.v1
-      ? slippageAdjustedAmountsV1
-        ? slippageAdjustedAmountsV1[Field.INPUT]
-        : null
-      : slippageAdjustedAmounts
-      ? slippageAdjustedAmounts[Field.INPUT]
-      : null
+    slippageAdjustedAmounts ? slippageAdjustedAmounts[Field.INPUT] : null
   ]
 
   if (balanceIn && amountIn && balanceIn.lessThan(amountIn)) {
@@ -227,8 +215,8 @@ export function useDerivedSwapInfo(): {
     currencies,
     currencyBalances,
     parsedAmount,
-    v2Trade: v2Trade ?? undefined,
-    inputError,
-    v1Trade
+    v2Trade: trade ?? undefined,
+    v1Trade: undefined,
+    inputError
   }
 }
