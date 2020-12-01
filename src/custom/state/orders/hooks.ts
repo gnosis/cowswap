@@ -1,4 +1,5 @@
 import { ChainId } from '@uniswap/sdk'
+import { useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { AppDispatch, AppState } from 'state'
@@ -29,15 +30,15 @@ export const useOrder = ({ id, chainId }: GetRemoveOrderParams): Order | undefin
 
 export const useAddOrder = (): AddOrderCallback => {
   const dispatch = useDispatch<AppDispatch>()
-  return (addOrderParams: AddOrderParams) => dispatch(addOrder(addOrderParams))
+  return useCallback((addOrderParams: AddOrderParams) => dispatch(addOrder(addOrderParams)), [dispatch])
 }
 
 export const useRemoveOrder = (): RemoveOrderCallback => {
   const dispatch = useDispatch<AppDispatch>()
-  return (removeOrderParams: GetRemoveOrderParams) => dispatch(removeOrder(removeOrderParams))
+  return useCallback((removeOrderParams: GetRemoveOrderParams) => dispatch(removeOrder(removeOrderParams)), [dispatch])
 }
 
 export const useClearOrders = (): ClearOrdersCallback => {
   const dispatch = useDispatch<AppDispatch>()
-  return (clearOrdersParams: ClearOrdersParams) => dispatch(clearOrders(clearOrdersParams))
+  return useCallback((clearOrdersParams: ClearOrdersParams) => dispatch(clearOrders(clearOrdersParams)), [dispatch])
 }
