@@ -1,9 +1,9 @@
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useActiveWeb3React } from 'hooks'
-import { useAddPopup, useBlockNumber } from 'state/application/hooks'
+import { /* useAddPopup ,*/ useBlockNumber } from 'state/application/hooks'
 import { AppDispatch, AppState } from 'state'
-import { OrderFull, removeOrder } from './actions'
+import { removeOrder } from './actions'
 
 export function shouldCheck(
   lastBlockNumber: number,
@@ -60,7 +60,7 @@ export function PollOnBlockUpdater(): null {
 
           if (!res.ok) throw new Error(res.statusText)
 
-          const orderData: OrderFull = await res.json()
+          // const orderData: OrderFull = await res.json()
 
           // if (order not fullfilled) return
 
