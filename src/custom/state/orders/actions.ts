@@ -25,5 +25,6 @@ export interface OrderCreation {
  */
 export type UUID = string
 
-export const addOrder = createAction<{ id: UUID; chainId: ChainId; order: OrderCreation }>('order/updateTip')
-export const removeOrder = createAction<{ id: UUID; chainId: ChainId }>('order/clearTip')
+export const addOrder = createAction<{ id: UUID; chainId: ChainId; order: OrderCreation }>('order/updateOrder')
+export const removeOrder = createAction<{ id: UUID; chainId: ChainId }>('order/removeOrder')
+export const clearOrders = createAction<{ chainId: ChainId }>('order/clearOrders')

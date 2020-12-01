@@ -1,6 +1,6 @@
 import { createReducer } from '@reduxjs/toolkit'
 import { ChainId } from '@uniswap/sdk'
-import { addOrder, removeOrder, OrderCreation, UUID } from './actions'
+import { addOrder, removeOrder, OrderCreation, UUID, clearOrders } from './actions'
 
 interface OrderObject {
   id: UUID
@@ -32,5 +32,10 @@ export default createReducer(initialState, builder =>
       const orderMap = state[chainId] ?? {}
 
       delete orderMap[id]
+    })
+    .addCase(clearOrders, (state, action) => {
+      const { chainId } = action.payload
+
+      state[chainId] = {}
     })
 )
