@@ -49,19 +49,44 @@ function tryValueToCurrency(value?: string, currency?: Currency): CurrencyAmount
   return undefined
 }
 
+function calculateTipInOrOut({
+  parsedAmount,
+  feeForTradeExactIn,
+  feeForTradeExactOut,
+  currencyByInput,
+  isExactIn
+}: TradeCalculation & {
+  feeForTradeExactIn: CurrencyAmount | undefined
+  feeForTradeExactOut: CurrencyAmount | undefined
+}): CurrencyAmount | undefined {
+  if (!parsedAmount) return undefined
+
+  const computedTip = isExactIn ? feeForTradeExactIn : feeForTradeExactOut
+
+  if (!computedTip) return parsedAmount
+
+  return tryValueToCurrency(
+    // PARSED_USER_AMOUNT - FEE_AMOUNT
+    JSBI[isExactIn ? 'subtract' : 'add'](parsedAmount.raw, computedTip.raw).toString(),
+    currencyByInput
+  )
+}
+
+interface TradeCalculation {
+  currencyByInput?: Currency
+  inputCurrency?: Currency | null
+  outputCurrency?: Currency | null
+  parsedAmount?: CurrencyAmount
+  isExactIn: boolean
+}
+
 const useTradeWithTip = ({
   currencyByInput,
   inputCurrency,
   outputCurrency,
   isExactIn,
   parsedAmount
-}: {
-  currencyByInput?: Currency
-  inputCurrency?: Currency | null
-  outputCurrency?: Currency | null
-  parsedAmount?: CurrencyAmount
-  isExactIn: boolean
-}) => {
+}: TradeCalculation) => {
   const tip = getTip()
   const parsedFeeAmount = tryParseAmount(tip, inputCurrency || undefined)
 
@@ -72,31 +97,16 @@ const useTradeWithTip = ({
   const feeForTradeExactOut = useTradeExactOut(outputCurrency ?? undefined, !isExactIn ? parsedFeeAmount : undefined)
     ?.inputAmount
 
-  const bestTradeExactIn = useTradeExactIn(
-    isExactIn
-      ? feeForTradeExactIn && parsedAmount
-        ? tryValueToCurrency(
-            // PARSED_USER_AMOUNT - FEE_AMOUNT
-            JSBI.subtract(parsedAmount.raw, feeForTradeExactIn.raw).toString(),
-            currencyByInput
-          )
-        : parsedAmount
-      : undefined,
-    outputCurrency ?? undefined
-  )
+  const tipAmount = calculateTipInOrOut({
+    parsedAmount,
+    feeForTradeExactIn,
+    feeForTradeExactOut,
+    isExactIn,
+    currencyByInput
+  })
 
-  const bestTradeExactOut = useTradeExactOut(
-    inputCurrency ?? undefined,
-    !isExactIn
-      ? feeForTradeExactOut && parsedAmount
-        ? tryValueToCurrency(
-            // INPUTAMOUNT
-            JSBI.add(parsedAmount.raw, feeForTradeExactOut.raw).toString(),
-            currencyByInput
-          )
-        : parsedAmount
-      : undefined
-  )
+  const bestTradeExactIn = useTradeExactIn(tipAmount, outputCurrency ?? undefined)
+  const bestTradeExactOut = useTradeExactOut(inputCurrency ?? undefined, tipAmount)
 
   return {
     bestTradeExactIn,
