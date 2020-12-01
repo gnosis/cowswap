@@ -1,7 +1,7 @@
 import { createAction } from '@reduxjs/toolkit'
 import { ChainId } from '@uniswap/sdk'
 
-const enum OrderKind {
+enum OrderKind {
   SELL,
   BUY
 }
