@@ -19,12 +19,20 @@ export interface OrderCreation {
   signature: string // 5 bytes encoded as hex without `0x` prefix. v + r + s from the spec
 }
 
+export interface Order extends OrderCreation {
+  uuid: UUID
+}
+
+export interface OrderFull extends OrderCreation {
+  creationTime: string // Creation time of the order. Encoded as ISO 8601 UTC
+}
+
 /**
  * Unique identifier for the order, calculated by keccak256(orderDigest, ownerAddress, validTo),
    where orderDigest = keccak256(orderStruct). bytes32.
  */
 export type UUID = string
 
-export const addOrder = createAction<{ id: UUID; chainId: ChainId; order: OrderCreation }>('order/updateOrder')
+export const addOrder = createAction<{ id: UUID; chainId: ChainId; order: Order }>('order/updateOrder')
 export const removeOrder = createAction<{ id: UUID; chainId: ChainId }>('order/removeOrder')
 export const clearOrders = createAction<{ chainId: ChainId }>('order/clearOrders')

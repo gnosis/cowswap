@@ -1,10 +1,10 @@
 import { createReducer } from '@reduxjs/toolkit'
 import { ChainId } from '@uniswap/sdk'
-import { addOrder, removeOrder, OrderCreation, UUID, clearOrders } from './actions'
+import { addOrder, removeOrder, Order, UUID, clearOrders } from './actions'
 
-interface OrderObject {
+export interface OrderObject {
   id: UUID
-  order: OrderCreation
+  order: Order
 }
 
 // {order uuid => OrderObject} mapping
