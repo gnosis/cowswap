@@ -1,4 +1,3 @@
-import { getTip } from '@src/custom/utils/price'
 import { useActiveWeb3React } from '@src/hooks'
 import { useCurrency } from '@src/hooks/Tokens'
 import { useTradeExactIn, useTradeExactOut } from '@src/hooks/Trades'
@@ -10,6 +9,7 @@ import { useCurrencyBalances } from '@src/state/wallet/hooks'
 import { isAddress } from '@src/utils'
 import { computeSlippageAdjustedAmounts } from '@src/utils/prices'
 import { Currency, CurrencyAmount, JSBI, Token, TokenAmount, Trade } from '@uniswap/sdk'
+import { useTip } from '../operator/hooks'
 
 export * from '@src/state/swap/hooks'
 
@@ -70,15 +70,17 @@ interface TradeCalculation {
   outputCurrency?: Currency | null
   parsedAmount?: CurrencyAmount
   isExactIn: boolean
+  tokenAddress?: string
 }
 
 const useCalculateTip = ({ inputCurrency, outputCurrency, isExactIn, parsedAmount }: TradeCalculation) => {
-  const tip = getTip()
+  const tip = useTip()
   const parsedFeeAmount = tryParseAmount(tip, inputCurrency || undefined)
 
   // Shows fee amount in OUTPUT token
   const feeForTradeExactIn = useTradeExactIn(isExactIn ? parsedFeeAmount : undefined, outputCurrency ?? undefined)
     ?.inputAmount
+
   // Shows fee amount in INPUT token
   const feeForTradeExactOut = useTradeExactOut(inputCurrency ?? undefined, !isExactIn ? parsedFeeAmount : undefined)
     ?.inputAmount
@@ -138,7 +140,8 @@ export function useDerivedSwapInfo(): DerivedSwapInfo {
     isExactIn,
     inputCurrency,
     outputCurrency,
-    parsedAmount
+    parsedAmount,
+    tokenAddress: inputCurrencyId
   })
 
   const bestTradeExactIn = useTradeExactIn(calculatedTip, outputCurrency ?? undefined)
