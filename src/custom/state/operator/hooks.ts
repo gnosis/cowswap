@@ -14,10 +14,10 @@ interface ClearTipParams {
 type AddTipCallback = (addTokenParams: AddTipParams) => void
 type ClearTipCallback = (clearTokenParams: ClearTipParams) => void
 
-export const useTip = (tokenAddress: string): Tip | undefined => {
+export const useTip = (tokenAddress?: string): Tip | undefined => {
   const { tipsMap } = useSelector<AppState, OperatorState>(state => state.operator)
 
-  return tipsMap[tokenAddress]?.tip
+  return tokenAddress ? tipsMap[tokenAddress]?.tip : undefined
 }
 
 export const useAddTip = (): AddTipCallback => {
