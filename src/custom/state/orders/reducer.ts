@@ -1,14 +1,14 @@
 import { createReducer } from '@reduxjs/toolkit'
 import { ChainId } from '@uniswap/sdk'
-import { addOrder, removeOrder, Order, UUID, clearOrders } from './actions'
+import { addOrder, removeOrder, Order, OrderID, clearOrders } from './actions'
 
 export interface OrderObject {
-  id: UUID
+  id: OrderID
   order: Order
 }
 
 // {order uuid => OrderObject} mapping
-type OrdersMap = Record<UUID, OrderObject>
+type OrdersMap = Record<OrderID, OrderObject>
 
 export type OrdersState = {
   readonly [chainId in ChainId]?: Partial<OrdersMap>

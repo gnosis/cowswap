@@ -28,15 +28,15 @@ export function PollOnBlockUpdater(): null {
       const orders = state[chainId]
       if (!orders) return
 
-      // check for each order by uuid if possible
+      // check for each order by id if possible
       // if not, get all orders and filter, will need order.owner
       Object.values(orders).forEach(async order => {
         // order is never undefined here, but TS thinks so
         if (!order) return
 
         try {
-          const { uuid } = order.order
-          const res = await fetch(`link_to_service/api/v1/order/${uuid}`)
+          const { id } = order.order
+          const res = await fetch(`link_to_service/api/v1/order/${id}`)
 
           if (!res.ok) throw new Error(res.statusText)
 
@@ -44,7 +44,7 @@ export function PollOnBlockUpdater(): null {
 
           // if (order not fullfilled) return
 
-          dispatch(removeOrder({ chainId, id: uuid }))
+          dispatch(removeOrder({ chainId, id }))
         } catch (error) {
           console.error('Error fetching orders', error)
         }

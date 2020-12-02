@@ -3,14 +3,14 @@ import { useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { AppDispatch, AppState } from 'state'
-import { addOrder, removeOrder, clearOrders, Order, UUID } from './actions'
+import { addOrder, removeOrder, clearOrders, Order, OrderID } from './actions'
 import { OrdersState } from './reducer'
 
 interface AddOrderParams extends GetRemoveOrderParams {
   order: Order
 }
 interface GetRemoveOrderParams {
-  id: UUID
+  id: OrderID
   chainId: ChainId
 }
 

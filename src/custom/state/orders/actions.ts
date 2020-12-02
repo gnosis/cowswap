@@ -23,8 +23,11 @@ export interface OrderCreation {
 
 // used internally by dapp
 export interface Order extends OrderCreation {
-  uuid: UUID
+  id: OrderID // it is special :)
   owner: string // address
+  status: string
+  fulfillTime: string
+  createTime: string
 }
 
 // gotten from querying /api/v1/orders
@@ -37,8 +40,8 @@ export interface OrderFull extends OrderCreation {
  * Unique identifier for the order, calculated by keccak256(orderDigest, ownerAddress, validTo),
    where orderDigest = keccak256(orderStruct). bytes32.
  */
-export type UUID = string
+export type OrderID = string
 
-export const addOrder = createAction<{ id: UUID; chainId: ChainId; order: Order }>('order/updateOrder')
-export const removeOrder = createAction<{ id: UUID; chainId: ChainId }>('order/removeOrder')
+export const addOrder = createAction<{ id: OrderID; chainId: ChainId; order: Order }>('order/updateOrder')
+export const removeOrder = createAction<{ id: OrderID; chainId: ChainId }>('order/removeOrder')
 export const clearOrders = createAction<{ chainId: ChainId }>('order/clearOrders')
