@@ -4,6 +4,7 @@ import { useActiveWeb3React } from 'hooks'
 import { /* useAddPopup ,*/ useBlockNumber } from 'state/application/hooks'
 import { AppDispatch, AppState } from 'state'
 import { removeOrder } from './actions'
+import { utils } from 'ethers'
 
 // first iteration -- checking on each block
 // ideally we would check agains backend orders from last session, only once, on page load
@@ -35,7 +36,6 @@ export function PollOnBlockUpdater(): null {
 
         try {
           const { uuid } = order.order
-          // also needs an owner
           const res = await fetch(`link_to_service/api/v1/order/${uuid}`)
 
           if (!res.ok) throw new Error(res.statusText)
@@ -53,6 +53,29 @@ export function PollOnBlockUpdater(): null {
 
     checkOrderStatuses()
   }, [chainId, dispatch, lastBlockNumber, library, state])
+
+  return null
+}
+
+export function EventUpdater(): null {
+  const { chainId, library } = useActiveWeb3React()
+
+  useEffect(() => {
+    if (!chainId || !library) return
+
+    const topicSets = [utils.id('Transfer(address,address,uint256)')]
+
+    const listener = (log: any, event: any) => {
+      console.log('Transfer::event', event)
+      console.log('Transfer::log', log) // the log isn't decoded, better use through contract
+      // Emitted any token is sent TO either address
+    }
+    library.on(topicSets, listener)
+
+    return () => {
+      library.off(topicSets, listener)
+    }
+  }, [chainId, library])
 
   return null
 }
