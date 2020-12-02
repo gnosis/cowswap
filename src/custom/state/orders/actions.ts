@@ -5,6 +5,8 @@ enum OrderKind {
   SELL,
   BUY
 }
+
+// posted to /api/v1/orders on Order creation
 // serializable, so no BigNumbers
 export interface OrderCreation {
   sellToken: string // address
@@ -19,12 +21,16 @@ export interface OrderCreation {
   signature: string // 5 bytes encoded as hex without `0x` prefix. v + r + s from the spec
 }
 
+// used internally by dapp
 export interface Order extends OrderCreation {
   uuid: UUID
+  owner: string // address
 }
 
+// gotten from querying /api/v1/orders
 export interface OrderFull extends OrderCreation {
   creationTime: string // Creation time of the order. Encoded as ISO 8601 UTC
+  owner: string // address
 }
 
 /**
