@@ -1,6 +1,6 @@
 import { Middleware } from '@reduxjs/toolkit'
 import { getTip } from '@src/custom/utils/price'
-import { Field, selectCurrency } from '@src/state/swap/actions'
+import { selectCurrency } from '@src/state/swap/actions'
 import { updateTip } from './actions'
 import { OperatorState } from './reducer'
 
@@ -9,8 +9,11 @@ export const applyTipMiddleware: Middleware = ({ dispatch, getState }) => next =
   const isTriggerAction = action.type === selectCurrency.type
 
   if (isTriggerAction) {
-    const { payload } = action as ReturnType<typeof selectCurrency>
-    const isSellToken = payload?.field === Field.INPUT
+    const { payload } = action
+
+    // check actions as several should trigger this update
+    // e.g direct selection? yes, also has payload to check token type
+    // but switchCurrencies? has no payload, but must be used to check tip
 
     const {
       operator: { tipsMap }
@@ -32,10 +35,9 @@ export const applyTipMiddleware: Middleware = ({ dispatch, getState }) => next =
     ========================================================
     🚀  [TIP MIDDLEWARE] SELECT_CURRENCY ACTION DETECTED
 
-        SELL/BUY: ${isSellToken ? 'SELL' : 'BUY'}
 
         PAYLOAD:  ${JSON.stringify(payload, null, 2)}
-        TIP:      ${tokenTip}
+        TIP:      ${getState().operator.tipsMap[payload.currencyId]?.tip}
     ========================================================
       `)
   }
