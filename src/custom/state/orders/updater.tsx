@@ -5,6 +5,7 @@ import { /* useAddPopup ,*/ useBlockNumber } from 'state/application/hooks'
 import { AppDispatch, AppState } from 'state'
 import { removeOrder } from './actions'
 import { utils } from 'ethers'
+import { getContract } from '@src/utils'
 
 // first iteration -- checking on each block
 // ideally we would check agains backend orders from last session, only once, on page load
@@ -61,7 +62,15 @@ export function EventUpdater(): null {
   const { chainId, library } = useActiveWeb3React()
 
   useEffect(() => {
+    const abi = ['event Transfer(address indexed src, address indexed dst, uint val)']
     if (!chainId || !library) return
+
+    const Contr = getContract('', abi, library)
+    Contr.on('Transfer', (...args) => {
+      console.log('Contract::onTransfer', ...args)
+    })
+
+    const Interface = new utils.Interface(abi)
 
     const topicSets = [utils.id('Transfer(address,address,uint256)')]
 
@@ -69,6 +78,12 @@ export function EventUpdater(): null {
       console.log('Transfer::event', event)
       console.log('Transfer::log', log) // the log isn't decoded, better use through contract
       // Emitted any token is sent TO either address
+
+      console.log('Transfer::decode 1', Interface.decodeEventLog('Transfer', log.data, log.topics))
+      console.log('Transfer::decode 2', Interface.decodeEventLog('Transfer', log.data))
+
+      const decoded = utils.defaultAbiCoder.decode(['address', 'address', 'uint256'], log.data)
+      console.log('Transfer::decoded_data', decoded)
     }
     library.on(topicSets, listener)
 
@@ -79,3 +94,63 @@ export function EventUpdater(): null {
 
   return null
 }
+
+// export default function Updater(): null {
+//   const { chainId, library } = useActiveWeb3React()
+
+//   const lastBlockNumber = useBlockNumber()
+
+//   const dispatch = useDispatch<AppDispatch>()
+//   const state = useSelector<AppState, AppState['orders']>(state => state.orders)
+
+//   const transactions = chainId ? state[chainId] ?? {} : {}
+
+//   useEffect(() => {
+//     if (!chainId || !library || !lastBlockNumber) return
+
+//     Object.keys(transactions)
+//       .filter(hash => shouldCheck(lastBlockNumber, transactions[hash]))
+//       .forEach(hash => {
+//         library
+//           .getTransactionReceipt(hash)
+//           .then(receipt => {
+//             if (receipt) {
+//               dispatch(
+//                 finalizeTransaction({
+//                   chainId,
+//                   hash,
+//                   receipt: {
+//                     blockHash: receipt.blockHash,
+//                     blockNumber: receipt.blockNumber,
+//                     contractAddress: receipt.contractAddress,
+//                     from: receipt.from,
+//                     status: receipt.status,
+//                     to: receipt.to,
+//                     transactionHash: receipt.transactionHash,
+//                     transactionIndex: receipt.transactionIndex
+//                   }
+//                 })
+//               )
+
+//               addPopup(
+//                 {
+//                   txn: {
+//                     hash,
+//                     success: receipt.status === 1,
+//                     summary: transactions[hash]?.summary
+//                   }
+//                 },
+//                 hash
+//               )
+//             } else {
+//               dispatch(checkedTransaction({ chainId, hash, blockNumber: lastBlockNumber }))
+//             }
+//           })
+//           .catch(error => {
+//             console.error(`failed to check transaction hash: ${hash}`, error)
+//           })
+//       })
+//   }, [chainId, library, transactions, lastBlockNumber, dispatch, addPopup])
+
+//   return null
+// }
