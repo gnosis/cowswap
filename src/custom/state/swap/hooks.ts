@@ -13,12 +13,6 @@ import { Currency, CurrencyAmount, JSBI, Token, TokenAmount, Trade } from '@unis
 
 export * from '@src/state/swap/hooks'
 
-const BAD_RECIPIENT_ADDRESSES: string[] = [
-  '0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f', // v2 factory
-  '0xf164fC0Ec4E93095b804a4795bBe1e041497b92a', // v2 router 01
-  '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D' // v2 router 02
-]
-
 /**
  * Returns true if any of the pairs or tokens in a trade have the given checksummed address
  * @param trade to check for the given address
@@ -189,7 +183,6 @@ export function useDerivedSwapInfo(): DerivedSwapInfo {
     inputError = inputError ?? 'Enter a recipient'
   } else {
     if (
-      BAD_RECIPIENT_ADDRESSES.indexOf(formattedTo) !== -1 ||
       (bestTradeExactIn && involvesAddress(bestTradeExactIn, formattedTo)) ||
       (bestTradeExactOut && involvesAddress(bestTradeExactOut, formattedTo))
     ) {
@@ -215,7 +208,10 @@ export function useDerivedSwapInfo(): DerivedSwapInfo {
     currencies,
     currencyBalances,
     parsedAmount,
+    // leave type name the same, but see this as our main "trade" or "swap"
     v2Trade: trade ?? undefined,
+    // as we dont have "v1" OR "v2" we just return undefined here
+    // as to not require also extending pages/Swap
     v1Trade: undefined,
     inputError
   }
