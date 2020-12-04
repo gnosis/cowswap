@@ -1,5 +1,5 @@
 import { Middleware } from '@reduxjs/toolkit'
-import { getTip } from '@src/custom/utils/price'
+import { getTip } from '@src/custom/utils/fees'
 import { selectCurrency } from '@src/state/swap/actions'
 import { updateTip } from './actions'
 import { OperatorState } from './reducer'

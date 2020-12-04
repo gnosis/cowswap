@@ -1,5 +1,3 @@
-export * from '@src/utils/prices'
-
 // TODO: add mock API using Alex's created open API definition of tip endpoint
 export const getTip = async (currencyId: string): Promise<string> =>
   new Promise(accept => {
