@@ -48,8 +48,9 @@ function calculateTipInOrOut({
   currencyByInput,
   isExactIn
 }: TradeCalculation & {
-  feeForTradeExactIn: CurrencyAmount | undefined
-  feeForTradeExactOut: CurrencyAmount | undefined
+  currencyByInput?: Currency
+  feeForTradeExactIn?: CurrencyAmount
+  feeForTradeExactOut?: CurrencyAmount
 }): CurrencyAmount | undefined {
   if (!parsedAmount) return undefined
 
@@ -65,20 +66,13 @@ function calculateTipInOrOut({
 }
 
 interface TradeCalculation {
-  currencyByInput?: Currency
   inputCurrency?: Currency | null
   outputCurrency?: Currency | null
   parsedAmount?: CurrencyAmount
   isExactIn: boolean
 }
 
-const useTradeWithTip = ({
-  currencyByInput,
-  inputCurrency,
-  outputCurrency,
-  isExactIn,
-  parsedAmount
-}: TradeCalculation) => {
+const useCalculateTip = ({ inputCurrency, outputCurrency, isExactIn, parsedAmount }: TradeCalculation) => {
   const tip = getTip()
   const parsedFeeAmount = tryParseAmount(tip, inputCurrency || undefined)
 
@@ -94,16 +88,10 @@ const useTradeWithTip = ({
     feeForTradeExactIn,
     feeForTradeExactOut,
     isExactIn,
-    currencyByInput
+    currencyByInput: (isExactIn ? inputCurrency : outputCurrency) ?? undefined
   })
 
-  const bestTradeExactIn = useTradeExactIn(tipAmount, outputCurrency ?? undefined)
-  const bestTradeExactOut = useTradeExactOut(inputCurrency ?? undefined, tipAmount)
-
-  return {
-    bestTradeExactIn,
-    bestTradeExactOut
-  }
+  return tipAmount
 }
 
 interface DerivedSwapInfo {
@@ -145,13 +133,16 @@ export function useDerivedSwapInfo(): DerivedSwapInfo {
 
   const parsedAmount = tryParseAmount(typedValue, currencyByInput)
 
-  const { bestTradeExactIn, bestTradeExactOut } = useTradeWithTip({
+  // Calculate the tip amount using input/output currency + user's input amount parsed
+  const calculatedTip = useCalculateTip({
     isExactIn,
-    currencyByInput,
     inputCurrency,
     outputCurrency,
     parsedAmount
   })
+
+  const bestTradeExactIn = useTradeExactIn(calculatedTip, outputCurrency ?? undefined)
+  const bestTradeExactOut = useTradeExactOut(inputCurrency ?? undefined, calculatedTip)
 
   const trade = isExactIn ? bestTradeExactIn : bestTradeExactOut
 
