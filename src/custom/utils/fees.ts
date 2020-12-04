@@ -1,4 +1,9 @@
 // TODO: add mock API using Alex's created open API definition of tip endpoint
+/**
+ * @name getTip
+ * @param currencyId token address as string
+ * @description queries oba services endpoint for sell token tip amount set by operator
+ */
 export const getTip = async (currencyId: string): Promise<string> =>
   new Promise(accept => {
     return setTimeout(() => {
