@@ -26,8 +26,8 @@ export interface Order extends OrderCreation {
   id: OrderID // it is special :)
   owner: string // address
   status: string
-  fulfillTime: string
-  createTime: string
+  fulfillmentTime?: string
+  creationTime: string
 }
 
 // gotten from querying /api/v1/orders
