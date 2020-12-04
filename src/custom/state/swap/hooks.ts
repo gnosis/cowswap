@@ -73,8 +73,14 @@ interface TradeCalculation {
   tokenAddress?: string
 }
 
-const useCalculateTip = ({ inputCurrency, outputCurrency, isExactIn, parsedAmount }: TradeCalculation) => {
-  const tip = useTip()
+const useCalculateTip = ({
+  inputCurrency,
+  outputCurrency,
+  isExactIn,
+  parsedAmount,
+  tokenAddress
+}: TradeCalculation) => {
+  const tip = useTip(tokenAddress)
   const parsedFeeAmount = tryParseAmount(tip, inputCurrency || undefined)
 
   // Shows fee amount in OUTPUT token
