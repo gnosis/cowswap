@@ -80,7 +80,7 @@ const useCalculateTip = ({ inputCurrency, outputCurrency, isExactIn, parsedAmoun
   const feeForTradeExactIn = useTradeExactIn(isExactIn ? parsedFeeAmount : undefined, outputCurrency ?? undefined)
     ?.inputAmount
   // Shows fee amount in INPUT token
-  const feeForTradeExactOut = useTradeExactOut(outputCurrency ?? undefined, !isExactIn ? parsedFeeAmount : undefined)
+  const feeForTradeExactOut = useTradeExactOut(inputCurrency ?? undefined, !isExactIn ? parsedFeeAmount : undefined)
     ?.inputAmount
 
   const tipAmount = calculateTipInOrOut({
