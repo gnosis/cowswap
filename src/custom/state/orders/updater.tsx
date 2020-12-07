@@ -59,27 +59,28 @@ export function PollOnBlockUpdater(): null {
 }
 
 // example of event watching + decoding without contract
-const transferEventAbi = ['event Transfer(address indexed from, address indexed to, uint amount)']
-const ERC20Interface = new utils.Interface(transferEventAbi)
+const transferEventAbi = 'event Transfer(address indexed from, address indexed to, uint amount)'
+const ERC20Interface = new utils.Interface([transferEventAbi])
 
 const TransferEvent = ERC20Interface.getEvent('Transfer')
 
 const TransferEventTopics = ERC20Interface.encodeFilterTopics(TransferEvent, [])
 
+const decodeTransferEvent = (transferEventLog: Log) => {
+  return ERC20Interface.decodeEventLog(TransferEvent, transferEventLog.data, transferEventLog.topics)
+}
+
 export function EventUpdater(): null {
   const { chainId, library } = useActiveWeb3React()
 
   useEffect(() => {
-    const abi = ['event Transfer(address indexed src, address indexed dst, uint val)']
     if (!chainId || !library) return
-
-    const Interface = new utils.Interface(abi)
 
     const listener = (log: Log) => {
       console.log('Transfer::log', log) // the log isn't decoded, if used through contract, can have decoded already
 
       // decode manually for now
-      const { from, to, amount } = Interface.decodeEventLog(TransferEvent, log.data, log.topics)
+      const { from, to, amount } = decodeTransferEvent(log)
 
       console.log('Detected transfer of token', log.address, { from, to, amount })
     }
