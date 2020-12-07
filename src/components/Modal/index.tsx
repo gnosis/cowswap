@@ -98,7 +98,7 @@ export default function Modal({
     leave: { opacity: 0 }
   })
 
-  const [{ y }, set] = useSpring(() => ({ y: 0, config: { mass: 1, tension: 210, friction: 20 } }))
+  const [{ y }, set] = useSpring<{ y: number }>(() => ({ y: 0, config: { mass: 1, tension: 210, friction: 20 } }))
   const bind = useGesture({
     onDrag: state => {
       set({
@@ -120,7 +120,7 @@ export default function Modal({
                 {...(isMobile
                   ? {
                       ...bind(),
-                      style: { transform: y.interpolate(y => `translateY(${y > 0 ? y : 0}px)`) }
+                      style: { transform: y.interpolate<string>((y: number) => `translateY(${y > 0 ? y : 0}px)`) }
                     }
                   : {})}
                 aria-label="dialog content"
