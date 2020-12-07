@@ -6,6 +6,7 @@ import { AppDispatch, AppState } from 'state'
 import { removeOrder } from './actions'
 import { utils } from 'ethers'
 import { Log } from '@ethersproject/abstract-provider'
+import { EventObject } from 'types'
 
 // first iteration -- checking on each block
 // ideally we would check agains backend orders from last session, only once, on page load
@@ -66,8 +67,14 @@ const TransferEvent = ERC20Interface.getEvent('Transfer')
 
 const TransferEventTopics = ERC20Interface.encodeFilterTopics(TransferEvent, [])
 
-const decodeTransferEvent = (transferEventLog: Log) => {
-  return ERC20Interface.decodeEventLog(TransferEvent, transferEventLog.data, transferEventLog.topics)
+type TransferEventParams = EventObject<typeof transferEventAbi>['params']
+
+const decodeTransferEvent = (transferEventLog: Log): TransferEventParams => {
+  return (ERC20Interface.decodeEventLog(
+    TransferEvent,
+    transferEventLog.data,
+    transferEventLog.topics
+  ) as unknown) as TransferEventParams
 }
 
 export function EventUpdater(): null {
