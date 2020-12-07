@@ -26,7 +26,7 @@ const UNISWAP_REDUCERS = {
   lists
 }
 
-const PERSISTED_KEYS: string[] = ['user', 'transactions', 'lists']
+const PERSISTED_KEYS: string[] = ['user', 'transactions', 'lists', 'orders']
 
 const store = configureStore({
   reducer: {
