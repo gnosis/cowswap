@@ -2,7 +2,7 @@ import { SwapCallbackState } from '@src/hooks/useSwapCallback'
 import { INITIAL_ALLOWED_SLIPPAGE } from 'constants/index'
 
 // import { useSwapCallback as useSwapCallbackUniswap } from '@src/hooks/useSwapCallback'
-import { Trade } from '@uniswap/sdk'
+import { Percent, Trade } from '@uniswap/sdk'
 import { useActiveWeb3React } from '@src/hooks'
 import useENS from '@src/hooks/useENS'
 import { useMemo } from 'react'
@@ -33,17 +33,37 @@ export function useSwapCallback(
     return {
       state: SwapCallbackState.VALID,
       callback: async function onSwap(): Promise<string> {
-        console.log(`[useSwapCallback] Trading for ${recipient}. Network ${chainId}. Data: `, {
-          trade,
-          allowedSlippage,
-          recipientAddressOrName
-        })
+        const { executionPrice, inputAmount, nextMidPrice, outputAmount, priceImpact, route, tradeType } = trade
+
+        const slippagePercent = new Percent(allowedSlippage.toString(10), '10000')
+        const routeDescription = route.path.map(token => token.symbol || token.name || token.address).join(' → ')
+
+        console.log(
+          `[useSwapCallback] Trading ${routeDescription}. Input = ${inputAmount.toExact()}, Output = ${outputAmount.toExact()}, Price = ${executionPrice.toFixed()}, Details: `,
+          {
+            inputAmount: inputAmount.toExact(),
+            outputAmount: outputAmount.toExact(),
+            executionPrice: executionPrice.toFixed(),
+            maximumAmountIn: trade.maximumAmountIn(slippagePercent).toExact(),
+            minimumAmountOut: trade.minimumAmountOut(slippagePercent).toExact(),
+            nextMidPrice: nextMidPrice.toFixed(),
+            priceImpact: priceImpact.toSignificant(),
+            tradeType: tradeType.toString(),
+            allowedSlippage,
+            slippagePercent: slippagePercent.toFixed() + '%',
+            recipientAddressOrName,
+            recipient,
+            chainId
+          }
+        )
         return new Promise(async (resolve, reject) => {
           setTimeout(() => {
-            if (Math.random() % 3 === 0) {
+            if (inputAmount.toExact() === '0.1') {
+              // Force error for testing
               console.log('[useSwapCallback] Ups, we had a small issue!')
               reject(new Error('Mock error: The flux capacitor melted'))
             } else {
+              // Pretend all went OK
               console.log('[useSwapCallback] Traded successfully!')
               resolve('0x5a0b54d5dc17e0aadc383d2db43b0a0d3e029c4c')
             }
