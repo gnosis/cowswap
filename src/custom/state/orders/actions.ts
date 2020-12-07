@@ -21,11 +21,16 @@ export interface OrderCreation {
   signature: string // 5 bytes encoded as hex without `0x` prefix. v + r + s from the spec
 }
 
+export enum OrderStatus {
+  PENDING,
+  FULFILLED
+}
+
 // used internally by dapp
 export interface Order extends OrderCreation {
   id: OrderID // it is special :)
   owner: string // address
-  status: string
+  status: OrderStatus
   fulfillmentTime?: string
   creationTime: string
 }
