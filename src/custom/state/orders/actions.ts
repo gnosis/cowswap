@@ -49,4 +49,8 @@ export type OrderID = string
 
 export const addOrder = createAction<{ id: OrderID; chainId: ChainId; order: Order }>('order/updateOrder')
 export const removeOrder = createAction<{ id: OrderID; chainId: ChainId }>('order/removeOrder')
+//                                                                        fulfillmentTime from event timestamp
+export const fulfillOrder = createAction<{ id: OrderID; chainId: ChainId; fulfillmentTime: string }>(
+  'order/fulfillOrder'
+)
 export const clearOrders = createAction<{ chainId: ChainId }>('order/clearOrders')
