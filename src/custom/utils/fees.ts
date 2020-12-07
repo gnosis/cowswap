@@ -1,16 +1,20 @@
+import { Percent, JSBI, Fraction } from '@uniswap/sdk'
 import { FeeInformation } from '../state/fee/reducer'
 
 // TODO: remove
-const ONE_WEEKS_MS = 604800000
-const DEFAULT_BASIS_POINTS = 10
 const DEFAULT_MINIMAL_FEE = '10'
+const DEFAULT_BASE_FEE = new Percent(JSBI.BigInt(10), JSBI.BigInt(10000))
+export const ONE_HUNDRED_PERCENT = new Percent(JSBI.BigInt(10000), JSBI.BigInt(10000))
+
+type MathType = string | bigint | Fraction | Percent | JSBI
+
+export const computeFee = (percentFee: MathType, multiplicand: MathType) =>
+  ONE_HUNDRED_PERCENT.subtract(percentFee).multiply(multiplicand)
 
 const MOCK_FEE_INFORMATION: FeeInformation = {
-  get expirationDate() {
-    return new Date(Date.now() + ONE_WEEKS_MS).toISOString()
-  },
+  expirationDate: new Date().toISOString(),
   minimalFee: DEFAULT_MINIMAL_FEE,
-  feeRatio: DEFAULT_BASIS_POINTS
+  feeRatio: Number(DEFAULT_BASE_FEE.toSignificant(4))
 }
 
 /**
