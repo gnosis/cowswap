@@ -15,11 +15,11 @@ interface FeeInformationObject {
 // {token address => FeeInformationObject} mapping
 type FeesMap = Record<string, FeeInformationObject>
 
-export interface OperatorState {
+export interface FeeInformationState {
   readonly feesMap: Partial<FeesMap>
 }
 
-const initialState: OperatorState = {
+const initialState: FeeInformationState = {
   feesMap: {}
 }
 
