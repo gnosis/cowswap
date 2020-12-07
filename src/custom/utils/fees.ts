@@ -1,8 +1,4 @@
-interface FeeInformation {
-  expirationDate: string
-  minimalFee: string
-  feeRatio: number
-}
+import { FeeInformation } from '../state/fee/reducer'
 
 // TODO: remove
 const ONE_WEEKS_MS = 604800000
