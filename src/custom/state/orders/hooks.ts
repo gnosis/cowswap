@@ -3,11 +3,15 @@ import { useCallback, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { AppDispatch, AppState } from 'state'
-import { addOrder, removeOrder, clearOrders, Order, OrderID, OrderStatus } from './actions'
+import { addOrder, removeOrder, clearOrders, fulfillOrder, Order, OrderID, OrderStatus } from './actions'
 import { OrderObject, OrdersState } from './reducer'
 
 interface AddOrderParams extends GetRemoveOrderParams {
   order: Order
+}
+
+interface FulfillOrderParams extends GetRemoveOrderParams {
+  fulfillmentTime: string
 }
 interface GetRemoveOrderParams {
   id: OrderID
@@ -22,6 +26,7 @@ type GetOrdersParams = Pick<GetRemoveOrderParams, 'chainId'>
 
 type AddOrderCallback = (addOrderParams: AddOrderParams) => void
 type RemoveOrderCallback = (clearOrderParams: GetRemoveOrderParams) => void
+type FulfillOrderCallback = (fulfillOrderParams: FulfillOrderParams) => void
 type ClearOrdersCallback = (clearOrdersParams: ClearOrdersParams) => void
 
 export const useOrder = ({ id, chainId }: GetRemoveOrderParams): Order | undefined => {
@@ -75,6 +80,11 @@ export const useFulfilledOrders = ({ chainId }: GetOrdersParams): Order[] => {
 export const useAddOrder = (): AddOrderCallback => {
   const dispatch = useDispatch<AppDispatch>()
   return useCallback((addOrderParams: AddOrderParams) => dispatch(addOrder(addOrderParams)), [dispatch])
+}
+
+export const useFulfillOrder = (): FulfillOrderCallback => {
+  const dispatch = useDispatch<AppDispatch>()
+  return useCallback((fulfillOrderParams: FulfillOrderParams) => dispatch(fulfillOrder(fulfillOrderParams)), [dispatch])
 }
 
 export const useRemoveOrder = (): RemoveOrderCallback => {
