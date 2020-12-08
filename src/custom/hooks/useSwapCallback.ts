@@ -16,13 +16,13 @@ interface PostOrderParams {
   account: string
   chainId: ChainId
   trade: Trade
-  validTo: BigNumber
+  validTo: number
   recipient: string
   recipientAddressOrName: string | null
   addPendingOrder: (order: AddPendingOrderParams) => void
 }
 
-const MAX_VALID_TO_EPOCH = BigNumber.from('0xFFFFFFFF') // Max uint32 (Feb 07 2106 07:28:15 GMT+0100)
+const MAX_VALID_TO_EPOCH = BigNumber.from('0xFFFFFFFF').toNumber() // Max uint32 (Feb 07 2106 07:28:15 GMT+0100)
 const DEFAULT_APP_ID = 0
 
 type UnsignedOrder = Omit<OrderCreation, 'signature'>
@@ -85,7 +85,7 @@ async function postOrder(params: PostOrderParams): Promise<string> {
     buyToken: buyToken.address,
     sellAmount: inputAmount.raw.toString(10),
     buyAmount: outputAmount.raw.toString(10),
-    validTo: validTo.toNumber(),
+    validTo,
     appData: DEFAULT_APP_ID, // TODO: Add appData by env var
     feeAmount: '0', // TODO: Get fee
     orderType: trade.tradeType === TradeType.EXACT_INPUT ? OrderKind.SELL : OrderKind.BUY,
@@ -128,7 +128,7 @@ export function useSwapCallback(
   const { address: recipientAddress } = useENS(recipientAddressOrName)
   const recipient = recipientAddressOrName === null ? account : recipientAddress
 
-  const validTo = useTransactionDeadline() || MAX_VALID_TO_EPOCH
+  const validTo = useTransactionDeadline()?.toNumber() || MAX_VALID_TO_EPOCH
   const addPendingOrder = useAddPendingOrder()
 
   return useMemo(() => {
