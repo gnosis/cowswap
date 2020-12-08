@@ -6,7 +6,7 @@ import {
   clearTip,
   Tip,
   addPendingOrder,
-  AddPendingOrder,
+  PendingOrder,
   updateExecutedOrder,
   UpdateExecutionOrder,
   updateExpiredOrder,
@@ -24,9 +24,9 @@ interface ClearTipParams {
 type AddTipCallback = (addTokenParams: AddTipParams) => void
 type ClearTipCallback = (clearTokenParams: ClearTipParams) => void
 
-export function useAddPendingOrder(): (params: AddPendingOrder) => void {
+export function useAddPendingOrder(): (params: PendingOrder) => void {
   const dispatch = useDispatch<AppDispatch>()
-  return (params: AddPendingOrder) => dispatch(addPendingOrder(params))
+  return (params: PendingOrder) => dispatch(addPendingOrder(params))
 }
 
 export function useUpdateExecutedOrder(): (params: UpdateExecutionOrder) => void {
