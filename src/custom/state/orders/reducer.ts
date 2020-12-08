@@ -9,9 +9,14 @@ export interface OrderObject {
 
 // {order uuid => OrderObject} mapping
 type OrdersMap = Record<OrderID, OrderObject>
+export type PartialOrdersMap = Partial<OrdersMap>
 
 export type OrdersState = {
-  readonly [chainId in ChainId]?: Partial<OrdersMap>
+  readonly [chainId in ChainId]?: {
+    pending: PartialOrdersMap
+    fulfilled: PartialOrdersMap
+  }
+}
 }
 
 const initialState: OrdersState = {}
