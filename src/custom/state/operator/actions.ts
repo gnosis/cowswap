@@ -11,7 +11,7 @@ export enum OrderType {
 /**
  * Required parameters to send a swap order using a meta-transaction
  */
-export interface AddPendingOrder {
+export interface PendingOrder {
   order: OrderCreation
   summary?: string
 }
@@ -49,7 +49,7 @@ export interface UpdateExpiredOrder {
 
 export type Order = OrderCreation & OrderMetaData
 
-export const addPendingOrder = createAction<AddPendingOrder>('operator/addPendingOrder')
+export const addPendingOrder = createAction<PendingOrder>('operator/addPendingOrder')
 export const updateExecutedOrder = createAction<UpdateExecutionOrder>('operator/updateExecutedOrder')
 export const updateExpiredOrder = createAction<UpdateExpiredOrder>('operator/updateExpiredOrder')
 export const updateTip = createAction<{ token: string; tip: Tip }>('operator/updateTip')

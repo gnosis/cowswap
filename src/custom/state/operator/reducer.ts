@@ -1,5 +1,14 @@
 import { createReducer } from '@reduxjs/toolkit'
-import { updateTip, clearTip, Tip, Order } from './actions'
+import {
+  updateTip,
+  clearTip,
+  Tip,
+  Order,
+  addPendingOrder,
+  PendingOrder,
+  updateExecutedOrder,
+  updateExpiredOrder
+} from './actions'
 
 export interface TipObject {
   token: string // token address
@@ -10,7 +19,7 @@ export interface TipObject {
 export type TipsMap = Record<string, TipObject>
 
 export interface OperatorState {
-  readonly pendingOrders: Order[]
+  readonly pendingOrders: PendingOrder[]
   readonly pastOrders: Order[]
   readonly tipsMap: Partial<TipsMap>
 }
@@ -23,6 +32,16 @@ const initialState: OperatorState = {
 
 export default createReducer(initialState, builder =>
   builder
+    .addCase(addPendingOrder, (state, action) => {
+      state.pendingOrders.push(action.payload)
+      console.log('Add pending orders', state.pendingOrders, action)
+    })
+    .addCase(updateExecutedOrder, (state, action) => {
+      console.log('TODO: Update executed order', state, action)
+    })
+    .addCase(updateExpiredOrder, (state, action) => {
+      console.log('TODO: Update expired order', state, action)
+    })
     .addCase(updateTip, (state, action) => {
       const { token, tip } = action.payload
       state.tipsMap[token] = { tip, token }
