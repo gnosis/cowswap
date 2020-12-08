@@ -6,6 +6,7 @@ import { AppDispatch, AppState } from 'state'
 import { removeOrder, OrderFromApi } from './actions'
 import { utils } from 'ethers'
 import { Log } from '@ethersproject/abstract-provider'
+import { PartialOrdersMap } from './reducer'
 
 // first iteration -- checking on each block
 // ideally we would check agains backend orders from last session, only once, on page load
@@ -16,7 +17,9 @@ export function PollOnBlockUpdater(): null {
   const lastBlockNumber = useBlockNumber()
 
   const dispatch = useDispatch<AppDispatch>()
-  const state = useSelector<AppState, AppState['orders']>(state => state.orders)
+  const orders = useSelector<AppState, PartialOrdersMap | undefined>(
+    state => chainId && state.orders?.[chainId]?.pending
+  )
 
   // show popup on confirm
   // for displaying fulfilled orders
@@ -24,10 +27,7 @@ export function PollOnBlockUpdater(): null {
 
   useEffect(() => {
     async function checkOrderStatuses() {
-      if (!chainId || !library || !lastBlockNumber) return
-
-      const orders = state[chainId]
-      if (!orders) return
+      if (!chainId || !library || !lastBlockNumber || !orders) return
 
       // check for each order by id if possible
       // if not, get all orders and filter, will need order.owner
@@ -37,13 +37,13 @@ export function PollOnBlockUpdater(): null {
 
         try {
           const { id } = order.order
-          const res = await fetch(`link_to_service/api/v1/order/${id}`)
+          const res = await fetch(`link_to_service/api/v1/orders/${id}`)
 
           if (!res.ok) throw new Error(res.statusText)
 
           const orderData: OrderFromApi = await res.json()
 
-          // if (order not fullfilled) return
+          if (orderData) return
 
           dispatch(removeOrder({ chainId, id }))
         } catch (error) {
@@ -53,7 +53,7 @@ export function PollOnBlockUpdater(): null {
     }
 
     checkOrderStatuses()
-  }, [chainId, dispatch, lastBlockNumber, library, state])
+  }, [chainId, dispatch, lastBlockNumber, library, orders])
 
   return null
 }
