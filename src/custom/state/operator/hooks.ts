@@ -1,18 +1,21 @@
+import { ChainId } from '@uniswap/sdk'
+import { useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { AppDispatch, AppState } from 'state'
-import {
-  updateTip,
-  clearTip,
-  Tip,
-  addPendingOrder,
-  PendingOrder,
-  updateExecutedOrder,
-  UpdateExecutionOrder,
-  updateExpiredOrder,
-  UpdateExpiredOrder
-} from './actions'
+import { updateTip, clearTip, addPendingOrder, OrderID, Order, Tip } from './actions'
 import { OperatorState } from './reducer'
+
+interface AddPendingOrderParams extends GetRemoveOrderParams {
+  order: Order
+}
+
+interface GetRemoveOrderParams {
+  id: OrderID
+  chainId: ChainId
+}
+
+type AddOrderCallback = (addOrderParams: AddPendingOrderParams) => void
 
 interface AddTipParams extends ClearTipParams {
   tip: Tip
@@ -24,19 +27,9 @@ interface ClearTipParams {
 type AddTipCallback = (addTokenParams: AddTipParams) => void
 type ClearTipCallback = (clearTokenParams: ClearTipParams) => void
 
-export function useAddPendingOrder(): (params: PendingOrder) => void {
+export const useAddPendingOrder = (): AddOrderCallback => {
   const dispatch = useDispatch<AppDispatch>()
-  return (params: PendingOrder) => dispatch(addPendingOrder(params))
-}
-
-export function useUpdateExecutedOrder(): (params: UpdateExecutionOrder) => void {
-  const dispatch = useDispatch<AppDispatch>()
-  return (params: UpdateExecutionOrder) => dispatch(updateExecutedOrder(params))
-}
-
-export function useUpdateExpiredOrder(): (params: UpdateExpiredOrder) => void {
-  const dispatch = useDispatch<AppDispatch>()
-  return (params: UpdateExpiredOrder) => dispatch(updateExpiredOrder(params))
+  return useCallback((addOrderParams: AddPendingOrderParams) => dispatch(addPendingOrder(addOrderParams)), [dispatch])
 }
 
 export const useTip = (tokenAddress: string): Tip | undefined => {
