@@ -2,25 +2,30 @@ import { SwapCallbackState } from '@src/hooks/useSwapCallback'
 import { INITIAL_ALLOWED_SLIPPAGE } from 'constants/index'
 
 // import { useSwapCallback as useSwapCallbackUniswap } from '@src/hooks/useSwapCallback'
-import { ChainId, Percent, Trade } from '@uniswap/sdk'
+import { ChainId, Percent, Trade, TradeType } from '@uniswap/sdk'
 import { useActiveWeb3React } from '@src/hooks'
 import useENS from '@src/hooks/useENS'
 import { useMemo } from 'react'
 import useTransactionDeadline from '@src/hooks/useTransactionDeadline'
 import { BigNumber } from 'ethers'
 import { useAddPendingOrder } from '../state/operator/hooks'
-import { PendingOrder } from '../state/operator/actions'
+import { AddPendingOrderParams, OrderCreation, OrderID, OrderKind, OrderStatus } from '../state/operator/actions'
 import { isAddress, shortenAddress } from '@src/utils'
 
 interface PostOrderParams {
   account: string
   chainId: ChainId
   trade: Trade
-  deadline?: BigNumber
+  validTo: BigNumber
   recipient: string
   recipientAddressOrName: string | null
-  addPendingOrder: (order: PendingOrder) => void
+  addPendingOrder: (order: AddPendingOrderParams) => void
 }
+
+const MAX_VALID_TO_EPOCH = BigNumber.from('0xFFFFFFFF') // Max uint32 (Feb 07 2106 07:28:15 GMT+0100)
+const DEFAULT_APP_ID = 0
+
+type UnsignedOrder = Omit<OrderCreation, 'signature'>
 
 function getSummary(params: PostOrderParams): string {
   const { trade, account, recipient, recipientAddressOrName } = params
@@ -43,11 +48,17 @@ function getSummary(params: PostOrderParams): string {
   return withRecipient
 }
 
-async function postOrder(params: PostOrderParams): Promise<string> {
-  const { trade, addPendingOrder } = params
-  const { inputAmount } = trade
+function signOrder(unsignedOrder: UnsignedOrder): string {
+  console.log('TODO: Sign order', unsignedOrder)
+  // TODO: Mocked, next PR
+  return '0xd6741f8031e7a7ea70f1b6c14a71e9d0d7d5aae54c157d8368ad4cabd7279a363955fa169a634469da01010bfefbacc2c1e2e7aaeb0c42049192e6359ed572281b'
+}
 
-  const mockCallToApi = new Promise<string>(async (resolve, reject) => {
+async function postOrderApi(params: PostOrderParams, signature: string): Promise<OrderID> {
+  const { inputAmount } = params.trade
+  // TODO: Pretend we call the API
+  console.log('TODO: call API and include the signature', signature)
+  return new Promise<string>(async (resolve, reject) => {
     setTimeout(() => {
       if (inputAmount.toExact() === '0.1') {
         // Force error for testing
@@ -60,18 +71,50 @@ async function postOrder(params: PostOrderParams): Promise<string> {
       }
     }, 3000)
   })
+}
 
+async function postOrder(params: PostOrderParams): Promise<string> {
+  const { addPendingOrder, chainId, trade, validTo, account } = params
+  const { inputAmount, outputAmount } = trade
+  const [selToken, , buyToken] = trade.route.path
+
+  // Prepare order
   const summary = getSummary(params)
+  const unsignedOrder: UnsignedOrder = {
+    sellToken: selToken.address,
+    buyToken: buyToken.address,
+    sellAmount: inputAmount.raw.toString(10),
+    buyAmount: outputAmount.raw.toString(10),
+    validTo: validTo.toNumber(),
+    appData: DEFAULT_APP_ID, // TODO: Add appData by env var
+    feeAmount: '0', // TODO: Get fee
+    orderType: trade.tradeType === TradeType.EXACT_INPUT ? OrderKind.SELL : OrderKind.BUY,
+    partiallyFillable: false // Always fill or kill
+  }
+  const signature = signOrder(unsignedOrder)
+  const creationTime = new Date().toISOString()
 
-  const uuid = await mockCallToApi
+  // Call API
+  const orderId = await postOrderApi(params, signature)
+
+  // Update the state
   addPendingOrder({
+    chainId,
+    id: orderId,
     order: {
-      sellAmount: inputAmount.raw.toString(10)
-    },
-    summary
+      id: orderId,
+      owner: account,
+      ...unsignedOrder,
+      creationTime,
+      signature,
+      status: OrderStatus.PENDING
+    }
+    //summary
   })
 
-  return uuid
+  console.log('[useSwapCallback] TODO: Add summary also to new pendingOrder', summary)
+
+  return orderId
 }
 
 // returns a function that will execute a swap, if the parameters are all valid
@@ -85,7 +128,7 @@ export function useSwapCallback(
   const { address: recipientAddress } = useENS(recipientAddressOrName)
   const recipient = recipientAddressOrName === null ? account : recipientAddress
 
-  const deadline = useTransactionDeadline()
+  const validTo = useTransactionDeadline() || MAX_VALID_TO_EPOCH
   const addPendingOrder = useAddPendingOrder()
 
   return useMemo(() => {
@@ -114,7 +157,7 @@ export function useSwapCallback(
             inputAmount: inputAmount.toExact(),
             outputAmount: outputAmount.toExact(),
             executionPrice: executionPrice.toFixed(),
-            deadline: deadline ? new Date(deadline.toNumber() * 1000).toISOString() : undefined,
+            validTo,
             maximumAmountIn: trade.maximumAmountIn(slippagePercent).toExact(),
             minimumAmountOut: trade.minimumAmountOut(slippagePercent).toExact(),
             nextMidPrice: nextMidPrice.toFixed(),
@@ -131,7 +174,7 @@ export function useSwapCallback(
           account,
           chainId,
           trade,
-          deadline,
+          validTo,
           recipient,
           recipientAddressOrName,
           addPendingOrder
@@ -139,5 +182,5 @@ export function useSwapCallback(
       },
       error: null
     }
-  }, [trade, library, account, chainId, recipient, allowedSlippage, recipientAddressOrName])
+  }, [trade, library, account, chainId, recipient, allowedSlippage, recipientAddressOrName, addPendingOrder, validTo])
 }
