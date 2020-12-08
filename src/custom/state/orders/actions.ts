@@ -47,7 +47,7 @@ export interface OrderFull extends OrderCreation {
  */
 export type OrderID = string
 
-export const addOrder = createAction<{ id: OrderID; chainId: ChainId; order: Order }>('order/updateOrder')
+export const addPendingOrder = createAction<{ id: OrderID; chainId: ChainId; order: Order }>('order/addPendingOrder')
 export const removeOrder = createAction<{ id: OrderID; chainId: ChainId }>('order/removeOrder')
 //                                                                        fulfillmentTime from event timestamp
 export const fulfillOrder = createAction<{ id: OrderID; chainId: ChainId; fulfillmentTime: string }>(
