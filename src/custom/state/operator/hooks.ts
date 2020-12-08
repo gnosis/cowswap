@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux'
 
 import { AppDispatch, AppState } from 'state'
-import { updateTip, clearTip, Tip } from './actions'
+import { updateTip, clearTip, Tip, addPendingOrder, AddPendingOrder } from './actions'
 import { OperatorState } from './reducer'
 
 interface AddTipParams extends ClearTipParams {
@@ -13,6 +13,11 @@ interface ClearTipParams {
 
 type AddTipCallback = (addTokenParams: AddTipParams) => void
 type ClearTipCallback = (clearTokenParams: ClearTipParams) => void
+
+export function useAddPendingOrder(): (params: AddPendingOrder) => void {
+  const dispatch = useDispatch<AppDispatch>()
+  return (params: AddPendingOrder) => dispatch(addPendingOrder(params))
+}
 
 export const useTip = (tokenAddress: string): Tip | undefined => {
   const { tipsMap } = useSelector<AppState, OperatorState>(state => state.operator)
