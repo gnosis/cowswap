@@ -17,17 +17,17 @@ export interface AddPendingOrder {
 }
 
 export interface OrderCreation {
-  chainId: ChainId // Not in the API!
-  sellToken: string
-  buyToken: string
+  // chainId: ChainId // Not in the API!
+  // sellToken: string
+  // buyToken: string
   sellAmount: string
-  buyAmount: string
-  validTo: string // deadline
-  appData: undefined // TODO: Add appId
-  tip: string // TODO: Should be called Fee
-  orderType: OrderType // buy, sell
-  partiallyFillable: false
-  signature: string // 65 bytes encoded as hex without `0x`
+  // buyAmount: string
+  // validTo: string // deadline
+  // appData: undefined // TODO: Add appId
+  // tip: string // TODO: Should be called Fee
+  // orderType: OrderType // buy, sell
+  // partiallyFillable: false
+  // signature: string // 65 bytes encoded as hex without `0x`
 }
 
 export interface OrderMetaData {
