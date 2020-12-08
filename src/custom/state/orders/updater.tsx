@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useActiveWeb3React } from 'hooks'
 import { /* useAddPopup ,*/ useBlockNumber } from 'state/application/hooks'
 import { AppDispatch, AppState } from 'state'
-import { removeOrder } from './actions'
+import { removeOrder, OrderFromApi } from './actions'
 import { utils } from 'ethers'
 import { Log } from '@ethersproject/abstract-provider'
 
@@ -41,7 +41,7 @@ export function PollOnBlockUpdater(): null {
 
           if (!res.ok) throw new Error(res.statusText)
 
-          // const orderData: OrderFull = await res.json()
+          const orderData: OrderFromApi = await res.json()
 
           // if (order not fullfilled) return
 
