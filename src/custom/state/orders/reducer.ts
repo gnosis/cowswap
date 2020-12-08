@@ -23,36 +23,38 @@ const initialState: OrdersState = {}
 
 export default createReducer(initialState, builder =>
   builder
-    .addCase(addOrder, (state, action) => {
+      prefillState(state, action)
       const { order, id, chainId } = action.payload
 
-      const orderMap = state[chainId] ?? {}
-
-      orderMap[id] = { order, id }
-      state[chainId] = orderMap
+      state[chainId].pending[id] = { order, id }
     })
     .addCase(removeOrder, (state, action) => {
+      prefillState(state, action)
       const { id, chainId } = action.payload
-
-      const orderMap = state[chainId] ?? {}
-
-      delete orderMap[id]
+      delete state[chainId].pending[id]
+      delete state[chainId].fulfilled[id]
     })
     .addCase(fulfillOrder, (state, action) => {
+      prefillState(state, action)
       const { id, chainId, fulfillmentTime } = action.payload
 
-      const orderMap = state[chainId] ?? {}
-
-      const orderObject = orderMap[id]
+      const orderObject = state[chainId].pending[id]
 
       if (orderObject) {
+        delete state[chainId].pending[id]
+
         orderObject.order.status = OrderStatus.FULFILLED
         orderObject.order.fulfillmentTime = fulfillmentTime
+
+        state[chainId].fulfilled[id] = orderObject
       }
     })
     .addCase(clearOrders, (state, action) => {
       const { chainId } = action.payload
 
-      state[chainId] = {}
+      state[chainId] = {
+        pending: {},
+        fulfilled: {}
+      }
     })
 )
