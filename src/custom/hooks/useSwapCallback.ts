@@ -9,7 +9,7 @@ import { useMemo } from 'react'
 import useTransactionDeadline from '@src/hooks/useTransactionDeadline'
 import { BigNumber } from 'ethers'
 import { useAddPendingOrder } from '../state/operator/hooks'
-import { AddPendingOrder } from '../state/operator/actions'
+import { PendingOrder } from '../state/operator/actions'
 import { isAddress, shortenAddress } from '@src/utils'
 
 interface PostOrderParams {
@@ -19,7 +19,7 @@ interface PostOrderParams {
   deadline?: BigNumber
   recipient: string
   recipientAddressOrName: string | null
-  addPendingOrder: (params: AddPendingOrder) => void
+  addPendingOrder: (order: PendingOrder) => void
 }
 
 function getSummary(params: PostOrderParams): string {
