@@ -36,10 +36,21 @@ export interface OrderMetaData {
   owner: string
 }
 
+export interface UpdateExecutionOrder {
+  uuid: string
+  tradedAmount: string
+  // TODO: This action will be implemented in a future PR
+}
+
+export interface UpdateExpiredOrder {
+  uuid: string
+  // TODO: This action will be implemented in a future PR
+}
+
 export type Order = OrderCreation & OrderMetaData
 
 export const addPendingOrder = createAction<AddPendingOrder>('operator/addPendingOrder')
-export const updateExecutedOrder = createAction<{ uuid: string }>('operator/updateExecutedOrder')
-export const updateExpiredOrder = createAction<{ uuid: string }>('operator/updateExpiredOrder')
+export const updateExecutedOrder = createAction<UpdateExecutionOrder>('operator/updateExecutedOrder')
+export const updateExpiredOrder = createAction<UpdateExpiredOrder>('operator/updateExpiredOrder')
 export const updateTip = createAction<{ token: string; tip: Tip }>('operator/updateTip')
 export const clearTip = createAction<{ token: string }>('operator/clearTip')
