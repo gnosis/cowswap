@@ -114,6 +114,7 @@ export function useSwapCallback(
             inputAmount: inputAmount.toExact(),
             outputAmount: outputAmount.toExact(),
             executionPrice: executionPrice.toFixed(),
+            deadline: deadline ? new Date(deadline.toNumber() * 1000).toISOString() : undefined,
             maximumAmountIn: trade.maximumAmountIn(slippagePercent).toExact(),
             minimumAmountOut: trade.minimumAmountOut(slippagePercent).toExact(),
             nextMidPrice: nextMidPrice.toFixed(),
