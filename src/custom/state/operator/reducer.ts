@@ -1,19 +1,23 @@
 import { createReducer } from '@reduxjs/toolkit'
-import { updateTip, clearTip, Tip } from './actions'
+import { updateTip, clearTip, Tip, Order } from './actions'
 
-interface TipObject {
+export interface TipObject {
   token: string // token address
   tip: Tip
 }
 
 // {token address => TipObject} mapping
-type TipsMap = Record<string, TipObject>
+export type TipsMap = Record<string, TipObject>
 
 export interface OperatorState {
+  readonly pendingOrders: Order[]
+  readonly pastOrders: Order[]
   readonly tipsMap: Partial<TipsMap>
 }
 
 const initialState: OperatorState = {
+  pendingOrders: [],
+  pastOrders: [],
   tipsMap: {}
 }
 
