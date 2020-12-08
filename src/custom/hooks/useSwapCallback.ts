@@ -2,10 +2,77 @@ import { SwapCallbackState } from '@src/hooks/useSwapCallback'
 import { INITIAL_ALLOWED_SLIPPAGE } from 'constants/index'
 
 // import { useSwapCallback as useSwapCallbackUniswap } from '@src/hooks/useSwapCallback'
-import { Percent, Trade } from '@uniswap/sdk'
+import { ChainId, Percent, Trade } from '@uniswap/sdk'
 import { useActiveWeb3React } from '@src/hooks'
 import useENS from '@src/hooks/useENS'
 import { useMemo } from 'react'
+import useTransactionDeadline from '@src/hooks/useTransactionDeadline'
+import { BigNumber } from 'ethers'
+import { useAddPendingOrder } from '../state/operator/hooks'
+import { AddPendingOrder } from '../state/operator/actions'
+import { isAddress, shortenAddress } from '@src/utils'
+
+interface PostOrderParams {
+  account: string
+  chainId: ChainId
+  trade: Trade
+  deadline?: BigNumber
+  recipient: string
+  recipientAddressOrName: string | null
+  addPendingOrder: (params: AddPendingOrder) => void
+}
+
+function getSummary(params: PostOrderParams): string {
+  const { trade, account, recipient, recipientAddressOrName } = params
+
+  const inputSymbol = trade.inputAmount.currency.symbol
+  const outputSymbol = trade.outputAmount.currency.symbol
+  const inputAmount = trade.inputAmount.toSignificant(3)
+  const outputAmount = trade.outputAmount.toSignificant(3)
+
+  const base = `Swap ${inputAmount} ${inputSymbol} for ${outputAmount} ${outputSymbol}`
+  const withRecipient =
+    recipient === account
+      ? base
+      : `${base} to ${
+          recipientAddressOrName && isAddress(recipientAddressOrName)
+            ? shortenAddress(recipientAddressOrName)
+            : recipientAddressOrName
+        }`
+
+  return withRecipient
+}
+
+async function postOrder(params: PostOrderParams): Promise<string> {
+  const { trade, addPendingOrder } = params
+  const { inputAmount } = trade
+
+  const mockCallToApi = new Promise<string>(async (resolve, reject) => {
+    setTimeout(() => {
+      if (inputAmount.toExact() === '0.1') {
+        // Force error for testing
+        console.log('[useSwapCallback] Ups, we had a small issue!')
+        reject(new Error('Mock error: The flux capacitor melted'))
+      } else {
+        // Pretend all went OK
+        console.log('[useSwapCallback] Traded successfully!')
+        resolve('123456789')
+      }
+    }, 3000)
+  })
+
+  const summary = getSummary(params)
+
+  const uuid = await mockCallToApi
+  addPendingOrder({
+    order: {
+      sellAmount: inputAmount.raw.toString(10)
+    },
+    summary
+  })
+
+  return uuid
+}
 
 // returns a function that will execute a swap, if the parameters are all valid
 // and the user has approved the slippage adjusted input amount for the trade
@@ -17,6 +84,9 @@ export function useSwapCallback(
   const { account, chainId, library } = useActiveWeb3React()
   const { address: recipientAddress } = useENS(recipientAddressOrName)
   const recipient = recipientAddressOrName === null ? account : recipientAddress
+
+  const deadline = useTransactionDeadline()
+  const addPendingOrder = useAddPendingOrder()
 
   return useMemo(() => {
     if (!trade || !library || !account || !chainId) {
@@ -51,23 +121,19 @@ export function useSwapCallback(
             tradeType: tradeType.toString(),
             allowedSlippage,
             slippagePercent: slippagePercent.toFixed() + '%',
-            recipientAddressOrName,
             recipient,
+            recipientAddressOrName,
             chainId
           }
         )
-        return new Promise(async (resolve, reject) => {
-          setTimeout(() => {
-            if (inputAmount.toExact() === '0.1') {
-              // Force error for testing
-              console.log('[useSwapCallback] Ups, we had a small issue!')
-              reject(new Error('Mock error: The flux capacitor melted'))
-            } else {
-              // Pretend all went OK
-              console.log('[useSwapCallback] Traded successfully!')
-              resolve('0x5a0b54d5dc17e0aadc383d2db43b0a0d3e029c4c')
-            }
-          }, 3000)
+        return postOrder({
+          account,
+          chainId,
+          trade,
+          deadline,
+          recipient,
+          recipientAddressOrName,
+          addPendingOrder
         })
       },
       error: null
