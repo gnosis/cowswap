@@ -3,10 +3,10 @@ import { useCallback, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { AppDispatch, AppState } from 'state'
-import { addOrder, removeOrder, clearOrders, fulfillOrder, Order, OrderID, OrderStatus } from './actions'
-import { OrderObject, OrdersState } from './reducer'
+import { addPendingOrder, removeOrder, clearOrders, fulfillOrder, Order, OrderID } from './actions'
+import { OrdersState, PartialOrdersMap } from './reducer'
 
-interface AddOrderParams extends GetRemoveOrderParams {
+interface AddPendingOrderParams extends GetRemoveOrderParams {
   order: Order
 }
 
@@ -24,22 +24,36 @@ interface ClearOrdersParams {
 
 type GetOrdersParams = Pick<GetRemoveOrderParams, 'chainId'>
 
-type AddOrderCallback = (addOrderParams: AddOrderParams) => void
+type AddOrderCallback = (addOrderParams: AddPendingOrderParams) => void
 type RemoveOrderCallback = (clearOrderParams: GetRemoveOrderParams) => void
 type FulfillOrderCallback = (fulfillOrderParams: FulfillOrderParams) => void
 type ClearOrdersCallback = (clearOrdersParams: ClearOrdersParams) => void
 
 export const useOrder = ({ id, chainId }: GetRemoveOrderParams): Order | undefined => {
-  const state = useSelector<AppState, OrdersState>(state => state.orders)
+  const state = useSelector<AppState, OrdersState[ChainId]>(state => state.orders[chainId])
 
-  return state[chainId]?.[id]?.order
+  return state?.fulfilled[id]?.order || state?.pending[id]?.order
 }
 
-// TOD
+// TODO: move to utils
 const isTruthy = <T>(value: T | null | undefined | false): value is T => !!value
 
 export const useOrders = ({ chainId }: GetOrdersParams): Order[] => {
   const state = useSelector<AppState, OrdersState[ChainId]>(state => state.orders?.[chainId])
+
+  return useMemo(() => {
+    if (!state) return []
+
+    const allOrders = Object.values(state.fulfilled)
+      .concat(Object.values(state.pending))
+      .map(orderObject => orderObject?.order)
+      .filter(isTruthy)
+    return allOrders
+  }, [state])
+}
+
+export const usePendingOrders = ({ chainId }: GetOrdersParams): Order[] => {
+  const state = useSelector<AppState, PartialOrdersMap | undefined>(state => state.orders?.[chainId]?.pending)
 
   return useMemo(() => {
     if (!state) return []
@@ -51,35 +65,22 @@ export const useOrders = ({ chainId }: GetOrdersParams): Order[] => {
   }, [state])
 }
 
-export const usePendingOrders = ({ chainId }: GetOrdersParams): Order[] => {
-  const state = useSelector<AppState, OrdersState[ChainId]>(state => state.orders?.[chainId])
-
-  return useMemo(() => {
-    if (!state) return []
-
-    const allOrders = Object.values(state)
-      .map(orderObject => orderObject?.order)
-      .filter((order): order is Order => !!order && order.status === OrderStatus.PENDING)
-    return allOrders
-  }, [state])
-}
-
 export const useFulfilledOrders = ({ chainId }: GetOrdersParams): Order[] => {
-  const state = useSelector<AppState, OrdersState[ChainId]>(state => state.orders?.[chainId])
+  const state = useSelector<AppState, PartialOrdersMap | undefined>(state => state.orders?.[chainId]?.fulfilled)
 
   return useMemo(() => {
     if (!state) return []
 
     const allOrders = Object.values(state)
       .map(orderObject => orderObject?.order)
-      .filter((order): order is Order => !!order && order.status === OrderStatus.FULFILLED)
+      .filter(isTruthy)
     return allOrders
   }, [state])
 }
 
-export const useAddOrder = (): AddOrderCallback => {
+export const useAddPendingOrder = (): AddOrderCallback => {
   const dispatch = useDispatch<AppDispatch>()
-  return useCallback((addOrderParams: AddOrderParams) => dispatch(addOrder(addOrderParams)), [dispatch])
+  return useCallback((addOrderParams: AddPendingOrderParams) => dispatch(addPendingOrder(addOrderParams)), [dispatch])
 }
 
 export const useFulfillOrder = (): FulfillOrderCallback => {
