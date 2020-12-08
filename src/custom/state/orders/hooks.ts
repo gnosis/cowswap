@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, AppState } from 'state'
 import { addPendingOrder, removeOrder, clearOrders, fulfillOrder, Order, OrderID } from './actions'
 import { OrdersState, PartialOrdersMap } from './reducer'
+import { isTruthy } from 'utils/misc'
 
 interface AddPendingOrderParams extends GetRemoveOrderParams {
   order: Order
@@ -34,9 +35,6 @@ export const useOrder = ({ id, chainId }: GetRemoveOrderParams): Order | undefin
 
   return state?.fulfilled[id]?.order || state?.pending[id]?.order
 }
-
-// TODO: move to utils
-const isTruthy = <T>(value: T | null | undefined | false): value is T => !!value
 
 export const useOrders = ({ chainId }: GetOrdersParams): Order[] => {
   const state = useSelector<AppState, OrdersState[ChainId]>(state => state.orders?.[chainId])
