@@ -1,47 +1,53 @@
 import { isAnyOf, Middleware } from '@reduxjs/toolkit'
 import { getFee } from 'utils/fees'
-import { selectCurrency } from '@src/state/swap/actions'
+import { replaceSwapState, selectCurrency, switchCurrencies } from '@src/state/swap/actions'
 import { updateFee } from './actions'
 import { FeeInformationState } from './reducer'
+import { SwapState } from '@src/state/swap/reducer'
 
-const isCurrencyChangeAction = isAnyOf(selectCurrency)
+const isCurrencyChangeAction = isAnyOf(selectCurrency, replaceSwapState, switchCurrencies)
+const isSelectCurrency = isAnyOf(selectCurrency)
+const isReplaceState = isAnyOf(replaceSwapState)
 
 export const applyFeeMiddleware: Middleware = ({ dispatch, getState }) => next => async action => {
   if (isCurrencyChangeAction(action)) {
-    console.debug(`
-      ========================================================
-      🚀  [FEE MIDDLEWARE] SELECT_CURRENCY ACTION DETECTED
-      ========================================================
-    `)
-    const { payload } = action
-
-    // check actions as several should trigger this update
-    // e.g direct selection? yes, also has payload to check token type
-    // but switchCurrencies? has no payload, but must be used to check tip
-
     const {
+      swap: {
+        OUTPUT: { currencyId }
+      },
       fee: { feesMap }
-    }: { fee: FeeInformationState } = getState()
+    }: { fee: FeeInformationState; swap: SwapState } = getState()
 
-    const tokenFee = feesMap[payload.currencyId]?.fee
+    console.log('🚀  [FEE MIDDLEWARE] currencyId from STATE =>', currencyId)
 
-    if (!tokenFee) {
-      const fee = await getFee(payload.currencyId)
-      dispatch(
-        updateFee({
-          token: payload.currencyId,
-          fee
-        })
-      )
-    }
+    let currencyIdFromPayload: string | undefined = currencyId
 
-    console.debug(`
+    if (isSelectCurrency(action)) currencyIdFromPayload = action.payload.currencyId
+    else if (isReplaceState(action)) currencyIdFromPayload = action.payload.inputCurrencyId
+
+    // we have a explicity token address (currencyIdFromPayload) within payload
+    // use this to getFee
+    if (currencyIdFromPayload) {
+      const tokenFee = feesMap[currencyIdFromPayload]?.fee
+
+      if (!tokenFee) {
+        const fee = await getFee(currencyIdFromPayload)
+        dispatch(
+          updateFee({
+            token: currencyIdFromPayload,
+            fee
+          })
+        )
+      }
+
+      console.log(`
     ========================================================
     🚀  [FEE MIDDLEWARE] SELECT_CURRENCY ACTION DETECTED
-        PAYLOAD:  ${JSON.stringify(payload, null, 2)}
-        FEE:      ${JSON.stringify(getState().fee.feesMap[payload.currencyId]?.fee, null, 2)}
+        PAYLOAD:  ${JSON.stringify(action.payload, null, 2)}
+        FEE:      ${JSON.stringify(getState().fee.feesMap[currencyIdFromPayload]?.fee, null, 2)}
     ========================================================
       `)
+    }
   }
 
   next(action)
