@@ -37,16 +37,16 @@ function getSummary(params: PostOrderParams): string {
   const outputAmount = trade.outputAmount.toSignificant(3)
 
   const base = `Swap ${inputAmount} ${inputSymbol} for ${outputAmount} ${outputSymbol}`
-  const withRecipient =
-    recipient === account
-      ? base
-      : `${base} to ${
-          recipientAddressOrName && isAddress(recipientAddressOrName)
-            ? shortenAddress(recipientAddressOrName)
-            : recipientAddressOrName
-        }`
 
-  return withRecipient
+  if (recipient === account) {
+    return base
+  } else {
+    const toAddress = recipientAddressOrName && isAddress(recipientAddressOrName) ? 
+      shortenAddress(recipientAddressOrName) : 
+      recipientAddressOrName
+
+    return `${base} to ${toAddress}`
+  }
 }
 
 function signOrder(unsignedOrder: UnsignedOrder): string {
