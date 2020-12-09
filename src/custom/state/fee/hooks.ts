@@ -20,12 +20,12 @@ export const useFee = (tokenAddress?: string): FeeInformation | undefined => {
   return tokenAddress ? feesMap[tokenAddress]?.fee : undefined
 }
 
-export const useAddTip = (): AddFeeCallback => {
+export const useAddFee = (): AddFeeCallback => {
   const dispatch = useDispatch<AppDispatch>()
   return (addTokenParams: AddFeeParams) => dispatch(updateFee(addTokenParams))
 }
 
-export const useClearTip = (): ClearFeeCallback => {
+export const useClearFee = (): ClearFeeCallback => {
   const dispatch = useDispatch<AppDispatch>()
   return (clearTokenParams: ClearFeeParams) => dispatch(clearFee(clearTokenParams))
 }
