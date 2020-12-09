@@ -7,12 +7,13 @@ import { useActiveWeb3React } from '@src/hooks'
 import useENS from '@src/hooks/useENS'
 import { useMemo } from 'react'
 import useTransactionDeadline from '@src/hooks/useTransactionDeadline'
-import { BigNumber, Signer, VoidSigner } from 'ethers'
+import { BigNumber, Signer } from 'ethers'
 import { isAddress, shortenAddress } from '@src/utils'
 import { AddPendingOrderParams, OrderID, OrderStatus } from 'state/orders/actions'
 import { useAddPendingOrder } from 'state/orders/hooks'
 import { delay } from 'utils/misc'
 import { ORDER_KIND_BUY, ORDER_KIND_SELL, signOrder, UnsignedOrder } from 'utils/signatures'
+import { useSigner } from './useSigner'
 
 interface PostOrderParams {
   account: string
@@ -130,7 +131,7 @@ export function useSwapCallback(
   recipientAddressOrName: string | null // the ENS name or address of the recipient of the trade, or null if swap should be returned to sender
 ): { state: SwapCallbackState; callback: null | (() => Promise<string>); error: string | null } {
   const { account, chainId, library } = useActiveWeb3React()
-  const signer = new VoidSigner('TODO')
+  const signer = useSigner()
   const { address: recipientAddress } = useENS(recipientAddressOrName)
   const recipient = recipientAddressOrName === null ? account : recipientAddress
 
@@ -138,7 +139,7 @@ export function useSwapCallback(
   const addPendingOrder = useAddPendingOrder()
 
   return useMemo(() => {
-    if (!trade || !library || !account || !chainId) {
+    if (!trade || !library || !account || !chainId || !signer) {
       return { state: SwapCallbackState.INVALID, callback: null, error: 'Missing dependencies' }
     }
     if (!recipient) {
@@ -189,5 +190,16 @@ export function useSwapCallback(
       },
       error: null
     }
-  }, [trade, library, account, chainId, recipient, allowedSlippage, recipientAddressOrName, addPendingOrder, validTo])
+  }, [
+    trade,
+    library,
+    account,
+    chainId,
+    recipient,
+    allowedSlippage,
+    recipientAddressOrName,
+    addPendingOrder,
+    validTo,
+    signer
+  ])
 }
