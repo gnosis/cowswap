@@ -18,8 +18,6 @@ export const applyFeeMiddleware: Middleware = ({ dispatch, getState }) => next =
       fee: { feesMap }
     }: { fee: FeeInformationState; swap: SwapState } = getState()
 
-    console.log('🚀  [FEE MIDDLEWARE] currencyId from STATE =>', currencyId)
-
     let currencyIdFromPayload: string | undefined = currencyId
 
     if (isSelectCurrency(action)) currencyIdFromPayload = action.payload.currencyId
@@ -39,14 +37,6 @@ export const applyFeeMiddleware: Middleware = ({ dispatch, getState }) => next =
           })
         )
       }
-
-      console.log(`
-    ========================================================
-    🚀  [FEE MIDDLEWARE] SELECT_CURRENCY ACTION DETECTED
-        PAYLOAD:  ${JSON.stringify(action.payload, null, 2)}
-        FEE:      ${JSON.stringify(getState().fee.feesMap[currencyIdFromPayload]?.fee, null, 2)}
-    ========================================================
-      `)
     }
   }
 
