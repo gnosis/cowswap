@@ -9,8 +9,8 @@ enum OrderKind {
 // posted to /api/v1/orders on Order creation
 // serializable, so no BigNumbers
 export interface OrderCreation {
-  sellToken: string // address
-  buyToken: string // address
+  sellToken: string // address, without '0x' prefix
+  buyToken: string // address, without '0x' prefix
   sellAmount: string // in atoms
   buyAmount: string // in atoms
   validTo: number // unix timestamp, seconds, use new Date(validTo * 1000)
@@ -28,8 +28,8 @@ export enum OrderStatus {
 
 // used internally by dapp
 export interface Order extends OrderCreation {
-  id: OrderID // it is special :)
-  owner: string // address
+  id: OrderID // it is special :), Unique identifier for the order: 56 bytes encoded as hex without 0x
+  owner: string // address, without '0x' prefix
   status: OrderStatus
   fulfillmentTime?: string
   creationTime: string
@@ -38,7 +38,7 @@ export interface Order extends OrderCreation {
 // gotten from querying /api/v1/orders
 export interface OrderFromApi extends OrderCreation {
   creationTime: string // Creation time of the order. Encoded as ISO 8601 UTC
-  owner: string // address
+  owner: string // address, without '0x' prefix
 }
 
 /**
