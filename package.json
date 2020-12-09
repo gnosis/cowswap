@@ -119,5 +119,8 @@
       "last 1 safari version"
     ]
   },
-  "license": "GPL-3.0-or-later"
+  "license": "GPL-3.0-or-later",
+  "dependencies": {
+    "@gnosis.pm/gp-v2-contracts": "^0.0.1-alpha.1"
+  }
 }
