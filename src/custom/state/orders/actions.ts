@@ -22,8 +22,8 @@ export interface OrderCreation {
 }
 
 export enum OrderStatus {
-  PENDING,
-  FULFILLED
+  PENDING = 'pending',
+  FULFILLED = 'fulfilled'
 }
 
 // used internally by dapp
