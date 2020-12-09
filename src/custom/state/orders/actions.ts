@@ -33,6 +33,7 @@ export interface Order extends OrderCreation {
   status: OrderStatus
   fulfillmentTime?: string
   creationTime: string
+  summary: string // for dapp use only, readable by user
 }
 
 // gotten from querying /api/v1/orders
