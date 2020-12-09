@@ -31,12 +31,7 @@ import useToggledVersion, { DEFAULT_VERSION, Version } from '../../hooks/useTogg
 import useWrapCallback, { WrapType } from '../../hooks/useWrapCallback'
 import { useToggleSettingsMenu, useWalletModalToggle } from '../../state/application/hooks'
 import { Field } from '../../state/swap/actions'
-import {
-  useDefaultsFromURLSearch,
-  useDerivedSwapInfo,
-  useSwapActionHandlers,
-  useSwapState
-} from '../../state/swap/hooks'
+import { useDefaultsFromURLSearch, useDerivedSwapInfo, useSwapActionHandlers, useSwapState } from 'state/swap/hooks'
 import { useExpertModeManager, useUserSlippageTolerance } from '../../state/user/hooks'
 import { LinkStyledButton, TYPE } from 'theme'
 import { maxAmountSpend } from '../../utils/maxAmountSpend'
@@ -99,6 +94,7 @@ export default function Swap() {
   }
   const trade = showWrap ? undefined : tradesByVersion[toggledVersion]
   const defaultTrade = showWrap ? undefined : tradesByVersion[DEFAULT_VERSION]
+  console.log('🚀 ~ file: index.tsx ~ line 102 ~ Swap ~ defaultTrade', trade)
 
   const betterTradeLinkVersion: Version | undefined =
     toggledVersion === Version.v2 && isTradeBetter(v2Trade, v1Trade, BETTER_TRADE_LINK_THRESHOLD)
