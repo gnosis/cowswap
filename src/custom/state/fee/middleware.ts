@@ -1,14 +1,18 @@
-import { Middleware } from '@reduxjs/toolkit'
+import { isAnyOf, Middleware } from '@reduxjs/toolkit'
 import { getFee } from 'utils/fees'
 import { selectCurrency } from '@src/state/swap/actions'
 import { updateFee } from './actions'
 import { FeeInformationState } from './reducer'
 
-export const applyFeeMiddleware: Middleware = ({ dispatch, getState }) => next => async action => {
-  // check that incoming action is a selected token
-  const isTriggerAction = action.type === selectCurrency.type
+const isCurrencyChangeAction = isAnyOf(selectCurrency)
 
-  if (isTriggerAction) {
+export const applyFeeMiddleware: Middleware = ({ dispatch, getState }) => next => async action => {
+  if (isCurrencyChangeAction(action)) {
+    console.debug(`
+      ========================================================
+      🚀  [FEE MIDDLEWARE] SELECT_CURRENCY ACTION DETECTED
+      ========================================================
+    `)
     const { payload } = action
 
     // check actions as several should trigger this update
