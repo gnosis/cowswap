@@ -18,6 +18,14 @@ import { tryParseAmount, useSwapState } from '@src/state/swap/hooks'
 
 export * from '@src/state/swap/hooks'
 
+function extendTrade(trade: Trade | null, extendedProperties = {}) {
+  if (!trade) return null
+
+  return Object.assign(trade, Object.create(trade), {
+    ...extendedProperties
+  })
+}
+
 // from the current swap inputs, compute the best trade and return it.
 export function useDerivedSwapInfo(): {
   currencies: { [field in Field]?: Currency }
@@ -53,7 +61,8 @@ export function useDerivedSwapInfo(): {
   const bestTradeExactIn = useTradeExactIn(isExactIn ? parsedAmount : undefined, outputCurrency ?? undefined)
   const bestTradeExactOut = useTradeExactOut(inputCurrency ?? undefined, !isExactIn ? parsedAmount : undefined)
 
-  const v2Trade = isExactIn ? bestTradeExactIn : bestTradeExactOut
+  const trade = isExactIn ? bestTradeExactIn : bestTradeExactOut
+  const v2Trade = extendTrade(trade)
 
   const currencyBalances = {
     [Field.INPUT]: relevantTokenBalances[0],
