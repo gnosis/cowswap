@@ -10,7 +10,7 @@ import useTransactionDeadline from '@src/hooks/useTransactionDeadline'
 import { BigNumber } from 'ethers'
 import { isAddress, shortenAddress } from '@src/utils'
 import { AddPendingOrderParams, OrderCreation, OrderID, OrderKind, OrderStatus } from 'state/orders/actions'
-import { useAddPendingOrder } from '../state/orders/hooks'
+import { useAddPendingOrder } from 'state/orders/hooks'
 import { delay } from 'utils/misc'
 
 interface PostOrderParams {

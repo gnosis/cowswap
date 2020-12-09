@@ -1,9 +1,7 @@
-import { ChainId } from '@uniswap/sdk'
-import { useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { AppDispatch, AppState } from 'state'
-import { updateTip, clearTip, OrderID, Tip } from './actions'
+import { updateTip, clearTip, Tip } from './actions'
 import { OperatorState } from './reducer'
 
 interface AddTipParams extends ClearTipParams {
