@@ -58,26 +58,28 @@ async function postOrderApi(params: PostOrderParams, signature: string): Promise
   const { inputAmount } = params.trade
   // TODO: Pretend we call the API
   console.log('TODO: call API and include the signature', signature)
-  return new Promise<string>(async (resolve, reject) => {
-    setTimeout(() => {
-      if (inputAmount.toExact() === '0.1') {
-        // Force error for testing
-        console.log('[useSwapCallback] Ups, we had a small issue!')
-        reject(new Error('Mock error: The flux capacitor melted'))
-      } else {
-        // Pretend all went OK
-        console.log('[useSwapCallback] Traded successfully!')
-        resolve('123456789')
-      }
-    }, 3000)
-  })
+
+  // Fake a delay
+  await delay(3000)
+
+  if (inputAmount.toExact() === '0.1') {
+    // Force error for testing
+    console.log('[useSwapCallback] Ups, we had a small issue!')
+    throw new Error('Mock error: The flux capacitor melted')
+  } else {
+    // Pretend all went OK
+    console.log('[useSwapCallback] Traded successfully!')
+    return '123456789'
+  }
 }
 
 async function postOrder(params: PostOrderParams): Promise<string> {
   const { addPendingOrder, chainId, trade, validTo, account } = params
   const { inputAmount, outputAmount } = trade
-  const [selToken] = trade.route.path
-  const [, buyToken] = trade.route.path
+
+  const path = trade.route.path
+  const selToken = path[0]
+  const buyToken = path[path.length - 1]
 
   // Prepare order
   const summary = getSummary(params)
