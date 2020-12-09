@@ -41,9 +41,10 @@ function getSummary(params: PostOrderParams): string {
   if (recipient === account) {
     return base
   } else {
-    const toAddress = recipientAddressOrName && isAddress(recipientAddressOrName) ? 
-      shortenAddress(recipientAddressOrName) : 
-      recipientAddressOrName
+    const toAddress =
+      recipientAddressOrName && isAddress(recipientAddressOrName)
+        ? shortenAddress(recipientAddressOrName)
+        : recipientAddressOrName
 
     return `${base} to ${toAddress}`
   }
