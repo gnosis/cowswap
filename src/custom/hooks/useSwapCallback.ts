@@ -78,8 +78,10 @@ async function postOrderApi(params: PostOrderParams, signature: string): Promise
 async function postOrder(params: PostOrderParams): Promise<string> {
   const { addPendingOrder, chainId, trade, validTo, account } = params
   const { inputAmount, outputAmount } = trade
-  const [selToken] = trade.route.path
-  const [, buyToken] = trade.route.path
+
+  const path = trade.route.path
+  const selToken = path[0]
+  const buyToken = path[path.length - 1]
 
   // Prepare order
   const summary = getSummary(params)
