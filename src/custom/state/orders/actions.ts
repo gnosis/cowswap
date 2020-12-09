@@ -2,8 +2,8 @@ import { createAction } from '@reduxjs/toolkit'
 import { ChainId } from '@uniswap/sdk'
 
 enum OrderKind {
-  SELL,
-  BUY
+  SELL = 'sell',
+  BUY = 'buy'
 }
 
 // posted to /api/v1/orders on Order creation
