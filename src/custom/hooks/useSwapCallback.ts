@@ -11,6 +11,7 @@ import { BigNumber } from 'ethers'
 import { useAddPendingOrder } from '../state/operator/hooks'
 import { AddPendingOrderParams, OrderCreation, OrderID, OrderKind, OrderStatus } from '../state/operator/actions'
 import { isAddress, shortenAddress } from '@src/utils'
+import { delay } from '../utils/misc'
 
 interface PostOrderParams {
   account: string
@@ -40,9 +41,10 @@ function getSummary(params: PostOrderParams): string {
   if (recipient === account) {
     return base
   } else {
-    const toAddress = recipientAddressOrName && isAddress(recipientAddressOrName) ? 
-      shortenAddress(recipientAddressOrName) : 
-      recipientAddressOrName
+    const toAddress =
+      recipientAddressOrName && isAddress(recipientAddressOrName)
+        ? shortenAddress(recipientAddressOrName)
+        : recipientAddressOrName
 
     return `${base} to ${toAddress}`
   }
@@ -58,19 +60,19 @@ async function postOrderApi(params: PostOrderParams, signature: string): Promise
   const { inputAmount } = params.trade
   // TODO: Pretend we call the API
   console.log('TODO: call API and include the signature', signature)
-  return new Promise<string>(async (resolve, reject) => {
-    setTimeout(() => {
-      if (inputAmount.toExact() === '0.1') {
-        // Force error for testing
-        console.log('[useSwapCallback] Ups, we had a small issue!')
-        reject(new Error('Mock error: The flux capacitor melted'))
-      } else {
-        // Pretend all went OK
-        console.log('[useSwapCallback] Traded successfully!')
-        resolve('123456789')
-      }
-    }, 3000)
-  })
+
+  // Fake a delay
+  await delay(3000)
+
+  if (inputAmount.toExact() === '0.1') {
+    // Force error for testing
+    console.log('[useSwapCallback] Ups, we had a small issue!')
+    throw new Error('Mock error: The flux capacitor melted')
+  } else {
+    // Pretend all went OK
+    console.log('[useSwapCallback] Traded successfully!')
+    return '123456789'
+  }
 }
 
 async function postOrder(params: PostOrderParams): Promise<string> {
