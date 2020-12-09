@@ -1,5 +1,5 @@
 import { SwapCallbackState } from '@src/hooks/useSwapCallback'
-import { INITIAL_ALLOWED_SLIPPAGE } from 'constants/index'
+import { GP_SETTLEMENT_CONTRACT_ADDRESS, INITIAL_ALLOWED_SLIPPAGE } from 'constants/index'
 
 // import { useSwapCallback as useSwapCallbackUniswap } from '@src/hooks/useSwapCallback'
 import { ChainId, Percent, Trade, TradeType } from '@uniswap/sdk'
@@ -7,11 +7,12 @@ import { useActiveWeb3React } from '@src/hooks'
 import useENS from '@src/hooks/useENS'
 import { useMemo } from 'react'
 import useTransactionDeadline from '@src/hooks/useTransactionDeadline'
-import { BigNumber } from 'ethers'
+import { BigNumber, TypedDataDomain } from 'ethers'
 import { isAddress, shortenAddress } from '@src/utils'
 import { AddPendingOrderParams, OrderCreation, OrderID, OrderKind, OrderStatus } from 'state/orders/actions'
 import { useAddPendingOrder } from 'state/orders/hooks'
 import { delay } from 'utils/misc'
+import { domain } from '@gnosis.pm/gp-v2-contracts'
 
 interface PostOrderParams {
   account: string
@@ -50,7 +51,23 @@ function getSummary(params: PostOrderParams): string {
   }
 }
 
-function signOrder(unsignedOrder: UnsignedOrder): string {
+interface SignOrderParams {
+  chainId: ChainId
+  unsignedOrder: UnsignedOrder
+}
+
+function signOrder(params: SignOrderParams): string {
+  const { chainId, unsignedOrder } = params
+
+  // Get settlement contract address
+  const settlementContract = GP_SETTLEMENT_CONTRACT_ADDRESS[chainId]
+  if (!settlementContract) {
+    throw new Error('Unsupported network. Settlement contract is not deployed')
+  }
+
+  const gpDomain = domain(chainId, settlementContract) as TypedDataDomain // TODO: Fix types in NPM package
+  console.log(gpDomain)
+
   console.log('TODO: Sign order', unsignedOrder)
   // TODO: Mocked, next PR
   return '0xd6741f8031e7a7ea70f1b6c14a71e9d0d7d5aae54c157d8368ad4cabd7279a363955fa169a634469da01010bfefbacc2c1e2e7aaeb0c42049192e6359ed572281b'
@@ -96,7 +113,11 @@ async function postOrder(params: PostOrderParams): Promise<string> {
     orderType: trade.tradeType === TradeType.EXACT_INPUT ? OrderKind.SELL : OrderKind.BUY,
     partiallyFillable: false // Always fill or kill
   }
-  const signature = signOrder(unsignedOrder)
+
+  const signature = signOrder({
+    chainId,
+    unsignedOrder
+  })
   const creationTime = new Date().toISOString()
 
   // Call API
