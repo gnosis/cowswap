@@ -148,14 +148,15 @@ export function EventUpdater(): null {
           const { orderUid: id } = decodeTradeEvent(log)
 
           console.log(`EventUpdater::Detected Trade event for order ${id} of token in block`, log.blockNumber)
+          dispatch(
+            fulfillOrder({
+              chainId,
+              id,
+              fulfillmentTime: new Date().toISOString() // event only has blockNumber
+              // if we want timestamp, need to getBlock() first
+            })
+          )
 
-      // TODO: extend addPopup to accept whatever we want to show for Orders
-      if (logs.length > 0) {
-        const firstBlock = logs[0].blockNumber
-        const lastBlock = logs[logs.length - 1].blockNumber
-
-        const blocksRangeStr = firstBlock === lastBlock ? `block ${firstBlock}` : `blocks ${firstBlock} - ${lastBlock}`
-        // Sample popup for events
         addPopup(
           {
             txn: {
