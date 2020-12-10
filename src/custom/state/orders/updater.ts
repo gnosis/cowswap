@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from 'react'
 import { useDispatch } from 'react-redux'
 import { useActiveWeb3React } from 'hooks'
-import { /* useAddPopup ,*/ useBlockNumber } from 'state/application/hooks'
+import { useAddPopup, useBlockNumber } from 'state/application/hooks'
 import { AppDispatch } from 'state'
 // import { removeOrder, /* fulfillOrder, */ OrderFromApi } from './actions'
 import { utils } from 'ethers'
@@ -79,7 +79,7 @@ export function EventUpdater(): null {
 
   // show popup on confirm
   // for displaying fulfilled orders
-  // const addPopup = useAddPopup()
+  const addPopup = useAddPopup()
 
   const getLogsRetry = useMemo(() => {
     if (!library) return null
@@ -127,12 +127,31 @@ export function EventUpdater(): null {
         } catch (e) {}
       })
 
+      // TODO: extend addPopup to accept whatever we want to show for Orders
+      if (logs.length > 0) {
+        const firstBlock = logs[0].blockNumber
+        const lastBlock = logs[logs.length - 1].blockNumber
+
+        const blocksRangeStr = firstBlock === lastBlock ? `block ${firstBlock}` : `blocks ${firstBlock} - ${lastBlock}`
+        // Sample popup for events
+        addPopup(
+          {
+            txn: {
+              hash: logs[0].transactionHash,
+              success: true,
+              summary: `EventUpdater::Detected ${logs.length} token Transfers in ${blocksRangeStr}`
+            }
+          },
+          logs[0].transactionHash
+        )
+      }
+
       // SET lastCheckedBlock = lastBlockNumber
       dispatch(updateLastCheckedBlock({ chainId, lastCheckedBlock: lastBlockNumber }))
     }
 
     getPastEvents()
-  }, [chainId, library, lastBlockNumber, lastCheckedBlock, getLogsRetry, dispatch])
+  }, [chainId, library, lastBlockNumber, lastCheckedBlock, getLogsRetry, dispatch, addPopup])
 
   // TODO: maybe implement event watching instead of getPastEvents on every block
   // useEffect(() => {
