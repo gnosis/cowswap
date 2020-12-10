@@ -19,7 +19,7 @@ export function useApproveCallbackFromTrade(trade?: Trade, allowedSlippage = 0) 
     return undefined
   }, [trade, allowedSlippage])
 
-  const allowanceManager = chainId ? GP_ALLOWANCE_MANAGER_CONTRACT_ADDRESS[chainId] : undefined
+  const allowanceManager = chainId && GP_ALLOWANCE_MANAGER_CONTRACT_ADDRESS[chainId]
 
   return useApproveCallback(amountToApprove, allowanceManager)
 }
