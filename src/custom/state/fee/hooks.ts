@@ -1,8 +1,9 @@
+import { useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { AppDispatch, AppState } from 'state'
 import { updateFee, clearFee } from './actions'
-import { FeeInformationState, FeeInformation } from './reducer'
+import { FeeInformation } from './reducer'
 
 interface AddFeeParams extends ClearFeeParams {
   fee: FeeInformation
@@ -15,17 +16,19 @@ type AddFeeCallback = (addTokenParams: AddFeeParams) => void
 type ClearFeeCallback = (clearTokenParams: ClearFeeParams) => void
 
 export const useFee = (tokenAddress?: string): FeeInformation | undefined => {
-  const { feesMap } = useSelector<AppState, FeeInformationState>(state => state.fee)
+  return useSelector<AppState, FeeInformation | undefined>(state => {
+    const { feesMap } = state.fee
 
-  return tokenAddress ? feesMap[tokenAddress]?.fee : undefined
+    return tokenAddress ? feesMap[tokenAddress]?.fee : undefined
+  })
 }
 
 export const useAddFee = (): AddFeeCallback => {
   const dispatch = useDispatch<AppDispatch>()
-  return (addTokenParams: AddFeeParams) => dispatch(updateFee(addTokenParams))
+  return useCallback((addTokenParams: AddFeeParams) => dispatch(updateFee(addTokenParams)), [dispatch])
 }
 
 export const useClearFee = (): ClearFeeCallback => {
   const dispatch = useDispatch<AppDispatch>()
-  return (clearTokenParams: ClearFeeParams) => dispatch(clearFee(clearTokenParams))
+  return useCallback((clearTokenParams: ClearFeeParams) => dispatch(clearFee(clearTokenParams)), [dispatch])
 }
