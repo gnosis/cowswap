@@ -107,13 +107,13 @@ async function _postOrder(params: PostOrderParams): Promise<string> {
     chainId,
     id: orderId,
     order: {
+      ...unsignedOrder,
       id: orderId,
       owner: account,
       creationTime,
       signature,
       status: OrderStatus.PENDING,
-      summary,
-      ...unsignedOrder
+      summary
     }
   })
 
