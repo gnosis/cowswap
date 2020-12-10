@@ -19,16 +19,19 @@ interface GetRemoveOrderParams {
   chainId: ChainId
 }
 
-interface ClearOrdersParams {
-  chainId: ChainId
+type GetOrdersParams = Partial<Pick<GetRemoveOrderParams, 'chainId'>>
+type ClearOrdersParams = Pick<GetRemoveOrderParams, 'chainId'>
+type GetLastCheckedBlockParams = GetOrdersParams
+
+interface UpdateLastCheckedBlockParams extends ClearOrdersParams {
+  lastCheckedBlock: number
 }
 
-type GetOrdersParams = Pick<GetRemoveOrderParams, 'chainId'>
-
 type AddOrderCallback = (addOrderParams: AddPendingOrderParams) => void
-type RemoveOrderCallback = (clearOrderParams: GetRemoveOrderParams) => void
+type RemoveOrderCallback = (removeOrderParams: GetRemoveOrderParams) => void
 type FulfillOrderCallback = (fulfillOrderParams: FulfillOrderParams) => void
 type ClearOrdersCallback = (clearOrdersParams: ClearOrdersParams) => void
+type UpdateLastCheckedBlockCallback = (updateLastCheckedBlockParams: UpdateLastCheckedBlockParams) => void
 
 export const useOrder = ({ id, chainId }: GetRemoveOrderParams): Order | undefined => {
   const state = useSelector<AppState, OrdersState[ChainId]>(state => state.orders[chainId])
