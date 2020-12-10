@@ -6,8 +6,8 @@ import { OrderCreation } from 'utils/signatures'
  *    https://protocol-rinkeby.dev.gnosisdev.com/api/
  */
 const API_BASE_URL: Partial<Record<ChainId, string>> = {
-  [ChainId.MAINNET]: 'https://protocol-rinkeby.dev.gnosisdev.com/api/v2',
-  [ChainId.RINKEBY]: ''
+  [ChainId.MAINNET]: 'https://protocol.gnosis.io/api/v1',
+  [ChainId.RINKEBY]: 'https://protocol-rinkeby.dev.gnosisdev.com/api/v1'
   // [ChainId.xDAI]: 'https://protocol-xdai.dev.gnosisdev.com/api/v2'
 }
 
@@ -45,33 +45,38 @@ function _getApiBaseUrl(chainId: ChainId): string {
 }
 
 async function _getErrorForBadPostOrderRequest(response: Response): Promise<string> {
-  const orderPostError: OrderPostError = await response.json()
-
   let errorMessage: string
-  switch (orderPostError.errorType) {
-    case 'DuplicateOrder':
-      errorMessage = 'There was another identical order already submitted'
-      break
+  try {
+    const orderPostError: OrderPostError = await response.json()
 
-    case 'InsufficientFunds':
-      errorMessage = "The account doesn't have enough funds"
-      break
+    switch (orderPostError.errorType) {
+      case 'DuplicateOrder':
+        errorMessage = 'There was another identical order already submitted'
+        break
 
-    case 'InvalidSignature':
-      errorMessage = 'The order signature is invalid'
-      break
+      case 'InsufficientFunds':
+        errorMessage = "The account doesn't have enough funds"
+        break
 
-    case 'MissingOrderData':
-      errorMessage = 'The order has missing information'
-      break
+      case 'InvalidSignature':
+        errorMessage = 'The order signature is invalid'
+        break
 
-    default:
-      console.error('Unknown reason for bad order submission', orderPostError)
-      errorMessage = orderPostError.description
-      break
+      case 'MissingOrderData':
+        errorMessage = 'The order has missing information'
+        break
+
+      default:
+        console.error('Unknown reason for bad order submission', orderPostError)
+        errorMessage = orderPostError.description
+        break
+    }
+  } catch (error) {
+    console.error('Error handling a 400 error. Probably could not deserialize the JSON response')
+    errorMessage = 'The order was not accepted by the operator'
   }
 
-  return `The order was refused. ${errorMessage}`
+  return errorMessage
 }
 
 async function _getErrorForUnsuccessfulPostOrder(response: Response): Promise<string> {
@@ -109,11 +114,13 @@ export async function postSignedOrder(params: { chainId: ChainId; order: OrderCr
 
   // Handle respose
   if (!response.ok) {
+    console.log('Not OK')
     // Raise an exception
     const errorMessage = await _getErrorForUnsuccessfulPostOrder(response)
     console.error('[util:operator] Error posting the signed order', response.text)
     throw new Error(errorMessage)
   }
+  console.log('OK')
 
   const uid = response.json()
   console.log('[util:operator] Success posting the signed order', uid)
