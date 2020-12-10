@@ -43,9 +43,12 @@ type ClearOrdersCallback = (clearOrdersParams: ClearOrdersParams) => void
 type UpdateLastCheckedBlockCallback = (updateLastCheckedBlockParams: UpdateLastCheckedBlockParams) => void
 
 export const useOrder = ({ id, chainId }: GetRemoveOrderParams): Order | undefined => {
-  const state = useSelector<AppState, OrdersState[ChainId]>(state => state.orders[chainId])
+  return useSelector<AppState, Order | undefined>(state => {
+    const orders = state.orders[chainId]
 
-  return state?.fulfilled[id]?.order || state?.pending[id]?.order
+    if (!orders) return undefined
+    return orders?.fulfilled[id]?.order || orders?.pending[id]?.order
+  })
 }
 
 export const useOrders = ({ chainId }: GetOrdersParams): Order[] => {
