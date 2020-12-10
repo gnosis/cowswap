@@ -9,7 +9,7 @@ import { useMemo } from 'react'
 import useTransactionDeadline from '@src/hooks/useTransactionDeadline'
 import { BigNumber, Signer } from 'ethers'
 import { isAddress, shortenAddress } from '@src/utils'
-import { AddPendingOrderParams, OrderID, OrderStatus } from 'state/orders/actions'
+import { AddPendingOrderParams, OrderCreation, OrderID, OrderStatus } from 'state/orders/actions'
 import { useAddPendingOrder } from 'state/orders/hooks'
 import { delay } from 'utils/misc'
 import { ORDER_KIND_BUY, ORDER_KIND_SELL, signOrder, UnsignedOrder } from 'utils/signatures'
@@ -50,15 +50,15 @@ function _getSummary(params: PostOrderParams): string {
   }
 }
 
-async function _postOrderApi(params: PostOrderParams, signature: string): Promise<OrderID> {
-  const { inputAmount } = params.trade
+async function _postOrderApi(order: OrderCreation): Promise<OrderID> {
+  const { sellAmount, signature } = order
   // TODO: Pretend we call the API
-  console.log('TODO: call API and include the signature', signature)
+  console.log('TODO: call API and include the signature', signature, order)
 
   // Fake a delay
   await delay(3000)
 
-  if (inputAmount.toExact() === '0.1') {
+  if (sellAmount === '100000000000000000') {
     // Force error for testing
     console.log('[useSwapCallback] Ups, we had a small issue!')
     throw new Error('Mock error: The flux capacitor melted')
@@ -100,7 +100,10 @@ async function _postOrder(params: PostOrderParams): Promise<string> {
   const creationTime = new Date().toISOString()
 
   // Call API
-  const orderId = await _postOrderApi(params, signature)
+  const orderId = await _postOrderApi({
+    ...unsignedOrder,
+    signature
+  })
 
   // Update the state
   addPendingOrder({
