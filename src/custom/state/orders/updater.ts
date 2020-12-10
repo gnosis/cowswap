@@ -157,17 +157,20 @@ export function EventUpdater(): null {
             })
           )
 
-        addPopup(
-          {
-            txn: {
-              hash: logs[0].transactionHash,
-              success: true,
-              summary: `EventUpdater::Detected ${logs.length} token Transfers in ${blocksRangeStr}`
-            }
-          },
-          logs[0].transactionHash
-        )
-      }
+          addPopup(
+            {
+              txn: {
+                hash: log.transactionHash,
+                success: true,
+                summary: `Order ${id} was traded`
+              }
+            },
+            log.transactionHash
+          )
+        } catch (error) {
+          console.error('Error decoding Trade event', error)
+        }
+      })
 
       // SET lastCheckedBlock = lastBlockNumber
       dispatch(updateLastCheckedBlock({ chainId, lastCheckedBlock: lastBlockNumber }))
