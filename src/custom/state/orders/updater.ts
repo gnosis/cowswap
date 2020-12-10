@@ -23,6 +23,27 @@ const TransferEventTopics = ERC20Interface.encodeFilterTopics(TransferEvent, [])
 //   return ERC20Interface.decodeEventLog(TransferEvent, transferEventLog.data, transferEventLog.topics)
 // }
 
+// TODO sync with contracts
+const tradeEventAbi =
+  'event Trade(address indexed owner, IERC20 sellToken, IERC20 buyToken, uint256 sellAmount, uint256 buyAmount, uint256 feeAmount, bytes orderUid)'
+const TradeSettlementInterface = new utils.Interface([tradeEventAbi])
+
+const TradeEvent = TradeSettlementInterface.getEvent('Trade')
+
+interface TradeEventParams {
+  owner: string // address
+  id?: string | string[] // to filter by id
+}
+
+const generateTradeEventTopics = ({ owner /*, id */ }: TradeEventParams) => {
+  const TradeEventTopics = TradeSettlementInterface.encodeFilterTopics(TradeEvent, [owner /*, id*/])
+  return TradeEventTopics
+}
+
+const decodeTradeEvent = (tradeEventLog: Log) => {
+  return TradeSettlementInterface.decodeEventLog(TradeEvent, tradeEventLog.data, tradeEventLog.topics)
+}
+
 type RetryFilter = Filter & { fromBlock: number; toBlock: number }
 
 const constructGetLogsRetry = (provider: Web3Provider) => {
