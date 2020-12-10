@@ -1,12 +1,14 @@
 import { useEffect, useMemo } from 'react'
-// import { /*useDispatch,*/ useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { useActiveWeb3React } from 'hooks'
 import { /* useAddPopup ,*/ useBlockNumber } from 'state/application/hooks'
-// import { /*AppDispatch,*/ AppState } from 'state'
+import { AppDispatch } from 'state'
 // import { removeOrder, /* fulfillOrder, */ OrderFromApi } from './actions'
 import { utils } from 'ethers'
 import { Web3Provider } from '@ethersproject/providers'
 import { Log, Filter } from '@ethersproject/abstract-provider'
+import { useLastCheckedBlock } from './hooks'
+import { updateLastCheckedBlock } from './actions'
 // import { PartialOrdersMap } from './reducer'
 
 // example of event watching + decoding without contract
@@ -63,26 +65,17 @@ const constructGetLogsRetry = (provider: Web3Provider) => {
   return getLogsRetry
 }
 
-// temp block to start at
-// TODO: put in state/orders
-let lastCheckedBlock = 0
-
 export function EventUpdater(): null {
   const { chainId, library } = useActiveWeb3React()
   // console.log('EventUpdater::library', library)
   // console.log('EventUpdater::chainId', chainId)
 
   const lastBlockNumber = useBlockNumber()
+  const lastCheckedBlock = useLastCheckedBlock({ chainId })
   console.log('EventUpdater::lastCheckedBlock', lastCheckedBlock)
   console.log('EventUpdater::lastBlockNumber', lastBlockNumber)
 
-  // const dispatch = useDispatch<AppDispatch>()
-
-  // const pendingOrders = useSelector<AppState, PartialOrdersMap | undefined>(
-  //   state => chainId && state.orders?.[chainId]?.pending
-  // )
-
-  // const lastCheckedBlock = useSelector<AppState, number>(state => chainId && state.orders?.[chainId]?.lastCheckedBlock)
+  const dispatch = useDispatch<AppDispatch>()
 
   // show popup on confirm
   // for displaying fulfilled orders
@@ -104,10 +97,6 @@ export function EventUpdater(): null {
       })
     }
 
-    // TEMP to start checking onlylast 10 blocks
-    // otherwise Transfer events overwhelm the console
-    if (lastCheckedBlock === 0) lastCheckedBlock = lastBlockNumber - 10
-
     // don't check for fromBlock > toBlock
     if (lastCheckedBlock + 1 > lastBlockNumber) return
 
@@ -119,14 +108,8 @@ export function EventUpdater(): null {
         topics: TransferEventTopics
       })
 
-      // TEMP
-      // will be replaced with
-      // dispatch(updateOrdersLastCheckedBlock(lastBlockNumber))
-      const wasLastCheckedBlock = lastCheckedBlock
-      lastCheckedBlock = lastBlockNumber
-
       const logs = await getLogsRetry({
-        fromBlock: wasLastCheckedBlock + 1,
+        fromBlock: lastCheckedBlock + 1,
         toBlock: lastBlockNumber,
         // address: '0x',
         topics: TransferEventTopics
@@ -143,10 +126,13 @@ export function EventUpdater(): null {
           // dispatch(fulfillOrder({ chainId, id, fulfillmentTime: from log,if: from log }))
         } catch (e) {}
       })
+
+      // SET lastCheckedBlock = lastBlockNumber
+      dispatch(updateLastCheckedBlock({ chainId, lastCheckedBlock: lastBlockNumber }))
     }
 
     getPastEvents()
-  }, [chainId, library, lastBlockNumber, /* lastCheckedBlock,*/ getLogsRetry])
+  }, [chainId, library, lastBlockNumber, lastCheckedBlock, getLogsRetry, dispatch])
 
   // TODO: maybe implement event watching instead of getPastEvents on every block
   // useEffect(() => {
