@@ -62,3 +62,7 @@ export const fulfillOrder = createAction<{ id: OrderID; chainId: ChainId; fulfil
   'order/fulfillOrder'
 )
 export const clearOrders = createAction<{ chainId: ChainId }>('order/clearOrders')
+
+export const updateLastCheckedBlock = createAction<{ chainId: ChainId; lastCheckedBlock: number }>(
+  'order/updateLastCheckedBlock'
+)
