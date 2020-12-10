@@ -36,12 +36,13 @@ export const applyFeeMiddleware: Middleware = ({ dispatch, getState }) => next =
 
       if (!isFeeDateValid || !tokenFee) {
         const fee = await getFee(currencyIdFromPayload)
-        dispatch(
-          updateFee({
-            token: currencyIdFromPayload,
-            fee
-          })
-        )
+        fee &&
+          dispatch(
+            updateFee({
+              token: currencyIdFromPayload,
+              fee
+            })
+          )
       }
     }
   }
