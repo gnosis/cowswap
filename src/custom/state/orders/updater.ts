@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, batch } from 'react-redux'
 import { useActiveWeb3React } from 'hooks'
 import { useAddPopup, useBlockNumber } from 'state/application/hooks'
 import { AppDispatch } from 'state'
@@ -141,36 +141,42 @@ export function EventUpdater(): null {
         topics: eventTopics
       })
 
-      // console.log('logs', logs)
-      logs.forEach(log => {
-        try {
-          // const { from, to, amount } = decodeTransferEvent(log)
-          const { orderUid: id } = decodeTradeEvent(log)
+      batch(() => {
+        logs.forEach(log => {
+          try {
+            // const { from, to, amount } = decodeTransferEvent(log)
+            const { orderUid: id } = decodeTradeEvent(log)
 
-          console.log(`EventUpdater::Detected Trade event for order ${id} of token in block`, log.blockNumber)
-          dispatch(
-            fulfillOrder({
-              chainId,
-              id,
-              fulfillmentTime: new Date().toISOString() // event only has blockNumber
-              // if we want timestamp, need to getBlock() first
-            })
-          )
+            console.log(`EventUpdater::Detected Trade event for order ${id} of token in block`, log.blockNumber)
+            dispatch(
+              fulfillOrder({
+                chainId,
+                id,
+                fulfillmentTime: new Date().toISOString() // event only has blockNumber
+                // if we want timestamp, need to getBlock() first
+              })
+            )
 
-          addPopup(
-            {
-              txn: {
-                hash: log.transactionHash,
-                success: true,
-                summary: `Order ${id} was traded`
-              }
-            },
-            log.transactionHash
-          )
-        } catch (error) {
-          console.error('Error decoding Trade event', error)
-        }
+            addPopup(
+              {
+                txn: {
+                  hash: log.transactionHash,
+                  success: true,
+                  summary: `Order ${id} was traded`
+                }
+              },
+              log.transactionHash
+            )
+          } catch (error) {
+            console.error('Error decoding Trade event', error)
+          }
+        })
+
+        // SET lastCheckedBlock = lastBlockNumber
+        dispatch(updateLastCheckedBlock({ chainId, lastCheckedBlock: lastBlockNumber }))
       })
+
+      // console.log('logs', logs)
 
       // TODO: extend addPopup to accept whatever we want to show for Orders
       // if (logs.length > 0) {
@@ -190,9 +196,6 @@ export function EventUpdater(): null {
       //     logs[0].transactionHash
       //   )
       // }
-
-      // SET lastCheckedBlock = lastBlockNumber
-      dispatch(updateLastCheckedBlock({ chainId, lastCheckedBlock: lastBlockNumber }))
     }
 
     getPastEvents()
