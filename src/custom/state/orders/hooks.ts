@@ -49,7 +49,7 @@ export const useOrder = ({ id, chainId }: GetRemoveOrderParams): Order | undefin
 }
 
 export const useOrders = ({ chainId }: GetOrdersParams): Order[] => {
-  const state = useSelector<AppState, OrdersState[ChainId]>(state => state.orders?.[chainId])
+  const state = useSelector<AppState, OrdersState[ChainId]>(state => chainId && state.orders?.[chainId])
 
   return useMemo(() => {
     if (!state) return []
@@ -63,7 +63,9 @@ export const useOrders = ({ chainId }: GetOrdersParams): Order[] => {
 }
 
 export const usePendingOrders = ({ chainId }: GetOrdersParams): Order[] => {
-  const state = useSelector<AppState, PartialOrdersMap | undefined>(state => state.orders?.[chainId]?.pending)
+  const state = useSelector<AppState, PartialOrdersMap | undefined>(
+    state => chainId && state.orders?.[chainId]?.pending
+  )
 
   return useMemo(() => {
     if (!state) return []
@@ -76,7 +78,9 @@ export const usePendingOrders = ({ chainId }: GetOrdersParams): Order[] => {
 }
 
 export const useFulfilledOrders = ({ chainId }: GetOrdersParams): Order[] => {
-  const state = useSelector<AppState, PartialOrdersMap | undefined>(state => state.orders?.[chainId]?.fulfilled)
+  const state = useSelector<AppState, PartialOrdersMap | undefined>(
+    state => chainId && state.orders?.[chainId]?.fulfilled
+  )
 
   return useMemo(() => {
     if (!state) return []
