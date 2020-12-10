@@ -67,5 +67,6 @@ export async function signOrder(params: SignOrderParams): Promise<string> {
   const { chainId, signer, order } = params
 
   const domain = _getDomain(chainId)
+  console.log('[signature] signOrder', { domain, order, signer, TYPED_DATA_SIGNING_SCHEME })
   return signOrderGp(domain, order, signer, TYPED_DATA_SIGNING_SCHEME)
 }
