@@ -1,17 +1,11 @@
 import useENS from '@src/hooks/useENS'
 import { Currency, CurrencyAmount, JSBI, Trade, Token, TokenAmount, Fraction, TradeType } from '@uniswap/sdk'
-import { ParsedQs } from 'qs'
-import { useEffect, useState } from 'react'
-import { useDispatch } from 'react-redux'
 import { useActiveWeb3React } from '@src/hooks'
 import { useCurrency } from '@src/hooks/Tokens'
 import { useTradeExactIn, useTradeExactOut } from '@src/hooks/Trades'
-import useParsedQueryString from '@src/hooks/useParsedQueryString'
 import { basisPointsToPercent, isAddress } from '@src/utils'
-import { AppDispatch } from 'state'
 import { useCurrencyBalances } from '@src/state/wallet/hooks'
-import { Field, replaceSwapState } from '@src/state/swap/actions'
-import { SwapState } from '@src/state/swap/reducer'
+import { Field } from '@src/state/swap/actions'
 import { useUserSlippageTolerance } from '@src/state/user/hooks'
 import { computeSlippageAdjustedAmounts } from '@src/utils/prices'
 import { tryParseAmount, useSwapState } from '@src/state/swap/hooks'
@@ -251,91 +245,4 @@ export function useDerivedSwapInfo(): DerivedSwapInfo {
     inputError,
     v1Trade: undefined
   }
-}
-
-function parseCurrencyFromURLParameter(urlParam: any): string {
-  if (typeof urlParam === 'string') {
-    const valid = isAddress(urlParam)
-    if (valid) return valid
-    if (urlParam.toUpperCase() === 'ETH') return 'ETH'
-    if (valid === false) return 'ETH'
-  }
-  return 'ETH' ?? ''
-}
-
-function parseTokenAmountURLParameter(urlParam: any): string {
-  return typeof urlParam === 'string' && !isNaN(parseFloat(urlParam)) ? urlParam : ''
-}
-
-function parseIndependentFieldURLParameter(urlParam: any): Field {
-  return typeof urlParam === 'string' && urlParam.toLowerCase() === 'output' ? Field.OUTPUT : Field.INPUT
-}
-
-const ENS_NAME_REGEX = /^[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&/=]*)?$/
-const ADDRESS_REGEX = /^0x[a-fA-F0-9]{40}$/
-function validatedRecipient(recipient: any): string | null {
-  if (typeof recipient !== 'string') return null
-  const address = isAddress(recipient)
-  if (address) return address
-  if (ENS_NAME_REGEX.test(recipient)) return recipient
-  if (ADDRESS_REGEX.test(recipient)) return recipient
-  return null
-}
-
-export function queryParametersToSwapState(parsedQs: ParsedQs): SwapState {
-  let inputCurrency = parseCurrencyFromURLParameter(parsedQs.inputCurrency)
-  let outputCurrency = parseCurrencyFromURLParameter(parsedQs.outputCurrency)
-  if (inputCurrency === outputCurrency) {
-    if (typeof parsedQs.outputCurrency === 'string') {
-      inputCurrency = ''
-    } else {
-      outputCurrency = ''
-    }
-  }
-
-  const recipient = validatedRecipient(parsedQs.recipient)
-
-  return {
-    [Field.INPUT]: {
-      currencyId: inputCurrency
-    },
-    [Field.OUTPUT]: {
-      currencyId: outputCurrency
-    },
-    typedValue: parseTokenAmountURLParameter(parsedQs.exactAmount),
-    independentField: parseIndependentFieldURLParameter(parsedQs.exactField),
-    recipient
-  }
-}
-
-// updates the swap state to use the defaults for a given network
-export function useDefaultsFromURLSearch():
-  | { inputCurrencyId: string | undefined; outputCurrencyId: string | undefined }
-  | undefined {
-  const { chainId } = useActiveWeb3React()
-  const dispatch = useDispatch<AppDispatch>()
-  const parsedQs = useParsedQueryString()
-  const [result, setResult] = useState<
-    { inputCurrencyId: string | undefined; outputCurrencyId: string | undefined } | undefined
-  >()
-
-  useEffect(() => {
-    if (!chainId) return
-    const parsed = queryParametersToSwapState(parsedQs)
-
-    dispatch(
-      replaceSwapState({
-        typedValue: parsed.typedValue,
-        field: parsed.independentField,
-        inputCurrencyId: parsed[Field.INPUT].currencyId,
-        outputCurrencyId: parsed[Field.OUTPUT].currencyId,
-        recipient: parsed.recipient
-      })
-    )
-
-    setResult({ inputCurrencyId: parsed[Field.INPUT].currencyId, outputCurrencyId: parsed[Field.OUTPUT].currencyId })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, chainId])
-
-  return result
 }
