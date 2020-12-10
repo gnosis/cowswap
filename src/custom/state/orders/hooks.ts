@@ -3,9 +3,18 @@ import { useCallback, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { AppDispatch, AppState } from 'state'
-import { addPendingOrder, removeOrder, clearOrders, fulfillOrder, Order, OrderID } from './actions'
+import {
+  addPendingOrder,
+  removeOrder,
+  clearOrders,
+  fulfillOrder,
+  Order,
+  OrderID,
+  updateLastCheckedBlock
+} from './actions'
 import { OrdersState, PartialOrdersMap } from './reducer'
 import { isTruthy } from 'utils/misc'
+import { ContractDeploymentBlocks } from './consts'
 
 interface AddPendingOrderParams extends GetRemoveOrderParams {
   order: Order
@@ -97,4 +106,21 @@ export const useRemoveOrder = (): RemoveOrderCallback => {
 export const useClearOrders = (): ClearOrdersCallback => {
   const dispatch = useDispatch<AppDispatch>()
   return useCallback((clearOrdersParams: ClearOrdersParams) => dispatch(clearOrders(clearOrdersParams)), [dispatch])
+}
+
+export const useLastCheckedBlock = ({ chainId }: GetLastCheckedBlockParams): number => {
+  return useSelector<AppState, number>(state => {
+    if (!chainId) return 0
+
+    return state.orders?.[chainId]?.lastCheckedBlock ?? ContractDeploymentBlocks[chainId] ?? 0
+  })
+}
+
+export const useUpdateLastCheckedBlock = (): UpdateLastCheckedBlockCallback => {
+  const dispatch = useDispatch<AppDispatch>()
+  return useCallback(
+    (updateLastCheckedBlockParams: UpdateLastCheckedBlockParams) =>
+      dispatch(updateLastCheckedBlock(updateLastCheckedBlockParams)),
+    [dispatch]
+  )
 }
