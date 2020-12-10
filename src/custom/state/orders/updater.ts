@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux'
 import { useActiveWeb3React } from 'hooks'
 import { useAddPopup, useBlockNumber } from 'state/application/hooks'
 import { AppDispatch } from 'state'
-// import { removeOrder, /* fulfillOrder, */ OrderFromApi } from './actions'
+import { fulfillOrder } from './actions'
 import { utils } from 'ethers'
 import { Web3Provider } from '@ethersproject/providers'
 import { Log, Filter } from '@ethersproject/abstract-provider'
@@ -87,7 +87,7 @@ const constructGetLogsRetry = (provider: Web3Provider) => {
 }
 
 export function EventUpdater(): null {
-  const { chainId, library } = useActiveWeb3React()
+  const { account, chainId, library } = useActiveWeb3React()
   // console.log('EventUpdater::library', library)
   // console.log('EventUpdater::chainId', chainId)
 
@@ -107,8 +107,13 @@ export function EventUpdater(): null {
     return constructGetLogsRetry(library)
   }, [library])
 
+  const eventTopics = useMemo(() => {
+    if (!account) return null
+    return generateTradeEventTopics({ owner: account })
+  }, [account])
+
   useEffect(() => {
-    if (!chainId || !library || !getLogsRetry || !lastBlockNumber) return
+    if (!chainId || !library || !getLogsRetry || !lastBlockNumber || !eventTopics) return
     ;(window as any).getLogsRetry = (fromBlock: number, toBlock: number) => {
       // to play around with in console
       return getLogsRetry({
@@ -125,28 +130,24 @@ export function EventUpdater(): null {
       console.log('EventUpdater::getLogs', {
         fromBlock: lastCheckedBlock + 1,
         toBlock: lastBlockNumber,
-        // address: '0x',
-        topics: TransferEventTopics
+        // address: '0x', // TODO: get address from networks.json or somewhere else
+        topics: eventTopics
       })
 
       const logs = await getLogsRetry({
         fromBlock: lastCheckedBlock + 1,
         toBlock: lastBlockNumber,
-        // address: '0x',
-        topics: TransferEventTopics
+        // address: '0x', // TODO: get address from networks.json or somewhere else
+        topics: eventTopics
       })
 
       // console.log('logs', logs)
       logs.forEach(log => {
         try {
           // const { from, to, amount } = decodeTransferEvent(log)
-          // const { from, to, amount, id } = decodeTransferEvent(log)
+          const { orderUid: id } = decodeTradeEvent(log)
 
-          console.log('EventUpdater::Detected transfer of token in block', log.blockNumber)
-          // console.log('EventUpdater::Detected transfer of token since last time', log.address, { from, to, amount })
-          // dispatch(fulfillOrder({ chainId, id, fulfillmentTime: from log,if: from log }))
-        } catch (e) {}
-      })
+          console.log(`EventUpdater::Detected Trade event for order ${id} of token in block`, log.blockNumber)
 
       // TODO: extend addPopup to accept whatever we want to show for Orders
       if (logs.length > 0) {
@@ -172,7 +173,7 @@ export function EventUpdater(): null {
     }
 
     getPastEvents()
-  }, [chainId, library, lastBlockNumber, lastCheckedBlock, getLogsRetry, dispatch, addPopup])
+  }, [chainId, library, lastBlockNumber, lastCheckedBlock, getLogsRetry, dispatch, addPopup, eventTopics])
 
   // TODO: maybe implement event watching instead of getPastEvents on every block
   // useEffect(() => {
