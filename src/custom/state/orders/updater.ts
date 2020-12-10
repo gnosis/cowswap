@@ -172,6 +172,25 @@ export function EventUpdater(): null {
         }
       })
 
+      // TODO: extend addPopup to accept whatever we want to show for Orders
+      // if (logs.length > 0) {
+      //   const firstBlock = logs[0].blockNumber
+      //   const lastBlock = logs[logs.length - 1].blockNumber
+
+      //   const blocksRangeStr = firstBlock === lastBlock ? `block ${firstBlock}` : `blocks ${firstBlock} - ${lastBlock}`
+      //   // Sample popup for events
+      //   addPopup(
+      //     {
+      //       txn: {
+      //         hash: logs[0].transactionHash,
+      //         success: true,
+      //         summary: `EventUpdater::Detected ${logs.length} token Transfers in ${blocksRangeStr}`
+      //       }
+      //     },
+      //     logs[0].transactionHash
+      //   )
+      // }
+
       // SET lastCheckedBlock = lastBlockNumber
       dispatch(updateLastCheckedBlock({ chainId, lastCheckedBlock: lastBlockNumber }))
     }
