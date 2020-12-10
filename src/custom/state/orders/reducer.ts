@@ -1,6 +1,6 @@
 import { createReducer, PayloadAction } from '@reduxjs/toolkit'
 import { ChainId } from '@uniswap/sdk'
-import { addPendingOrder, removeOrder, Order, OrderID, clearOrders, fulfillOrder, OrderStatus } from './actions'
+import { ContractDeploymentBlocks } from './consts'
 
 export interface OrderObject {
   id: OrderID
@@ -15,6 +15,7 @@ export type OrdersState = {
   readonly [chainId in ChainId]?: {
     pending: PartialOrdersMap
     fulfilled: PartialOrdersMap
+    lastCheckedBlock: number
   }
 }
 
@@ -37,7 +38,8 @@ function prefillState(
   if (!stateAtChainId) {
     state[chainId] = {
       pending: {},
-      fulfilled: {}
+      fulfilled: {},
+      lastCheckedBlock: ContractDeploymentBlocks[chainId] ?? 0
     }
     return
   }
@@ -87,7 +89,8 @@ export default createReducer(initialState, builder =>
 
       state[chainId] = {
         pending: {},
-        fulfilled: {}
+        fulfilled: {},
+        lastCheckedBlock: ContractDeploymentBlocks[chainId] ?? 0
       }
     })
 )
