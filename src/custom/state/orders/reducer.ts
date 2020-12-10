@@ -1,5 +1,15 @@
 import { createReducer, PayloadAction } from '@reduxjs/toolkit'
 import { ChainId } from '@uniswap/sdk'
+import {
+  addPendingOrder,
+  removeOrder,
+  Order,
+  OrderID,
+  clearOrders,
+  fulfillOrder,
+  OrderStatus,
+  updateLastCheckedBlock
+} from './actions'
 import { ContractDeploymentBlocks } from './consts'
 
 export interface OrderObject {
@@ -92,5 +102,11 @@ export default createReducer(initialState, builder =>
         fulfilled: {},
         lastCheckedBlock: ContractDeploymentBlocks[chainId] ?? 0
       }
+    })
+    .addCase(updateLastCheckedBlock, (state, action) => {
+      prefillState(state, action)
+      const { chainId, lastCheckedBlock } = action.payload
+
+      state[chainId].lastCheckedBlock = lastCheckedBlock
     })
 )
