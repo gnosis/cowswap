@@ -97,6 +97,7 @@ const useAddOrdersOnMount = (minPendingOrders = 5) => {
       const tokenMap = lists[chainId]
 
       const tokenList = Object.values(tokenMap)
+      if (tokenList.length === 0) return
 
       const newTempOrders = Array.from({ length: ordersNum }, () => {
         const [sellToken, buyToken] = getTwoRandomElementsFromArray(tokenList)
