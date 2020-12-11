@@ -1,0 +1,78 @@
+import { useEffect, useRef } from 'react'
+import { batch } from 'react-redux'
+
+import { Order, OrderStatus, OrderKind } from './actions'
+import { useActiveWeb3React } from 'hooks'
+import { useAddPendingOrder, usePendingOrders, useFulfillOrder } from './hooks'
+import { useSelectedTokenList } from 'state/lists/hooks'
+import { useAddPopup } from '@src/state/application/hooks'
+import { TokenInfo } from '@uniswap/token-lists'
+
+const randomNumberInRange = (min: number, max: number) => {
+  return Math.random() * (max - min) + min
+}
+
+// Infinity to not trigger condition
+const randomIntInRangeExcept = (min: number, max: number, exception = Infinity) => {
+  let num = Math.floor(randomNumberInRange(min, max))
+  // >= because we Math.floor
+  if (num >= exception) ++num
+  return num
+}
+
+const getRandomElementFromArray = <T>(array: T[]): T => {
+  const ind = randomIntInRangeExcept(0, array.length - 1)
+  return array[ind]
+}
+
+const getTwoRandomElementsFromArray = <T>(array: T[]): [T, T] => {
+  const ind1 = randomIntInRangeExcept(0, array.length - 1)
+  const ind2 = randomIntInRangeExcept(0, array.length - 1, ind1)
+
+  return [array[ind1], array[ind2]]
+}
+
+type MinTokenData = Pick<TokenInfo, 'symbol' | 'decimals' | 'address'>
+
+interface GenerateOrderParams extends Pick<Order, 'owner'> {
+  sellSymbol?: string
+  buySymbol?: string
+  buyToken: MinTokenData
+  sellToken: MinTokenData
+}
+
+// increment for OrderId
+let orderN = 1
+const generateOrderId = (ind: number) => {
+  return `OrderId_${ind}_`.padEnd(56 * 2, 'X')
+}
+
+const generateOrder = ({ owner, sellToken, buyToken }: GenerateOrderParams): Order => {
+  const sellAmount = (Math.random() * 1e18).toString(10) // in atoms
+  const buyAmount = (Math.random() * 1e18).toString(10) // in atoms
+
+  const orderType = orderN % 2 ? OrderKind.BUY : OrderKind.SELL
+
+  const summary = `Order ${orderType.toUpperCase()} ${+sellAmount / 10 ** sellToken.decimals} ${
+    sellToken.symbol
+  } for ${+buyAmount / 10 ** buyToken.decimals} ${buyToken.symbol} fulfilled`
+
+  return {
+    id: generateOrderId(orderN), // Unique identifier for the order: 56 bytes encoded as hex without 0x
+    owner: owner.replace('0x', ''),
+    status: OrderStatus.PENDING,
+    creationTime: new Date().toISOString(),
+    summary, // for dapp use only, readable by user
+    sellToken: sellToken.address.replace('0x', ''), // address, without '0x' prefix
+    buyToken: buyToken.address.replace('0x', ''), // address, without '0x' prefix
+    sellAmount, // in atoms
+    buyAmount, // in atoms
+    // 4 - 6min
+    validTo: Date.now() / 1000 + randomIntInRangeExcept(240, 360), // uint32. unix timestamp, seconds, use new Date(validTo * 1000)
+    appData: 1, // arbitrary identifier sent along with the order
+    feeAmount: (1e18).toString(), // in atoms
+    orderType,
+    partiallyFillable: false,
+    signature: (orderN++).toString().repeat(65 * 2) // 65 bytes encoded as hex without `0x` prefix. v + r + s from the spec
+  }
+}
