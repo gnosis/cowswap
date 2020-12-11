@@ -1,6 +1,6 @@
 import { createAction } from '@reduxjs/toolkit'
-import { OrderID } from '@src/custom/utils/operator'
-import { OrderCreation } from '@src/custom/utils/signatures'
+import { OrderID } from 'utils/operator'
+import { OrderCreation } from 'utils/signatures'
 import { ChainId } from '@uniswap/sdk'
 
 export enum OrderStatus {
