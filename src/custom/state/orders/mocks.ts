@@ -136,7 +136,8 @@ const useFulfillOrdersRandomly = (interval = 20000 /* ms */) => {
 
   useEffect(() => {
     if (!chainId) return
-    const intervalId = setInterval(() => {
+
+    const fulfillRandomOrder = () => {
       // no more pending orders
       // but don't clearInterval so we can restart when there are new orders
       if (pendingOrdersRef.current.length === 0) return
@@ -157,7 +158,10 @@ const useFulfillOrdersRandomly = (interval = 20000 /* ms */) => {
           randomOrder.id
         )
       })
-    }, interval)
+    }
+    ;(window as any).fulfillRandomOrder = fulfillRandomOrder
+
+    const intervalId = setInterval(() => fulfillRandomOrder, interval)
 
     return () => clearInterval(intervalId)
   }, [addPopup, chainId, fulfillOrder, interval])
