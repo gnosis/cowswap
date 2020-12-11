@@ -11,6 +11,7 @@ import {
   updateLastCheckedBlock
 } from './actions'
 import { ContractDeploymentBlocks } from './consts'
+import { Writable } from '@src/custom/types'
 
 export interface OrderObject {
   id: OrderID
@@ -31,10 +32,6 @@ export type OrdersState = {
 
 interface PrefillStateRequired {
   chainId: ChainId
-}
-
-type Writable<T> = {
-  -readonly [K in keyof T]: T[K]
 }
 
 // makes sure there's always an object at state[chainId], state[chainId].pending | .fulfilled
