@@ -105,11 +105,18 @@ export async function postSignedOrder(params: { chainId: ChainId; order: OrderCr
   const { chainId, order } = params
   console.log('[utils:operator] Post signed order for network', chainId, order)
 
+  const orderRaw: OrderCreation = {
+    ...order,
+    sellToken: order.sellToken.toString().substr(2),
+    buyToken: order.buyToken.toString().substr(2),
+    signature: order.signature.substr(2)
+  }
+
   // Call API
   const baseUrl = _getApiBaseUrl(chainId)
   const response = await fetch(`${baseUrl}/orders`, {
     ...POST_HEADERS,
-    body: JSON.stringify(order)
+    body: JSON.stringify(orderRaw)
   })
 
   // Handle respose
@@ -117,7 +124,6 @@ export async function postSignedOrder(params: { chainId: ChainId; order: OrderCr
     console.log('Not OK')
     // Raise an exception
     const errorMessage = await _getErrorForUnsuccessfulPostOrder(response)
-    console.error('[util:operator] Error posting the signed order', response.text)
     throw new Error(errorMessage)
   }
   console.log('OK')
