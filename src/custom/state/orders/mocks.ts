@@ -76,3 +76,49 @@ const generateOrder = ({ owner, sellToken, buyToken }: GenerateOrderParams): Ord
     signature: (orderN++).toString().repeat(65 * 2) // 65 bytes encoded as hex without `0x` prefix. v + r + s from the spec
   }
 }
+
+// add more orders if less than minPendingOrders currently
+const useAddOrdersOnMount = (minPendingOrders = 5) => {
+  const { account, chainId, library } = useActiveWeb3React()
+
+  const pendingOrders = usePendingOrders({ chainId })
+
+  // ref, so we don't rerun useEffect
+  const pendingOrdersRef = useRef(pendingOrders)
+  pendingOrdersRef.current = pendingOrders
+
+  const addOrder = useAddPendingOrder()
+
+  const lists = useSelectedTokenList()
+
+  useEffect(() => {
+    const addNOrders = (ordersNum: number) => {
+      if (!account || !chainId || !library) return
+      const tokenMap = lists[chainId]
+
+      const tokenList = Object.values(tokenMap)
+
+      const [sellToken, buyToken] = getTwoRandomElementsFromArray(tokenList)
+
+      const newTempOrders = Array.from({ length: ordersNum }, () =>
+        generateOrder({
+          owner: account,
+          sellToken: sellToken.tokenInfo,
+          buyToken: buyToken.tokenInfo
+        })
+      )
+
+      batch(() => {
+        newTempOrders.forEach(order => {
+          addOrder({ order, id: order.id, chainId })
+        })
+      })
+    }
+    ;(window as any).addNOrders = addNOrders
+
+    // don't just keep adding orders when there's already enough pending
+    if (pendingOrdersRef.current.length >= minPendingOrders) return
+
+    addNOrders(10)
+  }, [account, addOrder, chainId, library, lists, minPendingOrders])
+}
