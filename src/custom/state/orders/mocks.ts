@@ -167,3 +167,13 @@ const useFulfillOrdersRandomly = (interval = 20000 /* ms */) => {
   }, [addPopup, chainId, fulfillOrder, interval])
 }
 
+interface EventUpdaterProps {
+  minPendingOrders?: number
+}
+
+export function EventUpdater({ minPendingOrders }: EventUpdaterProps): null {
+  useAddOrdersOnMount(minPendingOrders)
+  useFulfillOrdersRandomly()
+
+  return null
+}
