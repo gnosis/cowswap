@@ -58,6 +58,10 @@ function prefillState(
   if (!stateAtChainId.fulfilled) {
     stateAtChainId.fulfilled = {}
   }
+
+  if (stateAtChainId.lastCheckedBlock === undefined) {
+    stateAtChainId.lastCheckedBlock = ContractDeploymentBlocks[chainId] ?? 0
+  }
 }
 
 const initialState: OrdersState = {}
