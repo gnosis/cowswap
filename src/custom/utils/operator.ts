@@ -132,15 +132,26 @@ export async function postSignedOrder(params: { chainId: ChainId; order: OrderCr
   return uid
 }
 
-export async function getFeeQuote(chainId: ChainId, feeQuote: string): Promise<FeeInformation> {
-  // TODO: Let see if we can incorporate the PRs from the Fee, where they cache stuff and keep it in sync using redux.
+export async function getFeeQuote(chainId: ChainId, tokenAddress: string): Promise<FeeInformation> {
+  // TODO: I commented out the implementation because the API is not yet implemented. Review the code in the comment below
+  console.log('[util:operator] Get fee for ', chainId, tokenAddress)
+
+  return {
+    feeRatio: 10,
+    minimalFee: '0',
+    expirationDate: '2021-12-31T23:59:59.999Z'
+  }
+
+  // // TODO: Let see if we can incorporate the PRs from the Fee, where they cache stuff and keep it in sync using redux.
   // if that part is delayed or need more review, we can easily add the cache in this file (we check expiration and cache here)
+  /*
   const baseUrl = _getApiBaseUrl(chainId)
-  const response = await fetch(`${baseUrl}/fee/${feeQuote}`, DEFAULT_HEADERS)
+  const response = await fetch(`${baseUrl}/fee/${tokenAddress}`, DEFAULT_HEADERS)
 
   if (!response.ok) {
     throw new Error('Error getting the fee')
   }
 
   return response.json()
+  */
 }
