@@ -98,15 +98,15 @@ const useAddOrdersOnMount = (minPendingOrders = 5) => {
 
       const tokenList = Object.values(tokenMap)
 
-      const [sellToken, buyToken] = getTwoRandomElementsFromArray(tokenList)
+      const newTempOrders = Array.from({ length: ordersNum }, () => {
+        const [sellToken, buyToken] = getTwoRandomElementsFromArray(tokenList)
 
-      const newTempOrders = Array.from({ length: ordersNum }, () =>
-        generateOrder({
+        return generateOrder({
           owner: account,
           sellToken: sellToken.tokenInfo,
           buyToken: buyToken.tokenInfo
         })
-      )
+      })
 
       batch(() => {
         newTempOrders.forEach(order => {
