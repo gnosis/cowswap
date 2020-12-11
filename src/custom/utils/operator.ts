@@ -18,11 +18,6 @@ const DEFAULT_HEADERS = {
   }
 }
 
-const POST_HEADERS = {
-  method: 'POST',
-  ...DEFAULT_HEADERS
-}
-
 /**
  * Unique identifier for the order, calculated by keccak256(orderDigest, ownerAddress, validTo),
    where orderDigest = keccak256(orderStruct). bytes32.
@@ -32,6 +27,12 @@ export type OrderID = string
 export interface OrderPostError {
   errorType: 'MissingOrderData' | 'InvalidSignature' | 'DuplicateOrder' | 'InsufficientFunds'
   description: string
+}
+
+export interface FeeInformation {
+  expirationDate: string
+  minimalFee: string
+  feeRatio: number
 }
 
 function _getApiBaseUrl(chainId: ChainId): string {
@@ -114,7 +115,8 @@ export async function postSignedOrder(params: { chainId: ChainId; order: OrderCr
   // Call API
   const baseUrl = _getApiBaseUrl(chainId)
   const response = await fetch(`${baseUrl}/orders`, {
-    ...POST_HEADERS,
+    ...DEFAULT_HEADERS,
+    method: 'POST',
     body: JSON.stringify(orderRaw)
   })
 
@@ -128,4 +130,15 @@ export async function postSignedOrder(params: { chainId: ChainId; order: OrderCr
   const uid = response.json()
   console.log('[util:operator] Success posting the signed order', uid)
   return uid
+}
+
+export async function getFeeQuote(chainId: ChainId, feeQuote: string): Promise<FeeInformation> {
+  const baseUrl = _getApiBaseUrl(chainId)
+  const response = await fetch(`${baseUrl}/fee/${feeQuote}`, DEFAULT_HEADERS)
+
+  if (!response.ok) {
+    throw new Error('Error getting the fee')
+  }
+
+  return response.json()
 }
