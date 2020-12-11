@@ -133,6 +133,8 @@ export async function postSignedOrder(params: { chainId: ChainId; order: OrderCr
 }
 
 export async function getFeeQuote(chainId: ChainId, feeQuote: string): Promise<FeeInformation> {
+  // TODO: Let see if we can incorporate the PRs from the Fee, where they cache stuff and keep it in sync using redux.
+  // if that part is delayed or need more review, we can easily add the cache in this file (we check expiration and cache here)
   const baseUrl = _getApiBaseUrl(chainId)
   const response = await fetch(`${baseUrl}/fee/${feeQuote}`, DEFAULT_HEADERS)
 
