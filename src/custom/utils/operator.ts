@@ -107,10 +107,6 @@ export async function postSignedOrder(params: { chainId: ChainId; order: OrderCr
 
   const orderRaw: Omit<OrderCreation, 'kind'> & { kind: string } = {
     ...order,
-    // The API will accept 0x prefix soon. this is temp code
-    sellToken: order.sellToken.toString().substr(2),
-    buyToken: order.buyToken.toString().substr(2),
-    signature: order.signature.substr(2),
     // TODO: The NPM module will use the same structure as the API soon, this is temporal code too
     kind: order.kind === ORDER_KIND_SELL ? 'sell' : 'buy'
   }
