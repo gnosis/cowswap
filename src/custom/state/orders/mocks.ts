@@ -122,3 +122,44 @@ const useAddOrdersOnMount = (minPendingOrders = 5) => {
     addNOrders(10)
   }, [account, addOrder, chainId, library, lists, minPendingOrders])
 }
+
+const useFulfillOrdersRandomly = (interval = 20000 /* ms */) => {
+  const { chainId } = useActiveWeb3React()
+  const pendingOrders = usePendingOrders({ chainId })
+
+  // ref, so we don't rerun useEffect
+  const pendingOrdersRef = useRef(pendingOrders)
+  pendingOrdersRef.current = pendingOrders
+
+  const fulfillOrder = useFulfillOrder()
+  const addPopup = useAddPopup()
+
+  useEffect(() => {
+    if (!chainId) return
+    const intervalId = setInterval(() => {
+      // no more pending orders
+      // but don't clearInterval so we can restart when there are new orders
+      if (pendingOrdersRef.current.length === 0) return
+
+      const randomOrder = getRandomElementFromArray(pendingOrdersRef.current)
+
+      batch(() => {
+        fulfillOrder({ chainId, id: randomOrder.id, fulfillmentTime: new Date().toISOString() })
+
+        addPopup(
+          {
+            txn: {
+              hash: randomOrder.id,
+              success: true,
+              summary: randomOrder.summary || `Order ${randomOrder.id} was traded`
+            }
+          },
+          randomOrder.id
+        )
+      })
+    }, interval)
+
+    return () => clearInterval(intervalId)
+  }, [addPopup, chainId, fulfillOrder, interval])
+}
+
