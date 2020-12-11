@@ -161,7 +161,7 @@ const useFulfillOrdersRandomly = (interval = 20000 /* ms */) => {
     }
     ;(window as any).fulfillRandomOrder = fulfillRandomOrder
 
-    const intervalId = setInterval(() => fulfillRandomOrder, interval)
+    const intervalId = setInterval(fulfillRandomOrder, interval)
 
     return () => clearInterval(intervalId)
   }, [addPopup, chainId, fulfillOrder, interval])
