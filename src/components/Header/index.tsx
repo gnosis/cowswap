@@ -21,7 +21,7 @@ import Settings from '../Settings'
 import Menu from '../Menu'
 
 import Row, { RowFixed } from '../Row'
-import Web3Status from '../Web3Status'
+import Web3Status from 'components/Web3Status'
 import ClaimModal from '../claim/ClaimModal'
 import { useToggleSelfClaimModal, useShowClaimPopup } from '../../state/application/hooks'
 import { useUserHasAvailableClaim } from '../../state/claim/hooks'
