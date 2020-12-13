@@ -217,7 +217,8 @@ interface AccountDetailsProps {
   ENSName?: string
   openOptions: () => void
 }
-
+const mockPendingTx = ['0x123123123', '0x1235asdasdasd']
+const mockConfirmedTx = ['0xAAA123123', '0xBBB5asdasdasd']
 export default function AccountDetails({
   toggleWalletModal,
   pendingTransactions,
@@ -392,14 +393,16 @@ export default function AccountDetails({
           </YourAccount>
         </AccountSection>
       </UpperSection>
-      {!!pendingTransactions.length || !!confirmedTransactions.length ? (
+      {mockPendingTx.length || !!pendingTransactions.length || !!confirmedTransactions.length ? (
         <LowerSection>
           <AutoRow mb={'1rem'} style={{ justifyContent: 'space-between' }}>
             <TYPE.body>Recent Transactions</TYPE.body>
             <LinkStyledButton onClick={clearAllTransactionsCallback}>(clear all)</LinkStyledButton>
           </AutoRow>
-          {renderTransactions(pendingTransactions)}
-          {renderTransactions(confirmedTransactions)}
+          <h1>PENDING</h1>
+          {renderTransactions((mockPendingTx.length > 0 && mockPendingTx) || pendingTransactions)}
+          <h1>CONFIRMED</h1>
+          {renderTransactions((mockConfirmedTx.length > 0 && mockConfirmedTx) || confirmedTransactions)}
         </LowerSection>
       ) : (
         <LowerSection>
