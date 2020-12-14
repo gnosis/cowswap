@@ -45,6 +45,14 @@ const constructGetLogsRetry = (provider: Web3Provider) => {
       // if a different error - rethrow
       if (!error?.message?.includes('query returned more than')) throw error
 
+      // still too many logsin 1 block
+      // skip it
+      // but this shouldn't happen
+      if (toBlock === fromBlock) {
+        console.error(`Too many logs in block ${toBlock}. Skipping. Some Orders may fail to update`)
+        return []
+      }
+
       const midBlock = Math.floor((toBlock + fromBlock) / 2)
 
       const [beforeMidLogs, afterMidLogs] = await Promise.all([
