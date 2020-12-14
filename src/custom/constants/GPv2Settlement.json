@@ -1,16 +1,5 @@
 [
   {
-    "inputs": [
-      {
-        "internalType": "contract GPv2Authentication",
-        "name": "authenticator_",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "constructor"
-  },
-  {
     "anonymous": false,
     "inputs": [
       {
@@ -70,71 +59,6 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes",
-        "name": "",
-        "type": "bytes"
-      }
-    ],
-    "name": "filledAmount",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes",
-        "name": "orderUid",
-        "type": "bytes"
-      }
-    ],
-    "name": "invalidateOrder",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "contract IERC20[]",
-        "name": "tokens",
-        "type": "address[]"
-      },
-      {
-        "internalType": "uint256[]",
-        "name": "clearingPrices",
-        "type": "uint256[]"
-      },
-      {
-        "internalType": "bytes",
-        "name": "encodedTrades",
-        "type": "bytes"
-      },
-      {
-        "internalType": "bytes",
-        "name": "encodedInteractions",
-        "type": "bytes"
-      },
-      {
-        "internalType": "bytes",
-        "name": "encodedOrderRefunds",
-        "type": "bytes"
-      }
-    ],
-    "name": "settle",
-    "outputs": [],
-    "stateMutability": "nonpayable",
     "type": "function"
   }
 ]
