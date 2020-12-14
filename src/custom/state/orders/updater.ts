@@ -263,19 +263,21 @@ export function ExpiredOrdersWatcher(): null {
         return validTo < now
       })
 
-      expiredOrders.forEach(order => {
-        expireOrder({ chainId, id: order.id })
+      batch(() => {
+        expiredOrders.forEach(order => {
+          expireOrder({ chainId, id: order.id })
 
-        addPopup(
-          {
-            txn: {
-              hash: order.id,
-              success: false,
-              summary: order.summary + ' expired' || `Order ${order.id} expired`
-            }
-          },
-          order.id + '_expired' // to differentiate further
-        )
+          addPopup(
+            {
+              txn: {
+                hash: order.id,
+                success: false,
+                summary: order.summary + ' expired' || `Order ${order.id} expired`
+              }
+            },
+            order.id + '_expired' // to differentiate further
+          )
+        })
       })
     }
 
