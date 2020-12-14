@@ -12,7 +12,7 @@ import { isAddress, shortenAddress } from '@src/utils'
 import { AddPendingOrderParams, OrderStatus } from 'state/orders/actions'
 import { useAddPendingOrder } from 'state/orders/hooks'
 import { ORDER_KIND_BUY, ORDER_KIND_SELL, signOrder, UnsignedOrder } from 'utils/signatures'
-import { getFeeQuote as getFeeInformation, postSignedOrder } from '../utils/operator'
+import { getFeeQuote as getFeeInformation, postSignedOrder } from 'utils/operator'
 import { getFeeAmount } from 'utils/fee'
 
 interface PostOrderParams {
