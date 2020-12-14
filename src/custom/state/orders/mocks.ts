@@ -55,7 +55,7 @@ const generateOrder = ({ owner, sellToken, buyToken }: GenerateOrderParams): Ord
 
   const summary = `Order ${kind.toUpperCase()} ${(sellAmount / 10 ** sellToken.decimals).toFixed(2)} ${
     sellToken.symbol
-  } for ${(buyAmount / 10 ** buyToken.decimals).toFixed(2)} ${buyToken.symbol} fulfilled`
+  } for ${(buyAmount / 10 ** buyToken.decimals).toFixed(2)} ${buyToken.symbol}`
 
   return {
     id: generateOrderId(orderN), // Unique identifier for the order: 56 bytes encoded as hex without 0x
@@ -67,8 +67,8 @@ const generateOrder = ({ owner, sellToken, buyToken }: GenerateOrderParams): Ord
     buyToken: buyToken.address.replace('0x', ''), // address, without '0x' prefix
     sellAmount: sellAmount.toString(10), // in atoms
     buyAmount: buyAmount.toString(10), // in atoms
-    // 4 - 6min
-    validTo: Date.now() / 1000 + randomIntInRangeExcept(240, 360), // uint32. unix timestamp, seconds, use new Date(validTo * 1000)
+    // 20sec - 4min
+    validTo: Date.now() / 1000 + randomIntInRangeExcept(20, 240), // uint32. unix timestamp, seconds, use new Date(validTo * 1000)
     appData: 1, // arbitrary identifier sent along with the order
     feeAmount: (1e18).toString(), // in atoms
     kind,
@@ -124,7 +124,7 @@ const useAddOrdersOnMount = (minPendingOrders = 5) => {
   }, [account, addOrder, chainId, library, lists, minPendingOrders])
 }
 
-const useFulfillOrdersRandomly = (interval = 20000 /* ms */) => {
+const useFulfillOrdersRandomly = (interval = 30000 /* ms */) => {
   const { chainId } = useActiveWeb3React()
   const pendingOrders = usePendingOrders({ chainId })
 
@@ -153,10 +153,10 @@ const useFulfillOrdersRandomly = (interval = 20000 /* ms */) => {
             txn: {
               hash: randomOrder.id,
               success: true,
-              summary: randomOrder.summary || `Order ${randomOrder.id} was traded`
+              summary: randomOrder.summary + ' fulfilled' || `Order ${randomOrder.id} was traded`
             }
           },
-          randomOrder.id
+          randomOrder.id + '_fulfilled'
         )
       })
     }
