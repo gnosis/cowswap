@@ -1,5 +1,5 @@
 import { ChainId } from '@uniswap/sdk'
-import { OrderCreation, ORDER_KIND_SELL } from 'utils/signatures'
+import { OrderCreation } from 'utils/signatures'
 
 /**
  * See Swagger documentation:
@@ -120,14 +120,8 @@ export async function postSignedOrder(params: { chainId: ChainId; order: OrderCr
   const { chainId, order } = params
   console.log('[utils:operator] Post signed order for network', chainId, order)
 
-  const orderRaw: Omit<OrderCreation, 'kind'> & { kind: string } = {
-    ...order,
-    // TODO: The NPM module will use the same structure as the API soon, this is temporal code too
-    kind: order.kind === ORDER_KIND_SELL ? 'sell' : 'buy'
-  }
-
   // Call API
-  const response = await _post(chainId, `/orders`, orderRaw)
+  const response = await _post(chainId, `/orders`, order)
 
   // Handle respose
   if (!response.ok) {
