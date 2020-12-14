@@ -12,10 +12,8 @@ const API_BASE_URL: Partial<Record<ChainId, string>> = {
 }
 
 const DEFAULT_HEADERS = {
-  headers: {
-    'Content-Type': 'application/json'
-    // TODO: Maybe add a custom header for the AppId (same as the signing tx)
-  }
+  'Content-Type': 'application/json'
+  // TODO: Maybe add a custom header for the AppId (same as the signing tx)
 }
 
 /**
@@ -115,7 +113,7 @@ export async function postSignedOrder(params: { chainId: ChainId; order: OrderCr
   // Call API
   const baseUrl = _getApiBaseUrl(chainId)
   const response = await fetch(`${baseUrl}/orders`, {
-    ...DEFAULT_HEADERS,
+    headers: DEFAULT_HEADERS,
     method: 'POST',
     body: JSON.stringify(orderRaw)
   })
@@ -136,22 +134,21 @@ export async function getFeeQuote(chainId: ChainId, tokenAddress: string): Promi
   // TODO: I commented out the implementation because the API is not yet implemented. Review the code in the comment below
   console.log('[util:operator] Get fee for ', chainId, tokenAddress)
 
-  return {
-    feeRatio: 10,
-    minimalFee: '0',
-    expirationDate: '2021-12-31T23:59:59.999Z'
-  }
+  // return {
+  //   feeRatio: 10,
+  //   minimalFee: '0',
+  //   expirationDate: '2021-12-31T23:59:59.999Z'
+  // }
 
   // // TODO: Let see if we can incorporate the PRs from the Fee, where they cache stuff and keep it in sync using redux.
   // if that part is delayed or need more review, we can easily add the cache in this file (we check expiration and cache here)
-  /*
+
   const baseUrl = _getApiBaseUrl(chainId)
-  const response = await fetch(`${baseUrl}/fee/${tokenAddress}`, DEFAULT_HEADERS)
+  const response = await fetch(`${baseUrl}/fee/${tokenAddress}`, { headers: DEFAULT_HEADERS })
 
   if (!response.ok) {
     throw new Error('Error getting the fee')
   }
 
   return response.json()
-  */
 }
