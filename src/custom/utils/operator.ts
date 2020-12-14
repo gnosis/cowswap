@@ -43,6 +43,15 @@ function _getApiBaseUrl(chainId: ChainId): string {
   }
 }
 
+function _post(chainId: ChainId, url: string, data: any) {
+  const baseUrl = _getApiBaseUrl(chainId)
+  return fetch(`${baseUrl}/orders`, {
+    headers: DEFAULT_HEADERS,
+    method: 'POST',
+    body: JSON.stringify(data)
+  })
+}
+
 async function _getErrorForBadPostOrderRequest(response: Response): Promise<string> {
   let errorMessage: string
   try {
@@ -111,12 +120,7 @@ export async function postSignedOrder(params: { chainId: ChainId; order: OrderCr
   }
 
   // Call API
-  const baseUrl = _getApiBaseUrl(chainId)
-  const response = await fetch(`${baseUrl}/orders`, {
-    headers: DEFAULT_HEADERS,
-    method: 'POST',
-    body: JSON.stringify(orderRaw)
-  })
+  const response = await _post(`/orders`, orderRaw)
 
   // Handle respose
   if (!response.ok) {
