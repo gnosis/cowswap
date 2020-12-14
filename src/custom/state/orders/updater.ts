@@ -45,7 +45,7 @@ const constructGetLogsRetry = (provider: Web3Provider) => {
       // if a different error - rethrow
       if (!error?.message?.includes('query returned more than')) throw error
 
-      // still too many logsin 1 block
+      // still too many logs in 1 block
       // skip it
       // but this shouldn't happen
       if (toBlock === fromBlock) {
