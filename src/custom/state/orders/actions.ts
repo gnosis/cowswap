@@ -1,11 +1,7 @@
 import { createAction } from '@reduxjs/toolkit'
 import { UnsignedOrder } from '@src/custom/utils/signatures'
 import { ChainId } from '@uniswap/sdk'
-
-export enum OrderKind {
-  SELL = 'sell',
-  BUY = 'buy'
-}
+export { OrderKind } from '@gnosis.pm/gp-v2-contracts'
 
 // posted to /api/v1/orders on Order creation
 // serializable, so no BigNumbers

@@ -51,9 +51,9 @@ const generateOrder = ({ owner, sellToken, buyToken }: GenerateOrderParams): Ord
   const sellAmount = randomNumberInRange(0.5, 5) * 10 ** sellToken.decimals // in atoms
   const buyAmount = randomNumberInRange(0.5, 5) * 10 ** buyToken.decimals // in atoms
 
-  const orderType = orderN % 2 ? OrderKind.BUY : OrderKind.SELL
+  const kind = orderN % 2 ? OrderKind.BUY : OrderKind.SELL
 
-  const summary = `Order ${orderType.toUpperCase()} ${(sellAmount / 10 ** sellToken.decimals).toFixed(2)} ${
+  const summary = `Order ${kind.toUpperCase()} ${(sellAmount / 10 ** sellToken.decimals).toFixed(2)} ${
     sellToken.symbol
   } for ${(buyAmount / 10 ** buyToken.decimals).toFixed(2)} ${buyToken.symbol} fulfilled`
 
@@ -71,7 +71,7 @@ const generateOrder = ({ owner, sellToken, buyToken }: GenerateOrderParams): Ord
     validTo: Date.now() / 1000 + randomIntInRangeExcept(240, 360), // uint32. unix timestamp, seconds, use new Date(validTo * 1000)
     appData: 1, // arbitrary identifier sent along with the order
     feeAmount: (1e18).toString(), // in atoms
-    orderType,
+    kind,
     partiallyFillable: false,
     signature: (orderN++).toString().repeat(65 * 2) // 65 bytes encoded as hex without `0x` prefix. v + r + s from the spec
   }
