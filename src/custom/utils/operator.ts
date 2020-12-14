@@ -136,7 +136,7 @@ export async function postSignedOrder(params: { chainId: ChainId; order: OrderCr
     throw new Error(errorMessage)
   }
 
-  const uid = response.json()
+  const uid = (await response.json()) as string
   console.log('[util:operator] Success posting the signed order', uid)
   return uid
 }
