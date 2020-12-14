@@ -48,14 +48,14 @@ const generateOrderId = (ind: number) => {
 }
 
 const generateOrder = ({ owner, sellToken, buyToken }: GenerateOrderParams): Order => {
-  const sellAmount = (Math.random() * 1e18).toString(10) // in atoms
-  const buyAmount = (Math.random() * 1e18).toString(10) // in atoms
+  const sellAmount = randomNumberInRange(0.5, 5) * 10 ** sellToken.decimals // in atoms
+  const buyAmount = randomNumberInRange(0.5, 5) * 10 ** buyToken.decimals // in atoms
 
   const orderType = orderN % 2 ? OrderKind.BUY : OrderKind.SELL
 
-  const summary = `Order ${orderType.toUpperCase()} ${+sellAmount / 10 ** sellToken.decimals} ${
+  const summary = `Order ${orderType.toUpperCase()} ${(sellAmount / 10 ** sellToken.decimals).toFixed(2)} ${
     sellToken.symbol
-  } for ${+buyAmount / 10 ** buyToken.decimals} ${buyToken.symbol} fulfilled`
+  } for ${(buyAmount / 10 ** buyToken.decimals).toFixed(2)} ${buyToken.symbol} fulfilled`
 
   return {
     id: generateOrderId(orderN), // Unique identifier for the order: 56 bytes encoded as hex without 0x
@@ -65,8 +65,8 @@ const generateOrder = ({ owner, sellToken, buyToken }: GenerateOrderParams): Ord
     summary, // for dapp use only, readable by user
     sellToken: sellToken.address.replace('0x', ''), // address, without '0x' prefix
     buyToken: buyToken.address.replace('0x', ''), // address, without '0x' prefix
-    sellAmount, // in atoms
-    buyAmount, // in atoms
+    sellAmount: sellAmount.toString(10), // in atoms
+    buyAmount: buyAmount.toString(10), // in atoms
     // 4 - 6min
     validTo: Date.now() / 1000 + randomIntInRangeExcept(240, 360), // uint32. unix timestamp, seconds, use new Date(validTo * 1000)
     appData: 1, // arbitrary identifier sent along with the order
