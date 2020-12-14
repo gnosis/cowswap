@@ -9,10 +9,10 @@ import { useMemo } from 'react'
 import useTransactionDeadline from '@src/hooks/useTransactionDeadline'
 import { BigNumber, Signer } from 'ethers'
 import { isAddress, shortenAddress } from '@src/utils'
-import { AddPendingOrderParams, OrderCreation, OrderID, OrderStatus } from 'state/orders/actions'
+import { AddPendingOrderParams, OrderCreation, OrderID, OrderStatus, OrderKind } from 'state/orders/actions'
 import { useAddPendingOrder } from 'state/orders/hooks'
 import { delay } from 'utils/misc'
-import { ORDER_KIND_BUY, ORDER_KIND_SELL, signOrder, UnsignedOrder } from 'utils/signatures'
+import { signOrder, UnsignedOrder } from 'utils/signatures'
 
 interface PostOrderParams {
   account: string
@@ -87,7 +87,7 @@ async function _postOrder(params: PostOrderParams): Promise<string> {
     validTo,
     appData: DEFAULT_APP_ID, // TODO: Add appData by env var
     feeAmount: '0', // TODO: Get fee
-    kind: trade.tradeType === TradeType.EXACT_INPUT ? ORDER_KIND_SELL : ORDER_KIND_BUY,
+    kind: trade.tradeType === TradeType.EXACT_INPUT ? OrderKind.SELL : OrderKind.BUY,
     // orderType: trade.tradeType === TradeType.EXACT_INPUT ? OrderKind.SELL : OrderKind.BUY,
     partiallyFillable: false // Always fill or kill
   }
