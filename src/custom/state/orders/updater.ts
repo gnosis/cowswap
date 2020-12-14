@@ -1,9 +1,9 @@
 import { useEffect, useMemo } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, batch } from 'react-redux'
 import { useActiveWeb3React } from 'hooks'
 import { useAddPopup, useBlockNumber } from 'state/application/hooks'
 import { AppDispatch } from 'state'
-// import { removeOrder, /* fulfillOrder, */ OrderFromApi } from './actions'
+import { fulfillOrder } from './actions'
 import { utils } from 'ethers'
 import { Web3Provider } from '@ethersproject/providers'
 import { Log, Filter } from '@ethersproject/abstract-provider'
@@ -22,6 +22,27 @@ const TransferEventTopics = ERC20Interface.encodeFilterTopics(TransferEvent, [])
 // const decodeTransferEvent = (transferEventLog: Log) => {
 //   return ERC20Interface.decodeEventLog(TransferEvent, transferEventLog.data, transferEventLog.topics)
 // }
+
+// TODO sync with contracts
+const tradeEventAbi =
+  'event Trade(address indexed owner, IERC20 sellToken, IERC20 buyToken, uint256 sellAmount, uint256 buyAmount, uint256 feeAmount, bytes orderUid)'
+const TradeSettlementInterface = new utils.Interface([tradeEventAbi])
+
+const TradeEvent = TradeSettlementInterface.getEvent('Trade')
+
+interface TradeEventParams {
+  owner: string // address
+  id?: string | string[] // to filter by id
+}
+
+const generateTradeEventTopics = ({ owner /*, id */ }: TradeEventParams) => {
+  const TradeEventTopics = TradeSettlementInterface.encodeFilterTopics(TradeEvent, [owner /*, id*/])
+  return TradeEventTopics
+}
+
+const decodeTradeEvent = (tradeEventLog: Log) => {
+  return TradeSettlementInterface.decodeEventLog(TradeEvent, tradeEventLog.data, tradeEventLog.topics)
+}
 
 type RetryFilter = Filter & { fromBlock: number; toBlock: number }
 
@@ -74,7 +95,7 @@ const constructGetLogsRetry = (provider: Web3Provider) => {
 }
 
 export function EventUpdater(): null {
-  const { chainId, library } = useActiveWeb3React()
+  const { account, chainId, library } = useActiveWeb3React()
   // console.log('EventUpdater::library', library)
   // console.log('EventUpdater::chainId', chainId)
 
@@ -94,8 +115,13 @@ export function EventUpdater(): null {
     return constructGetLogsRetry(library)
   }, [library])
 
+  const eventTopics = useMemo(() => {
+    if (!account) return null
+    return generateTradeEventTopics({ owner: account })
+  }, [account])
+
   useEffect(() => {
-    if (!chainId || !library || !getLogsRetry || !lastBlockNumber) return
+    if (!chainId || !library || !getLogsRetry || !lastBlockNumber || !eventTopics) return
     ;(window as any).getLogsRetry = (fromBlock: number, toBlock: number) => {
       // to play around with in console
       return getLogsRetry({
@@ -112,54 +138,76 @@ export function EventUpdater(): null {
       console.log('EventUpdater::getLogs', {
         fromBlock: lastCheckedBlock + 1,
         toBlock: lastBlockNumber,
-        // address: '0x',
-        topics: TransferEventTopics
+        // address: '0x', // TODO: get address from networks.json or somewhere else
+        topics: eventTopics
       })
 
       const logs = await getLogsRetry({
         fromBlock: lastCheckedBlock + 1,
         toBlock: lastBlockNumber,
-        // address: '0x',
-        topics: TransferEventTopics
+        // address: '0x', // TODO: get address from networks.json or somewhere else
+        topics: eventTopics
+      })
+
+      batch(() => {
+        logs.forEach(log => {
+          try {
+            // const { from, to, amount } = decodeTransferEvent(log)
+            const { orderUid: id } = decodeTradeEvent(log)
+
+            console.log(`EventUpdater::Detected Trade event for order ${id} of token in block`, log.blockNumber)
+            dispatch(
+              fulfillOrder({
+                chainId,
+                id,
+                fulfillmentTime: new Date().toISOString() // event only has blockNumber
+                // if we want timestamp, need to getBlock() first
+              })
+            )
+
+            addPopup(
+              {
+                txn: {
+                  hash: log.transactionHash,
+                  success: true,
+                  summary: `Order ${id} was traded`
+                }
+              },
+              log.transactionHash
+            )
+          } catch (error) {
+            console.error('Error decoding Trade event', error)
+          }
+        })
+
+        // SET lastCheckedBlock = lastBlockNumber
+        dispatch(updateLastCheckedBlock({ chainId, lastCheckedBlock: lastBlockNumber }))
       })
 
       // console.log('logs', logs)
-      logs.forEach(log => {
-        try {
-          // const { from, to, amount } = decodeTransferEvent(log)
-          // const { from, to, amount, id } = decodeTransferEvent(log)
-
-          console.log('EventUpdater::Detected transfer of token in block', log.blockNumber)
-          // console.log('EventUpdater::Detected transfer of token since last time', log.address, { from, to, amount })
-          // dispatch(fulfillOrder({ chainId, id, fulfillmentTime: from log,if: from log }))
-        } catch (e) {}
-      })
 
       // TODO: extend addPopup to accept whatever we want to show for Orders
-      if (logs.length > 0) {
-        const firstBlock = logs[0].blockNumber
-        const lastBlock = logs[logs.length - 1].blockNumber
+      // if (logs.length > 0) {
+      //   const firstBlock = logs[0].blockNumber
+      //   const lastBlock = logs[logs.length - 1].blockNumber
 
-        const blocksRangeStr = firstBlock === lastBlock ? `block ${firstBlock}` : `blocks ${firstBlock} - ${lastBlock}`
-        // Sample popup for events
-        addPopup(
-          {
-            txn: {
-              hash: logs[0].transactionHash,
-              success: true,
-              summary: `EventUpdater::Detected ${logs.length} token Transfers in ${blocksRangeStr}`
-            }
-          },
-          logs[0].transactionHash
-        )
-      }
-
-      // SET lastCheckedBlock = lastBlockNumber
-      dispatch(updateLastCheckedBlock({ chainId, lastCheckedBlock: lastBlockNumber }))
+      //   const blocksRangeStr = firstBlock === lastBlock ? `block ${firstBlock}` : `blocks ${firstBlock} - ${lastBlock}`
+      //   // Sample popup for events
+      //   addPopup(
+      //     {
+      //       txn: {
+      //         hash: logs[0].transactionHash,
+      //         success: true,
+      //         summary: `EventUpdater::Detected ${logs.length} token Transfers in ${blocksRangeStr}`
+      //       }
+      //     },
+      //     logs[0].transactionHash
+      //   )
+      // }
     }
 
     getPastEvents()
-  }, [chainId, library, lastBlockNumber, lastCheckedBlock, getLogsRetry, dispatch, addPopup])
+  }, [chainId, library, lastBlockNumber, lastCheckedBlock, getLogsRetry, dispatch, addPopup, eventTopics])
 
   // TODO: maybe implement event watching instead of getPastEvents on every block
   // useEffect(() => {
