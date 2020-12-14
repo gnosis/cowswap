@@ -43,12 +43,19 @@ function _getApiBaseUrl(chainId: ChainId): string {
   }
 }
 
-function _post(chainId: ChainId, url: string, data: any) {
+function _post(chainId: ChainId, url: string, data: any): Promise<Response> {
   const baseUrl = _getApiBaseUrl(chainId)
-  return fetch(`${baseUrl}/orders`, {
+  return fetch(baseUrl + url, {
     headers: DEFAULT_HEADERS,
     method: 'POST',
     body: JSON.stringify(data)
+  })
+}
+
+function _get(chainId: ChainId, url: string) {
+  const baseUrl = _getApiBaseUrl(chainId)
+  return fetch(baseUrl + url, {
+    headers: DEFAULT_HEADERS
   })
 }
 
@@ -120,7 +127,7 @@ export async function postSignedOrder(params: { chainId: ChainId; order: OrderCr
   }
 
   // Call API
-  const response = await _post(`/orders`, orderRaw)
+  const response = await _post(chainId, `/orders`, orderRaw)
 
   // Handle respose
   if (!response.ok) {
@@ -147,8 +154,7 @@ export async function getFeeQuote(chainId: ChainId, tokenAddress: string): Promi
   // // TODO: Let see if we can incorporate the PRs from the Fee, where they cache stuff and keep it in sync using redux.
   // if that part is delayed or need more review, we can easily add the cache in this file (we check expiration and cache here)
 
-  const baseUrl = _getApiBaseUrl(chainId)
-  const response = await fetch(`${baseUrl}/fee/${tokenAddress}`, { headers: DEFAULT_HEADERS })
+  const response = await _get(chainId, `/fee/${tokenAddress}`)
 
   if (!response.ok) {
     throw new Error('Error getting the fee')
