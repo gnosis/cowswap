@@ -1,8 +1,9 @@
 {
-  "name": "@uniswap/interface",
-  "description": "Uniswap Interface",
+  "name": "@gnosis/gp-v2-ui",
+  "description": "Gnosis Protocol v2 Webapp",
   "homepage": ".",
   "private": true,
+  "version": "0.1.0",
   "devDependencies": {
     "@craco/craco": "^5.7.0",
     "@ethersproject/experimental": "^5.0.1",
@@ -99,7 +100,8 @@
     "test": "craco test --env=jsdom",
     "test:debug": "craco --inspect-brk test --runInBand --no-cache",
     "eject": "react-scripts eject",
-    "integration-test": "start-server-and-test 'serve build -l 3000' http://localhost:3000 'cypress run'"
+    "integration-test": "start-server-and-test 'serve build -l 3000' http://localhost:3000 'cypress run'",
+    "dedup": "npx yarn-deduplicate"
   },
   "eslintConfig": {
     "extends": "react-app",
@@ -119,5 +121,8 @@
       "last 1 safari version"
     ]
   },
-  "license": "GPL-3.0-or-later"
+  "license": "GPL-3.0-or-later",
+  "dependencies": {
+    "@gnosis.pm/gp-v2-contracts": "^0.0.1-alpha.1"
+  }
 }
