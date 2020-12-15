@@ -1,6 +1,6 @@
 import { ChainId } from '@uniswap/sdk'
 
-export const APP_ID = Number(process.env.REACT_APP_ID || 0)
+export const APP_ID = Number(process.env.REACT_APP_ID)
 
 // TODO: The addresses will be exported as plain JSON file in the future
 
