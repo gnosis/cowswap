@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { useDispatch, batch } from 'react-redux'
 import { useActiveWeb3React } from 'hooks'
 import { useAddPopup, useBlockNumber } from 'state/application/hooks'
@@ -7,7 +7,7 @@ import { fulfillOrder } from './actions'
 import { utils } from 'ethers'
 import { Web3Provider } from '@ethersproject/providers'
 import { Log, Filter } from '@ethersproject/abstract-provider'
-import { useLastCheckedBlock } from './hooks'
+import { useLastCheckedBlock, usePendingOrders, useExpireOrder } from './hooks'
 import { updateLastCheckedBlock } from './actions'
 // import { PartialOrdersMap } from './reducer'
 
@@ -227,6 +227,64 @@ export function EventUpdater(): null {
   //     library.off(TransferEventTopics, listener)
   //   }
   // }, [chainId, library])
+
+  return null
+}
+
+const CHECK_EXPIRED_ORDERS_INTERVAL = 10000 // 10 sec
+
+export function ExpiredOrdersWatcher(): null {
+  const { chainId } = useActiveWeb3React()
+
+  const expireOrder = useExpireOrder()
+
+  const pendingOrders = usePendingOrders({ chainId })
+
+  // ref, so we don't rerun useEffect
+  const pendingOrdersRef = useRef(pendingOrders)
+  pendingOrdersRef.current = pendingOrders
+
+  // for displaying expired orders
+  const addPopup = useAddPopup()
+
+  useEffect(() => {
+    if (!chainId) return
+
+    const checkForExpiredOrders = () => {
+      // no more pending orders
+      // but don't clearInterval so we can restart when there are new orders
+      if (pendingOrdersRef.current.length === 0) return
+
+      const now = new Date()
+      const expiredOrders = pendingOrdersRef.current.filter(order => {
+        // validTo is either a Date or unix timestamp in seconds
+        const validTo = typeof order.validTo === 'number' ? new Date(order.validTo * 1000) : order.validTo
+
+        return validTo < now
+      })
+
+      batch(() => {
+        expiredOrders.forEach(order => {
+          expireOrder({ chainId, id: order.id })
+
+          addPopup(
+            {
+              txn: {
+                hash: order.id,
+                success: false,
+                summary: order.summary + ' expired' || `Order ${order.id} expired`
+              }
+            },
+            order.id + '_expired' // to differentiate further
+          )
+        })
+      })
+    }
+
+    const intervalId = setInterval(checkForExpiredOrders, CHECK_EXPIRED_ORDERS_INTERVAL)
+
+    return () => clearInterval(intervalId)
+  }, [chainId, expireOrder, addPopup])
 
   return null
 }

@@ -6,7 +6,8 @@ export { OrderKind } from '@gnosis.pm/gp-v2-contracts'
 
 export enum OrderStatus {
   PENDING = 'pending',
-  FULFILLED = 'fulfilled'
+  FULFILLED = 'fulfilled',
+  EXPIRED = 'expired'
 }
 
 // used internally by dapp
@@ -37,6 +38,7 @@ export const removeOrder = createAction<{ id: OrderID; chainId: ChainId }>('orde
 export const fulfillOrder = createAction<{ id: OrderID; chainId: ChainId; fulfillmentTime: string }>(
   'order/fulfillOrder'
 )
+export const expireOrder = createAction<{ id: OrderID; chainId: ChainId }>('order/expireOrder')
 export const clearOrders = createAction<{ chainId: ChainId }>('order/clearOrders')
 
 export const updateLastCheckedBlock = createAction<{ chainId: ChainId; lastCheckedBlock: number }>(

@@ -3,7 +3,15 @@ import { useCallback, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { AppDispatch, AppState } from 'state'
-import { addPendingOrder, removeOrder, clearOrders, fulfillOrder, updateLastCheckedBlock, Order } from './actions'
+import {
+  addPendingOrder,
+  removeOrder,
+  clearOrders,
+  fulfillOrder,
+  expireOrder,
+  updateLastCheckedBlock,
+  Order
+} from './actions'
 import { OrdersState, PartialOrdersMap } from './reducer'
 import { isTruthy } from 'utils/misc'
 import { OrderID } from 'utils/operator'
@@ -24,6 +32,7 @@ interface GetRemoveOrderParams {
 type GetOrdersParams = Partial<Pick<GetRemoveOrderParams, 'chainId'>>
 type ClearOrdersParams = Pick<GetRemoveOrderParams, 'chainId'>
 type GetLastCheckedBlockParams = GetOrdersParams
+type ExpireOrderParams = GetRemoveOrderParams
 
 interface UpdateLastCheckedBlockParams extends ClearOrdersParams {
   lastCheckedBlock: number
@@ -32,6 +41,7 @@ interface UpdateLastCheckedBlockParams extends ClearOrdersParams {
 type AddOrderCallback = (addOrderParams: AddPendingOrderParams) => void
 type RemoveOrderCallback = (removeOrderParams: GetRemoveOrderParams) => void
 type FulfillOrderCallback = (fulfillOrderParams: FulfillOrderParams) => void
+type ExpireOrderCallback = (fulfillOrderParams: ExpireOrderParams) => void
 type ClearOrdersCallback = (clearOrdersParams: ClearOrdersParams) => void
 type UpdateLastCheckedBlockCallback = (updateLastCheckedBlockParams: UpdateLastCheckedBlockParams) => void
 
@@ -40,7 +50,7 @@ export const useOrder = ({ id, chainId }: GetRemoveOrderParams): Order | undefin
     const orders = state.orders[chainId]
 
     if (!orders) return undefined
-    return orders?.fulfilled[id]?.order || orders?.pending[id]?.order
+    return orders?.fulfilled[id]?.order || orders?.pending[id]?.order || orders?.expired[id]?.order
   })
 }
 
@@ -52,6 +62,7 @@ export const useOrders = ({ chainId }: GetOrdersParams): Order[] => {
 
     const allOrders = Object.values(state.fulfilled)
       .concat(Object.values(state.pending))
+      .concat(Object.values(state.expired))
       .map(orderObject => orderObject?.order)
       .filter(isTruthy)
     return allOrders
@@ -88,6 +99,21 @@ export const useFulfilledOrders = ({ chainId }: GetOrdersParams): Order[] => {
   }, [state])
 }
 
+export const useExpiredOrders = ({ chainId }: GetOrdersParams): Order[] => {
+  const state = useSelector<AppState, PartialOrdersMap | undefined>(
+    state => chainId && state.orders?.[chainId]?.expired
+  )
+
+  return useMemo(() => {
+    if (!state) return []
+
+    const allOrders = Object.values(state)
+      .map(orderObject => orderObject?.order)
+      .filter(isTruthy)
+    return allOrders
+  }, [state])
+}
+
 export const useAddPendingOrder = (): AddOrderCallback => {
   const dispatch = useDispatch<AppDispatch>()
   return useCallback((addOrderParams: AddPendingOrderParams) => dispatch(addPendingOrder(addOrderParams)), [dispatch])
@@ -96,6 +122,11 @@ export const useAddPendingOrder = (): AddOrderCallback => {
 export const useFulfillOrder = (): FulfillOrderCallback => {
   const dispatch = useDispatch<AppDispatch>()
   return useCallback((fulfillOrderParams: FulfillOrderParams) => dispatch(fulfillOrder(fulfillOrderParams)), [dispatch])
+}
+
+export const useExpireOrder = (): ExpireOrderCallback => {
+  const dispatch = useDispatch<AppDispatch>()
+  return useCallback((expireOrderParams: ExpireOrderParams) => dispatch(expireOrder(expireOrderParams)), [dispatch])
 }
 
 export const useRemoveOrder = (): RemoveOrderCallback => {
