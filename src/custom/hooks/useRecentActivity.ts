@@ -1,9 +1,9 @@
 import { useMemo } from 'react'
 import { isTransactionRecent, useAllTransactions } from 'state/transactions/hooks'
-import { useOrders } from 'state/orders/hooks'
+import { useAllOrders, useOrders } from 'state/orders/hooks'
 import { useActiveWeb3React } from 'hooks'
 import { Order, OrderStatus } from 'state/orders/actions'
-import { TransactionDetails } from '@src/state/transactions/reducer'
+import { TransactionDetails } from 'state/transactions/reducer'
 
 type TransactionAndOrder =
   | (Order & { addedTime: number })
@@ -11,6 +11,11 @@ type TransactionAndOrder =
       id: string
       status: OrderStatus
     })
+
+export enum ActivityType {
+  ORDER = 'order',
+  TX = 'tx'
+}
 
 // One fill day in MS
 const DAY_MS = 86_400_000
@@ -90,4 +95,40 @@ export default function useRecentActivity() {
       confirmedActivity
     }
   }, [recentOrdersAdjusted, recentTransactionsAdjusted])
+}
+
+export function useActivityDescriptors({ chainId, id }: { chainId?: number; id: string }) {
+  const allTransactions = useAllTransactions()
+  const allOrders = useAllOrders({ chainId })
+
+  const tx = allTransactions?.[id]
+  const order = allOrders?.[id]?.order
+
+  return useMemo(() => {
+    if ((!tx && !order) || !chainId) return null
+
+    let activity: TransactionDetails | Order, summary, pending, success, type: ActivityType
+
+    if (!tx && order) {
+      activity = order
+      summary = activity?.summary
+      pending = activity?.status === OrderStatus.PENDING
+      success = !pending && activity && activity?.status === OrderStatus.FULFILLED
+      type = ActivityType.ORDER
+    } else {
+      activity = tx
+      summary = tx?.summary
+      pending = !tx?.receipt
+      success = !pending && tx && (tx.receipt?.status === 1 || typeof tx.receipt?.status === 'undefined')
+      type = ActivityType.TX
+    }
+
+    return {
+      activity,
+      summary,
+      pending,
+      success,
+      type
+    }
+  }, [chainId, order, tx])
 }
