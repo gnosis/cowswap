@@ -67,11 +67,11 @@ const constructGetLogsRetry = (provider: Web3Provider) => {
       if (!error?.message?.includes('query returned more than')) throw error
 
       // still too many logs in 1 block
-      // skip it
+      // rethrow
       // but this shouldn't happen
       if (toBlock === fromBlock) {
-        console.error(`Too many logs in block ${toBlock}. Skipping. Some Orders may fail to update`)
-        return []
+        console.error(`Too many logs in block ${toBlock}. Aborting`)
+        throw error
       }
 
       const midBlock = Math.floor((toBlock + fromBlock) / 2)

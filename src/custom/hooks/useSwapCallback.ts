@@ -9,10 +9,11 @@ import { useMemo } from 'react'
 import useTransactionDeadline from '@src/hooks/useTransactionDeadline'
 import { BigNumber, Signer } from 'ethers'
 import { isAddress, shortenAddress } from '@src/utils'
-import { AddPendingOrderParams, OrderCreation, OrderID, OrderStatus, OrderKind } from 'state/orders/actions'
+import { AddPendingOrderParams, OrderStatus, OrderKind } from 'state/orders/actions'
 import { useAddPendingOrder } from 'state/orders/hooks'
-import { delay } from 'utils/misc'
 import { signOrder, UnsignedOrder } from 'utils/signatures'
+import { getFeeQuote as getFeeInformation, postSignedOrder } from 'utils/operator'
+import { getFeeAmount } from 'utils/fee'
 
 interface PostOrderParams {
   account: string
@@ -50,45 +51,37 @@ function _getSummary(params: PostOrderParams): string {
   }
 }
 
-async function _postOrderApi(order: OrderCreation): Promise<OrderID> {
-  const { sellAmount, signature } = order
-  // TODO: Pretend we call the API
-  console.log('TODO: call API and include the signature', signature, order)
-
-  // Fake a delay
-  await delay(3000)
-
-  if (sellAmount === '100000000000000000') {
-    // Force error for testing
-    console.log('[useSwapCallback] Ups, we had a small issue!')
-    throw new Error('Mock error: The flux capacitor melted')
-  } else {
-    // Pretend all went OK
-    console.log('[useSwapCallback] Traded successfully!')
-    return '123456789'
-  }
-}
-
 async function _postOrder(params: PostOrderParams): Promise<string> {
   const { addPendingOrder, chainId, trade, validTo, account, signer } = params
   const { inputAmount, outputAmount } = trade
 
   const path = trade.route.path
-  const selToken = path[0]
+  const sellToken = path[0]
   const buyToken = path[path.length - 1]
+  const sellAmount = inputAmount.raw.toString(10)
+  const buyAmount = outputAmount.raw.toString(10)
+
+  // TODO: This might disappear, and just take the state from the state after the fees PRs are merged
+  //  we assume, the solvers will try to satisfy the price, and this fee is just a minimal fee.
+  // Get Fee
+  const { feeRatio, minimalFee } = await getFeeInformation(chainId, sellToken.address)
+  const feeAmount = getFeeAmount({
+    sellAmount: sellAmount,
+    feeRatio,
+    minimalFee
+  })
 
   // Prepare order
   const summary = _getSummary(params)
   const unsignedOrder: UnsignedOrder = {
-    sellToken: selToken.address,
+    sellToken: sellToken.address,
     buyToken: buyToken.address,
-    sellAmount: inputAmount.raw.toString(10),
-    buyAmount: outputAmount.raw.toString(10),
+    sellAmount,
+    buyAmount,
     validTo,
     appData: DEFAULT_APP_ID, // TODO: Add appData by env var
-    feeAmount: '0', // TODO: Get fee
+    feeAmount,
     kind: trade.tradeType === TradeType.EXACT_INPUT ? OrderKind.SELL : OrderKind.BUY,
-    // orderType: trade.tradeType === TradeType.EXACT_INPUT ? OrderKind.SELL : OrderKind.BUY,
     partiallyFillable: false // Always fill or kill
   }
 
@@ -100,9 +93,12 @@ async function _postOrder(params: PostOrderParams): Promise<string> {
   const creationTime = new Date().toISOString()
 
   // Call API
-  const orderId = await _postOrderApi({
-    ...unsignedOrder,
-    signature
+  const orderId = await postSignedOrder({
+    chainId,
+    order: {
+      ...unsignedOrder,
+      signature
+    }
   })
 
   // Update the state

@@ -8,13 +8,13 @@ import {
   removeOrder,
   clearOrders,
   fulfillOrder,
-  Order,
-  OrderID,
+  expireOrder,
   updateLastCheckedBlock,
-  expireOrder
+  Order
 } from './actions'
 import { OrdersState, PartialOrdersMap } from './reducer'
 import { isTruthy } from 'utils/misc'
+import { OrderID } from 'utils/operator'
 import { ContractDeploymentBlocks } from './consts'
 
 interface AddPendingOrderParams extends GetRemoveOrderParams {
