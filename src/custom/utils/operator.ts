@@ -1,7 +1,7 @@
 import { ChainId } from '@uniswap/sdk'
 import { OrderCreation } from 'utils/signatures'
-import { APP_ID } from '../constants'
-import { OrderKind } from '../state/orders/actions'
+import { APP_ID } from 'constants/index'
+import { OrderKind } from 'state/orders/actions'
 
 /**
  * See Swagger documentation:
