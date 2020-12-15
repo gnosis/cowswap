@@ -50,9 +50,9 @@ function getActivitySummary({
 }
 
 // override the href prop when we dont want a clickable row
-const TransactionState = styled(OldTransactionState).attrs((props): { href?: string } => ({
-  href: props.href
-}))``
+const TransactionState = styled(OldTransactionState).attrs((props): { href?: string; isMeta?: boolean } => props)`
+  ${(props): string | false => !!props.isMeta && `pointer-events: none; cursor: none;`}
+`
 
 export default function Transaction({ hash: id }: { hash: string }) {
   const { chainId } = useActiveWeb3React()
@@ -71,6 +71,8 @@ export default function Transaction({ hash: id }: { hash: string }) {
         href={!isOrder ? getEtherscanLink(chainId, id, 'transaction') : undefined}
         pending={pending}
         success={success}
+        // prevent cursor on meta tx
+        isMeta={isOrder && pending}
       >
         <RowFixed>
           {activity && (
