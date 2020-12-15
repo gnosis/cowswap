@@ -9,6 +9,7 @@ import { Web3Provider } from '@ethersproject/providers'
 import { Log, Filter } from '@ethersproject/abstract-provider'
 import { useLastCheckedBlock, usePendingOrders, useExpireOrder } from './hooks'
 import { updateLastCheckedBlock } from './actions'
+import { buildBlock2DateMap } from 'utils/blocks'
 // import { PartialOrdersMap } from './reducer'
 
 // example of event watching + decoding without contract
@@ -92,22 +93,6 @@ const constructGetLogsRetry = (provider: Web3Provider) => {
   }
 
   return getLogsRetry
-}
-
-const buildBlock2DateMap = async (library: Web3Provider, logs: Log[]): Promise<Record<string, Date>> => {
-  // only check unique blocks
-  // hashes are more stable than numbers in case of reorg
-  const blockHashes = Array.from(new Set(logs.map(log => log.blockHash)))
-  const blocks = await Promise.all(blockHashes.map(hash => library.getBlock(hash)))
-
-  const block2DateMap = blocks.reduce<Record<string, Date>>((accum, block) => {
-    // timestamp is unix epoch in seconds
-    accum[block.hash] = new Date(block.timestamp * 1000)
-
-    return accum
-  }, {})
-
-  return block2DateMap
 }
 
 export function EventUpdater(): null {
