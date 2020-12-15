@@ -5,7 +5,7 @@ import { NetworkContextName } from 'constants/index'
 
 import WalletModal from 'components/WalletModal'
 import { Web3StatusInner } from './Web3StatusMod'
-import useRecentActivity from '@src/custom/hooks/useRecentActivity'
+import useRecentActivity from 'hooks/useRecentActivity'
 
 export default function Web3Status() {
   const { active, account } = useWeb3React()
