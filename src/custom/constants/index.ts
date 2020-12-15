@@ -1,6 +1,9 @@
 import { ChainId } from '@uniswap/sdk'
 import { GPv2Settlement, GPv2AllowanceManager } from '@gnosis.pm/gp-v2-contracts/networks.json'
 
+// TODO: Load app Id
+export const APP_ID = 0
+
 // reexport all Uniswap constants everything
 export * from '@src/constants/index'
 
