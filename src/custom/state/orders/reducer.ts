@@ -1,10 +1,10 @@
 import { createReducer, PayloadAction } from '@reduxjs/toolkit'
+import { OrderID } from 'utils/operator'
 import { ChainId } from '@uniswap/sdk'
 import {
   addPendingOrder,
   removeOrder,
   Order,
-  OrderID,
   clearOrders,
   fulfillOrder,
   OrderStatus,
