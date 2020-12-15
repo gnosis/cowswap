@@ -149,6 +149,13 @@ export function EventUpdater(): null {
         topics: eventTopics
       })
 
+      // only update lastCheckedBlock if no logs
+      if (logs.length === 0) {
+        // SET lastCheckedBlock = lastBlockNumber
+        dispatch(updateLastCheckedBlock({ chainId, lastCheckedBlock: lastBlockNumber }))
+        return
+      }
+
       batch(() => {
         logs.forEach(log => {
           try {
