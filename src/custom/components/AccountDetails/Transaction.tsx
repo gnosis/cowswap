@@ -18,10 +18,10 @@ function determinePillColour(success: boolean, type: 'order' | 'transaction') {
     isPendingTx = !success && type === 'transaction',
     isFulfilledTx = success && type === 'transaction'
 
-  if (isPendingOrder) return 'violet'
-  else if (isFulfilledOrder) return 'lightgreen'
-  else if (isPendingTx) return 'lightblue'
-  else if (isFulfilledTx) return 'darkgreen'
+  if (isPendingOrder) return '#8958FF'
+  else if (isFulfilledOrder) return '#27AE60'
+  else if (isPendingTx) return '#ff58e8'
+  else if (isFulfilledTx) return '27AE60'
   else return 'transparent'
 }
 
@@ -55,7 +55,9 @@ export default function Transaction({ hash }: { hash: string }) {
       <TransactionState href={getEtherscanLink(chainId, hash, 'transaction')} pending={pending} success={success}>
         <RowFixed>
           {activity && (
-            <Pill bgColor={determinePillColour(success, type)}>{(success ? 'Confirmed ' : 'Pending ') + type}</Pill>
+            <Pill color="#fff" bgColor={determinePillColour(success, type)}>
+              {type}
+            </Pill>
           )}
           <TransactionStatusText>{summary ?? hash} ↗</TransactionStatusText>
         </RowFixed>
