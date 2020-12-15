@@ -1,5 +1,6 @@
 import { ChainId } from '@uniswap/sdk'
 import { OrderCreation } from 'utils/signatures'
+import { APP_ID } from '../constants'
 import { OrderKind } from '../state/orders/actions'
 
 /**
@@ -13,8 +14,8 @@ const API_BASE_URL: Partial<Record<ChainId, string>> = {
 }
 
 const DEFAULT_HEADERS = {
-  'Content-Type': 'application/json'
-  // TODO: Maybe add a custom header for the AppId (same as the signing tx)
+  'Content-Type': 'application/json',
+  'X-AppId': APP_ID.toString()
 }
 
 /**
