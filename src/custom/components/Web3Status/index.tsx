@@ -5,7 +5,7 @@ import { NetworkContextName } from 'constants/index'
 
 import WalletModal from 'components/WalletModal'
 import { Web3StatusInner } from './Web3StatusMod'
-import useAllTransactionsAndOrders from 'custom/hooks/useAllTransactionsAndOrders'
+import useRecentActivity from '@src/custom/hooks/useRecentActivity'
 
 export default function Web3Status() {
   const { active, account } = useWeb3React()
@@ -13,7 +13,8 @@ export default function Web3Status() {
 
   const { ENSName } = useENSName(account ?? undefined)
 
-  const { pendingTransactions, confirmedTransactions } = useAllTransactionsAndOrders()
+  // Returns all RECENT (last day) transaction and orders in 2 arrays: pending and confirmed
+  const { pendingActivity, confirmedActivity } = useRecentActivity()
 
   if (!contextNetwork.active && !active) {
     return null
@@ -21,11 +22,11 @@ export default function Web3Status() {
 
   return (
     <>
-      <Web3StatusInner pendingCount={pendingTransactions.concat(confirmedTransactions).length} />
+      <Web3StatusInner pendingCount={pendingActivity.length + confirmedActivity.length} />
       <WalletModal
         ENSName={ENSName ?? undefined}
-        pendingTransactions={pendingTransactions}
-        confirmedTransactions={confirmedTransactions}
+        pendingTransactions={pendingActivity}
+        confirmedTransactions={confirmedActivity}
       />
     </>
   )
