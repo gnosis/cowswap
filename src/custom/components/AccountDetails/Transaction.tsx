@@ -3,63 +3,82 @@ import { CheckCircle, Triangle } from 'react-feather'
 
 import { useActiveWeb3React } from 'hooks'
 import { getEtherscanLink } from 'utils'
-import { useAllTransactions } from 'state/transactions/hooks'
 import { RowFixed } from 'components/Row'
 import Loader from 'components/Loader'
-import { useAllOrders } from 'custom/state/orders/hooks'
-import { TransactionDetails } from 'state/transactions/reducer'
-import { Order, OrderStatus } from 'custom/state/orders/actions'
-import { TransactionWrapper, TransactionState, TransactionStatusText, IconWrapper } from './TransactionMod'
+import {
+  TransactionWrapper,
+  TransactionState as OldTransactionState,
+  TransactionStatusText,
+  IconWrapper
+} from './TransactionMod'
 import Pill from '../Pill'
+import styled from 'styled-components'
 
-function determinePillColour(success: boolean, type: 'order' | 'transaction') {
-  const isPendingOrder = !success && type === 'order',
-    isFulfilledOrder = success && type === 'order',
-    isPendingTx = !success && type === 'transaction',
-    isFulfilledTx = success && type === 'transaction'
+import { ActivityType, useActivityDescriptors } from 'hooks/useRecentActivity'
+
+function determinePillColour(success: boolean, type: ActivityType) {
+  const isPendingOrder = !success && type === ActivityType.ORDER,
+    isFulfilledOrder = success && type === ActivityType.ORDER,
+    isPendingTx = !success && type === ActivityType.TX,
+    isFulfilledTx = success && type === ActivityType.TX
 
   if (isPendingOrder) return '#8958FF'
-  else if (isFulfilledOrder) return '#27AE60'
-  else if (isPendingTx) return '#ff58e8'
-  else if (isFulfilledTx) return '27AE60'
+  else if (isFulfilledOrder) return '#1b7b43'
+  else if (isPendingTx) return '#2b68fa'
+  else if (isFulfilledTx) return '#1b7b43'
   else return 'transparent'
 }
 
-export default function Transaction({ hash }: { hash: string }) {
+function getActivitySummary({
+  id,
+  activityData
+}: {
+  id: string
+  activityData: ReturnType<typeof useActivityDescriptors>
+}) {
+  if (!activityData) return null
+
+  const { summary, pending, type } = activityData
+
+  const isMeta = type === ActivityType.ORDER && pending
+
+  // add arrow indiciating clickable link if not meta tx
+  const suffix = !isMeta ? ' ↗' : ''
+  const baseSummary = summary ?? id
+
+  return baseSummary + suffix
+}
+
+// override the href prop when we dont want a clickable row
+const TransactionState = styled(OldTransactionState).attrs((props): { href?: string } => ({
+  href: props.href
+}))``
+
+export default function Transaction({ hash: id }: { hash: string }) {
   const { chainId } = useActiveWeb3React()
-  const allTransactions = useAllTransactions()
-  const allOrders = useAllOrders({ chainId })
+  // Return info necessary for rendering order/transaction info from the incoming id
+  const activityData = useActivityDescriptors({ id, chainId })
 
-  const tx = allTransactions?.[hash]
-  const order = allOrders?.[hash]?.order
+  if (!activityData || !chainId) return null
 
-  if ((!tx && !order) || !chainId) return null
-
-  let activity: TransactionDetails | Order, summary, pending, success, type: 'order' | 'transaction'
-  if (!tx && order) {
-    activity = order
-    summary = activity?.summary
-    pending = activity?.status === OrderStatus.PENDING
-    success = !pending && activity && activity?.status === OrderStatus.FULFILLED
-    type = 'order'
-  } else {
-    activity = tx
-    summary = tx?.summary
-    pending = !tx?.receipt
-    success = !pending && tx && (tx.receipt?.status === 1 || typeof tx.receipt?.status === 'undefined')
-    type = 'transaction'
-  }
+  const { activity, pending, success, type } = activityData
+  const isOrder = type === ActivityType.ORDER
 
   return (
     <TransactionWrapper>
-      <TransactionState href={getEtherscanLink(chainId, hash, 'transaction')} pending={pending} success={success}>
+      <TransactionState
+        // trnsaction? fulfilled order? render etherscan link. meta-tx? don't do that
+        href={!isOrder ? getEtherscanLink(chainId, id, 'transaction') : undefined}
+        pending={pending}
+        success={success}
+      >
         <RowFixed>
           {activity && (
-            <Pill color="#fff" bgColor={determinePillColour(success, type)}>
+            <Pill color="#fff" bgColor={determinePillColour(success, type)} minWidth="3.5rem">
               {type}
             </Pill>
           )}
-          <TransactionStatusText>{summary ?? hash} ↗</TransactionStatusText>
+          <TransactionStatusText>{getActivitySummary({ activityData, id })}</TransactionStatusText>
         </RowFixed>
         <IconWrapper pending={pending} success={success}>
           {pending ? <Loader /> : success ? <CheckCircle size="16" /> : <Triangle size="16" />}
