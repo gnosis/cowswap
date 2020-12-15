@@ -94,6 +94,22 @@ const constructGetLogsRetry = (provider: Web3Provider) => {
   return getLogsRetry
 }
 
+const buildBlock2DateMap = async (library: Web3Provider, logs: Log[]): Promise<Record<string, Date>> => {
+  // only check unique blocks
+  // hashes are more stable than numbers in case of reorg
+  const blockHashes = Array.from(new Set(logs.map(log => log.blockHash)))
+  const blocks = await Promise.all(blockHashes.map(hash => library.getBlock(hash)))
+
+  const block2DateMap = blocks.reduce<Record<string, Date>>((accum, block) => {
+    // timestamp is unix epoch in seconds
+    accum[block.hash] = new Date(block.timestamp * 1000)
+
+    return accum
+  }, {})
+
+  return block2DateMap
+}
+
 export function EventUpdater(): null {
   const { account, chainId, library } = useActiveWeb3React()
   // console.log('EventUpdater::library', library)
@@ -156,6 +172,8 @@ export function EventUpdater(): null {
         return
       }
 
+      const block2DateMap = await buildBlock2DateMap(library, logs)
+
       batch(() => {
         logs.forEach(log => {
           try {
@@ -167,8 +185,7 @@ export function EventUpdater(): null {
               fulfillOrder({
                 chainId,
                 id,
-                fulfillmentTime: new Date().toISOString() // event only has blockNumber
-                // if we want timestamp, need to getBlock() first
+                fulfillmentTime: block2DateMap[log.blockHash].toISOString()
               })
             )
 
