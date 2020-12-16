@@ -17,7 +17,12 @@ export enum ActivityType {
   TX = 'tx'
 }
 
-// One fill day in MS
+enum TxReceiptStatus {
+  PENDING,
+  CONFIRMED
+}
+
+// One FULL day in MS (milliseconds not Microsoft)
 const DAY_MS = 86_400_000
 
 /**
@@ -113,13 +118,15 @@ export function useActivityDescriptors({ chainId, id }: { chainId?: number; id: 
       activity = order
       summary = activity?.summary
       pending = activity?.status === OrderStatus.PENDING
-      success = !pending && activity && activity?.status === OrderStatus.FULFILLED
+      success = !pending && activity?.status === OrderStatus.FULFILLED
       type = ActivityType.ORDER
     } else {
+      const isReceiptConfirmed =
+        tx.receipt?.status === TxReceiptStatus.CONFIRMED || typeof tx.receipt?.status === 'undefined'
       activity = tx
       summary = tx?.summary
       pending = !tx?.receipt
-      success = !pending && tx && (tx.receipt?.status === 1 || typeof tx.receipt?.status === 'undefined')
+      success = !pending && isReceiptConfirmed
       type = ActivityType.TX
     }
 
