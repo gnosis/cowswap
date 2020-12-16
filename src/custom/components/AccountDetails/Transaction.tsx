@@ -16,17 +16,26 @@ import styled from 'styled-components'
 
 import { ActivityType, useActivityDescriptors } from 'hooks/useRecentActivity'
 
-function determinePillColour(success: boolean, type: ActivityType) {
-  const isPendingOrder = !success && type === ActivityType.ORDER,
-    isFulfilledOrder = success && type === ActivityType.ORDER,
-    isPendingTx = !success && type === ActivityType.TX,
-    isFulfilledTx = success && type === ActivityType.TX
+const PILL_COLOUR_MAP = {
+  CONFIRMED: '#1b7b43',
+  PENDING_ORDER: '#8958FF',
+  PENDING_TX: '#2b68fa'
+}
 
-  if (isPendingOrder) return '#8958FF'
-  else if (isFulfilledOrder) return '#1b7b43'
-  else if (isPendingTx) return '#2b68fa'
-  else if (isFulfilledTx) return '#1b7b43'
-  else return 'transparent'
+function determinePillColour(success: boolean, type: ActivityType) {
+  if (!success) {
+    switch (type) {
+      // Pending Order
+      case ActivityType.ORDER:
+        return PILL_COLOUR_MAP.PENDING_ORDER
+      // Pending TX
+      case ActivityType.TX:
+        return PILL_COLOUR_MAP.PENDING_TX
+    }
+  }
+
+  // Else is Confirmed TX/Order
+  return PILL_COLOUR_MAP.CONFIRMED
 }
 
 function getActivitySummary({
