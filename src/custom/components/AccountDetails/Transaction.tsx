@@ -77,7 +77,7 @@ export default function Transaction({ hash: id }: { hash: string }) {
 
   const isPending = status === ActivityStatus.PENDING
   const isConfirmed = status === ActivityStatus.CONFIRMED
-  const isExpired = !isConfirmed && !isPending
+  const isExpired = status === ActivityStatus.EXPIRED
 
   return (
     <TransactionWrapper>
