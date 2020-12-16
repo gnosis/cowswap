@@ -9,13 +9,13 @@ export * from '@src/constants/index'
 
 // TODO: When contracts are deployed, we can load this from the NPM package
 export const GP_SETTLEMENT_CONTRACT_ADDRESS: Partial<Record<ChainId, string>> = {
-  // [ChainId.MAINNET]: GPv2Settlement[1].address, // Not yet deployed
-  [ChainId.RINKEBY]: GPv2Settlement[4].address
-  // [ChainId.xDAI]: GPv2Settlement[100].address // Not yet deployed
+  // [ChainId.MAINNET]: GPv2Settlement[ChainId.MAINNET].address, // Not yet deployed
+  [ChainId.RINKEBY]: GPv2Settlement[ChainId.RINKEBY].address
+  // [ChainId.xDAI]: GPv2Settlement[ChainId.xDAI].address // Not yet deployed
 }
 
 export const GP_ALLOWANCE_MANAGER_CONTRACT_ADDRESS: Partial<Record<ChainId, string>> = {
-  // [ChainId.MAINNET]: GPv2AllowanceManager[1].address, // Not yet deployed
-  [ChainId.RINKEBY]: GPv2AllowanceManager[4].address
-  // [ChainId.xDAI]: GPv2AllowanceManager[100].address // Not yet deployed
+  // [ChainId.MAINNET]: GPv2AllowanceManager[ChainId.MAINNET].address, // Not yet deployed
+  [ChainId.RINKEBY]: GPv2AllowanceManager[ChainId.RINKEBY].address
+  // [ChainId.xDAI]: GPv2AllowanceManager[ChainId.xDAI].address // Not yet deployed
 }
