@@ -17,13 +17,14 @@ import FortmaticIcon from 'assets/images/fortmaticIcon.png'
 import PortisIcon from 'assets/images/portisIcon.png'
 import Identicon from 'components/Identicon'
 import { ExternalLink as LinkIcon } from 'react-feather'
-import { CloseIcon, LinkStyledButton, TYPE } from 'theme'
+import { LinkStyledButton, TYPE } from 'theme'
 import { clearOrders } from 'state/orders/actions'
 import {
   WalletName,
   MainWalletAction,
   AccountDetailsProps,
   UpperSection,
+  CloseIcon,
   CloseColor,
   HeaderRow,
   AccountSection,
