@@ -1,5 +1,7 @@
 import { ChainId } from '@uniswap/sdk'
 import { OrderCreation } from 'utils/signatures'
+import { APP_ID } from 'constants/index'
+import { registerOnWindow } from './misc'
 
 /**
  * See Swagger documentation:
@@ -12,8 +14,8 @@ const API_BASE_URL: Partial<Record<ChainId, string>> = {
 }
 
 const DEFAULT_HEADERS = {
-  'Content-Type': 'application/json'
-  // TODO: Maybe add a custom header for the AppId (same as the signing tx)
+  'Content-Type': 'application/json',
+  'X-AppId': APP_ID.toString()
 }
 
 /**
@@ -150,3 +152,6 @@ export async function getFeeQuote(chainId: ChainId, tokenAddress: string): Promi
 
   return response.json()
 }
+
+// Register some globals for convenience
+registerOnWindow({ operator: { getFeeQuote, postSignedOrder, apiGet: _get, apiPost: _post } })
