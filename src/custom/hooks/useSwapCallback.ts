@@ -9,12 +9,12 @@ import { useMemo } from 'react'
 import useTransactionDeadline from '@src/hooks/useTransactionDeadline'
 import { BigNumber } from 'ethers'
 
+import { computeSlippageAdjustedAmounts } from '@src/utils/prices'
+import { useWETHContract } from '@src/hooks/useContract'
 import { useAddPendingOrder } from 'state/orders/hooks'
 import { postOrder } from 'utils/trade'
-import { computeSlippageAdjustedAmounts } from '@src/utils/prices'
 import { OrderKind } from 'utils/signatures'
-import { useWETHContract } from '@src/hooks/useContract'
-import { wrapEther } from '../utils/weth'
+import { wrapEther } from 'utils/weth'
 
 const MAX_VALID_TO_EPOCH = BigNumber.from('0xFFFFFFFF').toNumber() // Max uint32 (Feb 07 2106 07:28:15 GMT+0100)
 
