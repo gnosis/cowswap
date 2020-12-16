@@ -1651,7 +1651,7 @@
     "@ethersproject/properties" "^5.0.3"
     "@ethersproject/strings" "^5.0.4"
 
-"@gnosis.pm/gp-v2-contracts@^0.0.1-alpha.8":
+"@gnosis.pm/gp-v2-contracts@^0.0.1-alpha.7":
   version "0.0.1-alpha.8"
   resolved "https://registry.yarnpkg.com/@gnosis.pm/gp-v2-contracts/-/gp-v2-contracts-0.0.1-alpha.8.tgz#f7939764d7f4a1c3b0ba70a810a366b099dc24dd"
   integrity sha512-SfjvFjTxrWuczBXE7Souq6WeVq1pZunj/Kukzqv7QuwhqFbkkFLAQKT5SqN1R91BPscJUtqRzGHgRrXO4Gqt8A==
