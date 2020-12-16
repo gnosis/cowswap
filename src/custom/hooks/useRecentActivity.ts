@@ -24,7 +24,7 @@ const DAY_MS = 86_400_000
  * Returns whether a order happened in the last day (86400 seconds * 1000 milliseconds / second)
  * @param order
  */
-export function isOrderRecent(order: Order): boolean {
+function isOrderRecent(order: Order): boolean {
   return Date.now() - Date.parse(order.creationTime) < DAY_MS
 }
 
