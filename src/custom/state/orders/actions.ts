@@ -38,6 +38,20 @@ export const removeOrder = createAction<{ id: OrderID; chainId: ChainId }>('orde
 export const fulfillOrder = createAction<{ id: OrderID; chainId: ChainId; fulfillmentTime: string }>(
   'order/fulfillOrder'
 )
+
+export interface OrderFulfillmentData {
+  id: OrderID
+  fulfillmentTime: string
+}
+
+export interface FulfillOrdersBatchParams {
+  ordersData: OrderFulfillmentData[]
+  chainId: ChainId
+  lastCheckedBlock: number
+}
+
+export const fulfillOrdersBatch = createAction<FulfillOrdersBatchParams>('order/fullfillOrdersBatch')
+
 export const expireOrder = createAction<{ id: OrderID; chainId: ChainId }>('order/expireOrder')
 export const clearOrders = createAction<{ chainId: ChainId }>('order/clearOrders')
 
