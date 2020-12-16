@@ -3,12 +3,11 @@ import { useDispatch, batch } from 'react-redux'
 import { useActiveWeb3React } from 'hooks'
 import { useAddPopup, useBlockNumber } from 'state/application/hooks'
 import { AppDispatch } from 'state'
-import { fulfillOrder } from './actions'
+import { OrderFulfillmentData } from './actions'
 import { utils } from 'ethers'
 import { Web3Provider } from '@ethersproject/providers'
 import { Log, Filter } from '@ethersproject/abstract-provider'
-import { useLastCheckedBlock, usePendingOrders, useExpireOrder } from './hooks'
-import { updateLastCheckedBlock } from './actions'
+import { useLastCheckedBlock, usePendingOrders, useExpireOrder, useFulfillOrdersBatch } from './hooks'
 import { buildBlock2DateMap } from 'utils/blocks'
 // import { PartialOrdersMap } from './reducer'
 
@@ -107,6 +106,8 @@ export function EventUpdater(): null {
 
   const dispatch = useDispatch<AppDispatch>()
 
+  const fulfillOrdersBatch = useFulfillOrdersBatch()
+
   // show popup on confirm
   // for displaying fulfilled orders
   const addPopup = useAddPopup()
@@ -150,47 +151,45 @@ export function EventUpdater(): null {
         topics: eventTopics
       })
 
-      // only update lastCheckedBlock if no logs
-      if (logs.length === 0) {
-        // SET lastCheckedBlock = lastBlockNumber
-        dispatch(updateLastCheckedBlock({ chainId, lastCheckedBlock: lastBlockNumber }))
-        return
-      }
-
       const block2DateMap = await buildBlock2DateMap(library, logs)
 
+      const ordersBatchData: (OrderFulfillmentData & Pick<Log, 'transactionHash'>)[] = logs.map(log => {
+        const { orderUid: id } = decodeTradeEvent(log)
+
+        console.log(`EventUpdater::Detected Trade event for order ${id} of token in block`, log.blockNumber)
+
+        return {
+          id,
+          fulfillmentTime: block2DateMap[log.blockHash].toISOString(),
+          transactionHash: log.transactionHash
+        }
+      })
+
       batch(() => {
-        logs.forEach(log => {
+        // SET lastCheckedBlock = lastBlockNumber
+        // AND fulfill orders
+        // ordersBatchData can be empty
+        fulfillOrdersBatch({
+          ordersData: ordersBatchData,
+          chainId,
+          lastCheckedBlock
+        })
+        ordersBatchData.forEach(({ id, transactionHash }) => {
           try {
-            // const { from, to, amount } = decodeTransferEvent(log)
-            const { orderUid: id } = decodeTradeEvent(log)
-
-            console.log(`EventUpdater::Detected Trade event for order ${id} of token in block`, log.blockNumber)
-            dispatch(
-              fulfillOrder({
-                chainId,
-                id,
-                fulfillmentTime: block2DateMap[log.blockHash].toISOString()
-              })
-            )
-
             addPopup(
               {
                 txn: {
-                  hash: log.transactionHash,
+                  hash: transactionHash,
                   success: true,
                   summary: `Order ${id} was traded`
                 }
               },
-              log.transactionHash
+              transactionHash
             )
           } catch (error) {
             console.error('Error decoding Trade event', error)
           }
         })
-
-        // SET lastCheckedBlock = lastBlockNumber
-        dispatch(updateLastCheckedBlock({ chainId, lastCheckedBlock: lastBlockNumber }))
       })
 
       // console.log('logs', logs)
@@ -216,7 +215,17 @@ export function EventUpdater(): null {
     }
 
     getPastEvents()
-  }, [chainId, library, lastBlockNumber, lastCheckedBlock, getLogsRetry, dispatch, addPopup, eventTopics])
+  }, [
+    chainId,
+    library,
+    lastBlockNumber,
+    lastCheckedBlock,
+    getLogsRetry,
+    dispatch,
+    addPopup,
+    eventTopics,
+    fulfillOrdersBatch
+  ])
 
   // TODO: maybe implement event watching instead of getPastEvents on every block
   // useEffect(() => {
