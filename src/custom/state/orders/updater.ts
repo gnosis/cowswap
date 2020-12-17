@@ -181,7 +181,7 @@ export function EventUpdater(): null {
                   summary: summary || `Order ${id} was traded`
                 }
               },
-              transactionHash
+              id
             )
           } catch (error) {
             console.error('Error decoding Trade event', error)
