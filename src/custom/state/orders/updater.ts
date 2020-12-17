@@ -122,7 +122,7 @@ export function EventUpdater(): null {
         return getLogsRetry({
           fromBlock,
           toBlock,
-          topics: TransferEventTopics
+          topics: eventTopics
         })
       }
     })
