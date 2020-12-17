@@ -6,7 +6,7 @@ import { AppDispatch } from 'state'
 import { OrderFulfillmentData, Order } from './actions'
 import { Web3Provider } from '@ethersproject/providers'
 import { Log, Filter } from '@ethersproject/abstract-provider'
-import { useLastCheckedBlock, usePendingOrders, useExpireOrder, useFulfillOrdersBatch } from './hooks'
+import { useLastCheckedBlock, usePendingOrders, useExpireOrder, useFulfillOrdersBatch, useFindOrderById } from './hooks'
 import { buildBlock2DateMap } from 'utils/blocks'
 import { registerOnWindow } from 'utils/misc'
 import { GP_SETTLEMENT_CONTRACT_ADDRESS } from 'constants/index'
@@ -110,6 +110,9 @@ export function EventUpdater(): null {
   }, [account])
 
   const contractAddress = chainId && GP_SETTLEMENT_CONTRACT_ADDRESS[chainId]
+
+  const findOrderById = useFindOrderById({ chainId })
+
   useEffect(() => {
     if (!chainId || !library || !getLogsRetry || !lastBlockNumber || !eventTopics || !contractAddress) return
 
@@ -144,15 +147,18 @@ export function EventUpdater(): null {
 
       const block2DateMap = await buildBlock2DateMap(library, logs)
 
-      const ordersBatchData: (OrderFulfillmentData & Pick<Log, 'transactionHash'>)[] = logs.map(log => {
+      const ordersBatchData: OrderLogPupupMixData[] = logs.map(log => {
         const { orderUid: id } = decodeTradeEvent(log)
 
         console.log(`EventUpdater::Detected Trade event for order ${id} of token in block`, log.blockNumber)
 
+        const orderFromStore = findOrderById(id)
+
         return {
           id,
           fulfillmentTime: block2DateMap[log.blockHash].toISOString(),
-          transactionHash: log.transactionHash
+          transactionHash: log.transactionHash,
+          summary: orderFromStore?.summary // only if that order was previously in store
         }
       })
 
@@ -165,14 +171,14 @@ export function EventUpdater(): null {
           chainId,
           lastCheckedBlock: lastBlockNumber
         })
-        ordersBatchData.forEach(({ id, transactionHash }) => {
+        ordersBatchData.forEach(({ id, transactionHash, summary }) => {
           try {
             addPopup(
               {
                 txn: {
                   hash: transactionHash,
                   success: true,
-                  summary: `Order ${id} was traded`
+                  summary: summary || `Order ${id} was traded`
                 }
               },
               transactionHash
@@ -215,7 +221,9 @@ export function EventUpdater(): null {
     dispatch,
     addPopup,
     eventTopics,
+    fulfillOrdersBatch,
     contractAddress,
+    findOrderById
   ])
 
   // TODO: maybe implement event watching instead of getPastEvents on every block
