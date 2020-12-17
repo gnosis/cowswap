@@ -5,11 +5,12 @@ import { ExternalLink, TYPE } from 'theme'
 import { GP_SETTLEMENT_CONTRACT_ADDRESS } from 'custom/constants'
 import { getEtherscanLink } from 'utils'
 
-import { version as WEB, dependencies } from 'src/../../package.json'
+import { version as WEB } from 'src/../../package.json'
+import { version as CONTRACTS } from '@gnosis.pm/gp-v2-contracts/package.json'
 
 const VERSIONS = {
   WEB,
-  CONTRACTS: dependencies['@gnosis.pm/gp-v2-contracts']
+  CONTRACTS
 }
 
 const versionsList = Object.entries(VERSIONS)
@@ -48,7 +49,7 @@ const VersionsExternalLink = styled(ExternalLink)<{ isUnclickable?: boolean }>`
   `}
 `
 
-const VersionData = ({ versions }: { versions: [string, string][] }) => (
+const VersionData = ({ versions }: { versions: typeof versionsList }) => (
   <StyledPolling>
     {versions.map(([key, val]) => (
       <TYPE.small key={key}>
