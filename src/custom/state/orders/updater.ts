@@ -11,38 +11,27 @@ import { useLastCheckedBlock, usePendingOrders, useExpireOrder, useFulfillOrders
 import { buildBlock2DateMap } from 'utils/blocks'
 import { registerOnWindow } from 'utils/misc'
 import { GP_SETTLEMENT_CONTRACT_ADDRESS } from 'constants/index'
+import { GP_V2_SETTLEMENT_INTERFACE } from '@src/custom/constants/GPv2Settlement'
 
 // example of event watching + decoding without contract
 const transferEventAbi = 'event Transfer(address indexed from, address indexed to, uint amount)'
 const ERC20Interface = new utils.Interface([transferEventAbi])
 
-const TransferEvent = ERC20Interface.getEvent('Transfer')
-
-const TransferEventTopics = ERC20Interface.encodeFilterTopics(TransferEvent, [])
-
-// const decodeTransferEvent = (transferEventLog: Log) => {
-//   return ERC20Interface.decodeEventLog(TransferEvent, transferEventLog.data, transferEventLog.topics)
-// }
-
-// TODO sync with contracts
-const tradeEventAbi =
-  'event Trade(address indexed owner, IERC20 sellToken, IERC20 buyToken, uint256 sellAmount, uint256 buyAmount, uint256 feeAmount, bytes orderUid)'
-const TradeSettlementInterface = new utils.Interface([tradeEventAbi])
-
-const TradeEvent = TradeSettlementInterface.getEvent('Trade')
+const TradeEvent = GP_V2_SETTLEMENT_INTERFACE.getEvent('Trade')
 
 interface TradeEventParams {
   owner: string // address
-  id?: string | string[] // to filter by id
+  // maybe enable when orderUid is indexed
+  // id?: string | string[] // to filter by id
 }
 
 const generateTradeEventTopics = ({ owner /*, id */ }: TradeEventParams) => {
-  const TradeEventTopics = TradeSettlementInterface.encodeFilterTopics(TradeEvent, [owner /*, id*/])
+  const TradeEventTopics = GP_V2_SETTLEMENT_INTERFACE.encodeFilterTopics(TradeEvent, [owner /*, id*/])
   return TradeEventTopics
 }
 
 const decodeTradeEvent = (tradeEventLog: Log) => {
-  return TradeSettlementInterface.decodeEventLog(TradeEvent, tradeEventLog.data, tradeEventLog.topics)
+  return GP_V2_SETTLEMENT_INTERFACE.decodeEventLog(TradeEvent, tradeEventLog.data, tradeEventLog.topics)
 }
 
 type RetryFilter = Filter & { fromBlock: number; toBlock: number }
@@ -125,7 +114,7 @@ export function EventUpdater(): null {
 
   const contractAddress = chainId && GP_SETTLEMENT_CONTRACT_ADDRESS[chainId]
   useEffect(() => {
-    if (!chainId || !library || !getLogsRetry || !lastBlockNumber || !eventTopics) return
+    if (!chainId || !library || !getLogsRetry || !lastBlockNumber || !eventTopics || !contractAddress) return
 
     registerOnWindow({
       getLogsRetry: (fromBlock: number, toBlock: number) => {
@@ -145,14 +134,14 @@ export function EventUpdater(): null {
       console.log('EventUpdater::getLogs', {
         fromBlock: lastCheckedBlock + 1,
         toBlock: lastBlockNumber,
-        // address: '0x', // TODO: get address from networks.json or somewhere else
+        address: contractAddress,
         topics: eventTopics
       })
 
       const logs = await getLogsRetry({
         fromBlock: lastCheckedBlock + 1,
         toBlock: lastBlockNumber,
-        // address: '0x', // TODO: get address from networks.json or somewhere else
+        address: contractAddress,
         topics: eventTopics
       })
 
