@@ -12,7 +12,7 @@ import { registerOnWindow } from 'utils/misc'
 import { GP_SETTLEMENT_CONTRACT_ADDRESS } from 'constants/index'
 import { GP_V2_SETTLEMENT_INTERFACE } from '@src/custom/constants/GPv2Settlement'
 
-type OrderLogPupupMixData = OrderFulfillmentData & Pick<Log, 'transactionHash'> & Partial<Pick<Order, 'summary'>>
+type OrderLogPopupMixData = OrderFulfillmentData & Pick<Log, 'transactionHash'> & Partial<Pick<Order, 'summary'>>
 
 const TradeEvent = GP_V2_SETTLEMENT_INTERFACE.getEvent('Trade')
 
@@ -147,7 +147,7 @@ export function EventUpdater(): null {
 
       const block2DateMap = await buildBlock2DateMap(library, logs)
 
-      const ordersBatchData: OrderLogPupupMixData[] = logs.map(log => {
+      const ordersBatchData: OrderLogPopupMixData[] = logs.map(log => {
         const { orderUid: id } = decodeTradeEvent(log)
 
         console.log(`EventUpdater::Detected Trade event for order ${id} of token in block`, log.blockNumber)
