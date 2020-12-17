@@ -5,7 +5,7 @@ import { ExternalLink, TYPE } from 'theme'
 import { GP_SETTLEMENT_CONTRACT_ADDRESS } from 'custom/constants'
 import { getEtherscanLink } from 'utils'
 
-import { version as WEB } from 'src/../../package.json'
+import { version as WEB } from '@src/../package.json'
 import { version as CONTRACTS } from '@gnosis.pm/gp-v2-contracts/package.json'
 
 const VERSIONS = {
