@@ -5,51 +5,71 @@ import { ExternalLink, TYPE } from 'theme'
 import { GP_SETTLEMENT_CONTRACT_ADDRESS } from 'custom/constants'
 import { getEtherscanLink } from 'utils'
 
+import { version as WEB, dependencies } from 'src/../../package.json'
+
+const VERSIONS = {
+  WEB,
+  CONTRACTS: dependencies['@gnosis.pm/gp-v2-contracts']
+}
+
+const versionsMap = new Map(Object.entries(VERSIONS))
+const versionsList = Array.from(versionsMap)
+
 const StyledPolling = styled.div`
   position: fixed;
   display: flex;
   flex-flow: column nowrap;
   align-items: flex-start;
+
   left: 0;
   bottom: 0;
+
   padding: 1rem;
-  color: white;
-  transition: opacity 0.25s ease;
+
   color: ${({ theme }) => theme.green1};
-  :hover {
+  opacity: 0.4;
+
+  &:hover {
     opacity: 1;
   }
+
+  transition: opacity 0.25s ease;
 
   ${({ theme }) => theme.mediaWidth.upToMedium`
     display: none;
   `}
 `
 
-type VERSIONS_MAP = Record<'WEB' | 'CONTRACTS', string>
+const VersionsExternalLink = styled(ExternalLink)<{ isUnclickable?: boolean }>`
+  ${({ isUnclickable = false }): string | false =>
+    isUnclickable &&
+    `
+      pointer-events: none;
+      curose: none;
+  `}
+`
 
-const VERSIONS: VERSIONS_MAP = {
-  WEB: '0.2.0-DEMO',
-  CONTRACTS: '0.1.0-alpha10'
-}
-
-const VersionMap = new Map(Object.entries(VERSIONS))
-const VersionList = Array.from(VersionMap)
+const VersionData = ({ versions }: { versions: [string, string][] }) => (
+  <StyledPolling>
+    {versions.map(([key, val]) => (
+      <TYPE.small key={key}>
+        {key}: <strong>{val}</strong>
+      </TYPE.small>
+    ))}
+  </StyledPolling>
+)
 
 const Version = () => {
   const { chainId } = useActiveWeb3React()
-
   const swapAddress = chainId ? GP_SETTLEMENT_CONTRACT_ADDRESS[chainId] : null
 
   return (
-    <ExternalLink href={chainId && swapAddress ? getEtherscanLink(chainId, swapAddress, 'address') : ''}>
-      <StyledPolling>
-        {VersionList.map(([key, val]) => (
-          <TYPE.small key={key}>
-            {key}: {val}
-          </TYPE.small>
-        ))}
-      </StyledPolling>
-    </ExternalLink>
+    <VersionsExternalLink
+      isUnclickable={!chainId || !swapAddress}
+      href={chainId && swapAddress ? getEtherscanLink(chainId, swapAddress, 'address') : ''}
+    >
+      <VersionData versions={versionsList} />
+    </VersionsExternalLink>
   )
 }
 
