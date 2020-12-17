@@ -12,8 +12,7 @@ const VERSIONS = {
   CONTRACTS: dependencies['@gnosis.pm/gp-v2-contracts']
 }
 
-const versionsMap = new Map(Object.entries(VERSIONS))
-const versionsList = Array.from(versionsMap)
+const versionsList = Object.entries(VERSIONS)
 
 const StyledPolling = styled.div`
   position: fixed;
