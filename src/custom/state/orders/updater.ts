@@ -10,7 +10,7 @@ import { Log, Filter } from '@ethersproject/abstract-provider'
 import { useLastCheckedBlock, usePendingOrders, useExpireOrder, useFulfillOrdersBatch } from './hooks'
 import { buildBlock2DateMap } from 'utils/blocks'
 import { registerOnWindow } from 'utils/misc'
-// import { PartialOrdersMap } from './reducer'
+import { GP_SETTLEMENT_CONTRACT_ADDRESS } from 'constants/index'
 
 // example of event watching + decoding without contract
 const transferEventAbi = 'event Transfer(address indexed from, address indexed to, uint amount)'
@@ -123,6 +123,7 @@ export function EventUpdater(): null {
     return generateTradeEventTopics({ owner: account })
   }, [account])
 
+  const contractAddress = chainId && GP_SETTLEMENT_CONTRACT_ADDRESS[chainId]
   useEffect(() => {
     if (!chainId || !library || !getLogsRetry || !lastBlockNumber || !eventTopics) return
 
@@ -228,7 +229,7 @@ export function EventUpdater(): null {
     dispatch,
     addPopup,
     eventTopics,
-    fulfillOrdersBatch
+    contractAddress,
   ])
 
   // TODO: maybe implement event watching instead of getPastEvents on every block
