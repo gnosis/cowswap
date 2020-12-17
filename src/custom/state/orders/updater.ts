@@ -3,8 +3,7 @@ import { useDispatch, batch } from 'react-redux'
 import { useActiveWeb3React } from 'hooks'
 import { useAddPopup, useBlockNumber } from 'state/application/hooks'
 import { AppDispatch } from 'state'
-import { OrderFulfillmentData } from './actions'
-import { utils } from 'ethers'
+import { OrderFulfillmentData, Order } from './actions'
 import { Web3Provider } from '@ethersproject/providers'
 import { Log, Filter } from '@ethersproject/abstract-provider'
 import { useLastCheckedBlock, usePendingOrders, useExpireOrder, useFulfillOrdersBatch } from './hooks'
@@ -13,9 +12,7 @@ import { registerOnWindow } from 'utils/misc'
 import { GP_SETTLEMENT_CONTRACT_ADDRESS } from 'constants/index'
 import { GP_V2_SETTLEMENT_INTERFACE } from '@src/custom/constants/GPv2Settlement'
 
-// example of event watching + decoding without contract
-const transferEventAbi = 'event Transfer(address indexed from, address indexed to, uint amount)'
-const ERC20Interface = new utils.Interface([transferEventAbi])
+type OrderLogPupupMixData = OrderFulfillmentData & Pick<Log, 'transactionHash'> & Partial<Pick<Order, 'summary'>>
 
 const TradeEvent = GP_V2_SETTLEMENT_INTERFACE.getEvent('Trade')
 
