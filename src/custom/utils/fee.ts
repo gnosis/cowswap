@@ -4,7 +4,7 @@ import { FeeInformation } from './operator'
 const BPS_BASE = 10_000 // The number of basis points to make up 100%.
 
 export interface GetFeeAmount extends Omit<FeeInformation, 'expirationDate'> {
-  sellAmount: string
+  sellAmount?: string
 }
 
 export function getFeeAmount(params: GetFeeAmount): string {

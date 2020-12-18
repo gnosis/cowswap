@@ -12,7 +12,8 @@ import { tryParseAmount, useSwapState } from '@src/state/swap/hooks'
 import { useFee } from '../fee/hooks'
 import { FeeInformation } from '../fee/reducer'
 import { BIG_INT_ZERO } from '@src/constants'
-import { proxify } from '@src/custom/utils/misc'
+import { proxify, registerOnWindow } from '@src/custom/utils/misc'
+// import { getFeeAmount } from '@src/custom/utils/fee'
 
 export * from '@src/state/swap/hooks'
 
@@ -23,6 +24,8 @@ const proxyAndValidateTrade = (trade: Trade | null, handler: ProxyHandler<Trade>
   return isValidTrade(proxiedTrade) ? proxiedTrade : null
 }
 
+// Override the input/outputAmount
+// using our proxy and pass in the fees
 const feeApplicationHandler = ({
   parsedAmountWithFees
 }: {
@@ -65,28 +68,24 @@ function tryValueToCurrency(value?: string, currency?: Currency): CurrencyAmount
 }
 
 interface TradeCalculation {
-  inputCurrency?: Currency | null
-  outputCurrency?: Currency | null
-  parsedAmount?: CurrencyAmount
-  isExactIn: boolean
+  inputCurrency: Currency
+  parsedAmount: CurrencyAmount
 }
 
 function calculateFee({
   feeInformation,
   parsedAmount,
   inputCurrency
-}: Pick<TradeCalculation, 'inputCurrency' | 'parsedAmount'> & { feeInformation?: FeeInformation }) {
-  const minimalFee = feeInformation?.minimalFee ? new Fraction(feeInformation.minimalFee) : null
-  const feeRatio = feeInformation?.feeRatio ? basisPointsToPercent(feeInformation.feeRatio) : null
-  const computedFee = feeRatio && parsedAmount ? feeRatio.multiply(parsedAmount) : null
+}: TradeCalculation & { feeInformation: FeeInformation }) {
+  const minimalFee = new Fraction(feeInformation.minimalFee)
+  const feeRatio = basisPointsToPercent(feeInformation.feeRatio)
+  const computedFee = feeRatio.multiply(parsedAmount)
 
   // Which is greater? MinimalFee or the feeRatio applied to the sellVolume?
   // (100 - feeRatio) * sellVolume
-  const fee = computedFee && minimalFee && (computedFee.greaterThan(minimalFee) ? computedFee : minimalFee)
+  const fee = computedFee.greaterThan(minimalFee) ? computedFee : minimalFee
 
-  const parsedFeeAmount = fee
-    ? tryParseAmount(fee.toSignificant(inputCurrency?.decimals || 18), inputCurrency || undefined)
-    : null
+  const parsedFeeAmount = tryParseAmount(fee.toSignificant(inputCurrency?.decimals || 18), inputCurrency)
 
   return parsedFeeAmount
 }
@@ -104,9 +103,10 @@ const applyFee = ({
   parsedAmount?: CurrencyAmount
   isExactIn: boolean
 }) => {
-  if (!trade) return undefined
+  // Opt out early if all the variables we need don't exist
+  if (!trade || !parsedAmount || !inputCurrency) return undefined
 
-  // NO returned fee info for input token
+  // NO returned fee info for input token, return normal trade input/outputAmount
   if (!feeInformation) return isExactIn ? trade.inputAmount : trade.outputAmount
 
   const feeAmount = calculateFee({
@@ -115,7 +115,7 @@ const applyFee = ({
     parsedAmount: isExactIn ? parsedAmount : trade.inputAmount
   })
 
-  if (!feeAmount) return isExactIn ? trade.inputAmount : trade.outputAmount
+  if (!feeAmount) return isExactIn ? trade.outputAmount : trade.inputAmount
 
   let amount: CurrencyAmount, mathsMethod: 'add' | 'subtract'
   if (isExactIn) {
@@ -155,7 +155,7 @@ interface DerivedSwapInfo {
 
 // from the current swap inputs, compute the best trade and return it.
 export function useDerivedSwapInfo(): DerivedSwapInfo {
-  const { account } = useActiveWeb3React()
+  const { account, chainId } = useActiveWeb3React()
 
   const {
     independentField,
@@ -183,7 +183,12 @@ export function useDerivedSwapInfo(): DerivedSwapInfo {
 
   const tradeBeforeFees = isExactIn ? bestTradeExactIn : bestTradeExactOut
 
-  const feeInformation = useFee(inputCurrencyId)
+  // Get relevant sell token fee information
+  const feeInformation = useFee({ token: inputCurrencyId, chainId })
+
+  // We need to calculate the fee based on:
+  //  1. What type of trade? ExactIN (sell), ExactOUT (buy)
+  //  2. How much is being traded
   const appliedFees = applyFee({
     trade: tradeBeforeFees,
     feeInformation,
@@ -194,6 +199,8 @@ export function useDerivedSwapInfo(): DerivedSwapInfo {
 
   // Proxy trade object and intercept in/outputAmount calls
   const v2Trade = proxyAndValidateTrade(tradeBeforeFees, feeApplicationHandler({ parsedAmountWithFees: appliedFees }))
+
+  registerOnWindow({ trade: v2Trade })
 
   const currencyBalances = {
     [Field.INPUT]: relevantTokenBalances[0],
