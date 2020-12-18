@@ -99,7 +99,9 @@ export default function Swap() {
     [Version.v1]: v1Trade,
     [Version.v2]: v2Trade
   }
+  console.log('tradesByVersion', tradesByVersion)
   const trade = showWrap ? undefined : tradesByVersion[toggledVersion]
+  console.log('trade', trade)
   const defaultTrade = showWrap ? undefined : tradesByVersion[DEFAULT_VERSION]
 
   const betterTradeLinkVersion: Version | undefined =
