@@ -16,7 +16,7 @@ interface FeeInformationObject {
 }
 
 // {token address => FeeInformationObject} mapping
-type FeesMap = Record<string, FeeInformationObject>
+export type FeesMap = Record<string, FeeInformationObject>
 
 export type FeeInformationState = {
   readonly [chainId in ChainId]?: {

@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 
 import { AppDispatch, AppState } from 'state'
 import { updateFee, clearFee } from './actions'
-import { FeeInformation } from './reducer'
+import { FeeInformation, FeesMap } from './reducer'
 
 interface AddFeeParams extends ClearFeeParams {
   fee: FeeInformation
@@ -17,9 +17,22 @@ interface ClearFeeParams {
 type AddFeeCallback = (addTokenParams: AddFeeParams) => void
 type ClearFeeCallback = (clearTokenParams: ClearFeeParams) => void
 
-export const useFee = ({ token, chainId }: ClearFeeParams): FeeInformation | undefined => {
+export const useAllFees = ({ chainId }: Partial<Pick<ClearFeeParams, 'chainId'>>): Partial<FeesMap> | undefined => {
+  return useSelector<AppState, Partial<FeesMap> | undefined>(state => {
+    const fees = chainId && state.fee[chainId]
+
+    if (!fees) return undefined
+
+    return fees.feesMap
+  })
+}
+
+export const useFee = ({
+  token,
+  chainId
+}: ClearFeeParams & Partial<Pick<ClearFeeParams, 'chainId'>>): FeeInformation | undefined => {
   return useSelector<AppState, FeeInformation | undefined>(state => {
-    const fees = state.fee[chainId]
+    const fees = chainId && state.fee[chainId]
 
     if (!fees) return undefined
 
