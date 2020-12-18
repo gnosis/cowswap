@@ -1,14 +1,14 @@
 import { ChainId } from '@uniswap/sdk'
 import { OrderCreation } from 'utils/signatures'
 import { APP_ID } from 'constants/index'
-import { OrderKind } from 'state/orders/actions'
+import { registerOnWindow } from './misc'
 
 /**
  * See Swagger documentation:
  *    https://protocol-rinkeby.dev.gnosisdev.com/api/
  */
 const API_BASE_URL: Partial<Record<ChainId, string>> = {
-  [ChainId.MAINNET]: 'https://protocol.gnosis.io/api/v1',
+  [ChainId.MAINNET]: 'https://protocol-mainnet.dev.gnosisdev.com/api/v1',
   [ChainId.RINKEBY]: 'https://protocol-rinkeby.dev.gnosisdev.com/api/v1'
   // [ChainId.xDAI]: 'https://protocol-xdai.dev.gnosisdev.com/api/v2'
 }
@@ -122,14 +122,8 @@ export async function postSignedOrder(params: { chainId: ChainId; order: OrderCr
   const { chainId, order } = params
   console.log('[utils:operator] Post signed order for network', chainId, order)
 
-  const orderRaw: Omit<OrderCreation, 'kind'> & { kind: string } = {
-    ...order,
-    // TODO: The NPM module will use the same structure as the API soon, this is temporal code too
-    kind: order.kind === OrderKind.SELL ? 'sell' : 'buy'
-  }
-
   // Call API
-  const response = await _post(chainId, `/orders`, orderRaw)
+  const response = await _post(chainId, `/orders`, order)
 
   // Handle respose
   if (!response.ok) {
@@ -150,11 +144,20 @@ export async function getFeeQuote(chainId: ChainId, tokenAddress: string): Promi
   // TODO: Let see if we can incorporate the PRs from the Fee, where they cache stuff and keep it in sync using redux.
   // if that part is delayed or need more review, we can easily add the cache in this file (we check expiration and cache here)
 
-  const response = await _get(chainId, `/tokens/${tokenAddress}/fee`)
-
-  if (!response.ok) {
-    throw new Error('Error getting the fee')
+  let response: Response | undefined
+  try {
+    const responseMaybeOk = await _get(chainId, `/tokens/${tokenAddress}/fee`)
+    response = responseMaybeOk.ok ? responseMaybeOk : undefined
+  } catch (error) {
+    // do nothing
   }
 
-  return response.json()
+  if (!response) {
+    throw new Error('Error getting the fee')
+  } else {
+    return response.json()
+  }
 }
+
+// Register some globals for convenience
+registerOnWindow({ operator: { getFeeQuote, postSignedOrder, apiGet: _get, apiPost: _post } })

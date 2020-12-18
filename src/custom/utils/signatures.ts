@@ -3,6 +3,7 @@ import { ChainId } from '@uniswap/sdk'
 
 import { GP_SETTLEMENT_CONTRACT_ADDRESS } from 'constants/index'
 import { TypedDataDomain, Signer } from 'ethers'
+import { registerOnWindow } from './misc'
 
 export { OrderKind } from '@gnosis.pm/gp-v2-contracts'
 export type UnsignedOrder = Order
@@ -41,24 +42,8 @@ export interface OrderCreation extends UnsignedOrder {
 //   MESSAGE = 1
 // }
 
-// /**
-//  * Order kind.
-//  */
-// export declare const enum OrderKind {
-//   /**
-//    * A sell order.
-//    */
-//   SELL = 0,
-//   /**
-//    * A buy order.
-//    */
-//   BUY = 1
-// }
-
 // TODO: For now, instead of using enums (see todo above)
 const TYPED_DATA_SIGNING_SCHEME = 0
-export const ORDER_KIND_SELL = 0
-export const ORDER_KIND_BUY = 0
 
 function _getDomain(chainId: ChainId): TypedDataDomain {
   // Get settlement contract address
@@ -78,3 +63,5 @@ export async function signOrder(params: SignOrderParams): Promise<string> {
   console.log('[utils:signature] signOrder', { domain, order, signer, TYPED_DATA_SIGNING_SCHEME })
   return signOrderGp(domain, order, signer, TYPED_DATA_SIGNING_SCHEME)
 }
+
+registerOnWindow({ signature: { signOrder, getDomain: _getDomain } })
