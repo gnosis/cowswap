@@ -19,9 +19,7 @@ interface FeeInformationObject {
 export type FeesMap = Record<string, FeeInformationObject>
 
 export type FeeInformationState = {
-  readonly [chainId in ChainId]?: {
-    feesMap: Partial<FeesMap>
-  }
+  readonly [chainId in ChainId]?: Partial<FeesMap>
 }
 
 const initialState: FeeInformationState = {}
@@ -35,9 +33,7 @@ function prefillState(
   const stateAtChainId = state[chainId]
 
   if (!stateAtChainId) {
-    state[chainId] = {
-      feesMap: {}
-    }
+    state[chainId] = {}
     return
   }
 }
@@ -47,11 +43,11 @@ export default createReducer(initialState, builder =>
     .addCase(updateFee, (state, action) => {
       prefillState(state, action)
       const { token, fee, chainId } = action.payload
-      state[chainId].feesMap[token] = { fee, token }
+      state[chainId][token] = { fee, token }
     })
     .addCase(clearFee, (state, action) => {
       prefillState(state, action)
       const { token, chainId } = action.payload
-      delete state[chainId].feesMap[token]
+      delete state[chainId][token]
     })
 )

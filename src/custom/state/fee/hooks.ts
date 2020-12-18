@@ -21,9 +21,9 @@ export const useAllFees = ({ chainId }: Partial<Pick<ClearFeeParams, 'chainId'>>
   return useSelector<AppState, Partial<FeesMap> | undefined>(state => {
     const fees = chainId && state.fee[chainId]
 
-    if (!fees) return undefined
+    if (!fees) return {}
 
-    return fees.feesMap
+    return fees
   })
 }
 
@@ -36,7 +36,7 @@ export const useFee = ({
 
     if (!fees) return undefined
 
-    return token ? fees.feesMap[token]?.fee : undefined
+    return token ? fees[token]?.fee : undefined
   })
 }
 
