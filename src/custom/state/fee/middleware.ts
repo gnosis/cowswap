@@ -3,6 +3,7 @@ import { getFee } from 'utils/fees'
 import { replaceSwapState, selectCurrency, switchCurrencies } from '@src/state/swap/actions'
 import { updateFee } from './actions'
 import { AppState } from '..'
+import { ChainId } from '@uniswap/sdk'
 
 const isCurrencyChangeAction = isAnyOf(selectCurrency, replaceSwapState, switchCurrencies)
 const isSelectCurrency = isAnyOf(selectCurrency)
@@ -17,9 +18,14 @@ function isDateLater(dateA: string, dateB: string): boolean {
 export const applyFeeMiddleware: Middleware = ({ dispatch, getState }) => next => async action => {
   if (isCurrencyChangeAction(action)) {
     const {
-      swap: { OUTPUT },
-      fee: { feesMap }
-    }: Pick<AppState, 'fee' | 'swap'> = getState()
+      fee,
+      swap: { OUTPUT }
+    }: Pick<AppState, 'application' | 'fee' | 'swap'> = getState()
+
+    // TODO: fix this chainid
+    const chainId: ChainId | undefined = ChainId.MAINNET
+
+    if (!chainId) next(action)
 
     let currencyIdFromPayload: string | undefined = OUTPUT.currencyId
 
@@ -30,8 +36,8 @@ export const applyFeeMiddleware: Middleware = ({ dispatch, getState }) => next =
 
     // we have a explicity token address (currencyIdFromPayload) within payload
     // use this to getFee
-    if (currencyIdFromPayload) {
-      const tokenFee = feesMap[currencyIdFromPayload]?.fee
+    if (chainId && currencyIdFromPayload) {
+      const tokenFee = fee[chainId]?.feesMap[currencyIdFromPayload]?.fee
       const isFeeDateValid = tokenFee && isDateLater(tokenFee.expirationDate, new Date().toISOString())
 
       if (!isFeeDateValid || !tokenFee) {
@@ -40,7 +46,8 @@ export const applyFeeMiddleware: Middleware = ({ dispatch, getState }) => next =
           dispatch(
             updateFee({
               token: currencyIdFromPayload,
-              fee
+              fee,
+              chainId
             })
           )
       }

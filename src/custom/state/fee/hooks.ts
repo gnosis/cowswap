@@ -1,3 +1,4 @@
+import { ChainId } from '@uniswap/sdk'
 import { useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -9,17 +10,20 @@ interface AddFeeParams extends ClearFeeParams {
   fee: FeeInformation
 }
 interface ClearFeeParams {
-  token: string // token address
+  token: string // token address,
+  chainId: ChainId
 }
 
 type AddFeeCallback = (addTokenParams: AddFeeParams) => void
 type ClearFeeCallback = (clearTokenParams: ClearFeeParams) => void
 
-export const useFee = (tokenAddress?: string): FeeInformation | undefined => {
+export const useFee = ({ token, chainId }: ClearFeeParams): FeeInformation | undefined => {
   return useSelector<AppState, FeeInformation | undefined>(state => {
-    const { feesMap } = state.fee
+    const fees = state.fee[chainId]
 
-    return tokenAddress ? feesMap[tokenAddress]?.fee : undefined
+    if (!fees) return undefined
+
+    return token ? fees.feesMap[token]?.fee : undefined
   })
 }
 
