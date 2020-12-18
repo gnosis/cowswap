@@ -6,14 +6,11 @@ import { TYPE } from 'theme'
 import { ExternalLink } from 'theme'
 import { AutoColumn } from 'components/Column'
 import { AutoRow } from 'components/Row'
+import { getOrderLink } from 'utils/operator'
 
 const RowNoFlex = styled(AutoRow)`
   flex-wrap: nowrap;
 `
-
-const getOrderLink = (id: string) => {
-  return `https://protocol-rinkeby.dev.gnosisdev.com/api/v1/orders/${id}`
-}
 
 export default function MetaTransactionPopup({
   id,
@@ -35,7 +32,7 @@ export default function MetaTransactionPopup({
       </div>
       <AutoColumn gap="8px">
         <TYPE.body fontWeight={500}>{summary ?? 'ID: ' + id.slice(0, 8) + '...' + id.slice(58, 65)}</TYPE.body>
-        {chainId && <ExternalLink href={getOrderLink(id)}>View on Etherscan</ExternalLink>}
+        {chainId && <ExternalLink href={getOrderLink(chainId, id)}>View on API</ExternalLink>}
       </AutoColumn>
     </RowNoFlex>
   )
