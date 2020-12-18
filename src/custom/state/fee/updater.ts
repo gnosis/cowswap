@@ -1,9 +1,9 @@
 import { useEffect } from 'react'
-import { useActiveWeb3React } from 'hooks'
-import useIsWindowVisible from 'hooks/useIsWindowVisible'
-import { useSwapState } from '@src/state/swap/hooks'
 import { ChainId } from '@uniswap/sdk'
+import { useActiveWeb3React } from 'hooks'
 import { useAddFee, useAllFees } from './hooks'
+import { useSwapState } from 'state/swap/hooks'
+import useIsWindowVisible from 'hooks/useIsWindowVisible'
 import { FeesMap } from './reducer'
 import { getFeeQuote } from 'utils/operator'
 
@@ -15,16 +15,18 @@ function isDateLater(dateA: string, dateB: string): boolean {
 
 export default function FeesUpdater(): null {
   const { chainId } = useActiveWeb3React()
-  const { INPUT } = useSwapState()
+  const {
+    INPUT: { currencyId }
+  } = useSwapState()
   const stateFeesMap = useAllFees({ chainId })
   const addFee = useAddFee()
 
   const windowVisible = useIsWindowVisible()
 
-  useEffect(() => {
-    const inputCurrencyId = INPUT?.currencyId
+  const now = new Date().toISOString()
 
-    if (!stateFeesMap || !chainId || !inputCurrencyId || !windowVisible) return
+  useEffect(() => {
+    if (!stateFeesMap || !chainId || !currencyId || !windowVisible) return
 
     async function runFeeHook({
       feesMap,
@@ -36,7 +38,7 @@ export default function FeesUpdater(): null {
       sellToken: string
     }) {
       const currentFee = feesMap[sellToken]?.fee
-      const isFeeDateValid = currentFee && isDateLater(currentFee.expirationDate, new Date().toISOString())
+      const isFeeDateValid = currentFee && isDateLater(currentFee.expirationDate, now)
 
       if (!isFeeDateValid || !currentFee) {
         const fee = await getFeeQuote(chainId, sellToken).catch(err => {
@@ -53,8 +55,8 @@ export default function FeesUpdater(): null {
       }
     }
 
-    runFeeHook({ feesMap: stateFeesMap, sellToken: inputCurrencyId, chainId })
-  }, [windowVisible, INPUT?.currencyId, chainId, addFee, stateFeesMap])
+    runFeeHook({ feesMap: stateFeesMap, sellToken: currencyId, chainId })
+  }, [windowVisible, currencyId, chainId, now, addFee, stateFeesMap])
 
   return null
 }
