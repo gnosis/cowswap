@@ -15,8 +15,6 @@ import multicall from '@src/state/multicall/reducer'
 import operator from './operator/reducer'
 import orders from './orders/reducer'
 import fee from './fee/reducer'
-// CUSTOM MIDDLEWARE
-import { applyFeeMiddleware } from './fee/middleware'
 
 const UNISWAP_REDUCERS = {
   application,
@@ -38,7 +36,7 @@ const store = configureStore({
     orders,
     fee
   },
-  middleware: [...getDefaultMiddleware({ thunk: false }), save({ states: PERSISTED_KEYS }), applyFeeMiddleware],
+  middleware: [...getDefaultMiddleware({ thunk: false }), save({ states: PERSISTED_KEYS })],
   preloadedState: load({ states: PERSISTED_KEYS })
 })
 
