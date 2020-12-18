@@ -1,5 +1,8 @@
-import { createReducer } from '@reduxjs/toolkit'
+import { createReducer, PayloadAction } from '@reduxjs/toolkit'
+import { ChainId } from '@uniswap/sdk'
 import { updateFee, clearFee } from './actions'
+import { Writable } from 'custom/types'
+import { PrefillStateRequired } from '../orders/reducer'
 
 export interface FeeInformation {
   expirationDate: string
@@ -15,22 +18,40 @@ interface FeeInformationObject {
 // {token address => FeeInformationObject} mapping
 type FeesMap = Record<string, FeeInformationObject>
 
-export interface FeeInformationState {
-  readonly feesMap: Partial<FeesMap>
+export type FeeInformationState = {
+  readonly [chainId in ChainId]?: {
+    feesMap: Partial<FeesMap>
+  }
 }
 
-const initialState: FeeInformationState = {
-  feesMap: {}
+const initialState: FeeInformationState = {}
+
+// makes sure there's always an object at state[chainId], state[chainId].feesMap
+function prefillState(
+  state: Writable<FeeInformationState>,
+  { payload: { chainId } }: PayloadAction<PrefillStateRequired>
+): asserts state is Required<FeeInformationState> {
+  // asserts that state[chainId].feesMap is ok to access
+  const stateAtChainId = state[chainId]
+
+  if (!stateAtChainId) {
+    state[chainId] = {
+      feesMap: {}
+    }
+    return
+  }
 }
 
 export default createReducer(initialState, builder =>
   builder
     .addCase(updateFee, (state, action) => {
-      const { token, fee } = action.payload
-      state.feesMap[token] = { fee, token }
+      prefillState(state, action)
+      const { token, fee, chainId } = action.payload
+      state[chainId].feesMap[token] = { fee, token }
     })
     .addCase(clearFee, (state, action) => {
-      const { token } = action.payload
-      delete state.feesMap[token]
+      prefillState(state, action)
+      const { token, chainId } = action.payload
+      delete state[chainId].feesMap[token]
     })
 )
