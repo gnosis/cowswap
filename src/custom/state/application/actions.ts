@@ -1,7 +1,7 @@
 import { createAction } from '@reduxjs/toolkit'
 
-export * from '@src/state/application/actions'
 import { PopupContent as PopupContentUniswap } from '@src/state/application/actions'
+export * from '@src/state/application/actions'
 
 export interface MetaTxPopupContent {
   metatxn: {
