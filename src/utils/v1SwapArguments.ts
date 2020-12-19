@@ -1,5 +1,5 @@
 import { MaxUint256 } from '@ethersproject/constants'
-import { CurrencyAmount, ETHER, SwapParameters, Token, Trade, TradeOptionsDeadline, TradeType } from 'uniswap-xdai-sdk'
+import { CurrencyAmount, ETHER, SwapParameters, Token, Trade, TradeOptions, TradeType } from 'uniswap-xdai-sdk'
 import { getTradeVersion } from '../data/V1'
 import { Version } from '../hooks/useToggledVersion'
 
@@ -12,10 +12,7 @@ function toHex(currencyAmount: CurrencyAmount): string {
  * @param trade trade to get v1 arguments for swapping
  * @param options options for swapping
  */
-export default function v1SwapArguments(
-  trade: Trade,
-  options: Omit<TradeOptionsDeadline, 'feeOnTransfer'>
-): SwapParameters {
+export default function v1SwapArguments(trade: Trade, options: Omit<TradeOptions, 'feeOnTransfer'>): SwapParameters {
   if (getTradeVersion(trade) !== Version.v1) {
     throw new Error('invalid trade version')
   }
@@ -28,7 +25,7 @@ export default function v1SwapArguments(
   if (inputETH && outputETH) throw new Error('ETHER to ETHER')
   const minimumAmountOut = toHex(trade.minimumAmountOut(options.allowedSlippage))
   const maximumAmountIn = toHex(trade.maximumAmountIn(options.allowedSlippage))
-  const deadline = `0x${options.deadline.toString(16)}`
+  const deadline = `0x${options.ttl.toString(16)}`
   if (isExactIn) {
     if (inputETH) {
       return {
