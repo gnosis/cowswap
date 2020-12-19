@@ -28,7 +28,7 @@ import { ApprovalState, useApproveCallbackFromTrade } from 'hooks/useApproveCall
 import useENSAddress from '../../hooks/useENSAddress'
 import { useSwapCallback } from 'hooks/useSwapCallback'
 import useToggledVersion, { DEFAULT_VERSION, Version } from '../../hooks/useToggledVersion'
-import useWrapCallback, { WrapType } from '../../hooks/useWrapCallback'
+import useWrapCallback, { WrapType } from 'hooks/useWrapCallback'
 import { useToggleSettingsMenu, useWalletModalToggle } from '../../state/application/hooks'
 import { Field } from '../../state/swap/actions'
 import {
