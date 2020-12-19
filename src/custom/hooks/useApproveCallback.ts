@@ -2,7 +2,7 @@ import { useActiveWeb3React } from '@src/hooks'
 import { useApproveCallback } from '@src/hooks/useApproveCallback'
 import { Field } from '@src/state/swap/actions'
 import { computeSlippageAdjustedAmounts } from '@src/utils/prices'
-import { Trade } from '@uniswap/sdk'
+import { Trade } from 'uniswap-xdai-sdk'
 import { useMemo } from 'react'
 import { GP_ALLOWANCE_MANAGER_CONTRACT_ADDRESS } from 'constants/index'
 

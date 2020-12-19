@@ -3,7 +3,7 @@ import { INITIAL_ALLOWED_SLIPPAGE } from 'constants/index'
 
 // import { useSwapCallback as useSwapCallbackUniswap } from '@src/hooks/useSwapCallback'
 import { BigNumber } from 'ethers'
-import { Percent, Trade, TradeType } from '@uniswap/sdk'
+import { Percent, Trade, TradeType } from 'uniswap-xdai-sdk'
 
 import { useActiveWeb3React } from '@src/hooks'
 import useENS from '@src/hooks/useENS'
