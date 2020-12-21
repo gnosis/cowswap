@@ -1,7 +1,7 @@
 import { createAction } from '@reduxjs/toolkit'
 import { OrderID } from 'utils/operator'
 import { OrderCreation } from 'utils/signatures'
-import { ChainId } from 'uniswap-xdai-sdk'
+import { ChainId } from '@uniswap/sdk'
 export { OrderKind } from '@gnosis.pm/gp-v2-contracts'
 
 export enum OrderStatus {

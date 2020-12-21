@@ -1,4 +1,4 @@
-import { TokenAmount } from 'uniswap-xdai-sdk'
+import { TokenAmount } from '@uniswap/sdk'
 import React, { useEffect } from 'react'
 import { X } from 'react-feather'
 import styled, { keyframes } from 'styled-components'

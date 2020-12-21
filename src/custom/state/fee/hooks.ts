@@ -1,4 +1,4 @@
-import { ChainId } from 'uniswap-xdai-sdk'
+import { ChainId } from '@uniswap/sdk'
 import { useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
