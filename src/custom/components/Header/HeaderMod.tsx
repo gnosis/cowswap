@@ -1,4 +1,4 @@
-import { ChainId } from 'uniswap-xdai-sdk'
+import { ChainId } from '@uniswap/sdk'
 import React, { useState } from 'react'
 import { Text } from 'rebass'
 import { NavLink } from 'react-router-dom'

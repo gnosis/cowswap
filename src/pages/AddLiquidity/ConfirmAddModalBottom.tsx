@@ -1,4 +1,4 @@
-import { Currency, CurrencyAmount, Fraction, Percent } from 'uniswap-xdai-sdk'
+import { Currency, CurrencyAmount, Fraction, Percent } from '@uniswap/sdk'
 import React from 'react'
 import { Text } from 'rebass'
 import { ButtonPrimary } from '../../components/Button'
