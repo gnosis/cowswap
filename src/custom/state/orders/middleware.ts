@@ -15,6 +15,8 @@ const isPendingOrderAction = isAnyOf(OrderActions.addPendingOrder)
 
 const isFulfillOrderAction = isAnyOf(OrderActions.fulfillOrder)
 
+const isBatchOrderAction = isAnyOf(OrderActions.fulfillOrdersBatch, OrderActions.expireOrdersBatch)
+
 const isBatchFulfillOrderAction = isAnyOf(OrderActions.fulfillOrdersBatch)
 
 // what is passed to addPopup action
@@ -24,6 +26,8 @@ interface OrderIDWithPopup {
   popup: PopupPayload
 }
 
+// on each Pending, Expired, Fulfilled order action
+// a corresponsing Popup action is dispatched
 export const popupMiddleware: Middleware<{}, AppState> = store => next => action => {
   const result = next(action)
 
@@ -32,6 +36,7 @@ export const popupMiddleware: Middleware<{}, AppState> = store => next => action
   if (isSingleOrderChangeAction(action)) {
     const { id, chainId } = action.payload
 
+    // use current state to lookup orders' data
     const orders = store.getState().orders[chainId]
 
     if (!orders) return
@@ -71,7 +76,7 @@ export const popupMiddleware: Middleware<{}, AppState> = store => next => action
       popup = { key, content }
     } else {
       // action is order/expireOrder
-      const key = id + '_pending'
+      const key = id + '_expired'
       const content = {
         metatxn: {
           id: id,
@@ -87,32 +92,55 @@ export const popupMiddleware: Middleware<{}, AppState> = store => next => action
       id,
       popup
     })
-  } else if (isBatchFulfillOrderAction(action)) {
+  } else if (isBatchOrderAction(action)) {
     const { chainId } = action.payload
+
+    // use current state to lookup orders' data
     const orders = store.getState().orders[chainId]
 
     if (!orders) return
 
     const { pending, fulfilled, expired } = orders
 
-    // construct Fulfilled Order Popups for each Order
-    idsAndPopups = action.payload.ordersData.map(({ id, transactionHash }) => {
-      const orderObject = pending?.[id] || fulfilled?.[id] || expired?.[id]
+    if (isBatchFulfillOrderAction(action)) {
+      // construct Fulfilled Order Popups for each Order
+      idsAndPopups = action.payload.ordersData.map(({ id, transactionHash }) => {
+        const orderObject = pending?.[id] || fulfilled?.[id] || expired?.[id]
 
-      const summary = orderObject?.order.summary
-      const key = id + '_fulfilled'
-      const content = {
-        txn: {
-          hash: transactionHash,
-          success: true,
-          summary: summary + ' fulfilled' || `Order ${id} was traded`
+        const summary = orderObject?.order.summary
+        const key = id + '_fulfilled'
+        const content = {
+          txn: {
+            hash: transactionHash,
+            success: true,
+            summary: summary + ' fulfilled' || `Order ${id} was traded`
+          }
         }
-      }
 
-      const popup = { key, content }
+        const popup = { key, content }
 
-      return { id, popup }
-    })
+        return { id, popup }
+      })
+    } else {
+      // construct Expired Order Popups for each Order
+      idsAndPopups = action.payload.ids.map(id => {
+        const orderObject = pending?.[id] || fulfilled?.[id] || expired?.[id]
+
+        const summary = orderObject?.order.summary
+        const key = id + '_expired'
+        const content = {
+          metatxn: {
+            id: id,
+            success: false,
+            summary: summary + ' expired' || `Order ${id} expired`
+          }
+        }
+
+        const popup = { key, content }
+
+        return { id, popup }
+      })
+    }
   }
 
   // dispatch all necessary Popups
