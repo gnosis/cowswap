@@ -58,6 +58,9 @@ export interface FulfillOrdersBatchParams {
 export const fulfillOrdersBatch = createAction<FulfillOrdersBatchParams>('order/fullfillOrdersBatch')
 
 export const expireOrder = createAction<{ id: OrderID; chainId: ChainId }>('order/expireOrder')
+
+export const expireOrdersBatch = createAction<{ ids: OrderID[]; chainId: ChainId }>('order/expireOrdersBatch')
+
 export const clearOrders = createAction<{ chainId: ChainId }>('order/clearOrders')
 
 export const updateLastCheckedBlock = createAction<{ chainId: ChainId; lastCheckedBlock: number }>(
