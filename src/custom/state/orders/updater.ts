@@ -1,11 +1,16 @@
 import { useEffect, useMemo, useRef } from 'react'
-import { batch } from 'react-redux'
 import { useActiveWeb3React } from 'hooks'
 import { useBlockNumber } from 'state/application/hooks'
 import { OrderFulfillmentData, Order } from './actions'
 import { Web3Provider } from '@ethersproject/providers'
 import { Log, Filter } from '@ethersproject/abstract-provider'
-import { useLastCheckedBlock, usePendingOrders, useExpireOrder, useFulfillOrdersBatch, useFindOrderById } from './hooks'
+import {
+  useLastCheckedBlock,
+  usePendingOrders,
+  useFulfillOrdersBatch,
+  useFindOrderById,
+  useExpireOrdersBatch
+} from './hooks'
 import { buildBlock2DateMap } from 'utils/blocks'
 import { registerOnWindow } from 'utils/misc'
 import { GP_SETTLEMENT_CONTRACT_ADDRESS } from 'constants/index'
@@ -226,7 +231,7 @@ const CHECK_EXPIRED_ORDERS_INTERVAL = 10000 // 10 sec
 export function ExpiredOrdersWatcher(): null {
   const { chainId } = useActiveWeb3React()
 
-  const expireOrder = useExpireOrder()
+  const expireOrdersBatch = useExpireOrdersBatch()
 
   const pendingOrders = usePendingOrders({ chainId })
 
@@ -250,17 +255,18 @@ export function ExpiredOrdersWatcher(): null {
         return validTo < now
       })
 
-      batch(() => {
-        expiredOrders.forEach(order => {
-          expireOrder({ chainId, id: order.id })
-        })
+      const expiredIds = expiredOrders.map(({ id }) => id)
+
+      expireOrdersBatch({
+        chainId,
+        ids: expiredIds
       })
     }
 
     const intervalId = setInterval(checkForExpiredOrders, CHECK_EXPIRED_ORDERS_INTERVAL)
 
     return () => clearInterval(intervalId)
-  }, [chainId, expireOrder])
+  }, [chainId, expireOrdersBatch])
 
   return null
 }
