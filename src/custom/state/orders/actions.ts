@@ -35,13 +35,17 @@ export interface AddPendingOrderParams {
 export const addPendingOrder = createAction<AddPendingOrderParams>('order/addPendingOrder')
 export const removeOrder = createAction<{ id: OrderID; chainId: ChainId }>('order/removeOrder')
 //                                                                        fulfillmentTime from event timestamp
-export const fulfillOrder = createAction<{ id: OrderID; chainId: ChainId; fulfillmentTime: string }>(
-  'order/fulfillOrder'
-)
+export const fulfillOrder = createAction<{
+  id: OrderID
+  chainId: ChainId
+  fulfillmentTime: string
+  transactionHash: string
+}>('order/fulfillOrder')
 
 export interface OrderFulfillmentData {
   id: OrderID
   fulfillmentTime: string
+  transactionHash: string
 }
 
 export interface FulfillOrdersBatchParams {

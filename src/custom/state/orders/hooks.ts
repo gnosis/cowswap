@@ -25,6 +25,7 @@ interface AddPendingOrderParams extends GetRemoveOrderParams {
 
 interface FulfillOrderParams extends GetRemoveOrderParams {
   fulfillmentTime: string
+  transactionHash: string
 }
 interface GetRemoveOrderParams {
   id: OrderID
