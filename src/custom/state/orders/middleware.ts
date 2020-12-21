@@ -25,6 +25,8 @@ interface OrderIDWithPopup {
 }
 
 export const popupMiddleware: Middleware<{}, AppState> = store => next => action => {
+  const result = next(action)
+
   let idsAndPopups: OrderIDWithPopup[] = []
   //  is it a singular action with {chainId, id} payload
   if (isSingleOrderChangeAction(action)) {
@@ -119,5 +121,5 @@ export const popupMiddleware: Middleware<{}, AppState> = store => next => action
     store.dispatch(addPopup(popup))
   })
 
-  return next(action)
+  return result
 }
