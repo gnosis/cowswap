@@ -12,7 +12,8 @@ import {
   updateLastCheckedBlock,
   Order,
   fulfillOrdersBatch,
-  FulfillOrdersBatchParams
+  FulfillOrdersBatchParams,
+  expireOrdersBatch
 } from './actions'
 import { OrdersState, PartialOrdersMap } from './reducer'
 import { isTruthy } from 'utils/misc'
@@ -36,6 +37,10 @@ type GetOrdersParams = Partial<Pick<GetRemoveOrderParams, 'chainId'>>
 type ClearOrdersParams = Pick<GetRemoveOrderParams, 'chainId'>
 type GetLastCheckedBlockParams = GetOrdersParams
 type ExpireOrderParams = GetRemoveOrderParams
+interface ExpireOrdersBatchParams {
+  ids: OrderID[]
+  chainId: ChainId
+}
 
 interface UpdateLastCheckedBlockParams extends ClearOrdersParams {
   lastCheckedBlock: number
@@ -46,6 +51,7 @@ type RemoveOrderCallback = (removeOrderParams: GetRemoveOrderParams) => void
 type FulfillOrderCallback = (fulfillOrderParams: FulfillOrderParams) => void
 type FulfillOrdersBatchCallback = (fulfillOrdersBatchParams: FulfillOrdersBatchParams) => void
 type ExpireOrderCallback = (fulfillOrderParams: ExpireOrderParams) => void
+type ExpireOrdersBatchCallback = (expireOrdersBatchParams: ExpireOrdersBatchParams) => void
 type ClearOrdersCallback = (clearOrdersParams: ClearOrdersParams) => void
 type UpdateLastCheckedBlockCallback = (updateLastCheckedBlockParams: UpdateLastCheckedBlockParams) => void
 
@@ -180,6 +186,14 @@ export const useFulfillOrdersBatch = (): FulfillOrdersBatchCallback => {
 export const useExpireOrder = (): ExpireOrderCallback => {
   const dispatch = useDispatch<AppDispatch>()
   return useCallback((expireOrderParams: ExpireOrderParams) => dispatch(expireOrder(expireOrderParams)), [dispatch])
+}
+
+export const useExpireOrdersBatch = (): ExpireOrdersBatchCallback => {
+  const dispatch = useDispatch<AppDispatch>()
+  return useCallback(
+    (expireOrdersBatchParams: ExpireOrdersBatchParams) => dispatch(expireOrdersBatch(expireOrdersBatchParams)),
+    [dispatch]
+  )
 }
 
 export const useRemoveOrder = (): RemoveOrderCallback => {
