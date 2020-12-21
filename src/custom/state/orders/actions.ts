@@ -16,6 +16,7 @@ export interface Order extends OrderCreation {
   owner: string // address, without '0x' prefix
   status: OrderStatus
   fulfillmentTime?: string // Fulfillment time of the order. Encoded as ISO 8601 UTC
+  fulfilledTransactionHash?: string // hash of transaction when Order was fulfilled
   creationTime: string // Creation time of the order. Encoded as ISO 8601 UTC
   summary: string // for dapp use only, readable by user
 }

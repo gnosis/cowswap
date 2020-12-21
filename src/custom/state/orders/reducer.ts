@@ -91,7 +91,7 @@ export default createReducer(initialState, builder =>
     })
     .addCase(fulfillOrder, (state, action) => {
       prefillState(state, action)
-      const { id, chainId, fulfillmentTime } = action.payload
+      const { id, chainId, fulfillmentTime, transactionHash } = action.payload
 
       const orderObject = state[chainId].pending[id]
 
@@ -100,6 +100,8 @@ export default createReducer(initialState, builder =>
 
         orderObject.order.status = OrderStatus.FULFILLED
         orderObject.order.fulfillmentTime = fulfillmentTime
+
+        orderObject.order.fulfilledTransactionHash = transactionHash
 
         state[chainId].fulfilled[id] = orderObject
       }
@@ -116,7 +118,7 @@ export default createReducer(initialState, builder =>
 
       // if there are any newly fulfilled orders
       // update them
-      ordersData.forEach(({ id, fulfillmentTime }) => {
+      ordersData.forEach(({ id, fulfillmentTime, transactionHash }) => {
         const orderObject = pendingOrders[id]
 
         if (orderObject) {
@@ -124,6 +126,8 @@ export default createReducer(initialState, builder =>
 
           orderObject.order.status = OrderStatus.FULFILLED
           orderObject.order.fulfillmentTime = fulfillmentTime
+
+          orderObject.order.fulfilledTransactionHash = transactionHash
 
           fulfilledOrders[id] = orderObject
         }
