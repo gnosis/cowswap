@@ -1,8 +1,7 @@
 import { useEffect, useMemo, useRef } from 'react'
-import { useDispatch, batch } from 'react-redux'
+import { batch } from 'react-redux'
 import { useActiveWeb3React } from 'hooks'
-import { useAddPopup, useBlockNumber } from 'state/application/hooks'
-import { AppDispatch } from 'state'
+import { useBlockNumber } from 'state/application/hooks'
 import { OrderFulfillmentData, Order } from './actions'
 import { Web3Provider } from '@ethersproject/providers'
 import { Log, Filter } from '@ethersproject/abstract-provider'
@@ -91,13 +90,7 @@ export function EventUpdater(): null {
   console.log('EventUpdater::lastCheckedBlock', lastCheckedBlock)
   console.log('EventUpdater::lastBlockNumber', lastBlockNumber)
 
-  const dispatch = useDispatch<AppDispatch>()
-
   const fulfillOrdersBatch = useFulfillOrdersBatch()
-
-  // show popup on confirm
-  // for displaying fulfilled orders
-  const addPopup = useAddPopup()
 
   const getLogsRetry = useMemo(() => {
     if (!library) return null
@@ -162,31 +155,13 @@ export function EventUpdater(): null {
         }
       })
 
-      batch(() => {
-        // SET lastCheckedBlock = lastBlockNumber
-        // AND fulfill orders
-        // ordersBatchData can be empty
-        fulfillOrdersBatch({
-          ordersData: ordersBatchData,
-          chainId,
-          lastCheckedBlock: lastBlockNumber
-        })
-        ordersBatchData.forEach(({ id, transactionHash, summary }) => {
-          try {
-            addPopup(
-              {
-                txn: {
-                  hash: transactionHash,
-                  success: true,
-                  summary: summary || `Order ${id} was traded`
-                }
-              },
-              id
-            )
-          } catch (error) {
-            console.error('Error decoding Trade event', error)
-          }
-        })
+      // SET lastCheckedBlock = lastBlockNumber
+      // AND fulfill orders
+      // ordersBatchData can be empty
+      fulfillOrdersBatch({
+        ordersData: ordersBatchData,
+        chainId,
+        lastCheckedBlock: lastBlockNumber
       })
 
       // console.log('logs', logs)
@@ -218,8 +193,6 @@ export function EventUpdater(): null {
     lastBlockNumber,
     lastCheckedBlock,
     getLogsRetry,
-    dispatch,
-    addPopup,
     eventTopics,
     fulfillOrdersBatch,
     contractAddress,
@@ -261,9 +234,6 @@ export function ExpiredOrdersWatcher(): null {
   const pendingOrdersRef = useRef(pendingOrders)
   pendingOrdersRef.current = pendingOrders
 
-  // for displaying expired orders
-  const addPopup = useAddPopup()
-
   useEffect(() => {
     if (!chainId) return
 
@@ -283,17 +253,6 @@ export function ExpiredOrdersWatcher(): null {
       batch(() => {
         expiredOrders.forEach(order => {
           expireOrder({ chainId, id: order.id })
-
-          addPopup(
-            {
-              txn: {
-                hash: order.id,
-                success: false,
-                summary: order.summary + ' expired' || `Order ${order.id} expired`
-              }
-            },
-            order.id + '_expired' // to differentiate further
-          )
         })
       })
     }
@@ -301,7 +260,7 @@ export function ExpiredOrdersWatcher(): null {
     const intervalId = setInterval(checkForExpiredOrders, CHECK_EXPIRED_ORDERS_INTERVAL)
 
     return () => clearInterval(intervalId)
-  }, [chainId, expireOrder, addPopup])
+  }, [chainId, expireOrder])
 
   return null
 }
