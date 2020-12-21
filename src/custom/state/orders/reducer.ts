@@ -10,7 +10,8 @@ import {
   OrderStatus,
   updateLastCheckedBlock,
   expireOrder,
-  fulfillOrdersBatch
+  fulfillOrdersBatch,
+  expireOrdersBatch
 } from './actions'
 import { ContractDeploymentBlocks } from './consts'
 import { Writable } from '@src/custom/types'
@@ -146,6 +147,26 @@ export default createReducer(initialState, builder =>
 
         state[chainId].expired[id] = orderObject
       }
+    })
+    .addCase(expireOrdersBatch, (state, action) => {
+      prefillState(state, action)
+      const { ids, chainId } = action.payload
+
+      const pendingOrders = state[chainId].pending
+      const fulfilledOrders = state[chainId].expired
+
+      // if there are any newly fulfilled orders
+      // update them
+      ids.forEach(id => {
+        const orderObject = pendingOrders[id]
+
+        if (orderObject) {
+          delete pendingOrders[id]
+
+          orderObject.order.status = OrderStatus.EXPIRED
+          fulfilledOrders[id] = orderObject
+        }
+      })
     })
     .addCase(clearOrders, (state, action) => {
       const { chainId } = action.payload
