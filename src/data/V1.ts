@@ -12,9 +12,9 @@ import {
   Token,
   TokenAmount,
   Trade,
-  TradeType,
-  WETH
+  TradeType
 } from '@uniswap/sdk'
+import { WETH } from 'xdai'
 import { useMemo } from 'react'
 import { useActiveWeb3React } from '../hooks'
 import { useAllTokens } from '../hooks/Tokens'

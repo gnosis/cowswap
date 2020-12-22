@@ -1,4 +1,5 @@
-import { ChainId } from '@uniswap/sdk'
+// import { ChainId } from '@uniswap/sdk'
+import { ChainId } from 'xdai'
 
 // TODO: fill contract deploymentblocks
 // to start checking for orders from that point

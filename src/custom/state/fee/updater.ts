@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
-import { ChainId } from '@uniswap/sdk'
+// import { ChainId } from '@uniswap/sdk'
+import { ChainId } from 'xdai'
 import { useActiveWeb3React } from 'hooks'
 import { useAddFee, useAllFees } from './hooks'
 import { useSwapState } from 'state/swap/hooks'

@@ -1,4 +1,5 @@
-import { ChainId } from '@uniswap/sdk'
+// import { ChainId } from '@uniswap/sdk'
+import { ChainId } from 'xdai'
 import { createStore, Store } from 'redux'
 import { addPopup, ApplicationModal, removePopup, setOpenModal, updateBlockNumber } from 'state/application/actions'
 import reducer, { ApplicationState } from './reducer'

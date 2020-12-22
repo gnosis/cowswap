@@ -1,6 +1,7 @@
 import { createReducer, PayloadAction } from '@reduxjs/toolkit'
 import { OrderID } from 'utils/operator'
-import { ChainId } from '@uniswap/sdk'
+// import { ChainId } from '@uniswap/sdk'
+import { ChainId } from 'xdai'
 import {
   addPendingOrder,
   removeOrder,

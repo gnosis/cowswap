@@ -1,4 +1,5 @@
-import { ChainId, Pair, Token } from '@uniswap/sdk'
+import { Pair, Token } from '@uniswap/sdk'
+import { ChainId } from 'xdai'
 import flatMap from 'lodash.flatmap'
 import { useCallback, useMemo } from 'react'
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'

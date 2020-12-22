@@ -1,6 +1,7 @@
 import { TransactionResponse } from '@ethersproject/abstract-provider'
 import { AddressZero } from '@ethersproject/constants'
-import { Currency, CurrencyAmount, Fraction, JSBI, Percent, Token, TokenAmount, WETH } from '@uniswap/sdk'
+import { Currency, CurrencyAmount, Fraction, JSBI, Percent, Token, TokenAmount } from '@uniswap/sdk'
+import { WETH } from 'xdai'
 import React, { useCallback, useMemo, useState } from 'react'
 import ReactGA from 'react-ga'
 import { Redirect, RouteComponentProps } from 'react-router'

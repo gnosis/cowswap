@@ -1,5 +1,6 @@
 import { UNI } from './../../constants/index'
-import { TokenAmount, JSBI, ChainId } from '@uniswap/sdk'
+import { TokenAmount, JSBI } from '@uniswap/sdk'
+import { ChainId } from 'xdai'
 import { TransactionResponse } from '@ethersproject/providers'
 import { useEffect, useState } from 'react'
 import { useActiveWeb3React } from '../../hooks'
