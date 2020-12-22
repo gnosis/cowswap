@@ -1,4 +1,6 @@
-import { ChainId, ETHER, WETH } from '@uniswap/sdk'
+import { ETHER } from '@uniswap/sdk'
+import { WETH } from 'xdai'
+import { ChainId } from 'xdai'
 import { OrderCreation } from 'utils/signatures'
 import { APP_ID } from 'constants/index'
 import { registerOnWindow } from './misc'
@@ -9,8 +11,8 @@ import { registerOnWindow } from './misc'
  */
 const API_BASE_URL: Partial<Record<ChainId, string>> = {
   [ChainId.MAINNET]: 'https://protocol-mainnet.dev.gnosisdev.com/api/v1',
-  [ChainId.RINKEBY]: 'https://protocol-rinkeby.dev.gnosisdev.com/api/v1'
-  // [ChainId.xDAI]: 'https://protocol-xdai.dev.gnosisdev.com/api/v2'
+  [ChainId.RINKEBY]: 'https://protocol-rinkeby.dev.gnosisdev.com/api/v1',
+  [ChainId.XDAI]: 'https://protocol-xdai.dev.gnosisdev.com/api/v1'
 }
 
 const DEFAULT_HEADERS = {
