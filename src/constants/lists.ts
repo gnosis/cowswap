@@ -1,4 +1,5 @@
 // the Uniswap Default token list lives here
+// TODO: make chainId-dependent
 // export const DEFAULT_TOKEN_LIST_URL = 'tokens.uniswap.eth'
 export const DEFAULT_TOKEN_LIST_URL = 'https://tokens.honeyswap.org'
 

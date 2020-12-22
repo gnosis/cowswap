@@ -12,8 +12,11 @@ export enum ChainId {
   KOVAN = 42,
   XDAI = 100
 }
+
+// TODO: make chainId-dependant
 // xDAI
 export const FACTORY_ADDRESS = '0xA818b4F111Ccac7AA31D0BCc0806d64F2E0737D7'
+// TODO: make chainId-dependant
 // xDAI
 export const INIT_CODE_HASH = '0x3f88503e8580ab941773b59034fb4b2a63e86dbc031b3633a925533ad3ed2b93'
 
@@ -22,6 +25,7 @@ let PAIR_ADDRESS_CACHE: { [token0Address: string]: { [token1Address: string]: st
 
 // overrides actual function to use xDAI specific FACTORY_ADDRESS and INIT_CODE_HASH
 // copy-pasta from the lib
+// TODO: make chainId-dependant
 Pair.getAddress = function getAddress(tokenA: Token, tokenB: Token): string {
   const tokens = tokenA.sortsBefore(tokenB) ? [tokenA, tokenB] : [tokenB, tokenA] // does safety checks
 
