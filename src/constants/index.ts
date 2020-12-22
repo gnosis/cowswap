@@ -1,4 +1,5 @@
-import { ChainId, JSBI, Percent, Token, WETH } from '@uniswap/sdk'
+import { /*ChainId,*/ JSBI, Percent, Token /*, WETH */ } from '@uniswap/sdk'
+import { ChainId, WETH, USDC_XDAI } from 'xdai'
 import { AbstractConnector } from '@web3-react/abstract-connector'
 
 import { fortmatic, injected, portis, walletconnect, walletlink } from '../connectors'
@@ -36,7 +37,8 @@ export const UNI: { [chainId in ChainId]: Token } = {
   [ChainId.RINKEBY]: new Token(ChainId.RINKEBY, UNI_ADDRESS, 18, 'UNI', 'Uniswap'),
   [ChainId.ROPSTEN]: new Token(ChainId.ROPSTEN, UNI_ADDRESS, 18, 'UNI', 'Uniswap'),
   [ChainId.GÖRLI]: new Token(ChainId.GÖRLI, UNI_ADDRESS, 18, 'UNI', 'Uniswap'),
-  [ChainId.KOVAN]: new Token(ChainId.KOVAN, UNI_ADDRESS, 18, 'UNI', 'Uniswap')
+  [ChainId.KOVAN]: new Token(ChainId.KOVAN, UNI_ADDRESS, 18, 'UNI', 'Uniswap'),
+  [ChainId.XDAI]: USDC_XDAI
 }
 
 export const COMMON_CONTRACT_NAMES: { [address: string]: string } = {
