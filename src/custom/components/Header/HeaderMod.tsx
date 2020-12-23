@@ -266,6 +266,10 @@ const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
   [ChainId.XDAI]: 'xDAI'
 }
 
+const CHAIN_CURRENCY_LABELS: { [chainId in ChainId]?: string } = {
+  [ChainId.XDAI]: 'XDAI'
+}
+
 export default function HeaderMod(props: WithClassName) {
   const { account, chainId } = useActiveWeb3React()
   const { t } = useTranslation()
@@ -377,7 +381,7 @@ export default function HeaderMod(props: WithClassName) {
           <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
             {account && userEthBalance ? (
               <BalanceText style={{ flexShrink: 0 }} pl="0.75rem" pr="0.5rem" fontWeight={500}>
-                {userEthBalance?.toSignificant(4)} ETH
+                {userEthBalance?.toSignificant(4)} {chainId && (CHAIN_CURRENCY_LABELS[chainId] || 'ETH')}
               </BalanceText>
             ) : null}
             <Web3Status />
