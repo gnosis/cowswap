@@ -1,5 +1,12 @@
 // this file essentially provides all the overrides employed in uniswap-xdai-sdk fork
-import { WETH as WETH_UNISWAP, Token, Pair /*, Currency*/ } from '@uniswap/sdk'
+// + logic for chainId switch to/from xDAI
+import {
+  WETH as WETH_UNISWAP,
+  Token,
+  Pair,
+  FACTORY_ADDRESS as FACTORY_ADDRESS_UNISWAP,
+  INIT_CODE_HASH as INIT_CODE_HASH_UNISWAP
+} from '@uniswap/sdk'
 import { pack, keccak256 } from '@ethersproject/solidity'
 import { getCreate2Address } from '@ethersproject/address'
 
@@ -13,27 +20,50 @@ export enum ChainId {
   XDAI = 100
 }
 
-// TODO: make chainId-dependant
 // xDAI
-export const FACTORY_ADDRESS = '0xA818b4F111Ccac7AA31D0BCc0806d64F2E0737D7'
-// TODO: make chainId-dependant
+export const FACTORY_ADDRESS_XDAI = '0xA818b4F111Ccac7AA31D0BCc0806d64F2E0737D7'
 // xDAI
-export const INIT_CODE_HASH = '0x3f88503e8580ab941773b59034fb4b2a63e86dbc031b3633a925533ad3ed2b93'
+export const INIT_CODE_HASH_XDAI = '0x3f88503e8580ab941773b59034fb4b2a63e86dbc031b3633a925533ad3ed2b93'
+
+export let FACTORY_ADDRESS = FACTORY_ADDRESS_UNISWAP
+export let INIT_CODE_HASH = INIT_CODE_HASH_UNISWAP
+
+let currentChainId: ChainId | undefined
+
+// this is rather hacky but Pair.getAddress is used in new Pair(constructor)
+// so it happens rather often with no obvious place to pass in dynamic chainId
+export const switchXDAIparams = (chainId?: ChainId) => {
+  currentChainId = chainId
+
+  if (chainId === ChainId.XDAI) {
+    FACTORY_ADDRESS = FACTORY_ADDRESS_XDAI
+    INIT_CODE_HASH = INIT_CODE_HASH_XDAI
+
+    return
+  }
+
+  FACTORY_ADDRESS = FACTORY_ADDRESS_UNISWAP
+  INIT_CODE_HASH = INIT_CODE_HASH_UNISWAP
+}
 
 // copy-pasta from the lib
 let PAIR_ADDRESS_CACHE: { [token0Address: string]: { [token1Address: string]: string } } = {}
 
+let PAIR_ADDRESS_CACHE_XDAI: { [token0Address: string]: { [token1Address: string]: string } } = {}
+
 // overrides actual function to use xDAI specific FACTORY_ADDRESS and INIT_CODE_HASH
 // copy-pasta from the lib
-// TODO: make chainId-dependant
 Pair.getAddress = function getAddress(tokenA: Token, tokenB: Token): string {
   const tokens = tokenA.sortsBefore(tokenB) ? [tokenA, tokenB] : [tokenB, tokenA] // does safety checks
 
-  if (PAIR_ADDRESS_CACHE?.[tokens[0].address]?.[tokens[1].address] === undefined) {
-    PAIR_ADDRESS_CACHE = {
-      ...PAIR_ADDRESS_CACHE,
+  // separate caches for xDAI and non-xDAI
+  let pairAddressCache = currentChainId === ChainId.XDAI ? PAIR_ADDRESS_CACHE_XDAI : PAIR_ADDRESS_CACHE
+
+  if (pairAddressCache?.[tokens[0].address]?.[tokens[1].address] === undefined) {
+    pairAddressCache = {
+      ...pairAddressCache,
       [tokens[0].address]: {
-        ...PAIR_ADDRESS_CACHE?.[tokens[0].address],
+        ...pairAddressCache?.[tokens[0].address],
         [tokens[1].address]: getCreate2Address(
           FACTORY_ADDRESS,
           keccak256(['bytes'], [pack(['address', 'address'], [tokens[0].address, tokens[1].address])]),
@@ -41,9 +71,13 @@ Pair.getAddress = function getAddress(tokenA: Token, tokenB: Token): string {
         )
       }
     }
+
+    // update respective caches
+    if (currentChainId === ChainId.XDAI) PAIR_ADDRESS_CACHE_XDAI = pairAddressCache
+    else PAIR_ADDRESS_CACHE = pairAddressCache
   }
 
-  return PAIR_ADDRESS_CACHE[tokens[0].address][tokens[1].address]
+  return pairAddressCache[tokens[0].address][tokens[1].address]
 }
 
 // This may not be necessary
