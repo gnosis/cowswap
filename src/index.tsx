@@ -10,6 +10,7 @@ import { NetworkContextName } from './constants'
 import './i18n'
 import App from './pages/App'
 import store from 'state'
+import XDAIoverrideUpdater from 'xdai/updater'
 import ApplicationUpdater from './state/application/updater'
 import ListsUpdater from './state/lists/updater'
 import MulticallUpdater from './state/multicall/updater'
@@ -47,6 +48,8 @@ window.addEventListener('error', error => {
 function Updaters() {
   return (
     <>
+      {/* xDAI goes first to propagate updates first */}
+      <XDAIoverrideUpdater />
       <ListsUpdater />
       <UserUpdater />
       <ApplicationUpdater />
