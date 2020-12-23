@@ -47,6 +47,7 @@ export const switchXDAIparams = (chainId?: ChainId) => {
     // ETHER is used in a bunch of places
     // Including internaly by the lib
     // easier to change name+symbol
+    // this way you seeXDAI in Token selector when on xDAI
     // @ts-expect-error
     ETHER.name = 'xDai'
     // @ts-expect-error
@@ -98,13 +99,7 @@ Pair.getAddress = function getAddress(tokenA: Token, tokenB: Token): string {
   return pairAddressCache[tokens[0].address][tokens[1].address]
 }
 
-// This may not be necessary
-// or even useless,because it's exported as
-// const ETHER = Currency.ETHER; export {ETHER}
-// in the lib
-//// @ts-expect-error
-// Currency.ETHER = new Currency(18, 'XDAI', 'xDai')
-
+// used as UNI token
 export const HONEY_XDAI = new Token(ChainId.XDAI, '0x71850b7e9ee3f13ab46d67167341e4bdc905eef9', 18, 'HNY', 'Honey')
 
 export const USDC_XDAI = new Token(100, '0xDDAfbb505ad214D7b80b1f830fcCc89B60fb7A83', 6, 'USDC', 'USDC on xDai')
