@@ -102,23 +102,6 @@ Pair.getAddress = function getAddress(tokenA: Token, tokenB: Token): string {
 // used as UNI token
 export const HONEY_XDAI = new Token(ChainId.XDAI, '0x71850b7e9ee3f13ab46d67167341e4bdc905eef9', 18, 'HNY', 'Honey')
 
-export const USDC_XDAI = new Token(100, '0xDDAfbb505ad214D7b80b1f830fcCc89B60fb7A83', 6, 'USDC', 'USDC on xDai')
-
-export const WETH_XDAI = new Token(
-  ChainId.XDAI,
-  '0x6A023CCd1ff6F2045C3309768eAd9E68F978f6e1',
-  18,
-  'WETH',
-  'Wrapped Ether on xDai'
-)
-export const STAKE = new Token(
-  ChainId.XDAI,
-  '0xb7D311E2Eb55F2f68a9440da38e7989210b9A05e',
-  18,
-  'STAKE',
-  'Stake Token on xDai'
-)
-
 export const WXDAI = new Token(ChainId.XDAI, '0xe91D153E0b41518A2Ce8Dd3D7944Fa863463a97d', 18, 'WXDAI', 'Wrapped XDAI')
 
 // extends WETH to be used in Token Pairs logic
