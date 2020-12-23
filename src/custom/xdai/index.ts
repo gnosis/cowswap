@@ -5,7 +5,8 @@ import {
   Token,
   Pair,
   FACTORY_ADDRESS as FACTORY_ADDRESS_UNISWAP,
-  INIT_CODE_HASH as INIT_CODE_HASH_UNISWAP
+  INIT_CODE_HASH as INIT_CODE_HASH_UNISWAP,
+  ETHER
 } from '@uniswap/sdk'
 import { pack, keccak256 } from '@ethersproject/solidity'
 import { getCreate2Address } from '@ethersproject/address'
@@ -33,17 +34,34 @@ let currentChainId: ChainId | undefined
 // this is rather hacky but Pair.getAddress is used in new Pair(constructor)
 // so it happens rather often with no obvious place to pass in dynamic chainId
 export const switchXDAIparams = (chainId?: ChainId) => {
+  if (currentChainId === chainId) return
+
+  console.log('Changing library internal parameters for chainId', chainId)
+
   currentChainId = chainId
 
   if (chainId === ChainId.XDAI) {
     FACTORY_ADDRESS = FACTORY_ADDRESS_XDAI
     INIT_CODE_HASH = INIT_CODE_HASH_XDAI
 
+    // ETHER is used in a bunch of places
+    // Including internaly by the lib
+    // easier to change name+symbol
+    // @ts-expect-error
+    ETHER.name = 'xDai'
+    // @ts-expect-error
+    ETHER.symbol = 'XDAI'
+
     return
   }
 
   FACTORY_ADDRESS = FACTORY_ADDRESS_UNISWAP
   INIT_CODE_HASH = INIT_CODE_HASH_UNISWAP
+
+  // @ts-expect-error
+  ETHER.name = 'Ether'
+  // @ts-expect-error
+  ETHER.symbol = 'ETH'
 }
 
 // copy-pasta from the lib
