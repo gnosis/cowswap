@@ -1,5 +1,5 @@
-import { Colors as ColorsUniswap } from '@src/theme/styled'
-export { Color, Grids } from '@src/theme/styled'
+import { Colors as ColorsUniswap } from '@src/theme/styled.d'
+export { Color, Grids } from '@src/theme/styled.d'
 
 // Override colors
 export interface Colors extends ColorsUniswap {
