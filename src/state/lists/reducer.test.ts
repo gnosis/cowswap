@@ -320,7 +320,7 @@ describe('list reducer', () => {
       store.dispatch(removeList('fake-url'))
       expect(store.getState()).toEqual({
         byUrl: {},
-        selectedListUrl: 'https://tokens.honeyswap.org'
+        selectedListUrl: 'tokens.uniswap.eth'
       })
     })
   })
