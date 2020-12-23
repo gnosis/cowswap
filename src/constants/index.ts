@@ -1,4 +1,4 @@
-import { /*ChainId,*/ JSBI, Percent, Token /*, WETH */ } from '@uniswap/sdk'
+import { JSBI, Percent, Token } from '@uniswap/sdk'
 import { ChainId, WETH, HONEY_XDAI } from 'xdai'
 import { AbstractConnector } from '@web3-react/abstract-connector'
 

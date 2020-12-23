@@ -1,4 +1,3 @@
-// import { ChainId } from '@uniswap/sdk'
 import { ChainId } from 'xdai'
 
 // TODO: fill contract deploymentblocks

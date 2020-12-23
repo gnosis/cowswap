@@ -1,5 +1,4 @@
 import { domain as domainGp, signOrder as signOrderGp, Order } from '@gnosis.pm/gp-v2-contracts'
-// import { ChainId } from '@uniswap/sdk'
 import { ChainId } from 'xdai'
 
 import { GP_SETTLEMENT_CONTRACT_ADDRESS } from 'constants/index'

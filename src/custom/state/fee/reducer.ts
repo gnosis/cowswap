@@ -1,5 +1,4 @@
 import { createReducer, PayloadAction } from '@reduxjs/toolkit'
-// import { ChainId } from '@uniswap/sdk'
 import { ChainId } from 'xdai'
 import { updateFee, clearFee } from './actions'
 import { Writable } from 'custom/types'

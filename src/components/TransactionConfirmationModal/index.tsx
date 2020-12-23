@@ -1,4 +1,3 @@
-// import { ChainId } from '@uniswap/sdk'
 import { ChainId } from 'xdai'
 import React, { useContext } from 'react'
 import styled, { ThemeContext } from 'styled-components'

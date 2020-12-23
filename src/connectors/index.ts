@@ -6,7 +6,6 @@ import { PortisConnector } from '@web3-react/portis-connector'
 
 import { FortmaticConnector } from './Fortmatic'
 import { NetworkConnector } from './NetworkConnector'
-// import { ChainId } from '@uniswap/sdk'
 import { ChainId } from 'xdai'
 
 const NETWORK_URL = process.env.REACT_APP_NETWORK_URL

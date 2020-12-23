@@ -1,4 +1,3 @@
-// import { ChainId } from '@uniswap/sdk'
 import { ChainId } from 'xdai'
 import { GPv2Settlement, GPv2AllowanceManager } from '@gnosis.pm/gp-v2-contracts/networks.json'
 

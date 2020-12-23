@@ -1,6 +1,5 @@
 import { CurrencyAmount, JSBI, Token, TokenAmount, Pair } from '@uniswap/sdk'
-import { WETH } from 'xdai'
-import { ChainId } from 'xdai'
+import { WETH, ChainId } from 'xdai'
 import { useMemo } from 'react'
 import { DAI, UNI, USDC, USDT, WBTC } from '../../constants'
 import { STAKING_REWARDS_INTERFACE } from '../../constants/abis/staking-rewards'

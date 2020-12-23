@@ -1,6 +1,5 @@
 import { Currency, CurrencyAmount, ETHER, Token, TokenAmount } from '@uniswap/sdk'
-import { WETH } from 'xdai'
-import { ChainId } from 'xdai'
+import { WETH, ChainId } from 'xdai'
 
 export function wrappedCurrency(currency: Currency | undefined, chainId: ChainId | undefined): Token | undefined {
   return chainId && currency === ETHER ? WETH[chainId] : currency instanceof Token ? currency : undefined

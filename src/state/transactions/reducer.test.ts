@@ -1,4 +1,3 @@
-// import { ChainId } from '@uniswap/sdk'
 import { ChainId } from 'xdai'
 import { createStore, Store } from 'redux'
 import { addTransaction, checkedTransaction, clearAllTransactions, finalizeTransaction } from './actions'

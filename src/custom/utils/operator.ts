@@ -1,6 +1,5 @@
 import { ETHER } from '@uniswap/sdk'
-import { WETH } from 'xdai'
-import { ChainId } from 'xdai'
+import { WETH, ChainId } from 'xdai'
 import { OrderCreation } from 'utils/signatures'
 import { APP_ID } from 'constants/index'
 import { registerOnWindow } from './misc'
