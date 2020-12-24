@@ -6,6 +6,7 @@ import { useEffect, useRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { AppState, AppDispatch } from 'state'
 
+// enables hackarounds to override internal data for @uniswap/sdk
 export function XDAIoverrideUpdater(): null {
   const { chainId } = useActiveWeb3React()
 
@@ -15,6 +16,9 @@ export function XDAIoverrideUpdater(): null {
   return null
 }
 
+// watches when chainId changes and the current token list
+// doesn't have tokens for that chainId
+// tries to switch to a different token list
 export function TokenListUpdater(): null {
   const { chainId } = useActiveWeb3React()
 
