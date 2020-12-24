@@ -6,7 +6,7 @@ import { useEffect, useRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { AppState, AppDispatch } from 'state'
 
-export default function Updater(): null {
+export function XDAIoverrideUpdater(): null {
   const { chainId } = useActiveWeb3React()
 
   // sync update to not rely on useEffect timing
