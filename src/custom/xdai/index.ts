@@ -109,3 +109,9 @@ export const WETH = {
   ...WETH_UNISWAP,
   [ChainId.XDAI]: WXDAI
 }
+
+// library internally accesses its WETH mapping at ChainId passed from outside
+// breaks in Pair.involvesToken(WETH[chainId] == undefined)
+// so it can get ChainId.XDAI and would fail if not extended
+// @ts-expect-error
+WETH_UNISWAP[ChainId.XDAI] = WXDAI
