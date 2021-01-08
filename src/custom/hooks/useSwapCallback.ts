@@ -1,10 +1,9 @@
 import { SwapCallbackState } from '@src/hooks/useSwapCallback'
-import { INITIAL_ALLOWED_SLIPPAGE } from 'constants/index'
+import { BIPS_BASE, INITIAL_ALLOWED_SLIPPAGE } from 'constants/index'
 
-// import { useSwapCallback as useSwapCallbackUniswap } from '@src/hooks/useSwapCallback'
 import { BigNumber } from 'ethers'
 
-import { Percent, Trade, TradeType, WETH } from '@uniswap/sdk'
+import { ETHER, Percent, Trade, TradeType } from '@uniswap/sdk'
 import { useActiveWeb3React } from '@src/hooks'
 import useENS from '@src/hooks/useENS'
 import { useMemo } from 'react'
@@ -16,7 +15,7 @@ import { useWETHContract } from '@src/hooks/useContract'
 import { useAddPendingOrder } from 'state/orders/hooks'
 import { postOrder } from 'utils/trade'
 import { OrderKind } from 'utils/signatures'
-import { wrapEther } from 'utils/weth'
+import { useWrapEther } from '@src/hooks/useWrapEther'
 
 const MAX_VALID_TO_EPOCH = BigNumber.from('0xFFFFFFFF').toNumber() // Max uint32 (Feb 07 2106 07:28:15 GMT+0100)
 
@@ -36,6 +35,7 @@ export function useSwapCallback(
   const addPendingOrder = useAddPendingOrder()
   const { INPUT: inputAmount, OUTPUT: outputAmount } = computeSlippageAdjustedAmounts(trade, allowedSlippage)
   const weth = useWETHContract()
+  const wrapEther = useWrapEther()
 
   return useMemo(() => {
     if (!trade || !library || !account || !chainId || !inputAmount || !outputAmount || !weth) {
@@ -65,12 +65,11 @@ export function useSwapCallback(
         const sellToken = path[0]
         const buyToken = path[path.length - 1]
 
-        const slippagePercent = new Percent(allowedSlippage.toString(10), '10000')
+        const slippagePercent = new Percent(allowedSlippage.toString(10), BIPS_BASE)
         const routeDescription = route.path.map(token => token.symbol || token.name || token.address).join(' → ')
         const kind = trade.tradeType === TradeType.EXACT_INPUT ? OrderKind.SELL : OrderKind.BUY
-
-        // TODO: Improve this check, we can actually be also selling ETH. Just for a quick PoC
-        const isSellingEth = sellToken.address.toLowerCase() === WETH[chainId].address.toLowerCase()
+        const isBuyEth = trade.outputAmount.currency === ETHER
+        const isSellEth = trade.inputAmount.currency === ETHER
 
         console.log(
           `[useSwapCallback] Trading ${routeDescription}. Input = ${inputAmount.toExact()}, Output = ${outputAmount.toExact()}, Price = ${executionPrice.toFixed()}, Details: `,
@@ -83,7 +82,8 @@ export function useSwapCallback(
             sellToken,
             buyToken,
             validTo,
-            isSellingEth,
+            isSellEth,
+            isBuyEth,
             nextMidPrice: nextMidPrice.toFixed(),
             priceImpact: priceImpact.toSignificant(),
             tradeType: tradeType.toString(),
@@ -95,10 +95,9 @@ export function useSwapCallback(
           }
         )
 
-        // TODO: Decide if we need to WAP or not. Here I assume we need to wrap for the total amount
-        // TODO: Worth looking also src/utils/wrappedCurrency.ts
-        const wrapPromise = isSellingEth ? wrapEther(inputAmount.raw.toString(), weth) : undefined
+        const wrapPromise = isSellEth ? wrapEther(inputAmount, weth) : undefined
 
+        // TODO: indicate somehow in the order when the user was to receive ETH === isBuyEth flag
         const postOrderPromise = postOrder({
           kind,
           account,
@@ -128,13 +127,14 @@ export function useSwapCallback(
     library,
     account,
     chainId,
-    recipient,
-    allowedSlippage,
-    recipientAddressOrName,
-    addPendingOrder,
-    validTo,
     inputAmount,
     outputAmount,
-    weth
+    weth,
+    recipient,
+    recipientAddressOrName,
+    allowedSlippage,
+    validTo,
+    wrapEther,
+    addPendingOrder
   ])
 }
