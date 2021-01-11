@@ -8,7 +8,6 @@ import { useAddPendingOrder } from 'state/orders/hooks'
 
 import { SwapCallbackState } from '@src/hooks/useSwapCallback'
 import useTransactionDeadline from '@src/hooks/useTransactionDeadline'
-import { useWETHContract } from '@src/hooks/useContract'
 import useENS from '@src/hooks/useENS'
 
 import { useActiveWeb3React } from 'hooks'
@@ -35,11 +34,10 @@ export function useSwapCallback(
   const validTo = useTransactionDeadline()?.toNumber() || MAX_VALID_TO_EPOCH
   const addPendingOrder = useAddPendingOrder()
   const { INPUT: inputAmount, OUTPUT: outputAmount } = computeSlippageAdjustedAmounts(trade, allowedSlippage)
-  const weth = useWETHContract()
   const wrapEther = useWrapEther()
 
   return useMemo(() => {
-    if (!trade || !library || !account || !chainId || !inputAmount || !outputAmount || !weth) {
+    if (!trade || !library || !account || !chainId || !inputAmount || !outputAmount) {
       return { state: SwapCallbackState.INVALID, callback: null, error: 'Missing dependencies' }
     }
     if (!recipient) {
@@ -48,6 +46,13 @@ export function useSwapCallback(
       } else {
         return { state: SwapCallbackState.LOADING, callback: null, error: null }
       }
+    }
+
+    const isBuyEth = trade.outputAmount.currency === ETHER
+    const isSellEth = trade.inputAmount.currency === ETHER
+
+    if (isSellEth && !wrapEther) {
+      return { state: SwapCallbackState.INVALID, callback: null, error: 'Missing dependencies' }
     }
 
     return {
@@ -69,8 +74,6 @@ export function useSwapCallback(
         const slippagePercent = new Percent(allowedSlippage.toString(10), BIPS_BASE)
         const routeDescription = route.path.map(token => token.symbol || token.name || token.address).join(' → ')
         const kind = trade.tradeType === TradeType.EXACT_INPUT ? OrderKind.SELL : OrderKind.BUY
-        const isBuyEth = trade.outputAmount.currency === ETHER
-        const isSellEth = trade.inputAmount.currency === ETHER
 
         console.log(
           `[useSwapCallback] Trading ${routeDescription}. Input = ${inputAmount.toExact()}, Output = ${outputAmount.toExact()}, Price = ${executionPrice.toFixed()}, Details: `,
@@ -96,7 +99,7 @@ export function useSwapCallback(
           }
         )
 
-        const wrapPromise = isSellEth ? wrapEther(inputAmount, weth) : undefined
+        const wrapPromise = isSellEth && wrapEther ? wrapEther(inputAmount) : undefined
 
         // TODO: indicate somehow in the order when the user was to receive ETH === isBuyEth flag
         const postOrderPromise = postOrder({
@@ -130,7 +133,6 @@ export function useSwapCallback(
     chainId,
     inputAmount,
     outputAmount,
-    weth,
     recipient,
     recipientAddressOrName,
     allowedSlippage,

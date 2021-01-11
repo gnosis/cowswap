@@ -3,14 +3,21 @@ import { CurrencyAmount } from '@uniswap/sdk'
 
 import { useTransactionAdder } from '@src/state/transactions/hooks'
 
-import { Contract } from 'ethers'
+import { useWETHContract } from 'hooks/useContract'
 
 export function useWrapEther() {
   const addTransaction = useTransactionAdder()
+  const weth = useWETHContract()
 
-  return useCallback(
-    async (amount: CurrencyAmount, weth: Contract): Promise<string> => {
+  const wrapCallback = useCallback(
+    async (amount: CurrencyAmount): Promise<string | undefined> => {
       console.log('Wrapping ETH!', amount.raw.toString(), weth)
+
+      if (!weth) {
+        // callback not reachable anyway when `weth` is not set
+        // condition here to satisfy TS
+        return
+      }
 
       try {
         const txReceipt = await weth.deposit({ value: `0x${amount.raw.toString(16)}` })
@@ -22,6 +29,8 @@ export function useWrapEther() {
         return 'Failed to wrap'
       }
     },
-    [addTransaction]
+    [addTransaction, weth]
   )
+
+  return weth && wrapCallback
 }
