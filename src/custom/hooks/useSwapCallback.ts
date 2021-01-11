@@ -1,21 +1,22 @@
-import { SwapCallbackState } from '@src/hooks/useSwapCallback'
-import { BIPS_BASE, INITIAL_ALLOWED_SLIPPAGE } from 'constants/index'
-
+import { useMemo } from 'react'
+import { ETHER, Percent, Trade, TradeType } from '@uniswap/sdk'
 import { BigNumber } from 'ethers'
 
-import { ETHER, Percent, Trade, TradeType } from '@uniswap/sdk'
-import { useActiveWeb3React } from '@src/hooks'
-import useENS from '@src/hooks/useENS'
-import { useMemo } from 'react'
-import useTransactionDeadline from '@src/hooks/useTransactionDeadline'
-
-import { computeSlippageAdjustedAmounts } from '@src/utils/prices'
-import { useWETHContract } from '@src/hooks/useContract'
+import { BIPS_BASE, INITIAL_ALLOWED_SLIPPAGE } from 'constants/index'
 
 import { useAddPendingOrder } from 'state/orders/hooks'
+
+import { SwapCallbackState } from '@src/hooks/useSwapCallback'
+import useTransactionDeadline from '@src/hooks/useTransactionDeadline'
+import { useWETHContract } from '@src/hooks/useContract'
+import useENS from '@src/hooks/useENS'
+
+import { useActiveWeb3React } from 'hooks'
+import { useWrapEther } from 'hooks/useWrapEther'
+
+import { computeSlippageAdjustedAmounts } from 'utils/prices'
 import { postOrder } from 'utils/trade'
 import { OrderKind } from 'utils/signatures'
-import { useWrapEther } from '@src/hooks/useWrapEther'
 
 const MAX_VALID_TO_EPOCH = BigNumber.from('0xFFFFFFFF').toNumber() // Max uint32 (Feb 07 2106 07:28:15 GMT+0100)
 
