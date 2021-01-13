@@ -5,7 +5,8 @@ import { useAddFee, useAllFees } from './hooks'
 import { useSwapState } from 'state/swap/hooks'
 import useIsWindowVisible from 'hooks/useIsWindowVisible'
 import { FeesMap } from './reducer'
-import { getFeeQuote } from 'utils/operator'
+import { FeeInformation, getFeeQuote } from 'utils/operator'
+import { registerOnWindow } from 'utils/misc'
 
 function isDateLater(dateA: string, dateB: string): boolean {
   const [parsedDateA, parsedDateB] = [Date.parse(dateA), Date.parse(dateB)]
@@ -20,6 +21,36 @@ export default function FeesUpdater(): null {
   } = useSwapState()
   const stateFeesMap = useAllFees({ chainId })
   const addFee = useAddFee()
+
+  // Dispatch addFee to test
+  /* e.g
+  addFee({
+    token: 'ETH',
+    fee: { minimalFee: '2' }
+  })
+   */
+  registerOnWindow({
+    addFee: ({
+      token,
+      customChainId = chainId || 1,
+      fee
+    }: {
+      token: string
+      customChainId: number
+      fee: Partial<FeeInformation>
+    }) =>
+      addFee({
+        token,
+        fee: {
+          // expires in 5 minutes
+          expirationDate: new Date(Date.now() + 300000).toISOString(),
+          feeRatio: 0,
+          minimalFee: '0',
+          ...fee
+        },
+        chainId: customChainId
+      })
+  })
 
   const windowVisible = useIsWindowVisible()
 
@@ -45,7 +76,6 @@ export default function FeesUpdater(): null {
           console.error(new Error(err))
           return null
         })
-
         fee &&
           addFee({
             token: sellToken,
