@@ -1,8 +1,16 @@
 {
   "compilerOptions": {
     "paths": {
-      "@src/*": ["*"],
-      "*": ["custom/*", "*"]
+      "@uniswap/sdk": [
+        "src/custom/@uniswap/sdk/index.ts"
+      ],
+      "@src/*": [
+        "*"
+      ],
+      "*": [
+        "custom/*",
+        "*"
+      ]
     }
   }
 }
