@@ -1,10 +1,10 @@
 import { useActiveWeb3React } from 'hooks'
-import { switchParamsByNetwork } from './hack'
+import { switchParamsByNetwork } from '../../utils/xdai/hack'
 
 export default function Updater(): null {
   const { chainId } = useActiveWeb3React()
 
-  // sync update to not rely on useEffect timing
+  // Apply xDAI hack
   switchParamsByNetwork(chainId)
 
   return null
