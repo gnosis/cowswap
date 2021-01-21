@@ -112,49 +112,15 @@ jobs:
           name: website
           path: dist
 
-  storybook:
-    name: Build storybook
-    needs: setup
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up node
-        uses: actions/setup-node@v2
-        with:
-          node-version: 12
-
-      - name: Load dependencies
-        id: cache-node-modules
-        uses: actions/cache@v2
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-${{ matrix.node-version }}-nodemodules-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ matrix.node-version }}-nodemodules-
-
-      - name: Build Storybook
-        run: yarn build-storybook -o dist-storybook;
-
-      - name: Upload storybook artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: storybook
-          path: dist-storybook
-
+  
   deploy:
     name: Deploy
-    needs: [build, storybook]
+    needs: build
     runs-on: ubuntu-latest
 
     steps:
       - name: Download website
         uses: actions/download-artifact@v2
-
-      - name: Move storybook inside dist
-        run: mv storybook website/storybook
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
