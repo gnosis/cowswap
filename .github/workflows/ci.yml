@@ -77,9 +77,6 @@ jobs:
       #   with:
       #     github-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Integration tests
-        run: yarn integration-test
-
   build:
     name: Build apps
     needs: setup
