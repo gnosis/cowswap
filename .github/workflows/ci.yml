@@ -107,7 +107,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: website
-          path: dist
+          path: build
 
   
   deploy:
