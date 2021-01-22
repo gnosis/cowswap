@@ -14,27 +14,36 @@ interface DetermineFee {
  * @description using the inputAmount, compares whether the minimalFee or the feeRatio is greater and returns
  */
 function determineFee({ feeInformation, inputAmount }: DetermineFee): CurrencyAmount | null {
-  if (!feeInformation || !inputAmount) return null
+  if (!feeInformation) return null
 
-  const { minimalFee, feeRatio } = feeInformation
-  const feePercent = feeRatio && basisPointsToPercent(feeRatio)
-  const feeRatioAmount = feePercent ? inputAmount.multiply(feePercent) : null
-  const minimalFeeAsCurrency = tryParseAmount(minimalFee, inputAmount.currency) ?? null
+  const { feeRatio, minimalFee } = feeInformation
 
-  if (!feeRatioAmount || !minimalFeeAsCurrency) {
-    return (
-      (feeRatioAmount &&
-        tryParseAmount(feeRatioAmount.toSignificant(inputAmount.currency.decimals), inputAmount.currency)) ||
-      minimalFeeAsCurrency
-    )
-  }
+  // We need to consider some cases here:
+  // Case 1: No feeInformation - return null
+  // Case 2: No feeRatio, but minimalFee
+  //   Case2a: is minimalFee >= inputAmount? - return null
+  //   Case2b: minimalFee < inputAmount - return fee
+  // Case 3: feeRatio && minimalFee
+  //  Case 3a: feeRatio * inputAmount > minimalFee - return feeRatio
+  //  Case 3b: feeRatio * inputAmount <= minimalFee - return minimalFee
+  //  Case 3c: feeRatio exists && minimalFee > inputAmount - return feeRatio
 
+  // MINIMAL FEE
+  const minimalFeeAsCurrency = tryParseAmount(minimalFee, inputAmount?.currency)
+
+  // FEE_RATIO AS PERCENT
+  const feePercent = basisPointsToPercent(feeRatio)
+  const feeRatioAmount = inputAmount?.multiply(feePercent)
   const feeRatioAsCurrency =
-    tryParseAmount(feeRatioAmount.toSignificant(inputAmount.currency.decimals), inputAmount.currency) || null
+    tryParseAmount(feeRatioAmount?.toSignificant(inputAmount?.currency.decimals || 6), inputAmount?.currency) || null
 
-  const greaterFee = feeRatioAmount.greaterThan(minimalFeeAsCurrency) ? feeRatioAsCurrency : minimalFeeAsCurrency
-
-  return greaterFee
+  if (minimalFeeAsCurrency && feeRatioAsCurrency) {
+    // Which is bigger? feeRatio * inputAmount OR the minimalFee?
+    return feeRatioAsCurrency.greaterThan(minimalFeeAsCurrency) ? feeRatioAsCurrency : minimalFeeAsCurrency
+  } else {
+    // One or neither is valid, return that one
+    return minimalFeeAsCurrency || feeRatioAsCurrency
+  }
 }
 
 interface ExtendedTradeParams {
@@ -104,14 +113,16 @@ function useTradeExactInWithFee({ parsedAmount, outputCurrency, feeInformation }
     inputAmount: parsedAmount
   })
 
-  // Adjust sell input using fee
-  const adjustedInputAmount =
-    parsedAmount && feeAsCurrency && !feeAsCurrency.greaterThan(parsedAmount)
-      ? parsedAmount?.subtract(feeAsCurrency)
-      : undefined
+  let inputAmount: CurrencyAmount | undefined = parsedAmount
+  if (feeAsCurrency && parsedAmount) {
+    // we have a fee, but is it greater than the input amount?
+    const validFee = !feeAsCurrency.greaterThan(parsedAmount)
+    // fee < parsedAmount, return difference, else return undefined (no trade)
+    inputAmount = validFee ? parsedAmount.subtract(feeAsCurrency) : undefined
+  }
 
   // Original Uni trade hook
-  const inTrade = useTradeExactIn(adjustedInputAmount, outputCurrency ?? undefined)
+  const inTrade = useTradeExactIn(inputAmount, outputCurrency ?? undefined)
 
   return extendExactInTrade({
     exactInTrade: inTrade,
