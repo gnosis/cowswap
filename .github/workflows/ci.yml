@@ -1,4 +1,4 @@
-name: Continuous Integration
+name: CI
 
 # Run on every commit
 on: push
