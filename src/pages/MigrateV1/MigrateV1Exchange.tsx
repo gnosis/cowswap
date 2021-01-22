@@ -25,7 +25,7 @@ import { NEVER_RELOAD, useSingleCallResult } from '../../state/multicall/hooks'
 import { useIsTransactionPending, useTransactionAdder } from '../../state/transactions/hooks'
 import { useETHBalances, useTokenBalance } from '../../state/wallet/hooks'
 import { BackArrow, ExternalLink, TYPE } from 'theme'
-import { getEtherscanLink, isAddress } from '../../utils'
+import { getEtherscanLink, isAddress } from 'utils'
 import { BodyWrapper } from '../AppBody'
 import { EmptyState } from './EmptyState'
 

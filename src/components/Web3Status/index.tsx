@@ -16,7 +16,7 @@ import { useHasSocks } from '../../hooks/useSocksBalance'
 import { useWalletModalToggle } from '../../state/application/hooks'
 import { isTransactionRecent, useAllTransactions } from '../../state/transactions/hooks'
 import { TransactionDetails } from '../../state/transactions/reducer'
-import { shortenAddress } from '../../utils'
+import { shortenAddress } from 'utils'
 import { ButtonSecondary } from '../Button'
 
 import Identicon from '../Identicon'

@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 import { useActiveWeb3React } from '../../hooks'
 import { useMerkleDistributorContract } from 'hooks/useContract'
 import { useSingleCallResult } from '../multicall/hooks'
-import { calculateGasMargin, isAddress } from '../../utils'
+import { calculateGasMargin, isAddress } from 'utils'
 import { useTransactionAdder } from '../transactions/hooks'
 
 interface UserClaimData {
