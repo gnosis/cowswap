@@ -32,7 +32,7 @@
     "@uniswap/governance": "^1.0.2",
     "@uniswap/liquidity-staker": "^1.0.2",
     "@uniswap/merkle-distributor": "1.0.1",
-    "@uniswap/sdk": "npm:@anxolin/uniswap-sdk#3.0.3-rc.2",
+    "@uniswap/sdk": "npm:@anxolin/uniswap-sdk#3.0.3-rc.3",
     "@uniswap/token-lists": "^1.0.0-beta.17",
     "@uniswap/v2-core": "1.0.0",
     "@uniswap/v2-periphery": "^1.1.0-beta.0",

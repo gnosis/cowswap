@@ -2729,10 +2729,10 @@
   resolved "https://registry.yarnpkg.com/@uniswap/merkle-distributor/-/merkle-distributor-1.0.1.tgz#dc3d911f65a860fc3f0cae074bdcd08ed6a27a4d"
   integrity sha512-5gDiTI5hrXIh5UWTrxKYjw30QQDnpl8ckDSpefldNenDlYO1RKkdUYMYpvrqGi2r7YzLYTlO6+TDlNs6O7hDRw==
 
-"@uniswap/sdk@npm:@anxolin/uniswap-sdk#3.0.3-rc.2":
-  version "3.0.3-rc.2"
-  resolved "https://registry.yarnpkg.com/@anxolin/uniswap-sdk/-/uniswap-sdk-3.0.3-rc.2.tgz#d4dfcc26f967994c5c4edc3cddf591e70cd2e6db"
-  integrity sha512-zUxYNLfYU/lDAPI7b9DGyYomlQU0cxenoDV5Hz1FAYKoYJLkVNoFFYu16m6qBqRIb5DVUnwAu837OZ5Bi/19hA==
+"@uniswap/sdk@npm:@anxolin/uniswap-sdk#3.0.3-rc.3":
+  version "3.0.3-rc.3"
+  resolved "https://registry.yarnpkg.com/@anxolin/uniswap-sdk/-/uniswap-sdk-3.0.3-rc.3.tgz#c8014d61f010a957d621276ceb211406dcc2f435"
+  integrity sha512-/3K2Q+8FEWp6Z4Cjkyoy5HXvsFdwbq8WD2zWs7zILEeRerO57eSErl0Rw6gVcyuaFt64mObed8Qp4pKz64VMCg==
   dependencies:
     "@uniswap/v2-core" "^1.0.0"
     big.js "^5.2.2"
