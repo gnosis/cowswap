@@ -23,7 +23,7 @@ import CurrencyLogo from '../../components/CurrencyLogo'
 import { ROUTER_ADDRESS } from '../../constants'
 import { useActiveWeb3React } from '../../hooks'
 import { useCurrency } from '../../hooks/Tokens'
-import { usePairContract } from '../../hooks/useContract'
+import { usePairContract } from 'hooks/useContract'
 import useIsArgentWallet from '../../hooks/useIsArgentWallet'
 import useTransactionDeadline from '../../hooks/useTransactionDeadline'
 
