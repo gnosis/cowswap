@@ -28,6 +28,5 @@ export const BUY_ETHER_TOKEN: { [chainId in ChainId]: Token } = {
   [ChainId.ROPSTEN]: new Token(ChainId.ROPSTEN, BUY_ETHER_ADDRESS, 18, 'ETH', 'Ether'),
   [ChainId.GÖRLI]: new Token(ChainId.GÖRLI, BUY_ETHER_ADDRESS, 18, 'ETH', 'Ether'),
   [ChainId.KOVAN]: new Token(ChainId.KOVAN, BUY_ETHER_ADDRESS, 18, 'ETH', 'Ether'),
-  [ChainId.XDAI]: new Token(ChainId.XDAI, BUY_ETHER_ADDRESS, 18, 'xDAI', 'xDAI'),
-  [ChainId.XDAI]: HONEY_XDAI
+  [ChainId.XDAI]: new Token(ChainId.XDAI, BUY_ETHER_ADDRESS, 18, 'xDAI', 'xDAI')
 }
