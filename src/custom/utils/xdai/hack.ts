@@ -30,3 +30,13 @@ export const switchParamsByNetwork = (chainId?: ChainId) => {
     ETHER.symbol = 'ETH'
   }
 }
+
+export function getEthWethSymbols(): { ether?: string; weth?: string } {
+  const ether = ETHER.symbol
+
+  let weth
+  if (ether) {
+    weth = ETHER.symbol == 'Ether' ? 'WETH' : 'wxDAI'
+  }
+  return { ether, weth }
+}
