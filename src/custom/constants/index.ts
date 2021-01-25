@@ -1,6 +1,5 @@
 import { ChainId, Token } from '@uniswap/sdk'
 import { GPv2Settlement, GPv2AllowanceManager } from '@gnosis.pm/gp-v2-contracts/networks.json'
-import { HONEY_XDAI } from 'utils/xdai/constants'
 
 export const APP_ID = Number(process.env.REACT_APP_ID)
 
