@@ -56,7 +56,7 @@ interface TradeParams {
   parsedAmount?: CurrencyAmount
   inputCurrency?: Currency | null
   outputCurrency?: Currency | null
-  feeInformation?: FeeInformation
+  feeInformation?: Omit<FeeInformation, 'expirationDate'>
 }
 
 const stringToCurrency = (amount: string, currency: Currency) =>
@@ -71,27 +71,27 @@ export function useTradeExactInWithFee({
   outputCurrency,
   feeInformation
 }: Omit<TradeParams, 'inputCurrency'>) {
-  // Using feeInformation info, determine whether minimalFee greaterThan or lessThan feeRatio * sellAmount
-  let fee: CurrencyAmount | undefined
+  let feeAdjustedAmount: CurrencyAmount | undefined
+  // make sure we have a typed in amount
+  // else we can assume the trade will be null
+  // and we call `useTradeExacIn` with an `undefined` which returns null trade
   if (parsedAmount && feeInformation) {
+    // Using feeInformation info, determine whether minimalFee greaterThan or lessThan feeRatio * sellAmount
     const unformattedFee = getFeeAmount({
       sellAmount: parsedAmount.raw.toString(),
       ...feeInformation
     })
 
-    fee = stringToCurrency(unformattedFee, parsedAmount.currency)
-  }
-
-  let amtAdjusted: CurrencyAmount | undefined = parsedAmount
-  if (parsedAmount && fee) {
-    // we have a fee, but is it less than the input amount?
+    const fee = stringToCurrency(unformattedFee, parsedAmount.currency)
+    // Check that fee amount is not greater than the user's input amt
     const validFee = fee.lessThan(parsedAmount)
-    // fee < parsedAmount, return difference, else return undefined (no trade)
-    amtAdjusted = validFee ? parsedAmount.subtract(fee) : undefined
+    // If the fee value is higher than we are inputting, return undefined
+    // this makes sure `useTradeExactIn` returns null === no trade
+    feeAdjustedAmount = validFee ? parsedAmount.subtract(fee) : undefined
   }
 
   // Original Uni trade hook
-  const inTrade = useTradeExactIn(amtAdjusted, outputCurrency ?? undefined)
+  const inTrade = useTradeExactIn(feeAdjustedAmount, outputCurrency ?? undefined)
 
   return extendExactInTrade({
     exactInTrade: inTrade,
@@ -122,6 +122,7 @@ export function useTradeExactOutWithFee({
 
     fee = stringToCurrency(unformattedFee, outTrade.inputAmount.currency)
   }
+
   return extendExactOutTrade({
     exactOutTrade: outTrade,
     feeAsCurrency: fee
