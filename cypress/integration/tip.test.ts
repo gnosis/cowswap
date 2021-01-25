@@ -67,11 +67,11 @@ describe('Swap::Trade::Tip', () => {
           const { inputAmount, outputAmount, executionPrice } = trade
 
           const fee = getFeeAmount({
-            ...response.body,
+            ...response.body
             // can test with:
-            minimalFee: (20 * 10 ** 18).toString(),
-            feeRatio: 9000,
-            sellAmount: inputAmount.raw.toString()
+            // minimalFee: (20 * 10 ** 18).toString(),
+            // feeRatio: 9000,
+            // sellAmount: inputAmount.raw.toString()
           })
 
           const feeAsCurrency = stringToCurrency(fee, inputAmount.currency)
