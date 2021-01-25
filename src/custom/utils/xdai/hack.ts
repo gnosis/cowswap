@@ -36,7 +36,7 @@ export function getEthWethSymbols(): { ether?: string; weth?: string } {
 
   let weth
   if (ether) {
-    weth = ETHER.symbol == 'Ether' ? 'WETH' : 'wxDAI'
+    weth = ETHER.symbol === 'Ether' ? 'WETH' : 'wxDAI'
   }
   return { ether, weth }
 }
