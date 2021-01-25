@@ -30,7 +30,7 @@ describe('Swap::Trade::Tip', () => {
     cy.visit(SWAP_URL)
   })
 
-  xit('Fee query available', () => {
+  it('Fee query available', () => {
     cy.request(FEE_QUERY).then(response => {
       expect(response).to.have.property('body')
       expect(response.body).to.have.property('minimalFee') // true
