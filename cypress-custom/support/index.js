@@ -5,5 +5,8 @@
 // https://on.cypress.io/configuration
 // ***********************************************************
 
+// Uniswap original commands
+import '../../cypress/support/commands'
+
 // Import commands.ts using ES2015 syntax:
 import './commands'
