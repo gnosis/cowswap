@@ -28,7 +28,7 @@ jobs:
           node-version: 12
 
       - name: Cypress run
-        uses: cypress-io/github-action@v2.2.7
+        uses: cypress-io/github-action@v2.3.6
         with:
           start: yarn serve
           wait-on: http://localhost:3000
