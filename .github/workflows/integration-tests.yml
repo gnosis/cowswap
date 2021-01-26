@@ -26,8 +26,30 @@ jobs:
         with:
           node-version: 12
 
+      # Custom cache folder for cypress not supported by cypress' gh action
+      - name: Cache Cypress
+        uses: actions/cache@v2
+        id: cache-cypress
+        with:
+          path: ~/.cache/Cypress
+          key: ${{ runner.os }}-cypress-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cypress-
+
+      - name: Install dependencies and verify Cypress
+        if: steps.cache-cypress.outputs.cache-hit != 'true'
+        env:
+          # make sure every Cypress install prints minimal information
+          CI: 1
+          # print Cypress and OS info
+        run: |
+          npx cypress install
+          npx cypress verify
+
       - name: Cypress run
         uses: cypress-io/github-action@v2
         with:
           start: yarn serve
           wait-on: http://localhost:3000
+          # Custom cache key only available for npm cache
+          cache-key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
