@@ -31,4 +31,3 @@ jobs:
         with:
           start: yarn serve
           wait-on: http://localhost:3000
-          cache-key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
