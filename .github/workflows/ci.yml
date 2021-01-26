@@ -54,7 +54,7 @@ jobs:
           CI: 1
           # print Cypress and OS info
         run: |
-          npx cypress install
+          npx cypress@4.11.0
           npx cypress verify
           npx cypress info
           npx cypress version
