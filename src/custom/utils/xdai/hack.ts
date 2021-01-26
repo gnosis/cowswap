@@ -31,7 +31,7 @@ export const switchParamsByNetwork = (chainId?: ChainId) => {
   }
 }
 
-export function getEthWethSymbols(): { ether?: string; weth?: string } {
+export function getChainCurrencySymbols(): { ether?: string; weth?: string } {
   const ether = ETHER.symbol
 
   let weth

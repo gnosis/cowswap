@@ -1,4 +1,4 @@
-import { getEthWethSymbols } from '@src/custom/utils/xdai/hack'
+import { getChainCurrencySymbols } from '@src/custom/utils/xdai/hack'
 import { Currency, currencyEquals, ETHER, WETH } from '@uniswap/sdk'
 import { useMemo } from 'react'
 import { tryParseAmount } from '../state/swap/hooks'
@@ -38,7 +38,7 @@ export default function useWrapCallback(
     const sufficientBalance = inputAmount && balance && !balance.lessThan(inputAmount)
 
     if (inputCurrency === ETHER && currencyEquals(WETH[chainId], outputCurrency)) {
-      const { ether, weth } = getEthWethSymbols()
+      const { ether, weth } = getChainCurrencySymbols()
       return {
         wrapType: WrapType.WRAP,
         execute:
@@ -58,7 +58,7 @@ export default function useWrapCallback(
         inputError: sufficientBalance ? undefined : 'Insufficient ETH balance'
       }
     } else if (currencyEquals(WETH[chainId], inputCurrency) && outputCurrency === ETHER) {
-      const { ether, weth } = getEthWethSymbols()
+      const { ether, weth } = getChainCurrencySymbols()
       return {
         wrapType: WrapType.UNWRAP,
         execute:
