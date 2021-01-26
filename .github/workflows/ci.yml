@@ -34,15 +34,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
 
-      - name: Cache node_modules
-        id: cache-node-modules
-        uses: actions/cache@v2
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-${{ matrix.node-version }}-nodemodules-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ matrix.node-version }}-nodemodules-
-
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
@@ -109,7 +100,6 @@ jobs:
           name: website
           path: build
 
-  
   deploy:
     name: Deploy
     needs: build
