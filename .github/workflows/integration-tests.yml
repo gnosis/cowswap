@@ -1,0 +1,33 @@
+name: Integration Tests
+on:
+  push:
+    branches:
+      - master
+      - develop
+  pull_request:
+    branches:
+      - master
+      - develop
+
+env:
+  REACT_APP_NETWORK_URL: "https://mainnet.infura.io/v3/4bf032f2d38a4ed6bb975b80d6340847"
+  APP_ID: 1
+
+jobs:
+  integration-tests:
+    name: Cypress
+    runs-on: ubuntu-16.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 12
+
+      - name: Cypress run
+        uses: cypress-io/github-action@v2
+        with:
+          start: yarn serve
+          wait-on: http://localhost:3000      
