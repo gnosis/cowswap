@@ -37,6 +37,7 @@ jobs:
           # print Cypress and OS info
         run: |
           yarn install --frozen-lockfile
+          npx cypress install
           npx cypress verify
           npx cypress info
           npx cypress version
