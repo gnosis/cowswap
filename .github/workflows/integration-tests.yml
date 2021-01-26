@@ -1,4 +1,4 @@
-name: Tests
+name: Integration Tests
 on:
   push:
     branches:
@@ -16,7 +16,7 @@ env:
 
 jobs:
   integration-tests:
-    name: Integration tests
+    name: Cypress
     runs-on: ubuntu-16.04
     steps:
       - name: Checkout code
