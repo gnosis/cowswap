@@ -109,14 +109,6 @@ jobs:
           name: website
           path: build
 
-    
-      # Silly test!
-      - name: Cypress run
-        uses: cypress-io/github-action@v2
-        with:
-          start: yarn serve
-          wait-on: http://localhost:3000      
-
   
   deploy:
     name: Deploy
