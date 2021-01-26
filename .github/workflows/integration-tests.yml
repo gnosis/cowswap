@@ -16,7 +16,7 @@ env:
 jobs:
   integration-tests:
     name: Cypress
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
