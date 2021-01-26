@@ -143,7 +143,7 @@ export async function postSignedOrder(params: { chainId: ChainId; order: OrderCr
   return uid
 }
 
-function checkIfEther(tokenAddress: string, chainId: ChainId) {
+export function checkIfEther(tokenAddress: string, chainId: ChainId) {
   let checkedAddress = tokenAddress
   if (tokenAddress === ETHER.symbol) {
     checkedAddress = WETH[chainId].address

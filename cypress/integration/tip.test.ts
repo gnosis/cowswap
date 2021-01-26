@@ -1,5 +1,6 @@
-import { Currency, CurrencyAmount, JSBI, Token, TokenAmount, Trade, WETH } from '@uniswap/sdk'
+import { Currency, CurrencyAmount, JSBI, Token, TokenAmount, Trade } from '@uniswap/sdk'
 import { getFeeAmount } from '../../src/custom/utils/fee'
+import { checkIfEther } from '../../src/custom/utils/operator'
 
 const stringToCurrency = (amount: string, currency: Currency) =>
   currency instanceof Token ? new TokenAmount(currency, JSBI.BigInt(amount)) : CurrencyAmount.ether(JSBI.BigInt(amount))
@@ -8,25 +9,18 @@ const stringToCurrency = (amount: string, currency: Currency) =>
 // MAINNET
 // SELL: ETH
 // BUY: DAI
-const INPUT_TOKEN = WETH[1].address
-const OUTPUT_TOKEN = '0x1f9840a85d5af5bf1d1762f925bdaddc4201f984'
 const DAI = '0xc7AD46e0b8a400Bb3C915120d284AafbA8fc4735'
+const INPUT_TOKEN = 'ETH'
+const OUTPUT_TOKEN = DAI
 
 const INPUT_AMOUNT = '50'
 
-const FEE_QUERY = `https://protocol-mainnet.dev.gnosisdev.com/api/v1/tokens/${OUTPUT_TOKEN}/fee`
+const FEE_QUERY = `https://protocol-mainnet.dev.gnosisdev.com/api/v1/tokens/${checkIfEther(INPUT_TOKEN, 1)}/fee`
 
-const inputIsETH = INPUT_TOKEN === WETH[1].address
-const outputIsETH = OUTPUT_TOKEN === WETH[1].address
-
-const SWAP_URL = `/swap?inputCurrency=${inputIsETH ? 'ETH' : INPUT_TOKEN}&outputCurrency=${
-  outputIsETH ? 'ETH' : OUTPUT_TOKEN
-}`
+const SWAP_URL = `/swap?inputCurrency=${INPUT_TOKEN}&outputCurrency=${OUTPUT_TOKEN}`
 
 describe('Swap::Trade::Tip', () => {
   beforeEach(() => {
-    // cy.route2(FEE_QUERY, { statusCode: 200, body: response }).as('fee')
-
     cy.visit(SWAP_URL)
   })
 
@@ -74,9 +68,12 @@ describe('Swap::Trade::Tip', () => {
             // sellAmount: inputAmount.raw.toString()
           })
 
+          // get the fee as a CurrencyAmount
           const feeAsCurrency = stringToCurrency(fee, inputAmount.currency)
 
+          // get the inputAmount without any fee
           const amountNoFee = outputAmount.divide(executionPrice)
+          // add the feeAsCurrency to amountNoFee to determine fee amount
           const amountWithFee = amountNoFee.add(feeAsCurrency?.toExact() || '0')
 
           // amount with and without fee should not be null
@@ -87,6 +84,7 @@ describe('Swap::Trade::Tip', () => {
           expect(trade).to.have.property('inputAmount')
           expect(trade).to.have.property('outputAmount')
 
+          // input/output amounts should not be equal (ETH/DAI)
           expect(inputAmount.toExact()).to.not.equal(outputAmount.toExact())
 
           // Subtract amountNoFee from amountWithFee to get the feeAmount
