@@ -27,9 +27,9 @@ jobs:
         id: cache
         with:
           path: ~/.cache
-          key: ${{ runner.os }}-cache-${{ hashFiles('**/yarn.lock') }}${{ secrets.CACHE_VERSION }}
+          key: ${{ runner.os }}-cache-${{ secrets.CACHE_VERSION }}-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-cache-
+            ${{ runner.os }}-cache-${{ secrets.CACHE_VERSION }}-
 
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
