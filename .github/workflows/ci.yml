@@ -60,9 +60,9 @@ jobs:
         id: cache
         with:
           path: ~/.cache
-          key: ${{ runner.os }}-cache-${{ hashFiles('**/yarn.lock') }}
+          key: ${{ runner.os }}-cache-${{ secrets.CACHE_VERSION }}-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-cache-
+            ${{ runner.os }}-cache-${{ secrets.CACHE_VERSION }}-
       - name: Unit Test
         run: yarn test
       # - name: Coveralls
@@ -85,9 +85,9 @@ jobs:
         id: cache
         with:
           path: ~/.cache
-          key: ${{ runner.os }}-cache-${{ hashFiles('**/yarn.lock') }}
+          key: ${{ runner.os }}-cache-${{ secrets.CACHE_VERSION }}-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-cache-
+            ${{ runner.os }}-cache-${{ secrets.CACHE_VERSION }}-
       - name: Build Web Apps
         run: yarn build
       - name: Upload websites artifact
@@ -111,9 +111,9 @@ jobs:
         id: cache
         with:
           path: ~/.cache
-          key: ${{ runner.os }}-cache-${{ hashFiles('**/yarn.lock') }}
+          key: ${{ runner.os }}-cache-${{ secrets.CACHE_VERSION }}-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-cache-
+            ${{ runner.os }}-cache-${{ secrets.CACHE_VERSION }}-
       # # Custom cache folder for cypress not supported by cypress' gh action
       # - name: Cache Cypress
       #   uses: actions/cache@v2
