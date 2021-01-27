@@ -1,55 +1,33 @@
-# name: Integration Tests
-# on:
-#   push:
-#     branches:
-#       - master
-#       - develop
-#   pull_request:
-#     branches:
-#       - master
-#       - develop
+name: Integration Tests
+on:
+  push:
+    branches:
+      - master
+      - develop
+  pull_request:
+    branches:
+      - master
+      - develop
 
-# env:
-#   REACT_APP_NETWORK_URL: 'https://mainnet.infura.io/v3/4bf032f2d38a4ed6bb975b80d6340847'
-#   APP_ID: 1
+env:
+  REACT_APP_NETWORK_URL: 'https://mainnet.infura.io/v3/4bf032f2d38a4ed6bb975b80d6340847'
+  APP_ID: 1
 
-# jobs:
-#   integration-tests:
-#     name: Cypress
-#     runs-on: ubuntu-latest
-#     steps:
-#       - name: Checkout code
-#         uses: actions/checkout@v2
+jobs:
+  integration-tests:
+    name: Cypress
+    runs-on: ubuntu-16.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-#       - name: Set up node
-#         uses: actions/setup-node@v2
-#         with:
-#           node-version: 12
+      - name: Set up node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 12
 
-#       # Custom cache folder for cypress not supported by cypress' gh action
-#       - name: Cache Cypress
-#         uses: actions/cache@v2
-#         id: cache-cypress
-#         with:
-#           path: ~/.cache/Cypress
-#           key: ${{ runner.os }}-cypress-${{ hashFiles('**/yarn.lock') }}
-#           restore-keys: |
-#             ${{ runner.os }}-cypress-
-
-#       - name: Install dependencies and verify Cypress
-#         if: steps.cache-cypress.outputs.cache-hit != 'true'
-#         env:
-#           # make sure every Cypress install prints minimal information
-#           CI: 1
-#           # print Cypress and OS info
-#         run: |
-#           npx cypress@4.11.0
-#           npx cypress verify
-
-#       - name: Cypress run
-#         uses: cypress-io/github-action@v2
-#         with:
-#           start: yarn serve
-#           wait-on: http://localhost:3000
-#           # Custom cache key only available for npm cache
-#           cache-key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+      - name: Cypress run
+        uses: cypress-io/github-action@v2
+        with:
+          start: yarn serve
+          wait-on: http://localhost:3000
