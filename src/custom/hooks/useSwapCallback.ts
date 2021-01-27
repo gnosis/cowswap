@@ -4,8 +4,6 @@ import { BigNumber } from 'ethers'
 
 import { BIPS_BASE, BUY_ETHER_TOKEN, INITIAL_ALLOWED_SLIPPAGE } from 'constants/index'
 
-import { batch } from 'react-redux'
-
 import { useAddPendingOrder } from 'state/orders/hooks'
 
 import { SwapCallbackState } from '@src/hooks/useSwapCallback'
@@ -103,28 +101,6 @@ export function useSwapCallback(
 
         const wrapPromise = isSellEth && wrapEther ? wrapEther(inputAmount) : undefined
 
-        const addPendingOrderAndPopup: typeof addPendingOrder = pendingOrderParams => {
-          batch(() => {
-            addPendingOrder(pendingOrderParams)
-
-            const {
-              id,
-              order: { summary }
-            } = pendingOrderParams
-
-            addPopup(
-              {
-                metatxn: {
-                  id: id,
-                  success: true,
-                  summary: summary
-                }
-              },
-              id + '_pending'
-            )
-          })
-        }
-
         // TODO: indicate somehow in the order when the user was to receive ETH === isBuyEth flag
         const postOrderPromise = postOrder({
           kind,
@@ -162,7 +138,6 @@ export function useSwapCallback(
     allowedSlippage,
     validTo,
     wrapEther,
-    addPendingOrder,
-    addPopup
+    addPendingOrder
   ])
 }
