@@ -35,36 +35,15 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: yarn install --frozen-lockfile
 
-      - name: Check cypress binary
+      - name: Check cypress installation
         id: check-cypress
-        # Checks only whether Cypress binary folder exists, not which version, not if the binary is really there
-        run: echo "::set-output name=exists::$(test -d ~/.cache/Cypress/ && echo true || echo false)"
+        run: echo "::set-output name=exists::$(npx cypress verify &>/dev/null && echo true || echo false)"
 
       - name: Install cypress binary
-        # Only when there's no binary folder
+        # Only when it's not installed
         if: steps.check-cypress.outputs.exists == 'false'
         # Hopes it'll install the version we want instead of the latest
         run: npx cypress install
-
-      - name: Print stuff hopefully
-        run: |
-          echo "::set-output name=yarn-cache-dir::$(yarn cache dir)"
-          yarn cache dir
-          echo "::set-output name=cypress-cache-dir::$(ls ~/.cache/Cypress)"
-          ls ~/.cache/Cypress
-          $(yarn bin)/cypress verify
-      # Shouldn't be needed if yarn install was successful, so I'll remove once it's all working
-      # - name: Install and verify Cypress
-      #   if: steps.cache-cypress.outputs.cache-hit != 'true'
-      #   env:
-      #     # make sure every Cypress install prints minimal information
-      #     CI: 1
-      #     # print Cypress and OS info
-      #   run: |
-      #     npx cypress@4.11.0
-      #     npx cypress verify
-      #     npx cypress info
-      #     npx cypress version
   # test:
   #   name: Test
   #   needs: setup
