@@ -136,15 +136,6 @@ jobs:
     name: Integration tests
     needs: build
     runs-on: ubuntu-latest
-    on:
-      push:
-        branches:
-          - master
-          - develop
-      pull_request:
-        branches:
-          - master
-          - develop
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
