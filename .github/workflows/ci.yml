@@ -6,6 +6,7 @@ on: push
 env:
   APP_ID: 1
   REPO_NAME_SLUG: gpswapui
+  REACT_APP_NETWORK_URL: 'https://mainnet.infura.io/v3/4bf032f2d38a4ed6bb975b80d6340847'
 
 jobs:
   setup:
@@ -176,9 +177,6 @@ jobs:
           wait-on: http://localhost:3000
           # Custom cache key only available for npm cache
           cache-key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          env:
-            REACT_APP_NETWORK_URL: 'https://mainnet.infura.io/v3/4bf032f2d38a4ed6bb975b80d6340847'
-            APP_ID: 1
 
   deploy:
     name: Deploy
