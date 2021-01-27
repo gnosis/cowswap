@@ -26,6 +26,17 @@ jobs:
         with:
           node-version: 12
 
+      # Install deps only
+      - name: Cypress install deps
+        uses: cypress-io/github-action@v2
+        with:
+          runTests: false
+
+      - name: Install Cypress binary
+        if: failure()
+        run: npx cypress install
+
+      # Actually run tests, building repo
       - name: Cypress run
         uses: cypress-io/github-action@v2
         with:
