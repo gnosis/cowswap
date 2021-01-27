@@ -27,7 +27,7 @@ jobs:
         id: cache
         with:
           path: ~/.cache
-          key: ${{ runner.os }}-cache-${{ hashFiles('**/yarn.lock') }}
+          key: ${{ runner.os }}-cache-${{ hashFiles('**/yarn.lock') }}${{ secrets.CACHE_VERSION }}
           restore-keys: |
             ${{ runner.os }}-cache-
 
@@ -38,8 +38,9 @@ jobs:
       - name: Print stuff hopefully
         run: |
           echo "::set-output name=yarn-cache-dir::$(yarn cache dir)"
+          yarn cache dir
           echo "::set-output name=cypress-cache-dir::$(ls ~/.cache/Cypress)"
-          echo "::set-output name=cypress-cache-dir::$(ls ~/.cache/Cypress)"
+          ls ~/.cache/Cypress
           $(yarn bin)/cypress verify
       # Shouldn't be needed if yarn install was successful, so I'll remove once it's all working
       # - name: Install and verify Cypress
