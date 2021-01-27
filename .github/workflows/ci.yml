@@ -22,53 +22,31 @@ jobs:
         with:
           node-version: 12
 
-      - name: Set output of cache
-        id: yarn-cache
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-
-      - name: Cache yarn cache
+      - name: Cache the cache folder
         uses: actions/cache@v2
-        id: cache-yarn-cache
+        id: cache
         with:
-          path: ${{ steps.yarn-cache.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          path: ~/.cache
+          key: ${{ runner.os }}-cache-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-yarn-
-
-      - name: Cache node_modules
-        id: cache-node-modules
-        uses: actions/cache@v2
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-${{ matrix.node-version }}-nodemodules-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ matrix.node-version }}-nodemodules-
+            ${{ runner.os }}-cache-
 
       - name: Install dependencies
-        if: steps.cache-yarn-cache.outputs.cache-hit != 'true'
+        if: steps.cache.outputs.cache-hit != 'true'
         run: yarn install --frozen-lockfile
 
-      - name: Cache Cypress
-        uses: actions/cache@v2
-        id: cache-cypress
-        with:
-          path: ~/.cache/Cypress
-          key: ${{ runner.os }}-cypress-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-cypress-
-
       # Shouldn't be needed if yarn install was successful, so I'll remove once it's all working
-      - name: Install and verify Cypress
-        if: steps.cache-cypress.outputs.cache-hit != 'true'
-        env:
-          # make sure every Cypress install prints minimal information
-          CI: 1
-          # print Cypress and OS info
-        run: |
-          npx cypress@4.11.0
-          npx cypress verify
-          npx cypress info
-          npx cypress version
+      # - name: Install and verify Cypress
+      #   if: steps.cache-cypress.outputs.cache-hit != 'true'
+      #   env:
+      #     # make sure every Cypress install prints minimal information
+      #     CI: 1
+      #     # print Cypress and OS info
+      #   run: |
+      #     npx cypress@4.11.0
+      #     npx cypress verify
+      #     npx cypress info
+      #     npx cypress version
 
   test:
     name: Test
@@ -84,14 +62,14 @@ jobs:
         with:
           node-version: 12
 
-      - name: Load dependencies
-        id: cache-node-modules
+      - name: Load the cache folder
         uses: actions/cache@v2
+        id: cache
         with:
-          path: node_modules
-          key: ${{ runner.os }}-${{ matrix.node-version }}-nodemodules-${{ hashFiles('**/yarn.lock') }}
+          path: ~/.cache
+          key: ${{ runner.os }}-cache-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-${{ matrix.node-version }}-nodemodules-
+            ${{ runner.os }}-cache-
 
       - name: Unit Test
         run: yarn test
@@ -115,14 +93,14 @@ jobs:
         with:
           node-version: 12
 
-      - name: Load dependencies
-        id: cache-node-modules
+      - name: Load the cache folder
         uses: actions/cache@v2
+        id: cache
         with:
-          path: node_modules
-          key: ${{ runner.os }}-${{ matrix.node-version }}-nodemodules-${{ hashFiles('**/yarn.lock') }}
+          path: ~/.cache
+          key: ${{ runner.os }}-cache-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-${{ matrix.node-version }}-nodemodules-
+            ${{ runner.os }}-cache-
 
       - name: Build Web Apps
         run: yarn build
@@ -146,25 +124,34 @@ jobs:
         with:
           node-version: 12
 
-      # Custom cache folder for cypress not supported by cypress' gh action
-      - name: Cache Cypress
+      - name: Load the cache folder
         uses: actions/cache@v2
-        id: cache-cypress
+        id: cache
         with:
-          path: ~/.cache/Cypress
-          key: ${{ runner.os }}-cypress-${{ hashFiles('**/yarn.lock') }}
+          path: ~/.cache
+          key: ${{ runner.os }}-cache-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-cypress-
+            ${{ runner.os }}-cache-
 
-      - name: Install dependencies and verify Cypress
-        if: steps.cache-cypress.outputs.cache-hit != 'true'
+      # # Custom cache folder for cypress not supported by cypress' gh action
+      # - name: Cache Cypress
+      #   uses: actions/cache@v2
+      #   id: cache-cypress
+      #   with:
+      #     path: ~/.cache/Cypress
+      #     key: ${{ runner.os }}-cypress-${{ hashFiles('**/yarn.lock') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-cypress-
+
+      # TODO: remove
+      - name: Verify Cypress
+        if: steps.cache.outputs.cache-hit != 'true'
         env:
           # make sure every Cypress install prints minimal information
           CI: 1
           # print Cypress and OS info
         run: |
-          npx cypress@4.11.0
-          npx cypress verify
+          npx cypress@4.11.0 verify
 
       # Fetch build artifacts
       - name: Download website
@@ -176,7 +163,8 @@ jobs:
           start: yarn serve
           wait-on: http://localhost:3000
           # Custom cache key only available for npm cache
-          cache-key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          # cache-key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          # build: yarn build
 
   deploy:
     name: Deploy
