@@ -13,7 +13,6 @@ describe('Fee endpoint', () => {
 describe('Fetch and persist fee', () => {
   beforeEach(() => {
     cy.visit('/swap')
-    // TODO: No fee
   })
 
   it('Persisted when selecting a token', () => {
