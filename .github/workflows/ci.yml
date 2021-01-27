@@ -56,7 +56,8 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-cypress-
 
-      - name: Install dependencies and verify Cypress
+      # Shouldn't be needed if yarn install was successful, so I'll remove once it's all working
+      - name: Install and verify Cypress
         if: steps.cache-cypress.outputs.cache-hit != 'true'
         env:
           # make sure every Cypress install prints minimal information
@@ -67,10 +68,6 @@ jobs:
           npx cypress verify
           npx cypress info
           npx cypress version
-          npx cypress version --component package
-          npx cypress version --component binary
-          npx cypress version --component electron
-          npx cypress version --component node
 
   test:
     name: Test
@@ -135,7 +132,63 @@ jobs:
           name: website
           path: build
 
-  
+  integration:
+    name: Integration tests
+    needs: build
+    runs-on: ubuntu-latest
+    on:
+      push:
+        branches:
+          - master
+          - develop
+      pull_request:
+        branches:
+          - master
+          - develop
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 12
+
+      # Custom cache folder for cypress not supported by cypress' gh action
+      - name: Cache Cypress
+        uses: actions/cache@v2
+        id: cache-cypress
+        with:
+          path: ~/.cache/Cypress
+          key: ${{ runner.os }}-cypress-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cypress-
+
+      - name: Install dependencies and verify Cypress
+        if: steps.cache-cypress.outputs.cache-hit != 'true'
+        env:
+          # make sure every Cypress install prints minimal information
+          CI: 1
+          # print Cypress and OS info
+        run: |
+          npx cypress@4.11.0
+          npx cypress verify
+
+      # Fetch build artifacts
+      - name: Download website
+        uses: actions/download-artifact@v2
+
+      - name: Cypress run
+        uses: cypress-io/github-action@v2
+        with:
+          start: yarn serve
+          wait-on: http://localhost:3000
+          # Custom cache key only available for npm cache
+          cache-key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          env:
+            REACT_APP_NETWORK_URL: 'https://mainnet.infura.io/v3/4bf032f2d38a4ed6bb975b80d6340847'
+            APP_ID: 1
+
   deploy:
     name: Deploy
     needs: build
