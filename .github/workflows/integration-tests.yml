@@ -27,18 +27,24 @@ jobs:
           node-version: 12
 
       # Install deps only
-      - name: Cypress install deps
+      - name: Cypress install dependencies
+        id: cypress-deps
         uses: cypress-io/github-action@v2
         with:
           runTests: false
 
       - name: Install Cypress binary
+        id: cypress-bin
+        # Only run if previous step failed
         if: failure()
         run: npx cypress install
 
       # Actually run tests, building repo
       - name: Cypress run
         uses: cypress-io/github-action@v2
+        # Run when one of the previous 2 jobs succeeds
+        # Without this conditional, it won't run in case there's a failure, even if expected
+        if: steps.cypress-deps.conclusion == 'success' || steps.cypress-bin.conclusion == 'success'
         with:
           build: yarn build
           start: yarn serve
