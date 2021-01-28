@@ -79,12 +79,14 @@ describe('Fetch and persist fee', () => {
       .its(KEY)
       // Keep retrying until localStorage is populated from app
       .should($feeStorage => expect($feeStorage).to.have.property(NETWORK))
+      // Check that fee is currently in the PAST
       .then($feeStorage => {
         // we need to parse JSON
         const feeStorage = JSON.parse($feeStorage)
         const NOW = new Date()
         const feeExpirationDate = new Date(feeStorage[NETWORK].ETH.fee.expirationDate)
 
+        // Here we expect the current saved expirationDate to be in the PAST
         expect(NOW).to.be.greaterThan(feeExpirationDate)
       })
       // WHEN: When the fee quote expires, we refetch the fee
