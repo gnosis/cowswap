@@ -1,4 +1,3 @@
-import { getChainCurrencySymbols } from '@src/custom/utils/xdai/hack'
 import { Currency, currencyEquals, ETHER, WETH } from '@uniswap/sdk'
 import { useMemo } from 'react'
 import { tryParseAmount } from '../state/swap/hooks'
@@ -38,7 +37,6 @@ export default function useWrapCallback(
     const sufficientBalance = inputAmount && balance && !balance.lessThan(inputAmount)
 
     if (inputCurrency === ETHER && currencyEquals(WETH[chainId], outputCurrency)) {
-      const { native, wrapped } = getChainCurrencySymbols()
       return {
         wrapType: WrapType.WRAP,
         execute:
@@ -46,10 +44,7 @@ export default function useWrapCallback(
             ? async () => {
                 try {
                   const txReceipt = await wethContract.deposit({ value: `0x${inputAmount.raw.toString(16)}` })
-
-                  addTransaction(txReceipt, {
-                    summary: `Wrap ${inputAmount.toSignificant(6)} ${native} to ${wrapped}`
-                  })
+                  addTransaction(txReceipt, { summary: `Wrap ${inputAmount.toSignificant(6)} ETH to WETH` })
                 } catch (error) {
                   console.error('Could not deposit', error)
                 }
@@ -58,7 +53,6 @@ export default function useWrapCallback(
         inputError: sufficientBalance ? undefined : 'Insufficient ETH balance'
       }
     } else if (currencyEquals(WETH[chainId], inputCurrency) && outputCurrency === ETHER) {
-      const { native, wrapped } = getChainCurrencySymbols()
       return {
         wrapType: WrapType.UNWRAP,
         execute:
@@ -66,9 +60,7 @@ export default function useWrapCallback(
             ? async () => {
                 try {
                   const txReceipt = await wethContract.withdraw(`0x${inputAmount.raw.toString(16)}`)
-                  addTransaction(txReceipt, {
-                    summary: `Unwrap ${inputAmount.toSignificant(6)} ${wrapped} to ${native}`
-                  })
+                  addTransaction(txReceipt, { summary: `Unwrap ${inputAmount.toSignificant(6)} WETH to ETH` })
                 } catch (error) {
                   console.error('Could not withdraw', error)
                 }
