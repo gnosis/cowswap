@@ -1,6 +1,7 @@
 import { ChainId, WETH } from '@uniswap/sdk'
 
 const FEE_QUERY = `https://protocol-rinkeby.dev.gnosisdev.com/api/v1/tokens/${WETH[4].address}/fee`
+const FEE_QUOTES_LOCAL_STORAGE_KEY = 'redux_localstorage_simple_fee'
 
 describe('Fee endpoint', () => {
   it('Returns the expected info', () => {
@@ -20,35 +21,38 @@ describe('Fee endpoint', () => {
 describe('Fetch and persist fee', () => {
   beforeEach(() => {
     cy.visit('/swap')
-
-    // Alias localStorage
-    cy.window()
-      .then(window => window.localStorage)
-      .as('localStorage')
   })
 
-  it('Persisted when selecting a token', () => {
-    const TOKEN = 'ETH'
+  it.only('Persisted when selecting a token', () => {
+    const TOKEN = '0xc7AD46e0b8a400Bb3C915120d284AafbA8fc4735'
     const NETWORK = ChainId.RINKEBY.toString()
-    // GIVEN: A fee for a token is not in the local storage
+
+    // GIVEN: There's no fee quoted for the token
+    window.localStorage.setItem(FEE_QUOTES_LOCAL_STORAGE_KEY, '{"4": {}}')
+
     // WHEN: When the user select this token
+    // TODO: Select token
+    cy.swapSelectInput('0xc7AD46e0b8a400Bb3C915120d284AafbA8fc4735')
 
-    // Clear localStorage
-    cy.get<Storage>('@localStorage').then(storage => storage.clear())
+    cy.window()
+      .then(window => window.localStorage)
+      .its(FEE_QUOTES_LOCAL_STORAGE_KEY)
+      .then(feeQuotesStorage => {
+        // THEN: Theres fee quotes persisted in the local storage
+        if (!feeQuotesStorage) assert.fail('No fee in local storage')
+        return JSON.parse(feeQuotesStorage)
+      })
+      .its(NETWORK)
+      .its(TOKEN)
+      .then(feeQuote => {
+        // THEN: Theres a stored quote for the network/token
+        expect(feeQuote).to.exist
 
-    // THEN: The fee is persisted in the local storage (redux_localstorage_simple_fee)
-    cy.get<Storage>('@localStorage')
-      .its('redux_localstorage_simple_fee')
-      .should($feeStorage => {
-        // we need to parse JSON
-        const feeStorage = JSON.parse($feeStorage)
-        const feeQuote = feeStorage[NETWORK][TOKEN]
-        expect(feeStorage).to.have.property(NETWORK)
-        expect(feeStorage[NETWORK]).to.have.property(TOKEN)
-        expect(feeQuote.token).to.equal(TOKEN)
-        expect(feeQuote.fee).to.have.property('minimalFee')
-        expect(feeQuote.fee).to.have.property('feeRatio')
-        expect(feeQuote.fee).to.have.property('expirationDate')
+        // THEN: The quote has the expected shape
+        const fee = feeQuote.fee
+        expect(fee).to.have.property('minimalFee')
+        expect(fee).to.have.property('feeRatio')
+        expect(fee).to.have.property('expirationDate')
       })
   })
 
@@ -56,7 +60,6 @@ describe('Fetch and persist fee', () => {
   it('Re-fetched when it expires', () => {
     const NETWORK = ChainId.RINKEBY.toString()
     const TOKEN = 'ETH'
-    const KEY = 'redux_localstorage_simple_fee'
     const VALUE = JSON.stringify({
       [NETWORK]: {
         [TOKEN]: {
@@ -74,9 +77,9 @@ describe('Fetch and persist fee', () => {
     cy.get<Storage>('@localStorage')
       .then($storage => {
         // set time in the past
-        $storage.setItem(KEY, VALUE)
+        $storage.setItem(FEE_QUOTES_LOCAL_STORAGE_KEY, VALUE)
       })
-      .its(KEY)
+      .its(FEE_QUOTES_LOCAL_STORAGE_KEY)
       // Keep retrying until localStorage is populated from app
       .should($feeStorage => expect($feeStorage).to.have.property(NETWORK))
       // Check that fee is currently in the PAST
