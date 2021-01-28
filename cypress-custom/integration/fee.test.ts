@@ -23,9 +23,32 @@ describe('Fetch and persist fee', () => {
   })
 
   it('Persisted when selecting a token', () => {
+    const TOKEN = 'ETH'
     // GIVEN: A fee for a token is not in the local storage
     // WHEN: When the user select this token
+
+    // Alias localStorage
+    cy.window()
+      .then(window => window.localStorage)
+      .as('localStorage')
+
+    // Clear localStorage
+    cy.get<Storage>('@localStorage').then(storage => storage.clear())
+
     // THEN: The fee is persisted in the local storage (redux_localstorage_simple_fee)
+    cy.get<Storage>('@localStorage')
+      .its('redux_localstorage_simple_fee')
+      .should($feeStorage => {
+        // we need to parse JSON
+        const feeStorage = JSON.parse($feeStorage)
+        expect(feeStorage).to.have.property('4')
+        expect(feeStorage[4]).to.have.property(TOKEN)
+        expect(feeStorage[4][TOKEN]).to.have.property('token')
+        expect(feeStorage[4][TOKEN]).to.have.property('fee')
+        expect(feeStorage[4][TOKEN].fee).to.have.property('minimalFee')
+        expect(feeStorage[4][TOKEN].fee).to.have.property('feeRatio')
+        expect(feeStorage[4][TOKEN].fee).to.have.property('expirationDate')
+      })
   })
 
   // TODO: not sure if it's easy to test this
