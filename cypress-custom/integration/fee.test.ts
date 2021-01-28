@@ -20,17 +20,17 @@ describe('Fee endpoint', () => {
 describe('Fetch and persist fee', () => {
   beforeEach(() => {
     cy.visit('/swap')
+
+    // Alias localStorage
+    cy.window()
+      .then(window => window.localStorage)
+      .as('localStorage')
   })
 
   it('Persisted when selecting a token', () => {
     const TOKEN = 'ETH'
     // GIVEN: A fee for a token is not in the local storage
     // WHEN: When the user select this token
-
-    // Alias localStorage
-    cy.window()
-      .then(window => window.localStorage)
-      .as('localStorage')
 
     // Clear localStorage
     cy.get<Storage>('@localStorage').then(storage => storage.clear())
