@@ -29,7 +29,7 @@ describe('Fetch and persist fee', () => {
   })
 })
 
-describe('Swap considers fee', () => {
+describe('Swap: Considering fee', () => {
   beforeEach(() => {
     // GIVEN: an initial selection of WETH-DAI
     cy.visit('/swap')
@@ -45,13 +45,9 @@ describe('Swap considers fee', () => {
     // WHEN: Users input amount
     //
     // THEN: He gets uniswap price
-    //
-    // cy.get('#swap-currency-input .token-amount-input').type('0.001', { force: true, delay: 200 })
-    // cy.get('#swap-currency-output .token-amount-input').should('not.equal', '')
-    // cy.get('#swap-button').click()
   })
 
-  it("Use can't trade when amount is smaller than minimumFee", () => {
+  it("User can't trade when amount is smaller than minimumFee", () => {
     // GIVEN: Swap WETH-DAI
     //
     // GIVEN: amount is smaller than minimumFee
