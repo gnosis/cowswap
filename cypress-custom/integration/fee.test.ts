@@ -43,7 +43,8 @@ describe('Fetch and persist fee', () => {
         // we need to parse JSON
         const feeStorage = JSON.parse($feeStorage)
         const feeQuote = feeStorage[NETWORK][TOKEN]
-
+        expect(feeStorage).to.have.property(NETWORK)
+        expect(feeStorage[NETWORK]).to.have.property(TOKEN)
         expect(feeQuote.token).to.equal(TOKEN)
         expect(feeQuote.fee).to.have.property('minimalFee')
         expect(feeQuote.fee).to.have.property('feeRatio')
