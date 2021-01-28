@@ -28,6 +28,9 @@ jobs:
 
       # Install deps only
       - name: Cypress install deps
+        # Prevents job failure when in case step fails.
+        # Next step takes care of it
+        continue-on-error: true
         uses: cypress-io/github-action@v2
         with:
           runTests: false
