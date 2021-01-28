@@ -28,10 +28,9 @@ describe('Fetch and persist fee', () => {
     const NETWORK = ChainId.RINKEBY.toString()
 
     // GIVEN: There's no fee quoted for the token
-    window.localStorage.setItem(FEE_QUOTES_LOCAL_STORAGE_KEY, '{"4": {}}')
+    cy.clearLocalStorage()
 
     // WHEN: When the user select this token
-    // TODO: Select token
     cy.swapSelectInput('0xc7AD46e0b8a400Bb3C915120d284AafbA8fc4735')
 
     cy.window()
@@ -44,6 +43,7 @@ describe('Fetch and persist fee', () => {
       })
       .its(NETWORK)
       .its(TOKEN)
+      // .its(NETWORK + '.' + TOKEN)
       .then(feeQuote => {
         // THEN: Theres a stored quote for the network/token
         expect(feeQuote).to.exist
