@@ -1,12 +1,19 @@
+import { WETH } from '@uniswap/sdk'
+
+const FEE_QUERY = `https://protocol-rinkeby.dev.gnosisdev.com/api/v1/tokens/${WETH[4].address}/fee`
+
 describe('Fee endpoint', () => {
   it('Returns the expected info', () => {
     // GIVEN:-
     // WHEN: Call fee API
-    // cy.request('/users/1')
-    //   .its('body')
-    //   .should('deep.eq', { name: 'Jane' })
-    //
-    // THEN: The response has the expected information
+    cy.request(FEE_QUERY)
+      .its('body')
+      // THEN: response is as expected
+      .should(body => {
+        expect(body).to.have.property('minimalFee')
+        expect(body).to.have.property('feeRatio')
+        expect(body).to.have.property('expirationDate')
+      })
   })
 })
 
