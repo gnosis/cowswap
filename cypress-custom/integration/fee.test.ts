@@ -54,9 +54,51 @@ describe('Fetch and persist fee', () => {
 
   // TODO: not sure if it's easy to test this
   it('Re-fetched when it expires', () => {
+    const NETWORK = ChainId.RINKEBY.toString()
+    const TOKEN = 'ETH'
+    const KEY = 'redux_localstorage_simple_fee'
+    const VALUE = JSON.stringify({
+      [NETWORK]: {
+        [TOKEN]: {
+          fee: {
+            minimalFee: '777',
+            feeRatio: 777,
+            expirationDate: new Date(Date.now() - 200000).toISOString()
+          },
+          token: TOKEN
+        }
+      }
+    })
     // GIVEN: A fee is present in the local storage
-    // WHEN: When the fee quote expires, we refetch the fee
-    // THEN: We get another quote
+    // Set expiring fee in localStorage
+    cy.get<Storage>('@localStorage')
+      .then($storage => {
+        // set time in the past
+        $storage.setItem(KEY, VALUE)
+      })
+      .its(KEY)
+      // Keep retrying until localStorage is populated from app
+      .should($feeStorage => expect($feeStorage).to.have.property(NETWORK))
+      .then($feeStorage => {
+        // we need to parse JSON
+        const feeStorage = JSON.parse($feeStorage)
+        const NOW = new Date()
+        const feeExpirationDate = new Date(feeStorage[NETWORK].ETH.fee.expirationDate)
+
+        expect(NOW).to.be.greaterThan(feeExpirationDate)
+      })
+      // WHEN: When the fee quote expires, we refetch the fee
+      // better imo than using cy.wait - clear fee storage
+      .then(() => cy.get<Storage>('@localStorage').then($storage => $storage.removeItem(KEY)))
+      .its(KEY)
+      // THEN: We get another quote
+      .should($feeStorage => {
+        const feeStorage = JSON.parse($feeStorage)
+
+        const NOW = new Date()
+        const feeExpirationDate = new Date(feeStorage[NETWORK].ETH.fee.expirationDate)
+        expect(feeExpirationDate).to.be.greaterThan(NOW)
+      })
   })
 })
 
