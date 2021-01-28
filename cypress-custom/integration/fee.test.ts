@@ -1,4 +1,4 @@
-import { WETH } from '@uniswap/sdk'
+import { ChainId, WETH } from '@uniswap/sdk'
 
 const FEE_QUERY = `https://protocol-rinkeby.dev.gnosisdev.com/api/v1/tokens/${WETH[4].address}/fee`
 
@@ -29,6 +29,7 @@ describe('Fetch and persist fee', () => {
 
   it('Persisted when selecting a token', () => {
     const TOKEN = 'ETH'
+    const NETWORK = ChainId.RINKEBY.toString()
     // GIVEN: A fee for a token is not in the local storage
     // WHEN: When the user select this token
 
@@ -41,13 +42,12 @@ describe('Fetch and persist fee', () => {
       .should($feeStorage => {
         // we need to parse JSON
         const feeStorage = JSON.parse($feeStorage)
-        expect(feeStorage).to.have.property('4')
-        expect(feeStorage[4]).to.have.property(TOKEN)
-        expect(feeStorage[4][TOKEN]).to.have.property('token')
-        expect(feeStorage[4][TOKEN]).to.have.property('fee')
-        expect(feeStorage[4][TOKEN].fee).to.have.property('minimalFee')
-        expect(feeStorage[4][TOKEN].fee).to.have.property('feeRatio')
-        expect(feeStorage[4][TOKEN].fee).to.have.property('expirationDate')
+        const feeQuote = feeStorage[NETWORK][TOKEN]
+
+        expect(feeQuote.token).to.equal(TOKEN)
+        expect(feeQuote.fee).to.have.property('minimalFee')
+        expect(feeQuote.fee).to.have.property('feeRatio')
+        expect(feeQuote.fee).to.have.property('expirationDate')
       })
   })
 
