@@ -6,7 +6,7 @@ import { signOrder, UnsignedOrder } from 'utils/signatures'
 import { getFeeQuote as getFeeInformation, postSignedOrder } from 'utils/operator'
 import { getFeeAmount } from 'utils/fee'
 import { Signer } from 'ethers'
-import { APP_ID } from 'constants/index'
+import { APP_ID, SHORTEST_PRECISION } from 'constants/index'
 
 export interface PostOrderParams {
   account: string
@@ -28,8 +28,8 @@ function _getSummary(params: PostOrderParams): string {
 
   const inputSymbol = inputAmount.currency.symbol
   const outputSymbol = outputAmount.currency.symbol
-  const inputAmountValue = inputAmount.toSignificant(3)
-  const outputAmountValue = outputAmount.toSignificant(3)
+  const inputAmountValue = inputAmount.toSignificant(SHORTEST_PRECISION)
+  const outputAmountValue = outputAmount.toSignificant(SHORTEST_PRECISION)
 
   const base = `Swap ${inputAmountValue} ${inputSymbol} for ${outputAmountValue} ${outputSymbol}`
 
