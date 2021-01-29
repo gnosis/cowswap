@@ -14,7 +14,7 @@ import { ReactComponent as DropDown } from 'assets/images/dropdown.svg'
 import { useActiveWeb3React } from 'hooks'
 import { useTranslation } from 'react-i18next'
 import { WithClassName } from 'types'
-import { DEFAULT_PRECISION } from '@src/custom/constants'
+import { DEFAULT_PRECISION } from 'constants/index'
 
 export const InputRow = styled.div<{ selected: boolean }>`
   ${({ theme }) => theme.flexRowNoWrap}
