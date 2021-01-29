@@ -8,6 +8,7 @@ import { useSelectedTokenList } from 'state/lists/hooks'
 import { useAddPopup } from '@src/state/application/hooks'
 import { TokenInfo } from '@uniswap/token-lists'
 import { registerOnWindow } from 'utils/misc'
+import { RADIX_DECIMAL } from '@src/custom/constants'
 
 const randomNumberInRange = (min: number, max: number) => {
   return Math.random() * (max - min) + min
@@ -66,8 +67,8 @@ const generateOrder = ({ owner, sellToken, buyToken }: GenerateOrderParams): Ord
     summary, // for dapp use only, readable by user
     sellToken: sellToken.address.replace('0x', ''), // address, without '0x' prefix
     buyToken: buyToken.address.replace('0x', ''), // address, without '0x' prefix
-    sellAmount: sellAmount.toString(10), // in atoms
-    buyAmount: buyAmount.toString(10), // in atoms
+    sellAmount: sellAmount.toString(RADIX_DECIMAL), // in atoms
+    buyAmount: buyAmount.toString(RADIX_DECIMAL), // in atoms
     // 20sec - 4min
     validTo: Date.now() / 1000 + randomIntInRangeExcept(20, 240), // uint32. unix timestamp, seconds, use new Date(validTo * 1000)
     appData: 1, // arbitrary identifier sent along with the order
