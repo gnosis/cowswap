@@ -5,7 +5,13 @@ const RINKEBY = ChainId.RINKEBY.toString()
 const FEE_QUERY = `https://protocol-rinkeby.dev.gnosisdev.com/api/v1/tokens/${WETH[4].address}/fee`
 const FEE_QUOTES_LOCAL_STORAGE_KEY = 'redux_localstorage_simple_fee'
 
-function _isFeeFetched(token: string): void {
+function _assertFeeData(fee: any): void {
+  expect(fee).to.have.property('minimalFee')
+  expect(fee).to.have.property('feeRatio')
+  expect(fee).to.have.property('expirationDate')
+}
+
+function _assertFeeFetched(token: string): void {
   cy.window()
     .then(window => window.localStorage)
     .its(FEE_QUOTES_LOCAL_STORAGE_KEY)
@@ -21,9 +27,7 @@ function _isFeeFetched(token: string): void {
 
       // THEN: The quote has the expected information
       const fee = feeQuoteData[RINKEBY][token].fee
-      expect(fee).to.have.property('minimalFee')
-      expect(fee).to.have.property('feeRatio')
-      expect(fee).to.have.property('expirationDate')
+      _assertFeeData(fee)
     })
 }
 
@@ -35,9 +39,7 @@ describe('Fee endpoint', () => {
       .its('body')
       // THEN: response is as expected
       .should(body => {
-        expect(body).to.have.property('minimalFee')
-        expect(body).to.have.property('feeRatio')
-        expect(body).to.have.property('expirationDate')
+        _assertFeeData(body)
       })
   })
 })
@@ -55,7 +57,7 @@ describe('Fetch and persist fee', () => {
     // GIVEN: An user loads the swap page
     // WHEN: He does nothing
     // THEN: The fee for ETH is fetched
-    _isFeeFetched('ETH')
+    _assertFeeFetched('ETH')
   })
 
   it('Fetch fee when selecting token', () => {
@@ -66,7 +68,7 @@ describe('Fetch and persist fee', () => {
     cy.swapSelectInput(DAI)
 
     // THEN: The fee for DAI is fetched
-    _isFeeFetched(DAI)
+    _assertFeeFetched(DAI)
   })
 
   // TODO: not sure if it's easy to test this
