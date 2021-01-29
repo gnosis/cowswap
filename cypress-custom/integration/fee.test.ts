@@ -11,9 +11,12 @@ function _assertFeeData(fee: any): void {
   expect(fee).to.have.property('expirationDate')
 }
 
+function _getLocalStorage(): Cypress.Chainable<any> {
+  return cy.window().then(window => window.localStorage)
+}
+
 function _assertFeeFetched(token: string): void {
-  cy.window()
-    .then(window => window.localStorage)
+  _getLocalStorage()
     .its(FEE_QUOTES_LOCAL_STORAGE_KEY)
     .should(feeQuotesStorage => {
       // THEN: The fee information in the local storage
@@ -47,10 +50,6 @@ describe('Fee endpoint', () => {
 describe('Fetch and persist fee', () => {
   beforeEach(() => {
     cy.visit('/swap')
-
-    cy.window()
-      .then(window => window.localStorage)
-      .as('localStorage')
   })
 
   it('Fetch fee automatically on load', () => {
@@ -89,7 +88,7 @@ describe('Fetch and persist fee', () => {
     })
     // GIVEN: A fee is present in the local storage
     // Set expiring fee in localStorage
-    cy.get<Storage>('@localStorage')
+    _getLocalStorage()
       .then($storage => {
         // set time in the past
         $storage.setItem(FEE_QUOTES_LOCAL_STORAGE_KEY, VALUE)
@@ -109,7 +108,7 @@ describe('Fetch and persist fee', () => {
       })
       // WHEN: When the fee quote expires, we refetch the fee
       // better imo than using cy.wait - clear fee storage
-      .then(() => cy.get<Storage>('@localStorage').then($storage => $storage.removeItem(FEE_QUOTES_LOCAL_STORAGE_KEY)))
+      .then(() => _getLocalStorage().then($storage => $storage.removeItem(FEE_QUOTES_LOCAL_STORAGE_KEY)))
       .its(FEE_QUOTES_LOCAL_STORAGE_KEY)
       // THEN: We get another quote
       .should($feeStorage => {
