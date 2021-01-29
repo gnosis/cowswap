@@ -36,20 +36,19 @@ describe('Fetch and persist fee', () => {
     cy.window()
       .then(window => window.localStorage)
       .its(FEE_QUOTES_LOCAL_STORAGE_KEY)
-      .then(feeQuotesStorage => {
+      .should(feeQuotesStorage => {
         // THEN: Theres fee quotes persisted in the local storage
         if (!feeQuotesStorage) assert.fail('No fee in local storage')
-        return JSON.parse(feeQuotesStorage)
-      })
-      .its(NETWORK)
-      .its(TOKEN)
-      // .its(NETWORK + '.' + TOKEN)
-      .then(feeQuote => {
+        const feeQuoteData = JSON.parse(feeQuotesStorage)
+
         // THEN: Theres a stored quote for the network/token
-        expect(feeQuote).to.exist
+        expect(feeQuoteData).to.exist
+        expect(feeQuoteData).to.have.property(NETWORK)
+        expect(feeQuoteData[NETWORK]).to.have.property(TOKEN)
 
         // THEN: The quote has the expected shape
-        const fee = feeQuote.fee
+        console.log(feeQuoteData[NETWORK][TOKEN])
+        const fee = feeQuoteData[NETWORK][TOKEN].fee
         expect(fee).to.have.property('minimalFee')
         expect(fee).to.have.property('feeRatio')
         expect(fee).to.have.property('expirationDate')
