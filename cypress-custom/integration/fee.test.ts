@@ -24,31 +24,31 @@ describe('Fetch and persist fee', () => {
   })
 
   it.only('Persisted when selecting a token', () => {
-    const TOKEN = '0xc7AD46e0b8a400Bb3C915120d284AafbA8fc4735'
-    const NETWORK = ChainId.RINKEBY.toString()
+    const DAI = '0xc7AD46e0b8a400Bb3C915120d284AafbA8fc4735'
+    const Rinkeby = ChainId.RINKEBY.toString()
 
-    // GIVEN: There's no fee quoted for the token
+    // GIVEN: Clean local storage
     cy.clearLocalStorage()
 
-    // WHEN: When the user select this token
-    cy.swapSelectInput('0xc7AD46e0b8a400Bb3C915120d284AafbA8fc4735')
+    // WHEN: Select DAI token
+    cy.swapSelectInput(DAI)
 
+    // THEN: The fee for DAI is fetched
     cy.window()
       .then(window => window.localStorage)
       .its(FEE_QUOTES_LOCAL_STORAGE_KEY)
       .should(feeQuotesStorage => {
-        // THEN: Theres fee quotes persisted in the local storage
+        // THEN: The fee information in the local storage
         if (!feeQuotesStorage) assert.fail('No fee in local storage')
         const feeQuoteData = JSON.parse(feeQuotesStorage)
 
-        // THEN: Theres a stored quote for the network/token
+        // THEN: There is fee information for Rinkeby and DAI token
         expect(feeQuoteData).to.exist
-        expect(feeQuoteData).to.have.property(NETWORK)
-        expect(feeQuoteData[NETWORK]).to.have.property(TOKEN)
+        expect(feeQuoteData).to.have.property(Rinkeby)
+        expect(feeQuoteData[Rinkeby]).to.have.property(DAI)
 
-        // THEN: The quote has the expected shape
-        console.log(feeQuoteData[NETWORK][TOKEN])
-        const fee = feeQuoteData[NETWORK][TOKEN].fee
+        // THEN: The quote has the expected information
+        const fee = feeQuoteData[Rinkeby][DAI].fee
         expect(fee).to.have.property('minimalFee')
         expect(fee).to.have.property('feeRatio')
         expect(fee).to.have.property('expirationDate')
