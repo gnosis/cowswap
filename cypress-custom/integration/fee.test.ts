@@ -1,11 +1,12 @@
 import { ChainId, WETH } from '@uniswap/sdk'
+import { FeeInformation } from '../../src/custom/state/fee/reducer'
 
 const DAI = '0xc7AD46e0b8a400Bb3C915120d284AafbA8fc4735'
 const RINKEBY = ChainId.RINKEBY.toString()
 const FEE_QUERY = `https://protocol-rinkeby.dev.gnosisdev.com/api/v1/tokens/${WETH[4].address}/fee`
 const FEE_QUOTES_LOCAL_STORAGE_KEY = 'redux_localstorage_simple_fee'
 
-function _assertFeeData(fee: any): void {
+function _assertFeeData(fee: FeeInformation): void {
   expect(fee).to.have.property('minimalFee')
   expect(fee).to.have.property('feeRatio')
   expect(fee).to.have.property('expirationDate')
