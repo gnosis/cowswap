@@ -37,16 +37,13 @@ describe('Fetch and persist fee', () => {
     // WHEN: Select DAI token
     cy.swapSelectInput(DAI)
 
-    // THEN: The fee for DAI is fetched
+    // THEN: The fee for DAI is persisted in the Local Storage
     cy.window()
       .then(window => window.localStorage)
       .its(FEE_QUOTES_LOCAL_STORAGE_KEY)
       .should(feeQuotesStorage => {
-        // THEN: The fee information in the local storage
-        if (!feeQuotesStorage) assert.fail('No fee in local storage')
-        const feeQuoteData = JSON.parse(feeQuotesStorage)
-
         // THEN: There is fee information for Rinkeby and DAI token
+        const feeQuoteData = JSON.parse(feeQuotesStorage)
         expect(feeQuoteData).to.exist
         expect(feeQuoteData).to.have.property(Rinkeby)
         expect(feeQuoteData[Rinkeby]).to.have.property(DAI)
@@ -77,6 +74,7 @@ describe('Fetch and persist fee', () => {
     })
     // GIVEN: A fee is present in the local storage
     // Set expiring fee in localStorage
+    cy.wrap(this.localStorage)
     cy.get<Storage>('@localStorage')
       .then($storage => {
         // set time in the past
