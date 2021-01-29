@@ -1,7 +1,31 @@
 import { ChainId, WETH } from '@uniswap/sdk'
 
+const DAI = '0xc7AD46e0b8a400Bb3C915120d284AafbA8fc4735'
+const RINKEBY = ChainId.RINKEBY.toString()
 const FEE_QUERY = `https://protocol-rinkeby.dev.gnosisdev.com/api/v1/tokens/${WETH[4].address}/fee`
 const FEE_QUOTES_LOCAL_STORAGE_KEY = 'redux_localstorage_simple_fee'
+
+function _isFeeFetched(token: string): void {
+  cy.window()
+    .then(window => window.localStorage)
+    .its(FEE_QUOTES_LOCAL_STORAGE_KEY)
+    .should(feeQuotesStorage => {
+      // THEN: The fee information in the local storage
+      if (!feeQuotesStorage) assert.fail('No fee in local storage')
+      const feeQuoteData = JSON.parse(feeQuotesStorage)
+
+      // THEN: There is fee information for Rinkeby and the token
+      expect(feeQuoteData).to.exist
+      expect(feeQuoteData).to.have.property(RINKEBY)
+      expect(feeQuoteData[RINKEBY]).to.have.property(token)
+
+      // THEN: The quote has the expected information
+      const fee = feeQuoteData[RINKEBY][token].fee
+      expect(fee).to.have.property('minimalFee')
+      expect(fee).to.have.property('feeRatio')
+      expect(fee).to.have.property('expirationDate')
+    })
+}
 
 describe('Fee endpoint', () => {
   it('Returns the expected info', () => {
@@ -27,10 +51,14 @@ describe('Fetch and persist fee', () => {
       .as('localStorage')
   })
 
-  it('Persisted when selecting a token', () => {
-    const DAI = '0xc7AD46e0b8a400Bb3C915120d284AafbA8fc4735'
-    const Rinkeby = ChainId.RINKEBY.toString()
+  it('Fetch fee automatically on load', () => {
+    // GIVEN: An user loads the swap page
+    // WHEN: He does nothing
+    // THEN: The fee for ETH is fetched
+    _isFeeFetched('ETH')
+  })
 
+  it('Fetch fee when selecting token', () => {
     // GIVEN: Clean local storage
     cy.clearLocalStorage()
 
@@ -38,25 +66,7 @@ describe('Fetch and persist fee', () => {
     cy.swapSelectInput(DAI)
 
     // THEN: The fee for DAI is fetched
-    cy.window()
-      .then(window => window.localStorage)
-      .its(FEE_QUOTES_LOCAL_STORAGE_KEY)
-      .should(feeQuotesStorage => {
-        // THEN: The fee information in the local storage
-        if (!feeQuotesStorage) assert.fail('No fee in local storage')
-        const feeQuoteData = JSON.parse(feeQuotesStorage)
-
-        // THEN: There is fee information for Rinkeby and DAI token
-        expect(feeQuoteData).to.exist
-        expect(feeQuoteData).to.have.property(Rinkeby)
-        expect(feeQuoteData[Rinkeby]).to.have.property(DAI)
-
-        // THEN: The quote has the expected information
-        const fee = feeQuoteData[Rinkeby][DAI].fee
-        expect(fee).to.have.property('minimalFee')
-        expect(fee).to.have.property('feeRatio')
-        expect(fee).to.have.property('expirationDate')
-      })
+    _isFeeFetched(DAI)
   })
 
   // TODO: not sure if it's easy to test this
