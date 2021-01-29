@@ -23,7 +23,7 @@ describe('Fetch and persist fee', () => {
     cy.visit('/swap')
   })
 
-  it.only('Persisted when selecting a token', () => {
+  it('Persisted when selecting a token', () => {
     const DAI = '0xc7AD46e0b8a400Bb3C915120d284AafbA8fc4735'
     const Rinkeby = ChainId.RINKEBY.toString()
 
