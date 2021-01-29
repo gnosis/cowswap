@@ -93,8 +93,8 @@ describe('Fetch and persist fee', () => {
       })
       // WHEN: When the fee quote expires, we refetch the fee
       // better imo than using cy.wait - clear fee storage
-      .then(() => cy.get<Storage>('@localStorage').then($storage => $storage.removeItem(KEY)))
-      .its(KEY)
+      .then(() => cy.get<Storage>('@localStorage').then($storage => $storage.removeItem(FEE_QUOTES_LOCAL_STORAGE_KEY)))
+      .its(FEE_QUOTES_LOCAL_STORAGE_KEY)
       // THEN: We get another quote
       .should($feeStorage => {
         const feeStorage = JSON.parse($feeStorage)
