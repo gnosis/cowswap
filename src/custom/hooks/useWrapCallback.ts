@@ -17,7 +17,7 @@ export enum WrapType {
 
 interface WrapUnwrapCallback {
   wrapType: WrapType
-  execute?: undefined | (() => Promise<void>)
+  execute?: () => Promise<void>
   inputError?: string
 }
 
