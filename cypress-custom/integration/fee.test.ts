@@ -11,7 +11,7 @@ function _assertFeeData(fee: any): void {
   expect(fee).to.have.property('expirationDate')
 }
 
-function _getLocalStorage(): Cypress.Chainable<any> {
+function _getLocalStorage(): Cypress.Chainable<Storage> {
   return cy.window().then(window => window.localStorage)
 }
 
