@@ -21,6 +21,10 @@ describe('Fee endpoint', () => {
 describe('Fetch and persist fee', () => {
   beforeEach(() => {
     cy.visit('/swap')
+
+    cy.window()
+      .then(window => window.localStorage)
+      .as('localStorage')
   })
 
   it('Persisted when selecting a token', () => {
