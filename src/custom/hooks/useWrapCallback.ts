@@ -45,7 +45,7 @@ function _getWrapUnwrapCallback(params: GetWrapUnwrapCallback): WrapUnwrapCallba
   let wrapUnwrapCallback: (() => Promise<void>) | undefined
   if (sufficientBalance && inputAmount) {
     let wrapUnwrap: () => TransactionResponse
-    let summary: string, symbol: string
+    let summary: string
 
     if (isWrap) {
       wrapUnwrap = () => wethContract.deposit({ value: `0x${inputAmount.raw.toString(16)}` })
