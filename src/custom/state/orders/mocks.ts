@@ -5,7 +5,6 @@ import { Order, OrderStatus, OrderKind } from './actions'
 import { useActiveWeb3React } from 'hooks'
 import { useAddPendingOrder, usePendingOrders, useFulfillOrder } from './hooks'
 import { useSelectedTokenList } from 'state/lists/hooks'
-import { useAddPopup } from '@src/state/application/hooks'
 import { TokenInfo } from '@uniswap/token-lists'
 import { registerOnWindow } from 'utils/misc'
 import { RADIX_DECIMAL } from '@src/custom/constants'
@@ -135,7 +134,6 @@ const useFulfillOrdersRandomly = (interval = 30000 /* ms */) => {
   pendingOrdersRef.current = pendingOrders
 
   const fulfillOrder = useFulfillOrder()
-  const addPopup = useAddPopup()
 
   useEffect(() => {
     if (!chainId) return
@@ -148,18 +146,7 @@ const useFulfillOrdersRandomly = (interval = 30000 /* ms */) => {
       const randomOrder = getRandomElementFromArray(pendingOrdersRef.current)
 
       batch(() => {
-        fulfillOrder({ chainId, id: randomOrder.id, fulfillmentTime: new Date().toISOString() })
-
-        addPopup(
-          {
-            txn: {
-              hash: randomOrder.id,
-              success: true,
-              summary: randomOrder.summary + ' fulfilled' || `Order ${randomOrder.id} was traded`
-            }
-          },
-          randomOrder.id + '_fulfilled'
-        )
+        fulfillOrder({ chainId, id: randomOrder.id, fulfillmentTime: new Date().toISOString(), transactionHash: '0x0' })
       })
     }
     registerOnWindow({ fulfillRandomOrder })
@@ -167,7 +154,7 @@ const useFulfillOrdersRandomly = (interval = 30000 /* ms */) => {
     const intervalId = setInterval(fulfillRandomOrder, interval)
 
     return () => clearInterval(intervalId)
-  }, [addPopup, chainId, fulfillOrder, interval])
+  }, [chainId, fulfillOrder, interval])
 }
 
 interface EventUpdaterProps {
