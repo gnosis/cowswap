@@ -1,24 +1,55 @@
+import { ChainId, WETH } from '@uniswap/sdk'
+
+const FEE_QUERY = `https://protocol-rinkeby.dev.gnosisdev.com/api/v1/tokens/${WETH[4].address}/fee`
+
 describe('Fee endpoint', () => {
   it('Returns the expected info', () => {
     // GIVEN:-
     // WHEN: Call fee API
-    // cy.request('/users/1')
-    //   .its('body')
-    //   .should('deep.eq', { name: 'Jane' })
-    //
-    // THEN: The response has the expected information
+    cy.request(FEE_QUERY)
+      .its('body')
+      // THEN: response is as expected
+      .should(body => {
+        expect(body).to.have.property('minimalFee')
+        expect(body).to.have.property('feeRatio')
+        expect(body).to.have.property('expirationDate')
+      })
   })
 })
 
 describe('Fetch and persist fee', () => {
   beforeEach(() => {
     cy.visit('/swap')
+
+    // Alias localStorage
+    cy.window()
+      .then(window => window.localStorage)
+      .as('localStorage')
   })
 
   it('Persisted when selecting a token', () => {
+    const TOKEN = 'ETH'
+    const NETWORK = ChainId.RINKEBY.toString()
     // GIVEN: A fee for a token is not in the local storage
     // WHEN: When the user select this token
+
+    // Clear localStorage
+    cy.get<Storage>('@localStorage').then(storage => storage.clear())
+
     // THEN: The fee is persisted in the local storage (redux_localstorage_simple_fee)
+    cy.get<Storage>('@localStorage')
+      .its('redux_localstorage_simple_fee')
+      .should($feeStorage => {
+        // we need to parse JSON
+        const feeStorage = JSON.parse($feeStorage)
+        const feeQuote = feeStorage[NETWORK][TOKEN]
+        expect(feeStorage).to.have.property(NETWORK)
+        expect(feeStorage[NETWORK]).to.have.property(TOKEN)
+        expect(feeQuote.token).to.equal(TOKEN)
+        expect(feeQuote.fee).to.have.property('minimalFee')
+        expect(feeQuote.fee).to.have.property('feeRatio')
+        expect(feeQuote.fee).to.have.property('expirationDate')
+      })
   })
 
   // TODO: not sure if it's easy to test this
