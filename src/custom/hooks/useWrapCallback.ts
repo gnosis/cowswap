@@ -39,7 +39,7 @@ function _getWrapUnwrapCallback(params: GetWrapUnwrapCallback): WrapUnwrapCallba
   const symbol = isWrap ? native : wrapped
 
   // Check if user has enough balance for wrap/unwrap
-  const sufficientBalance = (inputAmount && balance && !balance.lessThan(inputAmount)) || false
+  const sufficientBalance = !!(inputAmount && balance && !balance.lessThan(inputAmount))
 
   // Create wrap/unwrap callback if sufficient balance
   let wrapUnwrapCallback: (() => Promise<void>) | undefined
