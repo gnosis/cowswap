@@ -20,11 +20,8 @@ function _assertFeeFetched(token: string): void {
   _getLocalStorage()
     .its(FEE_QUOTES_LOCAL_STORAGE_KEY)
     .should(feeQuotesStorage => {
-      // THEN: The fee information in the local storage
-      if (!feeQuotesStorage) assert.fail('No fee in local storage')
+      // THEN: There is fee information for Rinkeby and token
       const feeQuoteData = JSON.parse(feeQuotesStorage)
-
-      // THEN: There is fee information for Rinkeby and the token
       expect(feeQuoteData).to.exist
       expect(feeQuoteData).to.have.property(RINKEBY)
       expect(feeQuoteData[RINKEBY]).to.have.property(token)
