@@ -36,14 +36,12 @@ function _assertFeeFetched(token: string): void {
 
 describe('Fee endpoint', () => {
   it('Returns the expected info', () => {
-    // GIVEN:-
+    // GIVEN: -
     // WHEN: Call fee API
     cy.request(FEE_QUERY)
       .its('body')
-      // THEN: response is as expected
-      .should(body => {
-        _assertFeeData(body)
-      })
+      // THEN: The API response has the expected data
+      .should(_assertFeeData)
   })
 })
 
