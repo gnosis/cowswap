@@ -5,6 +5,7 @@ const DAI = '0xc7AD46e0b8a400Bb3C915120d284AafbA8fc4735'
 const RINKEBY = ChainId.RINKEBY.toString()
 const FEE_QUERY = `https://protocol-rinkeby.dev.gnosisdev.com/api/v1/tokens/${WETH[4].address}/fee`
 const FEE_QUOTES_LOCAL_STORAGE_KEY = 'redux_localstorage_simple_fee'
+const FOUR_HOURS = 3600 * 4 * 1000
 
 function _assertFeeData(fee: FeeInformation): void {
   expect(fee).to.have.property('minimalFee')
@@ -83,15 +84,15 @@ describe('Fetch and persist fee', () => {
   // but backend will not respect that manipulated time when recalculating
   // see https://github.com/gnosis/gp-v2-services/blob/537ca1856d270b698ca6c7950265198d85c009c7/orderbook/src/api/get_fee_info.rs#L28
   it('Re-fetched when it expires', () => {
-    const TOKEN = 'ETH'
-    const TIME_TO_ADVANCE_MS = 16200 * 1000
+    const ETH = 'ETH'
+
+    // WHEN: The user comes back 4h later (so the fee quote is expired)
+    cy.tick(FOUR_HOURS)
 
     // GIVEN: An expired fee is present in the local storage
-    // Advance local FRONTEND time +4.5 hours
-    cy.tick(TIME_TO_ADVANCE_MS)
-    // WHEN: When the fee quote expires, we refetch the fee
     _getChainFeeStorage(RINKEBY).then($feeStorage => {
-      console.log(`[FEE STORAGE]::[TEST]::[AFTER] => ${$feeStorage[TOKEN].fee.expirationDate}`)
+      // THEN: we refetch a new fee
+      console.log(`[FEE STORAGE]::[TEST]::[AFTER] => ${$feeStorage[ETH].fee.expirationDate}`)
     })
   })
 })
