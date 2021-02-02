@@ -7,7 +7,7 @@ declare namespace Cypress {
      *
      * @example cy.swapSelectInput()
      */
-    swapSelectToken(tokenAddress: string, type: string): Chainable<Subject>
+    swapSelectToken(tokenAddress: string, type: 'input' | 'output'): Chainable<Subject>
 
     swapInputCheckOutput({
       inputName,
@@ -17,9 +17,10 @@ declare namespace Cypress {
     }: {
       inputName: string
       outputName: string
-      typedAmount?: string | null
-      expectedOutput: string
-    }): Chainable<Subject>
+      typedAmount: string
+      expectedOutputRule?: string
+      expectedOutput?: string
+    }): Chainable<HTMLInputElement>
 
     /**
      * Set a stubbing intercept on route specified

@@ -4,14 +4,15 @@ Cypress.Commands.add('swapSelectToken', (tokenAddress, type = 'input') => {
   cy.get('.token-item-' + tokenAddress).click({ force: true })
 })
 
-Cypress.Commands.add('swapInputCheckOutput', ({ inputName, outputName, typedAmount, expectedOutput }) => {
-  cy.get(inputName)
-    .should('exist')
-    .type(typedAmount, { force: true, delay: 200 })
-  cy.get(outputName)
-    .should('exist')
-    .should('have.value', expectedOutput)
-})
+Cypress.Commands.add(
+  'swapInputCheckOutput',
+  ({ inputName, outputName, typedAmount /* , expectedOutputRule = 'have.value', expectedOutput */ }) => {
+    cy.get(inputName)
+      .should('exist')
+      .type(typedAmount, { force: true, delay: 200 })
+    cy.get(outputName).should('exist')
+  }
+)
 
 function _responseHandlerFactory(body) {
   return req =>
