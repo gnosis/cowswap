@@ -7,10 +7,13 @@ const FEE_QUERY = `https://protocol-rinkeby.dev.gnosisdev.com/api/v1/tokens/${WE
 const FEE_QUOTES_LOCAL_STORAGE_KEY = 'redux_localstorage_simple_fee'
 const FOUR_HOURS = 3600 * 4 * 1000
 
-function _assertFeeData(fee: FeeInformation): void {
-  expect(fee).to.have.property('minimalFee')
-  expect(fee).to.have.property('feeRatio')
-  expect(fee).to.have.property('expirationDate')
+function _assertFeeData(fee: FeeInformation, [minimalFee, feeRatio, expirationDate]: (string | number)[] = []): void {
+  // Allows use to assert not only it exists but that it can now accept expected property values
+  minimalFee ? expect(fee).to.have.property('minimalFee', minimalFee) : expect(fee).to.have.property('minimalFee')
+  feeRatio ? expect(fee).to.have.property('feeRatio', feeRatio) : expect(fee).to.have.property('feeRatio')
+  expirationDate
+    ? expect(fee).to.have.property('expirationDate', expirationDate)
+    : expect(fee).to.have.property('expirationDate')
 }
 
 function _getLocalStorage(): Cypress.Chainable<Storage> {
@@ -110,7 +113,7 @@ describe('Fee: simple checks it exists', () => {
   it('Fetch fee when selecting token', () => {
     // GIVEN: A user loads the swap page
     // WHEN: Select DAI token
-    cy.swapSelectInput(DAI)
+    cy.swapSelectToken(DAI, 'input')
 
     // THEN: The fee for DAI is fetched
     _assertFeeFetched(DAI)
@@ -118,31 +121,72 @@ describe('Fee: simple checks it exists', () => {
 })
 
 describe('Swap: Considering fee', () => {
+  const DAI_QUERY = `https://protocol-rinkeby.dev.gnosisdev.com/api/v1/tokens/${DAI}/fee`
+
   beforeEach(() => {
     // GIVEN: an initial selection of WETH-DAI
     cy.visit('/swap')
   })
 
   it("Uses Uniswap price, if there's no tip", () => {
-    // GIVEN: Swap WETH-DAI
-    // TODO: Create command for easy setting up a case (setup current selection)
-    //
     // GIVEN: No fee
-    // TODO: Create action for intercepting the API call
-    //
+    // Setup the stub on fee queries
+    const ZERO_FEE = {
+      // pass later date to not trigger refetch
+      expirationDate: new Date(Date.now() + FOUR_HOURS).toISOString(),
+      minimalFee: '0',
+      feeRatio: 0
+    }
+    // Set up stubbing on any calls to token fee API using passed in fee arg as response
+    // Visit app and get test started
+    cy.stubResponse({ url: DAI_QUERY, alias: 'feeRequest', body: ZERO_FEE })
+
+    // GIVEN: Swap WETH-DAI
+    cy.swapSelectToken(DAI, 'input')
+    cy.swapSelectToken('ETHER', 'output')
+
+    // We need to wait here for the API request to go out AFTER the user selects DAI as an input token
+    // as the app is programmed to detect inputToken change and fetch fee
+    cy.wait('@feeRequest')
+      .its('response.body')
+      // THEN: The API response has the expected data
+      .then($body => _assertFeeData(JSON.parse($body), ['0', 0]))
+
     // WHEN: Users input amount
-    //
-    // THEN: He gets uniswap price
+    cy.swapInputCheckOutput({
+      inputName: '#swap-currency-input .token-amount-input',
+      outputName: '#swap-currency-output .token-amount-input',
+      typedAmount: '0.01',
+      // THEN: He gets uniswap price
+      expectedOutput: '0.01'
+    })
   })
 
-  it("User can't trade when amount is smaller than minimumFee", () => {
+  xit("User can't trade when amount is smaller than minimumFee", () => {
+    // GIVEN: 5 minimum fee
+    // Setup the stub on fee queries
+    const FEE = {
+      expirationDate: new Date().toISOString(),
+      minimalFee: '5',
+      feeRatio: 0
+    }
+    // Set up stubbing on any calls to token fee API using passed in fee arg as response
+    // Visit app and get test started
+    cy.stubResponse({ url: DAI_QUERY, alias: 'fee', body: FEE })
+
     // GIVEN: Swap WETH-DAI
-    //
-    // GIVEN: amount is smaller than minimumFee
-    //
-    // WHEN: Users input amount
-    //
-    // THEN: He cannot trade
+    cy.swapSelectToken(DAI, 'input')
+    cy.swapSelectToken('ETHER', 'output')
+
+    // cy.swapInputCheckOutput({
+    //   inputName: '#swap-currency-input .token-amount-input',
+    //   outputName: '#swap-currency-output .token-amount-input',
+    //   // GIVEN: amount is smaller than minimumFee
+    //   // WHEN: Users input amount
+    //   typedAmount: '0.01',
+    //   // THEN: He cannot trade
+    //   expectedOutput: ''
+    // })
   })
 
   it('User pays minimumFee for small trades', () => {
