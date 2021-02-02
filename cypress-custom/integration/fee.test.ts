@@ -77,23 +77,27 @@ describe('Fetch and persist fee', () => {
     _assertFeeFetched(DAI)
   })
 
-  // TODO:
-  // Difficult to test this as the fee is calculated in the backend
-  // Backend fee calculation is totally unaware/doesn't care what the user's frontend Date time is
-  // meaning any date manipulation here WILL trigger a date change from frontend "/custom/state/fees/updater.tsx",
-  // but backend will not respect that manipulated time when recalculating
-  // see https://github.com/gnosis/gp-v2-services/blob/537ca1856d270b698ca6c7950265198d85c009c7/orderbook/src/api/get_fee_info.rs#L28
   it('Re-fetched when it expires', () => {
-    const ETH = 'ETH'
+    // const ETH = 'ETH'
+    const FEE = {
+      // expiration date now + 8 hours
+      expirationDate: new Date(Date.now() + FOUR_HOURS * 2),
+      minimalFee: '0',
+      feeRatio: 0
+    }
+
+    cy.swapStubResponse({ query: FEE_QUERY, alias: 'feeRequest', body: FEE })
 
     // WHEN: The user comes back 4h later (so the fee quote is expired)
     cy.tick(FOUR_HOURS)
 
-    // GIVEN: An expired fee is present in the local storage
-    _getChainFeeStorage(RINKEBY).then($feeStorage => {
-      // THEN: we refetch a new fee
-      console.log(`[FEE STORAGE]::[TEST]::[AFTER] => ${$feeStorage[ETH].fee.expirationDate}`)
-    })
+    cy.wait('@feeRequest')
+      .its('response.body')
+      .then($body => {
+        const body = JSON.parse($body)
+        const dateInFourHours = new Date(Date.now() + FOUR_HOURS)
+        expect(dateInFourHours).to.be.lessThan(new Date(body.expirationDate))
+      })
   })
 })
 
