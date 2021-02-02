@@ -40,7 +40,7 @@ function _assertFeeFetched(token: string): void {
   })
 }
 
-xdescribe('Fee endpoint', () => {
+describe('Fee endpoint', () => {
   it('Returns the expected info', () => {
     // GIVEN: -
     // WHEN: Call fee API
@@ -59,14 +59,14 @@ describe('Fetch and persist fee', () => {
     cy.visit('/swap')
   })
 
-  xit('Fetch fee automatically on load', () => {
+  it('Fetch fee automatically on load', () => {
     // GIVEN: An user loads the swap page
     // WHEN: He does nothing
     // THEN: The fee for ETH is fetched
     _assertFeeFetched('ETH')
   })
 
-  xit('Fetch fee when selecting token', () => {
+  it('Fetch fee when selecting token', () => {
     // GIVEN: Clean local storage
     cy.clearLocalStorage()
 
@@ -101,7 +101,7 @@ describe('Fetch and persist fee', () => {
   })
 })
 
-xdescribe('Swap: Considering fee', () => {
+describe('Swap: Considering fee', () => {
   beforeEach(() => {
     // GIVEN: an initial selection of WETH-DAI
     cy.visit('/swap')
