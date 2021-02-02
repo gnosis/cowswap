@@ -12,6 +12,6 @@ function _responseHandlerFactory(body) {
     })
 }
 
-Cypress.Commands.add('swapStubResponse', ({ query, alias = 'stubbedResponse', body }) => {
+Cypress.Commands.add('stubResponse', ({ query, alias = 'stubbedResponse', body }) => {
   cy.route2('GET', query, _responseHandlerFactory(body)).as(alias)
 })

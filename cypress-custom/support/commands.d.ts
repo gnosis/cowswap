@@ -14,6 +14,6 @@ declare namespace Cypress {
      *
      * @example cy.swapStubResponse({ query: '/api/v1/someEndpoint/', alias: 'endpoint', body: { foo: 'foo' } })
      */
-    swapStubResponse({ query, alias, body }: { query: string; alias?: string; body?: any }): Chainable<Subject>
+    stubResponse({ query, alias, body }: { query: string; alias?: string; body?: any }): Chainable<Subject>
   }
 }

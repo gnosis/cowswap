@@ -86,7 +86,7 @@ describe('Fetch and persist fee', () => {
       feeRatio: 0
     }
 
-    cy.swapStubResponse({ query: FEE_QUERY, alias: 'feeRequest', body: FEE })
+    cy.stubResponse({ query: FEE_QUERY, alias: 'feeRequest', body: FEE })
 
     // WHEN: The user comes back 4h later (so the fee quote is expired)
     cy.tick(FOUR_HOURS)
