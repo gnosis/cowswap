@@ -12,7 +12,7 @@ declare namespace Cypress {
     /**
      * Set a stubbing intercept on route specified
      *
-     * @example cy.swapStubResponse({ query: '/api/v1/someEndpoint/', alias: 'endpoint', body: { foo: 'foo' } })
+     * @example cy.stubResponse({ query: '/api/v1/someEndpoint/', alias: 'endpoint', body: { foo: 'foo' } })
      */
     stubResponse({ query, alias, body }: { query: string; alias?: string; body?: any }): Chainable<Subject>
   }
