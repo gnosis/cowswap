@@ -4,9 +4,10 @@ import { parseUnits } from 'ethers/lib/utils'
 
 const DAI = '0xc7AD46e0b8a400Bb3C915120d284AafbA8fc4735'
 const RINKEBY = ChainId.RINKEBY.toString()
-const FEE_QUERY = `https://protocol-rinkeby.dev.gnosisdev.com/api/v1/tokens/${WETH[4].address}/fee`
 const FEE_QUOTES_LOCAL_STORAGE_KEY = 'redux_localstorage_simple_fee'
 const FOUR_HOURS = 3600 * 4 * 1000
+
+const getFeeQuery = (token: string) => `https://protocol-rinkeby.dev.gnosisdev.com/api/v1/tokens/${token}/fee`
 
 function _assertFeeData(fee: FeeInformation, [minimalFee, feeRatio, expirationDate]: (string | number)[] = []): void {
   // Allows use to assert not only it exists but that it can now accept expected property values
@@ -52,7 +53,7 @@ describe('Fee endpoint', () => {
   it('Returns the expected info', () => {
     // GIVEN: -
     // WHEN: Call fee API
-    cy.request(FEE_QUERY)
+    cy.request(getFeeQuery(WETH[4].address))
       .its('body')
       // THEN: The API response has the expected data
       .should(_assertFeeData)
@@ -74,7 +75,7 @@ describe('Fee: Complex fetch and persist fee', () => {
     // set the Cypress clock to now (default is UNIX 0)
     // only override Date functions (default is to override all time based functions)
     cy.clock(Date.now(), ['Date'])
-    cy.stubResponse({ url: FEE_QUERY, alias: 'feeRequest', body: LATER_FEE })
+    cy.stubResponse({ url: getFeeQuery(WETH[4].address), alias: 'feeRequest', body: LATER_FEE })
 
     // GIVEN: user visits app and goes AFK
     cy.visit('/swap')
@@ -125,8 +126,7 @@ describe('Fee: simple checks it exists', () => {
   })
 })
 
-xdescribe('Swap: Considering fee', () => {
-  const DAI_QUERY = `https://protocol-rinkeby.dev.gnosisdev.com/api/v1/tokens/${DAI}/fee`
+describe('Swap: Considering fee', () => {
   const FUTURE_EXPIRATION_DATE = new Date(Date.now() + FOUR_HOURS).toISOString()
   const EXACT_IN_INPUT = '#swap-currency-input .token-amount-input'
   const EXACT_OUT_INPUT = '#swap-currency-output .token-amount-input'
@@ -137,8 +137,9 @@ xdescribe('Swap: Considering fee', () => {
   })
 
   it("Uses Uniswap price, if there's no tip", () => {
+    _getLocalStorage().then($window => $window.clear())
     // GIVEN: No fee
-    const TYPED_AMOUNT = '0.01'
+    const TYPED_AMOUNT = '1'
     const ZERO_FEE = {
       // pass later date to not trigger refetch
       expirationDate: FUTURE_EXPIRATION_DATE,
@@ -148,11 +149,10 @@ xdescribe('Swap: Considering fee', () => {
 
     // Set up stubbing on any calls to token fee API using passed in fee arg as response
     // Visit app and get test started
-    cy.stubResponse({ url: DAI_QUERY, alias: 'feeRequest', body: ZERO_FEE })
+    cy.stubResponse({ url: getFeeQuery(WETH[4].address), alias: 'feeRequest', body: ZERO_FEE })
 
-    // GIVEN: Swap WETH for DAI
-    cy.swapSelectToken(DAI, 'input')
-    cy.swapSelectToken('ETHER', 'output')
+    // GIVEN: Swap ETH for DAI
+    cy.swapSelectToken(DAI, 'output')
 
     // We need to wait here for the API request to go out AFTER the user selects DAI as an input token
     // as the app is programmed to detect inputToken change and fetch fee
@@ -174,7 +174,7 @@ xdescribe('Swap: Considering fee', () => {
 
   it("User can't trade when amount is smaller than minimumFee", () => {
     // GIVEN: 5 minimum fee and small input amount
-    const TYPED_AMOUNT = '0.01'
+    const TYPED_AMOUNT = '1'
     const FEE = {
       expirationDate: FUTURE_EXPIRATION_DATE,
       // fee is in ATOMS
@@ -183,11 +183,10 @@ xdescribe('Swap: Considering fee', () => {
     }
     // Set up stubbing on any calls to token fee API using passed in fee arg as response
     // Visit app and get test started
-    cy.stubResponse({ url: DAI_QUERY, alias: 'fee', body: FEE })
+    cy.stubResponse({ url: getFeeQuery(WETH[4].address), alias: 'fee', body: FEE })
 
     // GIVEN: Swap WETH for DAI
-    cy.swapSelectToken(DAI, 'input')
-    cy.swapSelectToken('ETHER', 'output')
+    cy.swapSelectToken(DAI, 'output')
 
     cy.swapInputCheckOutput({
       inputName: EXACT_IN_INPUT,
@@ -202,16 +201,16 @@ xdescribe('Swap: Considering fee', () => {
 
   it('User pays minimumFee for small trades', () => {
     // GIVEN: amount is bigger than minimumFee, but trade is still small
-    const TYPED_AMOUNT = '0.01'
+    const TYPED_AMOUNT = '1'
     const FEE = {
       expirationDate: FUTURE_EXPIRATION_DATE,
-      minimalFee: parseUnits('0.001', 18).toString(),
+      minimalFee: parseUnits('0.5', 18).toString(),
       feeRatio: 0
     }
     // Set up stubbing on any calls to token fee API using passed in fee arg as response
-    cy.stubResponse({ url: DAI_QUERY, alias: 'fee', body: FEE })
+    cy.stubResponse({ url: getFeeQuery(WETH[4].address), alias: 'fee', body: FEE })
 
-    // GIVEN: Swap DAI for WETH
+    // GIVEN: Swap ETH for DAI
     cy.swapSelectToken(DAI, 'output')
 
     // WHEN: Users input amount
@@ -222,30 +221,26 @@ xdescribe('Swap: Considering fee', () => {
     })
       // THEN: He gets Uniswap price minus minimal-trade
       // TODO: get actual numbers
-      .should('not.have.value', '')
+      .should(([$input]: any) => {
+        const inputValue = Number($input.value)
+        expect(inputValue).to.be.greaterThan(1)
+      })
   })
 
   it('User pays more than minimumFee for big trades', () => {
     // GIVEN: Swap WETH-DAI
-    //
     // GIVEN: amount * "fee factor" is bigger than minimumFee
-    //
     // WHEN: Users input amount
-    //
-    // THEN: He gets Uniswap price minus amount * "fee factor"
-
-    // GIVEN: amount is bigger than minimumFee, but trade is still small
-    const TYPED_AMOUNT = '0.01'
+    const TYPED_AMOUNT = '1'
     const FEE = {
       expirationDate: FUTURE_EXPIRATION_DATE,
-      minimalFee: parseUnits('0.000001', 18).toString(),
+      minimalFee: parseUnits('0.1', 18).toString(),
       // 99% fee
       feeRatio: 9999
     }
     // Set up stubbing on any calls to token fee API using passed in fee arg as response
-    cy.stubResponse({ url: DAI_QUERY, alias: 'fee', body: FEE })
+    cy.stubResponse({ url: getFeeQuery(WETH[4].address), alias: 'fee', body: FEE })
 
-    // GIVEN: Swap DAI for WETH
     cy.swapSelectToken(DAI, 'output')
 
     // WHEN: Users input amount
@@ -254,8 +249,11 @@ xdescribe('Swap: Considering fee', () => {
       outputName: EXACT_OUT_INPUT,
       typedAmount: TYPED_AMOUNT
     })
-      // THEN: He gets Uniswap price minus minimal-trade
+      // THEN: He gets Uniswap price minus amount * "fee factor"
       // TODO: get actual numbers
-      .should('not.have.value', '')
+      .should(([$input]: any) => {
+        const inputValue = Number($input.value)
+        expect(inputValue).to.be.greaterThan(1)
+      })
   })
 })

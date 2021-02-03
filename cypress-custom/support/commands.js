@@ -1,7 +1,7 @@
 Cypress.Commands.add('swapSelectToken', (tokenAddress, type = 'input') => {
   cy.get(`#swap-currency-${type} .open-currency-select-button`).click()
   cy.get('.token-item-' + tokenAddress).should('be.visible')
-  cy.get('.token-item-' + tokenAddress).click({ force: true })
+  cy.get('.token-item-' + tokenAddress).click({ force: true, delay: 2000 })
 })
 
 Cypress.Commands.add(
@@ -9,7 +9,7 @@ Cypress.Commands.add(
   ({ inputName, outputName, typedAmount /* , expectedOutputRule = 'have.value', expectedOutput */ }) => {
     cy.get(inputName)
       .should('exist')
-      .type(typedAmount, { force: true, delay: 200 })
+      .type(typedAmount, { force: true })
     cy.get(outputName).should('exist')
   }
 )
