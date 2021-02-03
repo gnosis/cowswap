@@ -17,20 +17,21 @@ function _getLocalStorage(): Cypress.Chainable<Storage> {
   return cy.window().then(window => window.localStorage)
 }
 
-function _getChainFeeStorage(networkKey: string): Cypress.Chainable {
+function _getChainFeeStorage(networkKey: string, token?: string): Cypress.Chainable {
   return (
     _getLocalStorage()
       .its(FEE_QUOTES_LOCAL_STORAGE_KEY)
       // To properly return this we need .should and an expectation
       .should(feeQuotesStorage => {
         expect(JSON.parse(feeQuotesStorage)).to.have.property(networkKey)
+        token && expect(JSON.parse(feeQuotesStorage)[RINKEBY]).to.have.property(token)
       })
       .then(fee => JSON.parse(fee)[networkKey])
   )
 }
 
-function _assertFeeFetched(token: string): void {
-  _getChainFeeStorage(RINKEBY).then(feeQuoteData => {
+function _assertFeeFetched(token: string): Cypress.Chainable {
+  return _getChainFeeStorage(RINKEBY, token).then(feeQuoteData => {
     expect(feeQuoteData).to.exist
     expect(feeQuoteData).to.have.property(token)
 
@@ -55,7 +56,7 @@ describe('Fetch and persist fee', () => {
   beforeEach(() => {
     // set the Cypress clock to now
     // only override Date functions
-    cy.clock(new Date().getTime(), ['Date'])
+    cy.clock(Date.now(), ['Date'])
     cy.visit('/swap')
   })
 
@@ -78,7 +79,6 @@ describe('Fetch and persist fee', () => {
   })
 
   it('Re-fetched when it expires', () => {
-    // const ETH = 'ETH'
     const FEE = {
       // expiration date now + 8 hours
       expirationDate: new Date(Date.now() + FOUR_HOURS * 2),
@@ -91,6 +91,7 @@ describe('Fetch and persist fee', () => {
     // WHEN: The user comes back 4h later (so the fee quote is expired)
     cy.tick(FOUR_HOURS)
 
+    // THEN: a new fee request is made AHEAD of current (advanced) time
     cy.wait('@feeRequest')
       .its('response.body')
       .then($body => {
@@ -101,7 +102,7 @@ describe('Fetch and persist fee', () => {
   })
 })
 
-describe('Swap: Considering fee', () => {
+xdescribe('Swap: Considering fee', () => {
   beforeEach(() => {
     // GIVEN: an initial selection of WETH-DAI
     cy.visit('/swap')
