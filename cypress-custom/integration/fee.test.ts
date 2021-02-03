@@ -48,7 +48,7 @@ function _assertFeeFetched(token: string): Cypress.Chainable {
   })
 }
 
-xdescribe('Fee endpoint', () => {
+describe('Fee endpoint', () => {
   it('Returns the expected info', () => {
     // GIVEN: -
     // WHEN: Call fee API
@@ -96,6 +96,10 @@ describe('Fee: Complex fetch and persist fee', () => {
           // THEN: the mocked later date is indeed less than the new fee (read: the fee is valid)
           expect(new Date(body.expirationDate)).to.be.greaterThan(mockedTime)
         })
+
+      // Stupid hack to give teardown time for next test block
+      // Doesn't work without this, don't have anything to back this up beyond I know it works with and doesn't without it
+      cy.wait(2000)
     })
   })
 })
@@ -121,7 +125,7 @@ describe('Fee: simple checks it exists', () => {
   })
 })
 
-describe('Swap: Considering fee', () => {
+xdescribe('Swap: Considering fee', () => {
   const DAI_QUERY = `https://protocol-rinkeby.dev.gnosisdev.com/api/v1/tokens/${DAI}/fee`
   const FUTURE_EXPIRATION_DATE = new Date(Date.now() + FOUR_HOURS).toISOString()
   const EXACT_IN_INPUT = '#swap-currency-input .token-amount-input'
