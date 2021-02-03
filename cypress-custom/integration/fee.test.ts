@@ -1,5 +1,5 @@
 import { ChainId, WETH } from '@uniswap/sdk'
-import { FeeInformation } from '../../src/custom/state/fee/reducer'
+import { FeeInformation, FeeInformationObject } from '../../src/custom/state/fee/reducer'
 
 const DAI = '0xc7AD46e0b8a400Bb3C915120d284AafbA8fc4735'
 const RINKEBY = ChainId.RINKEBY.toString()
@@ -17,7 +17,10 @@ function _getLocalStorage(): Cypress.Chainable<Storage> {
   return cy.window().then(window => window.localStorage)
 }
 
-function _getChainFeeStorage(networkKey: string, token?: string): Cypress.Chainable {
+function _getChainFeeStorage(
+  networkKey: string,
+  token?: string
+): Cypress.Chainable<{ [t: string]: FeeInformationObject }> {
   return (
     _getLocalStorage()
       .its(FEE_QUOTES_LOCAL_STORAGE_KEY)
@@ -52,57 +55,69 @@ describe('Fee endpoint', () => {
   })
 })
 
-describe('Fetch and persist fee', () => {
-  beforeEach(() => {
-    // set the Cypress clock to now
-    // only override Date functions
-    cy.clock(Date.now(), ['Date'])
-    cy.visit('/swap')
-  })
+describe('Fee: Complex fetch and persist fee', () => {
+  // Needs to run first to pass because of Cypress async issues between tests
+  it('Re-fetched when it expires', () => {
+    // GIVEN: input token Fee expiration is always 6 hours from now
+    const SIX_HOURS = FOUR_HOURS * 1.5
+    const LATER_TIME = new Date(Date.now() + SIX_HOURS).toISOString()
+    const LATER_FEE = {
+      expirationDate: LATER_TIME,
+      minimalFee: '0',
+      feeRatio: 0
+    }
 
+    // set the Cypress clock to now (default is UNIX 0)
+    // only override Date functions (default is to override all time based functions)
+    cy.clock(Date.now(), ['Date'])
+    cy.stubResponse({ url: FEE_QUERY, alias: 'feeRequest', body: LATER_FEE })
+
+    // GIVEN: user visits app and goes AFK
+    cy.visit('/swap')
+
+    // WHEN: The user comes back 4h later (so the fee quote is expired) (after a long sandwich eating sesh, dude was hungry)
+    cy.tick(FOUR_HOURS).then($clock => {
+      // Stub the API fee response to return LATER_FEE
+
+      // THEN: a new fee request is made AHEAD of current (advanced) time
+      cy.wait('@feeRequest')
+        .its('response.body')
+        .then($body => {
+          const body = JSON.parse($body)
+          // @ts-expect-error - cypress untyped method
+          const mockedTime = new Date($clock.details().now)
+
+          // THEN: fee time is properly stubbed and
+          expect(body.expirationDate).to.equal(LATER_TIME)
+          // THEN: the mocked later date is indeed less than the new fee (read: the fee is valid)
+          expect(new Date(body.expirationDate)).to.be.greaterThan(mockedTime)
+        })
+    })
+  })
+})
+
+describe('Fee: simple checks it exists', () => {
+  beforeEach(() => {
+    cy.visit('/app')
+  })
   it('Fetch fee automatically on load', () => {
-    // GIVEN: An user loads the swap page
+    // GIVEN: A user loads the swap page
     // WHEN: He does nothing
     // THEN: The fee for ETH is fetched
     _assertFeeFetched('ETH')
   })
 
   it('Fetch fee when selecting token', () => {
-    // GIVEN: Clean local storage
-    cy.clearLocalStorage()
-
+    // GIVEN: A user loads the swap page
     // WHEN: Select DAI token
     cy.swapSelectInput(DAI)
 
     // THEN: The fee for DAI is fetched
     _assertFeeFetched(DAI)
   })
-
-  it('Re-fetched when it expires', () => {
-    const FEE = {
-      // expiration date now + 8 hours
-      expirationDate: new Date(Date.now() + FOUR_HOURS * 2),
-      minimalFee: '0',
-      feeRatio: 0
-    }
-
-    cy.stubResponse({ query: FEE_QUERY, alias: 'feeRequest', body: FEE })
-
-    // WHEN: The user comes back 4h later (so the fee quote is expired)
-    cy.tick(FOUR_HOURS)
-
-    // THEN: a new fee request is made AHEAD of current (advanced) time
-    cy.wait('@feeRequest')
-      .its('response.body')
-      .then($body => {
-        const body = JSON.parse($body)
-        const dateInFourHours = new Date(Date.now() + FOUR_HOURS)
-        expect(dateInFourHours).to.be.lessThan(new Date(body.expirationDate))
-      })
-  })
 })
 
-xdescribe('Swap: Considering fee', () => {
+describe('Swap: Considering fee', () => {
   beforeEach(() => {
     // GIVEN: an initial selection of WETH-DAI
     cy.visit('/swap')
