@@ -9,13 +9,6 @@ import { getFeeQuote } from 'utils/operator'
 import { registerOnWindow } from '@src/custom/utils/misc'
 
 function isDateLater(dateA: string, dateB: string): boolean {
-  console.debug(
-    `
-[FEE STORAGE]::[FEE UPDATER]::
-[FEE DATE]::${new Date(Date.parse(dateA))},
-[NOW DATE]::${new Date(Date.parse(dateB))}
-    `
-  )
   const [parsedDateA, parsedDateB] = [Date.parse(dateA), Date.parse(dateB)]
 
   return parsedDateA > parsedDateB
@@ -48,14 +41,8 @@ export default function FeesUpdater(): null {
     }) {
       const currentFee = feesMap[sellToken]?.fee
       const isFeeDateValid = currentFee && isDateLater(currentFee.expirationDate, now)
-      console.debug(`
-==================================================
-[FEE STORAGE]::[IS DATE VALID?] => ${isFeeDateValid}
-==================================================
-      `)
 
       if (!isFeeDateValid || !currentFee) {
-        console.debug('[FEE STORAGE]::[QUERYING]')
         const fee = await getFeeQuote(chainId, sellToken).catch(err => {
           console.error(new Error(err))
           return null
