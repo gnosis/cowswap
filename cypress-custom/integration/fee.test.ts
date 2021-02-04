@@ -107,6 +107,7 @@ describe('Fee: Complex fetch and persist fee', () => {
 
 describe('Fee: simple checks it exists', () => {
   beforeEach(() => {
+    _getLocalStorage().then($window => $window.clear())
     cy.visit('/app')
   })
   it('Fetch fee automatically on load', () => {
@@ -127,6 +128,8 @@ describe('Fee: simple checks it exists', () => {
 })
 
 describe('Swap: Considering fee', () => {
+  const INPUT_TOKEN = DAI
+
   const FUTURE_EXPIRATION_DATE = new Date(Date.now() + FOUR_HOURS).toISOString()
   const EXACT_IN_INPUT = '#swap-currency-input .token-amount-input'
   const EXACT_OUT_INPUT = '#swap-currency-output .token-amount-input'
@@ -137,7 +140,6 @@ describe('Swap: Considering fee', () => {
   })
 
   it("Uses Uniswap price, if there's no tip", () => {
-    _getLocalStorage().then($window => $window.clear())
     // GIVEN: No fee
     const TYPED_AMOUNT = '1'
     const ZERO_FEE = {
@@ -149,10 +151,11 @@ describe('Swap: Considering fee', () => {
 
     // Set up stubbing on any calls to token fee API using passed in fee arg as response
     // Visit app and get test started
-    cy.stubResponse({ url: getFeeQuery(WETH[4].address), alias: 'feeRequest', body: ZERO_FEE })
+    cy.stubResponse({ url: getFeeQuery(INPUT_TOKEN), alias: 'feeRequest', body: ZERO_FEE })
 
     // GIVEN: Swap ETH for DAI
-    cy.swapSelectToken(DAI, 'output')
+    cy.swapSelectToken(INPUT_TOKEN, 'input')
+    cy.swapSelectToken(WETH[4].address, 'output')
 
     // We need to wait here for the API request to go out AFTER the user selects DAI as an input token
     // as the app is programmed to detect inputToken change and fetch fee
@@ -183,10 +186,11 @@ describe('Swap: Considering fee', () => {
     }
     // Set up stubbing on any calls to token fee API using passed in fee arg as response
     // Visit app and get test started
-    cy.stubResponse({ url: getFeeQuery(WETH[4].address), alias: 'fee', body: FEE })
+    cy.stubResponse({ url: getFeeQuery(INPUT_TOKEN), alias: 'fee', body: FEE })
 
     // GIVEN: Swap WETH for DAI
-    cy.swapSelectToken(DAI, 'output')
+    cy.swapSelectToken(INPUT_TOKEN, 'input')
+    cy.swapSelectToken(WETH[4].address, 'output')
 
     cy.swapInputCheckOutput({
       inputName: EXACT_IN_INPUT,
@@ -208,10 +212,11 @@ describe('Swap: Considering fee', () => {
       feeRatio: 0
     }
     // Set up stubbing on any calls to token fee API using passed in fee arg as response
-    cy.stubResponse({ url: getFeeQuery(WETH[4].address), alias: 'fee', body: FEE })
+    cy.stubResponse({ url: getFeeQuery(INPUT_TOKEN), alias: 'fee', body: FEE })
 
     // GIVEN: Swap ETH for DAI
-    cy.swapSelectToken(DAI, 'output')
+    cy.swapSelectToken(INPUT_TOKEN, 'input')
+    cy.swapSelectToken(WETH[4].address, 'output')
 
     // WHEN: Users input amount
     cy.swapInputCheckOutput({
@@ -223,7 +228,7 @@ describe('Swap: Considering fee', () => {
       // TODO: get actual numbers
       .should(([$input]: any) => {
         const inputValue = Number($input.value)
-        expect(inputValue).to.be.greaterThan(1)
+        expect(inputValue).to.be.greaterThan(0)
       })
   })
 
@@ -239,9 +244,10 @@ describe('Swap: Considering fee', () => {
       feeRatio: 9999
     }
     // Set up stubbing on any calls to token fee API using passed in fee arg as response
-    cy.stubResponse({ url: getFeeQuery(WETH[4].address), alias: 'fee', body: FEE })
+    cy.stubResponse({ url: getFeeQuery(INPUT_TOKEN), alias: 'fee', body: FEE })
 
-    cy.swapSelectToken(DAI, 'output')
+    cy.swapSelectToken(INPUT_TOKEN, 'input')
+    cy.swapSelectToken(WETH[4].address, 'output')
 
     // WHEN: Users input amount
     cy.swapInputCheckOutput({
@@ -253,7 +259,7 @@ describe('Swap: Considering fee', () => {
       // TODO: get actual numbers
       .should(([$input]: any) => {
         const inputValue = Number($input.value)
-        expect(inputValue).to.be.greaterThan(1)
+        expect(inputValue).to.be.greaterThan(0)
       })
   })
 })
