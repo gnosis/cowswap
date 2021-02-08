@@ -1,7 +1,7 @@
 import { createReducer } from '@reduxjs/toolkit'
+import { DEFAULT_TOKEN_LIST_URL, DEFAULT_LIST_OF_LISTS } from '@src/constants/lists'
 import { getVersionUpgrade, VersionUpgrade } from '@uniswap/token-lists'
 import { TokenList } from '@uniswap/token-lists/dist/types'
-import { DEFAULT_LIST_OF_LISTS, DEFAULT_TOKEN_LIST_URL } from 'constants/lists'
 import { updateVersion } from '../global/actions'
 import { acceptListUpdate, addList, fetchTokenList, removeList, selectList } from './actions'
 
@@ -28,7 +28,7 @@ const NEW_LIST_STATE: ListState = {
   pendingUpdate: null
 }
 
-type Mutable<T> = { -readonly [P in keyof T]: T[P] extends ReadonlyArray<infer U> ? U[] : T[P] }
+export type Mutable<T> = { -readonly [P in keyof T]: T[P] extends ReadonlyArray<infer U> ? U[] : T[P] }
 
 const initialState: ListsState = {
   lastInitializedDefaultListOfLists: DEFAULT_LIST_OF_LISTS,
