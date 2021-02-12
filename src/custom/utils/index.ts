@@ -1,4 +1,5 @@
 import { ChainId } from '@uniswap/sdk'
+import { getExplorerOrderLink } from './explorer'
 
 export {
   basisPointsToPercent,
@@ -73,7 +74,11 @@ function getBlockscoutUrl(chainId: ChainId, data: string, type: BlockExplorerLin
 }
 
 export function getEtherscanLink(chainId: ChainId, data: string, type: BlockExplorerLinkType): string {
-  if (chainId === ChainId.XDAI) {
+  // TODO: do nicer!
+  if (data.length === 114) {
+    // id!
+    return getExplorerOrderLink(chainId, data)
+  } else if (chainId === ChainId.XDAI) {
     return getBlockscoutUrl(chainId, data, type)
   } else {
     return getEtherscanUrl(chainId, data, type)
