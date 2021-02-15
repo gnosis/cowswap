@@ -10,22 +10,26 @@ interface ExtendedTradeParams {
   feeAsCurrency?: CurrencyAmount
 }
 
+export type TradeWithFee = Trade & { inputAmountWithFee: CurrencyAmount }
+
 /**
  * extendExactInTrade
  * @description takes a Uni ExactIn Trade object and returns a custom one with fee adjusted inputAmount
  */
-export function extendExactInTrade(params: Pick<ExtendedTradeParams, 'exactInTrade' | 'typedAmountAsCurrency'>) {
+export function extendExactInTrade(
+  params: Pick<ExtendedTradeParams, 'exactInTrade' | 'typedAmountAsCurrency'>
+): TradeWithFee | null {
   const { exactInTrade, typedAmountAsCurrency } = params
 
   if (!exactInTrade || !typedAmountAsCurrency) return null
 
-  // We need to iverride the Trade object to use different values as we are intercepting initial inputs
+  // We need to override the Trade object to use different values as we are intercepting initial inputs
   // and applying fee. For ExactIn orders, we leave outputAmount as is
   // and only change inputAmount to show the original entry before fee calculation
   return {
     ...exactInTrade,
     inputAmount: typedAmountAsCurrency,
-    inputAmountWithFees: exactInTrade.inputAmount,
+    inputAmountWithFee: exactInTrade.inputAmount,
     minimumAmountOut: exactInTrade.minimumAmountOut,
     maximumAmountIn: exactInTrade.maximumAmountIn
   }
@@ -35,7 +39,9 @@ export function extendExactInTrade(params: Pick<ExtendedTradeParams, 'exactInTra
  * extendExactOutTrade
  * @description takes a Uni ExactOut Trade object and returns a custom one with fee adjusted inputAmount
  */
-export function extendExactOutTrade(params: Pick<ExtendedTradeParams, 'exactOutTrade' | 'feeAsCurrency'>) {
+export function extendExactOutTrade(
+  params: Pick<ExtendedTradeParams, 'exactOutTrade' | 'feeAsCurrency'>
+): TradeWithFee | null {
   const { exactOutTrade, feeAsCurrency } = params
 
   if (!exactOutTrade || !feeAsCurrency) return null
@@ -47,6 +53,7 @@ export function extendExactOutTrade(params: Pick<ExtendedTradeParams, 'exactOutT
   return {
     ...exactOutTrade,
     inputAmount: inputAmountWithFee,
+    inputAmountWithFee,
     minimumAmountOut: exactOutTrade.minimumAmountOut,
     maximumAmountIn: exactOutTrade.maximumAmountIn
   }
