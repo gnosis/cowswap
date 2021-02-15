@@ -63,7 +63,6 @@ export const popupMiddleware: Middleware<{}, AppState> = store => next => action
       // Pending Order Popup
       popup = { key, content }
     } else if (isFulfillOrderAction(action)) {
-      console.debug('[MIDDLEWARE] isFulfillOrderAction', action)
       const { transactionHash } = action.payload
 
       const key = id + '_fulfilled'
@@ -105,7 +104,6 @@ export const popupMiddleware: Middleware<{}, AppState> = store => next => action
     const { pending, fulfilled, expired } = orders
 
     if (isBatchFulfillOrderAction(action)) {
-      console.debug('[MIDDLEWARE] isBatchFulfillOrderAction', action)
       // construct Fulfilled Order Popups for each Order
       idsAndPopups = action.payload.ordersData.map(({ id, transactionHash }) => {
         const orderObject = pending?.[id] || fulfilled?.[id] || expired?.[id]
