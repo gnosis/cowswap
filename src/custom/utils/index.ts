@@ -81,5 +81,5 @@ export function getEtherscanLink(chainId: ChainId, data: string, type: BlockExpl
 }
 
 export function shortenOrderId(orderId: string, chars = 4, length = 114): string {
-  return `${orderId.substring(0, chars + 2)}...${orderId.substring(length - chars)}`
+  return `${orderId.substring(2, chars + 2)}...${orderId.substring(length - chars)}`
 }
