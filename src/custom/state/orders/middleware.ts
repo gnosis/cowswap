@@ -4,6 +4,7 @@ import * as OrderActions from './actions'
 import { OrderID } from 'utils/operator'
 import { addPopup } from 'state/application/actions'
 import { AppState } from 'state'
+import { shortenOrderId } from 'utils'
 
 const isSingleOrderChangeAction = isAnyOf(
   OrderActions.addPendingOrder,
@@ -56,12 +57,13 @@ export const popupMiddleware: Middleware<{}, AppState> = store => next => action
         metatxn: {
           id,
           success: true,
-          summary: summary + ' submitted' || `Order ${id} submitted`
+          summary: summary ? summary + ' submitted' : `Order ${shortenOrderId(id)} submitted`
         }
       }
       // Pending Order Popup
       popup = { key, content }
     } else if (isFulfillOrderAction(action)) {
+      console.debug('[MIDDLEWARE] isFulfillOrderAction', action)
       const { transactionHash } = action.payload
 
       const key = id + '_fulfilled'
@@ -69,7 +71,7 @@ export const popupMiddleware: Middleware<{}, AppState> = store => next => action
         txn: {
           hash: transactionHash,
           success: true,
-          summary: summary + ' fulfilled' || `Order ${id} was traded`
+          summary: summary ? summary + ' fulfilled' : `Order ${shortenOrderId(id)} was traded`
         }
       }
       // Fulfilled Order Popup
@@ -81,7 +83,7 @@ export const popupMiddleware: Middleware<{}, AppState> = store => next => action
         metatxn: {
           id: id,
           success: false,
-          summary: summary + ' expired' || `Order ${id} expired`
+          summary: summary ? summary + ' expired' : `Order ${shortenOrderId(id)} expired`
         }
       }
       // Expired Order Popup
@@ -103,6 +105,7 @@ export const popupMiddleware: Middleware<{}, AppState> = store => next => action
     const { pending, fulfilled, expired } = orders
 
     if (isBatchFulfillOrderAction(action)) {
+      console.debug('[MIDDLEWARE] isBatchFulfillOrderAction', action)
       // construct Fulfilled Order Popups for each Order
       idsAndPopups = action.payload.ordersData.map(({ id, transactionHash }) => {
         const orderObject = pending?.[id] || fulfilled?.[id] || expired?.[id]
@@ -113,7 +116,7 @@ export const popupMiddleware: Middleware<{}, AppState> = store => next => action
           txn: {
             hash: transactionHash,
             success: true,
-            summary: summary + ' fulfilled' || `Order ${id} was traded`
+            summary: summary ? summary + ' fulfilled' : `Order ${shortenOrderId(id)} was traded`
           }
         }
 
@@ -132,7 +135,7 @@ export const popupMiddleware: Middleware<{}, AppState> = store => next => action
           metatxn: {
             id: id,
             success: false,
-            summary: summary + ' expired' || `Order ${id} expired`
+            summary: summary ? summary + ' expired' : `Order ${shortenOrderId(id)} expired`
           }
         }
 
