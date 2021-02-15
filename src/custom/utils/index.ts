@@ -79,3 +79,7 @@ export function getEtherscanLink(chainId: ChainId, data: string, type: BlockExpl
     return getEtherscanUrl(chainId, data, type)
   }
 }
+
+export function shortenOrderId(orderId: string, chars = 4, length = 114): string {
+  return `${orderId.substring(0, chars + 2)}...${orderId.substring(length - chars)}`
+}
