@@ -1,10 +1,11 @@
 import { useMemo } from 'react'
-import { ETHER, Percent, Trade, TradeType } from '@uniswap/sdk'
+import { ETHER, Percent, TradeType } from '@uniswap/sdk'
 import { BigNumber } from 'ethers'
 
 import { BIPS_BASE, BUY_ETHER_TOKEN, INITIAL_ALLOWED_SLIPPAGE, RADIX_DECIMAL } from 'constants/index'
 
 import { useAddPendingOrder } from 'state/orders/hooks'
+import { TradeWithFee } from 'state/swap/extension'
 
 import { SwapCallbackState } from '@src/hooks/useSwapCallback'
 import useTransactionDeadline from '@src/hooks/useTransactionDeadline'
@@ -22,7 +23,7 @@ const MAX_VALID_TO_EPOCH = BigNumber.from('0xFFFFFFFF').toNumber() // Max uint32
 // returns a function that will execute a swap, if the parameters are all valid
 // and the user has approved the slippage adjusted input amount for the trade
 export function useSwapCallback(
-  trade: Trade | undefined, // trade to execute, required
+  trade: TradeWithFee | undefined, // trade to execute, required
   allowedSlippage: number = INITIAL_ALLOWED_SLIPPAGE, // in bips
   recipientAddressOrName: string | null // the ENS name or address of the recipient of the trade, or null if swap should be returned to sender
 ): { state: SwapCallbackState; callback: null | (() => Promise<string>); error: string | null } {
@@ -61,6 +62,8 @@ export function useSwapCallback(
         const {
           executionPrice,
           inputAmount: expectedInputAmount,
+          inputAmountWithFee,
+          fee,
           nextMidPrice,
           outputAmount: expectedOutputAmount,
           priceImpact,
@@ -76,7 +79,13 @@ export function useSwapCallback(
         const kind = trade.tradeType === TradeType.EXACT_INPUT ? OrderKind.SELL : OrderKind.BUY
 
         console.log(
-          `[useSwapCallback] Trading ${routeDescription}. Input = ${inputAmount.toExact()}, Output = ${outputAmount.toExact()}, Price = ${executionPrice.toFixed()}, Details: `,
+          `[useSwapCallback] >> Trading ${routeDescription}. 
+            1. Original Input = ${inputAmount.toExact()}
+            2. Fee = ${fee?.toExact() || '0'}
+            3. Input Adjusted for Fee = ${inputAmountWithFee.toExact()}
+            4. Output = ${outputAmount.toExact()}
+            5. Price = ${executionPrice.toFixed()} 
+            6. Details: `,
           {
             expectedInputAmount: expectedInputAmount.toExact(),
             expectedOutputAmount: expectedOutputAmount.toExact(),
@@ -106,8 +115,11 @@ export function useSwapCallback(
           kind,
           account,
           chainId,
-          inputAmount,
+          // pass inputAmount calculated with fee applied
+          inputAmount: inputAmountWithFee,
           outputAmount,
+          // pass Trade feeAmount as raw string or give 0
+          feeAmount: fee?.raw.toString() || '0',
           sellToken,
           buyToken,
           validTo,
