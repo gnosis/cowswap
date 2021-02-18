@@ -3,9 +3,8 @@ import { isAddress, shortenAddress } from '@src/utils'
 import { AddPendingOrderParams, OrderStatus, OrderKind } from 'state/orders/actions'
 
 import { signOrder, UnsignedOrder } from 'utils/signatures'
-import { getFeeQuote as getFeeInformation, postSignedOrder } from 'utils/operator'
-import { getFeeAmount } from 'utils/fee'
-import { Signer } from 'ethers'
+import { postSignedOrder } from 'utils/operator'
+import { BigNumberish, Signer } from 'ethers'
 import { APP_ID, RADIX_DECIMAL, SHORTEST_PRECISION } from 'constants/index'
 
 export interface PostOrderParams {
@@ -15,6 +14,7 @@ export interface PostOrderParams {
   kind: OrderKind
   inputAmount: CurrencyAmount
   outputAmount: CurrencyAmount
+  feeAmount: BigNumberish
   sellToken: Token
   buyToken: Token
   validTo: number
@@ -54,6 +54,7 @@ export async function postOrder(params: PostOrderParams): Promise<string> {
     outputAmount,
     sellToken,
     buyToken,
+    feeAmount,
     validTo,
     account,
     signer
@@ -61,16 +62,6 @@ export async function postOrder(params: PostOrderParams): Promise<string> {
 
   const sellAmount = inputAmount.raw.toString(RADIX_DECIMAL)
   const buyAmount = outputAmount.raw.toString(RADIX_DECIMAL)
-
-  // TODO: This might disappear, and just take the state from the state after the fees PRs are merged
-  //  we assume, the solvers will try to satisfy the price, and this fee is just a minimal fee.
-  // Get Fee
-  const { feeRatio, minimalFee } = await getFeeInformation(chainId, sellToken.address)
-  const feeAmount = getFeeAmount({
-    sellAmount: sellAmount,
-    feeRatio,
-    minimalFee
-  })
 
   // Prepare order
   const summary = _getSummary(params)
