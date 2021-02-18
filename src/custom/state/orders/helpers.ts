@@ -1,4 +1,4 @@
-import { shortenOrderId } from 'utils'
+import { formatOrderId } from 'utils'
 import { OrderID } from 'utils/operator'
 import { addPopup } from 'state/application/actions'
 import { OrderStatus } from './actions'
@@ -46,7 +46,7 @@ type MetaPopupContent = GPPopupContent<OrderTxTypes.METATXN>
 type TxnPopupContent = GPPopupContent<OrderTxTypes.TXN>
 
 function setOrderSummary({ id, summary, status, descriptor }: SetOrderSummaryParams) {
-  return summary ? `${summary} ${status}` : `Order ${shortenOrderId(id)} ${descriptor || status}`
+  return summary ? `${summary} ${status}` : `Order ${formatOrderId(id)} ${descriptor || status}`
 }
 
 // Metatxn popup
