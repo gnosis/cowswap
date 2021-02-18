@@ -28,6 +28,8 @@ export function extendExactInTrade(
   // and only change inputAmount to show the original entry before fee calculation
   return {
     ...exactInTrade,
+    // overriding inputAmount is a hack
+    // to allow us to not have to change Uni's pages/swap/index and use different method names
     inputAmount: typedAmountAsCurrency,
     inputAmountWithFee: exactInTrade.inputAmount,
     minimumAmountOut: exactInTrade.minimumAmountOut,
@@ -52,6 +54,8 @@ export function extendExactOutTrade(
   // and only change outputAm to show the original entry before fee calculation
   return {
     ...exactOutTrade,
+    // overriding inputAmount is a hack
+    // to allow us to not have to change Uni's pages/swap/index and use different method names
     inputAmount: inputAmountWithFee,
     inputAmountWithFee,
     minimumAmountOut: exactOutTrade.minimumAmountOut,
