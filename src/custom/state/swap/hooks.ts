@@ -1,5 +1,5 @@
 import useENS from '@src/hooks/useENS'
-import { Currency, CurrencyAmount, Trade } from '@uniswap/sdk'
+import { Currency, CurrencyAmount } from '@uniswap/sdk'
 import { useActiveWeb3React } from '@src/hooks'
 import { useCurrency } from '@src/hooks/Tokens'
 import { isAddress } from '@src/utils'
@@ -10,7 +10,7 @@ import { computeSlippageAdjustedAmounts } from '@src/utils/prices'
 import { tryParseAmount, useSwapState } from '@src/state/swap/hooks'
 import { useFee } from '../fee/hooks'
 import { registerOnWindow } from 'utils/misc'
-import { useTradeExactInWithFee, useTradeExactOutWithFee } from './extension'
+import { TradeWithFee, useTradeExactInWithFee, useTradeExactOutWithFee } from './extension'
 
 export * from '@src/state/swap/hooks'
 
@@ -18,7 +18,7 @@ interface DerivedSwapInfo {
   currencies: { [field in Field]?: Currency }
   currencyBalances: { [field in Field]?: CurrencyAmount }
   parsedAmount: CurrencyAmount | undefined
-  v2Trade: Trade | undefined
+  v2Trade: TradeWithFee | undefined
   // TODO: review this - we don't use a v1 trade but changing all code
   // or extending whole swap comp for only removing v1trade is a lot
   v1Trade: undefined
