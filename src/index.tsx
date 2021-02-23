@@ -21,6 +21,7 @@ import UserUpdater from './state/user/updater'
 import FeesUpdater from 'state/fee/updater'
 import XdaiUpdater from 'state/network/updater'
 import { ExpiredOrdersWatcher, EventUpdater } from 'state/orders/updater'
+import { NetworkListUpdater } from 'state/lists/updater'
 // import { EventUpdater } from 'state/orders/mocks'
 import ThemeProvider, { FixedGlobalStyle, ThemedGlobalStyle } from 'theme'
 import getLibrary from './utils/getLibrary'
@@ -52,6 +53,7 @@ function Updaters() {
   return (
     <>
       <XdaiUpdater />
+      <NetworkListUpdater />
       <ListsUpdater />
       <UserUpdater />
       <ApplicationUpdater />
