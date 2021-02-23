@@ -26,15 +26,15 @@
         "name": "USDT",
         "chainId": 4,
         "symbol": "USDT",
-        "decimals": 18,
+        "decimals": 6,
         "address": "0xa9881E6459CA05d7D7C95374463928369cD7a90C",
         "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xdAC17F958D2ee523a2206206994597C13D831ec7/logo.png"
       },
       {
-        "name": "USDC",
+        "name": "USD Coin",
         "chainId": 4,
         "symbol": "USDC",
-        "decimals": 18,
+        "decimals": 6,
         "address": "0x4DBCdF9B62e891a7cec5A2568C3F4FAF9E8Abe2b",
         "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48/logo.png"
       },
@@ -74,7 +74,7 @@
         "name": "GUSD",
         "chainId": 4,
         "symbol": "GUSD",
-        "decimals": 18,
+        "decimals": 2,
         "address": "0x784B46A4331f5c7C495F296AE700652265ab2fC6",
         "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x056Fd409E1d7A124BD7017459dFEa2F387b6d5Cd/logo.png"
       },
