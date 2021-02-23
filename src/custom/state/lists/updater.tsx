@@ -27,7 +27,6 @@ export const NetworkListUpdater: React.FC = () => {
   // Loading//Saving network specific lists from//into storage
   useEffect(() => {
     if (chainId) {
-      console.debug('HERE')
       let refreshedTokenState: ListsState
       // build identifier for storage token list e.g Rinkeby list identifier = "_4"
       const newChainKey = buildKey(chainId)
