@@ -1,3 +1,4 @@
+import { ChainId } from '@uniswap/sdk'
 import { ListsState, ListState, Mutable } from './reducer'
 
 export function buildListState({
@@ -19,4 +20,12 @@ export function buildListState({
     },
     activeListUrls: defaultActiveListUrls
   }
+}
+
+const BASE_STORAGE_KEY = 'redux_localstorage_simple_lists'
+
+export function buildKey(chainId?: ChainId) {
+  const identifier = chainId ? `_${chainId}` : ''
+
+  return BASE_STORAGE_KEY + identifier
 }

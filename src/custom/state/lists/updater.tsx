@@ -1,6 +1,5 @@
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import { unstable_batchedUpdates as batchedUpdates } from 'react-dom'
-import { ChainId } from '@uniswap/sdk'
 import { useDispatch } from 'react-redux'
 
 import { useActiveWeb3React } from '@src/hooks'
@@ -8,17 +7,9 @@ import { useActiveWeb3React } from '@src/hooks'
 import { DEFAULT_ACTIVE_LIST_URLS_BY_NETWORK, DEFAULT_LIST_OF_LISTS_BY_NETWORK } from 'constants/lists'
 import { initialiseTokenLists } from './actions'
 import { ListsState, NEW_LIST_STATE } from './reducer'
-import { buildListState } from './helpers'
+import { buildKey, buildListState } from './helpers'
 
-const BASE_STORAGE_KEY = 'redux_localstorage_simple_lists'
-
-function buildKey(chainId?: ChainId) {
-  const identifier = chainId ? `_${chainId}` : ''
-
-  return BASE_STORAGE_KEY + identifier
-}
-
-export const NetworkListUpdater: React.FC = () => {
+export default function NetworkListUpdater(): null {
   const { chainId } = useActiveWeb3React()
   // const chainIdRef = useRef(chainId)
 
@@ -88,6 +79,7 @@ export const NetworkListUpdater: React.FC = () => {
           }
         }
 
+        // set our state's last initialised to the new list
         tokenStateCopy.lastInitializedDefaultListOfLists = newListOfLists
 
         refreshedTokenState = tokenStateCopy
