@@ -2,7 +2,8 @@
   "compilerOptions": {
     "paths": {
       "@src/*": ["*"],
-      "*": ["custom/*", "*"]
+      "*": ["custom/*", "*"],
+      "@uniswap/*": ["custom/@uniswap/*"]
     }
   }
 }
