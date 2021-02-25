@@ -13,6 +13,7 @@ export interface PostOrderParams {
   signer: Signer
   kind: OrderKind
   inputAmount: CurrencyAmount
+  adjustedInputAmount: CurrencyAmount
   outputAmount: CurrencyAmount
   feeAmount: BigNumberish
   sellToken: Token
@@ -50,7 +51,7 @@ export async function postOrder(params: PostOrderParams): Promise<string> {
     kind,
     addPendingOrder,
     chainId,
-    inputAmount,
+    adjustedInputAmount,
     outputAmount,
     sellToken,
     buyToken,
@@ -60,7 +61,7 @@ export async function postOrder(params: PostOrderParams): Promise<string> {
     signer
   } = params
 
-  const sellAmount = inputAmount.raw.toString(RADIX_DECIMAL)
+  const sellAmount = adjustedInputAmount.raw.toString(RADIX_DECIMAL)
   const buyAmount = outputAmount.raw.toString(RADIX_DECIMAL)
 
   // Prepare order
