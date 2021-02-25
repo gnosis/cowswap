@@ -87,13 +87,13 @@ export function useTradeExactInWithFee({
   feeInformation
 }: Omit<TradeParams, 'inputCurrency'>) {
   let feeAdjustedAmount: CurrencyAmount | undefined
-  let fee: FeeForTrade = EMPTY_FEE
+  let fee: FeeForTrade = { ...EMPTY_FEE, ...feeInformation }
   // make sure we have a typed in amount
   // else we can assume the trade will be null
   // and we call `useTradeExacIn` with an `undefined` which returns null trade
   if (parsedAmount && feeInformation) {
     // Using feeInformation info, determine whether minimalFee greaterThan or lessThan feeRatio * sellAmount
-    const { fee: feeAsString, ...restFee } = getFeeAmount({
+    const feeAsString = getFeeAmount({
       sellAmount: parsedAmount.raw.toString(),
       ...feeInformation
     })
@@ -107,7 +107,7 @@ export function useTradeExactInWithFee({
 
     // set final fee object
     fee = {
-      ...restFee,
+      ...feeInformation,
       feeAsCurrency
     }
   }
@@ -136,9 +136,9 @@ export function useTradeExactOutWithFee({
 
   // We need to determine the fee after, as the parsedAmount isn't known beforehand
   // Using feeInformation info, determine whether minimalFee greaterThan or lessThan feeRatio * sellAmount
-  let fee: FeeForTrade = EMPTY_FEE
+  let fee: FeeForTrade = { ...EMPTY_FEE, ...feeInformation }
   if (outTrade?.inputAmount && feeInformation) {
-    const { fee: feeAsString, ...restFee } = getFeeAmount({
+    const feeAsString = getFeeAmount({
       sellAmount: outTrade.inputAmount.raw.toString(),
       ...feeInformation
     })
@@ -147,7 +147,7 @@ export function useTradeExactOutWithFee({
 
     // set final fee object
     fee = {
-      ...restFee,
+      ...feeInformation,
       feeAsCurrency
     }
   }

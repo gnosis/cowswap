@@ -7,17 +7,11 @@ export interface GetFeeAmount extends Omit<FeeInformation, 'expirationDate'> {
   sellAmount: string
 }
 
-export function getFeeAmount(params: GetFeeAmount): Pick<FeeInformation, 'minimalFee' | 'feeRatio'> & { fee: string } {
+export function getFeeAmount(params: GetFeeAmount): string {
   const { feeRatio, minimalFee, sellAmount } = params
 
   const amountBn = BigNumber.from(sellAmount)
   const feeForAmount = amountBn.mul(feeRatio).div(BPS_BASE)
 
-  const fee = feeForAmount.lt(minimalFee) ? minimalFee : feeForAmount.toString()
-
-  return {
-    minimalFee,
-    feeRatio,
-    fee
-  }
+  return feeForAmount.lt(minimalFee) ? minimalFee : feeForAmount.toString()
 }
