@@ -5,7 +5,6 @@ import { BigNumber } from 'ethers'
 import { BIPS_BASE, BUY_ETHER_TOKEN, INITIAL_ALLOWED_SLIPPAGE, RADIX_DECIMAL } from 'constants/index'
 
 import { useAddPendingOrder } from 'state/orders/hooks'
-import { TradeWithFee } from 'state/swap/extension'
 
 import { SwapCallbackState } from '@src/hooks/useSwapCallback'
 import useTransactionDeadline from '@src/hooks/useTransactionDeadline'
@@ -17,6 +16,7 @@ import { useWrapEther } from 'hooks/useWrapEther'
 import { computeSlippageAdjustedAmounts } from 'utils/prices'
 import { postOrder } from 'utils/trade'
 import { OrderKind } from 'utils/signatures'
+import { TradeWithFee } from '../state/swap/extension'
 
 const MAX_VALID_TO_EPOCH = BigNumber.from('0xFFFFFFFF').toNumber() // Max uint32 (Feb 07 2106 07:28:15 GMT+0100)
 
@@ -81,7 +81,7 @@ export function useSwapCallback(
         console.log(
           `[useSwapCallback] >> Trading ${routeDescription}. 
             1. Original Input = ${inputAmount.toExact()}
-            2. Fee = ${fee?.toExact() || '0'}
+            2. Fee = ${fee?.feeAsCurrency?.toExact() || '0'}
             3. Input Adjusted for Fee = ${inputAmountWithFee.toExact()}
             4. Output = ${outputAmount.toExact()}
             5. Price = ${executionPrice.toFixed()} 
@@ -119,7 +119,7 @@ export function useSwapCallback(
           inputAmount: inputAmountWithFee,
           outputAmount,
           // pass Trade feeAmount as raw string or give 0
-          feeAmount: fee?.raw.toString() || '0',
+          feeAmount: fee?.feeAsCurrency?.raw.toString() || '0',
           sellToken,
           buyToken,
           validTo,

@@ -1,10 +1,13 @@
 import { CurrencyAmount, Trade, Currency, JSBI, Token, TokenAmount } from '@uniswap/sdk'
 import { useTradeExactIn, useTradeExactOut } from 'hooks/Trades'
-import { FeeInformation } from 'custom/utils/operator'
-import { getFeeAmount } from '@src/custom/utils/fee'
+import { FeeInformation } from 'utils/operator'
+import { getFeeAmount } from 'utils/fee'
 import { EMPTY_FEE } from '../operator/reducer'
 
-type FeeForTrade = { feeAsCurrency: CurrencyAmount | undefined } & Pick<FeeInformation, 'minimalFee' | 'feeRatio'>
+export type FeeForTrade = { feeAsCurrency: CurrencyAmount | undefined } & Pick<
+  FeeInformation,
+  'minimalFee' | 'feeRatio'
+>
 
 export type TradeWithFee = Trade & { inputAmountWithFee: CurrencyAmount; fee?: FeeForTrade }
 
@@ -24,7 +27,7 @@ export function extendExactInTrade(params: Omit<ExtendedTradeParams, 'exactOutTr
 
   if (!exactInTrade || !typedAmountAsCurrency) return null
 
-  // We need to iverride the Trade object to use different values as we are intercepting initial inputs
+  // We need to override the Trade object to use different values as we are intercepting initial inputs
   // and applying fee. For ExactIn orders, we leave outputAmount as is
   // and only change inputAmount to show the original entry before fee calculation
   return {
