@@ -4,12 +4,12 @@ import { TokenList } from '@uniswap/token-lists'
 import { useCallback } from 'react'
 import { useDispatch } from 'react-redux'
 import { getNetworkLibrary, NETWORK_CHAIN_ID } from 'connectors'
-import { AppDispatch } from '../state'
+import { AppDispatch } from '../../state'
 // import { fetchTokenList } from '../state/lists/actions'
 import { fetchTokenList } from 'state/lists/actions'
-import getTokenList from '@src/utils/getTokenList'
-import resolveENSContentHash from '@src/utils/resolveENSContentHash'
-import { useActiveWeb3React } from '@src/hooks/index'
+import getTokenList from 'utils/getTokenList'
+import resolveENSContentHash from 'utils/resolveENSContentHash'
+import { useActiveWeb3React } from 'hooks'
 
 export function useFetchListCallback(): (listUrl: string, sendDispatch?: boolean) => Promise<TokenList> {
   const { chainId, library } = useActiveWeb3React()
