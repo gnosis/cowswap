@@ -16,7 +16,7 @@ import { useWrapEther } from 'hooks/useWrapEther'
 import { computeSlippageAdjustedAmounts } from 'utils/prices'
 import { postOrder } from 'utils/trade'
 import { OrderKind } from 'utils/signatures'
-import { TradeWithFee } from '../state/swap/extension'
+import { TradeWithFee } from 'state/swap/extension'
 
 const MAX_VALID_TO_EPOCH = BigNumber.from('0xFFFFFFFF').toNumber() // Max uint32 (Feb 07 2106 07:28:15 GMT+0100)
 
@@ -115,8 +115,10 @@ export function useSwapCallback(
           kind,
           account,
           chainId,
+          // unadjusted inputAmount
+          inputAmount: inputAmount,
           // pass inputAmount calculated with fee applied
-          inputAmount: inputAmountWithFee,
+          adjustedInputAmount: inputAmountWithFee,
           outputAmount,
           // pass Trade feeAmount as raw string or give 0
           feeAmount: fee?.feeAsCurrency?.raw.toString() || '0',
