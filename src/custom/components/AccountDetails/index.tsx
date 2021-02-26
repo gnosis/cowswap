@@ -4,7 +4,7 @@ import { ThemeContext } from 'styled-components'
 import { useActiveWeb3React } from 'hooks'
 import { AppDispatch } from 'state'
 import { clearAllTransactions } from 'state/transactions/actions'
-import { shortenAddress } from 'utils'
+import { getExplorerLabel, shortenAddress } from 'utils'
 import { AutoRow } from 'components/Row'
 import Copy from 'components/AccountDetails/Copy'
 
@@ -185,7 +185,7 @@ export default function AccountDetails({
                             href={chainId && getEtherscanLink(chainId, ENSName, 'address')}
                           >
                             <LinkIcon size={16} />
-                            <span style={{ marginLeft: '4px' }}>View on Etherscan</span>
+                            <span style={{ marginLeft: '4px' }}>{getExplorerLabel(chainId, account, 'address')}</span>
                           </AddressLink>
                         )}
                       </div>
@@ -207,7 +207,7 @@ export default function AccountDetails({
                             href={getEtherscanLink(chainId, account, 'address')}
                           >
                             <LinkIcon size={16} />
-                            <span style={{ marginLeft: '4px' }}>View on Etherscan</span>
+                            <span style={{ marginLeft: '4px' }}>{getExplorerLabel(chainId, account, 'address')}</span>
                           </AddressLink>
                         )}
                       </div>
