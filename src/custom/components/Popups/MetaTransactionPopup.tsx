@@ -3,10 +3,9 @@ import { AlertCircle, CheckCircle } from 'react-feather'
 import styled, { ThemeContext } from 'styled-components'
 import { useActiveWeb3React } from 'hooks'
 import { TYPE } from 'theme'
-import { ExternalLink } from 'theme'
 import { AutoColumn } from 'components/Column'
 import { AutoRow } from 'components/Row'
-import { getExplorerOrderLink } from 'utils/explorer'
+import { ExplorerLink } from '../ExplorerLink'
 
 const RowNoFlex = styled(AutoRow)`
   flex-wrap: nowrap;
@@ -32,7 +31,7 @@ export default function MetaTransactionPopup({
       </div>
       <AutoColumn gap="8px">
         <TYPE.body fontWeight={500}>{summary ?? 'ID: ' + id.slice(0, 8) + '...' + id.slice(58, 65)}</TYPE.body>
-        {chainId && <ExternalLink href={getExplorerOrderLink(chainId, id)}>View on Explorer</ExternalLink>}
+        {chainId && <ExplorerLink id={id} />}
       </AutoColumn>
     </RowNoFlex>
   )
