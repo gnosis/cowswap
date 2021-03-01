@@ -15,6 +15,7 @@ export interface PostOrderParams {
   inputAmount: CurrencyAmount
   adjustedInputAmount: CurrencyAmount
   outputAmount: CurrencyAmount
+  adjustedOutputAmount: CurrencyAmount
   feeAmount: BigNumberish
   sellToken: Token
   buyToken: Token
@@ -25,14 +26,14 @@ export interface PostOrderParams {
 }
 
 function _getSummary(params: PostOrderParams): string {
-  const { inputAmount, outputAmount, account, recipient, recipientAddressOrName } = params
+  const { inputAmount, adjustedOutputAmount, account, recipient, recipientAddressOrName } = params
 
   const inputSymbol = inputAmount.currency.symbol
-  const outputSymbol = outputAmount.currency.symbol
+  const outputSymbol = adjustedOutputAmount.currency.symbol
   const inputAmountValue = inputAmount.toSignificant(SHORTEST_PRECISION)
-  const outputAmountValue = outputAmount.toSignificant(SHORTEST_PRECISION)
+  const outputAmountValue = adjustedOutputAmount.toSignificant(SHORTEST_PRECISION)
 
-  const base = `Swap ${inputAmountValue} ${inputSymbol} for ${outputAmountValue} ${outputSymbol}`
+  const base = `Swap ${inputAmountValue} ${inputSymbol} for at least ${outputAmountValue} ${outputSymbol}`
 
   if (recipient === account) {
     return base
@@ -51,18 +52,24 @@ export async function postOrder(params: PostOrderParams): Promise<string> {
     kind,
     addPendingOrder,
     chainId,
+    // fee adjusted input
     adjustedInputAmount,
-    outputAmount,
+    // slippage output
+    adjustedOutputAmount,
     sellToken,
     buyToken,
+    inputAmount,
+    outputAmount,
     feeAmount,
     validTo,
     account,
     signer
   } = params
 
+  // fee adjusted input amount
   const sellAmount = adjustedInputAmount.raw.toString(RADIX_DECIMAL)
-  const buyAmount = outputAmount.raw.toString(RADIX_DECIMAL)
+  // slippage adjusted output amount
+  const buyAmount = adjustedOutputAmount.raw.toString(RADIX_DECIMAL)
 
   // Prepare order
   const summary = _getSummary(params)
@@ -105,7 +112,9 @@ export async function postOrder(params: PostOrderParams): Promise<string> {
       creationTime,
       signature,
       status: OrderStatus.PENDING,
-      summary
+      summary,
+      inputCurrency: { symbol: inputAmount.currency.symbol, decimals: inputAmount.currency.decimals },
+      outputCurrency: { symbol: outputAmount.currency.symbol, decimals: outputAmount.currency.decimals }
     }
   })
 
