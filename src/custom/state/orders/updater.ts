@@ -13,8 +13,10 @@ import {
 } from './hooks'
 import { buildBlock2DateMap } from 'utils/blocks'
 import { registerOnWindow } from 'utils/misc'
-import { GP_SETTLEMENT_CONTRACT_ADDRESS } from 'constants/index'
-import { GP_V2_SETTLEMENT_INTERFACE } from '@src/custom/constants/GPv2Settlement'
+import { getOrder, OrderMetaData } from 'utils/operator'
+import { GP_SETTLEMENT_CONTRACT_ADDRESS, SHORT_PRECISION } from 'constants/index'
+import { GP_V2_SETTLEMENT_INTERFACE } from 'constants/GPv2Settlement'
+import { stringToCurrency } from '../swap/extension'
 
 type OrderLogPopupMixData = OrderFulfillmentData & Pick<Log, 'transactionHash'> & Partial<Pick<Order, 'summary'>>
 
@@ -24,6 +26,37 @@ interface TradeEventParams {
   owner: string // address
   // maybe enable when orderUid is indexed
   // id?: string | string[] // to filter by id
+}
+
+function _computeFulfilledSummary({
+  orderFromStore,
+  orderFromApi
+}: {
+  orderFromStore?: Order
+  orderFromApi: OrderMetaData | null
+}) {
+  // Default to store's current order summary
+  let summary: string | undefined = orderFromStore?.summary
+
+  // if we can find the order from the API
+  // and our specific order exists in our state, let's use that
+  if (orderFromApi) {
+    const { buyToken, sellToken, executedBuyAmount, executedSellAmount } = orderFromApi
+
+    if (orderFromStore) {
+      const { inputCurrency, outputCurrency } = orderFromStore
+      // don't show amounts in atoms
+      const inputAmount = stringToCurrency(executedSellAmount, inputCurrency).toSignificant(SHORT_PRECISION)
+      const outputAmount = stringToCurrency(executedBuyAmount, outputCurrency).toSignificant(SHORT_PRECISION)
+
+      summary = `Swap ${inputAmount} ${inputCurrency.symbol} for ${outputAmount} ${outputCurrency.symbol}`
+    } else {
+      // We only have the API order info, let's at least use that
+      summary = `Swap ${sellToken} for ${buyToken}`
+    }
+  }
+
+  return summary
 }
 
 const generateTradeEventTopics = ({ owner /*, id */ }: TradeEventParams) => {
@@ -145,20 +178,28 @@ export function EventUpdater(): null {
 
       const block2DateMap = await buildBlock2DateMap(library, logs)
 
-      const ordersBatchData: OrderLogPopupMixData[] = logs.map(log => {
-        const { orderUid: id } = decodeTradeEvent(log)
+      const ordersBatchData: OrderLogPopupMixData[] = await Promise.all(
+        logs.map(async log => {
+          const { orderUid: id } = decodeTradeEvent(log)
 
-        console.log(`EventUpdater::Detected Trade event for order ${id} of token in block`, log.blockNumber)
+          console.log(`EventUpdater::Detected Trade event for order ${id} of token in block`, log.blockNumber)
 
-        const orderFromStore = findOrderById(id)
+          // Get order from our store
+          // and from the backened API
+          const orderFromStore = findOrderById(id)
+          const orderFromApi = await getOrder(chainId, id)
 
-        return {
-          id,
-          fulfillmentTime: block2DateMap[log.blockHash].toISOString(),
-          transactionHash: log.transactionHash,
-          summary: orderFromStore?.summary // only if that order was previously in store
-        }
-      })
+          // using order from store and api compute summary
+          const summary = _computeFulfilledSummary({ orderFromApi, orderFromStore })
+
+          return {
+            id,
+            fulfillmentTime: block2DateMap[log.blockHash].toISOString(),
+            transactionHash: log.transactionHash,
+            summary
+          }
+        })
+      )
 
       // SET lastCheckedBlock = lastBlockNumber
       // AND fulfill orders
