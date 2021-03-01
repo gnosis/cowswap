@@ -83,7 +83,8 @@ export function useSwapCallback(
             1. Original Input = ${inputAmount.toExact()}
             2. Fee = ${fee?.feeAsCurrency?.toExact() || '0'}
             3. Input Adjusted for Fee = ${inputAmountWithFee.toExact()}
-            4. Output = ${outputAmount.toExact()}
+            4. Expected Output = ${expectedOutputAmount.toExact()}
+            4b. Output with SLIPPAGE = ${outputAmount.toExact()}
             5. Price = ${executionPrice.toFixed()} 
             6. Details: `,
           {
