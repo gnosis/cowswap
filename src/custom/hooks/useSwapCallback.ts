@@ -34,11 +34,14 @@ export function useSwapCallback(
 
   const validTo = useTransactionDeadline()?.toNumber() || MAX_VALID_TO_EPOCH
   const addPendingOrder = useAddPendingOrder()
-  const { INPUT: inputAmount, OUTPUT: outputAmount } = computeSlippageAdjustedAmounts(trade, allowedSlippage)
+  const { INPUT: inputAmount, OUTPUT: outputAmountWithSlippage } = computeSlippageAdjustedAmounts(
+    trade,
+    allowedSlippage
+  )
   const wrapEther = useWrapEther()
 
   return useMemo(() => {
-    if (!trade || !library || !account || !chainId || !inputAmount || !outputAmount) {
+    if (!trade || !library || !account || !chainId || !inputAmount || !outputAmountWithSlippage) {
       return { state: SwapCallbackState.INVALID, callback: null, error: 'Missing dependencies' }
     }
     if (!recipient) {
@@ -84,14 +87,14 @@ export function useSwapCallback(
             2. Fee = ${fee?.feeAsCurrency?.toExact() || '0'}
             3. Input Adjusted for Fee = ${inputAmountWithFee.toExact()}
             4. Expected Output = ${expectedOutputAmount.toExact()}
-            4b. Output with SLIPPAGE = ${outputAmount.toExact()}
+            4b. Output with SLIPPAGE = ${outputAmountWithSlippage.toExact()}
             5. Price = ${executionPrice.toFixed()} 
             6. Details: `,
           {
             expectedInputAmount: expectedInputAmount.toExact(),
             expectedOutputAmount: expectedOutputAmount.toExact(),
             inputAmountEstimated: inputAmount.toExact(),
-            outputAmountEstimated: outputAmount.toExact(),
+            outputAmountEstimated: outputAmountWithSlippage.toExact(),
             executionPrice: executionPrice.toFixed(),
             sellToken,
             buyToken,
@@ -120,7 +123,10 @@ export function useSwapCallback(
           inputAmount: inputAmount,
           // pass inputAmount calculated with fee applied
           adjustedInputAmount: inputAmountWithFee,
-          outputAmount,
+          // unadjusted outputAmount
+          outputAmount: expectedOutputAmount,
+          // output amount adjusted for selected slippage percentage
+          adjustedOutputAmount: outputAmountWithSlippage,
           // pass Trade feeAmount as raw string or give 0
           feeAmount: fee?.feeAsCurrency?.raw.toString() || '0',
           sellToken,
@@ -147,7 +153,7 @@ export function useSwapCallback(
     account,
     chainId,
     inputAmount,
-    outputAmount,
+    outputAmountWithSlippage,
     recipient,
     recipientAddressOrName,
     allowedSlippage,
