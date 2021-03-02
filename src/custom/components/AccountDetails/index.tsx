@@ -115,7 +115,7 @@ export default function AccountDetails({
       })
     }
   }, [dispatch, chainId])
-  const explorerLabel = getExplorerLabel(chainId, account, 'address')
+  const explorerLabel = chainId && account ? getExplorerLabel(chainId, account, 'address') : undefined
 
   return (
     <>
