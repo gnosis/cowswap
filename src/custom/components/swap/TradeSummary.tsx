@@ -13,7 +13,7 @@ import FormattedPriceImpact from '@src/components/swap/FormattedPriceImpact'
 import { TradeWithFee } from 'state/swap/extension'
 
 // computes price breakdown for the trade
-function computeTradePriceBreakdown(
+export function computeTradePriceBreakdown(
   trade?: TradeWithFee | null
 ): { priceImpactWithoutFee: Percent | undefined; realizedFee: CurrencyAmount | undefined | null } {
   return { priceImpactWithoutFee: trade?.priceImpact, realizedFee: trade?.fee?.feeAsCurrency }
