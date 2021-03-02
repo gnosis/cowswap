@@ -12,7 +12,7 @@ import { RowBetween /* , RowFixed */ } from 'components/Row'
 import SwapRoute from 'components/swap/SwapRoute'
 
 import { TradeWithFee } from '@src/custom/state/swap/extension'
-import TradeSummary from './TradeSummary'
+import TradeSummary from '../TradeSummary'
 
 export const InfoLink = styled(ExternalLink)`
   width: 100%;
