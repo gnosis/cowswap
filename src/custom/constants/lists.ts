@@ -26,12 +26,15 @@ const COINGECKO_LIST = 'https://tokens.coingecko.com/uniswap/all.json'
 const CMC_ALL_LIST = 'defi.cmc.eth'
 const CMC_STABLECOIN = 'stablecoin.cmc.eth'
 const KLEROS_LIST = 't2crtokens.eth'
+
 // Mainnet Default
 const GEMINI_LIST = 'https://www.gemini.com/uniswap/manifest.json'
+
 // Rinkeby Default
 // TODO: this will change when PR: https://github.com/gnosis/gp-swap-ui/pull/170 is merged
 const RINKEBY_LIST =
   'https://raw.githubusercontent.com/gnosis/gp-swap-ui/89cf4c7f167559d430a3d13dd5caf03255377140/src/custom/tokens/rinkeby-token-list.json'
+
 // XDAI Default
 const HONEY_SWAP_XDAI = 'https://tokens.honeyswap.org'
 
@@ -62,19 +65,19 @@ export const DEFAULT_LIST_OF_LISTS_BY_NETWORK: NetworkLists = {
   }),
   [ChainId.KOVAN]: buildNetworkDefaultLists({
     chainId: ChainId.KOVAN,
-    networkLists: []
+    networkLists: [COMPOUND_LIST]
   }),
   [ChainId.RINKEBY]: buildNetworkDefaultLists({
     chainId: ChainId.RINKEBY,
-    networkLists: [RINKEBY_LIST]
+    networkLists: [RINKEBY_LIST, COMPOUND_LIST]
   }),
   [ChainId.ROPSTEN]: buildNetworkDefaultLists({
     chainId: ChainId.ROPSTEN,
-    networkLists: []
+    networkLists: [COMPOUND_LIST]
   }),
   [ChainId.GÖRLI]: buildNetworkDefaultLists({
     chainId: ChainId.GÖRLI,
-    networkLists: []
+    networkLists: [COMPOUND_LIST]
   }),
   [ChainId.XDAI]: buildNetworkDefaultLists({
     chainId: ChainId.XDAI,
