@@ -24,16 +24,49 @@ export interface PostOrderParams {
   recipientAddressOrName: string | null
   addPendingOrder: (order: AddPendingOrderParams) => void
 }
+interface DetermineInputOutputParams<T> {
+  kind: string | 'sell' | 'buy'
+  inputAmount: T
+  outputAmount: T
+}
+
+export function determineInputOutput({
+  kind,
+  inputAmount,
+  outputAmount
+}: DetermineInputOutputParams<string>): { input: string; output: string; quantifier: string }
+export function determineInputOutput({
+  kind,
+  inputAmount,
+  outputAmount
+}: DetermineInputOutputParams<CurrencyAmount>): { input: CurrencyAmount; output: CurrencyAmount; quantifier: string }
+export function determineInputOutput({
+  kind,
+  inputAmount,
+  outputAmount
+}: DetermineInputOutputParams<CurrencyAmount | string>) {
+  const input = kind === 'sell' ? inputAmount : outputAmount
+  const output = kind === 'sell' ? outputAmount : inputAmount
+  const quantifier = kind === 'sell' ? 'at least' : 'at most'
+
+  return {
+    input,
+    output,
+    quantifier
+  }
+}
 
 function _getSummary(params: PostOrderParams): string {
-  const { inputAmount, adjustedOutputAmount, account, recipient, recipientAddressOrName } = params
+  const { kind, inputAmount, adjustedOutputAmount, account, recipient, recipientAddressOrName } = params
 
-  const inputSymbol = inputAmount.currency.symbol
-  const outputSymbol = adjustedOutputAmount.currency.symbol
-  const inputAmountValue = inputAmount.toSignificant(SHORTEST_PRECISION)
-  const outputAmountValue = adjustedOutputAmount.toSignificant(SHORTEST_PRECISION)
+  const { input, output, quantifier } = determineInputOutput({ inputAmount, outputAmount: adjustedOutputAmount, kind })
 
-  const base = `Swap ${inputAmountValue} ${inputSymbol} for at least ${outputAmountValue} ${outputSymbol}`
+  const inputSymbol = input.currency.symbol
+  const outputSymbol = output.currency.symbol
+  const inputAmountValue = input.toSignificant(SHORTEST_PRECISION)
+  const outputAmountValue = output.toSignificant(SHORTEST_PRECISION)
+
+  const base = `Swap ${inputAmountValue} ${inputSymbol} for ${quantifier} ${outputAmountValue} ${outputSymbol}`
 
   if (recipient === account) {
     return base
@@ -58,8 +91,6 @@ export async function postOrder(params: PostOrderParams): Promise<string> {
     adjustedOutputAmount,
     sellToken,
     buyToken,
-    inputAmount,
-    outputAmount,
     feeAmount,
     validTo,
     account,
@@ -113,8 +144,8 @@ export async function postOrder(params: PostOrderParams): Promise<string> {
       signature,
       status: OrderStatus.PENDING,
       summary,
-      inputCurrency: { symbol: inputAmount.currency.symbol, decimals: inputAmount.currency.decimals },
-      outputCurrency: { symbol: outputAmount.currency.symbol, decimals: outputAmount.currency.decimals }
+      inputToken: sellToken,
+      outputToken: buyToken
     }
   })
 
