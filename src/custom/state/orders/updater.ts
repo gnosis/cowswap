@@ -14,6 +14,7 @@ import {
 import { buildBlock2DateMap } from 'utils/blocks'
 import { registerOnWindow } from 'utils/misc'
 import { getOrder, OrderMetaData } from 'utils/operator'
+import { determineInputOutput } from 'utils/trade'
 import { GP_SETTLEMENT_CONTRACT_ADDRESS, SHORT_PRECISION } from 'constants/index'
 import { GP_V2_SETTLEMENT_INTERFACE } from 'constants/GPv2Settlement'
 import { stringToCurrency } from '../swap/extension'
@@ -35,24 +36,32 @@ function _computeFulfilledSummary({
   orderFromStore?: Order
   orderFromApi: OrderMetaData | null
 }) {
+  console.debug('🚀 ~ [_computeFulfilledSummary] orderFromApi', orderFromApi)
+  console.debug('🚀 ~ [_computeFulfilledSummary] orderFromStore', orderFromStore)
   // Default to store's current order summary
   let summary: string | undefined = orderFromStore?.summary
 
   // if we can find the order from the API
   // and our specific order exists in our state, let's use that
   if (orderFromApi) {
-    const { buyToken, sellToken, executedBuyAmount, executedSellAmount } = orderFromApi
+    const { kind, buyToken, sellToken, executedBuyAmount, executedSellAmount } = orderFromApi
 
     if (orderFromStore) {
-      const { inputCurrency, outputCurrency } = orderFromStore
+      const { inputToken, outputToken } = orderFromStore
       // don't show amounts in atoms
-      const inputAmount = stringToCurrency(executedSellAmount, inputCurrency).toSignificant(SHORT_PRECISION)
-      const outputAmount = stringToCurrency(executedBuyAmount, outputCurrency).toSignificant(SHORT_PRECISION)
+      const inputAmount = stringToCurrency(executedSellAmount, inputToken)
+      const outputAmount = stringToCurrency(executedBuyAmount, outputToken)
 
-      summary = `Swap ${inputAmount} ${inputCurrency.symbol} for ${outputAmount} ${outputCurrency.symbol}`
+      const { input, output } = determineInputOutput({ inputAmount, outputAmount, kind })
+      console.debug('🚀 ~ [_computeFulfilledSummary] INPUT/OUTPUT', input, output)
+
+      summary = `Swap ${input.toSignificant(SHORT_PRECISION)} ${input.currency.symbol} for ${output.toSignificant(
+        SHORT_PRECISION
+      )} ${output.currency.symbol}`
     } else {
       // We only have the API order info, let's at least use that
-      summary = `Swap ${sellToken} for ${buyToken}`
+      const { input, output } = determineInputOutput({ inputAmount: sellToken, outputAmount: buyToken, kind })
+      summary = `Swap ${input} for ${output}`
     }
   }
 
