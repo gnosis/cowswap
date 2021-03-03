@@ -1,7 +1,7 @@
 import { createAction } from '@reduxjs/toolkit'
 import { OrderID } from 'utils/operator'
 import { OrderCreation } from 'utils/signatures'
-import { ChainId, Currency } from '@uniswap/sdk'
+import { ChainId, Token } from '@uniswap/sdk'
 export { OrderKind } from '@gnosis.pm/gp-v2-contracts'
 
 export enum OrderStatus {
@@ -19,8 +19,8 @@ export interface Order extends OrderCreation {
   fulfilledTransactionHash?: string // hash of transaction when Order was fulfilled
   creationTime: string // Creation time of the order. Encoded as ISO 8601 UTC
   summary: string // for dapp use only, readable by user
-  inputCurrency: Pick<Currency, 'decimals' | 'symbol'> // for dapp use only, readable by user
-  outputCurrency: Pick<Currency, 'decimals' | 'symbol'> // for dapp use only, readable by user
+  inputToken: Token // for dapp use only, readable by user
+  outputToken: Token // for dapp use only, readable by user
 }
 
 // gotten from querying /api/v1/orders
