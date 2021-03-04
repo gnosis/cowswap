@@ -1,5 +1,5 @@
 import useENS from 'hooks/useENS'
-import { Currency, CurrencyAmount, Trade, WETH } from '@uniswap/sdk'
+import { Currency, CurrencyAmount, ETHER, Trade, WETH } from '@uniswap/sdk'
 import { useActiveWeb3React } from 'hooks'
 import { useCurrency } from 'hooks/Tokens'
 import { isAddress } from 'utils'
@@ -18,11 +18,11 @@ import { useFee } from '../fee/hooks'
 import { registerOnWindow } from 'utils/misc'
 import { useTradeExactInWithFee, useTradeExactOutWithFee } from './extension'
 import useParsedQueryString from 'hooks/useParsedQueryString'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { useDispatch } from 'react-redux'
-import { AppDispatch } from '..'
 import { SwapState } from 'state/swap/reducer'
 import { ParsedQs } from 'qs'
+import { useWETHContract } from 'hooks/useContract'
 
 export * from '@src/state/swap/hooks'
 
@@ -174,11 +174,25 @@ export function queryParametersToSwapState(parsedQs: ParsedQs): SwapState {
   }
 }
 
+export function useReplaceSwapState() {
+  const dispatch = useDispatch()
+  return useCallback(
+    (newState: {
+      field: Field
+      typedValue: string
+      inputCurrencyId?: string | undefined
+      outputCurrencyId?: string | undefined
+      recipient: string | null
+    }) => dispatch(replaceSwapState(newState)),
+    [dispatch]
+  )
+}
+
 type DefaultFromUrlSearch = { inputCurrencyId: string | undefined; outputCurrencyId: string | undefined } | undefined
 // updates the swap state to use the defaults for a given network
 export function useDefaultsFromURLSearch(): DefaultFromUrlSearch {
   const { chainId } = useActiveWeb3React()
-  const dispatch = useDispatch<AppDispatch>()
+  const replaceSwapState = useReplaceSwapState()
   const parsedQs = useParsedQueryString()
   const [result, setResult] = useState<DefaultFromUrlSearch>()
 
@@ -189,23 +203,36 @@ export function useDefaultsFromURLSearch(): DefaultFromUrlSearch {
     const defaultInputToken = WETH[chainId].address
     const parsed = queryParametersToSwapState(parsedQs)
 
-    dispatch(
-      replaceSwapState({
-        typedValue: parsed.typedValue,
-        field: parsed.independentField,
-        // inputCurrencyId: parsed[Field.INPUT].currencyId,
-        // outputCurrencyId: parsed[Field.OUTPUT].currencyId,
+    replaceSwapState({
+      typedValue: parsed.typedValue,
+      field: parsed.independentField,
+      // inputCurrencyId: parsed[Field.INPUT].currencyId,
+      // outputCurrencyId: parsed[Field.OUTPUT].currencyId,
 
-        // Default to WETH
-        inputCurrencyId: parsed[Field.INPUT].currencyId || defaultInputToken,
-        outputCurrencyId: parsed[Field.OUTPUT].currencyId,
-        recipient: parsed.recipient
-      })
-    )
+      // Default to WETH
+      inputCurrencyId: parsed[Field.INPUT].currencyId || defaultInputToken,
+      outputCurrencyId: parsed[Field.OUTPUT].currencyId,
+      recipient: parsed.recipient
+    })
 
     setResult({ inputCurrencyId: parsed[Field.INPUT].currencyId, outputCurrencyId: parsed[Field.OUTPUT].currencyId })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, chainId])
+  }, [chainId])
 
   return result
+}
+
+interface CurrencyWithAddress {
+  currency?: Currency
+  address?: string
+}
+
+export function useShouldDisableEth(input?: CurrencyWithAddress, output?: CurrencyWithAddress) {
+  const weth = useWETHContract()
+  return useMemo(() => {
+    const [isEthIn, isEthOut] = [input?.currency === ETHER, output?.currency === ETHER]
+    const [isWethIn, isWethOut] = [input?.address === weth?.address, output?.address === weth?.address]
+
+    return { showEthDisabled: (isEthIn && !isWethOut) || (isEthOut && !isWethIn), weth }
+  }, [input, output, weth])
 }
