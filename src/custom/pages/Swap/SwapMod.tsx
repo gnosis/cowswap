@@ -1,4 +1,4 @@
-import { CurrencyAmount, JSBI, Token, Trade } from '@uniswap/sdk'
+import { CurrencyAmount, ETHER, JSBI, Token, Trade } from '@uniswap/sdk'
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { ArrowDown } from 'react-feather'
 import ReactGA from 'react-ga'
@@ -543,8 +543,8 @@ export default function Swap() {
                 <ButtonConfirmed
                   onClick={() =>
                     replaceSwapState({
-                      inputCurrencyId: weth.address,
-                      outputCurrencyId: OUTPUT.currencyId,
+                      inputCurrencyId: currencies.INPUT === ETHER ? weth.address : INPUT.currencyId,
+                      outputCurrencyId: currencies.OUTPUT === ETHER ? weth.address : OUTPUT.currencyId,
                       typedValue,
                       recipient: null,
                       field: independentField
