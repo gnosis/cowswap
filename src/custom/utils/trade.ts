@@ -59,12 +59,12 @@ export function determineInputOutput({
 function _getSummary(params: PostOrderParams): string {
   const { kind, inputAmount, adjustedOutputAmount, account, recipient, recipientAddressOrName } = params
 
-  const { input, output, quantifier } = determineInputOutput({ inputAmount, outputAmount: adjustedOutputAmount, kind })
+  const { quantifier } = determineInputOutput({ inputAmount, outputAmount: adjustedOutputAmount, kind })
 
-  const inputSymbol = input.currency.symbol
-  const outputSymbol = output.currency.symbol
-  const inputAmountValue = input.toSignificant(SHORTEST_PRECISION)
-  const outputAmountValue = output.toSignificant(SHORTEST_PRECISION)
+  const inputSymbol = inputAmount.currency.symbol
+  const outputSymbol = adjustedOutputAmount.currency.symbol
+  const inputAmountValue = inputAmount.toSignificant(SHORTEST_PRECISION)
+  const outputAmountValue = adjustedOutputAmount.toSignificant(SHORTEST_PRECISION)
 
   const base = `Swap ${inputAmountValue} ${inputSymbol} for ${quantifier} ${outputAmountValue} ${outputSymbol}`
 
