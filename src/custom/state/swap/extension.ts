@@ -74,7 +74,7 @@ interface TradeParams {
   feeInformation?: Omit<FeeInformation, 'expirationDate'>
 }
 
-const stringToCurrency = (amount: string, currency: Currency) =>
+export const stringToCurrency = (amount: string, currency: Currency) =>
   currency instanceof Token ? new TokenAmount(currency, JSBI.BigInt(amount)) : CurrencyAmount.ether(JSBI.BigInt(amount))
 
 /**

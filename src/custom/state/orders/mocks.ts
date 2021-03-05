@@ -64,6 +64,8 @@ const generateOrder = ({ owner, sellToken, buyToken }: GenerateOrderParams): Ord
     status: OrderStatus.PENDING,
     creationTime: new Date().toISOString(),
     summary, // for dapp use only, readable by user
+    inputCurrency: sellToken,
+    outputCurrency: buyToken,
     sellToken: sellToken.address.replace('0x', ''), // address, without '0x' prefix
     buyToken: buyToken.address.replace('0x', ''), // address, without '0x' prefix
     sellAmount: sellAmount.toString(RADIX_DECIMAL), // in atoms
