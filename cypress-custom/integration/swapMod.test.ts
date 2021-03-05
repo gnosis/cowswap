@@ -8,7 +8,7 @@ describe('Swap', () => {
       .should('have.value', '0.001')
   })
 
-  it.skip('zero swap amount', () => {
+  it('zero swap amount', () => {
     cy.get('#swap-currency-input .token-amount-input')
       .type('0.0', { delay: 200 })
       .should('have.value', '0.0')
@@ -20,7 +20,7 @@ describe('Swap', () => {
       .should('have.value', '')
   })
 
-  it.skip('can enter an amount into output', () => {
+  it('can enter an amount into output', () => {
     cy.get('#swap-currency-output .token-amount-input')
       .type('0.001', { delay: 200 })
       .should('have.value', '0.001')
@@ -32,7 +32,7 @@ describe('Swap', () => {
       .should('have.value', '0.0')
   })
 
-  it('can swap ETH for DAI', () => {
+  it.skip('can swap ETH for DAI', () => {
     cy.get('#swap-currency-output .open-currency-select-button').click()
     cy.get('.token-item-0xc7AD46e0b8a400Bb3C915120d284AafbA8fc4735').should('be.visible')
     cy.get('.token-item-0xc7AD46e0b8a400Bb3C915120d284AafbA8fc4735').click({ force: true })

@@ -431,7 +431,7 @@ export default function Swap() {
               </ButtonPrimary>
             ) : // MOD: disable ETH trading
             showEthDisabled ? (
-              <ButtonPrimary disabled={true}>
+              <ButtonPrimary id="swap-button" disabled={true}>
                 <TYPE.main mb="4px">ETH cannot be traded. Use WETH</TYPE.main>
               </ButtonPrimary>
             ) : noRoute && userHasSpecifiedInputOutput ? (
