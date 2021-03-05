@@ -13,7 +13,7 @@ import FormattedPriceImpact from '@src/components/swap/FormattedPriceImpact'
 import { TradeWithFee } from 'state/swap/extension'
 
 // computes price breakdown for the trade
-function computeTradePriceBreakdown(
+export function computeTradePriceBreakdown(
   trade?: TradeWithFee | null
 ): { priceImpactWithoutFee: Percent | undefined; realizedFee: CurrencyAmount | undefined | null } {
   return { priceImpactWithoutFee: trade?.priceImpact, realizedFee: trade?.fee?.feeAsCurrency }
@@ -34,7 +34,7 @@ export default function TradeSummary({ trade, allowedSlippage }: { trade: TradeW
             <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
               {isExactIn ? 'Minimum received' : 'Maximum sold'}
             </TYPE.black>
-            <QuestionHelper text="Your transaction will revert if there is a large, unfavorable price movement before it is confirmed." />
+            <QuestionHelper text="Your transaction will expire if there is a large, unfavorable price movement before it is confirmed." />
           </RowFixed>
           <RowFixed>
             <TYPE.black color={theme.text1} fontSize={14}>
