@@ -8,7 +8,7 @@ import { ChainId } from '@uniswap/sdk'
 const NETWORK_DIMENSION = 'dimension1'
 export const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
   ...NETWORK_LABELS_HEADER,
-  [ChainId.MAINNET]: 'Mainnet' // The header don't has Mainet
+  [ChainId.MAINNET]: 'Mainnet' // The header doesn't have Mainnet
 }
 
 export default function GoogleAnalyticsReporter({ location: { pathname, search } }: RouteComponentProps): null {
