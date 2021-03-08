@@ -13,6 +13,7 @@ import CurrencyLogo from 'components/CurrencyLogo'
 import { RowBetween, RowFixed } from 'components/Row'
 import { TruncatedText, SwapShowAcceptChanges } from 'components/swap/styleds'
 import { TradeWithFee } from 'state/swap/extension'
+import { INPUT_OUTPUT_EXPLANATION } from 'constants/index'
 
 export interface SwapModalHeaderProps {
   trade: TradeWithFee
@@ -109,7 +110,7 @@ export default function SwapModalHeader({
               {slippageAdjustedAmounts[Field.OUTPUT]?.toSignificant(6)} {trade.outputAmount.currency.symbol}
             </b>
             {/* {' or the transaction will revert.'} */}
-            {' or the transaction will expire.'}
+            {'or the swap will not execute. ' + INPUT_OUTPUT_EXPLANATION}
           </TYPE.italic>
         ) : (
           <TYPE.italic textAlign="left" style={{ width: '100%' }}>
@@ -118,7 +119,7 @@ export default function SwapModalHeader({
               {slippageAdjustedAmounts[Field.INPUT]?.toSignificant(6)} {trade.inputAmount.currency.symbol}
             </b>
             {/* {' or the transaction will revert.'} */}
-            {' or the transaction will expire.'}
+            {'or the swap will not execute. ' + INPUT_OUTPUT_EXPLANATION}
           </TYPE.italic>
         )}
       </AutoColumn>
