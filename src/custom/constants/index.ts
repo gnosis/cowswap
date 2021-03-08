@@ -38,3 +38,4 @@ export const BUY_ETHER_TOKEN: { [chainId in ChainId]: Token } = {
 }
 
 export const ORDER_ID_SHORT_LENGTH = 8
+export const DEFAULT_ORDER_DELAY = 20000 // 20s

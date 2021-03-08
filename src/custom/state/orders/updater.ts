@@ -14,14 +14,13 @@ import {
 import { buildBlock2DateMap } from 'utils/blocks'
 import { delay, registerOnWindow } from 'utils/misc'
 import { getOrder, OrderMetaData } from 'utils/operator'
-import { GP_SETTLEMENT_CONTRACT_ADDRESS, SHORT_PRECISION } from 'constants/index'
+import { DEFAULT_ORDER_DELAY, GP_SETTLEMENT_CONTRACT_ADDRESS, SHORT_PRECISION } from 'constants/index'
 import { GP_V2_SETTLEMENT_INTERFACE } from 'constants/GPv2Settlement'
 import { stringToCurrency } from '../swap/extension'
 
 type OrderLogPopupMixData = OrderFulfillmentData & Pick<Log, 'transactionHash'> & Partial<Pick<Order, 'summary'>>
 
 const TradeEvent = GP_V2_SETTLEMENT_INTERFACE.getEvent('Trade')
-const DEFAULT_ORDER_DELAY = 20000 // 20 seconds
 
 interface TradeEventParams {
   owner: string // address
