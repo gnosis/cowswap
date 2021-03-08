@@ -110,7 +110,7 @@ export default function SwapModalHeader({
               {slippageAdjustedAmounts[Field.OUTPUT]?.toSignificant(6)} {trade.outputAmount.currency.symbol}
             </b>
             {/* {' or the transaction will revert.'} */}
-            {'or the swap will not execute. ' + INPUT_OUTPUT_EXPLANATION}
+            {' or the swap will not execute. ' + INPUT_OUTPUT_EXPLANATION}
           </TYPE.italic>
         ) : (
           <TYPE.italic textAlign="left" style={{ width: '100%' }}>
