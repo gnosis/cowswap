@@ -28,13 +28,13 @@ export interface PostOrderParams {
 function _getSummary(params: PostOrderParams): string {
   const { kind, inputAmount, adjustedOutputAmount, account, recipient, recipientAddressOrName } = params
 
-  const quantifier = kind === 'sell' ? 'at least' : 'at most'
+  const [inputQuantifier, outputQuantifier] = [kind === 'buy' ? 'at most' : '', kind === 'sell' ? 'at least' : '']
   const inputSymbol = inputAmount.currency.symbol
   const outputSymbol = adjustedOutputAmount.currency.symbol
   const inputAmountValue = inputAmount.toSignificant(SHORTEST_PRECISION)
   const outputAmountValue = adjustedOutputAmount.toSignificant(SHORTEST_PRECISION)
 
-  const base = `Swap ${inputAmountValue} ${inputSymbol} for ${quantifier} ${outputAmountValue} ${outputSymbol}`
+  const base = `Swap ${inputQuantifier} ${inputAmountValue} ${inputSymbol} for ${outputQuantifier} ${outputAmountValue} ${outputSymbol}`
 
   if (recipient === account) {
     return base
