@@ -20,7 +20,7 @@ describe('Swap', () => {
       .should('have.value', '')
   })
 
-  it('can enter an amount into output', () => {
+  it.skip('can enter an amount into output', () => {
     cy.get('#swap-currency-output .token-amount-input')
       .type('0.001', { delay: 200 })
       .should('have.value', '0.001')

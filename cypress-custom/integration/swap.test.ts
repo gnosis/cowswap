@@ -1,4 +1,4 @@
-import './swapMod.test'
+import './swapMod'
 
 // MOD of original Uni Swap test
 // Main differences summarised:
