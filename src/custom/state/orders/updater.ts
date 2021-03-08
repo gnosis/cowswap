@@ -193,6 +193,7 @@ export function EventUpdater(): null {
           // We've found the orderId in the Trade event
           // But the backend may not be completely updated yet, e.g
           // the frontend is ahead of the backend in regards to data freshness
+          // TODO: temporary! change to a better solution
           const orderFromApi = await delay(DEFAULT_ORDER_DELAY, getOrder(chainId, id))
 
           // using order from store and api compute summary
