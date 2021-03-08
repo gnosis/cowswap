@@ -12,7 +12,7 @@ import {
   useExpireOrdersBatch
 } from './hooks'
 import { buildBlock2DateMap } from 'utils/blocks'
-import { registerOnWindow } from 'utils/misc'
+import { delay, registerOnWindow } from 'utils/misc'
 import { getOrder, OrderMetaData } from 'utils/operator'
 import { GP_SETTLEMENT_CONTRACT_ADDRESS, SHORT_PRECISION } from 'constants/index'
 import { GP_V2_SETTLEMENT_INTERFACE } from 'constants/GPv2Settlement'
@@ -21,6 +21,7 @@ import { stringToCurrency } from '../swap/extension'
 type OrderLogPopupMixData = OrderFulfillmentData & Pick<Log, 'transactionHash'> & Partial<Pick<Order, 'summary'>>
 
 const TradeEvent = GP_V2_SETTLEMENT_INTERFACE.getEvent('Trade')
+const DEFAULT_ORDER_DELAY = 20000 // 20 seconds
 
 interface TradeEventParams {
   owner: string // address
@@ -189,7 +190,10 @@ export function EventUpdater(): null {
           // Get order from our store
           // and from the backened API
           const orderFromStore = findOrderById(id)
-          const orderFromApi = await getOrder(chainId, id)
+          // We've found the orderId in the Trade event
+          // But the backend may not be completely updated yet, e.g
+          // the frontend is ahead of the backend in regards to data freshness
+          const orderFromApi = await delay(DEFAULT_ORDER_DELAY, getOrder(chainId, id))
 
           // using order from store and api compute summary
           const summary = _computeFulfilledSummary({ orderFromApi, orderFromStore })
@@ -202,7 +206,6 @@ export function EventUpdater(): null {
           }
         })
       )
-
       // SET lastCheckedBlock = lastBlockNumber
       // AND fulfill orders
       // ordersBatchData can be empty
