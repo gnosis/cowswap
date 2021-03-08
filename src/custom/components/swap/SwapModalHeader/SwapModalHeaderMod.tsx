@@ -119,7 +119,7 @@ export default function SwapModalHeader({
               {slippageAdjustedAmounts[Field.INPUT]?.toSignificant(6)} {trade.inputAmount.currency.symbol}
             </b>
             {/* {' or the transaction will revert.'} */}
-            {'or the swap will not execute. ' + INPUT_OUTPUT_EXPLANATION}
+            {' or the swap will not execute. ' + INPUT_OUTPUT_EXPLANATION}
           </TYPE.italic>
         )}
       </AutoColumn>
