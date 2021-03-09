@@ -163,7 +163,7 @@ export default function SlippageTabs({
           </TYPE.black>
           <QuestionHelper
             text={
-              'Your swap will expire if the price changes unfavourably by more than your selected percentage. ' +
+              'Your swap expires and will not execute if the price changes unfavourably by more than the selected percentage. ' +
               INPUT_OUTPUT_EXPLANATION
             }
           />
@@ -245,7 +245,7 @@ export default function SlippageTabs({
           </TYPE.black>
           <QuestionHelper
             text={
-              'Your swap will expire if it is pending for longer than your selected duration. ' +
+              'Your swap expires and will not execute if it is pending for longer than the selected duration. ' +
               INPUT_OUTPUT_EXPLANATION
             }
           />
