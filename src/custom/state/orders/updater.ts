@@ -193,6 +193,7 @@ export function EventUpdater(): null {
           // But the backend may not be completely updated yet, e.g
           // the frontend is ahead of the backend in regards to data freshness
           // TODO: temporary! change to a better solution
+          // https://github.com/gnosis/gp-swap-ui/issues/213
           const orderFromApi = await delay(DEFAULT_ORDER_DELAY, getOrder(chainId, id))
 
           // using order from store and api compute summary
