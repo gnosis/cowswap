@@ -12,9 +12,9 @@ import {
   useExpireOrdersBatch
 } from './hooks'
 import { buildBlock2DateMap } from 'utils/blocks'
-import { registerOnWindow } from 'utils/misc'
+import { delay, registerOnWindow } from 'utils/misc'
 import { getOrder, OrderMetaData } from 'utils/operator'
-import { GP_SETTLEMENT_CONTRACT_ADDRESS, SHORT_PRECISION } from 'constants/index'
+import { DEFAULT_ORDER_DELAY, GP_SETTLEMENT_CONTRACT_ADDRESS, SHORT_PRECISION } from 'constants/index'
 import { GP_V2_SETTLEMENT_INTERFACE } from 'constants/GPv2Settlement'
 import { stringToCurrency } from '../swap/extension'
 
@@ -44,12 +44,14 @@ function _computeFulfilledSummary({
     const { buyToken, sellToken, executedBuyAmount, executedSellAmount } = orderFromApi
 
     if (orderFromStore) {
-      const { inputCurrency, outputCurrency } = orderFromStore
+      const { inputToken, outputToken } = orderFromStore
       // don't show amounts in atoms
-      const inputAmount = stringToCurrency(executedSellAmount, inputCurrency).toSignificant(SHORT_PRECISION)
-      const outputAmount = stringToCurrency(executedBuyAmount, outputCurrency).toSignificant(SHORT_PRECISION)
+      const inputAmount = stringToCurrency(executedSellAmount, inputToken)
+      const outputAmount = stringToCurrency(executedBuyAmount, outputToken)
 
-      summary = `Swap ${inputAmount} ${inputCurrency.symbol} for ${outputAmount} ${outputCurrency.symbol}`
+      summary = `Swap ${inputAmount.toSignificant(SHORT_PRECISION)} ${
+        inputAmount.currency.symbol
+      } for ${outputAmount.toSignificant(SHORT_PRECISION)} ${outputAmount.currency.symbol}`
     } else {
       // We only have the API order info, let's at least use that
       summary = `Swap ${sellToken} for ${buyToken}`
@@ -187,7 +189,12 @@ export function EventUpdater(): null {
           // Get order from our store
           // and from the backened API
           const orderFromStore = findOrderById(id)
-          const orderFromApi = await getOrder(chainId, id)
+          // We've found the orderId in the Trade event
+          // But the backend may not be completely updated yet, e.g
+          // the frontend is ahead of the backend in regards to data freshness
+          // TODO: temporary! change to a better solution
+          // https://github.com/gnosis/gp-swap-ui/issues/213
+          const orderFromApi = await delay(DEFAULT_ORDER_DELAY, getOrder(chainId, id))
 
           // using order from store and api compute summary
           const summary = _computeFulfilledSummary({ orderFromApi, orderFromStore })
@@ -200,7 +207,6 @@ export function EventUpdater(): null {
           }
         })
       )
-
       // SET lastCheckedBlock = lastBlockNumber
       // AND fulfill orders
       // ordersBatchData can be empty

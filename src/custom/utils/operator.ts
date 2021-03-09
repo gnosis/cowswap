@@ -202,6 +202,7 @@ export async function getOrder(chainId: ChainId, orderId: string): Promise<Order
     response = responseMaybeOk.ok ? responseMaybeOk : undefined
   } catch (error) {
     // do nothing
+    console.error('[util:operator] Error: Error fetching order with ID', orderId)
   }
 
   if (!response) {
