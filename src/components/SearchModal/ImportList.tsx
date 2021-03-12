@@ -17,7 +17,7 @@ import { TokenList } from '@uniswap/token-lists'
 import { useDispatch } from 'react-redux'
 import { AppDispatch } from 'state'
 import { useFetchListCallback } from 'hooks/useFetchListCallback'
-import { removeList, enableList } from 'state/lists/actions'
+import { removeList, enableList } from '@src/state/lists/actions'
 import { CurrencyModalView } from './CurrencySearchModal'
 import { useAllLists } from 'state/lists/hooks'
 
