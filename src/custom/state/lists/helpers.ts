@@ -86,11 +86,12 @@ export function _updateState({
 }: {
   storageKey: string
   state: ListsState
-  dispatch: React.Dispatch<any>
+  dispatch?: React.Dispatch<any>
 }) {
   return batchedUpdates(() => {
     // save chain aware tokens to localStorage and redux
-    dispatch(initialiseTokenLists(state))
+    // if dispatch is falsy, skip initialising the lists
+    dispatch && dispatch(initialiseTokenLists(state))
     localStorage.setItem(storageKey, JSON.stringify(state))
   })
 }
