@@ -89,6 +89,7 @@ export async function postOrder(params: PostOrderParams): Promise<string> {
     signer,
     order: unsignedOrder
   })
+  const signatureData = signature.data as string
   const creationTime = new Date().toISOString()
 
   // Call API
@@ -96,7 +97,7 @@ export async function postOrder(params: PostOrderParams): Promise<string> {
     chainId,
     order: {
       ...unsignedOrder,
-      signature
+      signature: signatureData
     }
   })
 
@@ -109,7 +110,7 @@ export async function postOrder(params: PostOrderParams): Promise<string> {
       id: orderId,
       owner: account,
       creationTime,
-      signature,
+      signature: signatureData,
       status: OrderStatus.PENDING,
       summary,
       inputToken: sellToken,
