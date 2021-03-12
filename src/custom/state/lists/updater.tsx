@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useRef, useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 
 import { useActiveWeb3React } from '@src/hooks'
@@ -13,11 +13,36 @@ import {
   _removeStaleTokenLists,
   _updateState
 } from './helpers'
+import { useFullLists } from 'state/lists/hooks'
 
 export default function NetworkListUpdater(): null {
   const { chainId } = useActiveWeb3React()
+  const chainIdRef = useRef(chainId)
 
   const dispatch = useDispatch()
+
+  const networkLists = useFullLists()
+
+  // deal with changing of networks and saving the previous list state
+  useEffect(() => {
+    const previousListState = networkLists
+    if (chainIdRef.current !== chainId) {
+      // chain has changed, save previous
+      console.debug('[Lists::Updater]::ChainId has changed. Prev: %s, Current: %s', chainIdRef.current, chainId)
+
+      const storageKey = buildKey(chainIdRef.current)
+
+      // only save state if we have a chainId
+      if (chainIdRef.current) {
+        _updateState({
+          storageKey,
+          state: previousListState
+        })
+      }
+      // update our chainId ref
+      chainIdRef.current = chainId
+    }
+  }, [chainId, networkLists])
 
   // Loading//Saving network specific lists from//into storage
   useEffect(() => {
