@@ -1,7 +1,6 @@
 import { ActionCreatorWithPayload, createAction } from '@reduxjs/toolkit'
 import { ChainId } from '@uniswap/sdk'
 import { TokenList, Version } from '@uniswap/token-lists'
-import { DEFAULT_NETWORK_FOR_LISTS } from '@src/custom/constants/lists'
 
 export interface WithChainId {
   chainId?: ChainId
@@ -22,16 +21,6 @@ interface FulfilledFetchTokenList extends PendingFetchTokenList {
 interface RejectedFetchTokenList extends PendingFetchTokenList {
   errorMessage: string
 }
-
-// Takes the payload of every action and if no chainId is found, sets to default
-// found in constants/index::DEFAULT_NETWORK_FOR_LISTS
-// allows us not to have to make this change in many places
-export const setDefaultChainId = <T extends WithChainId>(payload: T) => ({
-  payload: {
-    ...payload,
-    chainId: payload.chainId || DEFAULT_NETWORK_FOR_LISTS
-  }
-})
 
 //MOD: adds chainId to param
 export const fetchTokenList: Readonly<{
