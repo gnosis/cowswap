@@ -11,6 +11,8 @@ import { acceptListUpdate } from 'state/lists/actions'
 import { useActiveListUrls } from 'state/lists/hooks'
 import { useAllInactiveTokens } from 'hooks/Tokens'
 import { DEFAULT_NETWORK_FOR_LISTS } from 'constants/lists'
+// MOD: add updateVersion for chainId change init
+import { updateVersion } from 'state/global/actions'
 
 export default function Updater(): null {
   // MOD: chainId
@@ -82,6 +84,13 @@ export default function Updater(): null {
     // MOD: deps
     // }, [dispatch, lists, activeListUrls])
   }, [dispatch, lists, activeListUrls, chainId])
+
+  // automatically initialise lists if chainId changes
+  useEffect(() => {
+    if (chainId) {
+      dispatch(updateVersion({ chainId }))
+    }
+  }, [chainId, dispatch])
 
   return null
 }
