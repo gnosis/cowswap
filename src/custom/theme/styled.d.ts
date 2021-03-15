@@ -34,8 +34,6 @@ declare module 'styled-components' {
     // css snippets
     body: {
       background: FlattenSimpleInterpolation
-      backgroundRepeat?: FlattenSimpleInterpolation
-      backgroundPosition?: FlattenSimpleInterpolation
     }
     appBody: {
       maxWidth: string
