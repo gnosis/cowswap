@@ -1,5 +1,6 @@
 import { DefaultTheme, ThemeProvider as StyledComponentsThemeProvider, createGlobalStyle, css } from 'styled-components'
 import React, { useMemo } from 'react'
+import cowBg from 'assets/cow-bg.png'
 
 import { Colors } from 'theme/styled'
 import {
@@ -9,9 +10,6 @@ import {
   ThemedGlobalStyle as ThemedGlobalStyleUniswap
 } from '@src/theme'
 import { useIsDarkMode } from 'state/user/hooks'
-
-// Assets (not working)
-const backgroundImage = 'assets/cow-bg.png'
 
 export { TYPE } from '@src/theme'
 export * from '@src/theme/components'
@@ -74,7 +72,7 @@ function themeVariables(colorsTheme: Colors) {
   return {
     body: {
       background: css`
-        background-image: url(${backgroundImage});
+        background-image: url(${cowBg});
       `
     },
     appBody: {
