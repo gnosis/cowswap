@@ -42,8 +42,8 @@ interface GenerateOrderParams extends Pick<Order, 'owner'> {
 
 // increment for OrderId
 let orderN = 1
-const generateOrderId = (ind: number) => {
-  return `OrderId_${ind}_`.padEnd(56 * 2, 'X')
+const generateOrderId = () => {
+  return '0x'.padEnd(57 * 2, Math.floor(Math.random() * 10).toString())
 }
 
 const generateOrder = ({ owner, sellToken, buyToken }: GenerateOrderParams): Order => {
@@ -57,7 +57,7 @@ const generateOrder = ({ owner, sellToken, buyToken }: GenerateOrderParams): Ord
   } for ${(buyAmount / 10 ** buyToken.decimals).toFixed(2)} ${buyToken.symbol}`
 
   return {
-    id: generateOrderId(orderN), // Unique identifier for the order: 56 bytes encoded as hex without 0x
+    id: generateOrderId(), // Unique identifier for the order: 56 bytes encoded as hex without 0x
     owner: owner.replace('0x', ''),
     status: OrderStatus.PENDING,
     creationTime: new Date().toISOString(),
