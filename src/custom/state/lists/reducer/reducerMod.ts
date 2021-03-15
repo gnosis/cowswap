@@ -1,7 +1,8 @@
 import {
   // DEFAULT_ACTIVE_LIST_URLS,
   DEFAULT_LIST_OF_LISTS_BY_NETWORK,
-  DEFAULT_ACTIVE_LIST_URLS_BY_NETWORK
+  DEFAULT_ACTIVE_LIST_URLS_BY_NETWORK,
+  DEFAULT_NETWORK_FOR_LISTS
 } from 'constants/lists'
 import { createReducer } from '@reduxjs/toolkit'
 import { getVersionUpgrade, VersionUpgrade } from '@uniswap/token-lists'
@@ -72,72 +73,81 @@ const initialState: ListsStateByNetwork = {
 
 export default createReducer(initialState, builder =>
   builder
-    .addCase(fetchTokenList.pending, (baseState, { payload: { chainId, requestId, url } }) => {
-      const state = baseState[chainId]
-      state.byUrl[url] = {
-        current: null,
-        pendingUpdate: null,
-        ...state.byUrl[url],
-        loadingRequestId: requestId,
-        error: null
+    .addCase(
+      fetchTokenList.pending,
+      (baseState, { payload: { chainId = DEFAULT_NETWORK_FOR_LISTS, requestId, url } }) => {
+        const state = baseState[chainId]
+        state.byUrl[url] = {
+          current: null,
+          pendingUpdate: null,
+          ...state.byUrl[url],
+          loadingRequestId: requestId,
+          error: null
+        }
       }
-    })
-    .addCase(fetchTokenList.fulfilled, (baseState, { payload: { chainId, requestId, tokenList, url } }) => {
-      const state = baseState[chainId]
-      const current = state.byUrl[url]?.current
-      const loadingRequestId = state.byUrl[url]?.loadingRequestId
+    )
+    .addCase(
+      fetchTokenList.fulfilled,
+      (baseState, { payload: { chainId = DEFAULT_NETWORK_FOR_LISTS, requestId, tokenList, url } }) => {
+        const state = baseState[chainId]
+        const current = state.byUrl[url]?.current
+        const loadingRequestId = state.byUrl[url]?.loadingRequestId
 
-      // no-op if update does nothing
-      if (current) {
-        const upgradeType = getVersionUpgrade(current.version, tokenList.version)
+        // no-op if update does nothing
+        if (current) {
+          const upgradeType = getVersionUpgrade(current.version, tokenList.version)
 
-        if (upgradeType === VersionUpgrade.NONE) return
-        if (loadingRequestId === null || loadingRequestId === requestId) {
+          if (upgradeType === VersionUpgrade.NONE) return
+          if (loadingRequestId === null || loadingRequestId === requestId) {
+            state.byUrl[url] = {
+              ...state.byUrl[url],
+              loadingRequestId: null,
+              error: null,
+              current: current,
+              pendingUpdate: tokenList
+            }
+          }
+        } else {
+          // activate if on default active
+          if (DEFAULT_ACTIVE_LIST_URLS_BY_NETWORK[chainId].includes(url)) {
+            state.activeListUrls?.push(url)
+          }
+
           state.byUrl[url] = {
             ...state.byUrl[url],
             loadingRequestId: null,
             error: null,
-            current: current,
-            pendingUpdate: tokenList
+            current: tokenList,
+            pendingUpdate: null
           }
         }
-      } else {
-        // activate if on default active
-        if (DEFAULT_ACTIVE_LIST_URLS_BY_NETWORK[chainId].includes(url)) {
-          state.activeListUrls?.push(url)
+      }
+    )
+    .addCase(
+      fetchTokenList.rejected,
+      (baseState, { payload: { chainId = DEFAULT_NETWORK_FOR_LISTS, url, requestId, errorMessage } }) => {
+        const state = baseState[chainId]
+        if (state.byUrl[url]?.loadingRequestId !== requestId) {
+          // no-op since it's not the latest request
+          return
         }
 
         state.byUrl[url] = {
           ...state.byUrl[url],
           loadingRequestId: null,
-          error: null,
-          current: tokenList,
+          error: errorMessage,
+          current: null,
           pendingUpdate: null
         }
       }
-    })
-    .addCase(fetchTokenList.rejected, (baseState, { payload: { chainId, url, requestId, errorMessage } }) => {
-      const state = baseState[chainId]
-      if (state.byUrl[url]?.loadingRequestId !== requestId) {
-        // no-op since it's not the latest request
-        return
-      }
-
-      state.byUrl[url] = {
-        ...state.byUrl[url],
-        loadingRequestId: null,
-        error: errorMessage,
-        current: null,
-        pendingUpdate: null
-      }
-    })
-    .addCase(addList, (baseState, { payload: { chainId, url } }) => {
+    )
+    .addCase(addList, (baseState, { payload: { chainId = DEFAULT_NETWORK_FOR_LISTS, url } }) => {
       const state = baseState[chainId]
       if (!state.byUrl[url]) {
         state.byUrl[url] = NEW_LIST_STATE
       }
     })
-    .addCase(removeList, (baseState, { payload: { chainId, url } }) => {
+    .addCase(removeList, (baseState, { payload: { chainId = DEFAULT_NETWORK_FOR_LISTS, url } }) => {
       const state = baseState[chainId]
       if (state.byUrl[url]) {
         delete state.byUrl[url]
@@ -147,7 +157,7 @@ export default createReducer(initialState, builder =>
         state.activeListUrls = state.activeListUrls.filter(u => u !== url)
       }
     })
-    .addCase(enableList, (baseState, { payload: { chainId, url } }) => {
+    .addCase(enableList, (baseState, { payload: { chainId = DEFAULT_NETWORK_FOR_LISTS, url } }) => {
       const state = baseState[chainId]
       if (!state.byUrl[url]) {
         state.byUrl[url] = NEW_LIST_STATE
@@ -161,13 +171,13 @@ export default createReducer(initialState, builder =>
         state.activeListUrls = [url]
       }
     })
-    .addCase(disableList, (baseState, { payload: { chainId, url } }) => {
+    .addCase(disableList, (baseState, { payload: { chainId = DEFAULT_NETWORK_FOR_LISTS, url } }) => {
       const state = baseState[chainId]
       if (state.activeListUrls && state.activeListUrls.includes(url)) {
         state.activeListUrls = state.activeListUrls.filter(u => u !== url)
       }
     })
-    .addCase(acceptListUpdate, (baseState, { payload: { chainId, url } }) => {
+    .addCase(acceptListUpdate, (baseState, { payload: { chainId = DEFAULT_NETWORK_FOR_LISTS, url } }) => {
       const state = baseState[chainId]
       if (!state.byUrl[url]?.pendingUpdate) {
         throw new Error('accept list update called without pending update')
@@ -178,7 +188,7 @@ export default createReducer(initialState, builder =>
         current: state.byUrl[url].pendingUpdate
       }
     })
-    .addCase(updateVersion, (baseState, { payload: { chainId } }) => {
+    .addCase(updateVersion, (baseState, { payload: { chainId = DEFAULT_NETWORK_FOR_LISTS } }) => {
       const state = baseState[chainId]
 
       // state loaded from localStorage, but new lists have never been initialized
