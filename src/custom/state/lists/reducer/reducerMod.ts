@@ -9,13 +9,21 @@ import { getVersionUpgrade, VersionUpgrade } from '@uniswap/token-lists'
 import { TokenList } from '@uniswap/token-lists/dist/types'
 // import { DEFAULT_LIST_OF_LISTS } from '@src/constants/lists'
 import { updateVersion } from 'state/global/actions'
-import { acceptListUpdate, addList, fetchTokenList, removeList, enableList, disableList } from './actions/actionsMod'
+import {
+  acceptListUpdate,
+  addList,
+  fetchTokenList,
+  removeList,
+  enableList,
+  disableList
+} from 'state/lists/actions/actionsMod'
 import { ChainId } from '@uniswap/sdk'
 
 // Mod: change state shape - adds network map
 export type ListsStateByNetwork = {
   [chain in ChainId]: ListsState
 }
+
 export interface ListsState {
   readonly byUrl: {
     readonly [url: string]: {
