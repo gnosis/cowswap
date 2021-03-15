@@ -1,9 +1,13 @@
-import { ActionCreatorWithPayload, createAction } from '@reduxjs/toolkit'
+import { ActionCreatorWithPreparedPayload, createAction } from '@reduxjs/toolkit'
 import { ChainId } from '@uniswap/sdk'
 import { TokenList, Version } from '@uniswap/token-lists'
+import { DEFAULT_NETWORK_FOR_LISTS } from '@src/custom/constants/lists'
 
-interface WithChainIdAndUrl {
+export interface WithChainId {
   chainId?: ChainId
+}
+
+interface WithChainIdAndUrl extends WithChainId {
   url: string
 }
 
@@ -19,33 +23,43 @@ interface RejectedFetchTokenList extends PendingFetchTokenList {
   errorMessage: string
 }
 
-export const setDefaultChainId = <T extends WithChainIdAndUrl>(payload: T) => {
-  return {
+// Takes the payload of every action and if no chainId is found, sets to default
+// found in constants/index::DEFAULT_NETWORK_FOR_LISTS
+// allows us not to have to make this change in many places
+export const setDefaultChainId = <T extends WithChainId>(payload: T) => ({
+  payload: {
     ...payload,
-    chainId: payload.chainId || ChainId.MAINNET
+    chainId: payload.chainId || DEFAULT_NETWORK_FOR_LISTS
   }
-}
+})
 
 //MOD: adds chainId to param
 export const fetchTokenList: Readonly<{
-  pending: ActionCreatorWithPayload<PendingFetchTokenList>
-  fulfilled: ActionCreatorWithPayload<FulfilledFetchTokenList>
-  rejected: ActionCreatorWithPayload<RejectedFetchTokenList>
+  pending: ActionCreatorWithPreparedPayload<PendingFetchTokenList[], Required<PendingFetchTokenList>>
+  fulfilled: ActionCreatorWithPreparedPayload<FulfilledFetchTokenList[], Required<FulfilledFetchTokenList>>
+  rejected: ActionCreatorWithPreparedPayload<RejectedFetchTokenList[], Required<RejectedFetchTokenList>>
 }> = {
-  pending: createAction<PendingFetchTokenList>('lists/fetchTokenList/pending'),
-  fulfilled: createAction<FulfilledFetchTokenList>('lists/fetchTokenList/fulfilled'),
-  rejected: createAction<RejectedFetchTokenList>('lists/fetchTokenList/rejected')
+  pending: createAction('lists/fetchTokenList/pending', (payload: PendingFetchTokenList) => setDefaultChainId(payload)),
+  fulfilled: createAction('lists/fetchTokenList/fulfilled', (payload: FulfilledFetchTokenList) =>
+    setDefaultChainId(payload)
+  ),
+  rejected: createAction('lists/fetchTokenList/rejected', (payload: RejectedFetchTokenList) =>
+    setDefaultChainId(payload)
+  )
 }
 // add and remove from list options
-export const addList = createAction<WithChainIdAndUrl>('lists/addList')
-export const removeList = createAction<WithChainIdAndUrl>('lists/removeList')
+export const addList = createAction('lists/addList', (payload: WithChainIdAndUrl) => setDefaultChainId(payload))
+export const removeList = createAction('lists/removeList', (payload: WithChainIdAndUrl) => setDefaultChainId(payload))
 
 // select which lists to search across from loaded lists
-export const enableList = createAction<WithChainIdAndUrl>('lists/enableList')
-export const disableList = createAction<WithChainIdAndUrl>('lists/disableList')
+export const enableList = createAction('lists/enableList', (payload: WithChainIdAndUrl) => setDefaultChainId(payload))
+export const disableList = createAction('lists/disableList', (payload: WithChainIdAndUrl) => setDefaultChainId(payload))
 
 // versioning
-export const acceptListUpdate = createAction<WithChainIdAndUrl>('lists/acceptListUpdate')
-export const rejectVersionUpdate = createAction<Omit<WithChainIdAndUrl, 'url'> & { version: Version }>(
-  'lists/rejectVersionUpdate'
+export const acceptListUpdate = createAction('lists/acceptListUpdate', (payload: WithChainIdAndUrl) =>
+  setDefaultChainId(payload)
+)
+export const rejectVersionUpdate = createAction(
+  'lists/rejectVersionUpdate',
+  (payload: WithChainId & { version: Version }) => setDefaultChainId(payload)
 )
