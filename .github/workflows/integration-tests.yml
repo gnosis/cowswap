@@ -48,7 +48,8 @@ jobs:
         uses: cypress-io/github-action@v2
         with:
           start: yarn start
-          wait-on: http://localhost:3000
+          # wait-on: http://localhost:3000
+
       # Open tmate ssh connection on failure for debugging
       # Uncomment when needed and push upstream
       # - name: Setup tmate session
