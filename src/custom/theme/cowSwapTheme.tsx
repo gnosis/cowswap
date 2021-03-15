@@ -1,6 +1,6 @@
 import { DefaultTheme, ThemeProvider as StyledComponentsThemeProvider, createGlobalStyle, css } from 'styled-components'
 import React, { useMemo } from 'react'
-import cowBg from 'assets/cow-bg.png'
+import cowBg from 'assets/cow-swap/cow-bg.png'
 
 import { Colors } from 'theme/styled'
 import {
