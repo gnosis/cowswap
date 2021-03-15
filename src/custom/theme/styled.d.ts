@@ -32,6 +32,25 @@ declare module 'styled-components' {
   // Override theme
   export interface DefaultTheme extends DefaultThemeUniswap, Colors {
     // css snippets
+    body: {
+      background: FlattenSimpleInterpolation
+      backgroundRepeat?: FlattenSimpleInterpolation
+      backgroundPosition?: FlattenSimpleInterpolation
+    }
+    appBody: {
+      maxWidth: string
+      boxShadow: string
+      borderRadius: string
+      border: string
+      padding: string
+    }
+    buttonLight: {
+      fontSize: string
+      fontWeight: string
+      border: string
+      borderRadius: string
+      boxShadow: string
+    }
     bgLinearGradient: FlattenSimpleInterpolation
   }
 }

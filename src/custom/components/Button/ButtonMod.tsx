@@ -66,8 +66,11 @@ export const ButtonPrimary = styled(Base)`
 export const ButtonLight = styled(Base)`
   background-color: ${({ theme }) => theme.primary5};
   color: ${({ theme }) => theme.primaryText1};
-  font-size: 16px;
-  font-weight: 500;
+  font-size: ${({ theme }) => theme.buttonLight.fontSize};
+  font-weight: ${({ theme }) => theme.buttonLight.fontWeight};
+  border: ${({ theme }) => theme.buttonLight.border};
+  box-shadow: ${({ theme }) => theme.buttonLight.boxShadow};
+  border-radius: ${({ theme }) => theme.buttonLight.borderRadius};
   &:focus {
     box-shadow: 0 0 0 1pt ${({ theme, disabled }) => !disabled && darken(0.03, theme.primary5)};
     background-color: ${({ theme, disabled }) => !disabled && darken(0.03, theme.primary5)};

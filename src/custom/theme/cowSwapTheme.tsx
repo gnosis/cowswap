@@ -10,6 +10,9 @@ import {
 } from '@src/theme'
 import { useIsDarkMode } from 'state/user/hooks'
 
+// Assets
+const backgroundImage = 'assets/cow-bg.png'
+
 export { TYPE } from '@src/theme'
 export * from '@src/theme/components'
 
@@ -29,7 +32,7 @@ export function colors(darkMode: boolean): Colors {
     // text5: darkMode ? '#2C2F36' : '#EDEEF2',
 
     // ****** backgrounds / greys ******
-    bg1: darkMode ? '#b0e1de' : '#b0e1de',
+    bg1: darkMode ? '#D5E9F0' : '#D5E9F0',
     bg2: darkMode ? '#2C2D3F' : '#F7F8FA',
     bg3: darkMode ? '#1E1F2C' : '#EDEEF2',
     // bg4: darkMode ? '#565A69' : '#CED0D9',
@@ -44,10 +47,10 @@ export function colors(darkMode: boolean): Colors {
     // primary2: darkMode ? '#3680E7' : '#FF8CC3',
     // primary3: darkMode ? '#4D8FEA' : '#FF99C9',
     // primary4: darkMode ? '#376bad70' : '#F6DDE8',
-    primary5: darkMode ? '#153d6f70' : 'rgba(137,88,255,0.6)',
+    primary5: darkMode ? '#FF784A' : '#FF784A',
 
     // ****** color text ******
-    primaryText1: darkMode ? '#6da8ff' : '#8958FF',
+    primaryText1: darkMode ? '#000000' : '#000000',
 
     // ****** secondary colors ******
     secondary1: darkMode ? '#2172E5' : '#8958FF',
@@ -67,6 +70,33 @@ export function colors(darkMode: boolean): Colors {
   }
 }
 
+function themeVariables(colorsTheme: Colors) {
+  return {
+    body: {
+      background: css`
+        background-image: url(${backgroundImage});
+      `
+    },
+    appBody: {
+      maxWidth: '420px',
+      boxShadow: `6px 6px 0px #000000`,
+      borderRadius: '8px',
+      border: '4px solid #000000',
+      padding: '24px'
+    },
+    buttonLight: {
+      fontSize: '26px',
+      fontWeight: 'bold',
+      border: '4px solid #000000',
+      borderRadius: '9px',
+      boxShadow: '4px 4px 0px #000000'
+    },
+    bgLinearGradient: css`
+      background-image: linear-gradient(270deg, ${colorsTheme.purple} 30%, ${colorsTheme.blue1} 70%);
+    `
+  }
+}
+
 export function theme(darkmode: boolean): DefaultTheme {
   const colorsTheme = colors(darkmode)
   return {
@@ -74,9 +104,7 @@ export function theme(darkmode: boolean): DefaultTheme {
     ...colorsTheme,
 
     // Overide Theme
-    bgLinearGradient: css`
-      background-image: linear-gradient(270deg, ${colorsTheme.purple} 30%, ${colorsTheme.blue1} 70%);
-    `
+    ...themeVariables(colorsTheme)
   }
 }
 
@@ -96,8 +124,4 @@ export const FixedGlobalStyle = createGlobalStyle`
 export const ThemedGlobalStyle = createGlobalStyle`
   // Uniswap default
   ${ThemedGlobalStyleUniswap}
-
-  html {
-    background-image: ${({ theme }) => `linear-gradient(0deg, ${theme.bg1} 0%, ${theme.bg2} 100%)`};
-  }
 `

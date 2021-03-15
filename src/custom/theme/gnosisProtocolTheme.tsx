@@ -67,6 +67,34 @@ export function colors(darkMode: boolean): Colors {
   }
 }
 
+function themeVariables(colorsTheme: Colors) {
+  return {
+    body: {
+      background: css`
+        background: radial-gradient(50% 50%, ${colorsTheme.primary1} 0%, ${colorsTheme.bg1} 100%) 0 -30vh no-repeat;
+      `
+    },
+    appBody: {
+      maxWidth: '420px',
+      boxShadow: `0px 0px 1px rgba(0, 0, 0, 0.01), 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04),
+  0px 24px 32px rgba(0, 0, 0, 0.01)`,
+      borderRadius: '30px',
+      border: 'none',
+      padding: '1rem'
+    },
+    buttonLight: {
+      fontSize: '16px',
+      fontWeight: '500',
+      border: 'none',
+      borderRadius: 'inherit',
+      boxShadow: 'none'
+    },
+    bgLinearGradient: css`
+      background-image: linear-gradient(270deg, ${colorsTheme.purple} 30%, ${colorsTheme.blue1} 70%);
+    `
+  }
+}
+
 export function theme(darkmode: boolean): DefaultTheme {
   const colorsTheme = colors(darkmode)
   return {
@@ -74,9 +102,7 @@ export function theme(darkmode: boolean): DefaultTheme {
     ...colorsTheme,
 
     // Overide Theme
-    bgLinearGradient: css`
-      background-image: linear-gradient(270deg, ${colorsTheme.purple} 30%, ${colorsTheme.blue1} 70%);
-    `
+    ...themeVariables(colorsTheme)
   }
 }
 
@@ -96,8 +122,4 @@ export const FixedGlobalStyle = createGlobalStyle`
 export const ThemedGlobalStyle = createGlobalStyle`
   // Uniswap default
   ${ThemedGlobalStyleUniswap}
-
-  html {
-    background-image: ${({ theme }) => `linear-gradient(0deg, ${theme.bg1} 0%, ${theme.bg2} 100%)`};
-  }
 `
