@@ -10,7 +10,7 @@ import {
 } from '@src/theme'
 import { useIsDarkMode } from 'state/user/hooks'
 
-// Assets
+// Assets (not working)
 const backgroundImage = 'assets/cow-bg.png'
 
 export { TYPE } from '@src/theme'
