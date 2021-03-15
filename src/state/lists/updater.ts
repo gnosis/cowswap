@@ -8,7 +8,7 @@ import useInterval from '../../hooks/useInterval'
 import useIsWindowVisible from '../../hooks/useIsWindowVisible'
 import { AppDispatch } from 'state'
 import { acceptListUpdate } from './actions'
-import { useActiveListUrls } from './hooks'
+import { useActiveListUrls } from 'state/lists/hooks'
 import { useAllInactiveTokens } from 'hooks/Tokens'
 
 export default function Updater(): null {
