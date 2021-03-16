@@ -32,6 +32,12 @@ declare module 'styled-components' {
   // Override theme
   export interface DefaultTheme extends DefaultThemeUniswap, Colors {
     // css snippets
+    logo: {
+      src: string
+      alt: string
+      width: string
+      height: string
+    }
     body: {
       background: FlattenSimpleInterpolation
     }
@@ -41,6 +47,23 @@ declare module 'styled-components' {
       borderRadius: string
       border: string
       padding: string
+    }
+    header?: {
+      border?: string
+    }
+    swap?: {
+      headerSize?: string
+    }
+    currencyInput?: {
+      background?: string
+      border?: string
+      color?: string
+    }
+    buttonCurrencySelect: {
+      background: string
+      boxShadow?: string
+      border?: string
+      color?: string
     }
     buttonLight: {
       fontSize: string

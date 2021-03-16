@@ -1,6 +1,7 @@
 import { DefaultTheme, ThemeProvider as StyledComponentsThemeProvider, createGlobalStyle, css } from 'styled-components'
 import React, { useMemo } from 'react'
 import cowBg from 'assets/cow-swap/cow-bg.png'
+import Logo from 'assets/cow-swap/cowswap-logo.svg'
 
 import { Colors } from 'theme/styled'
 import {
@@ -19,32 +20,23 @@ export function colors(darkMode: boolean): Colors {
     ...colorsUniswap(darkMode),
 
     // ****** base ******
-    // white: '#FFFFFF,
-    // black: '#000000',
+    white: '#FFFFFF',
+    black: '#000000',
 
     // ****** text ******
-    // text1: darkMode ? '#FFFFFF' : '#000000',
-    text2: darkMode ? '#DCDCDC' : '#565A69',
-    // text3: darkMode ? '#6C7284' : '#888D9B',
-    // text4: darkMode ? '#565A69' : '#C3C5CB',
-    // text5: darkMode ? '#2C2F36' : '#EDEEF2',
+    text1: darkMode ? '#000000' : '#000000',
+    text2: darkMode ? '#000000' : '#000000',
 
     // ****** backgrounds / greys ******
     bg1: darkMode ? '#D5E9F0' : '#D5E9F0',
-    bg2: darkMode ? '#2C2D3F' : '#F7F8FA',
-    bg3: darkMode ? '#1E1F2C' : '#EDEEF2',
-    // bg4: darkMode ? '#565A69' : '#CED0D9',
-    // bg5: darkMode ? '#6C7284' : '#888D9B',
+    bg2: darkMode ? '#000000' : '#000000',
+    bg3: darkMode ? '#000000' : '#000000',
 
     // ****** specialty colors ******
-    // modalBG: darkMode ? 'rgba(0,0,0,.425)' : 'rgba(0,0,0,0.3)',
-    advancedBG: darkMode ? '#2B2D3F' : 'rgb(247 248 250)',
+    advancedBG: darkMode ? '#000000' : '#000000',
 
     // ****** primary colors ******
-    primary1: darkMode ? '#3F77FF' : '#8958FF',
-    // primary2: darkMode ? '#3680E7' : '#FF8CC3',
-    // primary3: darkMode ? '#4D8FEA' : '#FF99C9',
-    // primary4: darkMode ? '#376bad70' : '#F6DDE8',
+    primary1: darkMode ? '#FF784A' : '#FF784A',
     primary5: darkMode ? '#FF784A' : '#FF784A',
 
     // ****** color text ******
@@ -52,42 +44,54 @@ export function colors(darkMode: boolean): Colors {
 
     // ****** secondary colors ******
     secondary1: darkMode ? '#2172E5' : '#8958FF',
-    // secondary2: darkMode ? '#17000b26' : '#F6DDE8',
     secondary3: darkMode ? '#17000b26' : 'rgba(137,88,255,0.6)',
 
     // ****** other ******
-    // red1: '#FF6871',
-    // red2: '#F82D3A',
-    // green1: '#27AE60',
-    // yellow1: '#FFE270',
-    // yellow2: '#F3841E',
     blue1: '#3F77FF',
     purple: '#8958FF',
-    border: darkMode ? '#3a3b5a' : 'rgb(58 59 90 / 10%)',
+    border: darkMode ? '#000000' : '#000000',
     disabled: darkMode ? '#31323e' : 'rgb(237, 238, 242)'
   }
 }
 
 function themeVariables(colorsTheme: Colors) {
   return {
+    logo: { src: Logo, alt: 'CowSwap Logo', width: '208px', height: '50px' },
     body: {
       background: css`
         background-image: url(${cowBg});
       `
     },
     appBody: {
-      maxWidth: '420px',
-      boxShadow: `6px 6px 0px #000000`,
+      maxWidth: '440px',
+      boxShadow: `6px 6px 0px ${colorsTheme.black}`,
       borderRadius: '8px',
-      border: '4px solid #000000',
-      padding: '24px'
+      border: `4px solid ${colorsTheme.black}`,
+      padding: '12px 6px 24px'
+    },
+    header: {
+      border: 'none'
+    },
+    swap: {
+      headerSize: '28px'
     },
     buttonLight: {
       fontSize: '26px',
       fontWeight: 'bold',
-      border: '4px solid #000000',
+      border: `4px solid ${colorsTheme.black}`,
       borderRadius: '9px',
-      boxShadow: '4px 4px 0px #000000'
+      boxShadow: `4px 4px 0px ${colorsTheme.black}`
+    },
+    currencyInput: {
+      background: `${colorsTheme.white}`,
+      color: `${colorsTheme.black}`,
+      border: `4px solid ${colorsTheme.black}`
+    },
+    buttonCurrencySelect: {
+      background: `${colorsTheme.bg1}`,
+      border: `2px solid ${colorsTheme.black}`,
+      boxShadow: `2px 2px 0px ${colorsTheme.black}`,
+      color: `${colorsTheme.black}`
     },
     bgLinearGradient: css`
       background-image: linear-gradient(270deg, ${colorsTheme.purple} 30%, ${colorsTheme.blue1} 70%);
