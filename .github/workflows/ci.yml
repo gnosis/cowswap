@@ -200,7 +200,7 @@ jobs:
           #   when un-commenting this, we need to uncomment also the "Download website" I added in this PR and prevent cypres from buildig the project again
           # start: yarn serve:ci
           start: yarn start:default
-          wait-on: http://10.1.0.4:3000
+          wait-on: http://localhost:3000
       # Open tmate ssh connection on failure for debugging
       # Uncomment when needed and push upstream
       # - name: Setup tmate session
