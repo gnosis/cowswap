@@ -201,7 +201,7 @@ jobs:
           # start: yarn serve:ci
           start: yarn start:default
           wait-on: http://localhost:3000
-          wait-on-timeout: 120
+          wait-on-timeout: 200
       # Open tmate ssh connection on failure for debugging
       # Uncomment when needed and push upstream
       # - name: Setup tmate session
