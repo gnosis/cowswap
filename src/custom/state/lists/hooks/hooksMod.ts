@@ -15,6 +15,78 @@ export * from '@src/state/lists/hooks'
 // MOD
 // This mod file adds { chainId } support to the hooks
 
+// type TagDetails = Tags[keyof Tags]
+// export interface TagInfo extends TagDetails {
+//   id: string
+// }
+
+// /**
+//  * Token instances created from token info.
+//  */
+// export class WrappedTokenInfo extends Token {
+//   public readonly tokenInfo: TokenInfo
+//   public readonly tags: TagInfo[]
+//   constructor(tokenInfo: TokenInfo, tags: TagInfo[]) {
+//     super(tokenInfo.chainId, tokenInfo.address, tokenInfo.decimals, tokenInfo.symbol, tokenInfo.name)
+//     this.tokenInfo = tokenInfo
+//     this.tags = tags
+//   }
+//   public get logoURI(): string | undefined {
+//     return this.tokenInfo.logoURI
+//   }
+// }
+
+// export type TokenAddressMap = Readonly<
+//   { [chainId in ChainId]: Readonly<{ [tokenAddress: string]: { token: WrappedTokenInfo; list: TokenList } }> }
+// >
+
+// /**
+//  * An empty result, useful as a default.
+//  */
+// export const EMPTY_LIST: TokenAddressMap = {
+//   [ChainId.KOVAN]: {},
+//   [ChainId.RINKEBY]: {},
+//   [ChainId.ROPSTEN]: {},
+//   [ChainId.GÖRLI]: {},
+//   [ChainId.MAINNET]: {},
+//   [ChainId.XDAI]: {}
+// }
+
+// const listCache: WeakMap<TokenList, TokenAddressMap> | null =
+//   typeof WeakMap !== 'undefined' ? new WeakMap<TokenList, TokenAddressMap>() : null
+
+// export function listToTokenMap(list: TokenList): TokenAddressMap {
+//   const result = listCache?.get(list)
+//   if (result) return result
+
+//   const map = list.tokens.reduce<TokenAddressMap>(
+//     (tokenMap, tokenInfo) => {
+//       const tags: TagInfo[] =
+//         tokenInfo.tags
+//           ?.map(tagId => {
+//             if (!list.tags?.[tagId]) return undefined
+//             return { ...list.tags[tagId], id: tagId }
+//           })
+//           ?.filter((x): x is TagInfo => Boolean(x)) ?? []
+//       const token = new WrappedTokenInfo(tokenInfo, tags)
+//       if (tokenMap[token.chainId][token.address] !== undefined) throw Error('Duplicate tokens.')
+//       return {
+//         ...tokenMap,
+//         [token.chainId]: {
+//           ...tokenMap[token.chainId],
+//           [token.address]: {
+//             token,
+//             list: list
+//           }
+//         }
+//       }
+//     },
+//     { ...EMPTY_LIST }
+//   )
+//   listCache?.set(list, map)
+//   return map
+// }
+
 export function useAllLists(): {
   readonly [url: string]: {
     readonly current: TokenList | null
@@ -28,6 +100,16 @@ export function useAllLists(): {
   // return useSelector<AppState, AppState['lists']['byUrl']>(state => state.lists.byUrl)
   return useSelector<AppState, AppState['lists'][ChainId]['byUrl']>(state => state.lists[chainId].byUrl)
 }
+
+// export function combineMaps(map1: TokenAddressMap, map2: TokenAddressMap): TokenAddressMap {
+//   return {
+//     1: { ...map1[1], ...map2[1] },
+//     3: { ...map1[3], ...map2[3] },
+//     4: { ...map1[4], ...map2[4] },
+//     5: { ...map1[5], ...map2[5] },
+//     42: { ...map1[42], ...map2[42] },
+//     100: { ...map1[100], ...map2[100] }
+//   }
 
 // merge tokens contained within lists from urls
 export function useCombinedTokenMapFromUrls(urls: string[] | undefined): TokenAddressMap {
