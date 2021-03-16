@@ -59,7 +59,7 @@ function themeVariables(colorsTheme: Colors) {
     logo: { src: Logo, alt: 'CowSwap Logo', width: '208px', height: '50px' },
     body: {
       background: css`
-        background-image: url(${cowBg});
+        background: url(${cowBg}) no-repeat 100% / cover;
       `
     },
     appBody: {
