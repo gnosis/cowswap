@@ -10,8 +10,6 @@ import { TokenAddressMap, listToTokenMap, combineMaps, EMPTY_LIST } from '@src/s
 import sortByListPriority from 'utils/listSort'
 import UNSUPPORTED_TOKEN_LIST from 'constants/tokenLists/uniswap-v2-unsupported.tokenlist.json'
 
-export * from '@src/state/lists/hooks'
-
 // MOD
 // This mod file adds { chainId } support to the hooks
 
