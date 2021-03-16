@@ -11,6 +11,7 @@ import { TokenList } from '@uniswap/token-lists/dist/types'
 import { updateVersion } from 'state/global/actions'
 import { acceptListUpdate, addList, fetchTokenList, removeList, enableList, disableList } from 'state/lists/actions'
 import { ChainId } from '@uniswap/sdk'
+import { getChainIdValues } from 'utils/misc'
 
 // Mod: change state shape - adds network map
 export type ListsStateByNetwork = {
@@ -56,14 +57,11 @@ const setInitialListState = (chainId: ChainId): ListsState => ({
   activeListUrls: DEFAULT_ACTIVE_LIST_URLS_BY_NETWORK[chainId]
 })
 
-const ChainIdList = Object.values(ChainId)
 // MOD: change the intiialState shape
 // we make an object with each chainId pulled from ChainId enum
 // into a list and reduced into a map
 const initialState: ListsStateByNetwork = {
-  // cut in half as enums are always represented as key/value and then inverted
-  // https://stackoverflow.com/a/51536142
-  ...(ChainIdList.slice(ChainIdList.length / 2) as ChainId[]).reduce((memo, chainId) => {
+  ...getChainIdValues().reduce((memo, chainId) => {
     if (!memo[chainId]) {
       memo[chainId] = setInitialListState(chainId)
     }
