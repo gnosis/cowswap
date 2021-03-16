@@ -1,4 +1,4 @@
-import { TokenAddressMap, useDefaultTokenList, useUnsupportedTokenList } from './../state/lists/hooks'
+import { TokenAddressMap, useDefaultTokenList, useUnsupportedTokenList } from 'state/lists/hooks'
 import { parseBytes32String } from '@ethersproject/strings'
 import { Currency, ETHER, Token, currencyEquals } from '@uniswap/sdk'
 import { useMemo } from 'react'

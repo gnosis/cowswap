@@ -188,49 +188,54 @@ export default createReducer(initialState, builder =>
         current: state.byUrl[url].pendingUpdate
       }
     })
-    .addCase(updateVersion, (baseState, { payload: { chainId = DEFAULT_NETWORK_FOR_LISTS } }) => {
-      const state = baseState[chainId]
+    .addCase(
+      updateVersion,
+      (baseState, { payload: { chainId = DEFAULT_NETWORK_FOR_LISTS } }): ListsStateByNetwork | void => {
+        const state = baseState[chainId]
+        // MOD: we need to check the localstrorage list shape against our schema as it has changed
+        if (!state) return (baseState = initialState)
 
-      // state loaded from localStorage, but new lists have never been initialized
-      if (!state.lastInitializedDefaultListOfLists) {
-        state.byUrl = initialState[chainId].byUrl
-        state.activeListUrls = initialState[chainId].activeListUrls
-      } else if (state.lastInitializedDefaultListOfLists) {
-        const lastInitializedSet = state.lastInitializedDefaultListOfLists.reduce<Set<string>>(
-          (s, l) => s.add(l),
-          new Set()
-        )
-        const newListOfListsSet = DEFAULT_LIST_OF_LISTS_BY_NETWORK[chainId].reduce<Set<string>>(
-          (s, l) => s.add(l),
-          new Set()
-        )
+        // state loaded from localStorage, but new lists have never been initialized
+        if (!state.lastInitializedDefaultListOfLists) {
+          state.byUrl = initialState[chainId].byUrl
+          state.activeListUrls = initialState[chainId].activeListUrls
+        } else if (state.lastInitializedDefaultListOfLists) {
+          const lastInitializedSet = state.lastInitializedDefaultListOfLists.reduce<Set<string>>(
+            (s, l) => s.add(l),
+            new Set()
+          )
+          const newListOfListsSet = DEFAULT_LIST_OF_LISTS_BY_NETWORK[chainId].reduce<Set<string>>(
+            (s, l) => s.add(l),
+            new Set()
+          )
 
-        DEFAULT_LIST_OF_LISTS_BY_NETWORK[chainId].forEach(listUrl => {
-          if (!lastInitializedSet.has(listUrl)) {
-            state.byUrl[listUrl] = NEW_LIST_STATE
-          }
-        })
+          DEFAULT_LIST_OF_LISTS_BY_NETWORK[chainId].forEach(listUrl => {
+            if (!lastInitializedSet.has(listUrl)) {
+              state.byUrl[listUrl] = NEW_LIST_STATE
+            }
+          })
 
-        state.lastInitializedDefaultListOfLists.forEach(listUrl => {
-          if (!newListOfListsSet.has(listUrl)) {
-            delete state.byUrl[listUrl]
-          }
-        })
+          state.lastInitializedDefaultListOfLists.forEach(listUrl => {
+            if (!newListOfListsSet.has(listUrl)) {
+              delete state.byUrl[listUrl]
+            }
+          })
+        }
+
+        state.lastInitializedDefaultListOfLists = DEFAULT_LIST_OF_LISTS_BY_NETWORK[chainId]
+
+        // if no active lists, activate defaults
+        if (!state.activeListUrls) {
+          state.activeListUrls = DEFAULT_ACTIVE_LIST_URLS_BY_NETWORK[chainId]
+
+          // for each list on default list, initialize if needed
+          DEFAULT_ACTIVE_LIST_URLS_BY_NETWORK[chainId].map((listUrl: string) => {
+            if (!state.byUrl[listUrl]) {
+              state.byUrl[listUrl] = NEW_LIST_STATE
+            }
+            return true
+          })
+        }
       }
-
-      state.lastInitializedDefaultListOfLists = DEFAULT_LIST_OF_LISTS_BY_NETWORK[chainId]
-
-      // if no active lists, activate defaults
-      if (!state.activeListUrls) {
-        state.activeListUrls = DEFAULT_ACTIVE_LIST_URLS_BY_NETWORK[chainId]
-
-        // for each list on default list, initialize if needed
-        DEFAULT_ACTIVE_LIST_URLS_BY_NETWORK[chainId].map((listUrl: string) => {
-          if (!state.byUrl[listUrl]) {
-            state.byUrl[listUrl] = NEW_LIST_STATE
-          }
-          return true
-        })
-      }
-    })
+    )
 )
