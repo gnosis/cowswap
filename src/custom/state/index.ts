@@ -11,7 +11,6 @@ import burn from '@src/state/burn/reducer'
 import multicall from '@src/state/multicall/reducer'
 // CUSTOM REDUCERS
 import lists from './lists/reducer'
-import operator from './operator/reducer'
 import orders from './orders/reducer'
 import fee from './fee/reducer'
 import { updateVersion } from 'state/global/actions'
@@ -32,7 +31,6 @@ const UNISWAP_REDUCERS = {
 const reducers = {
   ...UNISWAP_REDUCERS,
   lists,
-  operator,
   orders,
   fee
 }
