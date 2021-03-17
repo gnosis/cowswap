@@ -27,15 +27,17 @@ export function colors(darkMode: boolean): Colors {
     // ****** text ******
     text1: darkMode ? '#000000' : '#000000',
     text2: darkMode ? '#000000' : '#000000',
+    text3: darkMode ? '#000000' : '#000000',
+    text4: darkMode ? '#000000b8' : '#000000b8',
 
     // ****** backgrounds / greys ******
     bg1: darkMode ? '#D5E9F0' : '#D5E9F0',
-    bg2: darkMode ? '#000000' : '#000000',
+    bg2: darkMode ? '#ffffff' : '#ffffff',
     bg3: darkMode ? '#d5e8f0' : '#d5e8f0',
     bg4: darkMode ? '#d5e8f0' : '#ffffff',
 
     // ****** specialty colors ******
-    advancedBG: darkMode ? '#000000' : '#000000',
+    advancedBG: darkMode ? '#d5e8f0' : '#d5e8f0',
 
     // ****** primary colors ******
     primary1: darkMode ? '#FF784A' : '#FF784A',

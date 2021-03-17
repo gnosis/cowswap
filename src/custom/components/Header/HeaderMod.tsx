@@ -132,12 +132,6 @@ const AccountElement = styled.div<{ active: boolean }>`
   }
 `
 
-const HideSmall = styled.span`
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    display: none;
-  `};
-`
-
 // const UNIAmount = styled(AccountElement)`
 //   color: white;
 //   padding: 4px 8px;
@@ -160,6 +154,12 @@ const HideSmall = styled.span`
 //     opacity: 0.9;
 //   }
 // `
+
+const HideSmall = styled.span`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    display: none;
+  `};
+`
 
 const NetworkCard = styled(YellowCard)`
   border-radius: 12px;
