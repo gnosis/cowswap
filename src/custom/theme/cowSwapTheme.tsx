@@ -117,7 +117,8 @@ function themeVariables(colorsTheme: Colors) {
       background: `${colorsTheme.bg1}`,
       border: `2px solid ${colorsTheme.black}`,
       boxShadow: `2px 2px 0px ${colorsTheme.black}`,
-      color: `${colorsTheme.black}`
+      color: `${colorsTheme.black}`,
+      colorSelected: `${colorsTheme.black}`
     },
     bgLinearGradient: css`
       background-image: linear-gradient(270deg, ${colorsTheme.purple} 30%, ${colorsTheme.blue1} 70%);

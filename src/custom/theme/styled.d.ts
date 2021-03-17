@@ -65,6 +65,7 @@ declare module 'styled-components' {
       boxShadow?: string
       border?: string
       color?: string
+      colorSelected?: string
     }
     buttonLight: {
       fontSize: string
