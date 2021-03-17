@@ -67,7 +67,7 @@ declare module 'styled-components' {
       colorSelected?: string
     }
     buttonPrimary: {
-      background: FlattenSimpleInterpolation
+      background?: FlattenSimpleInterpolation
       fontSize?: string
       fontWeight?: string
       border?: string
@@ -75,6 +75,8 @@ declare module 'styled-components' {
       boxShadow?: string
     }
     buttonLight: {
+      background?: FlattenSimpleInterpolation
+      backgroundHover?: string
       fontSize?: string
       fontWeight?: string
       border?: string

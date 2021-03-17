@@ -29,6 +29,8 @@ export const ButtonPrimary = styled(ButtonPrimaryMod)`
   box-shadow: ${({ theme }) => (theme.buttonPrimary?.boxShadow ? theme.buttonPrimary.boxShadow : 'none')};
   border-radius: ${({ theme }) => (theme.buttonPrimary?.borderRadius ? theme.buttonPrimary.borderRadius : 0)};
   ${({ theme }) => theme.cursor};
+  overflow: hidden;
+  position: relative;
 
   > div {
     font-size: inherit;
@@ -52,7 +54,7 @@ export const ButtonPrimary = styled(ButtonPrimaryMod)`
 
 export const ButtonLight = styled(ButtonLightMod)`
   // CSS override
-  background-color: ${({ theme }) => theme.primary5};
+  ${({ theme }) => (theme.buttonLight?.background ? theme.buttonLight?.background : theme.primary5)}
   color: ${({ theme }) => theme.primaryText1};
   font-size: ${({ theme }) => (theme.buttonLight?.fontSize ? theme.buttonLight.fontSize : '16px')};
   font-weight: ${({ theme }) => (theme.buttonLight?.fontWeight ? theme.buttonLight.fontWeight : 500)};
@@ -60,6 +62,8 @@ export const ButtonLight = styled(ButtonLightMod)`
   box-shadow: ${({ theme }) => (theme.buttonLight?.boxShadow ? theme.buttonLight.boxShadow : 'none')};
   border-radius: ${({ theme }) => (theme.buttonLight?.borderRadius ? theme.buttonLight.borderRadius : 0)};
   ${({ theme }) => theme.cursor};
+  overflow: hidden;
+  position: relative;
 
   > div {
     font-size: inherit;
@@ -68,14 +72,17 @@ export const ButtonLight = styled(ButtonLightMod)`
 
   &:focus {
     box-shadow: ${({ theme }) => (theme.buttonLight?.boxShadow ? theme.buttonLight.boxShadow : 'none')};
-    background-color: inherit;
+    background-color: ${({ theme }) =>
+      theme.buttonLight?.backgroundHover ? theme.buttonLight.backgroundHover : 'inherit'};
   }
   &:hover {
-    background-color: inherit;
+    background-color: ${({ theme }) =>
+      theme.buttonLight?.backgroundHover ? theme.buttonLight.backgroundHover : 'inherit'};
   }
   &:active {
     box-shadow: ${({ theme }) => (theme.buttonLight?.boxShadow ? theme.buttonLight.boxShadow : 'none')};
-    background-color: inherit;
+    background-color: ${({ theme }) =>
+      theme.buttonLight?.backgroundHover ? theme.buttonLight.backgroundHover : 'inherit'};
   }
   &:disabled {
     opacity: 0.4;
@@ -90,6 +97,7 @@ export const ButtonLight = styled(ButtonLightMod)`
       outline: none;
     }
   }
+
 `
 
 export const ButtonGray = styled(ButtonGrayMod)`

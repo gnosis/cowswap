@@ -45,6 +45,7 @@ export function colors(darkMode: boolean): Colors {
 
     // ****** primary colors ******
     primary1: darkMode ? '#FF784A' : '#FF784A',
+    primary4: darkMode ? '#ff5d25' : '#ff5d25',
     primary5: darkMode ? '#FF784A' : '#FF784A',
 
     // ****** color text ******
@@ -112,6 +113,7 @@ function themeVariables(colorsTheme: Colors) {
       boxShadow: `4px 4px 0px ${colorsTheme.black}`
     },
     buttonLight: {
+      backgroundHover: `${colorsTheme.primary4}`,
       fontSize: '26px',
       fontWeight: '800',
       border: `4px solid ${colorsTheme.black}`,
