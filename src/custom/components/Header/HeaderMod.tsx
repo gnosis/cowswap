@@ -7,6 +7,9 @@ import { useTranslation } from 'react-i18next'
 
 import styled from 'styled-components'
 
+// import Logo from 'assets/svg/logo.svg'
+// import LogoDark from 'assets/svg/logo_white.svg'
+
 import { useActiveWeb3React } from 'hooks'
 import { useDarkModeManager } from 'state/user/hooks'
 import { useETHBalances /*, useAggregateUniBalance*/ } from 'state/wallet/hooks'
@@ -25,6 +28,7 @@ import Web3Status from 'components/Web3Status'
 // import { useUserHasSubmittedClaim } from 'state/transactions/hooks'
 // import { Dots } from 'components/swap/styleds'
 import Modal from 'components/Modal'
+import { LogoImage } from 'components/Header'
 import UniBalanceContent from 'components/Header/UniBalanceContent'
 // import usePrevious from 'hooks/usePrevious'
 import { WithClassName } from 'types'
@@ -40,6 +44,7 @@ const HeaderFrame = styled.div`
   width: 100%;
   top: 0;
   position: relative;
+  /* border-bottom: 1px solid rgba(0, 0, 0, 0.1); */
   padding: 1rem;
   z-index: 2;
   ${({ theme }) => theme.mediaWidth.upToMedium`
@@ -196,15 +201,6 @@ export const UniIcon = styled.div`
   }
 `
 
-export const LogoImage = styled.img.attrs(props => ({
-  src: props.theme.logo.src,
-  alt: props.theme.logo.alt,
-  width: props.theme.logo.width,
-  height: props.theme.logo.height
-}))`
-  object-fit: contain;
-`
-
 const activeClassName = 'ACTIVE'
 
 const StyledNavLink = styled(NavLink).attrs({
@@ -338,6 +334,7 @@ export default function HeaderMod(props: WithClassName) {
       <HeaderRow>
         <Title href=".">
           <UniIcon>
+            {/* <img width={'24px'} src={darkMode ? LogoDark : Logo} alt="logo" /> */}
             <LogoImage />
           </UniIcon>
         </Title>

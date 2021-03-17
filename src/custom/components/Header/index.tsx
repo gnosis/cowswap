@@ -10,4 +10,13 @@ export const Header = styled(HeaderMod)`
   }
 `
 
+export const LogoImage = styled.img.attrs(props => ({
+  src: props.theme.logo.src,
+  alt: props.theme.logo.alt,
+  width: props.theme.logo.width,
+  height: props.theme.logo.height
+}))`
+  object-fit: contain;
+`
+
 export default Header
