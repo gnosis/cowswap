@@ -23,22 +23,30 @@ import {
 export const ButtonPrimary = styled(ButtonPrimaryMod)`
   // CSS overrides
   ${({ theme }) => (theme.buttonPrimary?.background ? theme.buttonPrimary?.background : theme.bgLinearGradient)}
-  font-size: ${({ theme }) => (theme.buttonLight?.fontSize ? theme.buttonLight.fontSize : '16px')};
-  font-weight: ${({ theme }) => (theme.buttonLight?.fontWeight ? theme.buttonLight.fontWeight : 500)};
-  border: ${({ theme }) => (theme.buttonLight?.border ? theme.buttonLight.border : 0)};
-  box-shadow: ${({ theme }) => (theme.buttonLight?.boxShadow ? theme.buttonLight.boxShadow : 'none')};
-  border-radius: ${({ theme }) => (theme.buttonLight?.borderRadius ? theme.buttonLight.borderRadius : 0)};
+  font-size: ${({ theme }) => (theme.buttonPrimary?.fontSize ? theme.buttonPrimary.fontSize : '16px')};
+  font-weight: ${({ theme }) => (theme.buttonPrimary?.fontWeight ? theme.buttonPrimary.fontWeight : 500)};
+  border: ${({ theme }) => (theme.buttonPrimary?.border ? theme.buttonPrimary.border : 0)};
+  box-shadow: ${({ theme }) => (theme.buttonPrimary?.boxShadow ? theme.buttonPrimary.boxShadow : 'none')};
+  border-radius: ${({ theme }) => (theme.buttonPrimary?.borderRadius ? theme.buttonPrimary.borderRadius : 0)};
+  ${({ theme }) => theme.cursor};
+
+  > div {
+    font-size: inherit;
+    font-weight: inherit;
+  }
 
   &:focus,
   &:hover,
   &:active {
     ${({ theme }) => (theme.buttonPrimary?.background ? theme.buttonPrimary?.background : theme.bgLinearGradient)}
-    border: ${({ theme }) => (theme.buttonLight?.border ? theme.buttonLight.border : 0)};
+    border: ${({ theme }) => (theme.buttonPrimary?.border ? theme.buttonPrimary.border : 0)};
   }
   &:disabled {
     background-color: ${({ theme }) => theme.disabled};
     background-image: none;
     border: 0;
+    cursor: auto;
+    animation: none;
   }
 `
 
@@ -53,6 +61,11 @@ export const ButtonLight = styled(ButtonLightMod)`
   border-radius: ${({ theme }) => (theme.buttonLight?.borderRadius ? theme.buttonLight.borderRadius : 0)};
   ${({ theme }) => theme.cursor};
 
+  > div {
+    font-size: inherit;
+    font-weight: inherit;
+  }
+
   &:focus {
     box-shadow: ${({ theme }) => (theme.buttonLight?.boxShadow ? theme.buttonLight.boxShadow : 'none')};
     background-color: inherit;
@@ -64,8 +77,10 @@ export const ButtonLight = styled(ButtonLightMod)`
     box-shadow: ${({ theme }) => (theme.buttonLight?.boxShadow ? theme.buttonLight.boxShadow : 'none')};
     background-color: inherit;
   }
-  :disabled {
+  &:disabled {
     opacity: 0.4;
+    cursor: auto;
+    animation: none;
     :hover {
       cursor: auto;
       background-color: ${({ theme }) => theme.primary5};

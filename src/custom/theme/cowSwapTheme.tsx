@@ -107,14 +107,14 @@ function themeVariables(colorsTheme: Colors) {
         color: ${colorsTheme.text1};
       `,
       fontSize: '26px',
-      fontWeight: 'bold',
+      fontWeight: '800',
       border: `4px solid ${colorsTheme.black}`,
       borderRadius: '9px',
       boxShadow: `4px 4px 0px ${colorsTheme.black}`
     },
     buttonLight: {
       fontSize: '26px',
-      fontWeight: 'bold',
+      fontWeight: '800',
       border: `4px solid ${colorsTheme.black}`,
       borderHover: 'inherit',
       borderRadius: '9px',
