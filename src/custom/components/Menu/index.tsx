@@ -1,5 +1,5 @@
 import React from 'react'
-import { Code, MessageCircle, PieChart } from 'react-feather'
+import { Code, MessageCircle } from 'react-feather'
 
 import MenuMod, { MenuItem } from './MenuMod'
 import styled from 'styled-components'
