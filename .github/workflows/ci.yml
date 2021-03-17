@@ -26,7 +26,7 @@ jobs:
 
       - name: Print PR numbers
         run: |
-          echo "PR_NUMBER = $PR_NUMBER, PR_NUMBER_2 = $PR_NUMBER_2, jwalton_PR_NUMBER = ${{ steps.findPr.outputs.number }}"
+          echo "PR_NUMBER = ${{ env.PR_NUMBER }}, PR_NUMBER_2 = ${{ env.PR_NUMBER_2 }}, jwalton_PR_NUMBER = ${{ steps.findPr.outputs.number }}"
 
   #     - name: Checkout code
   #       uses: actions/checkout@v2
