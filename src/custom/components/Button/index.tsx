@@ -22,16 +22,18 @@ import {
 
 export const ButtonPrimary = styled(ButtonPrimaryMod)`
   // CSS overrides
-  ${({ theme }) => theme.bgLinearGradient}
-  background-color: transparent;
-  border: 0;
+  ${({ theme }) => (theme.buttonPrimary?.background ? theme.buttonPrimary?.background : theme.bgLinearGradient)}
+  font-size: ${({ theme }) => (theme.buttonLight?.fontSize ? theme.buttonLight.fontSize : '16px')};
+  font-weight: ${({ theme }) => (theme.buttonLight?.fontWeight ? theme.buttonLight.fontWeight : 500)};
+  border: ${({ theme }) => (theme.buttonLight?.border ? theme.buttonLight.border : 0)};
+  box-shadow: ${({ theme }) => (theme.buttonLight?.boxShadow ? theme.buttonLight.boxShadow : 'none')};
+  border-radius: ${({ theme }) => (theme.buttonLight?.borderRadius ? theme.buttonLight.borderRadius : 0)};
 
   &:focus,
   &:hover,
   &:active {
-    ${({ theme }) => theme.bgLinearGradient}
-    background-color: transparent;
-    border: 0;
+    ${({ theme }) => (theme.buttonPrimary?.background ? theme.buttonPrimary?.background : theme.bgLinearGradient)}
+    border: ${({ theme }) => (theme.buttonLight?.border ? theme.buttonLight.border : 0)};
   }
   &:disabled {
     background-color: ${({ theme }) => theme.disabled};
@@ -44,22 +46,22 @@ export const ButtonLight = styled(ButtonLightMod)`
   // CSS override
   background-color: ${({ theme }) => theme.primary5};
   color: ${({ theme }) => theme.primaryText1};
-  font-size: ${({ theme }) => theme.buttonLight.fontSize};
-  font-weight: ${({ theme }) => theme.buttonLight.fontWeight};
-  border: ${({ theme }) => theme.buttonLight.border};
-  box-shadow: ${({ theme }) => theme.buttonLight.boxShadow};
-  border-radius: ${({ theme }) => theme.buttonLight.borderRadius};
+  font-size: ${({ theme }) => (theme.buttonLight?.fontSize ? theme.buttonLight.fontSize : '16px')};
+  font-weight: ${({ theme }) => (theme.buttonLight?.fontWeight ? theme.buttonLight.fontWeight : 500)};
+  border: ${({ theme }) => (theme.buttonLight?.border ? theme.buttonLight.border : 0)};
+  box-shadow: ${({ theme }) => (theme.buttonLight?.boxShadow ? theme.buttonLight.boxShadow : 'none')};
+  border-radius: ${({ theme }) => (theme.buttonLight?.borderRadius ? theme.buttonLight.borderRadius : 0)};
   ${({ theme }) => theme.cursor};
 
   &:focus {
-    box-shadow: inherit;
+    box-shadow: ${({ theme }) => (theme.buttonLight?.boxShadow ? theme.buttonLight.boxShadow : 'none')};
     background-color: inherit;
   }
   &:hover {
     background-color: inherit;
   }
   &:active {
-    box-shadow: inherit;
+    box-shadow: ${({ theme }) => (theme.buttonLight?.boxShadow ? theme.buttonLight.boxShadow : 'none')};
     background-color: inherit;
   }
   :disabled {
@@ -68,7 +70,8 @@ export const ButtonLight = styled(ButtonLightMod)`
       cursor: auto;
       background-color: ${({ theme }) => theme.primary5};
       box-shadow: none;
-      border: 1px solid transparent;
+      border: ${({ theme }) =>
+        theme.buttonLight?.borderHover ? theme.buttonLight.borderHover : '1px solid transparent'};
       outline: none;
     }
   }

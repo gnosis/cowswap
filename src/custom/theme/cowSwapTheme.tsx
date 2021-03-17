@@ -58,7 +58,7 @@ export function colors(darkMode: boolean): Colors {
     blue1: '#3F77FF',
     purple: '#8958FF',
     border: darkMode ? '#000000' : '#000000',
-    disabled: darkMode ? '#31323e' : 'rgb(237, 238, 242)'
+    disabled: darkMode ? '#afcbda' : '#afcbda'
   }
 }
 
@@ -101,23 +101,35 @@ function themeVariables(colorsTheme: Colors) {
     swap: {
       headerSize: '28px'
     },
-    buttonLight: {
+    buttonPrimary: {
+      background: css`
+        background: ${colorsTheme.primary1};
+        color: ${colorsTheme.text1};
+      `,
       fontSize: '26px',
       fontWeight: 'bold',
       border: `4px solid ${colorsTheme.black}`,
       borderRadius: '9px',
       boxShadow: `4px 4px 0px ${colorsTheme.black}`
     },
+    buttonLight: {
+      fontSize: '26px',
+      fontWeight: 'bold',
+      border: `4px solid ${colorsTheme.black}`,
+      borderHover: 'inherit',
+      borderRadius: '9px',
+      boxShadow: `4px 4px 0px ${colorsTheme.black}`
+    },
     currencyInput: {
       background: `${colorsTheme.white}`,
-      color: `${colorsTheme.black}`,
+      color: `${colorsTheme.text1}`,
       border: `4px solid ${colorsTheme.black}`
     },
     buttonCurrencySelect: {
       background: `${colorsTheme.bg1}`,
       border: `2px solid ${colorsTheme.black}`,
       boxShadow: `2px 2px 0px ${colorsTheme.black}`,
-      color: `${colorsTheme.black}`,
+      color: `${colorsTheme.text1}`,
       colorSelected: `${colorsTheme.black}`
     },
     bgLinearGradient: css`
