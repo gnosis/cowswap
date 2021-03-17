@@ -70,7 +70,7 @@ function themeVariables(darkMode: boolean, colorsTheme: Colors) {
       padding: '1rem'
     },
     header: {
-      border: '1px solid rgba(0, 0, 0, 0.1)'
+      border: `1px solid ${colorsTheme.border}`
     },
     buttonLight: {
       fontSize: '16px',
@@ -119,4 +119,8 @@ export const FixedGlobalStyle = createGlobalStyle`
 export const ThemedGlobalStyle = createGlobalStyle`
   // Uniswap default
   ${ThemedGlobalStyleUniswap}
+
+  html {
+    background-image: ${({ theme }) => `linear-gradient(0deg, ${theme.bg1} 0%, ${theme.bg2} 100%)`};
+  }
 `

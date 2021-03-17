@@ -3,7 +3,7 @@ import styled from 'styled-components'
 export { NETWORK_LABELS } from './HeaderMod'
 
 export const Header = styled(HeaderMod)`
-  border-bottom: 1px solid ${({ theme }) => theme.header?.border};
+  border-bottom: ${({ theme }) => (theme.header?.border ? theme.header.border : `1px solid ${theme.border}`)};
 
   ${UniIcon} {
     display: flex;
