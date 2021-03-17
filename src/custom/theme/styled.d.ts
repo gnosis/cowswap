@@ -43,7 +43,6 @@ declare module 'styled-components' {
       background: FlattenSimpleInterpolation
     }
     appBody: {
-      maxWidth: string
       boxShadow: string
       borderRadius: string
       border: string
