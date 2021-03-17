@@ -89,7 +89,6 @@ function themeVariables(colorsTheme: Colors) {
       `
     },
     appBody: {
-      maxWidth: '440px',
       boxShadow: `6px 6px 0px ${colorsTheme.black}`,
       borderRadius: '8px',
       border: `4px solid ${colorsTheme.black}`,
