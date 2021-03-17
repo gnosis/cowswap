@@ -13,6 +13,10 @@ export const Wrapper = styled.div<{ selected: boolean }>`
   // CSS Override
 
   ${InputRow} {
+    background: transparent;
+    > input {
+      background: transparent;
+    }
   }
 `
 

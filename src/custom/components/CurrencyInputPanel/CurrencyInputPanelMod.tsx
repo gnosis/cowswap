@@ -20,10 +20,6 @@ export const InputRow = styled.div<{ selected: boolean }>`
   ${({ theme }) => theme.flexRowNoWrap}
   align-items: center;
   padding: ${({ selected }) => (selected ? '0.75rem 0.5rem 0.75rem 1rem' : '0.75rem 0.75rem 0.75rem 1rem')};
-  background: transparent;
-  > input {
-    background: transparent;
-  }
 `
 
 export const CurrencySelect = styled.button<{ selected: boolean }>`
