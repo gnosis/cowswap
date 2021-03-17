@@ -6,15 +6,6 @@ import * as OrderActions from './actions'
 
 import { OrderIDWithPopup, OrderTxTypes, PopupPayload, setPopupData } from './helpers'
 
-// import mooooo_send from 'assets/audio/mooooo_send.mp3'
-// import mooooo_send from '/audio/mooooo_send.mp3'
-// import mooooo_success from 'assets/audio/mooooo_success.mp3'
-// import mooooo_error from 'assets/audio/mooooo_error.mp3'
-
-const moooooSend = new Audio('/audio/mooooo_send.mp3')
-const moooooSuccess = new Audio('/audio/mooooo_success.mp3')
-const moooooError = new Audio('/audio/mooooo_error.mp3')
-
 // action syntactic sugar
 const isSingleOrderChangeAction = isAnyOf(
   OrderActions.addPendingOrder,
@@ -131,6 +122,33 @@ export const popupMiddleware: Middleware<{}, AppState> = store => next => action
   return result
 }
 
+let moooooSend: HTMLAudioElement
+function getMoooooSend(): HTMLAudioElement {
+  if (!moooooSend) {
+    moooooSend = new Audio('/audio/mooooo_send.mp3')
+  }
+
+  return moooooSend
+}
+
+let moooooSuccess: HTMLAudioElement
+function getMoooooSuccess(): HTMLAudioElement {
+  if (!moooooSuccess) {
+    moooooSuccess = new Audio('/audio/mooooo_success.mp3')
+  }
+
+  return moooooSuccess
+}
+
+let moooooError: HTMLAudioElement
+function getMoooooError(): HTMLAudioElement {
+  if (!moooooError) {
+    moooooError = new Audio('/audio/mooooo_error.mp3')
+  }
+
+  return moooooError
+}
+
 // on each Pending, Expired, Fulfilled order action
 // a corresponsing sound is dispatched
 export const soundMiddleware: Middleware<{}, AppState> = store => next => action => {
@@ -149,11 +167,11 @@ export const soundMiddleware: Middleware<{}, AppState> = store => next => action
   }
 
   if (isPendingOrderAction(action)) {
-    moooooSend.play()
+    getMoooooSend().play()
   } else if (isFulfillOrderAction(action)) {
-    moooooSuccess.play()
+    getMoooooSuccess().play()
   } else if (isExpireOrdersAction(action)) {
-    moooooError.play()
+    getMoooooError().play()
   }
 
   return result
