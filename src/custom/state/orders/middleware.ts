@@ -163,7 +163,7 @@ export const soundMiddleware: Middleware<{}, AppState> = store => next => action
 
     const updatedElements = isBatchFulfillOrderAction(action) ? action.payload.ordersData : action.payload.ids
     // no orders were executed/expired
-    if (updatedElements.length == 0) return result
+    if (updatedElements.length === 0) return result
   }
 
   if (isPendingOrderAction(action)) {
