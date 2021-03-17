@@ -86,8 +86,9 @@ export const InputPanel = styled.div<{ hideInput?: boolean }>`
 
 export const Container = styled.div<{ hideInput: boolean }>`
   border-radius: ${({ hideInput }) => (hideInput ? '8px' : '20px')};
-  background: ${({ theme }) => theme.currencyInput?.background};
-  border: ${({ theme }) => theme.currencyInput?.border};
+  background: ${({ theme }) => (theme.currencyInput?.background ? theme.currencyInput?.background : theme.bg1)};
+  border: ${({ theme }) =>
+    theme.currencyInput?.border ? theme.currencyInput?.border : `border: 1px solid ${theme.bg2}`};
 `
 
 export const StyledTokenName = styled.span<{ active?: boolean }>`
