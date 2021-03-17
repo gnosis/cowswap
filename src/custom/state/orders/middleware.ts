@@ -6,6 +6,15 @@ import * as OrderActions from './actions'
 
 import { OrderIDWithPopup, OrderTxTypes, PopupPayload, setPopupData } from './helpers'
 
+// import mooooo_send from 'assets/audio/mooooo_send.mp3'
+// import mooooo_send from '/audio/mooooo_send.mp3'
+// import mooooo_success from 'assets/audio/mooooo_success.mp3'
+// import mooooo_error from 'assets/audio/mooooo_error.mp3'
+
+const moooooSend = new Audio('/audio/mooooo_send.mp3')
+const moooooSuccess = new Audio('/audio/mooooo_success.mp3')
+const moooooError = new Audio('/audio/mooooo_error.mp3')
+
 // action syntactic sugar
 const isSingleOrderChangeAction = isAnyOf(
   OrderActions.addPendingOrder,
@@ -16,7 +25,7 @@ const isPendingOrderAction = isAnyOf(OrderActions.addPendingOrder)
 const isSingleFulfillOrderAction = isAnyOf(OrderActions.fulfillOrder)
 const isBatchOrderAction = isAnyOf(OrderActions.fulfillOrdersBatch, OrderActions.expireOrdersBatch)
 const isBatchFulfillOrderAction = isAnyOf(OrderActions.fulfillOrdersBatch)
-const isFullfillOrderAction = isAnyOf(OrderActions.addPendingOrder, OrderActions.fulfillOrdersBatch)
+const isFulfillOrderAction = isAnyOf(OrderActions.addPendingOrder, OrderActions.fulfillOrdersBatch)
 const isExpireOrdersAction = isAnyOf(OrderActions.expireOrdersBatch, OrderActions.expireOrder)
 
 // on each Pending, Expired, Fulfilled order action
@@ -140,11 +149,11 @@ export const soundMiddleware: Middleware<{}, AppState> = store => next => action
   }
 
   if (isPendingOrderAction(action)) {
-    console.log('[soundMiddleware] Moooooooo', action)
-  } else if (isFullfillOrderAction(action)) {
-    console.log('[soundMiddleware] Happy Moooooooo', action)
+    moooooSend.play()
+  } else if (isFulfillOrderAction(action)) {
+    moooooSuccess.play()
   } else if (isExpireOrdersAction(action)) {
-    console.log('[soundMiddleware] Sad Moooooooo', action)
+    moooooError.play()
   }
 
   return result
