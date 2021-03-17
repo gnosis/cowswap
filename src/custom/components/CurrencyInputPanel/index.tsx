@@ -6,7 +6,8 @@ import { darken } from 'polished'
 import CurrencyInputPanelMod, {
   CurrencyInputPanelProps,
   CurrencySelect as CurrencySelectMod,
-  InputRow
+  InputRow,
+  Container
 } from './CurrencyInputPanelMod'
 
 export const Wrapper = styled.div<{ selected: boolean }>`
@@ -17,6 +18,12 @@ export const Wrapper = styled.div<{ selected: boolean }>`
     > input {
       background: transparent;
     }
+  }
+
+  ${Container} {
+    background: ${({ theme }) => (theme.currencyInput?.background ? theme.currencyInput?.background : theme.bg1)};
+    border: ${({ theme }) =>
+      theme.currencyInput?.border ? theme.currencyInput?.border : `border: 1px solid ${theme.bg2}`};
   }
 `
 
