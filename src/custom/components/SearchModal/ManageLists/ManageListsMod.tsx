@@ -4,30 +4,34 @@ import ReactGA from 'react-ga'
 import { usePopper } from 'react-popper'
 import { useDispatch, useSelector } from 'react-redux'
 import styled from 'styled-components'
-import { useFetchListCallback } from '../../hooks/useFetchListCallback'
-import { useOnClickOutside } from '../../hooks/useOnClickOutside'
+import { useFetchListCallback } from 'hooks/useFetchListCallback'
+import { useOnClickOutside } from 'hooks/useOnClickOutside'
 import { TokenList } from '@uniswap/token-lists'
 
-import useToggle from '../../hooks/useToggle'
-import { AppDispatch, AppState } from '../../state'
-import { acceptListUpdate, removeList, disableList, enableList } from '@src/state/lists/actions'
+import useToggle from 'hooks/useToggle'
+import { AppDispatch, AppState } from 'state'
+// import { acceptListUpdate, removeList, disableList, enableList } from 'state/lists/actions'
 import { useIsListActive, useAllLists, useActiveListUrls } from 'state/lists/hooks'
-import { ExternalLink, LinkStyledButton, TYPE, IconWrapper } from '../../theme'
-import listVersionLabel from '../../utils/listVersionLabel'
-import { parseENSAddress } from '../../utils/parseENSAddress'
-import uriToHttp from '../../utils/uriToHttp'
-import { ButtonEmpty, ButtonPrimary } from '../Button'
+import { ExternalLink, LinkStyledButton, TYPE, IconWrapper } from 'theme'
+import listVersionLabel from 'utils/listVersionLabel'
+import { parseENSAddress } from 'utils/parseENSAddress'
+import uriToHttp from 'utils/uriToHttp'
+import { ButtonEmpty, ButtonPrimary } from 'components/Button'
 
-import Column, { AutoColumn } from '../Column'
-import ListLogo from '../ListLogo'
-import Row, { RowFixed, RowBetween } from '../Row'
-import { PaddedColumn, SearchInput, Separator, SeparatorDark } from './styleds'
+import Column, { AutoColumn } from 'components/Column'
+import ListLogo from 'components/ListLogo'
+import Row, { RowFixed, RowBetween } from 'components/Row'
+import { PaddedColumn, SearchInput, Separator, SeparatorDark } from 'components/SearchModal/styleds'
 import { useListColor } from 'hooks/useColor'
-import useTheme from '../../hooks/useTheme'
-import ListToggle from '../Toggle/ListToggle'
+import useTheme from 'hooks/useTheme'
+import ListToggle from 'components/Toggle/ListToggle'
 import Card from 'components/Card'
-import { CurrencyModalView } from './CurrencySearchModal'
-import { UNSUPPORTED_LIST_URLS } from '@src/constants/lists'
+import { CurrencyModalView } from 'components/SearchModal/CurrencySearchModal'
+// Mod:
+import { ListRowProps } from '.'
+import { ChainId } from '@uniswap/sdk'
+import { useActiveWeb3React } from '@src/hooks'
+import { DEFAULT_NETWORK_FOR_LISTS } from 'constants/lists'
 
 const Wrapper = styled(Column)`
   width: 100%;
@@ -92,8 +96,18 @@ function listUrlRowHTMLId(listUrl: string) {
   return `list-row-${listUrl.replace(/\./g, '-')}`
 }
 
-const ListRow = memo(function ListRow({ listUrl }: { listUrl: string }) {
-  const listsByUrl = useSelector<AppState, AppState['lists']['byUrl']>(state => state.lists.byUrl)
+const ListRow = memo(function ListRow({
+  listUrl,
+  acceptListUpdate,
+  removeList,
+  enableList,
+  disableList
+}: // }: { listUrl: string }) {
+ListRowProps & { listUrl: string }) {
+  // We default to a chainId if none is available
+  const { chainId = DEFAULT_NETWORK_FOR_LISTS } = useActiveWeb3React()
+  // const listsByUrl = useSelector<AppState, AppState['lists']['byUrl']>(state => state.lists.byUrl)
+  const listsByUrl = useSelector<AppState, AppState['lists'][ChainId]['byUrl']>(state => state.lists[chainId].byUrl)
   const dispatch = useDispatch<AppDispatch>()
   const { current: list, pendingUpdate: pending } = listsByUrl[listUrl]
 
@@ -122,7 +136,8 @@ const ListRow = memo(function ListRow({ listUrl }: { listUrl: string }) {
       label: listUrl
     })
     dispatch(acceptListUpdate(listUrl))
-  }, [dispatch, listUrl, pending])
+    // }, [dispatch, listUrl, pending])
+  }, [acceptListUpdate, dispatch, listUrl, pending])
 
   const handleRemoveList = useCallback(() => {
     ReactGA.event({
@@ -138,7 +153,8 @@ const ListRow = memo(function ListRow({ listUrl }: { listUrl: string }) {
       })
       dispatch(removeList(listUrl))
     }
-  }, [dispatch, listUrl])
+    // }, [dispatch, listUrl])
+  }, [dispatch, listUrl, removeList])
 
   const handleEnableList = useCallback(() => {
     ReactGA.event({
@@ -147,7 +163,8 @@ const ListRow = memo(function ListRow({ listUrl }: { listUrl: string }) {
       label: listUrl
     })
     dispatch(enableList(listUrl))
-  }, [dispatch, listUrl])
+    // }, [dispatch, listUrl])
+  }, [dispatch, enableList, listUrl])
 
   const handleDisableList = useCallback(() => {
     ReactGA.event({
@@ -156,7 +173,8 @@ const ListRow = memo(function ListRow({ listUrl }: { listUrl: string }) {
       label: listUrl
     })
     dispatch(disableList(listUrl))
-  }, [dispatch, listUrl])
+    // }, [dispatch, listUrl])
+  }, [disableList, dispatch, listUrl])
 
   if (!list) return null
 
@@ -216,11 +234,15 @@ const ListContainer = styled.div`
 export function ManageLists({
   setModalView,
   setImportList,
-  setListUrl
+  setListUrl,
+  unsupportedListUrls,
+  listRowProps
 }: {
   setModalView: (view: CurrencyModalView) => void
   setImportList: (list: TokenList) => void
   setListUrl: (url: string) => void
+  unsupportedListUrls: string[]
+  listRowProps: ListRowProps
 }) {
   const theme = useTheme()
 
@@ -247,37 +269,42 @@ export function ManageLists({
     return uriToHttp(listUrlInput).length > 0 || Boolean(parseENSAddress(listUrlInput))
   }, [listUrlInput])
 
-  const sortedLists = useMemo(() => {
-    const listUrls = Object.keys(lists)
-    return listUrls
-      .filter(listUrl => {
-        // only show loaded lists, hide unsupported lists
-        return Boolean(lists[listUrl].current) && !Boolean(UNSUPPORTED_LIST_URLS.includes(listUrl))
-      })
-      .sort((u1, u2) => {
-        const { current: l1 } = lists[u1]
-        const { current: l2 } = lists[u2]
+  const sortedLists = useMemo(
+    () => {
+      const listUrls = Object.keys(lists)
+      return listUrls
+        .filter(listUrl => {
+          // only show loaded lists, hide unsupported lists
+          // return Boolean(lists[listUrl].current) && !Boolean(UNSUPPORTED_LIST_URLS.includes(listUrl))
+          return Boolean(lists[listUrl].current) && !Boolean(unsupportedListUrls.includes(listUrl))
+        })
+        .sort((u1, u2) => {
+          const { current: l1 } = lists[u1]
+          const { current: l2 } = lists[u2]
 
-        // first filter on active lists
-        if (activeCopy?.includes(u1) && !activeCopy?.includes(u2)) {
-          return -1
-        }
-        if (!activeCopy?.includes(u1) && activeCopy?.includes(u2)) {
-          return 1
-        }
+          // first filter on active lists
+          if (activeCopy?.includes(u1) && !activeCopy?.includes(u2)) {
+            return -1
+          }
+          if (!activeCopy?.includes(u1) && activeCopy?.includes(u2)) {
+            return 1
+          }
 
-        if (l1 && l2) {
-          return l1.name.toLowerCase() < l2.name.toLowerCase()
-            ? -1
-            : l1.name.toLowerCase() === l2.name.toLowerCase()
-            ? 0
-            : 1
-        }
-        if (l1) return -1
-        if (l2) return 1
-        return 0
-      })
-  }, [lists, activeCopy])
+          if (l1 && l2) {
+            return l1.name.toLowerCase() < l2.name.toLowerCase()
+              ? -1
+              : l1.name.toLowerCase() === l2.name.toLowerCase()
+              ? 0
+              : 1
+          }
+          if (l1) return -1
+          if (l2) return 1
+          return 0
+        })
+    },
+    // [lists, activeCopy]
+    [lists, unsupportedListUrls, activeCopy]
+  )
 
   // temporary fetched list for import flow
   const [tempList, setTempList] = useState<TokenList>()
@@ -368,7 +395,8 @@ export function ManageLists({
       <ListContainer>
         <AutoColumn gap="md">
           {sortedLists.map(listUrl => (
-            <ListRow key={listUrl} listUrl={listUrl} />
+            // <ListRow key={listUrl} listUrl={listUrl} />
+            <ListRow key={listUrl} listUrl={listUrl} {...listRowProps} />
           ))}
         </AutoColumn>
       </ListContainer>
