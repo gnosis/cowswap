@@ -14,7 +14,12 @@ import {
 import { buildBlock2DateMap } from 'utils/blocks'
 import { delay, registerOnWindow } from 'utils/misc'
 import { getOrder, OrderMetaData } from 'utils/operator'
-import { DEFAULT_ORDER_DELAY, GP_SETTLEMENT_CONTRACT_ADDRESS, SHORT_PRECISION } from 'constants/index'
+import {
+  DEFAULT_ORDER_DELAY,
+  GP_SETTLEMENT_CONTRACT_ADDRESS,
+  SHORT_PRECISION,
+  EXPIRED_ORDERS_BUFFER
+} from 'constants/index'
 import { GP_V2_SETTLEMENT_INTERFACE } from 'constants/GPv2Settlement'
 import { stringToCurrency } from '../swap/extension'
 
@@ -118,6 +123,15 @@ const constructGetLogsRetry = (provider: Web3Provider) => {
   }
 
   return getLogsRetry
+}
+
+/**
+ * @name getNowWithBuffer
+ * @description returns current date with added buffer time
+ * @param buffer buffer amount in MS
+ */
+function _getNowWithBuffer(buffer = 0) {
+  return new Date(Date.now() + buffer)
 }
 
 export function EventUpdater(): null {
@@ -307,12 +321,13 @@ export function ExpiredOrdersWatcher(): null {
       // but don't clearInterval so we can restart when there are new orders
       if (pendingOrdersRef.current.length === 0) return
 
-      const now = new Date()
+      // let's get the current date, with our expired order buffer time set in
+      const nowWithBuffer = _getNowWithBuffer(EXPIRED_ORDERS_BUFFER)
       const expiredOrders = pendingOrdersRef.current.filter(order => {
         // validTo is either a Date or unix timestamp in seconds
         const validTo = typeof order.validTo === 'number' ? new Date(order.validTo * 1000) : order.validTo
 
-        return validTo < now
+        return validTo < nowWithBuffer
       })
 
       const expiredIds = expiredOrders.map(({ id }) => id)
