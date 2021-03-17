@@ -130,4 +130,15 @@ export const FixedGlobalStyle = createGlobalStyle`
 export const ThemedGlobalStyle = createGlobalStyle`
   // Uniswap default
   ${ThemedGlobalStyleUniswap}
+
+  // Custom
+  html {
+    color: ${({ theme }) => theme.text1};
+    ${({ theme }) => theme.body.background}
+  }
+  body {
+    background-position: initial;
+    background-repeat: no-repeat;
+    background-image: initial;
+  }
 `
