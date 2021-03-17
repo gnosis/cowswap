@@ -4,6 +4,7 @@ import cowBg from 'assets/cow-swap/cow-bg.png'
 import Logo from 'assets/cow-swap/cowswap-logo.svg'
 
 import { Colors } from 'theme/styled'
+
 import {
   colors as colorsUniswap,
   theme as themeUniswap,
