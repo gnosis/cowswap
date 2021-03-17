@@ -10,16 +10,23 @@ import styled from 'styled-components'
 import { useActiveWeb3React } from 'hooks'
 import { useDarkModeManager } from 'state/user/hooks'
 import { useETHBalances /*, useAggregateUniBalance*/ } from 'state/wallet/hooks'
+// import { CardNoise } from 'components/earn/styled'
+// import { CountUp } from 'use-count-up'
 import { /*TYPE,*/ ExternalLink } from 'theme'
-
 import { YellowCard } from 'components/Card'
 import { Moon, Sun } from 'react-feather'
 import Menu from 'components/Menu'
 
 import Row, { RowFixed } from 'components/Row'
 import Web3Status from 'components/Web3Status'
+// import ClaimModal from 'components/claim/ClaimModal'
+// import { useToggleSelfClaimModal, useShowClaimPopup } from 'state/application/hooks'
+// import { useUserHasAvailableClaim } from 'state/claim/hooks'
+// import { useUserHasSubmittedClaim } from 'state/transactions/hooks'
+// import { Dots } from 'components/swap/styleds'
 import Modal from 'components/Modal'
 import UniBalanceContent from 'components/Header/UniBalanceContent'
+// import usePrevious from 'hooks/usePrevious'
 import { WithClassName } from 'types'
 import { SHORT_PRECISION } from '@src/custom/constants'
 
@@ -125,6 +132,29 @@ const HideSmall = styled.span`
     display: none;
   `};
 `
+
+// const UNIAmount = styled(AccountElement)`
+//   color: white;
+//   padding: 4px 8px;
+//   height: 36px;
+//   font-weight: 500;
+//   background-color: ${({ theme }) => theme.bg3};
+//   background: radial-gradient(174.47% 188.91% at 1.84% 0%, #ff007a 0%, #2172e5 100%), #edeef2;
+// `
+
+// const UNIWrapper = styled.span`
+//   width: fit-content;
+//   position: relative;
+//   cursor: pointer;
+
+//   :hover {
+//     opacity: 0.8;
+//   }
+
+//   :active {
+//     opacity: 0.9;
+//   }
+// `
 
 const NetworkCard = styled(YellowCard)`
   border-radius: 12px;
@@ -315,6 +345,26 @@ export default function HeaderMod(props: WithClassName) {
           <StyledNavLink id={`swap-nav-link`} to={'/swap'}>
             {t('swap')}
           </StyledNavLink>
+          {/* <StyledNavLink
+            id={`pool-nav-link`}
+            to={'/pool'}
+            isActive={(match, { pathname }) =>
+              Boolean(match) ||
+              pathname.startsWith('/add') ||
+              pathname.startsWith('/remove') ||
+              pathname.startsWith('/create') ||
+              pathname.startsWith('/find')
+            }
+          >
+            {t('pool')}
+          </StyledNavLink>          
+          <StyledNavLink id={`stake-nav-link`} to={'/uni'}>
+            UNI
+          </StyledNavLink>
+          <StyledNavLink id={`stake-nav-link`} to={'/vote'}>
+            Vote
+          </StyledNavLink>
+          */}
           <StyledExternalLink id={`stake-nav-link`} href={'https://uniswap.info'}>
             Charts <span style={{ fontSize: '11px' }}>↗</span>
           </StyledExternalLink>
@@ -327,6 +377,43 @@ export default function HeaderMod(props: WithClassName) {
               <NetworkCard title={NETWORK_LABELS[chainId]}>{NETWORK_LABELS[chainId]}</NetworkCard>
             )}
           </HideSmall>
+          {/* {availableClaim && !showClaimPopup && (
+            <UNIWrapper onClick={toggleClaimModal}>
+              <UNIAmount active={!!account && !availableClaim} style={{ pointerEvents: 'auto' }}>
+                <TYPE.white padding="0 2px">
+                  {claimTxn && !claimTxn?.receipt ? <Dots>Claiming UNI</Dots> : 'Claim UNI'}
+                </TYPE.white>
+              </UNIAmount>
+              <CardNoise />
+            </UNIWrapper>
+          )}          
+          {!availableClaim && aggregateBalance && (
+            <UNIWrapper onClick={() => setShowUniBalanceModal(true)}>
+              <UNIAmount active={!!account && !availableClaim} style={{ pointerEvents: 'auto' }}>
+                {account && (
+                  <HideSmall>
+                    <TYPE.white
+                      style={{
+                        paddingRight: '.4rem'
+                      }}
+                    >
+                      <CountUp
+                        key={countUpValue}
+                        isCounting
+                        start={parseFloat(countUpValuePrevious)}
+                        end={parseFloat(countUpValue)}
+                        thousandsSeparator={','}
+                        duration={1}
+                      />
+                    </TYPE.white>
+                  </HideSmall>
+                )}
+                UNI
+              </UNIAmount>
+              <CardNoise />
+            </UNIWrapper>
+          )}
+          */}
           <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
             {account && userEthBalance ? (
               <BalanceText style={{ flexShrink: 0 }} pl="0.75rem" pr="0.5rem" fontWeight={500}>
