@@ -126,12 +126,12 @@ const constructGetLogsRetry = (provider: Web3Provider) => {
 }
 
 /**
- * @name getNowWithBuffer
- * @description returns current date with added buffer time
+ * @name _validToWithBuffer
+ * @description returns order validTo with added buffer time
  * @param buffer buffer amount in MS
  */
-function _getNowWithBuffer(buffer = 0) {
-  return new Date(Date.now() + buffer)
+function _validToWithBuffer(validTo: Date, buffer = 0) {
+  return new Date(Date.parse(validTo.toUTCString()) + buffer)
 }
 
 export function EventUpdater(): null {
@@ -321,13 +321,13 @@ export function ExpiredOrdersWatcher(): null {
       // but don't clearInterval so we can restart when there are new orders
       if (pendingOrdersRef.current.length === 0) return
 
-      // let's get the current date, with our expired order buffer time set in
-      const nowWithBuffer = _getNowWithBuffer(EXPIRED_ORDERS_BUFFER)
+      const now = new Date()
       const expiredOrders = pendingOrdersRef.current.filter(order => {
         // validTo is either a Date or unix timestamp in seconds
         const validTo = typeof order.validTo === 'number' ? new Date(order.validTo * 1000) : order.validTo
 
-        return validTo < nowWithBuffer
+        // let's get the current date, with our expired order validTo given a buffer time
+        return _validToWithBuffer(validTo, EXPIRED_ORDERS_BUFFER) < now
       })
 
       const expiredIds = expiredOrders.map(({ id }) => id)
