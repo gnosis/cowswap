@@ -49,6 +49,8 @@ export const ButtonLight = styled(ButtonLightMod)`
   border: ${({ theme }) => theme.buttonLight.border};
   box-shadow: ${({ theme }) => theme.buttonLight.boxShadow};
   border-radius: ${({ theme }) => theme.buttonLight.borderRadius};
+  ${({ theme }) => theme.cursor};
+
   &:focus {
     box-shadow: inherit;
     background-color: inherit;

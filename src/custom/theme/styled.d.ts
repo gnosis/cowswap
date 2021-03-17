@@ -38,6 +38,7 @@ declare module 'styled-components' {
       width: string
       height: string
     }
+    cursor?: FlattenSimpleInterpolation
     body: {
       background: FlattenSimpleInterpolation
     }
