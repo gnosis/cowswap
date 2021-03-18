@@ -450,12 +450,12 @@ export default function Swap() {
             ) : // MOD: disable ETH trading
             showEthDisabled ? (
               <ButtonPrimary id="swap-button" disabled={true}>
-                <TYPE.main mb="4px">ETH cannot be traded. Use WETH.</TYPE.main>
+                <TYPE.main mb="4px">ETH cannot be traded. Use WETH</TYPE.main>
               </ButtonPrimary>
             ) : noRoute && userHasSpecifiedInputOutput ? (
               isFeeGreater ? (
                 <GreyCard style={{ textAlign: 'center' }}>
-                  <TYPE.main mb="4px">Fees exceed input amount.</TYPE.main>
+                  <TYPE.main mb="4px">Fees exceed input amount</TYPE.main>
                 </GreyCard>
               ) : (
                 <GreyCard style={{ textAlign: 'center' }}>
