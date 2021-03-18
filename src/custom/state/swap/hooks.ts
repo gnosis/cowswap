@@ -16,7 +16,7 @@ import {
 } from 'state/swap/hooks'
 import { useFee } from '../fee/hooks'
 import { registerOnWindow } from 'utils/misc'
-import { TradeWithFee, useTradeExactInWithFee, useTradeExactOutWithFee } from './extension'
+import { TradeWithFee, useTradeExactInWithFee, useTradeExactOutWithFee, stringToCurrency } from './extension'
 import useParsedQueryString from 'hooks/useParsedQueryString'
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import { useDispatch } from 'react-redux'
@@ -247,12 +247,15 @@ export function useIsFeeGreaterThanInput({
   address?: string
   parsedAmount?: CurrencyAmount
   chainId?: ChainId
-}): boolean {
+}): { isFeeGreater: boolean; fee: CurrencyAmount | null } {
   const fee = useFee({ chainId, token: address })
 
-  if (!fee || !parsedAmount) return false
+  if (!fee || !parsedAmount) return { isFeeGreater: false, fee: null }
 
   const calculatedFee = BigNumber.from(getFeeAmount({ ...fee, sellAmount: parsedAmount.raw.toString() }))
 
-  return calculatedFee.gte(parsedAmount.raw.toString())
+  return {
+    isFeeGreater: calculatedFee.gte(parsedAmount.raw.toString()),
+    fee: stringToCurrency(calculatedFee.toString(), parsedAmount.currency)
+  }
 }
