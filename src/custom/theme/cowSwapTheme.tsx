@@ -11,7 +11,6 @@ import { Colors } from 'theme/styled'
 import { colors as colorsBaseTheme, themeVariables as baseThemeVariables } from 'theme/baseTheme'
 
 import {
-  colors as colorsUniswap,
   theme as themeUniswap,
   FixedGlobalStyle as FixedGlobalStyleUniswap,
   ThemedGlobalStyle as ThemedGlobalStyleUniswap
@@ -23,7 +22,6 @@ export * from '@src/theme/components'
 
 export function colors(darkMode: boolean): Colors {
   return {
-    ...colorsUniswap(darkMode),
     ...colorsBaseTheme(darkMode),
 
     // ****** base ******
