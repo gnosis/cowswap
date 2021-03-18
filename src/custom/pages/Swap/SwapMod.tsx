@@ -38,7 +38,8 @@ import {
   useDerivedSwapInfo,
   useReplaceSwapState,
   useSwapActionHandlers,
-  useSwapState
+  useSwapState,
+  useIsFeeGreaterThanInput
 } from 'state/swap/hooks'
 import { useExpertModeManager, useUserSlippageTolerance, useUserSingleHopOnly } from 'state/user/hooks'
 import { LinkStyledButton, TYPE } from 'theme'
@@ -78,7 +79,7 @@ export default function Swap() {
       return !Boolean(token.address in defaultTokens)
     })
 
-  const { account } = useActiveWeb3React()
+  const { account, chainId } = useActiveWeb3React()
   const theme = useContext(ThemeContext)
 
   // toggle wallet when disconnected
@@ -112,6 +113,9 @@ export default function Swap() {
     { currency: currencies.INPUT, address: INPUT.currencyId },
     { currency: currencies.OUTPUT, address: OUTPUT.currencyId }
   )
+
+  // Is fee greater than input?
+  const isFeeGreaterThanInput = useIsFeeGreaterThanInput({ chainId, address: INPUT.currencyId, parsedAmount })
 
   const { wrapType, execute: onWrap, inputError: wrapInputError } = useWrapCallback(
     currencies[Field.INPUT],
@@ -432,13 +436,19 @@ export default function Swap() {
             ) : // MOD: disable ETH trading
             showEthDisabled ? (
               <ButtonPrimary id="swap-button" disabled={true}>
-                <TYPE.main mb="4px">ETH cannot be traded. Use WETH</TYPE.main>
+                <TYPE.main mb="4px">ETH cannot be traded. Use WETH.</TYPE.main>
               </ButtonPrimary>
             ) : noRoute && userHasSpecifiedInputOutput ? (
-              <GreyCard style={{ textAlign: 'center' }}>
-                <TYPE.main mb="4px">Insufficient liquidity for this trade.</TYPE.main>
-                {singleHopOnly && <TYPE.main mb="4px">Try enabling multi-hop trades.</TYPE.main>}
-              </GreyCard>
+              isFeeGreaterThanInput ? (
+                <GreyCard style={{ textAlign: 'center' }}>
+                  <TYPE.main mb="4px">Fees exceed input amount.</TYPE.main>
+                </GreyCard>
+              ) : (
+                <GreyCard style={{ textAlign: 'center' }}>
+                  <TYPE.main mb="4px">Insufficient liquidity for this trade.</TYPE.main>
+                  {singleHopOnly && <TYPE.main mb="4px">Try enabling multi-hop trades.</TYPE.main>}
+                </GreyCard>
+              )
             ) : showApproveFlow ? (
               <RowBetween>
                 <ButtonConfirmed

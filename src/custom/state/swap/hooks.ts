@@ -1,5 +1,5 @@
 import useENS from 'hooks/useENS'
-import { Currency, CurrencyAmount, ETHER, WETH } from '@uniswap/sdk'
+import { Currency, CurrencyAmount, ETHER, WETH, ChainId } from '@uniswap/sdk'
 import { useActiveWeb3React } from 'hooks'
 import { useCurrency } from 'hooks/Tokens'
 import { isAddress } from 'utils'
@@ -23,6 +23,8 @@ import { useDispatch } from 'react-redux'
 import { SwapState } from 'state/swap/reducer'
 import { ParsedQs } from 'qs'
 import { useWETHContract } from 'hooks/useContract'
+import { getFeeAmount } from 'utils/fee'
+import { BigNumber } from 'ethers'
 
 export * from '@src/state/swap/hooks'
 
@@ -235,4 +237,22 @@ export function useShouldDisableEth(input?: CurrencyWithAddress, output?: Curren
 
     return { showEthDisabled: (isEthIn && !isWethOut) || (isEthOut && !isWethIn), weth }
   }, [input, output, weth])
+}
+
+export function useIsFeeGreaterThanInput({
+  address,
+  parsedAmount,
+  chainId
+}: {
+  address?: string
+  parsedAmount?: CurrencyAmount
+  chainId?: ChainId
+}): boolean {
+  const fee = useFee({ chainId, token: address })
+
+  if (!fee || !parsedAmount) return false
+
+  const calculatedFee = BigNumber.from(getFeeAmount({ ...fee, sellAmount: parsedAmount.raw.toString() }))
+
+  return calculatedFee.gte(parsedAmount.raw.toString())
 }
