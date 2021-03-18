@@ -122,49 +122,31 @@ export const popupMiddleware: Middleware<{}, AppState> = store => next => action
   return result
 }
 
-// let moooooSend: HTMLAudioElement
-// function getMoooooSend(): HTMLAudioElement {
-//   if (!moooooSend) {
-//     moooooSend = new Audio('/audio/mooooo_send.mp3')
-//   }
-
-//   return moooooSend
-// }
-
-// let moooooSuccess: HTMLAudioElement
-// function getMoooooSuccess(): HTMLAudioElement {
-//   if (!moooooSuccess) {
-//     moooooSuccess = new Audio('/audio/mooooo_success.mp3')
-//   }
-
-//   return moooooSuccess
-// }
-
-// let moooooError: HTMLAudioElement
-// function getMoooooError(): HTMLAudioElement {
-//   if (!moooooError) {
-//     moooooError = new Audio('/audio/mooooo_error.mp3')
-//   }
-
-//   return moooooError
-// }
-
-let moooooHigh: HTMLAudioElement
-function getMoooooHigh(): HTMLAudioElement {
-  if (!moooooHigh) {
-    moooooHigh = new Audio('/audio/ben_mooooo_high.m4a')
+let moooooSend: HTMLAudioElement
+function getMoooooSend(): HTMLAudioElement {
+  if (!moooooSend) {
+    moooooSend = new Audio('/audio/mooooo_send.mp3')
   }
 
-  return moooooHigh
+  return moooooSend
 }
 
-let moooooLow: HTMLAudioElement
-function getMoooooLow(): HTMLAudioElement {
-  if (!moooooLow) {
-    moooooLow = new Audio('/audio/ben_mooooo_low.m4a')
+let moooooSuccess: HTMLAudioElement
+function getMoooooSuccess(): HTMLAudioElement {
+  if (!moooooSuccess) {
+    moooooSuccess = new Audio('/audio/mooooo_success.mp3')
   }
 
-  return moooooLow
+  return moooooSuccess
+}
+
+let moooooError: HTMLAudioElement
+function getMoooooError(): HTMLAudioElement {
+  if (!moooooError) {
+    moooooError = new Audio('/audio/mooooo_error.mp3')
+  }
+
+  return moooooError
 }
 
 // on each Pending, Expired, Fulfilled order action
@@ -185,11 +167,11 @@ export const soundMiddleware: Middleware<{}, AppState> = store => next => action
   }
 
   if (isPendingOrderAction(action)) {
-    getMoooooLow().play()
+    getMoooooSend().play()
   } else if (isFulfillOrderAction(action)) {
-    getMoooooHigh().play()
+    getMoooooSuccess().play()
   } else if (isExpireOrdersAction(action)) {
-    getMoooooLow().play()
+    getMoooooError().play()
   }
 
   return result
