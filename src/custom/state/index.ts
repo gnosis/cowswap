@@ -35,7 +35,7 @@ const reducers = {
   fee
 }
 
-const PERSISTED_KEYS: string[] = ['user', 'transactions', 'orders', 'fee', 'lists']
+const PERSISTED_KEYS: string[] = ['user', 'transactions', 'orders', 'lists']
 
 const store = configureStore({
   reducer: reducers,
