@@ -7,18 +7,19 @@ import { useTranslation } from 'react-i18next'
 
 import styled from 'styled-components'
 
-import Logo from 'assets/svg/logo.svg'
-import LogoDark from 'assets/svg/logo_white.svg'
+// import Logo from 'assets/svg/logo.svg'
+// import LogoDark from 'assets/svg/logo_white.svg'
+
 import { useActiveWeb3React } from 'hooks'
-import { useDarkModeManager } from 'state/user/hooks'
+// import { useDarkModeManager } from 'state/user/hooks'
 import { useETHBalances /*, useAggregateUniBalance*/ } from 'state/wallet/hooks'
 // import { CardNoise } from 'components/earn/styled'
 // import { CountUp } from 'use-count-up'
-import { /*TYPE,*/ ExternalLink } from 'theme'
+// import { TYPE, ExternalLink } from 'theme'
 
 import { YellowCard } from 'components/Card'
-import { Moon, Sun } from 'react-feather'
-import Menu from 'components/Menu'
+// import { Moon, Sun } from 'react-feather'
+// import Menu from 'components/Menu'
 
 import Row, { RowFixed } from 'components/Row'
 import Web3Status from 'components/Web3Status'
@@ -28,6 +29,7 @@ import Web3Status from 'components/Web3Status'
 // import { useUserHasSubmittedClaim } from 'state/transactions/hooks'
 // import { Dots } from 'components/swap/styleds'
 import Modal from 'components/Modal'
+import { LogoImage } from 'components/Header'
 import UniBalanceContent from 'components/Header/UniBalanceContent'
 // import usePrevious from 'hooks/usePrevious'
 import { WithClassName } from 'types'
@@ -43,7 +45,7 @@ const HeaderFrame = styled.div`
   width: 100%;
   top: 0;
   position: relative;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  /* border-bottom: 1px solid rgba(0, 0, 0, 0.1); */
   padding: 1rem;
   z-index: 2;
   ${({ theme }) => theme.mediaWidth.upToMedium`
@@ -97,10 +99,12 @@ const HeaderElement = styled.div`
   `};
 `
 
+/*
 const HeaderElementWrap = styled.div`
   display: flex;
   align-items: center;
 `
+*/
 
 const HeaderRow = styled(RowFixed)`
   ${({ theme }) => theme.mediaWidth.upToMedium`
@@ -229,6 +233,7 @@ const StyledNavLink = styled(NavLink).attrs({
   }
 `
 
+/*
 const StyledExternalLink = styled(ExternalLink).attrs({
   activeClassName
 })<{ isActive?: boolean }>`
@@ -259,6 +264,7 @@ const StyledExternalLink = styled(ExternalLink).attrs({
       display: none;
 `}
 `
+*/
 
 export const StyledMenuButton = styled.button`
   position: relative;
@@ -306,7 +312,7 @@ export default function HeaderMod(props: WithClassName) {
   const { t } = useTranslation()
 
   const userEthBalance = useETHBalances(account ? [account] : [])?.[account ?? '']
-  const [darkMode, toggleDarkMode] = useDarkModeManager()
+  // const [darkMode, toggleDarkMode] = useDarkModeManager()
 
   // const toggleClaimModal = useToggleSelfClaimModal()
 
@@ -333,15 +339,15 @@ export default function HeaderMod(props: WithClassName) {
       <HeaderRow>
         <Title href=".">
           <UniIcon>
-            <img width={'24px'} src={darkMode ? LogoDark : Logo} alt="logo" />
+            {/* <img width={'24px'} src={darkMode ? LogoDark : Logo} alt="logo" /> */}
+            <LogoImage />
           </UniIcon>
         </Title>
         <HeaderLinks>
           <StyledNavLink id={`swap-nav-link`} to={'/swap'}>
             {t('swap')}
           </StyledNavLink>
-          {/*
-          <StyledNavLink
+          {/* <StyledNavLink
             id={`pool-nav-link`}
             to={'/pool'}
             isActive={(match, { pathname }) =>
@@ -359,11 +365,11 @@ export default function HeaderMod(props: WithClassName) {
           </StyledNavLink>
           <StyledNavLink id={`stake-nav-link`} to={'/vote'}>
             Vote
-          </StyledNavLink>
-          */}
+          </StyledNavLink>          
           <StyledExternalLink id={`stake-nav-link`} href={'https://uniswap.info'}>
             Charts <span style={{ fontSize: '11px' }}>↗</span>
           </StyledExternalLink>
+          */}
         </HeaderLinks>
       </HeaderRow>
       <HeaderControls>
@@ -373,8 +379,7 @@ export default function HeaderMod(props: WithClassName) {
               <NetworkCard title={NETWORK_LABELS[chainId]}>{NETWORK_LABELS[chainId]}</NetworkCard>
             )}
           </HideSmall>
-          {/*
-          {availableClaim && !showClaimPopup && (
+          {/* {availableClaim && !showClaimPopup && (
             <UNIWrapper onClick={toggleClaimModal}>
               <UNIAmount active={!!account && !availableClaim} style={{ pointerEvents: 'auto' }}>
                 <TYPE.white padding="0 2px">
@@ -420,12 +425,12 @@ export default function HeaderMod(props: WithClassName) {
             <Web3Status />
           </AccountElement>
         </HeaderElement>
-        <HeaderElementWrap>
+        {/* <HeaderElementWrap>
           <StyledMenuButton onClick={() => toggleDarkMode()}>
             {darkMode ? <Moon size={20} /> : <Sun size={20} />}
           </StyledMenuButton>
           <Menu />
-        </HeaderElementWrap>
+        </HeaderElementWrap> */}
       </HeaderControls>
     </HeaderFrame>
   )

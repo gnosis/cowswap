@@ -1,5 +1,7 @@
-// export { default } from './cowSwapTheme'
-// export * from './cowSwapTheme'
+// Cow theme
+export { default } from './cowSwapTheme'
+export * from './cowSwapTheme'
 
-export { default } from './gnosisProtocolTheme'
-export * from './gnosisProtocolTheme'
+// GP theme
+// export { default } from './gnosisProtocolTheme'
+// export * from './gnosisProtocolTheme'

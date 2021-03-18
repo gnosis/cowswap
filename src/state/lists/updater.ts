@@ -3,12 +3,12 @@ import { getVersionUpgrade, minVersionBump, VersionUpgrade } from '@uniswap/toke
 import { useCallback, useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import { useActiveWeb3React } from '../../hooks'
-import { useFetchListCallback } from '../../hooks/useFetchListCallback'
+import { useFetchListCallback } from 'hooks/useFetchListCallback'
 import useInterval from '../../hooks/useInterval'
 import useIsWindowVisible from '../../hooks/useIsWindowVisible'
 import { AppDispatch } from 'state'
 import { acceptListUpdate } from './actions'
-import { useActiveListUrls } from './hooks'
+import { useActiveListUrls } from 'state/lists/hooks'
 import { useAllInactiveTokens } from 'hooks/Tokens'
 
 export default function Updater(): null {
