@@ -27,7 +27,7 @@ export const ButtonPrimary = styled(ButtonPrimaryMod)`
   font-weight: ${({ theme }) => (theme.buttonPrimary?.fontWeight ? theme.buttonPrimary.fontWeight : 500)};
   border: ${({ theme }) => (theme.buttonPrimary?.border ? theme.buttonPrimary.border : 0)};
   box-shadow: ${({ theme }) => (theme.buttonPrimary?.boxShadow ? theme.buttonPrimary.boxShadow : 'none')};
-  border-radius: ${({ theme }) => (theme.buttonPrimary?.borderRadius ? theme.buttonPrimary.borderRadius : 0)};
+  border-radius: ${({ theme }) => (theme.buttonPrimary?.borderRadius ? theme.buttonPrimary.borderRadius : '9px')};
   ${({ theme }) => theme.cursor};
   overflow: hidden;
   position: relative;
