@@ -311,13 +311,12 @@ export function ExpiredOrdersWatcher(): null {
       // but don't clearInterval so we can restart when there are new orders
       if (pendingOrdersRef.current.length === 0) return
 
-      const now = new Date()
       const expiredOrders = pendingOrdersRef.current.filter(order => {
         // validTo is either a Date or unix timestamp in seconds
         const validTo = typeof order.validTo === 'number' ? new Date(order.validTo * 1000) : order.validTo
 
         // let's get the current date, with our expired order validTo given a buffer time
-        return now.valueOf() - validTo.valueOf() < EXPIRED_ORDERS_BUFFER
+        return Date.now() - validTo.valueOf() > EXPIRED_ORDERS_BUFFER
       })
 
       const expiredIds = expiredOrders.map(({ id }) => id)
