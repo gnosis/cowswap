@@ -18,7 +18,8 @@ import {
   DEFAULT_ORDER_DELAY,
   GP_SETTLEMENT_CONTRACT_ADDRESS,
   SHORT_PRECISION,
-  EXPIRED_ORDERS_BUFFER
+  EXPIRED_ORDERS_BUFFER,
+  CHECK_EXPIRED_ORDERS_INTERVAL
 } from 'constants/index'
 import { GP_V2_SETTLEMENT_INTERFACE } from 'constants/GPv2Settlement'
 import { stringToCurrency } from '../swap/extension'
@@ -123,15 +124,6 @@ const constructGetLogsRetry = (provider: Web3Provider) => {
   }
 
   return getLogsRetry
-}
-
-/**
- * @name _validToWithBuffer
- * @description returns order validTo with added buffer time
- * @param buffer buffer amount in MS
- */
-function _validToWithBuffer(validTo: Date, buffer = 0) {
-  return new Date(Date.parse(validTo.toUTCString()) + buffer)
 }
 
 export function EventUpdater(): null {
@@ -300,8 +292,6 @@ export function EventUpdater(): null {
   return null
 }
 
-const CHECK_EXPIRED_ORDERS_INTERVAL = 10000 // 10 sec
-
 export function ExpiredOrdersWatcher(): null {
   const { chainId } = useActiveWeb3React()
 
@@ -327,7 +317,7 @@ export function ExpiredOrdersWatcher(): null {
         const validTo = typeof order.validTo === 'number' ? new Date(order.validTo * 1000) : order.validTo
 
         // let's get the current date, with our expired order validTo given a buffer time
-        return _validToWithBuffer(validTo, EXPIRED_ORDERS_BUFFER) < now
+        return now.valueOf() - validTo.valueOf() < EXPIRED_ORDERS_BUFFER
       })
 
       const expiredIds = expiredOrders.map(({ id }) => id)
