@@ -5,7 +5,7 @@ import GoogleAnalyticsReporter from 'components/analytics/GoogleAnalyticsReporte
 import AddressClaimModal from '../components/claim/AddressClaimModal'
 import Header from 'components/Header'
 import Polling from '../components/Header/Polling'
-import URLWarning from 'components/Header/URLWarning'
+import URLWarning from '@src/custom/components/Header/URLWarning/index'
 import Popups from 'components/Popups'
 import Web3ReactManager from '../components/Web3ReactManager'
 import { ApplicationModal } from '../state/application/actions'
