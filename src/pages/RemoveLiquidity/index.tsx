@@ -19,7 +19,7 @@ import { MinimalPositionCard } from '../../components/PositionCard'
 import Row, { RowBetween, RowFixed } from '../../components/Row'
 
 import Slider from '../../components/Slider'
-import CurrencyLogo from '../../components/CurrencyLogo'
+import CurrencyLogo from 'components/CurrencyLogo'
 import { ROUTER_ADDRESS } from '../../constants'
 import { useActiveWeb3React } from '../../hooks'
 import { useCurrency } from '../../hooks/Tokens'
