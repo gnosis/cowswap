@@ -26,6 +26,7 @@ const AppStatusWrapper = styled.div`
   font-weight: 800;
   letter-spacing: 0.2rem;
   text-transform: uppercase;
+  border-radius: ${({ theme }) => theme.buttonPrimary.borderRadius};
 `
 
 export const LogoImage = styled.img.attrs(props => ({
