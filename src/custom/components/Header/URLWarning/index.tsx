@@ -1,6 +1,6 @@
-import { PRODUCTION_URL } from '@src/custom/constants'
+import { PRODUCTION_URL } from 'constants/'
 import React from 'react'
-import { default as URLWarningUni } from './URLWarningMod'
+import URLWarningUni from './URLWarningMod'
 
 export * from './URLWarningMod'
 
