@@ -11,7 +11,7 @@ import CurrencyLogo from 'components/CurrencyLogo'
 import { getEtherscanLink, isAddress } from 'utils'
 import { useActiveWeb3React } from 'hooks'
 import Card from 'components/Card'
-import ImportRow from './ImportRow'
+import ImportRow from 'components/SearchModal/ImportRow'
 import useTheme from '../../hooks/useTheme'
 
 import { CurrencyModalView } from './CurrencySearchModal'

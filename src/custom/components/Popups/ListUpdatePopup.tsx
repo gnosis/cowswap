@@ -1,7 +1,7 @@
 import React from 'react'
 import ListUpdatePopupMod from './ListUpdatePopupMod'
 import { TokenList } from '@uniswap/token-lists'
-import { ListRowProps } from '../SearchModal/ManageLists'
+import { ListRowProps } from 'components/SearchModal/ManageLists'
 import { acceptListUpdate } from 'state/lists/actions'
 import { DEFAULT_NETWORK_FOR_LISTS } from 'constants/lists'
 import { useActiveWeb3React } from 'hooks'
