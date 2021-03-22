@@ -130,7 +130,11 @@ function themeVariables(colorsTheme: Colors) {
       boxShadow: `2px 2px 0px ${colorsTheme.black}`,
       color: `${colorsTheme.text1}`,
       colorSelected: `${colorsTheme.black}`
-    }
+    },
+    bgLinearGradient: css`
+      background-image: linear-gradient(270deg, ${colorsTheme.purple} 30%, ${colorsTheme.blue1} 70%);
+    `,
+    version: colorsTheme.primary1
   }
 }
 

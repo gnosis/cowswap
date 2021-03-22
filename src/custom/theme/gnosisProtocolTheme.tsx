@@ -55,7 +55,11 @@ function themeVariables(darkMode: boolean, colorsTheme: Colors) {
       color: `${colorsTheme.white}`,
       colorSelected: `${colorsTheme.text1}`,
       boxShadow: '0px 6px 10px rgba(0, 0, 0, 0.075)'
-    }
+    },
+    bgLinearGradient: css`
+      background-image: linear-gradient(270deg, ${colorsTheme.purple} 30%, ${colorsTheme.blue1} 70%);
+    `,
+    version: colorsTheme.green1
   }
 }
 

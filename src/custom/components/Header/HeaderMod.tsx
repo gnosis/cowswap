@@ -1,25 +1,27 @@
 import { ChainId } from '@uniswap/sdk'
 import React, { useState } from 'react'
 import { Text } from 'rebass'
-import { NavLink } from 'react-router-dom'
-import { darken } from 'polished'
-import { useTranslation } from 'react-i18next'
+// import { NavLink } from 'react-router-dom'
+// import { darken } from 'polished'
+// import { useTranslation } from 'react-i18next'
 
 import styled from 'styled-components'
+
+import { status as appStatus } from '@src/../package.json'
 
 // import Logo from 'assets/svg/logo.svg'
 // import LogoDark from 'assets/svg/logo_white.svg'
 
 import { useActiveWeb3React } from 'hooks'
-import { useDarkModeManager } from 'state/user/hooks'
+// import { useDarkModeManager } from 'state/user/hooks'
 import { useETHBalances /*, useAggregateUniBalance*/ } from 'state/wallet/hooks'
 // import { CardNoise } from 'components/earn/styled'
 // import { CountUp } from 'use-count-up'
 // import { TYPE, ExternalLink } from 'theme'
 
 import { YellowCard } from 'components/Card'
-import { Moon, Sun } from 'react-feather'
-import Menu from 'components/Menu'
+// import { Moon, Sun } from 'react-feather'
+// import Menu from 'components/Menu'
 
 import Row, { RowFixed } from 'components/Row'
 import Web3Status from 'components/Web3Status'
@@ -99,10 +101,12 @@ const HeaderElement = styled.div`
   `};
 `
 
+/*
 const HeaderElementWrap = styled.div`
   display: flex;
   align-items: center;
 `
+*/
 
 const HeaderRow = styled(RowFixed)`
   ${({ theme }) => theme.mediaWidth.upToMedium`
@@ -202,34 +206,34 @@ export const UniIcon = styled.div`
   }
 `
 
-const activeClassName = 'ACTIVE'
+// const activeClassName = 'ACTIVE'
 
-const StyledNavLink = styled(NavLink).attrs({
-  activeClassName
-})`
-  ${({ theme }) => theme.flexRowNoWrap}
-  align-items: left;
-  border-radius: 3rem;
-  outline: none;
-  cursor: pointer;
-  text-decoration: none;
-  color: ${({ theme }) => theme.text2};
-  font-size: 1rem;
-  width: fit-content;
-  margin: 0 12px;
-  font-weight: 500;
+// const StyledNavLink = styled(NavLink).attrs({
+//   activeClassName
+// })`
+//   ${({ theme }) => theme.flexRowNoWrap}
+//   align-items: left;
+//   border-radius: 3rem;
+//   outline: none;
+//   cursor: pointer;
+//   text-decoration: none;
+//   color: ${({ theme }) => theme.text2};
+//   font-size: 1rem;
+//   width: fit-content;
+//   margin: 0 12px;
+//   font-weight: 500;
 
-  &.${activeClassName} {
-    border-radius: 12px;
-    font-weight: 600;
-    color: ${({ theme }) => theme.text1};
-  }
+//   &.${activeClassName} {
+//     border-radius: 12px;
+//     font-weight: 600;
+//     color: ${({ theme }) => theme.text1};
+//   }
 
-  :hover,
-  :focus {
-    color: ${({ theme }) => darken(0.1, theme.text1)};
-  }
-`
+//   :hover,
+//   :focus {
+//     color: ${({ theme }) => darken(0.1, theme.text1)};
+//   }
+// `
 
 /*
 const StyledExternalLink = styled(ExternalLink).attrs({
@@ -305,12 +309,28 @@ const CHAIN_CURRENCY_LABELS: { [chainId in ChainId]?: string } = {
   [ChainId.XDAI]: 'xDAI'
 }
 
+const Wrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 10px;
+
+  background: ${({ theme }) => theme.primary1};
+  border-radius: ${({ theme }) => theme.buttonPrimary.borderRadius};
+
+  /* negative margin matches logo margin right */
+  margin: auto 0 0 -10px;
+  padding: 2px 6px;
+`
+const AppStatus = ({ appStatus }: { appStatus?: string }) => <Wrapper>{appStatus}</Wrapper>
+
 export default function HeaderMod(props: WithClassName) {
   const { account, chainId } = useActiveWeb3React()
-  const { t } = useTranslation()
+  // const { t } = useTranslation()
 
   const userEthBalance = useETHBalances(account ? [account] : [])?.[account ?? '']
-  const [darkMode, toggleDarkMode] = useDarkModeManager()
+  // const [darkMode, toggleDarkMode] = useDarkModeManager()
 
   // const toggleClaimModal = useToggleSelfClaimModal()
 
@@ -341,10 +361,11 @@ export default function HeaderMod(props: WithClassName) {
             <LogoImage />
           </UniIcon>
         </Title>
+        {appStatus && <AppStatus appStatus={appStatus} />}
         <HeaderLinks>
-          <StyledNavLink id={`swap-nav-link`} to={'/swap'}>
+          {/* <StyledNavLink id={`swap-nav-link`} to={'/swap'}>
             {t('swap')}
-          </StyledNavLink>
+          </StyledNavLink> */}
           {/* <StyledNavLink
             id={`pool-nav-link`}
             to={'/pool'}
@@ -423,12 +444,12 @@ export default function HeaderMod(props: WithClassName) {
             <Web3Status />
           </AccountElement>
         </HeaderElement>
-        <HeaderElementWrap>
+        {/* <HeaderElementWrap>
           <StyledMenuButton onClick={() => toggleDarkMode()}>
             {darkMode ? <Moon size={20} /> : <Sun size={20} />}
           </StyledMenuButton>
           <Menu />
-        </HeaderElementWrap>
+        </HeaderElementWrap> */}
       </HeaderControls>
     </HeaderFrame>
   )
