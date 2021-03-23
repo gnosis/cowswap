@@ -1,15 +1,20 @@
 import React from 'react'
-import HeaderMod, { UniIcon } from './HeaderMod'
+import HeaderMod, { UniIcon, NetworkCard } from './HeaderMod'
 import styled from 'styled-components'
 import { status as appStatus } from '@src/../package.json'
 
 export { NETWORK_LABELS } from './HeaderMod'
 
 export const HeaderModWrapper = styled(HeaderMod)`
-  border-bottom: ${({ theme }) => (theme.header?.border ? theme.header.border : `1px solid ${theme.border}`)};
+  border-bottom: ${({ theme }) => theme.header.border};
 
   ${UniIcon} {
     display: flex;
+  }
+
+  ${NetworkCard} {
+    background: ${({ theme }) => theme.networkCard.background};
+    color: ${({ theme }) => theme.networkCard.text};
   }
 `
 

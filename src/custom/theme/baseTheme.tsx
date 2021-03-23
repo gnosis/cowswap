@@ -1,12 +1,13 @@
-import { DefaultTheme, ThemeProvider as StyledComponentsThemeProvider, createGlobalStyle, css } from 'styled-components'
-import React, { useMemo } from 'react'
-
 import Logo from 'assets/svg/logo.svg'
 import LogoDark from 'assets/svg/logo_white.svg'
 
 import { Colors } from 'theme/styled'
+import { colors as colorsUniswap } from '@src/theme'
+
+import { DefaultTheme, ThemeProvider as StyledComponentsThemeProvider, createGlobalStyle, css } from 'styled-components'
+import React, { useMemo } from 'react'
+
 import {
-  colors as colorsUniswap,
   theme as themeUniswap,
   FixedGlobalStyle as FixedGlobalStyleUniswap,
   ThemedGlobalStyle as ThemedGlobalStyleUniswap
@@ -53,14 +54,14 @@ export function colors(darkMode: boolean): Colors {
   }
 }
 
-function themeVariables(darkMode: boolean, colorsTheme: Colors) {
+export function themeVariables(darkMode: boolean, colorsTheme: Colors) {
   return {
-    logo: { src: `${darkMode ? LogoDark : Logo}`, alt: 'GP Logo', width: '24px', height: 'auto' },
     body: {
       background: css`
         background: radial-gradient(50% 50%, ${colorsTheme.primary1} 0%, ${colorsTheme.bg1} 100%) 0 -30vh no-repeat;
       `
     },
+    logo: { src: `${darkMode ? LogoDark : Logo}`, alt: 'GP Logo', width: '24px', height: 'auto' },
     appBody: {
       boxShadow: `0px 0px 1px rgba(0, 0, 0, 0.01), 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04),
   0px 24px 32px rgba(0, 0, 0, 0.01)`,
@@ -73,17 +74,22 @@ function themeVariables(darkMode: boolean, colorsTheme: Colors) {
     },
     buttonPrimary: {
       background: css`
-        background-image: linear-gradient(270deg, ${colorsTheme.purple} 30%, ${colorsTheme.blue1} 70%);
-        background-color: transparent;
-      `
+        background: transparent linear-gradient(270deg, ${colorsTheme.purple} 30%, ${colorsTheme.blue1} 70%);
+      `,
+      fontSize: '16px',
+      fontWeight: '500',
+      border: `0`,
+      borderRadius: '9px',
+      boxShadow: `none`
     },
     buttonLight: {
       fontSize: '16px',
       fontWeight: '500',
       border: 'none',
       borderHover: '1px solid transparent',
-      borderRadius: 'inherit',
-      boxShadow: 'none'
+      boxShadow: 'none',
+      backgroundHover: `${colorsTheme.primary4}`,
+      borderRadius: '9px'
     },
     currencyInput: {
       background: `${colorsTheme.bg1}`,
@@ -98,7 +104,11 @@ function themeVariables(darkMode: boolean, colorsTheme: Colors) {
     bgLinearGradient: css`
       background-image: linear-gradient(270deg, ${colorsTheme.purple} 30%, ${colorsTheme.blue1} 70%);
     `,
-    version: colorsTheme.green1
+    version: colorsTheme.green1,
+    networkCard: {
+      background: 'rgba(243, 132, 30, 0.05)',
+      text: colorsTheme.yellow2
+    }
   }
 }
 
