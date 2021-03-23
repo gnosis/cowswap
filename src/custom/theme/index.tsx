@@ -1,6 +1,6 @@
 export enum ButtonSize {
   SMALL,
-  MEDIUM,
+  DEFAULT,
   BIG
 }
 
