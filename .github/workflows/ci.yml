@@ -107,9 +107,8 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: website
-          path: build        
+          path: build
 
-  
   deploy:
     name: Deploy
     needs: build
@@ -155,7 +154,6 @@ jobs:
         if: github.ref == 'refs/heads/master'
         run: aws s3 sync website s3://${{ secrets.AWS_STAGING_BUCKET_NAME }}/current --delete
 
-
   integration-tests:
     name: Cypress
     runs-on: ubuntu-latest
@@ -163,6 +161,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+
+      - name: Increase watchers
+        run: echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
 
       - name: Set up node
         uses: actions/setup-node@v2
