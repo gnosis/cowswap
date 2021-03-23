@@ -205,6 +205,6 @@ jobs:
           wait-on-timeout: 200
       # Open tmate ssh connection on failure for debugging
       # Uncomment when needed and push upstream
-      # - name: Setup tmate session
-      #   uses: mxschmitt/action-tmate@v3
-      #   if: ${{ failure() }}
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+        if: ${{ failure() }}
