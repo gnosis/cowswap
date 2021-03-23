@@ -77,7 +77,7 @@ export function themeVariables(darkMode: boolean, colorsTheme: Colors) {
       [ButtonSize.BIG]: css`
         font-size: 26px;
       `,
-      [ButtonSize.NORMAL]: css`
+      [ButtonSize.MEDIUM]: css`
         font-size: 16px;
       `,
       [ButtonSize.SMALL]: css`
