@@ -17,16 +17,12 @@ const AppStatusWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 8px;
-  background: white;
-  border: 2px solid ${({ theme }) => theme.primary1};
-  color: ${({ theme }) => theme.primary1};
-  margin: auto 0 -5px -5px;
-  padding: 3px 6px;
-  font-weight: 800;
-  letter-spacing: 0.2rem;
-  text-transform: uppercase;
+  font-size: 10px;
+  background: ${({ theme }) => theme.primary1};
   border-radius: ${({ theme }) => theme.buttonPrimary.borderRadius};
+  /* negative margin matches logo margin right */
+  margin: auto 0 0 -10px;
+  padding: 2px 6px;
 `
 
 export const LogoImage = styled.img.attrs(props => ({
