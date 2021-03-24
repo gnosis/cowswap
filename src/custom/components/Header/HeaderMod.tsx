@@ -1,9 +1,10 @@
 import { ChainId } from '@uniswap/sdk'
 import React, { useState } from 'react'
 import { Text } from 'rebass'
-// import { NavLink } from 'react-router-dom'
-// import { darken } from 'polished'
+import { NavLink } from 'react-router-dom'
+import { darken } from 'polished'
 // import { useTranslation } from 'react-i18next'
+import { LinkType } from './index'
 
 import styled from 'styled-components'
 
@@ -112,7 +113,7 @@ const HeaderRow = styled(RowFixed)`
   `};
 `
 
-const HeaderLinks = styled(Row)`
+export const HeaderLinks = styled(Row)`
   justify-content: center;
   ${({ theme }) => theme.mediaWidth.upToMedium`
     padding: 1rem 0 1rem 1rem;
@@ -183,7 +184,7 @@ const BalanceText = styled(Text)`
   `};
 `
 
-const Title = styled.a`
+export const Title = styled.a`
   display: flex;
   align-items: center;
   pointer-events: auto;
@@ -204,34 +205,34 @@ export const UniIcon = styled.div`
   }
 `
 
-// const activeClassName = 'ACTIVE'
+const activeClassName = 'ACTIVE'
 
-// const StyledNavLink = styled(NavLink).attrs({
-//   activeClassName
-// })`
-//   ${({ theme }) => theme.flexRowNoWrap}
-//   align-items: left;
-//   border-radius: 3rem;
-//   outline: none;
-//   cursor: pointer;
-//   text-decoration: none;
-//   color: ${({ theme }) => theme.text2};
-//   font-size: 1rem;
-//   width: fit-content;
-//   margin: 0 12px;
-//   font-weight: 500;
+const StyledNavLink = styled(NavLink).attrs({
+  activeClassName
+})`
+  ${({ theme }) => theme.flexRowNoWrap}
+  align-items: left;
+  border-radius: 3rem;
+  outline: none;
+  cursor: pointer;
+  text-decoration: none;
+  color: ${({ theme }) => theme.text2};
+  font-size: 1rem;
+  width: fit-content;
+  margin: 0 12px;
+  font-weight: 500;
 
-//   &.${activeClassName} {
-//     border-radius: 12px;
-//     font-weight: 600;
-//     color: ${({ theme }) => theme.text1};
-//   }
+  &.${activeClassName} {
+    border-radius: 12px;
+    font-weight: 600;
+    color: ${({ theme }) => theme.text1};
+  }
 
-//   :hover,
-//   :focus {
-//     color: ${({ theme }) => darken(0.1, theme.text1)};
-//   }
-// `
+  :hover,
+  :focus {
+    color: ${({ theme }) => darken(0.1, theme.text1)};
+  }
+`
 
 /*
 const StyledExternalLink = styled(ExternalLink).attrs({
@@ -307,7 +308,7 @@ const CHAIN_CURRENCY_LABELS: { [chainId in ChainId]?: string } = {
   [ChainId.XDAI]: 'xDAI'
 }
 
-export default function HeaderMod(props: { statusLabel: React.ReactNode } & WithClassName) {
+export default function HeaderMod(props: { headerLinks: LinkType[] } & WithClassName) {
   const { account, chainId } = useActiveWeb3React()
   // const { t } = useTranslation()
 
@@ -343,8 +344,16 @@ export default function HeaderMod(props: { statusLabel: React.ReactNode } & With
             <LogoImage />
           </UniIcon>
         </Title>
-        {props.statusLabel}
+        {/* {props.statusLabel} */}
         <HeaderLinks>
+          {props.headerLinks &&
+            props.headerLinks.map(({ id, title, path }) => {
+              return (
+                <StyledNavLink key={id} to={path}>
+                  {title}
+                </StyledNavLink>
+              )
+            })}
           {/* <StyledNavLink id={`swap-nav-link`} to={'/swap'}>
             {t('swap')}
           </StyledNavLink> */}

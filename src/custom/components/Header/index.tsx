@@ -1,33 +1,54 @@
 import React from 'react'
-import HeaderMod, { UniIcon, NetworkCard } from './HeaderMod'
+import HeaderMod, { UniIcon, NetworkCard, Title, HeaderLinks } from './HeaderMod'
 import styled from 'styled-components'
 import { status as appStatus } from '@src/../package.json'
 
 export { NETWORK_LABELS } from './HeaderMod'
+
+export interface LinkType {
+  id: number
+  title: string
+  path: string
+}
+
+const headerLinks: LinkType[] = [
+  { id: 0, title: 'Swap', path: '/swap' },
+  { id: 1, title: 'About', path: '/about' }
+]
 
 export const HeaderModWrapper = styled(HeaderMod)`
   border-bottom: ${({ theme }) => theme.header.border};
 
   ${UniIcon} {
     display: flex;
+    margin: 0 16px 0 0;
+    position: relative;
+
+    &::after {
+      content: '${appStatus}';
+      display: block;
+      font-size: 10px;
+      font-weight: bold;
+      position: absolute;
+      right: 12px;
+      top: 2px;
+    }
+  }
+
+  ${Title} {
+    margin: 0;
+    text-decoration: none;
+    color: ${({ theme }) => theme.text1};
+  }
+
+  ${HeaderLinks} {
+    margin: 5px 0 0 0;
   }
 
   ${NetworkCard} {
     background: ${({ theme }) => theme.networkCard.background};
     color: ${({ theme }) => theme.networkCard.text};
   }
-`
-
-const AppStatusWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 10px;
-  background: ${({ theme }) => theme.primary1};
-  border-radius: ${({ theme }) => theme.buttonPrimary.borderRadius};
-  /* negative margin matches logo margin right */
-  margin: auto 0 0 -10px;
-  padding: 2px 6px;
 `
 
 export const LogoImage = styled.img.attrs(props => ({
@@ -40,5 +61,5 @@ export const LogoImage = styled.img.attrs(props => ({
 `
 
 export default function Header() {
-  return <HeaderModWrapper statusLabel={<AppStatusWrapper>{appStatus}</AppStatusWrapper>} />
+  return <HeaderModWrapper headerLinks={headerLinks} />
 }
