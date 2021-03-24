@@ -93,7 +93,11 @@ function themeVariables(colorsTheme: Colors) {
       boxShadow: `6px 6px 0px ${colorsTheme.black}`,
       borderRadius: '8px',
       border: `4px solid ${colorsTheme.black}`,
-      padding: '12px 6px 24px'
+      padding: '12px 6px 24px',
+      maxWidth: {
+        normal: '420px',
+        content: '620px'
+      }
     },
     header: {
       border: 'none'

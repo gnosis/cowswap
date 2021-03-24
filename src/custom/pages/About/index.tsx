@@ -1,15 +1,31 @@
-import React from 'react'
-import AppBody from 'pages/AppBody'
-import styled from 'styled-components'
-
-const Title = styled.h1`
-  font-size: 24px;
-`
+import React, { useEffect, useState } from 'react'
+import { Title, Content, AppBodyMod } from './About.styled'
+import markdownContent from './about.md'
+import ReactMarkdown from 'react-markdown'
 
 export default function About() {
+  const [content, setContent] = useState('')
+
+  useEffect(() => {
+    const fetchContent = async () => {
+      await fetch(markdownContent)
+        .then(res => res.text())
+        .then(text => {
+          setContent(text)
+        })
+        .catch(error => {
+          console.log('Error fetching markdown content: ', error)
+          return null
+        })
+    }
+
+    fetchContent()
+  }, [])
+
   return (
-    <AppBody>
+    <AppBodyMod>
       <Title>About</Title>
-    </AppBody>
+      <Content>{content.length > 0 && <ReactMarkdown>{content}</ReactMarkdown>}</Content>
+    </AppBodyMod>
   )
 }
