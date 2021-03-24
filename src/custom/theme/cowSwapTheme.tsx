@@ -86,7 +86,7 @@ function themeVariables(colorsTheme: Colors) {
     `,
     body: {
       background: css`
-        background: url(${cowBg}) no-repeat 100% / cover;
+        background: url(${cowBg}) no-repeat 100% / cover fixed;
       `
     },
     appBody: {
