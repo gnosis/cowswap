@@ -29,12 +29,12 @@ export default function CurrencyLogo({
   currency,
   size = '24px',
   style,
-  getTokenLogoURL
+  getTokenLogoUrlCustom
 }: {
   currency?: Currency
   size?: string
   style?: React.CSSProperties
-  getTokenLogoURL: (url: string) => string
+  getTokenLogoUrlCustom: (url: string) => string
 }) {
   const uriLocations = useHttpLocations(currency instanceof WrappedTokenInfo ? currency.logoURI : undefined)
 
@@ -43,12 +43,16 @@ export default function CurrencyLogo({
 
     if (currency instanceof Token) {
       if (currency instanceof WrappedTokenInfo) {
-        return [...uriLocations, getTokenLogoURL(currency.address)]
+        return [...uriLocations, getTokenLogoUrlCustom(currency.address)]
       }
-      return [getTokenLogoURL(currency.address)]
+      return [getTokenLogoUrlCustom(currency.address)]
     }
     return []
-  }, [getTokenLogoURL, currency, uriLocations])
+  }, [getTokenLogoUrlCustom, currency, uriLocations])
+
+  // if (currency instanceof Token) {
+  //   console.log('Token info', currency.symbol, currency)
+  // }
 
   if (currency === ETHER) {
     return <StyledEthereumLogo src={EthereumLogo} size={size} style={style} />

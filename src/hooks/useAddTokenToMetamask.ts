@@ -1,4 +1,4 @@
-import { getTokenLogoURL } from './../components/CurrencyLogo/index'
+import { getTokenLogoURL } from 'components/CurrencyLogo'
 import { wrappedCurrency } from 'utils/wrappedCurrency'
 import { Currency, Token } from '@uniswap/sdk'
 import { useCallback, useState } from 'react'
