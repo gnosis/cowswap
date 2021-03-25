@@ -1,9 +1,37 @@
 import React from 'react'
-import HeaderMod, { UniIcon, NetworkCard, Title, HeaderLinks } from './HeaderMod'
+import { ChainId } from '@uniswap/sdk'
+import Web3Status from 'components/Web3Status'
+
+import HeaderMod, {
+  UniIcon,
+  NetworkCard,
+  Title,
+  HeaderLinks,
+  HeaderRow,
+  StyledNavLink,
+  HeaderControls,
+  HeaderElement,
+  HideSmall,
+  BalanceText,
+  AccountElement
+} from './HeaderMod'
 import styled from 'styled-components'
 import { status as appStatus } from '@src/../package.json'
+import { useActiveWeb3React } from 'hooks'
+import { useETHBalances } from 'state/wallet/hooks'
+import { SHORT_PRECISION } from 'constants/index'
 
-export { NETWORK_LABELS } from './HeaderMod'
+export const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
+  [ChainId.RINKEBY]: 'Rinkeby',
+  [ChainId.ROPSTEN]: 'Ropsten',
+  [ChainId.GÖRLI]: 'Görli',
+  [ChainId.KOVAN]: 'Kovan',
+  [ChainId.XDAI]: 'xDAI'
+}
+
+const CHAIN_CURRENCY_LABELS: { [chainId in ChainId]?: string } = {
+  [ChainId.XDAI]: 'xDAI'
+}
 
 export interface LinkType {
   id: number
@@ -61,5 +89,51 @@ export const LogoImage = styled.img.attrs(props => ({
 `
 
 export default function Header() {
-  return <HeaderModWrapper headerLinks={headerLinks} />
+  const { account, chainId } = useActiveWeb3React()
+  const userEthBalance = useETHBalances(account ? [account] : [])?.[account ?? '']
+  const nativeToken = chainId && (CHAIN_CURRENCY_LABELS[chainId] || 'ETH')
+
+  return (
+    <HeaderModWrapper>
+      <HeaderRow>
+        <Title href=".">
+          <UniIcon>
+            <LogoImage />
+          </UniIcon>
+        </Title>
+        <HeaderLinks>
+          {headerLinks.map(({ id, title, path }) => {
+            return (
+              <StyledNavLink key={id} to={path}>
+                {title}
+              </StyledNavLink>
+            )
+          })}
+        </HeaderLinks>
+      </HeaderRow>
+      <HeaderControls>
+        <HeaderElement>
+          <HideSmall>
+            {chainId && NETWORK_LABELS[chainId] && (
+              <NetworkCard title={NETWORK_LABELS[chainId]}>{NETWORK_LABELS[chainId]}</NetworkCard>
+            )}
+          </HideSmall>
+          <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
+            {account && userEthBalance ? (
+              <BalanceText style={{ flexShrink: 0 }} pl="0.75rem" pr="0.5rem" fontWeight={500}>
+                {userEthBalance?.toSignificant(SHORT_PRECISION)} {nativeToken}
+              </BalanceText>
+            ) : null}
+            <Web3Status />
+          </AccountElement>
+        </HeaderElement>
+        {/* <HeaderElementWrap>
+          <StyledMenuButton onClick={() => toggleDarkMode()}>
+            {darkMode ? <Moon size={20} /> : <Sun size={20} />}
+          </StyledMenuButton>
+          <Menu />
+        </HeaderElementWrap> */}
+      </HeaderControls>
+    </HeaderModWrapper>
+  )
 }
