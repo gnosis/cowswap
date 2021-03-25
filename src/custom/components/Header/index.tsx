@@ -39,11 +39,6 @@ export interface LinkType {
   path: string
 }
 
-const headerLinks: LinkType[] = [
-  { id: 0, title: 'Swap', path: '/swap' },
-  { id: 1, title: 'About', path: '/about' }
-]
-
 export const HeaderModWrapper = styled(HeaderMod)`
   border-bottom: ${({ theme }) => theme.header.border};
 
@@ -102,13 +97,8 @@ export default function Header() {
           </UniIcon>
         </Title>
         <HeaderLinks>
-          {headerLinks.map(({ id, title, path }) => {
-            return (
-              <StyledNavLink key={id} to={path}>
-                {title}
-              </StyledNavLink>
-            )
-          })}
+          <StyledNavLink to="/swap">Swap</StyledNavLink>
+          <StyledNavLink to="/about">About</StyledNavLink>
         </HeaderLinks>
       </HeaderRow>
       <HeaderControls>
