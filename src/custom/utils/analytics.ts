@@ -1,14 +1,18 @@
-const DOMAIN_DEV_REGEX = /cow-trade\.dev/i
-const DOMAIN_STAGING_REGEX = /cow-trade\.staging/i
-const DOMAIN_PROD_REGEX = /cow\.trade/i
+function getDomainRegex(domain: string | undefined): RegExp | undefined {
+  return domain ? new RegExp('^' + domain.replaceAll('.', '\\.'), 'i') : undefined
+}
 
 export function getAnalyticsId(): string | undefined {
+  const domainDevRegex = getDomainRegex(process.env.REACT_APP_DOMAIN_PREFIX_DEV)
+  const domainStagingRegex = getDomainRegex(process.env.REACT_APP_DOMAIN_PREFIX_STAGING)
+  const domainProdRegex = getDomainRegex(process.env.REACT_APP_DOMAIN_PREFIX_PROD)
+
   const host = window.location.host
-  if (DOMAIN_DEV_REGEX.test(host)) {
+  if (domainDevRegex && domainDevRegex.test(host)) {
     return process.env.REACT_APP_GOOGLE_ANALYTICS_ID_DEV
-  } else if (DOMAIN_STAGING_REGEX.test(host)) {
+  } else if (domainStagingRegex && domainStagingRegex.test(host)) {
     return process.env.REACT_APP_GOOGLE_ANALYTICS_ID_STAGING
-  } else if (DOMAIN_PROD_REGEX.test(host)) {
+  } else if (domainProdRegex && domainProdRegex.test(host)) {
     return process.env.REACT_APP_GOOGLE_ANALYTICS_ID_PROD
   }
 
