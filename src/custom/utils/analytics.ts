@@ -1,5 +1,5 @@
-function getDomainRegex(domain: string | undefined): RegExp | undefined {
-  return domain ? new RegExp('^' + domain.replaceAll('.', '\\.'), 'i') : undefined
+function getDomainRegex(domainPrefix: string | undefined): RegExp | undefined {
+  return domainPrefix ? new RegExp('^' + domainPrefix.replaceAll('.', '\\.'), 'i') : undefined
 }
 
 export function getAnalyticsId(): string | undefined {
