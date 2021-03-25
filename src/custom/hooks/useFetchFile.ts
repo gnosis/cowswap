@@ -1,23 +1,23 @@
 import { useEffect, useState } from 'react'
 
-export default function useFetchFile(file: string) {
-  const [data, setData] = useState<string | null>(null)
+export default function useFetchFile(filePath: string) {
+  const [file, setFile] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     const fetchFile = async () => {
-      await fetch(file)
+      await fetch(filePath)
         .then(res => res.text())
         .then(text => {
-          setData(text)
+          setFile(text)
         })
         .catch(res => {
-          setError(`Error fetching file ${file} - status: ${res.statusText}`)
+          setError(`Error fetching file ${filePath} - status: ${res.statusText}`)
         })
     }
 
     fetchFile()
-  }, [file])
+  }, [filePath])
 
-  return { data, error }
+  return { file, error }
 }
