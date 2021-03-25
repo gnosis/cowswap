@@ -1,6 +1,7 @@
 name: CI
 
 on:
+  # build on PR creation/updates, also when pushing to master, or create a release
   pull_request:
     types: [opened, synchronize] 
   push:
