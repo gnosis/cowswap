@@ -33,6 +33,12 @@ interface TradeEventParams {
   // id?: string | string[] // to filter by id
 }
 
+function apiOrderIsSettled(orderFromApi: OrderMetaData | null): boolean {
+  return (
+    orderFromApi !== null && Number(orderFromApi.executedBuyAmount) > 0 && Number(orderFromApi.executedSellAmount) > 0
+  )
+}
+
 function _computeFulfilledSummary({
   orderFromStore,
   orderFromApi
@@ -125,6 +131,73 @@ const constructGetLogsRetry = (provider: Web3Provider) => {
   }
 
   return getLogsRetry
+}
+
+export function EventUpdaterApiOnly(): null {
+  const { chainId, library } = useActiveWeb3React()
+
+  const pending = usePendingOrders({ chainId })
+  const fulfillOrdersBatch = useFulfillOrdersBatch()
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout | null = null
+    console.log('EventUpdaterApiOnly::useEffect')
+
+    if (!chainId || pending.length <= 0) {
+      console.log('EventUpdaterApiOnly::exiting', chainId, pending.length)
+
+      return
+    }
+
+    async function update(): Promise<void> {
+      console.log('EventUpdaterApiOnly::calling update')
+
+      const lastBlockNumber = await library?.getBlockNumber()
+      if (!chainId || !lastBlockNumber) {
+        console.log('EventUpdaterApiOnly::update, exiting', chainId, lastBlockNumber)
+
+        return
+      }
+      const orders = await Promise.all(
+        pending.map<Promise<[Order, OrderMetaData | null]>>(async storeOrder => {
+          const apiOrder = await getOrder(chainId, storeOrder.id)
+          return [storeOrder, apiOrder]
+        })
+      )
+      console.log('EventUpdaterApiOnly::got api orders', orders)
+
+      const ordersBatchData: OrderLogPopupMixData[] = orders
+        .filter(([, apiOrder]) => apiOrderIsSettled(apiOrder))
+        .map(([orderFromStore, orderFromApi]) => {
+          const summary = _computeFulfilledSummary({ orderFromStore, orderFromApi })
+          return {
+            id: orderFromStore.id,
+            fulfillmentTime: new Date().toISOString(),
+            // TODO: get this from the API!!!
+            transactionHash: 'nothing for now',
+            summary
+          }
+        })
+      console.log('EventUpdaterApiOnly::filtered and parsed orders batch', ordersBatchData)
+
+      // SET lastCheckedBlock = lastBlockNumber
+      // AND fulfill orders
+      // ordersBatchData can be empty
+      fulfillOrdersBatch({
+        ordersData: ordersBatchData,
+        chainId,
+        lastCheckedBlock: lastBlockNumber
+      })
+    }
+
+    interval = setInterval(update, 10000)
+
+    return (): void => {
+      interval && clearInterval(interval)
+    }
+  }, [pending, chainId, library, fulfillOrdersBatch])
+
+  return null
 }
 
 export function EventUpdater(): null {
