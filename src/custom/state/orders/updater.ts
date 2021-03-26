@@ -12,10 +12,9 @@ import {
   useExpireOrdersBatch
 } from './hooks'
 import { buildBlock2DateMap } from 'utils/blocks'
-import { delay, registerOnWindow } from 'utils/misc'
+import { registerOnWindow } from 'utils/misc'
 import { getOrder, OrderMetaData } from 'utils/operator'
 import {
-  DEFAULT_ORDER_DELAY,
   GP_SETTLEMENT_CONTRACT_ADDRESS,
   SHORT_PRECISION,
   EXPIRED_ORDERS_BUFFER,
@@ -214,7 +213,7 @@ export function EventUpdater(): null {
           // the frontend is ahead of the backend in regards to data freshness
           // TODO: temporary! change to a better solution
           // https://github.com/gnosis/gp-swap-ui/issues/213
-          const orderFromApi = await delay(DEFAULT_ORDER_DELAY, getOrder(chainId, id))
+          const orderFromApi = await getOrder(chainId, id)
 
           // using order from store and api compute summary
           const summary = _computeFulfilledSummary({ orderFromApi, orderFromStore })
