@@ -137,7 +137,7 @@ const constructGetLogsRetry = (provider: Web3Provider) => {
 }
 
 export function EventUpdaterApiOnly(): null {
-  const { chainId, library } = useActiveWeb3React()
+  const { chainId } = useActiveWeb3React()
 
   const pending = usePendingOrders({ chainId })
   const fulfillOrdersBatch = useFulfillOrdersBatch()
@@ -146,12 +146,6 @@ export function EventUpdaterApiOnly(): null {
     async (pending: Order[], chainId: ChainId) => {
       console.log('EventUpdaterApiOnly::calling update')
 
-      const lastBlockNumber = await library?.getBlockNumber()
-      if (!lastBlockNumber) {
-        console.log('EventUpdaterApiOnly::update, exiting', chainId, lastBlockNumber)
-
-        return
-      }
       const orders = await Promise.all(
         pending.map<Promise<[Order, OrderMetaData | null]>>(async orderFromStore => {
           const orderFromApi = await getOrder(chainId, orderFromStore.id)
@@ -173,18 +167,12 @@ export function EventUpdaterApiOnly(): null {
         })
       console.log('EventUpdaterApiOnly::filtered and parsed orders batch', ordersBatchData)
 
-      // SET lastCheckedBlock = lastBlockNumber
-      // AND fulfill orders
-      // ordersBatchData can be empty
       fulfillOrdersBatch({
         ordersData: ordersBatchData,
-        chainId,
-        // TODO: this is not good! we should keep the same that's in store
-        // this might have side effects everywhere else, like when checking balances or such
-        lastCheckedBlock: lastBlockNumber
+        chainId
       })
     },
-    [fulfillOrdersBatch, library]
+    [fulfillOrdersBatch]
   )
 
   useEffect(() => {
@@ -311,8 +299,8 @@ export function EventUpdater(): null {
       // ordersBatchData can be empty
       fulfillOrdersBatch({
         ordersData: ordersBatchData,
-        chainId,
-        lastCheckedBlock: lastBlockNumber
+        chainId
+        // lastCheckedBlock: lastBlockNumber
       })
 
       // console.log('logs', logs)
