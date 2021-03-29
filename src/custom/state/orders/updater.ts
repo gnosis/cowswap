@@ -160,9 +160,9 @@ export function EventUpdaterApiOnly(): null {
         return
       }
       const orders = await Promise.all(
-        pending.map<Promise<[Order, OrderMetaData | null]>>(async storeOrder => {
-          const apiOrder = await getOrder(chainId, storeOrder.id)
-          return [storeOrder, apiOrder]
+        pending.map<Promise<[Order, OrderMetaData | null]>>(async orderFromStore => {
+          const orderFromApi = await getOrder(chainId, orderFromStore.id)
+          return [orderFromStore, orderFromApi]
         })
       )
       console.log('EventUpdaterApiOnly::got api orders', orders)
