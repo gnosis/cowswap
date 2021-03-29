@@ -174,8 +174,7 @@ export function EventUpdaterApiOnly(): null {
           return {
             id: orderFromStore.id,
             fulfillmentTime: new Date().toISOString(),
-            // TODO: get this from the API!!!
-            transactionHash: 'nothing for now',
+            transactionHash: '', // there's no need  for a txHash as we'll link the notification to the Explorer
             summary
           }
         })
