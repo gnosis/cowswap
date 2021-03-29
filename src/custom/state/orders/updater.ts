@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from 'react'
+import { useCallback, useEffect, useMemo, useRef } from 'react'
 import { useActiveWeb3React } from 'hooks'
 import { useBlockNumber } from 'state/application/hooks'
 import { OrderFulfillmentData, Order } from './actions'
@@ -23,6 +23,7 @@ import {
 import { GP_V2_SETTLEMENT_INTERFACE } from 'constants/GPv2Settlement'
 import { stringToCurrency } from '../swap/extension'
 import { OPERATOR_API_POLL_INTERVAL } from './consts'
+import { ChainId } from '@uniswap/sdk'
 
 type OrderLogPopupMixData = OrderFulfillmentData & Pick<Log, 'transactionHash'> & Partial<Pick<Order, 'summary'>>
 
@@ -141,21 +142,12 @@ export function EventUpdaterApiOnly(): null {
   const pending = usePendingOrders({ chainId })
   const fulfillOrdersBatch = useFulfillOrdersBatch()
 
-  useEffect(() => {
-    let interval: NodeJS.Timeout | null = null
-    console.log('EventUpdaterApiOnly::useEffect')
-
-    if (!chainId || pending.length <= 0) {
-      console.log('EventUpdaterApiOnly::exiting', chainId, pending.length)
-
-      return
-    }
-
-    async function update(): Promise<void> {
+  const updateOrders = useCallback(
+    async (pending: Order[], chainId: ChainId) => {
       console.log('EventUpdaterApiOnly::calling update')
 
       const lastBlockNumber = await library?.getBlockNumber()
-      if (!chainId || !lastBlockNumber) {
+      if (!lastBlockNumber) {
         console.log('EventUpdaterApiOnly::update, exiting', chainId, lastBlockNumber)
 
         return
@@ -187,16 +179,29 @@ export function EventUpdaterApiOnly(): null {
       fulfillOrdersBatch({
         ordersData: ordersBatchData,
         chainId,
+        // TODO: this is not good! we should keep the same that's in store
+        // this might have side effects everywhere else, like when checking balances or such
         lastCheckedBlock: lastBlockNumber
       })
+    },
+    [fulfillOrdersBatch, library]
+  )
+
+  useEffect(() => {
+    console.log('EventUpdaterApiOnly::useEffect')
+
+    if (!chainId || pending.length <= 0) {
+      console.log('EventUpdaterApiOnly::exiting', chainId, pending.length)
+
+      return
     }
 
-    interval = setInterval(update, OPERATOR_API_POLL_INTERVAL)
+    const interval = setInterval(() => updateOrders(pending, chainId), OPERATOR_API_POLL_INTERVAL)
 
     return (): void => {
-      interval && clearInterval(interval)
+      clearInterval(interval)
     }
-  }, [pending, chainId, library, fulfillOrdersBatch])
+  }, [pending, chainId, updateOrders])
 
   return null
 }
