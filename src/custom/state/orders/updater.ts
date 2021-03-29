@@ -33,7 +33,8 @@ interface TradeEventParams {
   // id?: string | string[] // to filter by id
 }
 
-function apiOrderIsSettled(orderFromApi: OrderMetaData | null): boolean {
+function isOrderFinalized(orderFromApi: OrderMetaData | null): boolean {
+  // TODO: for now only checks for execution. Check also whether order is expired. Right?
   return (
     orderFromApi !== null && Number(orderFromApi.executedBuyAmount) > 0 && Number(orderFromApi.executedSellAmount) > 0
   )
@@ -51,7 +52,7 @@ function _computeFulfilledSummary({
 
   // if we can find the order from the API
   // and our specific order exists in our state, let's use that
-  if (orderFromApi && Number(orderFromApi.executedBuyAmount) > 0 && Number(orderFromApi.executedSellAmount) > 0) {
+  if (orderFromApi && isOrderFinalized(orderFromApi)) {
     const { buyToken, sellToken, executedBuyAmount, executedSellAmount } = orderFromApi
 
     if (orderFromStore) {
@@ -167,7 +168,7 @@ export function EventUpdaterApiOnly(): null {
       console.log('EventUpdaterApiOnly::got api orders', orders)
 
       const ordersBatchData: OrderLogPopupMixData[] = orders
-        .filter(([, apiOrder]) => apiOrderIsSettled(apiOrder))
+        .filter(([, orderFromApi]) => isOrderFinalized(orderFromApi))
         .map(([orderFromStore, orderFromApi]) => {
           const summary = _computeFulfilledSummary({ orderFromStore, orderFromApi })
           return {
