@@ -144,20 +144,18 @@ export function EventUpdaterApiOnly(): null {
 
   const updateOrders = useCallback(
     async (pending: Order[], chainId: ChainId) => {
-      console.log('EventUpdaterApiOnly::calling update')
-
-      const orders = await Promise.all(
-        pending.map<Promise<[Order, OrderMetaData | null]>>(async orderFromStore => {
+      // Iterate over pending orders fetching operator order data, async
+      // Returns a null when the order isn't finalized/not found
+      const unfilteredOrdersData: (OrderLogPopupMixData | null)[] = await Promise.all(
+        pending.map(async orderFromStore => {
           const orderFromApi = await getOrder(chainId, orderFromStore.id)
-          return [orderFromStore, orderFromApi]
-        })
-      )
-      console.log('EventUpdaterApiOnly::got api orders', orders)
 
-      const ordersBatchData: OrderLogPopupMixData[] = orders
-        .filter(([, orderFromApi]) => isOrderFinalized(orderFromApi))
-        .map(([orderFromStore, orderFromApi]) => {
+          if (!isOrderFinalized(orderFromApi)) {
+            return null
+          }
+
           const summary = _computeFulfilledSummary({ orderFromStore, orderFromApi })
+
           return {
             id: orderFromStore.id,
             fulfillmentTime: new Date().toISOString(),
@@ -165,10 +163,14 @@ export function EventUpdaterApiOnly(): null {
             summary
           }
         })
-      console.log('EventUpdaterApiOnly::filtered and parsed orders batch', ordersBatchData)
+      )
+
+      // Additional step filtering out `null` entries, due to lack of async reduce
+      // Type guard is required to tell TS what's the final type
+      const ordersData = unfilteredOrdersData.filter((data): data is OrderLogPopupMixData => data !== null)
 
       fulfillOrdersBatch({
-        ordersData: ordersBatchData,
+        ordersData,
         chainId
       })
     },
