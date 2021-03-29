@@ -46,6 +46,7 @@ export default function FeeInformationTooltip(props: FeeInformationTooltipProps)
                 <span>Gas costs</span>
                 <strong>Free</strong>{' '}
               </FeeTooltipLine>
+              ---
               <FeeTooltipLine>
                 <strong>{type}</strong>
                 <strong>{amountAfterFees}</strong>{' '}
