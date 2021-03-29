@@ -63,7 +63,7 @@ function _computeFulfilledSummary({
       summary = `Swap ${sellToken} for ${buyToken}`
     }
   } else {
-    console.log(`computeFulfilledSummary::API data not yet in sync with blockchain`)
+    console.log(`[state:orders:updater] computeFulfilledSummary::API data not yet in sync with blockchain`)
   }
 
   return summary
