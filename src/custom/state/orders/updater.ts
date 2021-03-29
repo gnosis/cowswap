@@ -136,6 +136,23 @@ const constructGetLogsRetry = (provider: Web3Provider) => {
   return getLogsRetry
 }
 
+async function fetchOrderPopupData(orderFromStore: Order, chainId: ChainId): Promise<OrderLogPopupMixData | null> {
+  const orderFromApi = await getOrder(chainId, orderFromStore.id)
+
+  if (!isOrderFinalized(orderFromApi)) {
+    return null
+  }
+
+  const summary = _computeFulfilledSummary({ orderFromStore, orderFromApi })
+
+  return {
+    id: orderFromStore.id,
+    fulfillmentTime: new Date().toISOString(),
+    transactionHash: '', // there's no need  for a txHash as we'll link the notification to the Explorer
+    summary
+  }
+}
+
 export function EventUpdaterApiOnly(): null {
   const { chainId } = useActiveWeb3React()
 
@@ -147,22 +164,7 @@ export function EventUpdaterApiOnly(): null {
       // Iterate over pending orders fetching operator order data, async
       // Returns a null when the order isn't finalized/not found
       const unfilteredOrdersData: (OrderLogPopupMixData | null)[] = await Promise.all(
-        pending.map(async orderFromStore => {
-          const orderFromApi = await getOrder(chainId, orderFromStore.id)
-
-          if (!isOrderFinalized(orderFromApi)) {
-            return null
-          }
-
-          const summary = _computeFulfilledSummary({ orderFromStore, orderFromApi })
-
-          return {
-            id: orderFromStore.id,
-            fulfillmentTime: new Date().toISOString(),
-            transactionHash: '', // there's no need  for a txHash as we'll link the notification to the Explorer
-            summary
-          }
-        })
+        pending.map(async orderFromStore => fetchOrderPopupData(orderFromStore, chainId))
       )
 
       // Additional step filtering out `null` entries, due to lack of async reduce
@@ -178,19 +180,13 @@ export function EventUpdaterApiOnly(): null {
   )
 
   useEffect(() => {
-    console.log('EventUpdaterApiOnly::useEffect')
-
     if (!chainId || pending.length <= 0) {
-      console.log('EventUpdaterApiOnly::exiting', chainId, pending.length)
-
       return
     }
 
     const interval = setInterval(() => updateOrders(pending, chainId), OPERATOR_API_POLL_INTERVAL)
 
-    return (): void => {
-      clearInterval(interval)
-    }
+    return () => clearInterval(interval)
   }, [pending, chainId, updateOrders])
 
   return null
