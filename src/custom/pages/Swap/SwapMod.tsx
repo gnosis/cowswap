@@ -310,8 +310,8 @@ export default function Swap() {
 
   const [exactInLabel, exactOutLabel] = useMemo(
     () => [
-      independentField === Field.OUTPUT && !showWrap && trade ? 'From (incl. GP + gas fees)' : 'From',
-      independentField === Field.INPUT && !showWrap && trade ? 'To (incl. GP + gas fees)' : 'To'
+      independentField === Field.OUTPUT && !showWrap && trade ? 'From (incl. fees)' : 'From',
+      independentField === Field.INPUT && !showWrap && trade ? 'To (incl. fees)' : 'To'
     ],
     [independentField, showWrap, trade]
   )
@@ -397,8 +397,10 @@ export default function Swap() {
                   amountBeforeFees={trade?.outputAmountWithoutFee?.toSignificant(DEFAULT_PRECISION)}
                   amountAfterFees={trade?.outputAmount.toSignificant(DEFAULT_PRECISION)}
                   type="Receive"
-                  feeAmount={trade?.fee?.feeAsCurrency?.toSignificant(DEFAULT_PRECISION)}
-                  feeSymbol={trade?.fee?.feeAsCurrency?.currency.symbol}
+                  feeAmount={trade?.outputAmountWithoutFee
+                    ?.subtract(trade?.outputAmount)
+                    .toSignificant(DEFAULT_PRECISION)}
+                  feeSymbol={trade?.outputAmount.currency.symbol}
                 />
               }
               showMaxButton={false}
