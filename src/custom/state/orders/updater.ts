@@ -22,6 +22,7 @@ import {
 } from 'constants/index'
 import { GP_V2_SETTLEMENT_INTERFACE } from 'constants/GPv2Settlement'
 import { stringToCurrency } from '../swap/extension'
+import { OPERATOR_API_POLL_INTERVAL } from './consts'
 
 type OrderLogPopupMixData = OrderFulfillmentData & Pick<Log, 'transactionHash'> & Partial<Pick<Order, 'summary'>>
 
@@ -190,7 +191,7 @@ export function EventUpdaterApiOnly(): null {
       })
     }
 
-    interval = setInterval(update, 10000)
+    interval = setInterval(update, OPERATOR_API_POLL_INTERVAL)
 
     return (): void => {
       interval && clearInterval(interval)
