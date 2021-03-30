@@ -12,6 +12,14 @@ interface FeeInformationTooltipProps {
   feeAmount?: string
   type: string
 }
+
+const Wrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 22.39px;
+`
+
 const FeeTooltipLine = styled.p`
   display: flex;
   flex-flow: row nowrap;
@@ -33,7 +41,7 @@ export default function FeeInformationTooltip(props: FeeInformationTooltipProps)
   const { trade, label, amountBeforeFees, amountAfterFees, feeAmount, type, showHelper } = props
 
   return (
-    <div>
+    <Wrapper>
       <span>{label}</span>{' '}
       {trade && showHelper && (
         <QuestionHelper
@@ -60,6 +68,6 @@ export default function FeeInformationTooltip(props: FeeInformationTooltipProps)
           }
         />
       )}
-    </div>
+    </Wrapper>
   )
 }
