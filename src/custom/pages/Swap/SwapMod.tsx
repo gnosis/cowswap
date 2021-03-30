@@ -355,7 +355,6 @@ export default function Swap() {
                   amountAfterFees={trade?.inputAmountWithFee.toSignificant(DEFAULT_PRECISION)}
                   type="From"
                   feeAmount={trade?.fee?.feeAsCurrency?.toSignificant(DEFAULT_PRECISION)}
-                  feeSymbol={trade?.fee?.feeAsCurrency?.currency.symbol}
                 />
               }
               value={formattedAmounts[Field.INPUT]}
@@ -400,7 +399,6 @@ export default function Swap() {
                   feeAmount={trade?.outputAmountWithoutFee
                     ?.subtract(trade?.outputAmount)
                     .toSignificant(DEFAULT_PRECISION)}
-                  feeSymbol={trade?.outputAmount.currency.symbol}
                 />
               }
               showMaxButton={false}
