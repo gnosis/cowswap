@@ -73,13 +73,15 @@ export async function postOrder(params: PostOrderParams): Promise<string> {
 
   // Prepare order
   const summary = _getSummary(params)
+  const appData = '0x' + APP_ID.toString(16).padStart(64, '0')
+
   const unsignedOrder: UnsignedOrder = {
     sellToken: sellToken.address,
     buyToken: buyToken.address,
     sellAmount,
     buyAmount,
     validTo,
-    appData: APP_ID,
+    appData,
     feeAmount,
     kind,
     partiallyFillable: false // Always fill or kill
