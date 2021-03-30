@@ -30,7 +30,7 @@ const FeeTooltipLine = styled.p`
   font-size: small;
 
   > .green {
-    color: green;
+    color: ${({ theme }) => theme.green1};
   }
 `
 
