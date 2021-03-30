@@ -42,7 +42,7 @@ import {
   useIsFeeGreaterThanInput
 } from 'state/swap/hooks'
 import { useExpertModeManager, useUserSlippageTolerance, useUserSingleHopOnly } from 'state/user/hooks'
-import { LinkStyledButton, TYPE } from 'theme'
+import { /*LinkStyledButton,*/ ButtonSize, TYPE } from 'theme'
 import { maxAmountSpend } from 'utils/maxAmountSpend'
 import { computeTradePriceBreakdown, warningSeverity } from 'utils/prices'
 import AppBody from 'pages/AppBody'
@@ -361,11 +361,11 @@ export default function Swap() {
                     color={currencies[Field.INPUT] && currencies[Field.OUTPUT] ? theme.primary1 : theme.text2}
                   />
                 </ArrowWrapper>
-                {recipient === null && !showWrap && isExpertMode ? (
+                {/* {recipient === null && !showWrap && isExpertMode ? (
                   <LinkStyledButton id="add-recipient-button" onClick={() => onChangeRecipient('')}>
                     + Add a send (optional)
                   </LinkStyledButton>
-                ) : null}
+                ) : null} */}
               </AutoRow>
             </AutoColumn>
             <CurrencyInputPanel
@@ -385,9 +385,9 @@ export default function Swap() {
                   <ArrowWrapper clickable={false}>
                     <ArrowDown size="16" color={theme.text2} />
                   </ArrowWrapper>
-                  <LinkStyledButton id="remove-recipient-button" onClick={() => onChangeRecipient(null)}>
+                  {/* <LinkStyledButton id="remove-recipient-button" onClick={() => onChangeRecipient(null)}>
                     - Remove send
-                  </LinkStyledButton>
+                  </LinkStyledButton> */}
                 </AutoRow>
                 <AddressInputPanel id="recipient" value={recipient} onChange={onChangeRecipient} />
               </>
@@ -437,19 +437,21 @@ export default function Swap() {
           </AutoColumn>
           <BottomGrouping>
             {swapIsUnsupported ? (
-              <ButtonPrimary disabled={true}>
+              <ButtonPrimary buttonSize={ButtonSize.BIG} disabled={true}>
                 <TYPE.main mb="4px">Unsupported Asset</TYPE.main>
               </ButtonPrimary>
             ) : !account ? (
-              <ButtonLight onClick={toggleWalletModal}>Connect Wallet</ButtonLight>
+              <ButtonLight buttonSize={ButtonSize.BIG} onClick={toggleWalletModal}>
+                Connect Wallet
+              </ButtonLight>
             ) : showWrap ? (
-              <ButtonPrimary disabled={Boolean(wrapInputError)} onClick={onWrap}>
+              <ButtonPrimary buttonSize={ButtonSize.BIG} disabled={Boolean(wrapInputError)} onClick={onWrap}>
                 {wrapInputError ??
                   (wrapType === WrapType.WRAP ? 'Wrap' : wrapType === WrapType.UNWRAP ? 'Unwrap' : null)}
               </ButtonPrimary>
             ) : // MOD: disable ETH trading
             showEthDisabled ? (
-              <ButtonPrimary id="swap-button" disabled={true}>
+              <ButtonPrimary buttonSize={ButtonSize.BIG} id="swap-button" disabled={true}>
                 <TYPE.main mb="4px">ETH cannot be traded. Use WETH</TYPE.main>
               </ButtonPrimary>
             ) : noRoute && userHasSpecifiedInputOutput ? (
@@ -466,6 +468,7 @@ export default function Swap() {
             ) : showApproveFlow ? (
               <RowBetween>
                 <ButtonConfirmed
+                  buttonSize={ButtonSize.BIG}
                   onClick={approveCallback}
                   disabled={approval !== ApprovalState.NOT_APPROVED || approvalSubmitted}
                   width="48%"
@@ -483,6 +486,7 @@ export default function Swap() {
                   )}
                 </ButtonConfirmed>
                 <ButtonError
+                  buttonSize={ButtonSize.BIG}
                   onClick={() => {
                     if (isExpertMode) {
                       handleSwap()
@@ -512,6 +516,7 @@ export default function Swap() {
               </RowBetween>
             ) : (
               <ButtonError
+                buttonSize={ButtonSize.BIG}
                 onClick={() => {
                   if (isExpertMode) {
                     handleSwap()

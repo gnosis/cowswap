@@ -1,9 +1,10 @@
 {
   "name": "@gnosis/gp-v2-ui",
-  "description": "Gnosis Protocol v2 Webapp",
+  "description": "Cow Swap - Gnosis Protocol",
   "homepage": ".",
   "private": true,
-  "version": "0.5.0",
+  "version": "0.7.3",
+  "status": "Alpha",
   "devDependencies": {
     "@craco/craco": "^5.7.0",
     "@ethersproject/experimental": "^5.0.1",
@@ -109,6 +110,7 @@
     "eject": "react-scripts eject",
     "integration-test": "start-server-and-test 'serve build -l 3000' http://localhost:3000 'cypress run'",
     "serve": "serve build -l 3000",
+    "serve:ci": "serve website -l 3000",
     "cypress": "cypress open"
   },
   "jest": {
