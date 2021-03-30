@@ -13,6 +13,8 @@ export const APP_ID = Number(process.env.REACT_APP_ID)
 // reexport all Uniswap constants everything
 export * from '@src/constants/index'
 
+export const PRODUCTION_URL = 'cow.trade'
+
 // TODO: When contracts are deployed, we can load this from the NPM package
 export const GP_SETTLEMENT_CONTRACT_ADDRESS: Partial<Record<ChainId, string>> = {
   [ChainId.MAINNET]: GPv2Settlement[ChainId.MAINNET].address,
@@ -40,3 +42,5 @@ export const BUY_ETHER_TOKEN: { [chainId in ChainId]: Token } = {
 export const ORDER_ID_SHORT_LENGTH = 8
 export const INPUT_OUTPUT_EXPLANATION = 'Only executed swaps incur fees.'
 export const DEFAULT_ORDER_DELAY = 20000 // 20s
+export const EXPIRED_ORDERS_BUFFER = 45 * 1000 // 45s
+export const CHECK_EXPIRED_ORDERS_INTERVAL = 10000 // 10 sec

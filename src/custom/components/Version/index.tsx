@@ -26,7 +26,7 @@ const StyledPolling = styled.div`
 
   padding: 1rem;
 
-  color: ${({ theme }) => theme.green1};
+  color: ${({ theme }) => theme.version};
   opacity: 0.4;
 
   &:hover {
@@ -45,7 +45,7 @@ const VersionsExternalLink = styled(ExternalLink)<{ isUnclickable?: boolean }>`
     isUnclickable &&
     `
       pointer-events: none;
-      curose: none;
+      cursor: none;
   `}
 `
 

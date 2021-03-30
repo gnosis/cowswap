@@ -19,29 +19,82 @@ import {
   ButtonErrorStyle as ButtonErrorStyleMod
   // We don't import the "composite" buttons, they are just redefined (c&p actually)
 } from './ButtonMod'
+import { ButtonSize } from '@src/custom/theme'
 
 export const ButtonPrimary = styled(ButtonPrimaryMod)`
   // CSS overrides
-  ${({ theme }) => theme.bgLinearGradient}
-  background-color: transparent;
-  border: 0;
+  ${({ theme }) => theme.buttonPrimary.background}
+  font-size: ${({ theme }) => theme.buttonPrimary.fontSize};
+  font-weight: ${({ theme }) => theme.buttonPrimary.fontWeight};
+  border: ${({ theme }) => theme.buttonPrimary.border};
+  box-shadow: ${({ theme }) => theme.buttonPrimary.boxShadow};
+  border-radius: ${({ theme }) => theme.buttonPrimary.borderRadius};
+  ${({ theme }) => theme.cursor};
+  overflow: hidden;
+  position: relative;
+
+  > div {
+    font-size: inherit;
+    font-weight: inherit;
+  }
 
   &:focus,
   &:hover,
   &:active {
-    ${({ theme }) => theme.bgLinearGradient}
-    background-color: transparent;
-    border: 0;
+    ${({ theme }) => theme.buttonPrimary.background}
+    border: ${({ theme }) => theme.buttonPrimary.border};
   }
   &:disabled {
     background-color: ${({ theme }) => theme.disabled};
     background-image: none;
     border: 0;
+    cursor: auto;
+    animation: none;
   }
 `
 
 export const ButtonLight = styled(ButtonLightMod)`
   // CSS override
+  ${({ theme }) => theme.buttonLight.background}
+  color: ${({ theme }) => theme.primaryText1};
+  font-size: ${({ theme }) => theme.buttonLight.fontSize};
+  font-weight: ${({ theme }) => theme.buttonLight.fontWeight};
+  border: ${({ theme }) => theme.buttonLight.border};
+  box-shadow: ${({ theme }) => theme.buttonLight.boxShadow};
+  border-radius: ${({ theme }) => theme.buttonLight.borderRadius};
+  ${({ theme }) => theme.cursor};
+  overflow: hidden;
+  position: relative;
+
+  > div {
+    font-size: inherit;
+    font-weight: inherit;
+  }
+
+  &:focus {
+    box-shadow: ${({ theme }) => theme.buttonLight.boxShadow};
+    background-color: ${({ theme }) => theme.buttonLight.backgroundHover};
+  }
+  &:hover {
+    background-color: ${({ theme }) => theme.buttonLight.backgroundHover};
+  }
+  &:active {
+    box-shadow: ${({ theme }) => theme.buttonLight.boxShadow};
+    background-color: ${({ theme }) => theme.buttonLight.backgroundHover};
+  }
+  &:disabled {
+    opacity: 0.4;
+    cursor: auto;
+    animation: none;
+    :hover {
+      cursor: auto;
+      background-color: ${({ theme }) => theme.primary5};
+      box-shadow: none;
+      border: ${({ theme }) => theme.buttonLight.borderHover};
+      outline: none;
+    }
+  }
+
 `
 
 export const ButtonGray = styled(ButtonGrayMod)`
@@ -76,11 +129,15 @@ export const ButtonEmpty = styled(ButtonEmptyMod)`
   // CSS overrides
 `
 
+type ButtonCustomProps = ButtonProps & {
+  buttonSize?: ButtonSize
+}
+
 export function ButtonConfirmed({
   confirmed,
   altDisabledStyle,
   ...rest
-}: { confirmed?: boolean; altDisabledStyle?: boolean } & ButtonProps) {
+}: { confirmed?: boolean; altDisabledStyle?: boolean } & ButtonCustomProps) {
   if (confirmed) {
     return <ButtonConfirmedStyle {...rest} />
   } else {
@@ -88,7 +145,7 @@ export function ButtonConfirmed({
   }
 }
 
-export function ButtonError({ error, ...rest }: { error?: boolean } & ButtonProps) {
+export function ButtonError({ error, ...rest }: { error?: boolean } & ButtonCustomProps) {
   if (error) {
     return <ButtonErrorStyle {...rest} />
   } else {
@@ -96,7 +153,7 @@ export function ButtonError({ error, ...rest }: { error?: boolean } & ButtonProp
   }
 }
 
-export function ButtonDropdown({ disabled = false, children, ...rest }: { disabled?: boolean } & ButtonProps) {
+export function ButtonDropdown({ disabled = false, children, ...rest }: { disabled?: boolean } & ButtonCustomProps) {
   return (
     <ButtonPrimary {...rest} disabled={disabled}>
       <RowBetween>
@@ -107,7 +164,11 @@ export function ButtonDropdown({ disabled = false, children, ...rest }: { disabl
   )
 }
 
-export function ButtonDropdownLight({ disabled = false, children, ...rest }: { disabled?: boolean } & ButtonProps) {
+export function ButtonDropdownLight({
+  disabled = false,
+  children,
+  ...rest
+}: { disabled?: boolean } & ButtonCustomProps) {
   return (
     <ButtonOutlined {...rest} disabled={disabled}>
       <RowBetween>
@@ -118,7 +179,7 @@ export function ButtonDropdownLight({ disabled = false, children, ...rest }: { d
   )
 }
 
-export function ButtonRadio({ active, ...rest }: { active?: boolean } & ButtonProps) {
+export function ButtonRadio({ active, ...rest }: { active?: boolean } & ButtonCustomProps) {
   if (!active) {
     return <ButtonWhite {...rest} />
   } else {
