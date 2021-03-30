@@ -10,7 +10,7 @@ interface FeeInformationTooltipProps {
   amountBeforeFees?: string
   amountAfterFees?: string
   feeAmount?: string
-  type: string
+  type: 'From' | 'Receive'
 }
 
 const Wrapper = styled.div`
@@ -28,6 +28,10 @@ const FeeTooltipLine = styled.p`
   margin: 0;
 
   font-size: small;
+
+  > .green {
+    color: green;
+  }
 `
 
 const Breakline = styled.p`
@@ -48,16 +52,19 @@ export default function FeeInformationTooltip(props: FeeInformationTooltipProps)
           text={
             <div>
               <FeeTooltipLine>
-                <span>Before fees</span>
+                <span>Before fee</span>
                 <span>{amountBeforeFees}</span>{' '}
               </FeeTooltipLine>
               <FeeTooltipLine>
-                <span>GP fee</span>
-                <span>{feeAmount}</span>{' '}
+                <span>Fee</span>
+                <span>
+                  {type === 'From' ? '+' : '-'}
+                  {feeAmount}
+                </span>{' '}
               </FeeTooltipLine>
               <FeeTooltipLine>
                 <span>Gas costs</span>
-                <strong>Free</strong>{' '}
+                <strong className="green">Free</strong>{' '}
               </FeeTooltipLine>
               <Breakline />
               <FeeTooltipLine>

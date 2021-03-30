@@ -310,8 +310,8 @@ export default function Swap() {
 
   const [exactInLabel, exactOutLabel] = useMemo(
     () => [
-      independentField === Field.OUTPUT && !showWrap && trade ? 'From (incl. fees)' : 'From',
-      independentField === Field.INPUT && !showWrap && trade ? 'To (incl. fees)' : 'To'
+      independentField === Field.OUTPUT && !showWrap && trade ? 'From (incl. fee)' : 'From',
+      independentField === Field.INPUT && !showWrap && trade ? 'To (incl. fee)' : 'To'
     ],
     [independentField, showWrap, trade]
   )
