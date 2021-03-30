@@ -10,7 +10,6 @@ interface FeeInformationTooltipProps {
   amountBeforeFees?: string
   amountAfterFees?: string
   feeAmount?: string
-  feeSymbol?: string
   type: string
 }
 const FeeTooltipLine = styled.p`
@@ -22,8 +21,16 @@ const FeeTooltipLine = styled.p`
 
   font-size: small;
 `
+
+const Breakline = styled.p`
+  height: 0;
+  border: 0.1px solid #00000052;
+  margin: 0.3rem 0;
+  width: 100%;
+`
+
 export default function FeeInformationTooltip(props: FeeInformationTooltipProps) {
-  const { trade, label, amountBeforeFees, amountAfterFees, feeAmount, feeSymbol, type, showHelper } = props
+  const { trade, label, amountBeforeFees, amountAfterFees, feeAmount, type, showHelper } = props
 
   return (
     <div>
@@ -38,15 +45,13 @@ export default function FeeInformationTooltip(props: FeeInformationTooltipProps)
               </FeeTooltipLine>
               <FeeTooltipLine>
                 <span>GP fee</span>
-                <span>
-                  {feeAmount} {feeSymbol}
-                </span>{' '}
+                <span>{feeAmount}</span>{' '}
               </FeeTooltipLine>
               <FeeTooltipLine>
                 <span>Gas costs</span>
                 <strong>Free</strong>{' '}
               </FeeTooltipLine>
-              ---
+              <Breakline />
               <FeeTooltipLine>
                 <strong>{type}</strong>
                 <strong>{amountAfterFees}</strong>{' '}

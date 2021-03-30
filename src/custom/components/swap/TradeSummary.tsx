@@ -73,11 +73,7 @@ export default function TradeSummary({ trade, allowedSlippage }: { trade: TradeW
             <QuestionHelper text="GP Swap has 0 gas fees. A portion of the sell amount in each trade goes to the GP Protocol." />
           </RowFixed>
           <TYPE.black fontSize={14} color={theme.text1}>
-            {realizedFee
-              ? `${realizedFee.toSignificant(DEFAULT_PRECISION)} ${
-                  trade[!isExactIn ? 'inputAmount' : 'outputAmount'].currency.symbol
-                }`
-              : '-'}
+            {realizedFee ? `${realizedFee.toSignificant(DEFAULT_PRECISION)} ${realizedFee.currency.symbol}` : '-'}
           </TYPE.black>
         </RowBetween>
       </AutoColumn>
