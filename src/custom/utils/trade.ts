@@ -82,6 +82,7 @@ export async function postOrder(params: PostOrderParams): Promise<string> {
     buyAmount,
     validTo,
     appData,
+    receiver: account, // TODO: implement receiver. This field is suppoused to be optional, but the backend fails if its not set
     feeAmount,
     kind,
     partiallyFillable: false // Always fill or kill
