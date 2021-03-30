@@ -459,14 +459,11 @@ export default function Swap() {
                 <RowBetween>
                   <ButtonError buttonSize={ButtonSize.BIG} error id="swap-button" disabled>
                     <Text fontSize={20} fontWeight={500}>
-                      Fees exceed input amount
+                      Fees exceed from amount
                     </Text>
                   </ButtonError>
                 </RowBetween>
               ) : (
-                // <GreyCard style={{ textAlign: 'center' }}>
-                //   <TYPE.main mb="4px">Fees exceed input amount</TYPE.main>
-                // </GreyCard>
                 <GreyCard style={{ textAlign: 'center' }}>
                   <TYPE.main mb="4px">Insufficient liquidity for this trade.</TYPE.main>
                   {singleHopOnly && <TYPE.main mb="4px">Try enabling multi-hop trades.</TYPE.main>}
