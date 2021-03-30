@@ -1,25 +1,29 @@
 import React from 'react'
 import styled from 'styled-components'
-import { useActiveWeb3React } from 'hooks'
 import { ExternalLink, TYPE } from 'theme'
-import { GP_SETTLEMENT_CONTRACT_ADDRESS } from 'custom/constants'
-import { getEtherscanLink } from 'utils'
 
 import { version as WEB } from '@src/../package.json'
 import { version as CONTRACTS } from '@gnosis.pm/gp-v2-contracts/package.json'
 
-const VERSIONS = {
-  WEB,
-  CONTRACTS
+const VERSIONS: Record<string, { version: string; href: string }> = {
+  Web: {
+    version: 'v' + WEB,
+    href: 'https://github.com/gnosis/gp-swap-ui'
+  },
+  Contracts: {
+    version: 'v' + CONTRACTS,
+    href: 'https://github.com/gnosis/gp-v2-contracts'
+  }
 }
 
-const versionsList = Object.entries(VERSIONS)
+const versionsList = Object.keys(VERSIONS)
 
 const StyledPolling = styled.div`
   position: fixed;
   display: flex;
-  flex-flow: column nowrap;
+  flex-flow: row nowrap;
   align-items: flex-start;
+  gap: 0.5rem;
 
   left: 0;
   bottom: 0;
@@ -49,28 +53,20 @@ const VersionsExternalLink = styled(ExternalLink)<{ isUnclickable?: boolean }>`
   `}
 `
 
-const VersionData = ({ versions }: { versions: typeof versionsList }) => (
+const Version = () => (
   <StyledPolling>
-    {versions.map(([key, val]) => (
-      <TYPE.small key={key}>
-        {key}: <strong>{val}</strong>
-      </TYPE.small>
-    ))}
+    {/* it's hardcoded anyways */}
+    {versionsList.map(key => {
+      const { href, version } = VERSIONS[key]
+      return (
+        <TYPE.small key={key}>
+          <VersionsExternalLink href={href}>
+            <strong>{key}</strong>: {version}
+          </VersionsExternalLink>
+        </TYPE.small>
+      )
+    })}
   </StyledPolling>
 )
-
-const Version = () => {
-  const { chainId } = useActiveWeb3React()
-  const swapAddress = chainId ? GP_SETTLEMENT_CONTRACT_ADDRESS[chainId] : null
-
-  return (
-    <VersionsExternalLink
-      isUnclickable={!chainId || !swapAddress}
-      href={chainId && swapAddress ? getEtherscanLink(chainId, swapAddress, 'address') : ''}
-    >
-      <VersionData versions={versionsList} />
-    </VersionsExternalLink>
-  )
-}
 
 export default Version
