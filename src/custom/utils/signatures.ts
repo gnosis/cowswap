@@ -21,7 +21,7 @@ export interface SignOrderParams {
 export interface OrderCreation extends UnsignedOrder {
   // TODO: I commented this because I expect the API and contract to follow the same structure for the order data. confirm and delete this comment
   signature: string // 65 bytes encoded as hex without `0x` prefix. v + r + s from the spec
-  signedScheme: SigningScheme
+  signingScheme: SigningScheme
 }
 
 // TODO: We cannot make use of the NPM exported enum for now. See https://babeljs.io/docs/en/babel-plugin-transform-typescript#caveats

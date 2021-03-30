@@ -109,7 +109,7 @@ export async function postOrder(params: PostOrderParams): Promise<string> {
       ...unsignedOrder,
       signature: signatureData,
       receiver,
-      signedScheme: SIGNING_SCHEME
+      signingScheme: SIGNING_SCHEME
     }
   })
 
