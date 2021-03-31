@@ -12,6 +12,7 @@ on:
 env:
   APP_ID: 1
   REPO_NAME_SLUG: gpswapui
+  PR_NUMBER: ${{ github.event.number }}
 
 jobs:
   setup:
@@ -19,213 +20,219 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up node
-        uses: actions/setup-node@v2
-        with:
-          node-version: 12
-
       - name: Set output of cache
         id: yarn-cache
-        run: echo "::set-output name=dir::$(yarn cache dir)"
+        run: echo "PRAUL $PR_NUMBER ${{ env.PR_NUMBER }}"
 
-      - name: Cache yarn cache
-        uses: actions/cache@v2
-        id: cache-yarn-cache
-        with:
-          path: ${{ steps.yarn-cache.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
+  #     - name: Checkout code
+  #       uses: actions/checkout@v2
 
-      - name: Cache node_modules
-        id: cache-node-modules
-        uses: actions/cache@v2
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-${{ matrix.node-version }}-nodemodules-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ matrix.node-version }}-nodemodules-
+  #     - name: Set up node
+  #       uses: actions/setup-node@v2
+  #       with:
+  #         node-version: 12
 
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
+  #     - name: Set output of cache
+  #       id: yarn-cache
+  #       run: echo "::set-output name=dir::$(yarn cache dir)"
 
-  test:
-    name: Test
-    needs: setup
-    runs-on: ubuntu-latest
+    
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+  #     - name: Cache yarn cache
+  #       uses: actions/cache@v2
+  #       id: cache-yarn-cache
+  #       with:
+  #         path: ${{ steps.yarn-cache.outputs.dir }}
+  #         key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+  #         restore-keys: |
+  #           ${{ runner.os }}-yarn-
 
-      - name: Set up node
-        uses: actions/setup-node@v2
-        with:
-          node-version: 12
+  #     - name: Cache node_modules
+  #       id: cache-node-modules
+  #       uses: actions/cache@v2
+  #       with:
+  #         path: node_modules
+  #         key: ${{ runner.os }}-${{ matrix.node-version }}-nodemodules-${{ hashFiles('**/yarn.lock') }}
+  #         restore-keys: |
+  #           ${{ runner.os }}-${{ matrix.node-version }}-nodemodules-
 
-      - name: Load dependencies
-        id: cache-node-modules
-        uses: actions/cache@v2
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-${{ matrix.node-version }}-nodemodules-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ matrix.node-version }}-nodemodules-
+  #     - name: Install dependencies
+  #       run: yarn install --frozen-lockfile
 
-      - name: Unit Test
-        run: yarn test
+  # test:
+  #   name: Test
+  #   needs: setup
+  #   runs-on: ubuntu-latest
 
-      # - name: Coveralls
-      #   uses: coverallsapp/github-action@v1.1.2
-      #   with:
-      #     github-token: ${{ secrets.GITHUB_TOKEN }}
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v2
 
-  build:
-    name: Build apps
-    needs: setup
-    runs-on: ubuntu-latest
+  #     - name: Set up node
+  #       uses: actions/setup-node@v2
+  #       with:
+  #         node-version: 12
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+  #     - name: Load dependencies
+  #       id: cache-node-modules
+  #       uses: actions/cache@v2
+  #       with:
+  #         path: node_modules
+  #         key: ${{ runner.os }}-${{ matrix.node-version }}-nodemodules-${{ hashFiles('**/yarn.lock') }}
+  #         restore-keys: |
+  #           ${{ runner.os }}-${{ matrix.node-version }}-nodemodules-
 
-      - name: Set up node
-        uses: actions/setup-node@v2
-        with:
-          node-version: 12
+  #     - name: Unit Test
+  #       run: yarn test
 
-      - name: Load dependencies
-        id: cache-node-modules
-        uses: actions/cache@v2
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-${{ matrix.node-version }}-nodemodules-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ matrix.node-version }}-nodemodules-
+  #     # - name: Coveralls
+  #     #   uses: coverallsapp/github-action@v1.1.2
+  #     #   with:
+  #     #     github-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build Web Apps
-        run: yarn build
+  # build:
+  #   name: Build apps
+  #   needs: setup
+  #   runs-on: ubuntu-latest
 
-      - name: Upload websites artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: website
-          path: build
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v2
 
-  deploy:
-    name: Deploy
-    needs: build
-    runs-on: ubuntu-latest
+  #     - name: Set up node
+  #       uses: actions/setup-node@v2
+  #       with:
+  #         node-version: 12
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+  #     - name: Load dependencies
+  #       id: cache-node-modules
+  #       uses: actions/cache@v2
+  #       with:
+  #         path: node_modules
+  #         key: ${{ runner.os }}-${{ matrix.node-version }}-nodemodules-${{ hashFiles('**/yarn.lock') }}
+  #         restore-keys: |
+  #           ${{ runner.os }}-${{ matrix.node-version }}-nodemodules-
 
-      - name: Download website
-        uses: actions/download-artifact@v2
+  #     - name: Build Web Apps
+  #       run: yarn build
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
+  #     - name: Upload websites artifact
+  #       uses: actions/upload-artifact@v2
+  #       with:
+  #         name: website
+  #         path: build
 
-      - name: Get PR number
-        uses: jwalton/gh-find-current-pr@v1
-        id: findPr
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+  # deploy:
+  #   name: Deploy
+  #   needs: build
+  #   runs-on: ubuntu-latest
 
-      - name: 'Deploy to S3: PRaul'
-        if: success() && steps.findPr.outputs.number
-        run: aws s3 sync website s3://${{ secrets.AWS_REVIEW_BUCKET_NAME }}/${{ env.REPO_NAME_SLUG }}/pr${{ steps.findPr.outputs.number }} --delete
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v2
 
-      - name: 'PRaul: Comment PR with app URLs'
-        uses: mshick/add-pr-comment@v1
-        with:
-          message: |
-            * **🔭 [GP Swap](${{ env.REVIEW_FEATURE_URL }})**: Gnosis Protocol v2 Swap UI
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          repo-token-user-login: 'github-actions[bot]'
-        if: success() && steps.findPr.outputs.number
-        env:
-          REVIEW_FEATURE_URL: https://pr${{ steps.findPr.outputs.number }}--${{ env.REPO_NAME_SLUG }}.review.gnosisdev.com
+  #     - name: Download website
+  #       uses: actions/download-artifact@v2
 
-      - name: 'Deploy to S3: Develop'
-        if: github.ref == 'refs/heads/develop'
-        run: aws s3 sync website s3://${{ secrets.AWS_DEV_BUCKET_NAME }} --delete
+  #     - name: Configure AWS credentials
+  #       uses: aws-actions/configure-aws-credentials@v1
+  #       with:
+  #         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  #         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  #         aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: 'Deploy to S3: Staging'
-        if: github.ref == 'refs/heads/master'
-        run: aws s3 sync website s3://${{ secrets.AWS_STAGING_BUCKET_NAME }}/current --delete
+  #     - name: Get PR number
+  #       uses: jwalton/gh-find-current-pr@v1
+  #       id: findPr
+  #       with:
+  #         github-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: 'Production deployment: Upload release build files to be deployed'
-        if: startsWith(github.ref, 'refs/tags/v')
-        run: aws s3 sync website s3://${{ secrets.AWS_STAGING_BUCKET_NAME }}/releases/${{ github.event.release.tag_name }} --delete
+  #     - name: 'Deploy to S3: PRaul'
+  #       if: success() && steps.findPr.outputs.number
+  #       run: aws s3 sync website s3://${{ secrets.AWS_REVIEW_BUCKET_NAME }}/${{ env.REPO_NAME_SLUG }}/pr${{ steps.findPr.outputs.number }} --delete
 
-      - name: 'Production deployment: Enable production deployment'
-        if: success() && startsWith(github.ref, 'refs/tags/v')
-        run: bash ./.github/scripts/prepare_production_deployment.sh
-        env:
-          PROD_DEPLOYMENT_HOOK_TOKEN: ${{ secrets.PROD_DEPLOYMENT_HOOK_TOKEN }}
-          PROD_DEPLOYMENT_HOOK_URL: ${{ secrets.PROD_DEPLOYMENT_HOOK_URL }}
-          VERSION_TAG: ${{ github.event.release.tag_name }}
+  #     - name: 'PRaul: Comment PR with app URLs'
+  #       uses: mshick/add-pr-comment@v1
+  #       with:
+  #         message: |
+  #           * **🔭 [GP Swap](${{ env.REVIEW_FEATURE_URL }})**: Gnosis Protocol v2 Swap UI
+  #         repo-token: ${{ secrets.GITHUB_TOKEN }}
+  #         repo-token-user-login: 'github-actions[bot]'
+  #       if: success() && steps.findPr.outputs.number
+  #       env:
+  #         REVIEW_FEATURE_URL: https://pr${{ steps.findPr.outputs.number }}--${{ env.REPO_NAME_SLUG }}.review.gnosisdev.com
 
-  integration-tests:
-    name: Cypress
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+  #     - name: 'Deploy to S3: Develop'
+  #       if: github.ref == 'refs/heads/develop'
+  #       run: aws s3 sync website s3://${{ secrets.AWS_DEV_BUCKET_NAME }} --delete
 
-      - name: Increase watchers
-        run: echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
+  #     - name: 'Deploy to S3: Staging'
+  #       if: github.ref == 'refs/heads/master'
+  #       run: aws s3 sync website s3://${{ secrets.AWS_STAGING_BUCKET_NAME }}/current --delete
 
-      - name: Set up node
-        uses: actions/setup-node@v2
-        with:
-          node-version: 12
+  #     - name: 'Production deployment: Upload release build files to be deployed'
+  #       if: startsWith(github.ref, 'refs/tags/v')
+  #       run: aws s3 sync website s3://${{ secrets.AWS_STAGING_BUCKET_NAME }}/releases/${{ github.event.release.tag_name }} --delete
 
-      # - name: Download website
-      #   uses: actions/download-artifact@v2
-      #   with:
-      #     name: website
+  #     - name: 'Production deployment: Enable production deployment'
+  #       if: success() && startsWith(github.ref, 'refs/tags/v')
+  #       run: bash ./.github/scripts/prepare_production_deployment.sh
+  #       env:
+  #         PROD_DEPLOYMENT_HOOK_TOKEN: ${{ secrets.PROD_DEPLOYMENT_HOOK_TOKEN }}
+  #         PROD_DEPLOYMENT_HOOK_URL: ${{ secrets.PROD_DEPLOYMENT_HOOK_URL }}
+  #         VERSION_TAG: ${{ github.event.release.tag_name }}
 
-      # Install deps only
-      - name: Cypress install dependencies
-        id: cypress-deps
-        uses: cypress-io/github-action@v2
-        # Do not consider failure a failure. Well, sort of.
-        # See https://docs.github.com/en/actions/reference/context-and-expression-syntax-for-github-actions#steps-context
-        continue-on-error: true
-        with:
-          runTests: false
+  # integration-tests:
+  #   name: Cypress
+  #   runs-on: ubuntu-latest
+  #   needs: build
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v2
 
-      - name: Install Cypress binary
-        id: cypress-bin
-        # Only run if previous step failed
-        if: steps.cypress-deps.outcome == 'failure'
-        run: npx cypress install
+  #     - name: Increase watchers
+  #       run: echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
 
-      # Actually run tests, building repo
-      - name: Cypress run
-        id: cypress-run
-        uses: cypress-io/github-action@v2
-        with:
-          # Uncomment to test the production release. Right now, it doens't work the automatic "connection"
-          #   very likely it's related to Web3StatusMod!
-          #   when un-commenting this, we need to uncomment also the "Download website" I added in this PR and prevent cypres from buildig the project again
-          # start: yarn serve:ci
-          start: yarn start:default
-          wait-on: http://localhost:3000
-          wait-on-timeout: 200
-      # Open tmate ssh connection on failure for debugging
-      # Uncomment when needed and push upstream
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
-        if: ${{ failure() }}
+  #     - name: Set up node
+  #       uses: actions/setup-node@v2
+  #       with:
+  #         node-version: 12
+
+  #     # - name: Download website
+  #     #   uses: actions/download-artifact@v2
+  #     #   with:
+  #     #     name: website
+
+  #     # Install deps only
+  #     - name: Cypress install dependencies
+  #       id: cypress-deps
+  #       uses: cypress-io/github-action@v2
+  #       # Do not consider failure a failure. Well, sort of.
+  #       # See https://docs.github.com/en/actions/reference/context-and-expression-syntax-for-github-actions#steps-context
+  #       continue-on-error: true
+  #       with:
+  #         runTests: false
+
+  #     - name: Install Cypress binary
+  #       id: cypress-bin
+  #       # Only run if previous step failed
+  #       if: steps.cypress-deps.outcome == 'failure'
+  #       run: npx cypress install
+
+  #     # Actually run tests, building repo
+  #     - name: Cypress run
+  #       id: cypress-run
+  #       uses: cypress-io/github-action@v2
+  #       with:
+  #         # Uncomment to test the production release. Right now, it doens't work the automatic "connection"
+  #         #   very likely it's related to Web3StatusMod!
+  #         #   when un-commenting this, we need to uncomment also the "Download website" I added in this PR and prevent cypres from buildig the project again
+  #         # start: yarn serve:ci
+  #         start: yarn start:default
+  #         wait-on: http://localhost:3000
+  #         wait-on-timeout: 200
+  #     # Open tmate ssh connection on failure for debugging
+  #     # Uncomment when needed and push upstream
+  #     - name: Setup tmate session
+  #       uses: mxschmitt/action-tmate@v3
+  #       if: ${{ failure() }}
