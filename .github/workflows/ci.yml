@@ -136,7 +136,7 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
       
       - name: 'Deploy to S3: PRaul'
-        if: success() && env.PR_NUMBER
+        if: env.PR_NUMBER
         run: aws s3 sync website s3://${{ secrets.AWS_REVIEW_BUCKET_NAME }}/${{ env.REPO_NAME_SLUG }}/pr${{ env.PR_NUMBER }} --delete
 
       - name: 'PRaul: Comment PR with app URLs'
@@ -146,9 +146,9 @@ jobs:
             * **🔭 [GP Swap](${{ env.REVIEW_FEATURE_URL }})**: Gnosis Protocol v2 Swap UI
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           repo-token-user-login: 'github-actions[bot]'
-        if: success() && env.PR_NUMBER
+        if: env.PR_NUMBER
         env:
-          REVIEW_FEATURE_URL: https://pr{{ env.PR_NUMBER }}--${{ env.REPO_NAME_SLUG }}.review.gnosisdev.com
+          REVIEW_FEATURE_URL: https://pr${{ env.PR_NUMBER }}--${{ env.REPO_NAME_SLUG }}.review.gnosisdev.com
 
       - name: 'Deploy to S3: Develop'
         if: github.ref == 'refs/heads/develop'
