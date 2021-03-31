@@ -10,7 +10,7 @@ interface FeeInformationTooltipProps {
   amountBeforeFees?: string
   amountAfterFees?: string
   feeAmount?: string
-  type: 'From' | 'Receive'
+  type: 'From' | 'To'
 }
 
 const Wrapper = styled.div`

@@ -395,7 +395,7 @@ export default function Swap() {
                   showHelper={independentField === Field.INPUT}
                   amountBeforeFees={trade?.outputAmountWithoutFee?.toSignificant(DEFAULT_PRECISION)}
                   amountAfterFees={trade?.outputAmount.toSignificant(DEFAULT_PRECISION)}
-                  type="Receive"
+                  type="To"
                   feeAmount={trade?.outputAmountWithoutFee
                     ?.subtract(trade?.outputAmount)
                     .toSignificant(DEFAULT_PRECISION)}
