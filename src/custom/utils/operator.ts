@@ -1,5 +1,5 @@
 import { ChainId, ETHER, WETH } from '@uniswap/sdk'
-import { OrderCreation } from 'utils/signatures'
+import { getSigningSchemeApiValue, OrderCreation } from 'utils/signatures'
 import { APP_ID } from 'constants/index'
 import { registerOnWindow } from './misc'
 
@@ -152,7 +152,10 @@ export async function postSignedOrder(params: { chainId: ChainId; order: OrderCr
   console.log('[utils:operator] Post signed order for network', chainId, order)
 
   // Call API
-  const response = await _post(chainId, `/orders`, order)
+  const response = await _post(chainId, `/orders`, {
+    ...order,
+    signingScheme: getSigningSchemeApiValue(order.signingScheme)
+  })
 
   // Handle response
   if (!response.ok) {

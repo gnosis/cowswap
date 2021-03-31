@@ -21,7 +21,7 @@ export interface SignOrderParams {
 export interface OrderCreation extends UnsignedOrder {
   // TODO: I commented this because I expect the API and contract to follow the same structure for the order data. confirm and delete this comment
   signature: string // 65 bytes encoded as hex without `0x` prefix. v + r + s from the spec
-  signingScheme: SigningScheme
+  signingScheme: EcdsaSigningScheme // value of
 }
 
 // TODO: We cannot make use of the NPM exported enum for now. See https://babeljs.io/docs/en/babel-plugin-transform-typescript#caveats
@@ -52,6 +52,33 @@ export enum SigningScheme {
 }
 export type EcdsaSigningScheme = SigningScheme.EIP712 | SigningScheme.ETHSIGN
 
+interface SchemaInfo {
+  libraryValue: number
+  apiValue: string
+}
+const mapSigningSchema: Map<SigningScheme, SchemaInfo> = new Map([
+  [SigningScheme.EIP712, { libraryValue: 0, apiValue: 'eip712' }],
+  [SigningScheme.ETHSIGN, { libraryValue: 0, apiValue: 'ethsign' }]
+])
+
+function _getSigningSchemeInfo(ecdaSigningScheme: EcdsaSigningScheme): SchemaInfo {
+  const value = mapSigningSchema.get(ecdaSigningScheme)
+  if (value === undefined) {
+    throw new Error('Unknown schema ' + ecdaSigningScheme)
+  }
+
+  return value
+}
+
+export function getSigningSchemeApiValue(ecdaSigningScheme: EcdsaSigningScheme): string {
+  return _getSigningSchemeInfo(ecdaSigningScheme).apiValue
+}
+
+export function getSigningSchemeLibValue(ecdaSigningScheme: EcdsaSigningScheme): number {
+  return _getSigningSchemeInfo(ecdaSigningScheme).libraryValue
+}
+// ---------------- end of the TODO:
+
 function _getDomain(chainId: ChainId): TypedDataDomain {
   // Get settlement contract address
   const settlementContract = GP_SETTLEMENT_CONTRACT_ADDRESS[chainId]
@@ -63,16 +90,6 @@ function _getDomain(chainId: ChainId): TypedDataDomain {
   return domainGp(chainId, settlementContract) // TODO: Fix types in NPM package
 }
 
-// TODO: This method will dissapear once we use the NPM exported enum. See comments above in SigningScheme enum
-function _getSigningSchemeValue(ecdaSigningScheme: EcdsaSigningScheme) {
-  switch (ecdaSigningScheme) {
-    case SigningScheme.EIP712:
-      return 0
-    case SigningScheme.ETHSIGN:
-      return 1
-  }
-}
-
 export async function signOrder(params: SignOrderParams): Promise<Signature> {
   const { chainId, signer, order, signingScheme } = params
 
@@ -82,7 +99,8 @@ export async function signOrder(params: SignOrderParams): Promise<Signature> {
     order,
     signer
   })
-  return signOrderGp(domain, order, signer, _getSigningSchemeValue(signingScheme))
+
+  return signOrderGp(domain, order, signer, getSigningSchemeLibValue(signingScheme))
 }
 
 registerOnWindow({ signature: { signOrder, getDomain: _getDomain } })
