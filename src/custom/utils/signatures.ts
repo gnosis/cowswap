@@ -58,7 +58,7 @@ interface SchemaInfo {
 }
 const mapSigningSchema: Map<SigningScheme, SchemaInfo> = new Map([
   [SigningScheme.EIP712, { libraryValue: 0, apiValue: 'eip712' }],
-  [SigningScheme.ETHSIGN, { libraryValue: 0, apiValue: 'ethsign' }]
+  [SigningScheme.ETHSIGN, { libraryValue: 1, apiValue: 'ethsign' }]
 ])
 
 function _getSigningSchemeInfo(ecdaSigningScheme: EcdsaSigningScheme): SchemaInfo {
