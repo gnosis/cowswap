@@ -8,7 +8,7 @@ import HeaderMod, {
   Title,
   HeaderLinks,
   HeaderRow,
-  StyledNavLink,
+  // StyledNavLink,
   HeaderControls,
   HeaderElement,
   HideSmall,
@@ -82,6 +82,18 @@ export const LogoImage = styled.img.attrs(props => ({
 }))`
   object-fit: contain;
 `
+const AppStatusWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  background: ${({ theme }) => theme.primary1};
+  border-radius: ${({ theme }) => theme.buttonPrimary.borderRadius};
+  /* negative margin matches logo margin right */
+  margin: auto 0 0 -10px;
+  padding: 2px 6px;
+  color: ${({ theme }) => theme.white};
+`
 
 export default function Header() {
   const { account, chainId } = useActiveWeb3React()
@@ -96,10 +108,11 @@ export default function Header() {
             <LogoImage />
           </UniIcon>
         </Title>
-        <HeaderLinks>
+        <AppStatusWrapper>{appStatus}</AppStatusWrapper>
+        {/* <HeaderLinks>
           <StyledNavLink to="/swap">Swap</StyledNavLink>
           <StyledNavLink to="/about">About</StyledNavLink>
-        </HeaderLinks>
+        </HeaderLinks> */}
       </HeaderRow>
       <HeaderControls>
         <HeaderElement>
