@@ -21,6 +21,7 @@ import { LightGreyCard } from 'components/Card'
 import TokenListLogo from '../../assets/svg/tokenlist.svg'
 import QuestionHelper from 'components/QuestionHelper'
 import useTheme from 'hooks/useTheme'
+import { SEARCH_MODAL_BALANCE_SIGNIFICANT_DIGITS } from 'constants/index' // gp-swap added
 
 function currencyKey(currency: Currency): string {
   return currency instanceof Token ? currency.address : currency === ETHER ? 'ETHER' : ''
@@ -56,7 +57,8 @@ const FixedContentRow = styled.div`
 `
 
 function Balance({ balance }: { balance: CurrencyAmount }) {
-  return <StyledBalanceText title={balance.toExact()}>{balance.toSignificant(4)}</StyledBalanceText>
+  const significant = SEARCH_MODAL_BALANCE_SIGNIFICANT_DIGITS // gp-swap added; rename to avoid further code formatting
+  return <StyledBalanceText title={balance.toExact()}>{balance.toSignificant(significant)}</StyledBalanceText>
 }
 
 const TagContainer = styled.div`
