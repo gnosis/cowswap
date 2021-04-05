@@ -44,3 +44,5 @@ export const INPUT_OUTPUT_EXPLANATION = 'Only executed swaps incur fees.'
 export const DEFAULT_ORDER_DELAY = 20000 // 20s
 export const EXPIRED_ORDERS_BUFFER = 45 * 1000 // 45s
 export const CHECK_EXPIRED_ORDERS_INTERVAL = 10000 // 10 sec
+
+export const SEARCH_MODAL_BALANCE_SIGNIFICANT_DIGITS = 10
