@@ -37,7 +37,7 @@ const _computeInputAmountForSignature = (params: {
 }) => {
   const { input, inputWithSlippage, fee, kind } = params
   // When POSTing the order, we need to check inputAmount value depending on trade type
-  // If we don't have an applicable fee amt, return the inputAmount adjusted for fee
+  // If we don't have an applicable fee amt, return the input as is
   if (!fee) return input
 
   if (kind === OrderKind.SELL) {
