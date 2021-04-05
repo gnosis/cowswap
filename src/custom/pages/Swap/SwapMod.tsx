@@ -11,7 +11,7 @@ import Column, { AutoColumn } from 'components/Column'
 import ConfirmSwapModal from 'components/swap/ConfirmSwapModal'
 import CurrencyInputPanel from 'components/CurrencyInputPanel'
 import { SwapPoolTabs } from 'components/NavigationTabs'
-import { AutoRow, RowBetween } from 'components/Row'
+import { AutoRow, RowBetween, RowFixed } from 'components/Row'
 import AdvancedSwapDetailsDropdown from 'components/swap/AdvancedSwapDetailsDropdown'
 import BetterTradeLink, { DefaultVersionLink } from 'components/swap/BetterTradeLink'
 import confirmPriceImpactWithoutFee from 'components/swap/confirmPriceImpactWithoutFee'
@@ -21,7 +21,7 @@ import TokenWarningModal from 'components/TokenWarningModal'
 import ProgressSteps from 'components/ProgressSteps'
 import SwapHeader from 'components/swap/SwapHeader'
 
-import { INITIAL_ALLOWED_SLIPPAGE } from 'constants/index'
+import { INITIAL_ALLOWED_SLIPPAGE, DEFAULT_PRECISION } from 'constants/index'
 import { getTradeVersion } from 'data/V1'
 import { useActiveWeb3React } from 'hooks'
 import { useCurrency, useAllTokens } from 'hooks/Tokens'
@@ -38,7 +38,8 @@ import {
   useDerivedSwapInfo,
   useReplaceSwapState,
   useSwapActionHandlers,
-  useSwapState
+  useSwapState,
+  useIsFeeGreaterThanInput
 } from 'state/swap/hooks'
 import { useExpertModeManager, useUserSlippageTolerance, useUserSingleHopOnly } from 'state/user/hooks'
 import { /*LinkStyledButton,*/ ButtonSize, TYPE } from 'theme'
@@ -50,6 +51,8 @@ import Loader from 'components/Loader'
 import { useIsTransactionUnsupported } from 'hooks/Trades'
 import UnsupportedCurrencyFooter from 'components/swap/UnsupportedCurrencyFooter'
 import { isTradeBetter } from 'utils/trades'
+import QuestionHelper from 'components/QuestionHelper'
+import FeeInformationTooltip from 'components/swap/FeeInformationTooltip'
 
 export default function Swap() {
   const loadedUrlParams = useDefaultsFromURLSearch()
@@ -78,7 +81,7 @@ export default function Swap() {
       return !Boolean(token.address in defaultTokens)
     })
 
-  const { account } = useActiveWeb3React()
+  const { account, chainId } = useActiveWeb3React()
   const theme = useContext(ThemeContext)
 
   // toggle wallet when disconnected
@@ -112,6 +115,9 @@ export default function Swap() {
     { currency: currencies.INPUT, address: INPUT.currencyId },
     { currency: currencies.OUTPUT, address: OUTPUT.currencyId }
   )
+
+  // Is fee greater than input?
+  const { isFeeGreater, fee } = useIsFeeGreaterThanInput({ chainId, address: INPUT.currencyId, parsedAmount })
 
   const { wrapType, execute: onWrap, inputError: wrapInputError } = useWrapCallback(
     currencies[Field.INPUT],
@@ -177,7 +183,7 @@ export default function Swap() {
     [independentField]: typedValue,
     [dependentField]: showWrap
       ? parsedAmounts[independentField]?.toExact() ?? ''
-      : parsedAmounts[dependentField]?.toSignificant(6) ?? ''
+      : parsedAmounts[dependentField]?.toSignificant(DEFAULT_PRECISION) ?? ''
   }
 
   const route = trade?.route
@@ -307,6 +313,14 @@ export default function Swap() {
 
   const swapIsUnsupported = useIsTransactionUnsupported(currencies?.INPUT, currencies?.OUTPUT)
 
+  const [exactInLabel, exactOutLabel] = useMemo(
+    () => [
+      independentField === Field.OUTPUT && !showWrap && trade ? 'From (incl. fee)' : 'From',
+      independentField === Field.INPUT && !showWrap && trade ? 'To (incl. fee)' : 'To'
+    ],
+    [independentField, showWrap, trade]
+  )
+
   return (
     <>
       <TokenWarningModal
@@ -334,7 +348,20 @@ export default function Swap() {
 
           <AutoColumn gap={'md'}>
             <CurrencyInputPanel
-              label={independentField === Field.OUTPUT && !showWrap && trade ? 'From (estimated)' : 'From'}
+              label={
+                <FeeInformationTooltip
+                  label={exactInLabel}
+                  trade={trade}
+                  showHelper={independentField === Field.OUTPUT}
+                  amountBeforeFees={
+                    trade?.fee?.feeAsCurrency &&
+                    trade?.inputAmount.subtract(trade.fee?.feeAsCurrency).toSignificant(DEFAULT_PRECISION)
+                  }
+                  amountAfterFees={trade?.inputAmountWithFee.toSignificant(DEFAULT_PRECISION)}
+                  type="From"
+                  feeAmount={trade?.fee?.feeAsCurrency?.toSignificant(DEFAULT_PRECISION)}
+                />
+              }
               value={formattedAmounts[Field.INPUT]}
               showMaxButton={!atMaxAmountInput}
               currency={currencies[Field.INPUT]}
@@ -366,7 +393,19 @@ export default function Swap() {
             <CurrencyInputPanel
               value={formattedAmounts[Field.OUTPUT]}
               onUserInput={handleTypeOutput}
-              label={independentField === Field.INPUT && !showWrap && trade ? 'To (estimated)' : 'To'}
+              label={
+                <FeeInformationTooltip
+                  label={exactOutLabel}
+                  trade={trade}
+                  showHelper={independentField === Field.INPUT}
+                  amountBeforeFees={trade?.outputAmountWithoutFee?.toSignificant(DEFAULT_PRECISION)}
+                  amountAfterFees={trade?.outputAmount.toSignificant(DEFAULT_PRECISION)}
+                  type="To"
+                  feeAmount={trade?.outputAmountWithoutFee
+                    ?.subtract(trade?.outputAmount)
+                    .toSignificant(DEFAULT_PRECISION)}
+                />
+              }
               showMaxButton={false}
               currency={currencies[Field.OUTPUT]}
               onCurrencySelect={handleOutputSelect}
@@ -413,6 +452,19 @@ export default function Swap() {
                       </ClickableText>
                     </RowBetween>
                   )}
+                  {isFeeGreater && fee && (
+                    <RowBetween>
+                      <RowFixed>
+                        <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
+                          GP/Gas Fee
+                        </TYPE.black>
+                        <QuestionHelper text="GP Swap has 0 gas fees. A portion of the sell amount in each trade goes to the GP Protocol." />
+                      </RowFixed>
+                      <TYPE.black fontSize={14} color={theme.text1}>
+                        {fee.toSignificant(4)} {fee.currency.symbol}
+                      </TYPE.black>
+                    </RowBetween>
+                  )}
                 </AutoColumn>
               </Card>
             )}
@@ -437,10 +489,20 @@ export default function Swap() {
                 <TYPE.main mb="4px">ETH cannot be traded. Use WETH</TYPE.main>
               </ButtonPrimary>
             ) : noRoute && userHasSpecifiedInputOutput ? (
-              <GreyCard style={{ textAlign: 'center' }}>
-                <TYPE.main mb="4px">Insufficient liquidity for this trade.</TYPE.main>
-                {singleHopOnly && <TYPE.main mb="4px">Try enabling multi-hop trades.</TYPE.main>}
-              </GreyCard>
+              isFeeGreater ? (
+                <RowBetween>
+                  <ButtonError buttonSize={ButtonSize.BIG} error id="swap-button" disabled>
+                    <Text fontSize={20} fontWeight={500}>
+                      Fees exceed from amount
+                    </Text>
+                  </ButtonError>
+                </RowBetween>
+              ) : (
+                <GreyCard style={{ textAlign: 'center' }}>
+                  <TYPE.main mb="4px">Insufficient liquidity for this trade.</TYPE.main>
+                  {singleHopOnly && <TYPE.main mb="4px">Try enabling multi-hop trades.</TYPE.main>}
+                </GreyCard>
+              )
             ) : showApproveFlow ? (
               <RowBetween>
                 <ButtonConfirmed
