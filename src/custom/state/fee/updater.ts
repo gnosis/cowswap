@@ -16,6 +16,8 @@ function isDateLater(dateA: string, dateB: string): boolean {
   return parsedDateA > parsedDateB
 }
 
+const DEBOUNCE_TIME = 350
+
 export default function FeesUpdater(): null {
   const { chainId } = useActiveWeb3React()
   const {
@@ -26,7 +28,7 @@ export default function FeesUpdater(): null {
   } = useSwapState()
   // debounce the typed value as to not overkill the useEffect
   // fee API calculation/call
-  const typedValue = useDebounce(rawTypedValue, 200)
+  const typedValue = useDebounce(rawTypedValue, DEBOUNCE_TIME)
 
   // to not rerun useEffect and check if amount really changed
   const typedValueRef = useRef(typedValue)
