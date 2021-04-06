@@ -2,13 +2,14 @@ import { ChainId, CurrencyAmount, Token } from '@uniswap/sdk'
 import { isAddress, shortenAddress } from '@src/utils'
 import { AddPendingOrderParams, OrderStatus, OrderKind } from 'state/orders/actions'
 
-import { SigningScheme, signOrder, UnsignedOrder } from 'utils/signatures'
+import { SigningScheme, signOrder, SignOrderParams, UnsignedOrder } from 'utils/signatures'
 import { postSignedOrder } from 'utils/operator'
 import { ethers, Signer } from 'ethers'
 import { APP_ID, RADIX_DECIMAL, SHORTEST_PRECISION } from 'constants/index'
-import { EcdsaSignature } from '@gnosis.pm/gp-v2-contracts'
+import { EcdsaSignature, Signature } from '@gnosis.pm/gp-v2-contracts'
 
-const SIGNING_SCHEME = SigningScheme.EIP712
+const DEFAULT_SIGNING_SCHEME = SigningScheme.EIP712
+const METAMASK_SIGNATURE_ERROR = -32603
 
 export interface PostOrderParams {
   account: string
@@ -88,14 +89,37 @@ export async function postOrder(params: PostOrderParams): Promise<string> {
     partiallyFillable: false // Always fill or kill
   }
 
-  const signature = (await signOrder({
+  let signature: Signature | null = null
+  let signingScheme = DEFAULT_SIGNING_SCHEME
+
+  const signatureParams: SignOrderParams = {
     chainId,
     signer,
     order: unsignedOrder,
-    signingScheme: SIGNING_SCHEME
-  })) as EcdsaSignature // Only ECDSA signing supported for now
+    signingScheme
+  }
 
-  const signatureData = signature.data.toString()
+  try {
+    signature = (await signOrder(signatureParams)) as EcdsaSignature // Only ECDSA signing supported for now
+  } catch (e) {
+    if (e.code === METAMASK_SIGNATURE_ERROR) {
+      // We tried to sign order the nice way.
+      // That works fine for regular MM addresses. Does not work for Hardware wallets, though.
+      // See https://github.com/MetaMask/metamask-extension/issues/10240#issuecomment-812672324
+      // So, when that specific error occurs, we know this is a problem with MM + HW.
+      // Then, we fallback to ETHSIGN.
+      console.info('[trade:postOrder] Wallet does not support EIP712. Trying ETHSIGN instead', e)
+      signingScheme = SigningScheme.ETHSIGN
+      signature = (await signOrder({ ...signatureParams, signingScheme })) as EcdsaSignature // Only ECDSA signing supported for now
+    } else {
+      // Some other error signing. Let it bubble up.
+      throw e
+    }
+  }
+
+  console.log(`we got a signature \\o/`, signature)
+
+  const signatureData = signature?.data.toString()
   const creationTime = new Date().toISOString()
 
   // Call API
@@ -105,7 +129,7 @@ export async function postOrder(params: PostOrderParams): Promise<string> {
       ...unsignedOrder,
       signature: signatureData,
       receiver,
-      signingScheme: SIGNING_SCHEME
+      signingScheme
     }
   })
 
