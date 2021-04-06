@@ -41,8 +41,6 @@ export interface LinkType {
 
 export const HeaderModWrapper = styled(HeaderMod)`
   border-bottom: ${({ theme }) => theme.header.border};
-  background: red;
-  font-size: 200px;
 
   ${Title} {
     margin: 0;
