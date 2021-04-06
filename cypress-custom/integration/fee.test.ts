@@ -1,14 +1,14 @@
 import { ChainId, WETH } from '@uniswap/sdk'
-import { FeeInformation, FeeInformationObject } from '../../src/custom/state/fee/reducer'
+import { FeeInformation } from '../../src/custom/state/fee/reducer'
 import { OrderKind } from '@gnosis.pm/gp-v2-contracts'
+import { FeeQuoteParams } from '../../src/custom/utils/operator'
+import { parseUnits } from 'ethers/lib/utils'
 
 const DAI = '0xc7AD46e0b8a400Bb3C915120d284AafbA8fc4735'
-const RINKEBY = ChainId.RINKEBY.toString()
-const FEE_QUOTES_LOCAL_STORAGE_KEY = 'redux_localstorage_simple_fee'
 const FOUR_HOURS = 3600 * 4 * 1000
-const DEFAULT_SELL_TOKEN = WETH[ChainId.RINKEBY].address
+const DEFAULT_SELL_TOKEN = WETH[ChainId.RINKEBY]
 
-const getFeeQuery = ({ sellToken, buyToken, amount, kind }: any) =>
+const getFeeQuery = ({ sellToken, buyToken, amount, kind }: Omit<FeeQuoteParams, 'chainId'>) =>
   `https://protocol-rinkeby.dev.gnosisdev.com/api/v1/fee?sellToken=${sellToken}&buyToken=${buyToken}&amount=${amount}&kind=${kind}`
 
 function _assertFeeData(fee: FeeInformation | string): void {
@@ -18,6 +18,9 @@ function _assertFeeData(fee: FeeInformation | string): void {
   expect(fee).to.have.property('amount')
   expect(fee).to.have.property('expirationDate')
 }
+
+/* Fee not currently being saved in local so commenting this out
+ * for now - may be re-implemented in the future so keeping
 
 function _getLocalStorage(): Cypress.Chainable<Storage> {
   return cy.window().then(window => window.localStorage)
@@ -48,16 +51,14 @@ function _assertFeeFetched(token: string): Cypress.Chainable {
     const fee = feeQuoteData[token].fee
     _assertFeeData(fee)
   })
-}
-
-console.log('[function]::', _assertFeeFetched)
+} */
 
 describe('Fee endpoint', () => {
   it('Returns the expected info', () => {
     const FEE_QUERY = getFeeQuery({
-      sellToken: DEFAULT_SELL_TOKEN,
+      sellToken: DEFAULT_SELL_TOKEN.address,
       buyToken: DAI,
-      amount: 0.1 * 10 ** 18 + '',
+      amount: parseUnits('0.1', DEFAULT_SELL_TOKEN.decimals).toString(),
       kind: OrderKind.SELL
     })
 
@@ -71,11 +72,11 @@ describe('Fee endpoint', () => {
 })
 
 describe('Fee: Complex fetch and persist fee', () => {
-  const INPUT_AMOUNT = 0.1
+  const INPUT_AMOUNT = '0.1'
   const FEE_QUERY = getFeeQuery({
-    sellToken: DEFAULT_SELL_TOKEN,
+    sellToken: DEFAULT_SELL_TOKEN.address,
     buyToken: DAI,
-    amount: INPUT_AMOUNT * 10 ** 18 + '',
+    amount: parseUnits(INPUT_AMOUNT, DEFAULT_SELL_TOKEN.decimals).toString(),
     kind: OrderKind.SELL
   })
 
@@ -96,7 +97,7 @@ describe('Fee: Complex fetch and persist fee', () => {
     // and goes AFK
     cy.visit('/swap')
     cy.swapSelectOutput(DAI)
-    cy.swapEnterInputAmount(DEFAULT_SELL_TOKEN, INPUT_AMOUNT)
+    cy.swapEnterInputAmount(DEFAULT_SELL_TOKEN.address, INPUT_AMOUNT)
 
     // set the Cypress clock to now (default is UNIX 0)
     cy.clock(Date.now(), ['Date'])
@@ -121,11 +122,11 @@ describe('Fee: Complex fetch and persist fee', () => {
 })
 
 describe('Fee: simple checks it exists', () => {
-  const INPUT_AMOUNT = 0.1
+  const INPUT_AMOUNT = '0.1'
   const FEE_QUERY = getFeeQuery({
-    sellToken: DEFAULT_SELL_TOKEN,
+    sellToken: DEFAULT_SELL_TOKEN.address,
     buyToken: DAI,
-    amount: INPUT_AMOUNT * 10 ** 18 + '',
+    amount: parseUnits(INPUT_AMOUNT, DEFAULT_SELL_TOKEN.decimals).toString(),
     kind: OrderKind.SELL
   })
   const FEE_RESP = {
@@ -145,7 +146,7 @@ describe('Fee: simple checks it exists', () => {
     // WHEN: Select DAI token as output and sells 0.1 WETH
     cy.visit('/swap')
     cy.swapSelectOutput(DAI)
-    cy.swapEnterInputAmount(DEFAULT_SELL_TOKEN, INPUT_AMOUNT)
+    cy.swapEnterInputAmount(DEFAULT_SELL_TOKEN.address, INPUT_AMOUNT)
 
     // THEN: The fee for selling WETH for DAI is fetched from api endpoint
     cy.wait('@feeRequest')
