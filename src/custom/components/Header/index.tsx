@@ -40,8 +40,6 @@ export interface LinkType {
 }
 
 export const HeaderModWrapper = styled(HeaderMod)`
-  border-bottom: ${({ theme }) => theme.header.border};
-
   ${Title} {
     margin: 0;
     text-decoration: none;
