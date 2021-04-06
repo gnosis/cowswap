@@ -132,7 +132,7 @@ describe('Fee: simple checks it exists', () => {
   const FEE_RESP = {
     // 1 min in future
     expirationDate: new Date(Date.now() + 60000).toISOString(),
-    amount: (0.05 * 10 ** 18).toString()
+    amount: parseUnits('0.05', DEFAULT_SELL_TOKEN.decimals).toString()
   }
 
   it('Fetch fee when selecting both tokens', () => {
