@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import { RedirectPathToSwapOnly, RedirectToSwap } from 'pages/Swap/redirects'
 import { Route, Switch } from 'react-router-dom'
 import Swap from 'pages/Swap'
+import PrivacyPolicy from 'pages/PrivacyPolicy'
 // import About from 'pages/About'
 
 export const Wrapper = styled(AppMod)``
@@ -17,6 +18,7 @@ export default function App() {
         <Route exact strict path="/send" component={RedirectPathToSwapOnly} />
         {/* TODO: re-enable once about is finalized */}
         {/* <Route exact strict path="/about" component={About} /> */}
+        <Route exact strict path="/privacy-policy" component={PrivacyPolicy} />
         <Route component={RedirectPathToSwapOnly} />
       </Switch>
     </Wrapper>
