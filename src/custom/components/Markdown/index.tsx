@@ -13,9 +13,7 @@ export default function Markdown({ content, title }: MarkdownParams) {
   return (
     <PageWrapper>
       <Title>{title}</Title>
-      <Content>
-        <ReactMarkdown>{error ? error : file}</ReactMarkdown>
-      </Content>
+      <Content>{file && <ReactMarkdown>{error ? error : file}</ReactMarkdown>}</Content>
     </PageWrapper>
   )
 }
