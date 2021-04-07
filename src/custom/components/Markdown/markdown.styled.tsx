@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 import AppBody from 'pages/AppBody'
 
-export const AppBodyMod = styled(AppBody)`
+export const PageWrapper = styled(AppBody)`
   padding: 0 24px 24px;
   max-width: ${({ theme }) => theme.appBody.maxWidth.content};
 `
