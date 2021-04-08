@@ -13,7 +13,13 @@ export default function Markdown({ content, title }: MarkdownParams) {
   return (
     <PageWrapper>
       <Title>{title}</Title>
-      <Content>{file && <ReactMarkdown>{error ? error : file}</ReactMarkdown>}</Content>
+      <Content>
+        {file && (
+          <ReactMarkdown allowDangerousHtml linkTarget="_blank">
+            {error ? error : file}
+          </ReactMarkdown>
+        )}
+      </Content>
     </PageWrapper>
   )
 }
