@@ -27,11 +27,32 @@ export const Content = styled.div`
     opacity: 0.2;
   }
 
+  /* underlined subheader */
+  h4 {
+    text-decoration: underline;
+    font-weight: normal;
+    // margin: 0;
+  }
+
   > p {
     line-height: 1.5;
   }
 
+  /* List styles */
   > ul > li {
+    /* Match 1st level list styles from G Docs */
     margin: 0 0 10px;
+    list-style: lower-roman;
+
+    > ul > li {
+      /* Match 2nd level list styles from G Docs */
+      list-style: lower-alpha;
+    }
+
+    > h4:last-child {
+      /* CSS hack to allow nested subheaders to be aligned */
+      /* while keeping sequential lower roman bullets */
+      margin-left: -2.4rem;
+    }
   }
 `
