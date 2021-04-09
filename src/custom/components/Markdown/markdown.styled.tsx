@@ -39,20 +39,46 @@ export const Content = styled.div`
   }
 
   /* List styles */
-  > ul > li {
-    /* Match 1st level list styles from G Docs */
-    margin: 0 0 10px;
-    list-style: lower-roman;
+  > ul,
+  > ol {
+    > li {
+      /* Match 1st level list styles from G Docs */
+      margin: 0 0 10px;
+      list-style: lower-roman;
 
-    > ul > li {
-      /* Match 2nd level list styles from G Docs */
-      list-style: lower-alpha;
+      > ul,
+      > ol {
+        > li {
+          /* Match 2nd level list styles from G Docs */
+          list-style: lower-alpha;
+        }
+
+        > h4:last-child {
+          /* CSS hack to allow nested subheaders to be aligned */
+          /* while keeping sequential lower roman bullets */
+          margin-left: -2.4rem;
+        }
+      }
     }
+  }
 
-    > h4:last-child {
-      /* CSS hack to allow nested subheaders to be aligned */
-      /* while keeping sequential lower roman bullets */
-      margin-left: -2.4rem;
+  #table-container {
+    overflow-x: scroll;
+
+    > table {
+      min-width: 800px;
+
+      thead, tr:nth-child(even) {
+          background: lightgrey;
+        }
+      }
+
+      th,
+      td {
+        min-width: 8.5rem;
+        text-align: left;
+        padding: 0.5rem 0.4rem;
+      }
     }
   }
 `
