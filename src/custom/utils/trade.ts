@@ -113,11 +113,10 @@ export async function postOrder(params: PostOrderParams): Promise<string> {
       signature = (await signOrder({ ...signatureParams, signingScheme })) as EcdsaSignature // Only ECDSA signing supported for now
     } else {
       // Some other error signing. Let it bubble up.
+      console.error(e)
       throw e
     }
   }
-
-  console.log(`we got a signature \\o/`, signature)
 
   const signatureData = signature?.data.toString()
   const creationTime = new Date().toISOString()
