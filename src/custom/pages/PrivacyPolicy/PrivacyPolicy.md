@@ -15,17 +15,17 @@ In this Policy, “processing” means any operation or set of operations which 
 ## Navigating this Policy
 If you are viewing this policy online, you can click on the below links to jump to the relevant section:
     
-1. [Your information and the Blockchain](#your-information-and-the-blockchain)
-2. [How We Use Personal Data](/#/privacy-policy#How-We-Use-Personal-Data)
-3. [Use of Third Party Applications](#Use-of-Third-Party-Applications)
-4. [Sharing Your Personal Data](#Sharing-Your-Personal-Data)
-5. [Transferring Your data outside of the EU](#Transferring-Your-data-outside-of-the-EU)
-6. [Existence of Automated Decision-making](#Existence-of-Automated-Decision-making)
-7. [Data Security](#bookmark=id.k8qc5kgqu9hp)
-8. [Your Rights as a Data Subject](#bookmark=id.v430se3znxne)
-9. [Storing Personal Data](#bookmark=id.fstyffug7piv)
-10. [Changes to this Privacy Policy](#bookmark=id.utritvoelpzi)
-11. [Our details](#bookmark=id.qllwcj1249z0)
+1. [Your information and the Blockchain](#1--your-information-and-the-blockchain)
+2. [How We Use Personal Data](#2--how-we-use-personal-data)
+3. [Use of Third Party Applications](#3--use-of-third-party-applications)
+4. [Sharing Your Personal Data](#4--sharing-your-personal-data)
+5. [Transferring Your data outside of the EU](#5--transferring-your-data-outside-of-the-eu)
+6. [Existence of Automated Decision-making](#6--existence-of-automated-decision-making)
+7. [Data Security](#7--data-security)
+8. [Your Rights as a Data Subject](#8--your-rights-as-a-data-subject)
+9. [Storing Personal Data](#9--storing-personal-data)
+10. [Changes to this Privacy Policy](#10--changes-to-this-privacy-policy)
+11. [Our details](#11--our-details)
 
 ### 1. Your information and the Blockchain ###
 Blockchain technology, also known as distributed ledger technology (or simply ‘DLT’), is at the core of our business. Blockchains are decentralized and made up of digitally recorded data in a chain of packages called ‘blocks’. The manner in which these blocks are linked is chronological, meaning that the data is very difficult to alter once recorded. Since the ledger may be distributed all over the world (across several ‘nodes’ which usually replicate the ledger) this means there is no single person making decisions or otherwise administering the system (such as an operator of a cloud computing system), and that there is no centralized place where it is located either.
