@@ -1,5 +1,5 @@
-# GP Swap Privacy Policy
-## (updated March 2021)
+# Privacy Policy
+### (updated March 2021)
 
  
 We are delighted that you have chosen to use our App and/or visit our website. We take our data protection responsibilities with the utmost seriousness and we have designed our website so that you may navigate and use it without having to provide Personal Data.
@@ -16,7 +16,7 @@ In this Policy, “processing” means any operation or set of operations which 
 If you are viewing this policy online, you can click on the below links to jump to the relevant section:
     
 1. [Your information and the Blockchain](#your-information-and-the-blockchain)
-2. [How We Use Personal Data](#How-We-Use-Personal-Data)
+2. [How We Use Personal Data](/#/privacy-policy#How-We-Use-Personal-Data)
 3. [Use of Third Party Applications](#Use-of-Third-Party-Applications)
 4. [Sharing Your Personal Data](#Sharing-Your-Personal-Data)
 5. [Transferring Your data outside of the EU](#Transferring-Your-data-outside-of-the-EU)
