@@ -13,7 +13,7 @@ const HashLink = (props: LinkProps) => {
     window.scrollTo(0, elem.offsetTop)
   }, [location.hash])
 
-  return <Link {...props}>{props.children}</Link>
+  return <Link {...props}/>
 }
 
 export default HashLink
