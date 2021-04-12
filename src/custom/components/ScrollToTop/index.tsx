@@ -34,6 +34,8 @@ const Wrapper = styled.div<WrapperProps>`
     cursor: pointer;
     opacity: 0.4;
 
+    transition: opacity 0.4s ease-in-out;
+    
     &:hover {
         opacity: 1;
     }
@@ -42,24 +44,27 @@ const Wrapper = styled.div<WrapperProps>`
         margin: 0 0.4rem;
     }
 
-    transition: opacity 0.4s ease-in-out;
 `
 
+const SHOW_SCROLL_TOP_THRESHOLD = 250
+
 export default function ScrollToTop(props: { styleProps?: WrapperProps }) {
-  const [position, setPosition] = useState(window.scrollY)
-  const [, debouncedSetPosition] = useDebouncedChangeHandler(position, setPosition, 500)
+  const [isShown, setIsShown] = useState(() => window.scrollY >= SHOW_SCROLL_TOP_THRESHOLD)
+  const [, debouncedSetPosition] = useDebouncedChangeHandler(isShown, setIsShown, 500)
 
   const handleClick = () => window.scrollTo(0, 0)
 
   useEffect(() => {
-    const scrollListener = () => debouncedSetPosition(window.scrollY)
+    const scrollListener = () => debouncedSetPosition(window.scrollY >= SHOW_SCROLL_TOP_THRESHOLD)
 
-    window.addEventListener('scroll', scrollListener)
+    // make eventListener passive as to not block main thread (thanks @velenir)
+    // https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener#improving_scrolling_performance_with_passive_listeners
+    window.addEventListener('scroll', scrollListener, { passive: true })
 
     return () => window.removeEventListener('scroll', scrollListener)
   }, [debouncedSetPosition])
 
-  if (position < 250) return null
+  if (!isShown) return null
 
   return (
     <Wrapper {...props.styleProps} onClick={handleClick}>
