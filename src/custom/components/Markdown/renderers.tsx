@@ -23,7 +23,7 @@ const HeadingRenderer = (props: { level: number; children: ReactNode }) => {
 }
 
 const LinkRenderer = (props: { href: string; children: React.ReactNode }) => {
-  const isExternalLink = props.href.match(/^(https?:)?\/\//)
+  const isExternalLink = /^(https?:)?\/\//.test(props.href)
   return isExternalLink ? (
     <a target="_blank" href={props.href} rel="noopener noreferrer">
       {props.children}
