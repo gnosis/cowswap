@@ -1,25 +1,36 @@
-import React, { ReactNode, ReactElement } from 'react'
+import React, { ReactNode } from 'react'
+import visit from 'unist-util-visit'
+import { Node as MarkdownNode } from 'unist'
+
 import HashLink from 'components/HashLink'
 
-// Another overcomplicated React thing? ok!
-// react-markdown doesn't auto add ids to header tags
-// making TOCs impossible without some annoying plugins to install etc
-// https://github.com/remarkjs/react-markdown/issues/404
-function flatten(text: string, child: ReactNode): any {
-  return typeof child === 'string'
-    ? text + child
-    : React.Children.toArray((child as ReactElement).props.children).reduce(flatten, text)
-}
+const constructId = (text: string): string => text.toLowerCase().replace(/\W/g, '-')
 
-/**
- * HeadingRenderer is a custom renderer
- * It parses the heading and attaches an id to it to be used as an anchor
- */
-const HeadingRenderer = (props: { level: number; children: ReactNode }) => {
-  const children = React.Children.toArray(props.children)
-  const text = children.reduce(flatten, '')
-  const slug = text.toLowerCase().replace(/\W/g, '-')
-  return React.createElement('h' + props.level, { id: slug }, props.children)
+const getTextFromMarkdownNode = (node: MarkdownNode): string => {
+  let text = ''
+  // get all text nodes
+  // for heading, most of the time there will be only one child text node
+  // but can be `## heading text <span>span text</span> **bold text**`
+  // =4 nodes (space is a text node)
+  visit(node, 'text', textNode => {
+    text += textNode.value || ''
+  })
+
+  return text
+}
+interface HeadingProps {
+  level: number
+  children: ReactNode
+  node: MarkdownNode & { type: 'heading' }
+}
+const HeadingRenderer = ({ level, children, node }: HeadingProps): JSX.Element => {
+  // traverse markdown syntax tree node
+  // and get text
+  const nodeText = getTextFromMarkdownNode(node)
+  const id = constructId(nodeText)
+
+  const HComp = ('h' + level) as keyof JSX.IntrinsicElements
+  return <HComp id={id}>{children}</HComp>
 }
 
 const LinkRenderer = (props: { href: string; children: React.ReactNode }) => {
@@ -36,3 +47,24 @@ const LinkRenderer = (props: { href: string; children: React.ReactNode }) => {
 }
 
 export { HeadingRenderer, LinkRenderer }
+
+// // Another overcomplicated React thing? ok!
+// // react-markdown doesn't auto add ids to header tags
+// // making TOCs impossible without some annoying plugins to install etc
+// // https://github.com/remarkjs/react-markdown/issues/404
+// function flatten(text: string, child: ReactNode): any {
+//   return typeof child === 'string'
+//     ? text + child
+//     : React.Children.toArray((child as ReactElement).props.children).reduce(flatten, text)
+// }
+
+// /**
+//  * HeadingRenderer is a custom renderer
+//  * It parses the heading and attaches an id to it to be used as an anchor
+//  */
+// const HeadingRenderer = (props: { level: number; children: ReactNode }) => {
+//   const children = React.Children.toArray(props.children)
+//   const text = children.reduce(flatten, '')
+//   const slug = text.toLowerCase().replace(/\W/g, '-')
+//   return React.createElement('h' + props.level, { id: slug }, props.children)
+// }
