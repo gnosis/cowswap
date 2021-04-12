@@ -118,7 +118,7 @@ export async function postOrder(params: PostOrderParams): Promise<string> {
     }
   }
 
-  const signatureData = signature?.data.toString()
+  const signatureData = signature.data.toString()
   const creationTime = new Date().toISOString()
 
   // Call API
