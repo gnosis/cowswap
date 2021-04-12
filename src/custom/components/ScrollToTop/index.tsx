@@ -13,10 +13,13 @@ interface WrapperProps {
 
 const Wrapper = styled.div<WrapperProps>`
     position: fixed;
-    ${({ top }): string | undefined => top && `top: ${top};`}
-    ${({ left }): string | undefined => left && `left: ${left};`}
-    ${({ bottom }): string | undefined => bottom && `bottom: ${bottom};`}
-    ${({ right }): string | undefined => right && `right: ${right};`}
+    ${({ theme, background = theme.primary1, top, right, bottom, left }) => ({
+      background,
+      top,
+      right,
+      bottom,
+      left
+    })}
 
     display: flex;
     flex-flow: row nowrap;
@@ -24,7 +27,6 @@ const Wrapper = styled.div<WrapperProps>`
     align-items: center;
 
     font-size: larger;
-    background: ${({ background, theme }) => background || theme.primary1}
     border-radius: ${({ theme }) => theme.buttonPrimary.borderRadius}
 
     padding: 0.2rem 0.4rem;
