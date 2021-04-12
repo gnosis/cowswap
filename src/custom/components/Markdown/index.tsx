@@ -12,9 +12,7 @@ interface MarkdownParams {
 }
 
 const CustomReactMarkdown = (props: ReactMarkdownPropsBase & { children: string }) => (
-  <ReactMarkdown {...props} renderers={{ heading: HeadingRenderer, link: LinkRenderer }} allowDangerousHtml>
-    {props.children}
-  </ReactMarkdown>
+  <ReactMarkdown {...props} renderers={{ heading: HeadingRenderer, link: LinkRenderer }} allowDangerousHtml />
 )
 
 export default function Markdown({ content, title }: MarkdownParams) {
