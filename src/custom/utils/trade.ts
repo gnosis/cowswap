@@ -9,7 +9,7 @@ import { APP_ID, RADIX_DECIMAL, SHORTEST_PRECISION } from 'constants/index'
 import { EcdsaSignature, Signature } from '@gnosis.pm/gp-v2-contracts'
 
 const DEFAULT_SIGNING_SCHEME = SigningScheme.EIP712
-const METAMASK_SIGNATURE_ERROR = -32603
+const METAMASK_SIGNATURE_ERROR_CODE = -32603
 
 export interface PostOrderParams {
   account: string
@@ -102,7 +102,7 @@ export async function postOrder(params: PostOrderParams): Promise<string> {
   try {
     signature = (await signOrder(signatureParams)) as EcdsaSignature // Only ECDSA signing supported for now
   } catch (e) {
-    if (e.code === METAMASK_SIGNATURE_ERROR) {
+    if (e.code === METAMASK_SIGNATURE_ERROR_CODE) {
       // We tried to sign order the nice way.
       // That works fine for regular MM addresses. Does not work for Hardware wallets, though.
       // See https://github.com/MetaMask/metamask-extension/issues/10240#issuecomment-812672324
