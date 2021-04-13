@@ -20,7 +20,7 @@ const Wrapper = styled.div`
   ${({ theme }) => theme.flexRowNoWrap}
   align-items: center;
   justify-content: space-evenly;
-  margin: auto 6rem 1rem 0;
+  margin: auto 6rem 0 2rem;
 
   width: 100%;
 
@@ -30,16 +30,18 @@ const Wrapper = styled.div`
 `
 
 const UrlWrapper = styled(Wrapper)`
-  margin: 0;
+  align-self: flex-end;
+  margin: 0 0 1rem 0;
 
   > * {
+    color: black;
     font-size: small;
     text-align: center;
     margin: 0 0.5rem;
     width: 20%;
 
     &:not(:last-child) {
-      border-right: 1px solid black;
+      border-right: 1px solid #00000040;
     }
   }
 `
