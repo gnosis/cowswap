@@ -108,7 +108,6 @@ export async function postOrder(params: PostOrderParams): Promise<string> {
       // See https://github.com/MetaMask/metamask-extension/issues/10240#issuecomment-812672324
       // So, when that specific error occurs, we know this is a problem with MM + HW.
       // Then, we fallback to ETHSIGN.
-      console.info('[trade:postOrder] Wallet does not support EIP712. Trying ETHSIGN instead', e)
       signingScheme = SigningScheme.ETHSIGN
       signature = (await signOrder({ ...signatureParams, signingScheme })) as EcdsaSignature // Only ECDSA signing supported for now
     } else {
