@@ -37,11 +37,16 @@ const UrlWrapper = styled(Wrapper)`
     color: black;
     font-size: small;
     text-align: center;
+    white-space: nowrap;
     margin: 0 0.5rem;
     width: 20%;
 
     &:not(:last-child) {
       border-right: 1px solid #00000040;
+
+      ${({ theme }) => theme.mediaWidth.upToLarge`
+        border: none;
+      `}
     }
   }
 `
