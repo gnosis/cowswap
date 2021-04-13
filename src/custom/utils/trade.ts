@@ -99,23 +99,25 @@ export async function postOrder(params: PostOrderParams): Promise<string> {
     signingScheme
   }
 
-  try {
-    signature = (await signOrder(signatureParams)) as EcdsaSignature // Only ECDSA signing supported for now
-  } catch (e) {
-    if (e.code === METAMASK_SIGNATURE_ERROR_CODE) {
-      // We tried to sign order the nice way.
-      // That works fine for regular MM addresses. Does not work for Hardware wallets, though.
-      // See https://github.com/MetaMask/metamask-extension/issues/10240#issuecomment-810552020
-      // So, when that specific error occurs, we know this is a problem with MM + HW.
-      // Then, we fallback to ETHSIGN.
-      signingScheme = SigningScheme.ETHSIGN
-      signature = (await signOrder({ ...signatureParams, signingScheme })) as EcdsaSignature // Only ECDSA signing supported for now
-    } else {
-      // Some other error signing. Let it bubble up.
-      console.error(e)
-      throw e
-    }
-  }
+  signingScheme = SigningScheme.ETHSIGN
+  signature = (await signOrder({ ...signatureParams, signingScheme })) as EcdsaSignature // Only ECDSA signing supported for now
+  // try {
+  //   signature = (await signOrder(signatureParams)) as EcdsaSignature // Only ECDSA signing supported for now
+  // } catch (e) {
+  //   if (e.code === METAMASK_SIGNATURE_ERROR_CODE) {
+  //     // We tried to sign order the nice way.
+  //     // That works fine for regular MM addresses. Does not work for Hardware wallets, though.
+  //     // See https://github.com/MetaMask/metamask-extension/issues/10240#issuecomment-810552020
+  //     // So, when that specific error occurs, we know this is a problem with MM + HW.
+  //     // Then, we fallback to ETHSIGN.
+  //     signingScheme = SigningScheme.ETHSIGN
+  //     signature = (await signOrder({ ...signatureParams, signingScheme })) as EcdsaSignature // Only ECDSA signing supported for now
+  //   } else {
+  //     // Some other error signing. Let it bubble up.
+  //     console.error(e)
+  //     throw e
+  //   }
+  // }
 
   const signatureData = signature.data.toString()
   const creationTime = new Date().toISOString()
