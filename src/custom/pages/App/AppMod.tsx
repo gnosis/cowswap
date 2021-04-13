@@ -31,6 +31,8 @@ import DarkModeQueryParamReader from 'theme'
 // import Vote from './Vote'
 // import VotePage from './Vote/VotePage'
 
+import Footer from 'components/Footer'
+
 const AppWrapper = styled.div`
   display: flex;
   flex-flow: column;
@@ -61,6 +63,11 @@ const BodyWrapper = styled.div`
   `};
 
   z-index: 1;
+`
+
+const FooterWrapper = styled(HeaderWrapper)`
+  position: fixed;
+  bottom: 0;
 `
 
 const Marginer = styled.div`
@@ -117,6 +124,9 @@ export default function App(props?: PropsWithChildren<void>) {
           </Web3ReactManager>
           <Marginer />
         </BodyWrapper>
+        <FooterWrapper>
+          <Footer />
+        </FooterWrapper>
       </AppWrapper>
     </Suspense>
   )
