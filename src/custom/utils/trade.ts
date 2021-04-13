@@ -9,7 +9,7 @@ import { APP_ID, RADIX_DECIMAL, SHORTEST_PRECISION } from 'constants/index'
 import { EcdsaSignature, Signature } from '@gnosis.pm/gp-v2-contracts'
 
 const DEFAULT_SIGNING_SCHEME = SigningScheme.EIP712
-const METAMASK_SIGNATURE_ERROR_CODE = -32603
+// const METAMASK_SIGNATURE_ERROR_CODE = -32603
 
 export interface PostOrderParams {
   account: string
