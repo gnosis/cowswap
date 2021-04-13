@@ -105,7 +105,7 @@ export async function postOrder(params: PostOrderParams): Promise<string> {
     if (e.code === METAMASK_SIGNATURE_ERROR_CODE) {
       // We tried to sign order the nice way.
       // That works fine for regular MM addresses. Does not work for Hardware wallets, though.
-      // See https://github.com/MetaMask/metamask-extension/issues/10240#issuecomment-812672324
+      // See https://github.com/MetaMask/metamask-extension/issues/10240#issuecomment-810552020
       // So, when that specific error occurs, we know this is a problem with MM + HW.
       // Then, we fallback to ETHSIGN.
       signingScheme = SigningScheme.ETHSIGN
