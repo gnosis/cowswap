@@ -3,7 +3,7 @@
 
 ### (updated: March 2021)
 
-As described in our [Privacy Policy](/#/privacy-policy), for general web-browsing of this website, your personal data is not revealed to us, although certain statistical information is available to us via our internet service provider as well as through the use of special tracking technologies. Such information tells us about the pages you are clicking on or the hardware you are using, but not your name, age, address or anything we can use to identify you personally.
+As described in our [Privacy Policy](/privacy-policy), for general web-browsing of this website, your personal data is not revealed to us, although certain statistical information is available to us via our internet service provider as well as through the use of special tracking technologies. Such information tells us about the pages you are clicking on or the hardware you are using, but not your name, age, address or anything we can use to identify you personally.
 
 This Cookie Policy sets out some further detail on how and why we use these technologies on our website. The terms "we", "us", and "our" includes Gnosis Limited and our affiliates. The terms “you” and “your” includes our clients, business partners and users of this website. By using our website, you consent to storage and access to cookies and other technologies on your device, in accordance with this Cookie Policy.
 
