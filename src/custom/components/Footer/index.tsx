@@ -56,15 +56,16 @@ export default function Footer() {
     <Wrapper>
       <FooterVersion />
       <UrlWrapper>
-        {FOOTER_URLS.map(({ name, url }) =>
-          url ? (
-            <Link key={url} to={url}>
+        {FOOTER_URLS.map(({ name, url }, i) => {
+          const key = url || name + '_' + i
+          return url ? (
+            <Link key={key} to={url}>
               {name}
             </Link>
           ) : (
-            <span>{name}</span>
+            <span key={key}>{name}</span>
           )
-        )}
+        })}
       </UrlWrapper>
     </Wrapper>
   )
