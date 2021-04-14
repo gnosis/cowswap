@@ -37,6 +37,7 @@ const AppWrapper = styled.div`
   display: flex;
   flex-flow: column;
   align-items: flex-start;
+  min-height: 100vh;
   overflow-x: hidden;
 `
 
@@ -65,10 +66,7 @@ const BodyWrapper = styled.div`
   z-index: 1;
 `
 
-const FooterWrapper = styled(HeaderWrapper)`
-  position: fixed;
-  bottom: 0;
-`
+const FooterWrapper = styled(HeaderWrapper)``
 
 const Marginer = styled.div`
   margin-top: 5rem;
