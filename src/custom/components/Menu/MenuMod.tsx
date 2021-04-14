@@ -7,7 +7,7 @@ import { useOnClickOutside } from 'hooks/useOnClickOutside'
 import { ApplicationModal } from 'state/application/actions'
 import { useModalOpen, useToggleModal } from 'state/application/hooks'
 
-import { ExternalLink } from 'theme'
+import { ExternalLink, StyledInternalLink } from 'theme'
 // import { ButtonPrimary } from 'Button'
 
 const StyledMenuIcon = styled(MenuIcon)`
@@ -72,6 +72,20 @@ export const MenuFlyout = styled.span`
 `
 
 export const MenuItem = styled(ExternalLink)`
+  flex: 1;
+  padding: 0.5rem 0.5rem;
+  color: ${({ theme }) => theme.text2};
+  :hover {
+    color: ${({ theme }) => theme.text1};
+    cursor: pointer;
+    text-decoration: none;
+  }
+  > svg {
+    margin-right: 8px;
+  }
+`
+
+export const InternalMenuItem = styled(StyledInternalLink)`
   flex: 1;
   padding: 0.5rem 0.5rem;
   color: ${({ theme }) => theme.text2};
