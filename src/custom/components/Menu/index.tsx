@@ -4,7 +4,7 @@ import { Code, MessageCircle } from 'react-feather'
 import MenuMod, { MenuItem, InternalMenuItem, MenuFlyout as MenuFlyoutUni } from './MenuMod'
 import styled from 'styled-components'
 
-const CODE_LINK = 'https://github.com/gnosis/dex-swap'
+const CODE_LINK = 'https://github.com/gnosis/gp-swap-ui'
 const DISCORD_LINK = 'https://discord.gg/egGzDDctuC'
 
 export const StyledMenu = styled(MenuMod)`
