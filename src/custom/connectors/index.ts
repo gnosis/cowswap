@@ -14,7 +14,7 @@ function getRpcNetworks(): [RpcNetworks, number[]] {
   const defaultChainId = parseInt(process.env.REACT_APP_CHAIN_ID ?? '1')
 
   // Make sure the mandatory envs are present
-  if (typeof supportedChainIdsEnv === 'undefined') {
+  if (!supportedChainIdsEnv) {
     throw new Error(`REACT_APP_NETWORK_URL must be a defined environment variable`)
   }
 
@@ -35,7 +35,7 @@ function getRpcNetworks(): [RpcNetworks, number[]] {
   const rpcNetworks = chainIds.reduce<RpcNetworks>((acc, chainId) => {
     const url = process.env['REACT_APP_NETWORK_URL_' + chainId]
 
-    if (typeof url === 'undefined') {
+    if (!url) {
       throw new Error(
         `Network ${chainId} is supported, however 'REACT_APP_NETWORK_URL_${chainId} environment variable was not defined`
       )
