@@ -8,7 +8,7 @@ import { ApplicationModal } from 'state/application/actions'
 import { useModalOpen, useToggleModal } from 'state/application/hooks'
 
 import { ExternalLink, StyledInternalLink } from 'theme'
-import { WithClassName } from '@src/custom/types'
+import { WithClassName } from 'types'
 // import { ButtonPrimary } from 'Button'
 
 const StyledMenuIcon = styled(MenuIcon)`
