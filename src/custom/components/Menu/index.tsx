@@ -3,6 +3,7 @@ import { Code, MessageCircle } from 'react-feather'
 
 import MenuMod, { MenuItem, InternalMenuItem, MenuFlyout as MenuFlyoutUni } from './MenuMod'
 import styled from 'styled-components'
+import { Separator as SeparatorBase } from 'components/swap/styleds'
 
 const CODE_LINK = 'https://github.com/gnosis/gp-swap-ui'
 const DISCORD_LINK = 'https://discord.gg/egGzDDctuC'
@@ -20,6 +21,12 @@ const Policy = styled(InternalMenuItem)`
 
 const MenuFlyout = styled(MenuFlyoutUni)`
   min-width: 11rem;
+`
+
+const Separator = styled(SeparatorBase)`
+  background-color: #0000002e;
+  margin: 0.3rem auto;
+  width: 90%;
 `
 
 export function Menu() {
@@ -40,9 +47,7 @@ export function Menu() {
           Discord
         </MenuItem>
 
-        <span>
-          <hr />
-        </span>
+        <Separator />
 
         <Policy to="/terms-and-conditions">Terms and conditions</Policy>
         <Policy to="/privacy-policy">Privacy policy</Policy>
