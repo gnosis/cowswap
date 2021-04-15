@@ -3,12 +3,17 @@ import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 
 import Version from '../Version'
-const FOOTER_URLS = [
+import { BookOpen, Search, Book, AlertTriangle } from 'react-feather'
+export const FOOTER_URLS = [
   { name: '© 2021 Gnosis' },
-  { name: 'About', url: '/about' },
-  { name: 'Cookies', url: '/cookie-policy' },
-  { name: 'Privacy', url: '/privacy-policy' },
-  { name: 'Terms', url: '/terms-and-conditions' }
+  {
+    name: 'About',
+    url: '/about',
+    Icon: BookOpen
+  },
+  { name: 'Cookies', url: '/cookie-policy', Icon: Search },
+  { name: 'Privacy', url: '/privacy-policy', Icon: AlertTriangle },
+  { name: 'Terms', url: '/terms-and-conditions', Icon: Book }
 ]
 
 const FooterVersion = styled(Version)`
