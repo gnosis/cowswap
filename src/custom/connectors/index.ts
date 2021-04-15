@@ -98,7 +98,6 @@ export const portis = new PortisConnector({
 // mainnet only
 export const walletlink = new WalletLinkConnector({
   url: rpcNetworks[NETWORK_CHAIN_ID],
-  appName: 'Uniswap',
-  appLogoUrl:
-    'https://mpng.pngfly.com/20181202/bex/kisspng-emoji-domain-unicorn-pin-badges-sticker-unicorn-tumblr-emoji-unicorn-iphoneemoji-5c046729264a77.5671679315437924251569.jpg'
+  appName: 'Cow Swap',
+  appLogoUrl: 'https://raw.githubusercontent.com/gnosis/gp-swap-ui/develop/public/images/logo-square-512.png'
 })
