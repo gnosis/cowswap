@@ -1,5 +1,5 @@
-export function getDomainRegex(domainPrefix: string | undefined): RegExp | undefined {
-  return domainPrefix ? new RegExp('^' + domainPrefix.replaceAll('.', '\\.'), 'i') : undefined
+function getDomainRegex(domainPrefix: string | undefined): RegExp | undefined {
+  return domainPrefix ? new RegExp('^' + domainPrefix.replace('.', '\\.'), 'i') : undefined
 }
 
 export function checkEnvironment(host?: string) {
