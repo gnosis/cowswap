@@ -20,12 +20,12 @@ export const PRODUCTION_URL = 'cow.trade'
 const DISABLED_WALLETS = /^(?:WALLET_LINK|COINBASE_LINK|WALLET_CONNECT|FORTMATIC|Portis)$/
 
 // Re-export only the supported wallets
-export const SUPPORTED_WALLETS = Object.keys(SUPPORTED_WALLETS_UNISWAP)
-  .filter(key => !DISABLED_WALLETS.test(key))
-  .reduce((acc, key) => {
+export const SUPPORTED_WALLETS = Object.keys(SUPPORTED_WALLETS_UNISWAP).reduce((acc, key) => {
+  if (!DISABLED_WALLETS.test(key)) {
     acc[key] = SUPPORTED_WALLETS_UNISWAP[key]
-    return acc
-  }, {} as { [key: string]: WalletInfo })
+  }
+  return acc
+}, {} as { [key: string]: WalletInfo })
 
 // TODO: When contracts are deployed, we can load this from the NPM package
 export const GP_SETTLEMENT_CONTRACT_ADDRESS: Partial<Record<ChainId, string>> = {
