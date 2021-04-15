@@ -8,12 +8,10 @@ import { FortmaticConnector } from 'connectors/Fortmatic'
 import { NetworkConnector } from 'connectors/NetworkConnector'
 
 const SUPPORTED_CHAIN_IDS = process.env.REACT_APP_SUPPORTED_CHAIN_IDS
-const DEFAULT_CHAIN_ID = Number(process.env.REACT_APP_CHAIN_ID || '1')
+export const NETWORK_CHAIN_ID = parseInt(process.env.REACT_APP_CHAIN_ID ?? '1')
 
 const FORMATIC_KEY = process.env.REACT_APP_FORTMATIC_KEY
 const PORTIS_ID = process.env.REACT_APP_PORTIS_ID
-
-export const NETWORK_CHAIN_ID: number = parseInt(process.env.REACT_APP_CHAIN_ID ?? '1')
 
 type RpcNetworks = { [chainId: number]: string }
 
@@ -30,9 +28,9 @@ function getRpcNetworks(): [RpcNetworks, number[]] {
   }
 
   // Make sure the default chain is in the list of supported chains
-  if (!chainIds.includes(DEFAULT_CHAIN_ID)) {
+  if (!chainIds.includes(NETWORK_CHAIN_ID)) {
     throw new Error(
-      `The default chain id (${DEFAULT_CHAIN_ID}) must be part of the list of supported networks: ${chainIds.join(
+      `The default chain id (${NETWORK_CHAIN_ID}) must be part of the list of supported networks: ${chainIds.join(
         ', '
       )}`
     )
@@ -53,12 +51,12 @@ function getRpcNetworks(): [RpcNetworks, number[]] {
     return acc
   }, {})
 
-  // Get chainIds (excluding the DEFAULT_CHAIN_ID)
-  // Reason: By convention we will return DEFAULT_CHAIN_ID as the first element in the supported networks
+  // Get chainIds (excluding the NETWORK_CHAIN_ID)
+  // Reason: By convention we will return NETWORK_CHAIN_ID as the first element in the supported networks
   const otherChainIds = Object.keys(rpcNetworks)
     .map(Number)
-    .filter(networkId => networkId !== DEFAULT_CHAIN_ID)
-  const supportedChainIds = [DEFAULT_CHAIN_ID, ...otherChainIds]
+    .filter(networkId => networkId !== NETWORK_CHAIN_ID)
+  const supportedChainIds = [NETWORK_CHAIN_ID, ...otherChainIds]
 
   return [rpcNetworks, supportedChainIds]
 }
@@ -81,7 +79,7 @@ export const injected = new InjectedConnector({ supportedChainIds })
 export const walletconnect = new WalletConnectConnector({
   // TODO: Use any network when this PR is merged https://github.com/NoahZinsmeister/web3-react/pull/185
   // rpc: rpcNetworks,
-  rpc: { 1: rpcNetworks[DEFAULT_CHAIN_ID] },
+  rpc: { 1: rpcNetworks[NETWORK_CHAIN_ID] },
   bridge: 'https://bridge.walletconnect.org',
   qrcode: true,
   pollingInterval: 15000
@@ -90,7 +88,7 @@ export const walletconnect = new WalletConnectConnector({
 // mainnet only
 export const fortmatic = new FortmaticConnector({
   apiKey: FORMATIC_KEY ?? '',
-  chainId: DEFAULT_CHAIN_ID
+  chainId: NETWORK_CHAIN_ID
 })
 
 // mainnet only
@@ -98,12 +96,12 @@ export const portis = new PortisConnector({
   dAppId: PORTIS_ID ?? '',
   // TODO: Allow to configure multiple networks in portis
   // networks: supportedChainIds
-  networks: [DEFAULT_CHAIN_ID]
+  networks: [NETWORK_CHAIN_ID]
 })
 
 // mainnet only
 export const walletlink = new WalletLinkConnector({
-  url: rpcNetworks[DEFAULT_CHAIN_ID],
+  url: rpcNetworks[NETWORK_CHAIN_ID],
   appName: 'Uniswap',
   appLogoUrl:
     'https://mpng.pngfly.com/20181202/bex/kisspng-emoji-domain-unicorn-pin-badges-sticker-unicorn-tumblr-emoji-unicorn-iphoneemoji-5c046729264a77.5671679315437924251569.jpg'
