@@ -7,32 +7,27 @@ import { PortisConnector } from '@web3-react/portis-connector'
 import { FortmaticConnector } from 'connectors/Fortmatic'
 import { NetworkConnector } from 'connectors/NetworkConnector'
 
-const SUPPORTED_CHAIN_IDS = process.env.REACT_APP_SUPPORTED_CHAIN_IDS
-export const NETWORK_CHAIN_ID = parseInt(process.env.REACT_APP_CHAIN_ID ?? '1')
-
-const FORMATIC_KEY = process.env.REACT_APP_FORTMATIC_KEY
-const PORTIS_ID = process.env.REACT_APP_PORTIS_ID
-
 type RpcNetworks = { [chainId: number]: string }
 
 function getRpcNetworks(): [RpcNetworks, number[]] {
+  const supportedChainIdsEnv = process.env.REACT_APP_SUPPORTED_CHAIN_IDS
+  const defaultChainId = parseInt(process.env.REACT_APP_CHAIN_ID ?? '1')
+
   // Make sure the mandatory envs are present
-  if (typeof SUPPORTED_CHAIN_IDS === 'undefined') {
+  if (typeof supportedChainIdsEnv === 'undefined') {
     throw new Error(`REACT_APP_NETWORK_URL must be a defined environment variable`)
   }
 
   // Get list of supported chains
-  const chainIds = SUPPORTED_CHAIN_IDS.split(',').map(chainId => Number(chainId.trim()))
+  const chainIds = supportedChainIdsEnv.split(',').map(chainId => Number(chainId.trim()))
   if (chainIds.length === 0) {
     throw new Error(`At least one network should be supported. REACT_APP_CHAIN_ID`)
   }
 
   // Make sure the default chain is in the list of supported chains
-  if (!chainIds.includes(NETWORK_CHAIN_ID)) {
+  if (!chainIds.includes(defaultChainId)) {
     throw new Error(
-      `The default chain id (${NETWORK_CHAIN_ID}) must be part of the list of supported networks: ${chainIds.join(
-        ', '
-      )}`
+      `The default chain id (${defaultChainId}) must be part of the list of supported networks: ${chainIds.join(', ')}`
     )
   }
 
@@ -55,13 +50,14 @@ function getRpcNetworks(): [RpcNetworks, number[]] {
   // Reason: By convention we will return NETWORK_CHAIN_ID as the first element in the supported networks
   const otherChainIds = Object.keys(rpcNetworks)
     .map(Number)
-    .filter(networkId => networkId !== NETWORK_CHAIN_ID)
-  const supportedChainIds = [NETWORK_CHAIN_ID, ...otherChainIds]
+    .filter(networkId => networkId !== defaultChainId)
+  const supportedChainIds = [defaultChainId, ...otherChainIds]
 
   return [rpcNetworks, supportedChainIds]
 }
 
 const [rpcNetworks, supportedChainIds] = getRpcNetworks()
+export const NETWORK_CHAIN_ID = supportedChainIds[0]
 
 export const network = new NetworkConnector({
   urls: rpcNetworks,
@@ -87,13 +83,13 @@ export const walletconnect = new WalletConnectConnector({
 
 // mainnet only
 export const fortmatic = new FortmaticConnector({
-  apiKey: FORMATIC_KEY ?? '',
+  apiKey: process.env.REACT_APP_FORTMATIC_KEY ?? '',
   chainId: NETWORK_CHAIN_ID
 })
 
 // mainnet only
 export const portis = new PortisConnector({
-  dAppId: PORTIS_ID ?? '',
+  dAppId: process.env.REACT_APP_PORTIS_ID ?? '',
   // TODO: Allow to configure multiple networks in portis
   // networks: supportedChainIds
   networks: [NETWORK_CHAIN_ID]
