@@ -3,7 +3,7 @@ import { ChainId } from '@uniswap/sdk'
 import Web3Status from 'components/Web3Status'
 
 import HeaderMod, {
-  UniIcon,
+  // UniIcon,
   NetworkCard,
   Title,
   HeaderLinks,
@@ -69,10 +69,15 @@ export const LogoImage = styled.img.attrs(props => ({
   `};
 `
 
-const UniIconMod = styled(UniIcon)`
+const UniIcon = styled.div`
   display: flex;
   margin: 0 16px 0 0;
   position: relative;
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: rotate(-5deg);
+  }
 
   &::after {
     content: '${appStatus}';
@@ -95,9 +100,9 @@ export default function Header() {
     <HeaderModWrapper>
       <HeaderRow>
         <Title href=".">
-          <UniIconMod>
+          <UniIcon>
             <LogoImage />
-          </UniIconMod>
+          </UniIcon>
         </Title>
         {/* <HeaderLinks>
           <StyledNavLink to="/swap">Swap</StyledNavLink>
