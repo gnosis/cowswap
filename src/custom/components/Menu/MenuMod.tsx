@@ -8,6 +8,7 @@ import { ApplicationModal } from 'state/application/actions'
 import { useModalOpen, useToggleModal } from 'state/application/hooks'
 
 import { ExternalLink, StyledInternalLink } from 'theme'
+import { WithClassName } from 'types'
 // import { ButtonPrimary } from 'Button'
 
 const StyledMenuIcon = styled(MenuIcon)`
@@ -101,7 +102,7 @@ export const InternalMenuItem = styled(StyledInternalLink)`
 
 // const CODE_LINK = 'https://github.com/Uniswap/uniswap-interface'
 
-export default function Menu(props?: PropsWithChildren<void>) {
+export default function Menu(props?: PropsWithChildren<void> & WithClassName) {
   // const { account } = useActiveWeb3React()
 
   const node = useRef<HTMLDivElement>()
@@ -112,15 +113,15 @@ export default function Menu(props?: PropsWithChildren<void>) {
 
   return (
     // https://github.com/DefinitelyTyped/DefinitelyTyped/issues/30451
-    <StyledMenu ref={node as any}>
+    <StyledMenu ref={node as any} className={props?.className}>
       <StyledMenuButton onClick={toggle}>
         <StyledMenuIcon />
       </StyledMenuButton>
 
-      {open && (
-        <MenuFlyout>
-          {props?.children}
-          {/* <MenuItem id="link" href="https://uniswap.org/">
+      {open &&
+        /*
+        <MenuFlyout>          
+          <MenuItem id="link" href="https://uniswap.org/">
             <Info size={14} />
             About
           </MenuItem>
@@ -144,9 +145,10 @@ export default function Menu(props?: PropsWithChildren<void>) {
             <ButtonPrimary onClick={openClaimModal} padding="8px 16px" width="100%" borderRadius="12px" mt="0.5rem">
               Claim UNI
             </ButtonPrimary>
-          )} */}
+          )}
         </MenuFlyout>
-      )}
+        */
+        props?.children}
     </StyledMenu>
   )
 }
