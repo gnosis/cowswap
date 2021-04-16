@@ -1,17 +1,17 @@
-function getDomainRegex(domainPrefix: string | undefined): RegExp | undefined {
-  return domainPrefix ? new RegExp('^' + domainPrefix.replace('.', '\\.'), 'i') : undefined
-}
+export function checkEnvironment(host: string) {
+  const getRegex = (regex: string | undefined) => (regex ? new RegExp(regex) : undefined)
 
-export function checkEnvironment(host?: string) {
-  const domainDevRegex = getDomainRegex(process.env.REACT_APP_DOMAIN_PREFIX_DEV)
-  const domainStagingRegex = getDomainRegex(process.env.REACT_APP_DOMAIN_PREFIX_STAGING)
-  const domainProdRegex = getDomainRegex(process.env.REACT_APP_DOMAIN_PREFIX_PROD)
-
-  const hostToCheck = host || window.location.host
+  const domainDevRegex = getRegex(process.env.REACT_APP_DOMAIN_REGEX_DEV)
+  const domainStagingRegex = getRegex(process.env.REACT_APP_DOMAIN_REGEX_STAGING)
+  const domainProdRegex = getRegex(process.env.REACT_APP_DOMAIN_REGEX_PROD)
 
   return {
-    isDev: domainDevRegex?.test(hostToCheck),
-    isStaging: domainStagingRegex?.test(hostToCheck),
-    isProd: domainProdRegex?.test(hostToCheck)
+    isDev: domainDevRegex?.test(host) || false,
+    isStaging: domainStagingRegex?.test(host) || false,
+    isProd: domainProdRegex?.test(host) || false
   }
 }
+
+const { isDev, isStaging, isProd } = checkEnvironment(window.location.host)
+
+export { isDev, isStaging, isProd }

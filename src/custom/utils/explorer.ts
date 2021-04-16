@@ -1,8 +1,6 @@
 import { ChainId } from '@uniswap/sdk'
 import { OrderID } from 'utils/operator'
-import { checkEnvironment } from './environments'
-
-const { isDev, isStaging, isProd } = checkEnvironment(window.location.host)
+import { isDev, isStaging } from './environments'
 
 function _getExplorerUrlByEnvironment() {
   let baseUrl: string | undefined
@@ -10,11 +8,9 @@ function _getExplorerUrlByEnvironment() {
     baseUrl = process.env.REACT_APP_EXPLORER_URL_DEV || 'https://protocol-explorer.dev.gnosisdev.com'
   } else if (isStaging) {
     baseUrl = process.env.REACT_APP_EXPLORER_URL_STAGING || 'https://protocol-explorer.staging.gnosisdev.com'
-  } else if (isProd) {
-    baseUrl = process.env.REACT_APP_EXPLORER_URL_PROD || 'https://gnosis-protocol.io'
   } else {
-    // default to dev
-    baseUrl = process.env.REACT_APP_EXPLORER_URL_DEV || 'https://protocol-explorer.dev.gnosisdev.com'
+    // Production by default
+    baseUrl = process.env.REACT_APP_EXPLORER_URL_PROD || 'https://gnosis-protocol.io'
   }
 
   return {
