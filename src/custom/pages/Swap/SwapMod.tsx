@@ -57,7 +57,6 @@ const Wrapper = styled.div``
 
 export default function Swap({
   history,
-  className,
   FeeGreaterMessage,
   EthWethWrapMessage,
   SwitchToWethBtn,
@@ -334,7 +333,7 @@ export default function Swap({
   )
 
   return (
-    <Wrapper className={className}>
+    <>
       <TokenWarningModal
         isOpen={importTokensNotInDefault.length > 0 && !dismissTokenWarning}
         tokens={importTokensNotInDefault}
@@ -595,6 +594,6 @@ export default function Swap({
       ) : (
         <UnsupportedCurrencyFooter show={swapIsUnsupported} currencies={[currencies.INPUT, currencies.OUTPUT]} />
       )}
-    </Wrapper>
+    </>
   )
 }

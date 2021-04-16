@@ -7,7 +7,6 @@ import { Text } from 'rebass'
 
 import { ButtonSize, TYPE } from 'theme/index'
 
-import { WithClassName } from 'custom/types'
 import SwapMod from './SwapMod'
 import { RowBetween, RowFixed } from 'components/Row'
 import QuestionHelper from 'components/QuestionHelper'
@@ -19,13 +18,12 @@ interface FeeGreaterMessageProp {
   fee: CurrencyAmount
 }
 
-export type SwapProps = RouteComponentProps &
-  WithClassName & {
-    FeeGreaterMessage: React.FC<FeeGreaterMessageProp>
-    EthWethWrapMessage: React.FC<EthWethWrapProps>
-    SwitchToWethBtn: React.FC<SwitchToWethBtnProps>
-    FeesExceedFromAmountMessage: React.FC
-  }
+export interface SwapProps extends RouteComponentProps {
+  FeeGreaterMessage: React.FC<FeeGreaterMessageProp>
+  EthWethWrapMessage: React.FC<EthWethWrapProps>
+  SwitchToWethBtn: React.FC<SwitchToWethBtnProps>
+  FeesExceedFromAmountMessage: React.FC
+}
 
 function FeeGreaterMessage({ fee }: FeeGreaterMessageProp) {
   const theme = useContext(ThemeContext)
