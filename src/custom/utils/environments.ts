@@ -1,5 +1,5 @@
 export function checkEnvironment(host: string) {
-  const getRegex = (regex: string | undefined) => regex && new RegExp(regex)
+  const getRegex = (regex: string | undefined) => (regex ? new RegExp(regex) : undefined)
 
   const domainDevRegex = getRegex(process.env.REACT_APP_DOMAIN_REGEX_DEV)
   const domainStagingRegex = getRegex(process.env.REACT_APP_DOMAIN_REGEX_STAGING)
