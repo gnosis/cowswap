@@ -79,9 +79,10 @@ export interface Props {
   account?: string
   native: Currency
   wrapped: Token
+  wrapCallback: (() => Promise<void>) | undefined
 }
 
-export default function EthWethWrap({ account, native, wrapped }: Props) {
+export default function EthWethWrap({ account, native, wrapped, wrapCallback }: Props) {
   const wrappedSymbol = wrapped.symbol || 'wrapped native token'
   const nativeSymbol = native.symbol || 'native token'
 
@@ -107,7 +108,9 @@ export default function EthWethWrap({ account, native, wrapped }: Props) {
         <span>{wrappedSymbol} balance:</span>
         <span>{wrappedBalance?.toSignificant(SHORT_PRECISION) || '-'}</span>
       </BalanceLabel>
-      <ButtonPrimary padding="0.5rem">Wrap my {nativeSymbol}</ButtonPrimary>
+      <ButtonPrimary padding="0.5rem" onClick={wrapCallback}>
+        Wrap my {nativeSymbol}
+      </ButtonPrimary>
     </Wrapper>
   )
 }
