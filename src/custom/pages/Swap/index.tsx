@@ -1,6 +1,5 @@
 import React, { useContext } from 'react'
 import { RouteComponentProps } from 'react-router-dom'
-import styled from 'styled-components'
 import { ThemeContext } from 'styled-components'
 import { CurrencyAmount, Token } from '@uniswap/sdk'
 import { Text } from 'rebass'
@@ -90,11 +89,9 @@ function FeesExceedFromAmountMessage() {
   )
 }
 
-const Wrapper = styled(SwapMod)``
-
 export default function Swap(props: RouteComponentProps) {
   return (
-    <Wrapper
+    <SwapMod
       FeeGreaterMessage={FeeGreaterMessage}
       EthWethWrapMessage={EthWethWrapMessage}
       SwitchToWethBtn={SwitchToWethBtn}
