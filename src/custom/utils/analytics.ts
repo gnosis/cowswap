@@ -1,8 +1,6 @@
-import { checkEnvironment } from './environments'
+import { isDev, isStaging, isProd } from './environments'
 
 export function getAnalyticsId(): string | undefined {
-  const { isDev, isStaging, isProd } = checkEnvironment(window.location.host)
-
   if (isDev) {
     return process.env.REACT_APP_GOOGLE_ANALYTICS_ID_DEV
   } else if (isStaging) {
@@ -11,5 +9,6 @@ export function getAnalyticsId(): string | undefined {
     return process.env.REACT_APP_GOOGLE_ANALYTICS_ID_PROD
   }
 
+  // Undefined by default
   return undefined
 }
