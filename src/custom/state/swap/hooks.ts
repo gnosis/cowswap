@@ -22,8 +22,8 @@ import { useState, useEffect, useCallback, useMemo } from 'react'
 import { useDispatch } from 'react-redux'
 import { SwapState } from 'state/swap/reducer'
 import { ParsedQs } from 'qs'
-import { useWETHContract } from 'hooks/useContract'
 import { BigNumber } from 'ethers'
+import { DEFAULT_NETWORK_FOR_LISTS } from 'constants/lists'
 
 export * from '@src/state/swap/hooks'
 
@@ -228,14 +228,19 @@ interface CurrencyWithAddress {
   address?: string
 }
 
-export function useShouldDisableEth(input?: CurrencyWithAddress, output?: CurrencyWithAddress) {
-  const weth = useWETHContract()
-  return useMemo(() => {
-    const [isEthIn, isEthOut] = [input?.currency === ETHER, output?.currency === ETHER]
-    const [isWethIn, isWethOut] = [input?.address === weth?.address, output?.address === weth?.address]
+export function useDetectNativeToken(input?: CurrencyWithAddress, output?: CurrencyWithAddress, chainId?: ChainId) {
+  const wrappedToken = WETH[chainId || DEFAULT_NETWORK_FOR_LISTS]
+  const native = ETHER
 
-    return { showEthDisabled: (isEthIn && !isWethOut) || (isEthOut && !isWethIn), weth }
-  }, [input, output, weth])
+  return useMemo(() => {
+    const [isNativeIn, isNativeOut] = [input?.currency === native, output?.currency === native]
+    const [isWrappedIn, isWrappedOut] = [
+      input?.address === wrappedToken.address,
+      output?.address === wrappedToken.address
+    ]
+
+    return { isNativeIn: isNativeIn && !isWrappedOut, isNativeOut: isNativeOut && !isWrappedIn, wrappedToken, native }
+  }, [input?.address, input?.currency, native, output?.address, output?.currency, wrappedToken])
 }
 
 export function useIsFeeGreaterThanInput({
