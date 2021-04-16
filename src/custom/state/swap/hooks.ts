@@ -240,7 +240,7 @@ export function useDetectNativeToken(input?: CurrencyWithAddress, output?: Curre
     ]
 
     return { isNativeIn: isNativeIn && !isWrappedOut, isNativeOut: isNativeOut && !isWrappedIn, wrappedToken, native }
-  }, [input?.address, input?.currency, native, output?.address, output?.currency, wrappedToken])
+  }, [input, output, native, wrappedToken])
 }
 
 export function useIsFeeGreaterThanInput({
