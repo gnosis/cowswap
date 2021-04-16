@@ -1,4 +1,4 @@
-import { CurrencyAmount, ETHER, JSBI, Token, Trade } from '@uniswap/sdk'
+import { CurrencyAmount, JSBI, Token, Trade } from '@uniswap/sdk'
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { ArrowDown } from 'react-feather'
 import ReactGA from 'react-ga'
@@ -33,7 +33,7 @@ import useWrapCallback, { WrapType } from 'hooks/useWrapCallback'
 import { useToggleSettingsMenu, useWalletModalToggle } from 'state/application/hooks'
 import { Field } from 'state/swap/actions'
 import {
-  useShouldDisableEth,
+  useDetectNativeToken,
   useDefaultsFromURLSearch,
   useDerivedSwapInfo,
   useReplaceSwapState,
@@ -54,6 +54,7 @@ import { isTradeBetter } from 'utils/trades'
 import QuestionHelper from 'components/QuestionHelper'
 import FeeInformationTooltip from 'components/swap/FeeInformationTooltip'
 import { RouteComponentProps } from 'react-router-dom'
+import EthWethWrap from 'components/swap/EthWethWrap'
 
 export default function Swap({ history }: RouteComponentProps) {
   const loadedUrlParams = useDefaultsFromURLSearch()
@@ -112,9 +113,10 @@ export default function Swap({ history }: RouteComponentProps) {
 
   // Checks if either currency is native ETH
   // MOD: adds this hook
-  const { showEthDisabled, weth } = useShouldDisableEth(
+  const { isNativeIn, native, wrappedToken } = useDetectNativeToken(
     { currency: currencies.INPUT, address: INPUT.currencyId },
-    { currency: currencies.OUTPUT, address: OUTPUT.currencyId }
+    { currency: currencies.OUTPUT, address: OUTPUT.currencyId },
+    chainId
   )
 
   // Is fee greater than input?
@@ -474,6 +476,11 @@ export default function Swap({ history }: RouteComponentProps) {
                       </TYPE.black>
                     </RowBetween>
                   )}
+                  {isNativeIn && (
+                    <RowBetween>
+                      <EthWethWrap account={account ?? undefined} native={native} wrapped={wrappedToken} />
+                    </RowBetween>
+                  )}
                 </AutoColumn>
               </Card>
             )}
@@ -493,9 +500,21 @@ export default function Swap({ history }: RouteComponentProps) {
                   (wrapType === WrapType.WRAP ? 'Wrap' : wrapType === WrapType.UNWRAP ? 'Unwrap' : null)}
               </ButtonPrimary>
             ) : // MOD: disable ETH trading
-            showEthDisabled ? (
-              <ButtonPrimary buttonSize={ButtonSize.BIG} id="swap-button" disabled={true}>
-                <TYPE.main mb="4px">ETH cannot be traded. Use WETH</TYPE.main>
+            isNativeIn ? (
+              <ButtonPrimary
+                buttonSize={ButtonSize.BIG}
+                id="swap-button"
+                onClick={() =>
+                  replaceSwapState({
+                    inputCurrencyId: wrappedToken.address,
+                    outputCurrencyId: OUTPUT.currencyId,
+                    typedValue,
+                    recipient: null,
+                    field: independentField
+                  })
+                }
+              >
+                <TYPE.main mb="4px">Switch to {wrappedToken.symbol}</TYPE.main>
               </ButtonPrimary>
             ) : noRoute && userHasSpecifiedInputOutput ? (
               isFeeGreater ? (
@@ -604,62 +623,7 @@ export default function Swap({ history }: RouteComponentProps) {
           </BottomGrouping>
         </Wrapper>
       </AppBody>
-      {/* MOD */}
-      {showEthDisabled ? (
-        <UnsupportedCurrencyFooter
-          detailsText={
-            <>
-              <div>
-                Ether (ETH) is not tradable as a native token. Please use Wrapped Ether (WETH) instead. ETH can still be
-                wrapped/unwrapped into WETH by selecting one as the input and the other as the output.
-              </div>
-
-              {/* Offer option to trade using WETH and same user set amounts */}
-              {weth && (
-                <ButtonConfirmed
-                  onClick={() =>
-                    replaceSwapState({
-                      inputCurrencyId: currencies.INPUT === ETHER ? weth.address : INPUT.currencyId,
-                      outputCurrencyId: currencies.OUTPUT === ETHER ? weth.address : OUTPUT.currencyId,
-                      typedValue,
-                      recipient: null,
-                      field: independentField
-                    })
-                  }
-                  disabled={!weth?.address}
-                  marginTop="1.5rem"
-                  padding="0.65rem"
-                  altDisabledStyle
-                >
-                  Trade with WETH
-                </ButtonConfirmed>
-              )}
-
-              <ButtonConfirmed
-                onClick={() =>
-                  replaceSwapState({
-                    inputCurrencyId: 'ETH',
-                    outputCurrencyId: weth?.address,
-                    typedValue: '0.1',
-                    recipient: null,
-                    field: Field.INPUT
-                  })
-                }
-                disabled={!weth?.address}
-                marginTop="1.5rem"
-                padding="0.65rem"
-                altDisabledStyle
-              >
-                Wrap ETH
-              </ButtonConfirmed>
-            </>
-          }
-          detailsTitle="Ether and GP Swap"
-          showDetailsText="Learn more about using ETH on GP Swap"
-          show={showEthDisabled}
-          currencies={[currencies.INPUT, currencies.OUTPUT]}
-        />
-      ) : !swapIsUnsupported ? (
+      {!swapIsUnsupported ? (
         <AdvancedSwapDetailsDropdown trade={trade} />
       ) : (
         <UnsupportedCurrencyFooter show={swapIsUnsupported} currencies={[currencies.INPUT, currencies.OUTPUT]} />
