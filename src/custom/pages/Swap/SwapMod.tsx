@@ -112,11 +112,15 @@ export default function Swap({
   } = useDerivedSwapInfo()
 
   // Checks if either currency is native ETH
-  const { isNativeIn, native, wrappedToken } = useDetectNativeToken(
+  // MOD: adds this hook
+  const { isNativeIn, isWrappedOut, native, wrappedToken } = useDetectNativeToken(
     { currency: currencies.INPUT, address: INPUT.currencyId },
     { currency: currencies.OUTPUT, address: OUTPUT.currencyId },
     chainId
   )
+
+  // Is user swapping Eth as From token and not wrapping to WETH?
+  const isNativeInSwap = isNativeIn && !isWrappedOut
 
   // Is fee greater than input?
   const { isFeeGreater, fee } = useIsFeeGreaterThanInput({ chainId, address: INPUT.currencyId, parsedAmount })
@@ -124,9 +128,12 @@ export default function Swap({
   const { wrapType, execute: onWrap, inputError: wrapInputError } = useWrapCallback(
     currencies[Field.INPUT],
     currencies[Field.OUTPUT],
-    typedValue
+    typedValue,
+    // should override and get wrapCallback?
+    isNativeInSwap
   )
-  const showWrap: boolean = wrapType !== WrapType.NOT_APPLICABLE
+
+  const showWrap: boolean = !isNativeInSwap && wrapType !== WrapType.NOT_APPLICABLE
   const { address: recipientAddress } = useENSAddress(recipient)
   const toggledVersion = useToggledVersion()
   const tradesByVersion = {
@@ -463,7 +470,7 @@ export default function Swap({
                     </RowBetween>
                   )}
                   {isFeeGreater && fee && <FeeGreaterMessage fee={fee} />}
-                  {isNativeIn && (
+                  {isNativeIn && onWrap && (
                     <EthWethWrapMessage
                       account={account ?? undefined}
                       native={native}
@@ -489,7 +496,7 @@ export default function Swap({
                 {wrapInputError ??
                   (wrapType === WrapType.WRAP ? 'Wrap' : wrapType === WrapType.UNWRAP ? 'Unwrap' : null)}
               </ButtonPrimary>
-            ) : isNativeIn ? (
+            ) : !swapInputError && isNativeIn ? (
               <SwitchToWethBtn wrappedToken={wrappedToken} />
             ) : noRoute && userHasSpecifiedInputOutput ? (
               isFeeGreater ? (
