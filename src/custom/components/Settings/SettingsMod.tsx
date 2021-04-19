@@ -1,6 +1,5 @@
 import React, { useContext, useRef, useState } from 'react'
-// import { Settings, X } from 'react-feather'
-import { X } from 'react-feather'
+import { Settings, X } from 'react-feather'
 import { Text } from 'rebass'
 import styled, { ThemeContext } from 'styled-components'
 import { useOnClickOutside } from 'hooks/useOnClickOutside'
@@ -20,21 +19,22 @@ import QuestionHelper from 'components/QuestionHelper'
 import { RowBetween, RowFixed } from 'components/Row'
 import Toggle from 'components/Toggle'
 import TransactionSettings from 'components/TransactionSettings'
+import { SettingsTabProp } from '.'
 
-// const StyledMenuIcon = styled(Settings)`
-//   height: 20px;
-//   width: 20px;
+export const StyledMenuIcon = styled(Settings)`
+  height: 20px;
+  width: 20px;
 
-//   > * {
-//     stroke: ${({ theme }) => theme.text2};
-//   }
+  > * {
+    stroke: ${({ theme }) => theme.text2};
+  }
 
-//   :hover {
-//     opacity: 0.7;
-//   }
-// `
+  :hover {
+    opacity: 0.7;
+  }
+`
 
-export const StyledCloseIcon = styled(X)`
+const StyledCloseIcon = styled(X)`
   height: 20px;
   width: 20px;
   :hover {
@@ -46,7 +46,7 @@ export const StyledCloseIcon = styled(X)`
   }
 `
 
-const StyledMenuButton = styled.button`
+export const StyledMenuButton = styled.button`
   position: relative;
   width: 100%;
   height: 100%;
@@ -69,15 +69,14 @@ const StyledMenuButton = styled.button`
     margin-top: 2px;
   }
 `
+export const EmojiWrapper = styled.div`
+  position: absolute;
+  bottom: -6px;
+  right: 0px;
+  font-size: 14px;
+`
 
-// const EmojiWrapper = styled.div`
-//   position: absolute;
-//   bottom: -6px;
-//   right: 0px;
-//   font-size: 14px;
-// `
-
-export const StyledMenu = styled.div`
+const StyledMenu = styled.div`
   margin-left: 0.5rem;
   display: flex;
   justify-content: center;
@@ -87,7 +86,7 @@ export const StyledMenu = styled.div`
   text-align: left;
 `
 
-export const MenuFlyout = styled.span`
+const MenuFlyout = styled.span`
   min-width: 20.125rem;
   background-color: ${({ theme }) => theme.bg2};
   box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.01), 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04),
@@ -106,13 +105,13 @@ export const MenuFlyout = styled.span`
   `};
 `
 
-export const Break = styled.div`
+const Break = styled.div`
   width: 100%;
   height: 1px;
   background-color: ${({ theme }) => theme.bg3};
 `
 
-export const ModalContentWrapper = styled.div`
+const ModalContentWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -121,7 +120,7 @@ export const ModalContentWrapper = styled.div`
   border-radius: 20px;
 `
 
-export default function SettingsTab() {
+export default function SettingsTab({ className, SettingsButton }: SettingsTabProp) {
   const node = useRef<HTMLDivElement>()
   const open = useModalOpen(ApplicationModal.SETTINGS)
   const toggle = useToggleSettingsMenu()
@@ -142,7 +141,7 @@ export default function SettingsTab() {
 
   return (
     // https://github.com/DefinitelyTyped/DefinitelyTyped/issues/30451
-    <StyledMenu ref={node as any}>
+    <StyledMenu ref={node as any} className={className}>
       <Modal isOpen={showConfirmation} onDismiss={() => setShowConfirmation(false)} maxHeight={100}>
         <ModalContentWrapper>
           <AutoColumn gap="lg">
@@ -180,16 +179,19 @@ export default function SettingsTab() {
           </AutoColumn>
         </ModalContentWrapper>
       </Modal>
+      <SettingsButton expertMode={expertMode} toggleSettings={toggle} />
+      {/* 
       <StyledMenuButton onClick={toggle} id="open-settings-dialog-button">
-        {/* <StyledMenuIcon /> */}
-        {/* {expertMode ? (
+        <StyledMenuIcon />
+        {expertMode ? (
           <EmojiWrapper>
             <span role="img" aria-label="wizard-icon">
-              🧙
+              🐮
             </span>
           </EmojiWrapper>
-        ) : null} */}
-      </StyledMenuButton>
+        ) : null}
+      </StyledMenuButton> 
+      */}
       {open && (
         <MenuFlyout>
           <AutoColumn gap="md" style={{ padding: '1rem' }}>
