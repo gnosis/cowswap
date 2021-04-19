@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useCallback } from 'react'
 import styled from 'styled-components'
 import { Separator } from 'components/Menu'
 import { ArrowDown, AlertTriangle } from 'react-feather'
@@ -7,6 +7,7 @@ import { Currency, Token } from '@uniswap/sdk'
 import { useCurrencyBalances } from 'state/wallet/hooks'
 import { SHORT_PRECISION } from 'constants/index'
 import { colors } from 'theme'
+import Loader from 'components/Loader'
 
 const COLOUR_SHEET = colors(false)
 
@@ -28,11 +29,16 @@ const Wrapper = styled.div`
   }
 
   > ${ButtonPrimary} {
-      // TODO: themed
+      // TODO: @biocom themed
       background: #62d9ff;
       width: 75%;
       padding: 0.4rem;
       margin-top: 0.3rem;
+
+      &:disabled {
+        // TODO: @biocom disabled prop should already do this
+        background-color: ${({ theme }) => theme.disabled}
+      }
   }
 `
 const WarningWrapper = styled(Wrapper)`
@@ -79,14 +85,31 @@ export interface Props {
   account?: string
   native: Currency
   wrapped: Token
-  wrapCallback: (() => Promise<void>) | undefined
+  wrapCallback: () => Promise<void>
 }
 
 export default function EthWethWrap({ account, native, wrapped, wrapCallback }: Props) {
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<Error | null>(null)
+  const [nativeBalance, wrappedBalance] = useCurrencyBalances(account, [native, wrapped])
+
   const wrappedSymbol = wrapped.symbol || 'wrapped native token'
   const nativeSymbol = native.symbol || 'native token'
 
-  const [nativeBalance, wrappedBalance] = useCurrencyBalances(account, [native, wrapped])
+  const handleWrap = useCallback(async () => {
+    try {
+      setLoading(true)
+      setError(null)
+
+      await wrapCallback()
+    } catch (error) {
+      console.error('Error wrapping ETH:', error)
+
+      setError(new Error(error))
+    } finally {
+      setLoading(false)
+    }
+  }, [wrapCallback])
 
   return (
     <Wrapper>
@@ -97,6 +120,11 @@ export default function EthWethWrap({ account, native, wrapped, wrapCallback }: 
           <span>
             Wrap your {nativeSymbol} first or switch to {wrappedSymbol}
           </span>
+          {error && (
+            <span>
+              <strong>{error.message}</strong>
+            </span>
+          )}
         </div>
       </WarningWrapper>
       <BalanceLabel>
@@ -108,8 +136,8 @@ export default function EthWethWrap({ account, native, wrapped, wrapCallback }: 
         <span>{wrappedSymbol} balance:</span>
         <span>{wrappedBalance?.toSignificant(SHORT_PRECISION) || '-'}</span>
       </BalanceLabel>
-      <ButtonPrimary padding="0.5rem" onClick={wrapCallback}>
-        Wrap my {nativeSymbol}
+      <ButtonPrimary disabled={loading} padding="0.5rem" onClick={handleWrap}>
+        {loading ? <Loader /> : `Wrap my ${nativeSymbol}`}
       </ButtonPrimary>
     </Wrapper>
   )
