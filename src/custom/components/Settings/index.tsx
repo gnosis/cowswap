@@ -114,7 +114,7 @@ function SettingsButton({ toggleSettings, expertMode }: SettingsButtonProps) {
       <StyledMenuIcon />
       {expertMode ? (
         <EmojiWrapper>
-          <span>🥋</span>
+          <span role="img">🥋</span>
         </EmojiWrapper>
       ) : null}
     </StyledMenuButton>
