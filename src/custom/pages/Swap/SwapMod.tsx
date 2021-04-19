@@ -11,7 +11,7 @@ import Column, { AutoColumn } from 'components/Column'
 import ConfirmSwapModal from 'components/swap/ConfirmSwapModal'
 import CurrencyInputPanel from 'components/CurrencyInputPanel'
 import { SwapPoolTabs } from 'components/NavigationTabs'
-import { AutoRow, RowBetween, RowFixed } from 'components/Row'
+import { AutoRow, RowBetween } from 'components/Row'
 import AdvancedSwapDetailsDropdown from 'components/swap/AdvancedSwapDetailsDropdown'
 import BetterTradeLink, { DefaultVersionLink } from 'components/swap/BetterTradeLink'
 import confirmPriceImpactWithoutFee from 'components/swap/confirmPriceImpactWithoutFee'
@@ -36,7 +36,6 @@ import {
   useDetectNativeToken,
   useDefaultsFromURLSearch,
   useDerivedSwapInfo,
-  useReplaceSwapState,
   useSwapActionHandlers,
   useSwapState,
   useIsFeeGreaterThanInput
@@ -51,12 +50,16 @@ import Loader from 'components/Loader'
 import { useIsTransactionUnsupported } from 'hooks/Trades'
 import UnsupportedCurrencyFooter from 'components/swap/UnsupportedCurrencyFooter'
 import { isTradeBetter } from 'utils/trades'
-import QuestionHelper from 'components/QuestionHelper'
 import FeeInformationTooltip from 'components/swap/FeeInformationTooltip'
-import { RouteComponentProps } from 'react-router-dom'
-import EthWethWrap from 'components/swap/EthWethWrap'
+import { SwapProps } from '.'
 
-export default function Swap({ history }: RouteComponentProps) {
+export default function Swap({
+  history,
+  FeeGreaterMessage,
+  EthWethWrapMessage,
+  SwitchToWethBtn,
+  FeesExceedFromAmountMessage
+}: SwapProps) {
   const loadedUrlParams = useDefaultsFromURLSearch()
 
   // token warning stuff
@@ -108,11 +111,7 @@ export default function Swap({ history }: RouteComponentProps) {
     inputError: swapInputError
   } = useDerivedSwapInfo()
 
-  // MOD: adds this fn
-  const replaceSwapState = useReplaceSwapState()
-
   // Checks if either currency is native ETH
-  // MOD: adds this hook
   const { isNativeIn, native, wrappedToken } = useDetectNativeToken(
     { currency: currencies.INPUT, address: INPUT.currencyId },
     { currency: currencies.OUTPUT, address: OUTPUT.currencyId },
@@ -463,23 +462,9 @@ export default function Swap({ history }: RouteComponentProps) {
                       </ClickableText>
                     </RowBetween>
                   )}
-                  {isFeeGreater && fee && (
-                    <RowBetween>
-                      <RowFixed>
-                        <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
-                          GP/Gas Fee
-                        </TYPE.black>
-                        <QuestionHelper text="GP Swap has 0 gas fees. A portion of the sell amount in each trade goes to the GP Protocol." />
-                      </RowFixed>
-                      <TYPE.black fontSize={14} color={theme.text1}>
-                        {fee.toSignificant(4)} {fee.currency.symbol}
-                      </TYPE.black>
-                    </RowBetween>
-                  )}
+                  {isFeeGreater && fee && <FeeGreaterMessage fee={fee} />}
                   {isNativeIn && (
-                    <RowBetween>
-                      <EthWethWrap account={account ?? undefined} native={native} wrapped={wrappedToken} />
-                    </RowBetween>
+                    <EthWethWrapMessage account={account ?? undefined} native={native} wrapped={wrappedToken} />
                   )}
                 </AutoColumn>
               </Card>
@@ -499,32 +484,11 @@ export default function Swap({ history }: RouteComponentProps) {
                 {wrapInputError ??
                   (wrapType === WrapType.WRAP ? 'Wrap' : wrapType === WrapType.UNWRAP ? 'Unwrap' : null)}
               </ButtonPrimary>
-            ) : // MOD: disable ETH trading
-            isNativeIn ? (
-              <ButtonPrimary
-                buttonSize={ButtonSize.BIG}
-                id="swap-button"
-                onClick={() =>
-                  replaceSwapState({
-                    inputCurrencyId: wrappedToken.address,
-                    outputCurrencyId: OUTPUT.currencyId,
-                    typedValue,
-                    recipient: null,
-                    field: independentField
-                  })
-                }
-              >
-                <TYPE.main mb="4px">Switch to {wrappedToken.symbol}</TYPE.main>
-              </ButtonPrimary>
+            ) : isNativeIn ? (
+              <SwitchToWethBtn wrappedToken={wrappedToken} />
             ) : noRoute && userHasSpecifiedInputOutput ? (
               isFeeGreater ? (
-                <RowBetween>
-                  <ButtonError buttonSize={ButtonSize.BIG} error id="swap-button" disabled>
-                    <Text fontSize={20} fontWeight={500}>
-                      Fees exceed from amount
-                    </Text>
-                  </ButtonError>
-                </RowBetween>
+                <FeesExceedFromAmountMessage />
               ) : (
                 <GreyCard style={{ textAlign: 'center' }}>
                   <TYPE.main mb="4px">Insufficient liquidity for this trade.</TYPE.main>

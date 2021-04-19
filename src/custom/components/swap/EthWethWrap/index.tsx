@@ -75,13 +75,13 @@ const BalanceLabel = styled.p<{ background?: string }>`
   }
 `
 
-interface Params {
+export interface Props {
   account?: string
   native: Currency
   wrapped: Token
 }
 
-export default function EthWethWrap({ account, native, wrapped }: Params) {
+export default function EthWethWrap({ account, native, wrapped }: Props) {
   const wrappedSymbol = wrapped.symbol || 'wrapped native token'
   const nativeSymbol = native.symbol || 'native token'
 
