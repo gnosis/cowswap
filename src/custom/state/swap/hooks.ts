@@ -239,7 +239,14 @@ export function useDetectNativeToken(input?: CurrencyWithAddress, output?: Curre
       output?.address === wrappedToken.address
     ]
 
-    return { isNativeIn: isNativeIn && !isWrappedOut, isNativeOut: isNativeOut && !isWrappedIn, wrappedToken, native }
+    return {
+      isNativeIn: isNativeIn && !isWrappedOut,
+      isNativeOut: isNativeOut && !isWrappedIn,
+      isWrappedIn,
+      isWrappedOut,
+      wrappedToken,
+      native
+    }
   }, [input, output, native, wrappedToken])
 }
 
