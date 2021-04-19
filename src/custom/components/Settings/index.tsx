@@ -5,34 +5,95 @@ import styled from 'styled-components'
 import SettingsMod, { StyledMenuButton, StyledMenuIcon, EmojiWrapper } from './SettingsMod'
 
 const Wrapper = styled(SettingsMod)`
-  color: red;
+  ${StyledMenuButton} {
+    display: flex;
+    align-items: center;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border: none;
+    background-color: transparent;
+    margin: 0;
+    padding: 0;
+    height: 35px;
+    padding: 0.15rem 0.5rem;
+    border-radius: 0.5rem;
+    transition: opacity 0.2s ease-in-out;
+    opacity: 0.85;
 
-  b {
-    margin: 0px 5px 0px 0px;
+    &:hover,
+    &:focus {
+      cursor: pointer;
+      outline: none;
+      opacity: 1;
+    }
+
+    > b {
+      margin: 0 3px 0 0;
+    }
+
+    svg {
+      opacity: 1;
+      margin: 2px 0 0;
+      transition: transform 0.3s cubic-bezier(0.65, 0.05, 0.36, 1);
+    }
+
+    &:hover > svg {
+      transform: rotate(180deg);
+    }
+  }
+
+  ${StyledMenuIcon} {
+    height: 20px;
+    width: 20px;
+    > * {
+      stroke: ${({ theme }) => theme.text2};
+    }
   }
 
   ${EmojiWrapper} {
     position: absolute;
-    /* width: 50px; */
     flex-direction: row;
-    top: 0px;
-    right: 100px;
+    top: 9px;
+    right: -16px;
+    animation: expertModeOn 3s normal forwards ease-in-out;
 
-    span:first-child {
-      font-size: 30px;
-      z-index: 100;
-      /* display: block; */
-      position: absolute;
-      top: -11px;
-      right: -3px;
+    span {
+      font-size: 20px;
+
+      &::after {
+        content: '🐮';
+        font-size: inherit;
+        position: absolute;
+        top: -13px;
+        right: 0;
+        left: 0;
+        margin: 0 auto;
+      }
     }
+  }
 
-    span:last-child {
-      font-size: 25px;
-      /* display: block; */
-      position: absolute;
-      bottom: 0;
-      right: 0;
+  @keyframes expertModeOn {
+    0% {
+      filter: none;
+    }
+    15% {
+      filter: sepia(1);
+    }
+    30% {
+      filter: sepia(0);
+    }
+    45% {
+      filter: sepia(1);
+    }
+    60% {
+      filter: sepia(0);
+    }
+    75% {
+      filter: sepia(1);
+    }
+    100% {
+      filter: sepia(0);
     }
   }
 `
@@ -53,12 +114,7 @@ function SettingsButton({ toggleSettings, expertMode }: SettingsButtonProps) {
       <StyledMenuIcon />
       {expertMode ? (
         <EmojiWrapper>
-          <span role="img" aria-label="cow-icon">
-            🐮
-          </span>
-          <span role="img" aria-label="kimono-icon">
-            🥋
-          </span>
+          <span>🥋</span>
         </EmojiWrapper>
       ) : null}
     </StyledMenuButton>
