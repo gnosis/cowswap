@@ -14,7 +14,10 @@ export const StyledMenu = styled(MenuMod)`
   }
 `
 
-const Policy = styled(InternalMenuItem)`
+const Policy = styled(InternalMenuItem).attrs(attrs => ({
+  ...attrs,
+  target: '_blank'
+}))`
   font-size: 0.8em;
   text-decoration: underline;
 `
