@@ -3,7 +3,7 @@ import { ChainId } from '@uniswap/sdk'
 import Web3Status from 'components/Web3Status'
 
 import HeaderMod, {
-  UniIcon,
+  // UniIcon,
   NetworkCard,
   Title,
   HeaderLinks,
@@ -13,8 +13,10 @@ import HeaderMod, {
   HeaderElement,
   HideSmall,
   BalanceText,
-  AccountElement
+  AccountElement,
+  HeaderElementWrap
 } from './HeaderMod'
+import Menu from '../Menu'
 import styled from 'styled-components'
 import { status as appStatus } from '@src/../package.json'
 import { useActiveWeb3React } from 'hooks'
@@ -40,24 +42,6 @@ export interface LinkType {
 }
 
 export const HeaderModWrapper = styled(HeaderMod)`
-  border-bottom: ${({ theme }) => theme.header.border};
-
-  ${UniIcon} {
-    display: flex;
-    margin: 0 16px 0 0;
-    position: relative;
-
-    &::after {
-      content: '${appStatus}';
-      display: block;
-      font-size: 10px;
-      font-weight: bold;
-      position: absolute;
-      right: 12px;
-      top: 2px;
-    }
-  }
-
   ${Title} {
     margin: 0;
     text-decoration: none;
@@ -81,18 +65,32 @@ export const LogoImage = styled.img.attrs(props => ({
   height: props.theme.logo.height
 }))`
   object-fit: contain;
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    width: 150px;
+  `};
 `
-const AppStatusWrapper = styled.div`
+
+const UniIcon = styled.div`
   display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 10px;
-  background: ${({ theme }) => theme.primary1};
-  border-radius: ${({ theme }) => theme.buttonPrimary.borderRadius};
-  /* negative margin matches logo margin right */
-  margin: auto 0 0 -10px;
-  padding: 2px 6px;
-  color: ${({ theme }) => theme.white};
+  margin: 0 16px 0 0;
+  position: relative;
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: rotate(-5deg);
+  }
+
+  &::after {
+    content: '${appStatus}';
+    display: block;
+    font-size: 10px;
+    font-weight: bold;
+    position: absolute;
+    right: 12px;
+    top: 2px;
+    color: ${({ theme }) => theme.text1};
+  }
 `
 
 export default function Header() {
@@ -108,7 +106,6 @@ export default function Header() {
             <LogoImage />
           </UniIcon>
         </Title>
-        <AppStatusWrapper>{appStatus}</AppStatusWrapper>
         {/* <HeaderLinks>
           <StyledNavLink to="/swap">Swap</StyledNavLink>
           <StyledNavLink to="/about">About</StyledNavLink>
@@ -130,12 +127,9 @@ export default function Header() {
             <Web3Status />
           </AccountElement>
         </HeaderElement>
-        {/* <HeaderElementWrap>
-          <StyledMenuButton onClick={() => toggleDarkMode()}>
-            {darkMode ? <Moon size={20} /> : <Sun size={20} />}
-          </StyledMenuButton>
+        <HeaderElementWrap>
           <Menu />
-        </HeaderElementWrap> */}
+        </HeaderElementWrap>
       </HeaderControls>
     </HeaderModWrapper>
   )

@@ -41,7 +41,7 @@ const HeaderFrame = styled.div`
   width: 100%;
   top: 0;
   position: relative;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  border-bottom: ${({ theme }) => theme.header.border};
   padding: 1rem;
   z-index: 2;
   ${({ theme }) => theme.mediaWidth.upToMedium`
@@ -94,12 +94,10 @@ export const HeaderElement = styled.div`
   `};
 `
 
-/*
-const HeaderElementWrap = styled.div`
+export const HeaderElementWrap = styled.div`
   display: flex;
   align-items: center;
 `
-*/
 
 export const HeaderRow = styled(RowFixed)`
   ${({ theme }) => theme.mediaWidth.upToMedium`
@@ -194,12 +192,12 @@ export const Title = styled.a`
   }
 `
 
-export const UniIcon = styled.div`
-  transition: transform 0.3s ease;
-  :hover {
-    transform: rotate(-5deg);
-  }
-`
+// export const UniIcon = styled.div`
+//   transition: transform 0.3s ease;
+//   :hover {
+//     transform: rotate(-5deg);
+//   }
+// `
 
 const activeClassName = 'ACTIVE'
 
