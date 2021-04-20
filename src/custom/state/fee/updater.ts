@@ -71,9 +71,6 @@ export default function FeesUpdater(): null {
   // Fee API calculation/call
   const typedValue = useDebounce(rawTypedValue, DEBOUNCE_TIME)
 
-  // Keep the typed value for the last refetch of the fee
-  // const lastTypedValueUsedRef = useRef(typedValue)
-
   const sellCurrency = useCurrency(sellToken)
   const buyCurrency = useCurrency(buyToken)
   const feesMap = useAllFees({ chainId })
