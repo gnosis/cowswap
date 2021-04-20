@@ -100,11 +100,10 @@ export default function EthWethWrap({ account, native, userInput, wrapped, wrapC
   return (
     <Wrapper>
       <WarningWrapper>
-        <AlertTriangle size={30} />
+        <AlertTriangle size={25} />
         <div>
-          <span>Only {wrappedSymbol} can be used to swap.</span>
           <span>
-            Wrap your {nativeSymbol} first or switch to {wrappedSymbol}
+            To sell {nativeSymbol}, first wrap or switch to {wrappedSymbol}
           </span>
           {error && (
             <span>
