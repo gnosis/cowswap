@@ -103,6 +103,34 @@ export const ButtonGray = styled(ButtonGrayMod)`
 
 export const ButtonSecondary = styled(ButtonSecondaryMod)`
   // CSS overrides
+  ${({ theme }) => theme.buttonSecondary.background}
+  font-size: ${({ theme }) => theme.buttonSecondary.fontSize};
+  font-weight: ${({ theme }) => theme.buttonSecondary.fontWeight};
+  border: ${({ theme }) => theme.buttonSecondary.border};
+  box-shadow: ${({ theme }) => theme.buttonSecondary.boxShadow};
+  border-radius: ${({ theme }) => theme.buttonSecondary.borderRadius};
+  ${({ theme }) => theme.cursor};
+  overflow: hidden;
+  position: relative;
+
+  > div {
+    font-size: inherit;
+    font-weight: inherit;
+  }
+
+  &:focus,
+  &:hover,
+  &:active {
+    ${({ theme }) => theme.buttonPrimary.background}
+    border: ${({ theme }) => theme.buttonPrimary.border};
+  }
+  &:disabled {
+    background-color: ${({ theme }) => theme.disabled};
+    background-image: none;
+    border: 0;
+    cursor: auto;
+    animation: none;
+  }
 `
 
 export const ButtonPink = styled(ButtonPinkMod)`

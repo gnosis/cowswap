@@ -97,6 +97,15 @@ export function themeVariables(darkMode: boolean, colorsTheme: Colors) {
       borderRadius: '9px',
       boxShadow: `none`
     },
+    buttonSecondary: {
+      background: css`
+        background: transparent linear-gradient(270deg, ${colorsTheme.purple} 30%, ${colorsTheme.blue1} 70%);
+      `,
+      fontWeight: '500',
+      border: `0`,
+      borderRadius: '9px',
+      boxShadow: `none`
+    },
     buttonLight: {
       fontWeight: '500',
       border: 'none',
