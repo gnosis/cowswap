@@ -6,6 +6,7 @@ import AppBody from 'pages/AppBody'
 export const PageWrapper = styled(AppBody)`
   padding: 0 24px 24px;
   max-width: ${({ theme }) => theme.appBody.maxWidth.content};
+  min-height: 500px;
 `
 
 export const Title = styled.h1`

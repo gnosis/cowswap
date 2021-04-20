@@ -21,11 +21,12 @@ export default function About() {
         </p>
         <p>
           Everytime you and another trader each hold an asset the other wants, your trade is settled directly without
-          using an AMM and therefore without incurring any slippage + fees.
-          <br />
-          <br />
-          This economic phenomenon is called <b>Coincidence Of Wants (COW)</b>. Only amounts that can’t be settled with
+          using an AMM and therefore without incurring any slippage + fees. Only amounts that can’t be settled with
           other CowSwap traders are sent to the underlying AMMs.
+          <br />
+          <br />
+          This economic phenomenon is <b>Coincidence Of Wants (COW)</b>
+          (COW).
         </p>
 
         <h3 id="gas-free">Gas Free Transactions</h3>
@@ -67,14 +68,16 @@ export default function About() {
           <img src={mevIMG} alt="CowSwap - Miner-Extractable Value" />
         </p>
         <p>
-          Heard about Miner Extractable Value yet? It’s scary. Many good articles describe the phenomenon of miners
-          frontrunning transactions, extracting significant value from users (till date USD 318M). <br />
+          Heard about Maximal Extractable Value yet? It’s scary. To date more than{' '}
+          <a href="#mev" target="_blank" rel="noopener">
+            USD 390M
+          </a>{' '}
+          in value has been extracted from users by bots frontrunning transactions, exploiting the slippage users allow
+          in a trade.
+          <br />
           <br />
           CowSwap is the first DEX Aggregator offering some protection against it: COWs enable tight slippages and can
-          even avoid settlement on AMMs altogether, additionally transactions are submitted privately to trusted pools.{' '}
-          <a href="#mev" target="_blank" rel="noopener">
-            Read more
-          </a>
+          even avoid settlement on AMMs altogether.
         </p>
       </Content>
     </Page>
