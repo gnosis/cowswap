@@ -1,13 +1,16 @@
 import React, { useState, useCallback } from 'react'
+import { AlertTriangle, ArrowRight } from 'react-feather'
 import styled from 'styled-components'
+import { Currency, Token, CurrencyAmount } from '@uniswap/sdk'
+
 import { Separator } from 'components/Menu'
-import { ArrowDown, AlertTriangle } from 'react-feather'
 import { ButtonPrimary } from 'components/Button'
-import { Currency, Token } from '@uniswap/sdk'
-import { useCurrencyBalances } from 'state/wallet/hooks'
-import { SHORT_PRECISION } from 'constants/index'
-import { colors } from 'theme'
 import Loader from 'components/Loader'
+import { WrapCardContainer, WrapCard } from './WrapCard'
+
+import { useCurrencyBalances } from 'state/wallet/hooks'
+
+import { colors } from 'theme'
 
 const COLOUR_SHEET = colors(false)
 
@@ -63,32 +66,15 @@ const WarningWrapper = styled(Wrapper)`
   }
 `
 
-const BalanceLabel = styled.p<{ background?: string }>`
-  display: flex;
-  justify-content: space-between;
-  width: 90%;
-  padding: 0.5rem 0.7rem;
-  margin: 0.5rem 0;
-
-  border-radius: ${({ theme }) => theme.buttonPrimary.borderRadius};
-
-  background: ${({ background = 'initial' }) => background};
-
-  > span {
-    &:first-child {
-      margin-right: auto;
-    }
-  }
-`
-
 export interface Props {
   account?: string
   native: Currency
+  userInput?: CurrencyAmount
   wrapped: Token
   wrapCallback: () => Promise<void>
 }
 
-export default function EthWethWrap({ account, native, wrapped, wrapCallback }: Props) {
+export default function EthWethWrap({ account, native, userInput, wrapped, wrapCallback }: Props) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<Error | null>(null)
   const [nativeBalance, wrappedBalance] = useCurrencyBalances(account, [native, wrapped])
@@ -127,15 +113,17 @@ export default function EthWethWrap({ account, native, wrapped, wrapCallback }: 
           )}
         </div>
       </WarningWrapper>
-      <BalanceLabel>
-        <span>{nativeSymbol} balance:</span> <span>{nativeBalance?.toSignificant(SHORT_PRECISION) || '-'}</span>
-      </BalanceLabel>
-      <Separator />
-      <ArrowDown size={18} color={COLOUR_SHEET.primary1} />
-      <BalanceLabel background={COLOUR_SHEET.bg1}>
-        <span>{wrappedSymbol} balance:</span>
-        <span>{wrappedBalance?.toSignificant(SHORT_PRECISION) || '-'}</span>
-      </BalanceLabel>
+
+      <WrapCardContainer>
+        {/* To Wrap */}
+        <WrapCard symbol={nativeSymbol} balance={nativeBalance} currency={native} amountToWrap={userInput} />
+
+        <ArrowRight size={18} color={COLOUR_SHEET.primary1} />
+
+        {/* Wrap Outcome */}
+        <WrapCard symbol={wrappedSymbol} balance={wrappedBalance} currency={wrapped} amountToWrap={userInput} />
+      </WrapCardContainer>
+
       <ButtonPrimary disabled={loading} padding="0.5rem" onClick={handleWrap}>
         {loading ? <Loader /> : `Wrap my ${nativeSymbol}`}
       </ButtonPrimary>
