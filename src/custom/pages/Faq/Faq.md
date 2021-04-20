@@ -15,7 +15,7 @@ From only this January 2021 to now, the total amount of value extracted by miner
 Coincidence of Wants (CoWs) can be [explained](https://en.wikipedia.org/wiki/Coincidence_of_wants) as “an economic phenomenon where two parties each hold an item the other wants, so they exchange these items directly.” CowSwap facilitates CoWs among traders and their orders through using batch auctions as a core mechanism. 
 
 
-This means, on CowSwap, when two traders each hold an asset the other wants, a trade can be settled directly between them without an external market maker or liquidity provider. This leads to better prices for the individual traders (because traditionally market makers add a fee—referred to as spread—for their surface). 
+This means, on CowSwap, when two traders each hold an asset the other wants, a trade can be settled directly between them without an external market maker or liquidity provider. This leads to better prices for the individual traders (because traditionally market makers add a fee — referred to as spread — for their surface). 
 
 
 CowSwap allows for coincidence of wants (CoWs) orders to be traded directly against one another. Only the excess order amount that cannot be settled directly with other CowSwap traders are sent to the underlying AMMs (automated market makers). 
