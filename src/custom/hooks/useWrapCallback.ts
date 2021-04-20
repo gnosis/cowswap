@@ -86,7 +86,8 @@ function _getWrapUnwrapCallback(params: GetWrapUnwrapCallback): WrapUnwrapCallba
 export default function useWrapCallback(
   inputCurrency: Currency | undefined,
   outputCurrency: Currency | undefined,
-  typedValue: string | undefined
+  typedValue: string | undefined,
+  isEthTradeOverride?: boolean
 ): WrapUnwrapCallback {
   const { chainId, account } = useActiveWeb3React()
   const wethContract = useWETHContract()
@@ -98,7 +99,8 @@ export default function useWrapCallback(
   return useMemo(() => {
     if (!wethContract || !chainId || !inputCurrency || !outputCurrency) return NOT_APPLICABLE
 
-    const isWrappingEther = inputCurrency === ETHER && currencyEquals(WETH[chainId], outputCurrency)
+    const isWrappingEther =
+      inputCurrency === ETHER && (isEthTradeOverride || currencyEquals(WETH[chainId], outputCurrency))
     const isUnwrappingWeth = currencyEquals(WETH[chainId], inputCurrency) && outputCurrency === ETHER
 
     if (!isWrappingEther && !isUnwrappingWeth) {
@@ -112,5 +114,5 @@ export default function useWrapCallback(
         wethContract
       })
     }
-  }, [wethContract, chainId, inputCurrency, outputCurrency, inputAmount, balance, addTransaction])
+  }, [wethContract, chainId, inputCurrency, outputCurrency, isEthTradeOverride, balance, inputAmount, addTransaction])
 }
