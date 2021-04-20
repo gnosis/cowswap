@@ -24,7 +24,7 @@ export default function About() {
           other CowSwap traders are sent to the underlying AMMs.
           <br />
           <br />
-          This economic phenomenon is <b>Coincidence Of Wants (COW)</b>.
+          This economic phenomenon is known as <b>Coincidence Of Wants (COW)</b>.
         </p>
 
         <h3 id="gas-free">Gas Free Transactions</h3>
