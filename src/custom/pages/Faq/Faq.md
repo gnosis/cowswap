@@ -30,7 +30,7 @@ Batches are decentrally settled by an external, independent party (called “sol
 Additionally, depending on the composition of the orders submitted and valid for a given batch, the existence of CoWs may significantly reduce the amount that has to be exchanged via external MEV-prone protocols, such as Uniswap.
 
 ### How does CowSwap determine prices?
-CowSwap settles batch auctions in discrete time intervals. In the absence of other traders, CowSwap matches traders against the best available Uniswap liquidity (note: other base-liquidity sources such as Balancer are being added soon).
+CowSwap settles batch auctions in discrete time intervals. In the absence of other traders, CowSwap matches traders against the best available Uniswap liquidity (note: other base-liquidity sources such as Balancer will be added soon).
 
 
 If CoWs (Coincidence of Wants) orders exist in a batch, the “smaller” order is matched fully with the larger order. The excess of the larger order is settled with the best available base liquidity CowSwap integrates with, which is, for now, Uniswap. The clearing price for both orders will be the price of the token with the excess amount on external liquidity sources to which the protocol is connected.
