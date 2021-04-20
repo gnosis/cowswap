@@ -122,9 +122,10 @@ export default function EthWethWrap({ account, native, wrapped, wrapCallback }: 
   }, [isWrapPending])
 
   const handleWrap = useCallback(async () => {
-    try {
-      setError(null)
+    setError(null)
+    setLoading(true)
 
+    try {
       const txResponse = await wrapCallback()
       setPendingHash(txResponse.hash)
     } catch (error) {
