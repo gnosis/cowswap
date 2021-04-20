@@ -1,18 +1,9 @@
-import { ChainId } from '@uniswap/sdk'
 import { useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { AppDispatch, AppState } from 'state'
-import { updateFee, clearFee } from './actions'
+import { updateFee, clearFee, AddFeeParams, ClearFeeParams } from './actions'
 import { FeeInformation, FeesMap } from './reducer'
-
-interface AddFeeParams extends ClearFeeParams {
-  fee: FeeInformation
-}
-interface ClearFeeParams {
-  token: string // token address,
-  chainId: ChainId
-}
 
 type AddFeeCallback = (addTokenParams: AddFeeParams) => void
 type ClearFeeCallback = (clearTokenParams: ClearFeeParams) => void
