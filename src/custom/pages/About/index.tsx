@@ -12,7 +12,6 @@ export default function About() {
       <Title>About</Title>
 
       <Content>
-        <small>(updated: April 2021)</small>
         <h2>
           <b>C</b>oincidence <b>O</b>f <b>W</b>ants
         </h2>
@@ -25,8 +24,7 @@ export default function About() {
           other CowSwap traders are sent to the underlying AMMs.
           <br />
           <br />
-          This economic phenomenon is <b>Coincidence Of Wants (COW)</b>
-          (COW).
+          This economic phenomenon is <b>Coincidence Of Wants (COW)</b>.
         </p>
 
         <h3 id="gas-free">Gas Free Transactions</h3>
@@ -52,10 +50,10 @@ export default function About() {
               <li>
                 <p>Optimized gas price for inclusion in the next mined block</p>
               </li>
-              <li>
-                <p>Your trade is submitted and settled on-chain</p>
-              </li>
             </ul>
+          </li>
+          <li>
+            <p>Your trade is submitted and settled on-chain</p>
           </li>
         </ol>
         <p>
