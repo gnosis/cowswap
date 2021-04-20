@@ -1,6 +1,10 @@
 import React from 'react'
-import gasLessSignImg from 'assets/cow-swap/gasless-sign.png'
 import Page, { Title, Content } from 'components/Page'
+
+// Assets
+import diagramIMG from 'assets/cow-swap/cowswap-diagram.png'
+import gaslessIMG from 'assets/cow-swap/gasless.png'
+import mevIMG from 'assets/cow-swap/mev.png'
 
 export default function About() {
   return (
@@ -8,40 +12,69 @@ export default function About() {
       <Title>About</Title>
 
       <Content>
-        <h3>(updated: April 2021)</h3>
-        <h2>What is CowSwap?</h2>
+        <small>(updated: April 2021)</small>
+        <h2>
+          <b>C</b>oincidence <b>O</b>f <b>W</b>ants
+        </h2>
         <p>
-          <strong>CowSwap</strong> is a Interdum et malesuada fames ac ante ipsum primis in faucibus. Proin vitae
-          blandit leo. Etiam consequat diam eu tortor scelerisque mattis. Nulla eu lacus accumsan, consequat ante et,
-          molestie ex. Cras eu ante nisl. Vestibulum ut sagittis ex. Praesent et metus a ligula porta interdum.
+          <img src={diagramIMG} alt="CowSwap vs. AMM's" />
         </p>
-        <h2 id="gas-free">Gas Free</h2>
         <p>
-          <img src={gasLessSignImg} alt="CowSwap - Gas Free Transactions" />
+          Everytime you and another trader each hold an asset the other wants, your trade is settled directly without
+          using an AMM and therefore without incurring any slippage + fees.
+          <br />
+          <br />
+          This economic phenomenon is called <b>Coincidence Of Wants (COW)</b>. Only amounts that can’t be settled with
+          other CowSwap traders are sent to the underlying AMMs.
+        </p>
+
+        <h3 id="gas-free">Gas Free Transactions</h3>
+        <p>
+          <img src={gaslessIMG} alt="CowSwap - Gas Free Transactions" />
         </p>
         <p>
           Gas costs are accounted for in your sell token already - no gas costs need to be paid! CowSwap uses an
           off-chain design for submitting trades:
         </p>
         <ol>
-          <li>You sign a trade message which is submitted to CowSwap’s off-chain service</li>
+          <li>
+            <p>You sign a trade message which is submitted to CowSwap’s off-chain service</p>
+          </li>
           <li>
             <p>CowSwap’s off-chain service optimizes your trade’s execution by considering:</p>
-          </li>
-          <li>
-            <p>Coincidence Of Wants</p>
-          </li>
-          <li>Best execution route among AMMs (for the remaining amount)</li>
-          <li>
-            <p>Optimized gas price for inclusion in the next mined block</p>
-          </li>
-          <li>
-            <p>Your trade is submitted and settled on-chain</p>
+            <ul>
+              {' '}
+              <li>
+                <p>Coincidence Of Wants</p>
+              </li>
+              <li>Best execution route among AMMs (for the remaining amount)</li>
+              <li>
+                <p>Optimized gas price for inclusion in the next mined block</p>
+              </li>
+              <li>
+                <p>Your trade is submitted and settled on-chain</p>
+              </li>
+            </ul>
           </li>
         </ol>
         <p>
           Why? This helps you to save on gas, slippage &amp; protocol fees. You might receive a larger amount than
           anticipated :)
+        </p>
+
+        <h3 id="mev">Miner-Extractable Value (MEV)</h3>
+        <p>
+          <img src={mevIMG} alt="CowSwap - Miner-Extractable Value" />
+        </p>
+        <p>
+          Heard about Miner Extractable Value yet? It’s scary. Many good articles describe the phenomenon of miners
+          frontrunning transactions, extracting significant value from users (till date USD 318M). <br />
+          <br />
+          CowSwap is the first DEX Aggregator offering some protection against it: COWs enable tight slippages and can
+          even avoid settlement on AMMs altogether, additionally transactions are submitted privately to trusted pools.{' '}
+          <a href="#mev" target="_blank" rel="noopener">
+            Read more
+          </a>
         </p>
       </Content>
     </Page>
