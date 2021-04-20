@@ -5,7 +5,7 @@ import AppBody from 'pages/AppBody'
 
 export const PageWrapper = styled(AppBody)`
   padding: 0 24px 24px;
-  max-width: ${({ theme }) => theme.appBody.maxWidth.content};
+  max-width: 85%;
 `
 
 export const Title = styled.h1`
@@ -14,8 +14,9 @@ export const Title = styled.h1`
 
 export const Content = styled.div`
   font-size: 15px;
-  margin: 0 0 28px;
+  margin: 0 auto;
   display: block;
+  max-width: 90em;
 
   > h2 {
     font-size: 18px;
