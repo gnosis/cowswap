@@ -2,12 +2,12 @@ import React from 'react'
 import { CurrencyAmount, Currency } from '@uniswap/sdk'
 import styled from 'styled-components'
 import CurrencyLogo from 'components/CurrencyLogo'
-import { SHORT_PRECISION } from 'constants/index'
+import { DEFAULT_PRECISION } from 'constants/index'
 
 const BalanceLabel = styled.p<{ background?: string }>`
   display: flex;
   justify-content: center;
-  margin: 0.5rem 0;
+  margin: 8px 0;
   width: 100%;
 
   border-radius: ${({ theme }) => theme.buttonPrimary.borderRadius};
@@ -16,7 +16,7 @@ const BalanceLabel = styled.p<{ background?: string }>`
 
   > span {
     &:first-child {
-      margin-right: 0.2rem;
+      margin-right: 3.2px;
     }
   }
 `
@@ -26,15 +26,15 @@ const WrapCardWrapper = styled.div`
   align-items: center;
   justify-content: center;
   flex: 1;
-  padding: 0.5rem;
+  padding: 8px;
 `
 
 export const WrapCardContainer = styled.div`
   position: relative;
   ${({ theme }) => theme.flexRowNoWrap}
-  border: 0.15rem solid ${({ theme }) => theme.bg1};
+  border: 2.4px solid ${({ theme }) => theme.bg1};
   border-radius: ${({ theme }) => theme.buttonPrimary.borderRadius};
-  margin: 0.7rem 0;
+  margin: 11.2px 0;
   width: 100%;
 
   > ${WrapCardWrapper} {
@@ -53,7 +53,7 @@ export const WrapCardContainer = styled.div`
     left: calc(50% - 15px);
     top: calc(50% - 15px);
     border-radius: 100%;
-    background: #fff;
+    background: ${({ theme }) => theme.white};
     width: 30px;
     height: 30px;
     padding: 5px;
@@ -76,13 +76,13 @@ export function WrapCard(props: WrapCardProps) {
       {/* amount to wrap/unwrap */}
       <BalanceLabel>
         <strong>
-          {amountToWrap?.toSignificant(SHORT_PRECISION) || '-'} {symbol}
+          {amountToWrap?.toSignificant(DEFAULT_PRECISION) || '-'} {symbol}
         </strong>
       </BalanceLabel>
       {/* user balance */}
       <BalanceLabel>
         <span>Balance: </span>
-        <span>{balance?.toSignificant(SHORT_PRECISION) || '-'}</span>
+        <span>{balance?.toSignificant(DEFAULT_PRECISION) || '-'}</span>
       </BalanceLabel>
     </WrapCardWrapper>
   )

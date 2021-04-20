@@ -3,7 +3,6 @@ import { AlertTriangle, ArrowRight } from 'react-feather'
 import styled from 'styled-components'
 import { Currency, Token, CurrencyAmount } from '@uniswap/sdk'
 
-import { Separator } from 'components/Menu'
 import { ButtonPrimary } from 'components/Button'
 import Loader from 'components/Loader'
 import { WrapCardContainer, WrapCard } from './WrapCard'
@@ -19,34 +18,27 @@ const Wrapper = styled.div`
   background: ${({ theme }) => theme.bg2};
   align-items: center;
   justify-content: center;
-  margin: 0.3rem auto 0;
-  padding: 1rem;
+  margin: 4.8px auto 0;
+  padding: 16px;
   width: 100%;
 
   border-radius: ${({ theme }) => theme.buttonPrimary.borderRadius};
   font-size: smaller;
 
-  > ${Separator} {
-      margin: -0.3rem 0 0.6rem 0;
-      width: 83%;
-  }
-
   > ${ButtonPrimary} {
-      // TODO: @biocom themed
       background: #62d9ff;
       width: 75%;
-      padding: 0.4rem;
-      margin-top: 0.3rem;
+      padding: 6.4px;
+      margin-top: 4.8px;
 
       &:disabled {
-        // TODO: @biocom disabled prop should already do this
         background-color: ${({ theme }) => theme.disabled}
       }
   }
 `
 const WarningWrapper = styled(Wrapper)`
   ${({ theme }) => theme.flexRowNoWrap}
-  padding: 0rem;
+  padding: 0;
 
   color: ${({ theme }) => theme.red1};
   font-weight: 600;
@@ -54,7 +46,7 @@ const WarningWrapper = styled(Wrapper)`
 
   // warning logo
   > svg {
-    margin-right: 0.5rem;
+    margin-right: 8px;
   }
 
   // warning text
