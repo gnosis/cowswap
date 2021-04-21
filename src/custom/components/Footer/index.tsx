@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 
 import Version from '../Version'
-import ClickWrap from '../ClickWrap'
+// import ClickWrap from '../ClickWrap'
 
 const FooterVersion = styled(Version)`
   margin-right: auto;
@@ -26,7 +26,7 @@ const FooterWrapper = styled.div`
 export default function Footer({ children }: { children?: React.ReactChildren }) {
   return (
     <Wrapper>
-      <ClickWrap />
+      {/* <ClickWrap /> */}
       <FooterWrapper>
         <FooterVersion />
         {children}
