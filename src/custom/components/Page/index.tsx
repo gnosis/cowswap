@@ -1,6 +1,6 @@
 import React, { PropsWithChildren } from 'react'
 
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import AppBody from 'pages/AppBody'
 import { WithClassName } from 'types'
 
@@ -80,8 +80,39 @@ export const Content = styled.div`
   }
 `
 
+export const GdocsListStyle = css`
+  /* List styles */
+  > ul,
+  ol {
+    margin: 24px 0;
+    padding: 12px 24px 12px 38px;
+    background: #eefaff;
+    border-radius: 12px;
+
+    > li {
+      /* Match 1st level list styles from G Docs */
+      margin: 0 0 10px;
+      list-style: decimal;
+
+      > ul,
+      > ol {
+        > li {
+          /* Match 2nd level list styles from G Docs */
+          list-style: lower-alpha;
+        }
+
+        > h4:last-child {
+          /* CSS hack to allow nested subheaders to be aligned */
+          /* while keeping sequential lower roman bullets */
+          margin-left: -2.4rem;
+        }
+      }
+    }
+  }
+`
+
 export type PageProps = PropsWithChildren<WithClassName>
 
-export default function Page(props?: PageProps) {
+export default function Page(props: PageProps) {
   return <PageWrapper className={props?.className}>{props?.children}</PageWrapper>
 }

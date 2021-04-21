@@ -5,52 +5,24 @@ import useFetchFile from 'hooks/useFetchFile'
 import { HeadingRenderer, LinkRenderer } from './renderers'
 import Page, { Title, Content } from 'components/Page'
 import styled from 'styled-components'
+import { WithClassName } from '@src/custom/types'
 // import ScrollToTop from '../ScrollToTop'
 
-interface MarkdownParams {
+interface MarkdownParams extends WithClassName {
   content: string
   title?: ReactNode
 }
 
-export const Wrapper = styled(Page)`
-  /* List styles */
-  > ul,
-  ol {
-    margin: 24px 0;
-    padding: 12px 24px 12px 38px;
-    background: #eefaff;
-    border-radius: 12px;
-
-    > li {
-      /* Match 1st level list styles from G Docs */
-      margin: 0 0 10px;
-      list-style: decimal;
-
-      > ul,
-      > ol {
-        > li {
-          /* Match 2nd level list styles from G Docs */
-          list-style: lower-alpha;
-        }
-
-        > h4:last-child {
-          /* CSS hack to allow nested subheaders to be aligned */
-          /* while keeping sequential lower roman bullets */
-          margin-left: -2.4rem;
-        }
-      }
-    }
-  }
-`
+export const Wrapper = styled(Page)``
 
 const CustomReactMarkdown = (props: ReactMarkdownPropsBase & { children: string }) => (
   <ReactMarkdown {...props} renderers={{ heading: HeadingRenderer, link: LinkRenderer }} allowDangerousHtml />
 )
 
-export default function Markdown({ content, title }: MarkdownParams) {
+export default function Markdown({ content, title, className }: MarkdownParams) {
   const { error, file } = useFetchFile(content)
   return (
-    <Wrapper>
+    <Wrapper className={className}>
       {title && <Title>{title}</Title>}
       <Content>
         {file && <CustomReactMarkdown>{file}</CustomReactMarkdown>}

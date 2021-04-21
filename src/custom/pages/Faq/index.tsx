@@ -2,6 +2,6 @@ import React from 'react'
 import content from './Faq.md'
 import MarkdownPage from 'components/MarkdownPage'
 
-export default function PrivacyPolicy() {
+export default function Faq() {
   return <MarkdownPage content={content} />
 }
