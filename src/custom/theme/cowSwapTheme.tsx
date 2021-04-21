@@ -115,7 +115,7 @@ function themeVariables(colorsTheme: Colors) {
       borderRadius: '9px',
       boxShadow: `4px 4px 0px ${colorsTheme.black}`
     },
-    buttonSecondary: {
+    buttonOutlined: {
       background: css`
         background: ${colorsTheme.bg1};
         color: ${colorsTheme.text1};

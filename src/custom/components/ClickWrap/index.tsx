@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { NavLink } from 'react-router-dom'
-import { ButtonPrimary, ButtonSecondary } from 'components/Button'
+import { ButtonPrimary, ButtonOutlined } from 'components/Button'
 
 const Wrapper = styled.div`
   display: flex;
@@ -15,8 +15,6 @@ const Wrapper = styled.div`
   min-height: 100px;
   padding: 16px;
   box-shadow: rgb(0 0 0) 0 -4px 0 0, rgb(0 0 0 / 16%) 0 -9px 0 0;
-  box-sizing: border-box;
-  display: flex;
   justify-content: center;
   font-size: 13px;
   line-height: 1.2;
@@ -26,8 +24,8 @@ const Wrapper = styled.div`
     max-width: 1000px;
     align-items: center;
     display: grid;
-    grid-column-gap: 24px;
-    grid-template-columns: 1fr 1fr;
+    grid-column-gap: 16px;
+    grid-template-columns: 0.9fr 1.1fr;
     justify-content: center;
     justify-items: center;
 
@@ -60,8 +58,6 @@ const Form = styled.form`
   > span:first-of-type {
     margin: 12px 0;
     align-items: center;
-    flex-flow: column wrap;
-    align-items: center;
     justify-content: flex-start;
     flex-flow: column wrap;
 
@@ -89,7 +85,13 @@ const Form = styled.form`
     display: flex;
     flex-flow: row nowrap;
     margin: 0 0 0 16px;
+    flex: 1 0 auto;
     align-items: center;
+
+    > button {
+      height: 100%;
+      max-height: 62px;
+    }
 
     > button:not(:last-of-type) {
       margin: 0 16px 0 0;
@@ -103,7 +105,7 @@ export default function ClickWrap() {
       <div>
         <p>
           We use cookies to provide you with the best experience and to help improve our website and application. Please
-          read our <NavLink to={'/cookie-policy'}>Cookie Policy</NavLink> for more information. By clicking &apos;Accept
+          read our <NavLink to="/cookie-policy">Cookie Policy</NavLink> for more information. By clicking &apos;Accept
           all&apos;, you agree to the storing of cookies on your device to enhance site navigation, analyze site usage
           and provide customer support.
         </p>
@@ -121,7 +123,7 @@ export default function ClickWrap() {
           </span>
 
           <span>
-            <ButtonSecondary>Accept selection</ButtonSecondary>
+            <ButtonOutlined>Accept selection</ButtonOutlined>
             <ButtonPrimary>Accept All</ButtonPrimary>
           </span>
         </Form>
