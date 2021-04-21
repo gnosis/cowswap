@@ -7,27 +7,38 @@ const Wrapper = styled.div`
   display: flex;
   width: 100%;
   height: auto;
+  max-width: 300px;
+  min-height: 100px;
+  width: 100%;
   background: ${({ theme }) => theme.bg1};
   position: fixed;
-  bottom: 0;
-  left: 0;
   z-index: 999;
-  min-height: 100px;
-  padding: 16px;
-  box-shadow: rgb(0 0 0) 0 -4px 0 0, rgb(0 0 0 / 16%) 0 -9px 0 0;
+  padding: 24px;
+  box-shadow: rgb(0 0 0) 0 6px 0 0, rgb(0 0 0 / 16%) 0 -6px 0 0;
   justify-content: center;
   font-size: 13px;
-  line-height: 1.2;
+  line-height: 1.4;
+  right: 16px;
+  bottom: 50px;
+  border-radius: 16px;
+  left: initial;
+  flex-flow: column wrap;
+
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+    bottom: 100px;
+    max-width: 92%;
+    margin: 0 auto;
+    left: 0;
+    right: 0;
+    border: 4px solid black;
+    box-shadow: rgb(0 0 0) 0 6px 0 0, rgb(0 0 0 / 36%) 0 0 0px 100vh;
+  `};
 
   > div {
     width: 100%;
-    max-width: 1000px;
-    align-items: center;
-    display: grid;
-    grid-column-gap: 16px;
-    grid-template-columns: 0.9fr 1.1fr;
+    display: flex;
     justify-content: center;
-    justify-items: center;
+    flex-flow: column wrap;
 
     ${({ theme }) => theme.mediaWidth.upToMedium`
       max-width: 100%;
@@ -49,21 +60,17 @@ const Wrapper = styled.div`
 
 const Form = styled.form`
   display: flex;
-  flex-flow: row nowrap;
+  flex-flow: column wrap;
 
   ${({ theme }) => theme.mediaWidth.upToMedium`
     flex-flow: column wrap;
   `};
 
   > span:first-of-type {
-    margin: 12px 0;
+    margin: 24px 0;
     align-items: center;
     justify-content: flex-start;
     flex-flow: column wrap;
-
-    ${({ theme }) => theme.mediaWidth.upToMedium`
-      text-align: center;
-    `};
 
     > label {
       width: 100%;
@@ -84,8 +91,8 @@ const Form = styled.form`
   > span:last-of-type {
     display: flex;
     flex-flow: row nowrap;
-    margin: 0 0 0 16px;
-    flex: 1 0 auto;
+    margin: 0 auto;
+    width: 100%;
     align-items: center;
 
     > button {
