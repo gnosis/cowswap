@@ -18,7 +18,7 @@ export enum WrapType {
 
 interface WrapUnwrapCallback {
   wrapType: WrapType
-  execute?: () => Promise<void>
+  execute?: () => Promise<TransactionResponse>
   inputError?: string
 }
 
@@ -46,7 +46,7 @@ function _getWrapUnwrapCallback(params: GetWrapUnwrapCallback): WrapUnwrapCallba
   const inputError = isZero ? `Enter an amount` : !sufficientBalance ? `Insufficient ${symbol} balance` : undefined
 
   // Create wrap/unwrap callback if sufficient balance
-  let wrapUnwrapCallback: (() => Promise<void>) | undefined
+  let wrapUnwrapCallback: (() => Promise<TransactionResponse>) | undefined
   if (sufficientBalance && inputAmount) {
     let wrapUnwrap: () => TransactionResponse
     let summary: string
@@ -63,9 +63,13 @@ function _getWrapUnwrapCallback(params: GetWrapUnwrapCallback): WrapUnwrapCallba
       try {
         const txReceipt = await wrapUnwrap()
         addTransaction(txReceipt, { summary })
+
+        return txReceipt
       } catch (error) {
         const actionName = WrapType.WRAP ? 'wrapping' : 'unwrapping'
         console.error(`Error ${actionName} ${symbol}`, error)
+
+        throw error.message ? error : new Error(error)
       }
     }
   }

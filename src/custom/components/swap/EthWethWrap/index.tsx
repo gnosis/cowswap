@@ -1,6 +1,7 @@
-import React, { useState, useCallback } from 'react'
-import { AlertTriangle, ArrowRight } from 'react-feather'
+import React, { useState, useCallback, useEffect } from 'react'
 import styled from 'styled-components'
+import { TransactionResponse } from '@ethersproject/providers'
+import { ArrowRight, AlertTriangle } from 'react-feather'
 import { Currency, Token, CurrencyAmount } from '@uniswap/sdk'
 
 import { ButtonPrimary } from 'components/Button'
@@ -8,6 +9,7 @@ import Loader from 'components/Loader'
 import { WrapCardContainer, WrapCard } from './WrapCard'
 
 import { useCurrencyBalances } from 'state/wallet/hooks'
+import { useIsTransactionPending } from 'state/transactions/hooks'
 
 import { colors } from 'theme'
 
@@ -58,33 +60,74 @@ const WarningWrapper = styled(Wrapper)`
   }
 `
 
+const BalanceLabel = styled.p<{ background?: string }>`
+  display: flex;
+  justify-content: space-between;
+  width: 90%;
+  padding: 8px 11.2px;
+  margin: 8px 0;
+
+  border-radius: ${({ theme }) => theme.buttonPrimary.borderRadius};
+
+  background: ${({ background = 'initial' }) => background};
+
+  > span {
+    &:first-child {
+      margin-right: auto;
+    }
+  }
+`
+
+const ErrorWrapper = styled(BalanceLabel)`
+  font-size: x-small;
+  background-color: #ff000040;
+  color: ${({ theme }) => theme.red1};
+`
+
+const ErrorMessage = ({ error }: { error: Error }) => (
+  <ErrorWrapper>
+    <i>
+      <strong>{error.message}</strong>
+    </i>
+  </ErrorWrapper>
+)
+
 export interface Props {
   account?: string
   native: Currency
   userInput?: CurrencyAmount
   wrapped: Token
-  wrapCallback: () => Promise<void>
+  wrapCallback: () => Promise<TransactionResponse>
 }
 
 export default function EthWethWrap({ account, native, userInput, wrapped, wrapCallback }: Props) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<Error | null>(null)
+  const [pendingHash, setPendingHash] = useState<string | undefined>()
+
+  const isWrapPending = useIsTransactionPending(pendingHash)
   const [nativeBalance, wrappedBalance] = useCurrencyBalances(account, [native, wrapped])
 
   const wrappedSymbol = wrapped.symbol || 'wrapped native token'
   const nativeSymbol = native.symbol || 'native token'
 
+  // Listen for changes in isWrapPending
+  // and set loading local state accordingly..
+  useEffect(() => {
+    setLoading(isWrapPending)
+  }, [isWrapPending])
+
   const handleWrap = useCallback(async () => {
+    setError(null)
+    setLoading(true)
+
     try {
-      setLoading(true)
-      setError(null)
-
-      await wrapCallback()
+      const txResponse = await wrapCallback()
+      setPendingHash(txResponse.hash)
     } catch (error) {
-      console.error('Error wrapping ETH:', error)
+      console.error(error)
 
-      setError(new Error(error))
-    } finally {
+      setError(error)
       setLoading(false)
     }
   }, [wrapCallback])
@@ -97,14 +140,9 @@ export default function EthWethWrap({ account, native, userInput, wrapped, wrapC
           <span>
             To sell {nativeSymbol}, first wrap or switch to {wrappedSymbol}
           </span>
-          {error && (
-            <span>
-              <strong>{error.message}</strong>
-            </span>
-          )}
         </div>
       </WarningWrapper>
-
+      {error && <ErrorMessage error={error} />}
       <WrapCardContainer>
         {/* To Wrap */}
         <WrapCard symbol={nativeSymbol} balance={nativeBalance} currency={native} amountToWrap={userInput} />
