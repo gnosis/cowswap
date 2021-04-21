@@ -148,11 +148,16 @@ export default function Faq() {
           </p>
 
           <p>
-            The fee consists of the “base cost to execute the trade” and the “protocol fee” (although it is only exposed
-            to the user as one fee). As a user, you are only signing a message to submit your trade and the underlying
-            solver will end up submitting the transaction for you. Essentially you are paying this “base cost to execute
-            the trade” aka “gas costs” with your sell token and the cost is already included in your price estimation.
-            The protocol is currently subsidizing 90% of the gas cost, while the protocol fee is currently switched off.
+            The fee consists of the &quot;base cost to execute the trade&quot; and the &quot;protocol fee&quot;
+            (although it is only exposed to the user as one fee). As a user, you are only signing a message to submit
+            your trade and the underlying solver will end up submitting the transaction for you. Essentially you are
+            paying this &quot;base cost to execute the trade&quot; aka &quot;gas costs&quot; with your sell token and
+            the cost is already included in your price estimation. The protocol is currently subsidizing 90% of the gas
+            cost, while the protocol fee is currently switched off.
+          </p>
+          <p>
+            Note that you will only have to pay fees IF your trade is executed. No more gas-costs on any failed
+            transactions!
           </p>
 
           <h3 id="how-does-cowswap-connect-to-all-on-chain-liquidity-">
