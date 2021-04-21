@@ -6,7 +6,7 @@ import { Field } from 'state/swap/actions'
 import { useCurrency } from 'hooks/Tokens'
 import useDebounce from 'hooks/useDebounce'
 import { useAllFees } from './hooks'
-import { useRefetchFeeCallback } from '@src/custom/hooks/useRefetchFee'
+import { useRefetchFeeCallback } from 'hooks/useRefetchFee'
 import { FeeQuoteParams } from '@src/custom/utils/operator'
 import { FeeInformationObject } from './reducer'
 
