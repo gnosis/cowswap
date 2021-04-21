@@ -474,6 +474,7 @@ export default function Swap({
                     <EthWethWrapMessage
                       account={account ?? undefined}
                       native={native}
+                      userInput={parsedAmount}
                       wrapped={wrappedToken}
                       wrapCallback={onWrap}
                     />
