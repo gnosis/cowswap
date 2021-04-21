@@ -42,10 +42,10 @@ function FeeGreaterMessage({ fee }: FeeGreaterMessageProp) {
   )
 }
 
-function EthWethWrapMessage({ account, native, wrapped, wrapCallback }: EthWethWrapProps) {
+function EthWethWrapMessage(props: EthWethWrapProps) {
   return (
     <RowBetween>
-      <EthWethWrap account={account ?? undefined} native={native} wrapped={wrapped} wrapCallback={wrapCallback} />
+      <EthWethWrap {...props} />
     </RowBetween>
   )
 }

@@ -1,15 +1,17 @@
 import React, { useState, useCallback, useEffect } from 'react'
 import styled from 'styled-components'
 import { TransactionResponse } from '@ethersproject/providers'
-import { Separator } from 'components/Menu'
-import { ArrowDown, AlertTriangle } from 'react-feather'
+import { ArrowRight, AlertTriangle } from 'react-feather'
+import { Currency, Token, CurrencyAmount } from '@uniswap/sdk'
+
 import { ButtonPrimary } from 'components/Button'
-import { Currency, Token } from '@uniswap/sdk'
-import { useCurrencyBalances } from 'state/wallet/hooks'
-import { SHORT_PRECISION } from 'constants/index'
-import { colors } from 'theme'
 import Loader from 'components/Loader'
+import { WrapCardContainer, WrapCard } from './WrapCard'
+
+import { useCurrencyBalances } from 'state/wallet/hooks'
 import { useIsTransactionPending } from 'state/transactions/hooks'
+
+import { colors } from 'theme'
 
 const COLOUR_SHEET = colors(false)
 
@@ -18,34 +20,27 @@ const Wrapper = styled.div`
   background: ${({ theme }) => theme.bg2};
   align-items: center;
   justify-content: center;
-  margin: 0.3rem auto 0;
-  padding: 1rem;
+  margin: 4.8px auto 0;
+  padding: 16px;
   width: 100%;
 
   border-radius: ${({ theme }) => theme.buttonPrimary.borderRadius};
   font-size: smaller;
 
-  > ${Separator} {
-      margin: -0.3rem 0 0.6rem 0;
-      width: 83%;
-  }
-
   > ${ButtonPrimary} {
-      // TODO: @biocom themed
       background: #62d9ff;
       width: 75%;
-      padding: 0.4rem;
-      margin-top: 0.3rem;
+      padding: 6.4px;
+      margin-top: 4.8px;
 
       &:disabled {
-        // TODO: @biocom disabled prop should already do this
         background-color: ${({ theme }) => theme.disabled}
       }
   }
 `
 const WarningWrapper = styled(Wrapper)`
   ${({ theme }) => theme.flexRowNoWrap}
-  padding: 0rem;
+  padding: 0;
 
   color: ${({ theme }) => theme.red1};
   font-weight: 600;
@@ -53,7 +48,7 @@ const WarningWrapper = styled(Wrapper)`
 
   // warning logo
   > svg {
-    margin-right: 0.5rem;
+    margin-right: 8px;
   }
 
   // warning text
@@ -69,8 +64,8 @@ const BalanceLabel = styled.p<{ background?: string }>`
   display: flex;
   justify-content: space-between;
   width: 90%;
-  padding: 0.5rem 0.7rem;
-  margin: 0.5rem 0;
+  padding: 8px 11.2px;
+  margin: 8px 0;
 
   border-radius: ${({ theme }) => theme.buttonPrimary.borderRadius};
 
@@ -100,11 +95,12 @@ const ErrorMessage = ({ error }: { error: Error }) => (
 export interface Props {
   account?: string
   native: Currency
+  userInput?: CurrencyAmount
   wrapped: Token
   wrapCallback: () => Promise<TransactionResponse>
 }
 
-export default function EthWethWrap({ account, native, wrapped, wrapCallback }: Props) {
+export default function EthWethWrap({ account, native, userInput, wrapped, wrapCallback }: Props) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<Error | null>(null)
   const [pendingHash, setPendingHash] = useState<string | undefined>()
@@ -139,24 +135,24 @@ export default function EthWethWrap({ account, native, wrapped, wrapCallback }: 
   return (
     <Wrapper>
       <WarningWrapper>
-        <AlertTriangle size={30} />
+        <AlertTriangle size={25} />
         <div>
-          <span>Only {wrappedSymbol} can be used to swap.</span>
           <span>
-            Wrap your {nativeSymbol} first or switch to {wrappedSymbol}
+            To sell {nativeSymbol}, first wrap or switch to {wrappedSymbol}
           </span>
         </div>
       </WarningWrapper>
       {error && <ErrorMessage error={error} />}
-      <BalanceLabel>
-        <span>{nativeSymbol} balance:</span> <span>{nativeBalance?.toSignificant(SHORT_PRECISION) || '-'}</span>
-      </BalanceLabel>
-      <Separator />
-      <ArrowDown size={18} color={COLOUR_SHEET.primary1} />
-      <BalanceLabel background={COLOUR_SHEET.bg1}>
-        <span>{wrappedSymbol} balance:</span>
-        <span>{wrappedBalance?.toSignificant(SHORT_PRECISION) || '-'}</span>
-      </BalanceLabel>
+      <WrapCardContainer>
+        {/* To Wrap */}
+        <WrapCard symbol={nativeSymbol} balance={nativeBalance} currency={native} amountToWrap={userInput} />
+
+        <ArrowRight size={18} color={COLOUR_SHEET.primary1} />
+
+        {/* Wrap Outcome */}
+        <WrapCard symbol={wrappedSymbol} balance={wrappedBalance} currency={wrapped} amountToWrap={userInput} />
+      </WrapCardContainer>
+
       <ButtonPrimary disabled={loading} padding="0.5rem" onClick={handleWrap}>
         {loading ? <Loader /> : `Wrap my ${nativeSymbol}`}
       </ButtonPrimary>
