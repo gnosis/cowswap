@@ -15,7 +15,7 @@ export const APP_ID = Number(process.env.REACT_APP_ID)
 // reexport all Uniswap constants everything
 export * from '@src/constants/index'
 
-export const PRODUCTION_URL = 'cow.trade'
+export const PRODUCTION_URL = 'cowswap.exchange'
 
 const DISABLED_WALLETS = /^(?:WALLET_LINK|COINBASE_LINK|WALLET_CONNECT|FORTMATIC|Portis)$/i
 
@@ -56,3 +56,8 @@ export const INPUT_OUTPUT_EXPLANATION = 'Only executed swaps incur fees.'
 export const DEFAULT_ORDER_DELAY = 20000 // 20s
 export const EXPIRED_ORDERS_BUFFER = 45 * 1000 // 45s
 export const CHECK_EXPIRED_ORDERS_INTERVAL = 10000 // 10 sec
+
+export const WETH_LOGO_URI =
+  'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2/logo.png'
+export const XDAI_LOGO_URI =
+  'https://raw.githubusercontent.com/1Hive/default-token-list/master/src/assets/xdai/0xe91d153e0b41518a2ce8dd3d7944fa863463a97d/logo.png'
