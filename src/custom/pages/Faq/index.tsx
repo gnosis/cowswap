@@ -10,6 +10,16 @@ const Wrapper = styled.div`
   > div:not(:first-child) {
     margin: 2rem 0;
   }
+
+  ${Content} {
+    > h3 {
+      margin: 0;
+
+      ::before {
+        border-top: none;
+      }
+    }
+  }
 `
 
 export default function Faq() {
