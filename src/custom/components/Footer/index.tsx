@@ -15,9 +15,11 @@ const Wrapper = styled.div`
   justify-content: space-evenly;
   margin: auto 96px 0 32px;
   width: 100%;
+`
 
+const FooterWrapper = styled.div`
   ${({ theme }) => theme.mediaWidth.upToMedium`
-    
+    display: none;
   `}
 `
 
@@ -25,8 +27,10 @@ export default function Footer({ children }: { children?: React.ReactChildren })
   return (
     <Wrapper>
       <ClickWrap />
-      <FooterVersion />
-      {children}
+      <FooterWrapper>
+        <FooterVersion />
+        {children}
+      </FooterWrapper>
     </Wrapper>
   )
 }
