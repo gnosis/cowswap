@@ -32,7 +32,7 @@ export const ButtonPrimary = styled(ButtonPrimaryMod)`
   ${({ theme }) => theme.cursor};
   overflow: hidden;
   position: relative;
-  transition: box-shadow 0.1s ease-in-out;
+  transition: box-shadow 0.1s ease-in-out, transform 0.1s ease-in-out;
 
   > div {
     font-size: inherit;
@@ -45,6 +45,7 @@ export const ButtonPrimary = styled(ButtonPrimaryMod)`
     ${({ theme }) => theme.buttonPrimary.background}
     border: ${({ theme }) => theme.buttonPrimary.border};
     box-shadow: none;
+    transform: translateY(3px);
   }
   &:disabled {
     background-color: ${({ theme }) => theme.disabled};
@@ -127,7 +128,7 @@ export const ButtonOutlined = styled(ButtonOutlinedMod)`
   ${({ theme }) => theme.cursor};
   overflow: hidden;
   position: relative;
-  transition: box-shadow 0.1s ease-in-out;
+  transition: box-shadow 0.1s ease-in-out, transform 0.1s ease-in-out;
 
   > div {
     font-size: inherit;
@@ -140,6 +141,7 @@ export const ButtonOutlined = styled(ButtonOutlinedMod)`
     ${({ theme }) => theme.buttonPrimary.background}
     border: ${({ theme }) => theme.buttonPrimary.border};
     box-shadow: none;
+    transform: translateY(3px);
   }
   &:disabled {
     background-color: ${({ theme }) => theme.disabled};
