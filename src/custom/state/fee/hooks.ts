@@ -5,8 +5,8 @@ import { AppDispatch, AppState } from 'state'
 import { updateFee, clearFee, AddFeeParams, ClearFeeParams } from './actions'
 import { FeeInformation, FeesMap } from './reducer'
 
-type AddFeeCallback = (addTokenParams: AddFeeParams) => void
-type ClearFeeCallback = (clearTokenParams: ClearFeeParams) => void
+type AddFeeCallback = (addFeeParams: AddFeeParams) => void
+type ClearFeeCallback = (clearFeeParams: ClearFeeParams) => void
 
 export const useAllFees = ({ chainId }: Partial<Pick<ClearFeeParams, 'chainId'>>): Partial<FeesMap> | undefined => {
   return useSelector<AppState, Partial<FeesMap> | undefined>(state => {
