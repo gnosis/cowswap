@@ -132,6 +132,7 @@ export default function EthWethWrap({ account, native, wrapped, wrapCallback }: 
       console.error(error)
 
       setError(error)
+      setLoading(false)
     }
   }, [wrapCallback])
 
