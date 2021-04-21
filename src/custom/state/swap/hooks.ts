@@ -24,6 +24,8 @@ import { SwapState } from 'state/swap/reducer'
 import { ParsedQs } from 'qs'
 import { BigNumber } from 'ethers'
 import { DEFAULT_NETWORK_FOR_LISTS } from 'constants/lists'
+import { WETH_LOGO_URI, XDAI_LOGO_URI } from 'constants/index'
+import { WrappedTokenInfo } from '../lists/hooks'
 
 export * from '@src/state/swap/hooks'
 
@@ -229,10 +231,15 @@ interface CurrencyWithAddress {
 }
 
 export function useDetectNativeToken(input?: CurrencyWithAddress, output?: CurrencyWithAddress, chainId?: ChainId) {
-  const wrappedToken = WETH[chainId || DEFAULT_NETWORK_FOR_LISTS]
-  const native = ETHER
-
   return useMemo(() => {
+    const wrappedToken = new WrappedTokenInfo(
+      Object.assign(WETH[chainId || DEFAULT_NETWORK_FOR_LISTS], {
+        logoURI: chainId === ChainId.XDAI ? XDAI_LOGO_URI : WETH_LOGO_URI
+      } as WrappedTokenInfo['tokenInfo']),
+      []
+    )
+    const native = ETHER
+
     const [isNativeIn, isNativeOut] = [input?.currency === native, output?.currency === native]
     const [isWrappedIn, isWrappedOut] = [
       input?.address === wrappedToken.address,
@@ -247,7 +254,7 @@ export function useDetectNativeToken(input?: CurrencyWithAddress, output?: Curre
       wrappedToken,
       native
     }
-  }, [input, output, native, wrappedToken])
+  }, [input, output, chainId])
 }
 
 export function useIsFeeGreaterThanInput({
