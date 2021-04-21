@@ -144,12 +144,15 @@ export default function Faq() {
 
           <p>
             Each executed order has a fee which is captured by the protocol. Part of the fee is paid to solvers
-            (entities which provide order settlement solutions) to incentivize their participation.{' '}
+            (entities which provide order settlement solutions) to incentivize their participation.
           </p>
 
           <p>
-            Note that CowSwap trades don’t incur any gas costs for the trader. The protocol currently subsidizes all gas
-            fee costs.{' '}
+            The fee consists of the “base cost to execute the trade” and the “protocol fee” (although it is only exposed
+            to the user as one fee). As a user, you are only signing a message to submit your trade and the underlying
+            solver will end up submitting the transaction for you. Essentially you are paying this “base cost to execute
+            the trade” aka “gas costs” with your sell token and the cost is already included in your price estimation.
+            The protocol is currently subsidizing 90% of the gas cost, while the protocol fee is currently switched off.
           </p>
 
           <h3 id="how-does-cowswap-connect-to-all-on-chain-liquidity-">
