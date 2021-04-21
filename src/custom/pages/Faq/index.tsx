@@ -174,7 +174,7 @@ export default function Faq() {
           </p>
 
           <h3 id="how-is-cowswap-able-to-offer-better-prices-than-aggregators-themselves-">
-            How is CowSwap able to offer better prices than aggregators themselves?
+            How is CowSwap able to offer better prices?
           </h3>
 
           <p>
