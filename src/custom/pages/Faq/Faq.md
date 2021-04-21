@@ -8,7 +8,7 @@ CowSwap is a proof-of-concept dapp (decentralized application) built on Gnosis P
 Initially [defined](https://research.paradigm.xyz/MEV) by the Paradigm research team, MEV is “a measure of the profit a miner (or validator, sequencer, etc.) can make through their ability to arbitrarily include, exclude, or re-order transactions within the blocks they produce.” 
 
 
-From only this January 2021 to now, the total amount of value extracted by miners (etc.) on Ethereum transactions has reached [$ 382.4 Million, including successful and failed transactions.](https://explore.flashbots.net/)
+Since January 2020 until now (April'21), the total amount of value extracted by miners (etc.) on Ethereum transactions has reached [$ 382.4 Million, including successful and failed transactions.](https://explore.flashbots.net/)
 
 ### To what does the term Coincidence of Wants (CoWs) refer?
 
