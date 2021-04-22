@@ -18,6 +18,7 @@ const WrapCardWrapper = styled.div`
   justify-content: center;
   flex: 1;
   padding: 8px;
+  border-radius: 0 6px 6px 0;
 
   > img {
     width: 32px;
