@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react'
 import Page, { Content, Title } from 'components/Page'
 import styled from 'styled-components'
-import { LinkRenderer } from 'components/MarkdownPage/renderers'
+import { ContentLink } from 'components/ContentLink'
 
 const Wrapper = styled.div`
   h2 {
@@ -90,11 +90,11 @@ export default function Faq() {
         <Content>
           {toc.map(({ section, items }) => (
             <div key={section.id}>
-              <LinkRenderer href={'#' + section.id}>{section.label}</LinkRenderer>
+              <ContentLink href={'#' + section.id}>{section.label}</ContentLink>
               <ul>
                 {items.map(tocItem => (
                   <li key={tocItem.id}>
-                    <LinkRenderer href={'#' + tocItem.id}>{tocItem.label}</LinkRenderer>
+                    <ContentLink href={'#' + tocItem.id}>{tocItem.label}</ContentLink>
                   </li>
                 ))}
               </ul>
