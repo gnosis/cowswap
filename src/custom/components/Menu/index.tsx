@@ -1,5 +1,5 @@
 import React from 'react'
-import { Code, MessageCircle, PieChart } from 'react-feather'
+import { Code, MessageCircle /*PieChart*/ } from 'react-feather'
 
 import MenuMod, { MenuItem, InternalMenuItem, MenuFlyout as MenuFlyoutUni } from './MenuMod'
 import styled from 'styled-components'
@@ -39,10 +39,10 @@ export function Menu() {
           FAQ
         </InternalMenuItem>
 
-        <MenuItem id="link" href={DUNE_DASHBOARD_LINK}>
+        {/* <MenuItem id="link" href={DUNE_DASHBOARD_LINK}>
           <PieChart size={14} />
           Stats
-        </MenuItem>
+        </MenuItem> */}
 
         <MenuItem id="link" href={CODE_LINK}>
           <Code size={14} />
