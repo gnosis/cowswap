@@ -1,8 +1,7 @@
-import React, { useCallback, useRef, useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import Page, { Content, Title } from 'components/Page'
 import styled from 'styled-components'
-import { Link } from 'react-router-dom'
-import { HashLink } from 'react-router-hash-link'
+import { LinkRenderer } from 'components/MarkdownPage/renderers'
 
 const Wrapper = styled.div`
   h2 {
@@ -91,15 +90,11 @@ export default function Faq() {
         <Content>
           {toc.map(({ section, items }) => (
             <div key={section.id}>
-              <HashLink smooth to={'#' + section.id}>
-                {section.label}
-              </HashLink>
+              <LinkRenderer href={'#' + section.id}>{section.label}</LinkRenderer>
               <ul>
                 {items.map(tocItem => (
                   <li key={tocItem.id}>
-                    <HashLink smooth to={'#' + tocItem.id}>
-                      {tocItem.label}
-                    </HashLink>
+                    <LinkRenderer href={'#' + tocItem.id}>{tocItem.label}</LinkRenderer>
                   </li>
                 ))}
               </ul>
