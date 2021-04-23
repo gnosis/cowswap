@@ -12,6 +12,7 @@ import { useCurrencyBalances } from 'state/wallet/hooks'
 import { useIsTransactionPending } from 'state/transactions/hooks'
 
 import { colors } from 'theme'
+import { LOW_NATIVE_BALANCE_THRESHOLD } from 'constants/index'
 
 const COLOUR_SHEET = colors(false)
 
@@ -100,6 +101,11 @@ export interface Props {
   wrapCallback: () => Promise<TransactionResponse>
 }
 
+const setNativeLowBalanceError = (nativeSymbol: string) =>
+  new Error(
+    `WARNING! Your ${nativeSymbol} balance is low. You may not have enough funds to cover future on-chain transactions gas costs.`
+  )
+
 export default function EthWethWrap({ account, native, userInput, wrapped, wrapCallback }: Props) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<Error | null>(null)
@@ -107,6 +113,9 @@ export default function EthWethWrap({ account, native, userInput, wrapped, wrapC
 
   const isWrapPending = useIsTransactionPending(pendingHash)
   const [nativeBalance, wrappedBalance] = useCurrencyBalances(account, [native, wrapped])
+
+  // does the user have a lower than set threshold balance? show error
+  const isLowBalance = nativeBalance?.lessThan(LOW_NATIVE_BALANCE_THRESHOLD)
 
   const wrappedSymbol = wrapped.symbol || 'wrapped native token'
   const nativeSymbol = native.symbol || 'native token'
@@ -142,6 +151,7 @@ export default function EthWethWrap({ account, native, userInput, wrapped, wrapC
           </span>
         </div>
       </WarningWrapper>
+      {isLowBalance && <ErrorMessage error={setNativeLowBalanceError(nativeSymbol)} />}
       {error && <ErrorMessage error={error} />}
       <WrapCardContainer>
         {/* To Wrap */}
