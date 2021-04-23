@@ -60,7 +60,7 @@ export const WrapCardContainer = styled.div`
     width: 24px;
     height: 24px;
     border-radius: 24px;
-      padding: 3px;
+    padding: 3px;
   }
 `
 
