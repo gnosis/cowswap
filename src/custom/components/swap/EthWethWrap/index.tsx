@@ -62,8 +62,9 @@ const WarningWrapper = styled(Wrapper)`
 const BalanceLabel = styled.p<{ background?: string }>`
   display: flex;
   justify-content: space-between;
-  width: 90%;
-  padding: 8px 11.2px;
+  text-align: center;
+  width: 100%;
+  padding: 12px;
   margin: 8px 0;
   border-radius: ${({ theme }) => theme.buttonPrimary.borderRadius};
   background: ${({ background = 'initial' }) => background};
