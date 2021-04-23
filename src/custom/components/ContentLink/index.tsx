@@ -1,3 +1,4 @@
+import React from 'react'
 import HashLink from 'components/HashLink'
 
 export function ContentLink (props: { href: string; children: React.ReactNode }): JSX.Element {
