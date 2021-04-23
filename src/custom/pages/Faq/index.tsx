@@ -2,6 +2,7 @@ import React, { useCallback, useState } from 'react'
 import Page, { Content, Title } from 'components/Page'
 import styled from 'styled-components'
 import { ContentLink } from 'components/ContentLink'
+import { DISCORD_LINK } from 'constants/index'
 
 const Wrapper = styled.div`
   h2 {
@@ -378,8 +379,7 @@ export default function Faq() {
           <hr />
 
           <p>
-            Didn&#39;t find an answer? Join the <a href="https://discord.gg/FCfyBSbCU5">community on Discord</a> for
-            support.
+            Didn&#39;t find an answer? Join the <a href={DISCORD_LINK}>community on Discord</a> for support.
           </p>
 
           {/* 
