@@ -1,7 +1,6 @@
-import React, { useCallback, useRef, useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import Page, { Content, Title } from 'components/Page'
 import styled from 'styled-components'
-import { Link } from 'react-router-dom'
 import { HashLink } from 'react-router-hash-link'
 
 const Wrapper = styled.div`
