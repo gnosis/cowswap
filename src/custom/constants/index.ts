@@ -1,4 +1,4 @@
-import { ChainId, Token } from '@uniswap/sdk'
+import { ChainId, Token, Fraction } from '@uniswap/sdk'
 import { GPv2Settlement, GPv2AllowanceManager } from '@gnosis.pm/gp-v2-contracts/networks.json'
 import { SUPPORTED_WALLETS as SUPPORTED_WALLETS_UNISWAP, WalletInfo } from '@src/constants/index'
 
@@ -61,3 +61,6 @@ export const WETH_LOGO_URI =
   'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2/logo.png'
 export const XDAI_LOGO_URI =
   'https://raw.githubusercontent.com/1Hive/default-token-list/master/src/assets/xdai/0xe91d153e0b41518a2ce8dd3d7944fa863463a97d/logo.png'
+
+// 0.1 balance threshold
+export const LOW_NATIVE_BALANCE_THRESHOLD = new Fraction('1', '10')
