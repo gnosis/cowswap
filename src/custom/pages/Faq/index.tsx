@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react'
 import Page, { Content, Title } from 'components/Page'
 import styled from 'styled-components'
-import { HashLink } from 'react-router-hash-link'
+import { ContentLink } from 'components/ContentLink'
 
 const Wrapper = styled.div`
   h2 {
@@ -89,15 +89,11 @@ export default function Faq() {
         <Content>
           {toc.map(({ section, items }) => (
             <div key={section.id}>
-              <HashLink smooth to={'#' + section.id}>
-                {section.label}
-              </HashLink>
+              <ContentLink href={'#' + section.id}>{section.label}</ContentLink>
               <ul>
                 {items.map(tocItem => (
                   <li key={tocItem.id}>
-                    <HashLink smooth to={'#' + tocItem.id}>
-                      {tocItem.label}
-                    </HashLink>
+                    <ContentLink href={'#' + tocItem.id}>{tocItem.label}</ContentLink>
                   </li>
                 ))}
               </ul>
