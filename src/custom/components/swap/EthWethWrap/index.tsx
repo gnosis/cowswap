@@ -12,7 +12,7 @@ import { useCurrencyBalances } from 'state/wallet/hooks'
 import { useIsTransactionPending } from 'state/transactions/hooks'
 
 import { colors } from 'theme'
-import { LOW_NATIVE_BALANCE_THRESHOLD } from 'constants/index'
+import { LOW_NATIVE_BALANCE_THRESHOLD, DEFAULT_PRECISION } from 'constants/index'
 
 const COLOUR_SHEET = colors(false)
 
@@ -103,7 +103,9 @@ export interface Props {
 
 const setNativeLowBalanceError = (nativeSymbol: string) =>
   new Error(
-    `WARNING! Your ${nativeSymbol} balance is low. You may not have enough funds to cover future on-chain transactions gas costs.`
+    `WARNING! After wrapping your ${nativeSymbol}, your balance will fall below < ${LOW_NATIVE_BALANCE_THRESHOLD.toSignificant(
+      DEFAULT_PRECISION
+    )} ${nativeSymbol}. As a result you may not have sufficient ${nativeSymbol} left to cover future on-chain transaction costs.`
   )
 
 function checkUserBalance(userInput?: CurrencyAmount, balance?: CurrencyAmount) {
