@@ -51,7 +51,6 @@ function getToc(node: HTMLDivElement) {
   }
 
   headingNodes.forEach(entry => {
-    console.log(entry, entry.tagName, entry.textContent)
     if (entry.tagName === 'H2') {
       // If H2
       addNewSection()
