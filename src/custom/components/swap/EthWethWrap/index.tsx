@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react'
+import React, { useState, useCallback, useMemo, useEffect } from 'react'
 import styled from 'styled-components'
 import { TransactionResponse } from '@ethersproject/providers'
 import { ArrowRight, AlertTriangle } from 'react-feather'
@@ -106,6 +106,12 @@ const setNativeLowBalanceError = (nativeSymbol: string) =>
     `WARNING! Your ${nativeSymbol} balance is low. You may not have enough funds to cover future on-chain transactions gas costs.`
   )
 
+function checkUserBalance(userInput?: CurrencyAmount, balance?: CurrencyAmount) {
+  if (!userInput || !balance || userInput.greaterThan(balance)) return true
+
+  return balance.subtract(userInput).lessThan(LOW_NATIVE_BALANCE_THRESHOLD)
+}
+
 export default function EthWethWrap({ account, native, userInput, wrapped, wrapCallback }: Props) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<Error | null>(null)
@@ -115,7 +121,7 @@ export default function EthWethWrap({ account, native, userInput, wrapped, wrapC
   const [nativeBalance, wrappedBalance] = useCurrencyBalances(account, [native, wrapped])
 
   // does the user have a lower than set threshold balance? show error
-  const isLowBalance = nativeBalance?.lessThan(LOW_NATIVE_BALANCE_THRESHOLD)
+  const isLowBalance = useMemo(() => checkUserBalance(userInput, nativeBalance), [nativeBalance, userInput])
 
   const wrappedSymbol = wrapped.symbol || 'wrapped native token'
   const nativeSymbol = native.symbol || 'native token'
