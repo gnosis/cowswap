@@ -193,7 +193,7 @@ export default function Faq() {
           </p>
 
           <p>
-            Finding the order best settlement is a challenging task, which may have its own{' '}
+            Finding the orders best settlement is a challenging task, which may have its own{' '}
             <a href="https://forum.gnosis.io/t/gpv2-road-to-decentralization/1245">decentralized competition</a> very
             soon.{' '}
           </p>
