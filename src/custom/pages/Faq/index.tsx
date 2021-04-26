@@ -304,7 +304,7 @@ export default function Faq() {
 
           <p>
             <small>
-              * In the neartime future, if you are trying to sell an ERC20 that allows offline approvals, then the ETH
+              * In the near future, if you are trying to sell an ERC20 that allows offline approvals, then the ETH
               needed to pay for allowing your funds to be spent is not needed anymore, making the trading experience
               fully gas-free. Keep in mind that this is only possible with ERC20 tokens that have such functionality; if
               not, you will need ETH to execute the approval transaction only.
