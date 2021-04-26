@@ -69,9 +69,9 @@ export default function About() {
           </span>
         </p>
 
-        <h3 id="mev">Miner-Extractable Value (MEV)</h3>
+        <h3 id="mev">Maximal Extractable Value (MEV)</h3>
         <p>
-          <img src={mevIMG} alt="CowSwap - Miner-Extractable Value" />
+          <img src={mevIMG} alt="CowSwap - Maximal Extractable Value" />
         </p>
         <p>
           Heard about Maximal Extractable Value yet? It’s scary. To date more than{' '}
