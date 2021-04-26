@@ -6,9 +6,9 @@ function getAnalyticsId(): string | undefined {
   } else if (isStaging) {
     return process.env.REACT_APP_GOOGLE_ANALYTICS_ID_STAGING || 'UA-190948266-4'
   } else if (isEns) {
-    return process.env.REACT_APP_GOOGLE_ANALYTICS_ID_PROD || 'UA-190948266-1'
-  } else if (isProd) {
     return process.env.REACT_APP_GOOGLE_ANALYTICS_ID_ENS || 'UA-190948266-5'
+  } else if (isProd) {
+    return process.env.REACT_APP_GOOGLE_ANALYTICS_ID_PROD || 'UA-190948266-1'
   }
 
   // Undefined by default
