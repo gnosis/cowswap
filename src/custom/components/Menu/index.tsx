@@ -4,7 +4,7 @@ import { Code, MessageCircle /*PieChart*/ } from 'react-feather'
 import MenuMod, { MenuItem, InternalMenuItem, MenuFlyout as MenuFlyoutUni } from './MenuMod'
 import styled from 'styled-components'
 import { Separator as SeparatorBase } from 'components/swap/styleds'
-import { CODE_LINK, DISCORD_LINK, DUNE_DASHBOARD_LINK } from 'constants/index'
+import { CODE_LINK, DISCORD_LINK } from 'constants/index'
 
 export const StyledMenu = styled(MenuMod)`
   hr {
