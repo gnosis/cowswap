@@ -201,7 +201,7 @@ export default function Faq() {
           <h3 id="is-cowswap-secure-to-use">Is CowSwap secure to use?</h3>
 
           <p>
-            CowSwap is in ongoing development, and that is why this is not a beta product but rather a proo-of-concept
+            CowSwap is in ongoing development, and that is why this is not a beta product but rather a proof-of-concept
             dapp for the community to test and leverage before the final version is released.{' '}
           </p>
 
