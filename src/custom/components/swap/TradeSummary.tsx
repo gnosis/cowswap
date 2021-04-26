@@ -8,6 +8,7 @@ import {
   computeSlippageAdjustedAmounts,
   computeTradePriceBreakdown as computeTradePriceBreakdownUni
 } from '@src/utils/prices'
+import { getMinimumReceivedTooltip } from 'utils/tooltips'
 
 import { AutoColumn } from '@src/components/Column'
 import QuestionHelper from '@src/components/QuestionHelper'
@@ -48,7 +49,7 @@ export default function TradeSummary({ trade, allowedSlippage }: { trade: TradeW
             <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
               {isExactIn ? 'Minimum received' : 'Maximum sold'}
             </TYPE.black>
-            <QuestionHelper text="Your transaction will expire if there is a large, unfavorable price movement before it is confirmed." />
+            <QuestionHelper text={getMinimumReceivedTooltip(allowedSlippage, isExactIn)} />
           </RowFixed>
           <RowFixed>
             <TYPE.black color={theme.text1} fontSize={14}>
