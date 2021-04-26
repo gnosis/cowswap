@@ -24,7 +24,7 @@ export default function About() {
           <img src={diagramIMG} alt="CowSwap vs. AMM's" />
         </p>
         <p>
-          Everytime you and another trader each hold an asset the other wants, your trade is settled directly without
+          Every time you and another trader each hold an asset the other wants, your trade is settled directly without
           using an AMM and therefore without incurring any slippage + fees. Only amounts that can’t be settled with
           other CowSwap traders are sent to the underlying AMMs.
           <br />
