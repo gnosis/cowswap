@@ -136,20 +136,20 @@ export default function Faq() {
             Coincidence of Wants (CoWs) can be{' '}
             <a href="https://en.wikipedia.org/wiki/Coincidence_of_wants">explained</a> as “an economic phenomenon where
             two parties each hold an item the other wants, so they exchange these items directly.” CowSwap facilitates
-            CoWs among traders and their orders through using batch auctions as a core mechanism.{' '}
+            CoWs among traders and their orders through using batch auctions as a core mechanism
           </p>
 
           <p>
             This means, on CowSwap, when two traders each hold an asset the other wants, a trade can be settled directly
             between them without an external market maker or liquidity provider. This leads to better prices for the
             individual traders (because traditionally market makers add a fee — referred to as spread — for their
-            surface).{' '}
+            surface)
           </p>
 
           <p>
             CowSwap allows for coincidence of wants (CoWs) orders to be traded directly against one another. Only the
             excess order amount that cannot be settled directly with other CowSwap traders are sent to the underlying
-            AMMs (automated market makers).{' '}
+            AMMs (automated market makers)
           </p>
 
           <h3 id="how-am-i-protected-from-mev-arbitrage-front-running-sandwiching-with-cowswap">
@@ -195,19 +195,19 @@ export default function Faq() {
           <p>
             Finding the orders best settlement is a challenging task, which may have its own{' '}
             <a href="https://forum.gnosis.io/t/gpv2-road-to-decentralization/1245">decentralized competition</a> very
-            soon.{' '}
+            soon
           </p>
 
           <h3 id="is-cowswap-secure-to-use">Is CowSwap secure to use?</h3>
 
           <p>
             CowSwap is in ongoing development, and that is why this is not a beta product but rather a proof-of-concept
-            dapp for the community to test and leverage before the final version is released.{' '}
+            dapp for the community to test and leverage before the final version is released
           </p>
 
           <p>
             The code has been carefully tested and peer-reviewed. Although this can be seen as a step forward in terms
-            of security, it&#39;s recommended to use the protocol at <strong>your own risk</strong>.{' '}
+            of security, it&#39;s recommended to use the protocol at <strong>your own risk</strong>
           </p>
         </Content>
       </Page>
@@ -258,7 +258,7 @@ export default function Faq() {
             currently valid orders and match them directly with one another. CoWs result in better prices because no fee
             is paid to the liquidity provider (e.g. 0.3% for Uniswap v2). In the case that CowSwap does not have CoWs,
             it taps into the DEX that gives the next best price. This results in the same or better performance than
-            existing DEX aggregators.{' '}
+            existing DEX aggregators
           </p>
 
           <h3 id="how-can-i-become-a-liquidity-provider">How can I become a liquidity provider?</h3>
@@ -288,7 +288,7 @@ export default function Faq() {
           <p>
             CowSwap is able to offer gas-free trades because the orders are submitted off-chain via signed messages.
             Once you approve your funds for spending on the dapp, you can submit orders via signed messages that contain
-            the trade’s details, such as limit price, amount, timestamp, and so on.{' '}
+            the trade’s details, such as limit price, amount, timestamp, and so on
           </p>
 
           <h3 id="do-i-need-eth-to-trade">Do I need ETH to trade?</h3>
@@ -297,7 +297,7 @@ export default function Faq() {
             For the trade itself you do not need to hold ETH. Although, in order to be able to trade on CowSwap, you
             first need to approve your funds for spending on the dapp<small>**</small>. For that action, you need ETH to
             pay for gas fees. Once you’ve done this, ETH is no longer required as CowSwap charges the fee from the sell
-            token.{' '}
+            token
           </p>
 
           <p>
@@ -319,15 +319,15 @@ export default function Faq() {
             <li>
               Approve the CowSwap smart contract to spend the token on your behalf. By executing this smart contract
               interaction you are approving the contract to withdraw the funds from your wallet once the trade you have
-              signed has been filled in a batch auction.{' '}
+              signed has been filled in a batch auction
             </li>
             <li>
               Once the approval has been mined, the next step is to sign a meta-tx in which you will see the parameters
-              of the order you are about to place in the CowSwap interface. After that, there&#39;s nothing else to do.{' '}
+              of the order you are about to place in the CowSwap interface. After that, there&#39;s nothing else to do
             </li>
             <li>
               Once the order is executed, you will see a notification in the CowSwap UI and hear a confirming “Moo”
-              sound.{' '}
+              sound
             </li>
           </ol>
 
@@ -346,7 +346,7 @@ export default function Faq() {
 
           <p>
             When an order is executed, the settlement contract withdraws the sell amount from the trader’s token balance
-            via the Allowance Manager (for more information cf.{' '}
+            via the Allowance Manager (for more information cf
             <a href="https://github.com/gnosis/gp-v2-contracts">Smart Contract Architecture</a>). In order to allow that
             to happen, the trader has to first approve the Allowance Manager contract to spend tokens on their behalf.
             The smart contract logic ensures that no token can be spent without deliberately signing an order for it.
@@ -360,7 +360,7 @@ export default function Faq() {
             Signing a message incurs no gas cost and is therefore free to the user. When placing an order, the protocol
             cannot guarantee that the order will be executed (e.g. the price could change to no longer satisfy the
             specified limit). By only signing the intent to trade, we can ensure that users only incur a cost when their
-            trade is successfully executed.{' '}
+            trade is successfully executed
           </p>
 
           <p>
@@ -373,7 +373,7 @@ export default function Faq() {
 
           <p>
             Yes, you can directly place buy and sell orders for ETH. Before the actual order is placed, the UI will
-            allow you to wrap and unwrap ETH into WETH without needing to leave the dapp’s UI.{' '}
+            allow you to wrap and unwrap ETH into WETH without needing to leave the dapp’s UI
           </p>
 
           <hr />
@@ -395,12 +395,12 @@ export default function Faq() {
         <ol>
           <li>
             Calling the Cowsap API to signal that you want to cancel a specific order. In this case, the cancellation is
-            completely free as it does not require any onchain interaction.{' '}
+            completely free as it does not require any onchain interaction
           </li>
 
           <li>
             Calling the CowSwap contract to register onchain that you want to cancel a specific order. In this case the
-            cancellation does have a cost as the onchain interaction requires gas fees.{' '}
+            cancellation does have a cost as the onchain interaction requires gas fees
           </li>
         </ol>
         */}
