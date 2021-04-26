@@ -137,10 +137,10 @@ export default function Faq() {
           </h3>
 
           <p>
-            Coincidence of Wants (CoWs) can be{' '}
-            <a href="https://en.wikipedia.org/wiki/Coincidence_of_wants">explained</a> as “an economic phenomenon where
-            two parties each hold an item the other wants, so they exchange these items directly.” CowSwap facilitates
-            CoWs among traders and their orders through using batch auctions as a core mechanism
+            <a href="https://en.wikipedia.org/wiki/Coincidence_of_wants"> Coincidence of Wants (CoWs)</a> can be
+            explained as “an economic phenomenon where two parties each hold an item the other wants, so they exchange
+            these items directly.” CowSwap facilitates CoWs among traders and their orders through using batch auctions
+            as a core mechanism
           </p>
 
           <p>
