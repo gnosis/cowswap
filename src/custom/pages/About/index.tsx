@@ -47,7 +47,6 @@ export default function About() {
           <li>
             <p>CowSwap’s off-chain service optimizes your trade’s execution by considering:</p>
             <ul>
-              {' '}
               <li>
                 <p>Coincidence Of Wants</p>
               </li>
