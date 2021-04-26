@@ -3,6 +3,7 @@ import Page, { Content, Title } from 'components/Page'
 import styled from 'styled-components'
 import { ContentLink } from 'components/ContentLink'
 import { DISCORD_LINK } from 'constants/index'
+import { Link } from 'react-router-dom'
 
 const Wrapper = styled.div`
   h2 {
@@ -113,7 +114,7 @@ export default function Faq() {
           <p>
             CowSwap is a proof-of-concept dapp (decentralized application) built on Gnosis Protocol v2 (GPv2). CowSwap
             offers the decentralized finance community a teaser of the capabilities of GPv2 through testing upcoming
-            features while placing gas free trades. Milk it!{' '}
+            features while placing gas free trades. <Link to="/">Milk it!</Link>
           </p>
 
           <h3 id="what-is-mev-and-how-much-mev-has-been-extracted-from-users-to-date">
