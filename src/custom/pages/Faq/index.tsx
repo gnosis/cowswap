@@ -207,7 +207,7 @@ export default function Faq() {
 
           <p>
             The code has been carefully tested and peer-reviewed. Although this can be seen as a step forward in terms
-            of security, it&#39;s recommended to use the protocol at your own risk.{' '}
+            of security, it&#39;s recommended to use the protocol at <strong>your own risk</strong>.{' '}
           </p>
         </Content>
       </Page>
