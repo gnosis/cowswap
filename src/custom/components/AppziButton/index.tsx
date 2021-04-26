@@ -44,6 +44,10 @@ const Wrapper = styled(ButtonPrimary)`
     top: -60px;
     visibility: visible;
     opacity: 1;
+
+    ${({ theme }) => theme.mediaWidth.upToSmall`
+      display: none;
+    `};
   }
 
   > img {
