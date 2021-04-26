@@ -63,7 +63,10 @@ export default function About() {
         </ol>
         <p>
           Why? This helps you to save on gas, slippage &amp; protocol fees. You might receive a larger amount than
-          anticipated :)
+          anticipated{' '}
+          <span role="img" aria-label="happy cow face">
+            🐮
+          </span>
         </p>
 
         <h3 id="mev">Miner-Extractable Value (MEV)</h3>
