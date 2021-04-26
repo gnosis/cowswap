@@ -232,8 +232,10 @@ export default function Faq() {
             cost, while the protocol fee is currently switched off.
           </p>
           <p>
-            Note that you will only have to pay fees IF your trade is executed. No more gas-costs on any failed
-            transactions!
+            <strong>
+              Note that you will only have to pay fees IF your trade is executed. No more gas-costs on any failed
+              transactions!
+            </strong>
           </p>
 
           <h3 id="how-does-cowswap-connect-to-all-on-chain-liquidity">
