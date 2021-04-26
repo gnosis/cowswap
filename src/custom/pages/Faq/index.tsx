@@ -297,14 +297,14 @@ export default function Faq() {
 
           <p>
             For the trade itself you do not need to hold ETH. Although, in order to be able to trade on CowSwap, you
-            first need to approve your funds for spending on the dapp<small>**</small>. For that action, you need ETH to
+            first need to approve your funds for spending on the dapp<small>*</small>. For that action, you need ETH to
             pay for gas fees. Once you’ve done this, ETH is no longer required as CowSwap charges the fee from the sell
             token
           </p>
 
           <p>
             <small>
-              ** In the neartime future, if you are trying to sell an ERC20 that allows offline approvals, then the ETH
+              * In the neartime future, if you are trying to sell an ERC20 that allows offline approvals, then the ETH
               needed to pay for allowing your funds to be spent is not needed anymore, making the trading experience
               fully gas-free. Keep in mind that this is only possible with ERC20 tokens that have such functionality; if
               not, you will need ETH to execute the approval transaction only.
