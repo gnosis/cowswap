@@ -346,7 +346,7 @@ export default function Faq() {
             In order for solvers (order settlement solution providers) to be economically viable, they need to take into
             account how much gas they spend executing the settlement transaction. The protocol’s fee ensures that
             solvers are incentivized to include the order in a settlement (similar to how gas is paid on traditional
-            DEXs). The fee is directly taken from the sell amount, which therefore has to have a certain minimum size.
+            DEXes). The fee is directly taken from the sell amount, which therefore has to have a certain minimum size.
           </p>
 
           <h3 id="why-do-i-need-to-approve-a-token-before-trading">Why do I need to approve a token before trading?</h3>
