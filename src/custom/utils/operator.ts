@@ -2,17 +2,11 @@ import { ChainId, ETHER, WETH } from '@uniswap/sdk'
 import { getSigningSchemeApiValue, OrderCreation } from 'utils/signatures'
 import { APP_ID } from 'constants/index'
 import { registerOnWindow } from './misc'
-import { isProd, isStaging } from './environments'
+import { isDev } from './environments'
 import { FeeInformation } from 'state/fee/reducer'
 
 function getOperatorUrl(): Partial<Record<ChainId, string>> {
-  if (isProd || isStaging) {
-    return {
-      [ChainId.MAINNET]: process.env.REACT_APP_API_URL_PROD_MAINNET || 'https://protocol-mainnet.gnosis.io/api',
-      [ChainId.RINKEBY]: process.env.REACT_APP_API_URL_PROD_RINKEBY || 'https://protocol-rinkeby.gnosis.io/api',
-      [ChainId.XDAI]: process.env.REACT_APP_API_URL_PROD_XDAI || 'https://protocol-xdai.gnosis.io/api'
-    }
-  } else {
+  if (isDev) {
     return {
       [ChainId.MAINNET]:
         process.env.REACT_APP_API_URL_STAGING_MAINNET || 'https://protocol-mainnet.dev.gnosisdev.com/api',
@@ -20,6 +14,13 @@ function getOperatorUrl(): Partial<Record<ChainId, string>> {
         process.env.REACT_APP_API_URL_STAGING_RINKEBY || 'https://protocol-rinkeby.dev.gnosisdev.com/api',
       [ChainId.XDAI]: process.env.REACT_APP_API_URL_STAGING_XDAI || 'https://protocol-xdai.dev.gnosisdev.com/api'
     }
+  }
+
+  // Production, staging, ens, ...
+  return {
+    [ChainId.MAINNET]: process.env.REACT_APP_API_URL_PROD_MAINNET || 'https://protocol-mainnet.gnosis.io/api',
+    [ChainId.RINKEBY]: process.env.REACT_APP_API_URL_PROD_RINKEBY || 'https://protocol-rinkeby.gnosis.io/api',
+    [ChainId.XDAI]: process.env.REACT_APP_API_URL_PROD_XDAI || 'https://protocol-xdai.gnosis.io/api'
   }
 }
 
@@ -188,6 +189,15 @@ export type FeeQuoteParams = Pick<OrderMetaData, 'sellToken' | 'buyToken' | 'kin
   chainId: ChainId
 }
 
+function toApiAddress(address: string, chainId: ChainId): string {
+  if (address === 'ETH') {
+    // TODO: Return magical address
+    return WETH[chainId].address
+  }
+
+  return address
+}
+
 export async function getFeeQuote(params: FeeQuoteParams): Promise<FeeInformation> {
   const { sellToken, buyToken, amount, kind, chainId } = params
   const [checkedSellAddress, checkedBuyAddress] = [checkIfEther(sellToken, chainId), checkIfEther(buyToken, chainId)]
@@ -197,7 +207,10 @@ export async function getFeeQuote(params: FeeQuoteParams): Promise<FeeInformatio
   try {
     const responseMaybeOk = await _get(
       chainId,
-      `/fee?sellToken=${checkedSellAddress}&buyToken=${checkedBuyAddress}&amount=${amount}&kind=${kind}`
+      `/fee?sellToken=${toApiAddress(checkedSellAddress, chainId)}&buyToken=${toApiAddress(
+        checkedBuyAddress,
+        chainId
+      )}&amount=${amount}&kind=${kind}`
     )
     response = responseMaybeOk.ok ? responseMaybeOk : undefined
   } catch (error) {
