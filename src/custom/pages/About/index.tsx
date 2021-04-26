@@ -18,7 +18,7 @@ export default function About() {
 
       <Content>
         <h2>
-          <b>C</b>oincidence <b>O</b>f <b>W</b>ants
+          <b>C</b>oincidence <b>o</b>f <b>W</b>ants
         </h2>
         <p>
           <img src={diagramIMG} alt="CowSwap vs. AMM's" />
