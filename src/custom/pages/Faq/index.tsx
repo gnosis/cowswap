@@ -22,6 +22,10 @@ const Wrapper = styled.div`
       }
     }
   }
+
+  ol > li {
+    margin-bottom: 0.5rem;
+  }
 `
 
 interface TocSection {
