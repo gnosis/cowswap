@@ -25,8 +25,8 @@ export default function About() {
         </p>
         <p>
           Every time you and another trader each hold an asset the other wants, your trade is settled directly without
-          using an AMM and therefore without incurring any slippage + fees. Only amounts that can’t be settled with
-          other CowSwap traders are sent to the underlying AMMs.
+          using an AMM (Automated Market Maker) and therefore without incurring any slippage + fees. Only amounts that
+          can’t be settled with other CowSwap traders are sent to the underlying AMMs.
           <br />
           <br />
           This economic phenomenon is known as <b>Coincidence Of Wants (COW)</b>.
