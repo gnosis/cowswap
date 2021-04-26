@@ -1,6 +1,7 @@
 import React from 'react'
 import Page, { Title, Content, GdocsListStyle } from 'components/Page'
 import styled from 'styled-components'
+import { Link } from 'react-router-dom'
 
 // Assets
 import diagramIMG from 'assets/cow-swap/cowswap-diagram.png'
@@ -83,6 +84,11 @@ export default function About() {
           <br />
           CowSwap is the first DEX Aggregator offering some protection against it: COWs enable tight slippages and can
           even avoid settlement on AMMs altogether.
+        </p>
+
+        <h3>Do you want to know more?</h3>
+        <p>
+          Head over to the <Link to="/faq">FAQ</Link>
         </p>
       </Content>
     </Wrapper>
