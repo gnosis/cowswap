@@ -159,7 +159,7 @@ export default function SlippageTabs({
       <AutoColumn gap="sm">
         <RowFixed>
           <TYPE.black fontWeight={400} fontSize={14} color={theme.text2}>
-            MEV protected slippage:
+            MEV protected slippage
           </TYPE.black>
           <QuestionHelper
             text={
