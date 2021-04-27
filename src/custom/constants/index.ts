@@ -70,14 +70,3 @@ export const DUNE_DASHBOARD_LINK = 'https://duneanalytics.com/gnosis.protocol/Gn
 
 // 30 minutes
 export const GAS_PRICE_UPDATE_THRESHOLD = 30 * 60 * 1000
-export const GAS_FEE_ENDPOINTS = {
-  [ChainId.MAINNET]: 'https://safe-relay.gnosis.io/api/v1/gas-station/',
-  // No ropsten = main
-  [ChainId.ROPSTEN]: 'https://safe-relay.gnosis.io/api/v1/gas-station/',
-  [ChainId.RINKEBY]: 'https://safe-relay.rinkeby.gnosis.io/api/v1/gas-station/',
-  [ChainId.GÖRLI]: 'https://safe-relay.goerli.gnosis.io/api/v1/gas-station/',
-  // no kovan = main
-  [ChainId.KOVAN]: 'https://safe-relay.kovan.gnosis.io/api/v1/gas-station/',
-  // TODO: xdai? = main
-  [ChainId.XDAI]: 'https://safe-relay.gnosis.io/api/v1/gas-station/'
-}
