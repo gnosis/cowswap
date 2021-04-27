@@ -27,6 +27,10 @@ const Wrapper = styled.div`
   ol > li {
     margin-bottom: 0.5rem;
   }
+
+  span[role='img'] {
+    font-size: 1.8em;
+  }
 `
 
 interface TocSection {
@@ -114,7 +118,7 @@ export default function Faq() {
           <p>
             CowSwap is a proof-of-concept dapp (decentralized application) built on Gnosis Protocol v2 (GPv2). CowSwap
             offers the decentralized finance community a teaser of the capabilities of GPv2 through testing upcoming
-            features while placing gas free trades. <Link to="/">Milk it!</Link>
+            features while placing gas free trades.
           </p>
 
           <h3 id="what-is-mev-and-how-much-mev-has-been-extracted-from-users-to-date">
@@ -386,7 +390,13 @@ export default function Faq() {
           <hr />
 
           <p>
-            Didn&#39;t find an answer? Join the <a href={DISCORD_LINK}>community on Discord</a> for support.
+            Didn&#39;t find an answer? Join the <a href={DISCORD_LINK}>community on Discord</a>
+          </p>
+          <p>
+            We really hope you like CowSwap. If you do,&nbsp;<Link to="/">Milk it!</Link>
+            <span role="img" aria-label="happy cow face">
+              🥛
+            </span>
           </p>
 
           {/* 
