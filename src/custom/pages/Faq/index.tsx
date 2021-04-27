@@ -393,7 +393,7 @@ export default function Faq() {
             Didn&#39;t find an answer? Join the <a href={DISCORD_LINK}>community on Discord</a>
           </p>
           <p>
-            We really hope you like CowSwap, and it&apos;s nice features. If you do, just <Link to="/">Milk them!</Link>
+            We really hope you like CowSwap. If you do,&nbsp;<Link to="/">Milk it!</Link>
             <span role="img" aria-label="happy cow face">
               🥛
             </span>
