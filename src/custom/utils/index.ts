@@ -116,3 +116,43 @@ export function formatOrderId(orderId: string): string {
   // 0x is at index 0 of orderId, shorten. Else return id as is
   return has0x?.index === 0 ? shortenOrderId(orderId, 2, orderId.length) : orderId
 }
+
+export async function fetchData(endpoint: string, options?: RequestInit) {
+  let response
+  try {
+    response = await fetch(endpoint, options)
+    if (!response.ok) throw new Error('[fetchData]::Server returned non-ok response.')
+  } catch (error) {
+    console.error(error)
+    throw new Error(error)
+  }
+  return response
+}
+
+export async function promiseFirstResolved<T>(
+  promiseList: ((...args: any[]) => Promise<T | undefined>)[]
+  // fallback: T
+): Promise<{ id: number | null; result: T | null }> {
+  let promisedResult
+  for (const [index, promise] of promiseList.entries()) {
+    // bail out if we got our promise
+    if (promisedResult !== undefined) break
+
+    try {
+      promisedResult = { result: await promise(), id: index }
+    } catch (err) {
+      // don't bail/throw - just log and continue
+      console.error('Error in promise chain! Skipping.')
+      continue
+    }
+  }
+
+  // using the fallback we can return a promise back with
+  // a defined result
+  const finalResult = {
+    result: promisedResult?.result ?? null,
+    id: promisedResult?.id ?? null
+  }
+
+  return finalResult
+}
