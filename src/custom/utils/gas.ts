@@ -32,7 +32,7 @@ export function chainIdToGasLabel(chainId: ChainId) {
 export const GAS_FEE_ENDPOINTS: GasPriceEndpointData = {
   source: GasPriceSources.SAFE,
   urls: getChainIdValues().reduce((memo, chainId) => {
-    memo[chainId] = `https://safe-rlay.${chainIdToGasLabel(chainId)}.gnosis.io/api/v1/gas-station/`
+    memo[chainId] = `https://safe-relay.${chainIdToGasLabel(chainId)}.gnosis.io/api/v1/gas-station/`
     return memo
   }, {} as GasPriceEndpointData['urls'])
 }
@@ -47,7 +47,7 @@ export const GAS_FEE_ENDPOINTS_BACKUP: GasPriceEndpointData = {
     body: ETH_GAS_PRICE_REQUEST
   },
   urls: getChainIdValues().reduce((memo, chainId) => {
-    memo[chainId] = `https://${chainIdToGasLabel(chainId)}.infoora.io/v3/27b1a8a99c49447e83d918dad2cb46e9`
+    memo[chainId] = `https://${chainIdToGasLabel(chainId)}.infura.io/v3/27b1a8a99c49447e83d918dad2cb46e9`
     return memo
   }, {} as GasPriceEndpointData['urls'])
 }
