@@ -147,8 +147,8 @@ export async function promiseFirstResolved<T>(
     }
   }
 
-  // using the fallback we can return a promise back with
-  // a defined result
+  // we return id here to determine which of the
+  // list promises resolved
   const finalResult = {
     result: promisedResult?.result ?? null,
     id: promisedResult?.id ?? null
