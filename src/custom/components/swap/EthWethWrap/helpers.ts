@@ -13,7 +13,7 @@ export const setNativeLowBalanceError = (nativeSymbol: string, lowBalanceThresho
     )} ${nativeSymbol}. As a result you may not have sufficient ${nativeSymbol} left to cover future on-chain transaction costs.`
   )
 
-export function checkUserBalance({
+export function isLowBalanceCheck({
   threshold,
   txCost,
   userInput,

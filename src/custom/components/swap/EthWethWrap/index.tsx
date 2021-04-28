@@ -20,7 +20,7 @@ import {
   DEFAULT_GAS_FEE,
   MINIMUM_TXS,
   AVG_APPROVE_COST_GWEI,
-  checkUserBalance,
+  isLowBalanceCheck,
   setNativeLowBalanceError
 } from './helpers'
 
@@ -148,7 +148,7 @@ export default function EthWethWrap({ account, native, userInput, wrapped, wrapC
   // does the user have a lower than set threshold balance? show error
   const isLowBalance = useMemo(
     () =>
-      checkUserBalance({
+      isLowBalanceCheck({
         threshold: multiTxCost,
         userInput,
         balance: nativeBalance,
@@ -188,6 +188,7 @@ export default function EthWethWrap({ account, native, userInput, wrapped, wrapC
 
   return (
     <Wrapper>
+      {/* Conditional Confirmation modal */}
       <Modal isOpen={modalOpen} onDismiss={() => setModalOpen(false)}>
         <ModalWrapper>
           <WarningLabel>Your {nativeSymbol} balance is running low!</WarningLabel>
@@ -214,11 +215,15 @@ export default function EthWethWrap({ account, native, userInput, wrapped, wrapC
           </ButtonPrimary>
         </ModalWrapper>
       </Modal>
+      {/* Primary warning label */}
       <WarningLabel>
         Wrap your {nativeSymbol} first or switch to {wrappedSymbol}!
       </WarningLabel>
+      {/* Low Balance Error */}
       {isLowBalance && <ErrorMessage error={setNativeLowBalanceError(nativeSymbol, multiTxCost)} />}
+      {/* Async Error */}
       {error && <ErrorMessage error={error} />}
+      {/* Wrapping cards */}
       <WrappingVisualisation
         nativeSymbol={nativeSymbol}
         nativeBalance={nativeBalance}
@@ -228,6 +233,7 @@ export default function EthWethWrap({ account, native, userInput, wrapped, wrapC
         wrappedSymbol={wrappedSymbol}
         userInput={userInput}
       />
+      {/* Wrap CTA */}
       <ButtonPrimary disabled={loading} padding="0.5rem" onClick={handlePrimaryAction}>
         {loading ? <Loader /> : `Wrap my ${nativeSymbol}`}
       </ButtonPrimary>
