@@ -99,6 +99,8 @@ const MenuFlyout = styled.span`
   top: 3rem;
   right: 0rem;
   z-index: 100;
+  box-shadow: 4px 4px 0 0px rgb(0 0 0);
+  border: 4px solid ${({ theme }) => theme.black};
 
   ${({ theme }) => theme.mediaWidth.upToMedium`
     min-width: 18.125rem;

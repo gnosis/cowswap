@@ -31,21 +31,24 @@ const FancyButton = styled.button`
   border: 1px solid ${({ theme }) => theme.bg3};
   outline: none;
   background: ${({ theme }) => theme.bg1};
-  :hover {
+
+  &:hover {
     border: 1px solid ${({ theme }) => theme.bg4};
   }
-  :focus {
+  &:focus {
     border: 1px solid ${({ theme }) => theme.primary1};
   }
 `
 
 const Option = styled(FancyButton)<{ active: boolean }>`
   margin-right: 8px;
-  :hover {
+  border: 0;
+  background-color: ${({ active, theme }) => active && theme.primary1};
+  color: ${({ theme }) => theme.text1};
+
+  &:hover {
     cursor: pointer;
   }
-  background-color: ${({ active, theme }) => active && theme.primary1};
-  color: ${({ active, theme }) => (active ? theme.white : theme.text1)};
 `
 
 const Input = styled.input`
@@ -81,7 +84,7 @@ const OptionCustom = styled(FancyButton)<{ active?: boolean; warning?: boolean }
 `
 
 const SlippageEmojiContainer = styled.span`
-  color: #f3841e;
+  color: ${({ theme }) => theme.red1};
   ${({ theme }) => theme.mediaWidth.upToSmall`
     display: none;  
   `}
@@ -226,7 +229,7 @@ export default function SlippageTabs({
             style={{
               fontSize: '14px',
               paddingTop: '7px',
-              color: slippageError === SlippageError.InvalidInput ? 'red' : '#F3841E'
+              color: slippageError === SlippageError.InvalidInput ? `${theme.red1}` : `${theme.redShade}`
             }}
           >
             {slippageError === SlippageError.InvalidInput

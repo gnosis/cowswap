@@ -38,8 +38,11 @@ export const CurrencySelect = styled.button<{ selected: boolean }>`
   padding: 0 6px;
   transition: background-color 0.2s ease-in-out;
 
-  :focus,
-  :hover {
+  &:focus {
+    background-color: ${({ selected, theme }) => (selected ? theme.bg1 : theme.primary1)};
+  }
+
+  &:hover {
     background-color: ${({ theme }) => darken(0.05, theme.primary1)};
   }
 `
@@ -51,6 +54,7 @@ export const LabelRow = styled.div`
   font-size: 0.75rem;
   line-height: 1rem;
   padding: 0.75rem 1rem 0 1rem;
+
   span:hover {
     cursor: pointer;
     color: ${({ theme }) => darken(0.2, theme.text2)};
