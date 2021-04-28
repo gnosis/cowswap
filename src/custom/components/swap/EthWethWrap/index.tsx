@@ -4,14 +4,13 @@ import { TransactionResponse } from '@ethersproject/providers'
 import { AlertTriangle } from 'react-feather'
 import { Currency, Token, CurrencyAmount } from '@uniswap/sdk'
 
-import { ButtonPrimary } from 'components/Button'
+import { ButtonSecondary, ButtonPrimary } from 'components/Button'
 import Loader from 'components/Loader'
 import WrappingVisualisation from './WrappingVisualisation'
 
 import { useCurrencyBalances } from 'state/wallet/hooks'
 import { useIsTransactionPending } from 'state/transactions/hooks'
 
-import { SHORT_PRECISION } from 'constants/index'
 import Modal from 'components/Modal'
 import { useGasPrices } from 'state/gas/hooks'
 import { useActiveWeb3React } from 'hooks'
@@ -20,8 +19,9 @@ import {
   DEFAULT_GAS_FEE,
   MINIMUM_TXS,
   AVG_APPROVE_COST_GWEI,
-  isLowBalanceCheck,
-  setNativeLowBalanceError
+  _isLowBalanceCheck,
+  _setNativeLowBalanceError,
+  _getAvailableTransactions
 } from './helpers'
 
 const Wrapper = styled.div`
@@ -45,6 +45,13 @@ const Wrapper = styled.div`
         background-color: ${({ theme }) => theme.disabled}
       }
   }
+`
+
+const ModalMessage = styled.p`
+  display: flex;
+  flex-flow: row wrap;
+  padding: 0 8px;
+  width: 100%;
 `
 
 const ModalWrapper = styled(Wrapper)`
@@ -98,13 +105,22 @@ const ErrorWrapper = styled(BalanceLabel)`
   color: ${({ theme }) => theme.redShade};
 `
 
+const ButtonWrapper = styled.div`
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  gap: 16px;
+  width: 100%;
+  margin-top: 8px;
+`
+
 const ErrorMessage = ({ error }: { error: Error }) => (
   <ErrorWrapper>
     <strong>{error.message}</strong>
   </ErrorWrapper>
 )
 
-const WarningLabel = ({ children }: { children: ReactNode }) => (
+const WarningLabel = ({ children }: { children?: ReactNode }) => (
   <WarningWrapper>
     <AlertTriangle size={25} />
     <div>{children}</div>
@@ -130,6 +146,8 @@ export default function EthWethWrap({ account, native, userInput, wrapped, wrapC
 
   // returns the cost of 1 tx and multi txs
   const { multiTxCost, singleTxCost } = useMemo(() => {
+    // TODO: should use DEFAULT_GAS_FEE from backup source
+    // when/if implemented
     const gas = gasPrice?.standard || DEFAULT_GAS_FEE
 
     const amount = BigNumber.from(gas)
@@ -146,14 +164,16 @@ export default function EthWethWrap({ account, native, userInput, wrapped, wrapC
   const [nativeBalance, wrappedBalance] = useCurrencyBalances(account, [native, wrapped])
 
   // does the user have a lower than set threshold balance? show error
-  const isLowBalance = useMemo(
-    () =>
-      isLowBalanceCheck({
+  const { isLowBalance, txsRemaining } = useMemo(
+    () => ({
+      isLowBalance: _isLowBalanceCheck({
         threshold: multiTxCost,
         userInput,
         balance: nativeBalance,
         txCost: singleTxCost
       }),
+      txsRemaining: _getAvailableTransactions({ nativeBalance, userInput, singleTxCost })
+    }),
     [multiTxCost, nativeBalance, singleTxCost, userInput]
   )
 
@@ -191,16 +211,29 @@ export default function EthWethWrap({ account, native, userInput, wrapped, wrapC
       {/* Conditional Confirmation modal */}
       <Modal isOpen={modalOpen} onDismiss={() => setModalOpen(false)}>
         <ModalWrapper>
-          <WarningLabel>Your {nativeSymbol} balance is running low!</WarningLabel>
-          <BalanceLabel>
+          <h2>Confirm {nativeSymbol} wrap</h2>
+          <ModalMessage>
             <span>
-              At current gas prices, please consider keeping at least{' '}
+              Cow Swap is a gasless exchange. <strong>{nativeSymbol}</strong> however, is required for paying{' '}
               <strong>
-                {multiTxCost.toSignificant(SHORT_PRECISION)} {nativeSymbol}
-              </strong>{' '}
-              in your wallet for a smooth experience.
+                on-chain transaction costs associated with enabling tokens and the wrapping/unwrapping of {nativeSymbol}
+                /{wrappedSymbol}
+              </strong>
+              , respectively.
             </span>
-          </BalanceLabel>
+          </ModalMessage>
+          <ModalMessage>
+            <span>
+              At current gas prices, your remaining {nativeSymbol} balance after confirmation would be{' '}
+              {!txsRemaining ? (
+                <strong>insufficient for any further on-chain transactions.</strong>
+              ) : (
+                <>
+                  sufficient for <strong>up to {txsRemaining} wrapping, unwrapping, or enabling operation(s)</strong>.
+                </>
+              )}
+            </span>
+          </ModalMessage>
           <WrappingVisualisation
             nativeSymbol={nativeSymbol}
             nativeBalance={nativeBalance}
@@ -210,9 +243,14 @@ export default function EthWethWrap({ account, native, userInput, wrapped, wrapC
             wrappedSymbol={wrappedSymbol}
             userInput={userInput}
           />
-          <ButtonPrimary disabled={loading} padding="0.5rem" onClick={handleWrap}>
-            {loading ? <Loader /> : `Wrap my ${nativeSymbol} anyways`}
-          </ButtonPrimary>
+          <ButtonWrapper>
+            <ButtonSecondary padding="0.5rem" maxWidth="30%" onClick={(): void => setModalOpen(false)}>
+              Cancel
+            </ButtonSecondary>
+            <ButtonPrimary disabled={loading} padding="0.5rem" maxWidth="70%" onClick={handleWrap}>
+              {loading ? <Loader /> : `Wrap my ${nativeSymbol} anyways`}
+            </ButtonPrimary>
+          </ButtonWrapper>
         </ModalWrapper>
       </Modal>
       {/* Primary warning label */}
@@ -220,7 +258,7 @@ export default function EthWethWrap({ account, native, userInput, wrapped, wrapC
         Wrap your {nativeSymbol} first or switch to {wrappedSymbol}!
       </WarningLabel>
       {/* Low Balance Error */}
-      {isLowBalance && <ErrorMessage error={setNativeLowBalanceError(nativeSymbol, multiTxCost)} />}
+      {isLowBalance && <ErrorMessage error={_setNativeLowBalanceError(nativeSymbol)} />}
       {/* Async Error */}
       {error && <ErrorMessage error={error} />}
       {/* Wrapping cards */}
