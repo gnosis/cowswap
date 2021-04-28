@@ -24,7 +24,7 @@ import { ExpiredOrdersWatcher, EventUpdater } from 'state/orders/updater'
 // import { EventUpdater } from 'state/orders/mocks'
 import ThemeProvider, { FixedGlobalStyle, ThemedGlobalStyle } from 'theme'
 import getLibrary from './utils/getLibrary'
-import { analyticsId } from './custom/utils/analytics'
+import { analyticsId } from 'utils/analytics'
 import AppziButton from 'components/AppziButton'
 
 const Web3ProviderNetwork = createWeb3ReactRoot(NetworkContextName)
