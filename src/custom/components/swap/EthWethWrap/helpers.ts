@@ -1,16 +1,13 @@
 import { parseUnits } from 'ethers/lib/utils'
 import { CurrencyAmount } from '@uniswap/sdk'
-import { DEFAULT_PRECISION } from 'constants/index'
 
 export const MINIMUM_TXS = '10'
 export const AVG_APPROVE_COST_GWEI = '50000'
 export const DEFAULT_GAS_FEE = parseUnits('50', 'gwei')
 
-export const setNativeLowBalanceError = (nativeSymbol: string, lowBalanceThreshold: CurrencyAmount) =>
+export const setNativeLowBalanceError = (nativeSymbol: string) =>
   new Error(
-    `WARNING! After wrapping your ${nativeSymbol}, your balance will fall below < ${lowBalanceThreshold.toSignificant(
-      DEFAULT_PRECISION
-    )} ${nativeSymbol}. As a result you may not have sufficient ${nativeSymbol} left to cover future on-chain transaction costs.`
+    `This ${nativeSymbol} wrapping operation may leave insufficient funds to cover any future on-chain transaction costs.`
   )
 
 export function isLowBalanceCheck({
