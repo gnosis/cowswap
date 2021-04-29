@@ -43,7 +43,7 @@ import {
 import { useExpertModeManager, useUserSlippageTolerance, useUserSingleHopOnly } from 'state/user/hooks'
 import { LinkStyledButton, ButtonSize, TYPE } from 'theme'
 import { maxAmountSpend } from 'utils/maxAmountSpend'
-import { computeTradePriceBreakdown, warningSeverity } from 'utils/prices'
+import { computeTradePriceBreakdown, warningSeverity, computeSlippageAdjustedAmounts } from 'utils/prices'
 import AppBody from 'pages/AppBody'
 import { ClickableText } from 'pages/Pool/styleds'
 import Loader from 'components/Loader'
@@ -475,7 +475,13 @@ export default function Swap({
                   <EthWethWrapMessage
                     account={account ?? undefined}
                     native={native}
-                    userInput={trade.tradeType === TradeType.EXACT_INPUT ? trade.inputAmount : trade.inputAmountWithFee}
+                    userInput={
+                      // is exact in? use input as is
+                      trade.tradeType === TradeType.EXACT_INPUT
+                        ? trade.inputAmount
+                        : // else use the slippage + fee adjusted amount to see
+                          computeSlippageAdjustedAmounts(trade, allowedSlippage).INPUT
+                    }
                     wrapped={wrappedToken}
                     wrapCallback={onWrap}
                   />
