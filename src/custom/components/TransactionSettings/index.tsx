@@ -1,7 +1,21 @@
 import React from 'react'
-import SlippageTabsMod, { SlippageTabsProps as SlippageTabsPropsMod } from './TransactionSetttingsMod'
+import SlippageTabsMod, {
+  SlippageTabsProps as SlippageTabsPropsMod,
+  FancyButton as FancyButtonUni
+} from './TransactionSetttingsMod'
+import styled from 'styled-components'
 
 import { unstable_batchedUpdates as batchedUpdates } from 'react-dom'
+
+const Option = styled(FancyButtonUni)<{ active: boolean }>`
+  margin-right: 8px;
+  border: 0;
+  background-color: ${({ active, theme }) => active && theme.primary1};
+  color: ${({ theme }) => theme.text1};
+  &:hover {
+    cursor: pointer;
+  }
+`
 
 type SetRawSlippage = (rawSlippage: number) => void
 type SetSlippageInput = (value: React.SetStateAction<string>) => void
@@ -29,5 +43,5 @@ export type ParseCustomSlippageFn = typeof parseCustomSlippage
 export type SlippageTabsProps = Omit<SlippageTabsPropsMod, 'parseCustomSlippageFn'>
 
 export default function SlippageTabs(params: SlippageTabsProps) {
-  return <SlippageTabsMod {...params} parseCustomSlippageFn={parseCustomSlippage} />
+  return <SlippageTabsMod {...params} parseCustomSlippageFn={parseCustomSlippage} OptionOverride={Option} />
 }

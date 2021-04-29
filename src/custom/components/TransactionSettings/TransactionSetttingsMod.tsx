@@ -1,4 +1,4 @@
-import React, { useState, useRef, useContext } from 'react'
+import React, { useState, useRef, useContext, ReactNode } from 'react'
 import styled, { ThemeContext } from 'styled-components'
 
 import QuestionHelper from 'components/QuestionHelper'
@@ -20,7 +20,7 @@ enum DeadlineError {
   InvalidInput = 'InvalidInput'
 }
 
-const FancyButton = styled.button`
+export const FancyButton = styled.button`
   color: ${({ theme }) => theme.text1};
   align-items: center;
   height: 2rem;
@@ -31,24 +31,21 @@ const FancyButton = styled.button`
   border: 1px solid ${({ theme }) => theme.bg3};
   outline: none;
   background: ${({ theme }) => theme.bg1};
-
-  &:hover {
+  :hover {
     border: 1px solid ${({ theme }) => theme.bg4};
   }
-  &:focus {
+  :focus {
     border: 1px solid ${({ theme }) => theme.primary1};
   }
 `
 
 const Option = styled(FancyButton)<{ active: boolean }>`
   margin-right: 8px;
-  border: 0;
-  background-color: ${({ active, theme }) => active && theme.primary1};
-  color: ${({ theme }) => theme.text1};
-
-  &:hover {
+  :hover {
     cursor: pointer;
   }
+  background-color: ${({ active, theme }) => active && theme.primary1};
+  color: ${({ active, theme }) => (active ? theme.white : theme.text1)};
 `
 
 const Input = styled.input`
@@ -84,7 +81,7 @@ const OptionCustom = styled(FancyButton)<{ active?: boolean; warning?: boolean }
 `
 
 const SlippageEmojiContainer = styled.span`
-  color: ${({ theme }) => theme.red1};
+  color: #f3841e;
   ${({ theme }) => theme.mediaWidth.upToSmall`
     display: none;  
   `}
@@ -96,6 +93,7 @@ export interface SlippageTabsProps {
   deadline: number
   setDeadline: (deadline: number) => void
   parseCustomSlippageFn: ParseCustomSlippageFn
+  OptionOverride: React.FC<>
 }
 
 export default function SlippageTabs({
@@ -103,7 +101,8 @@ export default function SlippageTabs({
   setRawSlippage,
   deadline,
   setDeadline,
-  parseCustomSlippageFn
+  parseCustomSlippageFn,
+  OptionOverride: Option
 }: SlippageTabsProps) {
   const theme = useContext(ThemeContext)
 
@@ -229,7 +228,7 @@ export default function SlippageTabs({
             style={{
               fontSize: '14px',
               paddingTop: '7px',
-              color: slippageError === SlippageError.InvalidInput ? `${theme.red1}` : `${theme.redShade}`
+              color: slippageError === SlippageError.InvalidInput ? 'red' : '#F3841E'
             }}
           >
             {slippageError === SlippageError.InvalidInput
