@@ -125,22 +125,22 @@ export default function Swap({
   // Is fee greater than input?
   const { isFeeGreater, fee } = useIsFeeGreaterThanInput({ chainId, address: INPUT.currencyId, parsedAmount })
 
-  const { wrapType, execute: onWrap, inputError: wrapInputError } = useWrapCallback(
-    currencies[Field.INPUT],
-    currencies[Field.OUTPUT],
-    typedValue,
-    // should override and get wrapCallback?
-    isNativeInSwap
-  )
-
-  const showWrap: boolean = !isNativeInSwap && wrapType !== WrapType.NOT_APPLICABLE
-  const { address: recipientAddress } = useENSAddress(recipient)
   const toggledVersion = useToggledVersion()
   const tradesByVersion = {
     [Version.v1]: v1Trade,
     [Version.v2]: v2Trade
   }
-  const trade = showWrap ? undefined : tradesByVersion[toggledVersion]
+  const tradeCurrentVersion = tradesByVersion[toggledVersion]
+  const { wrapType, execute: onWrap, inputError: wrapInputError } = useWrapCallback(
+    currencies[Field.INPUT],
+    currencies[Field.OUTPUT],
+    tradeCurrentVersion?.inputAmountWithFee,
+    // should override and get wrapCallback?
+    isNativeInSwap
+  )
+  const showWrap: boolean = !isNativeInSwap && wrapType !== WrapType.NOT_APPLICABLE
+  const { address: recipientAddress } = useENSAddress(recipient)
+  const trade = showWrap ? undefined : tradeCurrentVersion
   const defaultTrade = showWrap ? undefined : tradesByVersion[DEFAULT_VERSION]
 
   const betterTradeLinkV2: Version | undefined =
