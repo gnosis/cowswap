@@ -131,10 +131,20 @@ export default function Swap({
     [Version.v2]: v2Trade
   }
   const tradeCurrentVersion = tradesByVersion[toggledVersion]
+
+  // nativeInput only applies to useWrapCallback and any function that is native
+  // currency specific - use slippage/fee adjusted native currency for exactOUT orders
+  // and direct input for exactIn orders
+  const nativeInput = !!(tradeCurrentVersion?.tradeType === TradeType.EXACT_INPUT)
+    ? tradeCurrentVersion.inputAmount
+    : // else use the slippage + fee adjusted amount
+      computeSlippageAdjustedAmounts(tradeCurrentVersion, allowedSlippage).INPUT
+
   const { wrapType, execute: onWrap, inputError: wrapInputError } = useWrapCallback(
     currencies[Field.INPUT],
     currencies[Field.OUTPUT],
-    tradeCurrentVersion?.inputAmount,
+    // if native input !== NATIVE_TOKEN, validation fails
+    nativeInput,
     // should override and get wrapCallback?
     isNativeInSwap
   )
@@ -471,17 +481,12 @@ export default function Swap({
                   )}
                   {isFeeGreater && fee && <FeeGreaterMessage fee={fee} />}
                 </AutoColumn>
-                {isNativeIn && trade && onWrap && (
+                {/* ETH exactIn && wrapCallback returned us cb */}
+                {isNativeIn && onWrap && (
                   <EthWethWrapMessage
                     account={account ?? undefined}
                     native={native}
-                    userInput={
-                      // is exact in? use input as is
-                      trade.tradeType === TradeType.EXACT_INPUT
-                        ? trade.inputAmount
-                        : // else use the slippage + fee adjusted amount to see
-                          computeSlippageAdjustedAmounts(trade, allowedSlippage).INPUT
-                    }
+                    nativeInput={nativeInput}
                     wrapped={wrappedToken}
                     wrapCallback={onWrap}
                   />
