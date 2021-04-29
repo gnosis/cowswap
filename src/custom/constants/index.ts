@@ -17,7 +17,7 @@ export * from '@src/constants/index'
 
 export const PRODUCTION_URL = 'cowswap.exchange'
 
-const DISABLED_WALLETS = /^(?:WALLET_LINK|COINBASE_LINK|WALLET_CONNECT|FORTMATIC|Portis)$/i
+const DISABLED_WALLETS = /^(?:WALLET_LINK|COINBASE_LINK|FORTMATIC|Portis)$/i
 
 // Re-export only the supported wallets
 export const SUPPORTED_WALLETS = Object.keys(SUPPORTED_WALLETS_UNISWAP).reduce((acc, key) => {
