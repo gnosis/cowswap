@@ -1,9 +1,6 @@
 import { Web3Provider } from '@ethersproject/providers'
 import { InjectedConnector } from '@web3-react/injected-connector'
-// TODO: Use any network when this PR is merged https://github.com/NoahZinsmeister/web3-react/pull/185
-// import { WalletConnectConnector } from '@web3-react/walletconnect-connector'
-import { WalletConnectConnector } from '@anxolin/walletconnect-connector'
-// End of TODO ----
+import { WalletConnectConnector } from '@web3-react/walletconnect-connector'
 import { WalletLinkConnector } from '@web3-react/walletlink-connector'
 import { PortisConnector } from '@web3-react/portis-connector'
 
