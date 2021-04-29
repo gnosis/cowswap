@@ -15,6 +15,17 @@ const Wrapper = styled.div`
   }
 
   ${Content} {
+    > div > a {
+      font-size: 16px;
+      font-weight: bold;
+      color: ${({ theme }) => theme.text1};
+    }
+    > div > ul {
+      margin: 12px 0 24px;
+      padding: 0 0 0 20px;
+      color: ${({ theme }) => theme.primary1};
+    }
+
     > h3 {
       margin: 0;
 
