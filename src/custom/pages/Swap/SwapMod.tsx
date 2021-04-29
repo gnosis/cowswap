@@ -1,4 +1,4 @@
-import { CurrencyAmount, JSBI, Token, Trade } from '@uniswap/sdk'
+import { CurrencyAmount, JSBI, Token, Trade, TradeType } from '@uniswap/sdk'
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { ArrowDown } from 'react-feather'
 import ReactGA from 'react-ga'
@@ -475,7 +475,7 @@ export default function Swap({
                   <EthWethWrapMessage
                     account={account ?? undefined}
                     native={native}
-                    userInput={trade.inputAmount}
+                    userInput={trade.tradeType === TradeType.EXACT_INPUT ? trade.inputAmount : trade.inputAmountWithFee}
                     wrapped={wrappedToken}
                     wrapCallback={onWrap}
                   />
