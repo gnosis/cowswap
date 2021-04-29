@@ -134,7 +134,7 @@ export default function Swap({
   const { wrapType, execute: onWrap, inputError: wrapInputError } = useWrapCallback(
     currencies[Field.INPUT],
     currencies[Field.OUTPUT],
-    tradeCurrentVersion?.inputAmountWithFee,
+    tradeCurrentVersion?.inputAmount,
     // should override and get wrapCallback?
     isNativeInSwap
   )
@@ -475,7 +475,7 @@ export default function Swap({
                   <EthWethWrapMessage
                     account={account ?? undefined}
                     native={native}
-                    userInput={trade.inputAmountWithFee}
+                    userInput={trade.inputAmount}
                     wrapped={wrappedToken}
                     wrapCallback={onWrap}
                   />
