@@ -43,5 +43,5 @@ export type ParseCustomSlippageFn = typeof parseCustomSlippage
 export type SlippageTabsProps = Omit<SlippageTabsPropsMod, 'parseCustomSlippageFn'>
 
 export default function SlippageTabs(params: SlippageTabsProps) {
-  return <SlippageTabsMod {...params} parseCustomSlippageFn={parseCustomSlippage} OptionOverride={Option} />
+  return <SlippageTabsMod {...params} parseCustomSlippageFn={parseCustomSlippage} Option={Option} />
 }

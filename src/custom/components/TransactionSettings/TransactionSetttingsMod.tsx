@@ -93,7 +93,7 @@ export interface SlippageTabsProps {
   deadline: number
   setDeadline: (deadline: number) => void
   parseCustomSlippageFn: ParseCustomSlippageFn
-  OptionOverride: React.FC<>
+  Option: React.ElementType
 }
 
 export default function SlippageTabs({
@@ -102,7 +102,7 @@ export default function SlippageTabs({
   deadline,
   setDeadline,
   parseCustomSlippageFn,
-  OptionOverride: Option
+  Option
 }: SlippageTabsProps) {
   const theme = useContext(ThemeContext)
 
