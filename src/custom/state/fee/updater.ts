@@ -18,7 +18,7 @@ const WAITING_TIME_BETWEEN_EQUAL_REQUESTS = 10000 // Prevents from sending the s
  * Returns true if the fee quote expires soon (in less than RENEW_FEE_QUOTES_BEFORE_EXPIRATION_TIME milliseconds)
  */
 function wasCheckedRecently(lastFeeCheck: number): boolean {
-  return lastFeeCheck + WAITING_TIME_BETWEEN_EQUAL_REQUESTS < Date.now()
+  return lastFeeCheck + WAITING_TIME_BETWEEN_EQUAL_REQUESTS > Date.now()
 }
 
 /**
