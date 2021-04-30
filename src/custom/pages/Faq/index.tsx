@@ -16,12 +16,10 @@ const Wrapper = styled.div`
 
   ${Content} {
     > div a {
-      text-decoration: none;
       color: ${({ theme }) => theme.text1};
       transition: color 0.2s ease-in-out;
 
       &:hover {
-        text-decoration: underline;
         color: ${({ theme }) => theme.redShade};
       }
     }
