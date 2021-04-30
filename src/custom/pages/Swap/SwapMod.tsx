@@ -1,4 +1,4 @@
-import { CurrencyAmount, JSBI, Token, Trade } from '@uniswap/sdk'
+import { CurrencyAmount, JSBI, Token, Trade, TradeType } from '@uniswap/sdk'
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { ArrowDown } from 'react-feather'
 import ReactGA from 'react-ga'
@@ -43,7 +43,7 @@ import {
 import { useExpertModeManager, useUserSlippageTolerance, useUserSingleHopOnly } from 'state/user/hooks'
 import { LinkStyledButton, ButtonSize, TYPE } from 'theme'
 import { maxAmountSpend } from 'utils/maxAmountSpend'
-import { computeTradePriceBreakdown, warningSeverity } from 'utils/prices'
+import { computeTradePriceBreakdown, warningSeverity, computeSlippageAdjustedAmounts } from 'utils/prices'
 import AppBody from 'pages/AppBody'
 import { ClickableText } from 'pages/Pool/styleds'
 import Loader from 'components/Loader'
@@ -131,10 +131,20 @@ export default function Swap({
     [Version.v2]: v2Trade
   }
   const tradeCurrentVersion = tradesByVersion[toggledVersion]
+
+  // nativeInput only applies to useWrapCallback and any function that is native
+  // currency specific - use slippage/fee adjusted native currency for exactOUT orders
+  // and direct input for exactIn orders
+  const nativeInput = !!(tradeCurrentVersion?.tradeType === TradeType.EXACT_INPUT)
+    ? tradeCurrentVersion.inputAmount
+    : // else use the slippage + fee adjusted amount
+      computeSlippageAdjustedAmounts(tradeCurrentVersion, allowedSlippage).INPUT
+
   const { wrapType, execute: onWrap, inputError: wrapInputError } = useWrapCallback(
     currencies[Field.INPUT],
     currencies[Field.OUTPUT],
-    tradeCurrentVersion?.inputAmountWithFee,
+    // if native input !== NATIVE_TOKEN, validation fails
+    nativeInput,
     // should override and get wrapCallback?
     isNativeInSwap
   )
@@ -471,11 +481,12 @@ export default function Swap({
                   )}
                   {isFeeGreater && fee && <FeeGreaterMessage fee={fee} />}
                 </AutoColumn>
-                {isNativeIn && trade && onWrap && (
+                {/* ETH exactIn && wrapCallback returned us cb */}
+                {isNativeIn && onWrap && (
                   <EthWethWrapMessage
                     account={account ?? undefined}
                     native={native}
-                    userInput={trade.inputAmountWithFee}
+                    nativeInput={nativeInput}
                     wrapped={wrappedToken}
                     wrapCallback={onWrap}
                   />
