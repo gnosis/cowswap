@@ -103,12 +103,14 @@ export async function postOrder(params: PostOrderParams): Promise<string> {
   try {
     signature = (await signOrder(signatureParams)) as EcdsaSignature // Only ECDSA signing supported for now
   } catch (e) {
-    if (e.code === METAMASK_SIGNATURE_ERROR_CODE) {
+    if (e.code === METAMASK_SIGNATURE_ERROR_CODE || V4_ERROR_MSG_REGEX.test(e.message)) {
       // We tried to sign order the nice way.
       // That works fine for regular MM addresses. Does not work for Hardware wallets, though.
       // See https://github.com/MetaMask/metamask-extension/issues/10240#issuecomment-810552020
       // So, when that specific error occurs, we know this is a problem with MM + HW.
       // Then, we fallback to ETHSIGN.
+      // That is also the case for example of TrustWallet dapp browser.
+      // It fails with the error message: "method eth_signTypedData_v4 does not exist/is not available"
       signingScheme = SigningScheme.ETHSIGN
       signature = (await signOrder({ ...signatureParams, signingScheme })) as EcdsaSignature // Only ECDSA signing supported for now
     } else {
