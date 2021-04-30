@@ -10,6 +10,7 @@ import { EcdsaSignature, Signature } from '@gnosis.pm/gp-v2-contracts'
 
 const DEFAULT_SIGNING_SCHEME = SigningScheme.EIP712
 const METAMASK_SIGNATURE_ERROR_CODE = -32603
+const V4_ERROR_MSG_REGEX = /eth_signTypedData_v4 does not exist/i
 
 export interface PostOrderParams {
   account: string
