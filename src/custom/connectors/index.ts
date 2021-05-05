@@ -7,6 +7,8 @@ import { PortisConnector } from '@web3-react/portis-connector'
 import { FortmaticConnector } from 'connectors/Fortmatic'
 import { NetworkConnector } from 'connectors/NetworkConnector'
 
+export const WALLET_CONNECT_BRIDGE = process.env.WALLET_CONNECT_BRIDGE || 'wss://safe-walletconnect.gnosis.io'
+
 type RpcNetworks = { [chainId: number]: string }
 
 function getRpcNetworks(): [RpcNetworks, number[]] {
@@ -74,7 +76,7 @@ export const injected = new InjectedConnector({ supportedChainIds })
 // mainnet only
 export const walletconnect = new WalletConnectConnector({
   rpc: rpcNetworks,
-  bridge: 'https://bridge.walletconnect.org',
+  bridge: WALLET_CONNECT_BRIDGE,
   qrcode: true,
   pollingInterval: 15000
 })
