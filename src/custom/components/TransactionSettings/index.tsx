@@ -2,7 +2,7 @@ import React from 'react'
 import SlippageTabsMod, {
   SlippageTabsProps as SlippageTabsPropsMod,
   FancyButton as FancyButtonUni
-} from './TransactionSetttingsMod'
+} from './TransactionSettingsMod'
 import styled from 'styled-components'
 
 import { unstable_batchedUpdates as batchedUpdates } from 'react-dom'
@@ -40,7 +40,7 @@ function parseCustomSlippage(value: string, setRawSlippage: SetRawSlippage, setS
 }
 
 export type ParseCustomSlippageFn = typeof parseCustomSlippage
-export type SlippageTabsProps = Omit<SlippageTabsPropsMod, 'parseCustomSlippageFn'>
+export type SlippageTabsProps = Omit<SlippageTabsPropsMod, 'parseCustomSlippageFn' | 'Option'>
 
 export default function SlippageTabs(params: SlippageTabsProps) {
   return <SlippageTabsMod {...params} parseCustomSlippageFn={parseCustomSlippage} Option={Option} />

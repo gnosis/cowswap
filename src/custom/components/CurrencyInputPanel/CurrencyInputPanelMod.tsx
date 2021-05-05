@@ -24,26 +24,22 @@ export const InputRow = styled.div<{ selected: boolean }>`
 
 export const CurrencySelect = styled.button<{ selected: boolean }>`
   align-items: center;
-  height: 36px;
+  height: 2.2rem;
   font-size: 20px;
   font-weight: 500;
   background-color: ${({ selected, theme }) => (selected ? theme.bg1 : theme.primary1)};
-  color: ${({ theme }) => theme.black};
+  color: ${({ selected, theme }) => (selected ? theme.text1 : theme.white)};
   border-radius: 12px;
   box-shadow: ${({ selected }) => (selected ? 'none' : '0px 6px 10px rgba(0, 0, 0, 0.075)')};
   outline: none;
   cursor: pointer;
   user-select: none;
   border: none;
-  padding: 0 6px;
-  transition: background-color 0.2s ease-in-out;
+  padding: 0 0.5rem;
 
-  &:focus {
-    background-color: ${({ selected, theme }) => (selected ? theme.bg1 : theme.primary1)};
-  }
-
-  &:hover {
-    background-color: ${({ theme }) => darken(0.05, theme.primary1)};
+  :focus,
+  :hover {
+    background-color: ${({ selected, theme }) => (selected ? theme.bg2 : darken(0.05, theme.primary1))};
   }
 `
 
@@ -54,7 +50,6 @@ export const LabelRow = styled.div`
   font-size: 0.75rem;
   line-height: 1rem;
   padding: 0.75rem 1rem 0 1rem;
-
   span:hover {
     cursor: pointer;
     color: ${({ theme }) => darken(0.2, theme.text2)};
@@ -72,7 +67,7 @@ export const StyledDropDown = styled(DropDown)<{ selected: boolean }>`
   height: 35%;
 
   path {
-    stroke: ${({ selected, theme }) => (selected ? theme.black : theme.black)};
+    stroke: ${({ selected, theme }) => (selected ? theme.text1 : theme.white)};
     stroke-width: 1.5px;
   }
 `

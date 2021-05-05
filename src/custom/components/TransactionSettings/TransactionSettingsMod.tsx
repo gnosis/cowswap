@@ -1,4 +1,4 @@
-import React, { useState, useRef, useContext, ReactNode } from 'react'
+import React, { useState, useRef, useContext } from 'react'
 import styled, { ThemeContext } from 'styled-components'
 
 import QuestionHelper from 'components/QuestionHelper'
@@ -39,14 +39,14 @@ export const FancyButton = styled.button`
   }
 `
 
-const Option = styled(FancyButton)<{ active: boolean }>`
-  margin-right: 8px;
-  :hover {
-    cursor: pointer;
-  }
-  background-color: ${({ active, theme }) => active && theme.primary1};
-  color: ${({ active, theme }) => (active ? theme.white : theme.text1)};
-`
+// const Option = styled(FancyButton)<{ active: boolean }>`
+//   margin-right: 8px;
+//   :hover {
+//     cursor: pointer;
+//   }
+//   background-color: ${({ active, theme }) => active && theme.primary1};
+//   color: ${({ active, theme }) => (active ? theme.white : theme.text1)};
+// `
 
 const Input = styled.input`
   background: ${({ theme }) => theme.bg1};
