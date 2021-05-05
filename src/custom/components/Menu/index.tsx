@@ -2,8 +2,7 @@ import React from 'react'
 import { Code, MessageCircle /*PieChart*/ } from 'react-feather'
 
 import MenuMod, { MenuItem, InternalMenuItem, MenuFlyout as MenuFlyoutUni } from './MenuMod'
-import { ApplicationModal } from 'state/application/actions'
-import { useToggleModal } from 'state/application/hooks'
+import { useCloseModals } from 'state/application/hooks'
 import styled from 'styled-components'
 import { Separator as SeparatorBase } from 'components/swap/styleds'
 import { CONTRACTS_CODE_LINK, DISCORD_LINK } from 'constants/index'
@@ -124,13 +123,13 @@ export const CloseMenu = styled.button`
 `
 
 export function Menu() {
-  const toggle = useToggleModal(ApplicationModal.MENU)
+  const close = useCloseModals()
 
   return (
     <StyledMenu>
       <MenuFlyout>
-        <CloseMenu onClick={toggle} />
-        <InternalMenuItem to="/faq" onClick={toggle}>
+        <CloseMenu onClick={close} />
+        <InternalMenuItem to="/faq" onClick={close}>
           <Code size={14} />
           FAQ
         </InternalMenuItem>
@@ -141,13 +140,13 @@ export function Menu() {
         </MenuItem> */}
 
         <MenuItem id="link" href={CONTRACTS_CODE_LINK}>
-          <span onClick={toggle}>
+          <span onClick={close}>
             <Code size={14} />
             Code
           </span>
         </MenuItem>
         <MenuItem id="link" href={DISCORD_LINK}>
-          <span onClick={toggle}>
+          <span onClick={close}>
             <MessageCircle size={14} />
             Discord
           </span>
@@ -155,7 +154,7 @@ export function Menu() {
 
         <Separator />
 
-        <Policy to="/terms-and-conditions" onClick={toggle}>
+        <Policy to="/terms-and-conditions" onClick={close}>
           Terms and conditions
         </Policy>
         {/* 
