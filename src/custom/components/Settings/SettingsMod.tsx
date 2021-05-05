@@ -69,7 +69,6 @@ export const StyledMenuButton = styled.button`
     margin-top: 2px;
   }
 `
-
 export const EmojiWrapper = styled.div`
   position: absolute;
   bottom: -6px;
