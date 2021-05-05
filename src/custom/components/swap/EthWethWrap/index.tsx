@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useMemo, useEffect, ReactNode } from 'react'
 import styled from 'styled-components'
-import { TransactionResponse } from '@ethersproject/providers'
+import { TransactionResponse } from 'ethers_providers_alfetopito'
 import { AlertTriangle } from 'react-feather'
 import { Currency, Token, CurrencyAmount } from '@uniswap/sdk'
 

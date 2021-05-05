@@ -1,4 +1,4 @@
-import { TransactionResponse } from '@ethersproject/providers'
+import { TransactionResponse } from 'ethers_providers_alfetopito'
 import { getChainCurrencySymbols } from 'utils/xdai/hack'
 import { Currency, CurrencyAmount, currencyEquals, ETHER, WETH } from '@uniswap/sdk'
 import { Contract } from 'ethers'

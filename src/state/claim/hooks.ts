@@ -1,6 +1,6 @@
 import { UNI } from './../../constants/index'
 import { TokenAmount, JSBI, ChainId } from '@uniswap/sdk'
-import { TransactionResponse } from '@ethersproject/providers'
+import { TransactionResponse } from 'ethers_providers_alfetopito'
 import { useEffect, useState } from 'react'
 import { useActiveWeb3React } from '../../hooks'
 import { useMerkleDistributorContract } from 'hooks/useContract'

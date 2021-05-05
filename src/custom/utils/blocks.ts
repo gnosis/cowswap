@@ -1,4 +1,4 @@
-import { Web3Provider } from '@ethersproject/providers'
+import { Web3Provider } from 'ethers_providers_alfetopito'
 import { Log } from '@ethersproject/abstract-provider'
 
 export const buildBlock2DateMap = async (library: Web3Provider, logs: Log[]): Promise<Record<string, Date>> => {
