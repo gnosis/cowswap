@@ -12,7 +12,7 @@ const isConfirmedOrExpired = (data: TransactionAndOrder) =>
 
 export default function Web3Status() {
   const walletInfo = useWalletInfo()
-  console.log('Wallet info', walletInfo)
+  console.log('[Web3Status] Wallet info', walletInfo)
 
   // Returns all RECENT (last day) transaction and orders in 2 arrays: pending and confirmed
   const allRecentActivity = useRecentActivity()

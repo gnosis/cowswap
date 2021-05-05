@@ -6,6 +6,7 @@ import { PortisConnector } from '@web3-react/portis-connector'
 
 import { FortmaticConnector } from 'connectors/Fortmatic'
 import { NetworkConnector } from 'connectors/NetworkConnector'
+import { AbstractConnector } from '@web3-react/abstract-connector'
 
 export const WALLET_CONNECT_BRIDGE = process.env.WALLET_CONNECT_BRIDGE || 'wss://safe-walletconnect.gnosis.io'
 
@@ -101,3 +102,37 @@ export const walletlink = new WalletLinkConnector({
   appName: 'CowSwap',
   appLogoUrl: 'https://raw.githubusercontent.com/gnosis/gp-swap-ui/develop/public/images/logo-square-512.png'
 })
+
+export enum WalletProvider {
+  INJECTED = 'INJECTED',
+  WALLET_CONNECT = 'WALLET_CONNECT',
+  FORMATIC = 'FORMATIC',
+  PORTIS = 'PORTIS',
+  WALLET_LINK = 'WALLET_LINK'
+}
+
+export function getProviderType(connector: AbstractConnector | undefined): WalletProvider | undefined {
+  if (!connector) {
+    return undefined
+  }
+
+  switch (connector) {
+    case injected:
+      return WalletProvider.INJECTED
+
+    case walletconnect:
+      return WalletProvider.WALLET_CONNECT
+
+    case fortmatic:
+      return WalletProvider.FORMATIC
+
+    case portis:
+      return WalletProvider.PORTIS
+
+    case walletlink:
+      return WalletProvider.WALLET_LINK
+
+    default:
+      return undefined
+  }
+}
