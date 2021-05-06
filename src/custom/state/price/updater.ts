@@ -31,7 +31,9 @@ function priceIsOld(quoteInfo?: QuoteInformationObject): boolean {
   if (!lastPriceCheck) {
     return true
   }
-  return lastPriceCheck + PRICE_UPDATE_TIME > Date.now()
+  const isPriceOld = lastPriceCheck + PRICE_UPDATE_TIME < Date.now()
+  // console.log(`[state:price:updater] Price is old? `, isPriceOld)
+  return isPriceOld
 }
 
 /**
@@ -39,10 +41,10 @@ function priceIsOld(quoteInfo?: QuoteInformationObject): boolean {
  */
 function isFeeExpiringSoon(quoteExpirationIsoDate: string): boolean {
   const feeExpirationDate = Date.parse(quoteExpirationIsoDate)
-  const secondsLeft = (feeExpirationDate.valueOf() - Date.now()) / 1000
-
   const needRefetch = feeExpirationDate <= Date.now() + RENEW_FEE_QUOTES_BEFORE_EXPIRATION_TIME
-  console.log(`[state:price:updater] Fee isExpiring in ${secondsLeft}. Refetch?`, needRefetch)
+
+  // const secondsLeft = (feeExpirationDate.valueOf() - Date.now()) / 1000
+  // console.log(`[state:price:updater] Fee isExpiring in ${secondsLeft}. Refetch?`, needRefetch)
 
   return needRefetch
 }
@@ -119,11 +121,12 @@ export default function FeesUpdater(): null {
     if (!amount) return
 
     // Callback to re-fetch both the fee and the price
-    const refetchFeeAndPriceIfRequired = () => {
+    const refetchQuoteIfRequired = () => {
       const quoteParams = { buyToken, chainId, sellToken, kind, amount: amount.raw.toString() }
 
       const refetchAll = isRefetchQuoteRequired(quoteParams, quoteInfo)
       const refetchPrice = priceIsOld(quoteInfo)
+
       if (refetchAll || refetchPrice) {
         refetchQuote({
           quoteParams,
@@ -133,12 +136,12 @@ export default function FeesUpdater(): null {
     }
 
     // Refetch fee and price if any parameter changes
-    refetchFeeAndPriceIfRequired()
+    refetchQuoteIfRequired()
 
     // Periodically re-fetch the fee/price, even if the user don't change the parameters
     // Note that refetchFee won't refresh if it doesn't need to (i.e. the quote is valid for a long time)
     const intervalId = setInterval(() => {
-      refetchFeeAndPriceIfRequired()
+      refetchQuoteIfRequired()
     }, REFETCH_CHECK_INTERVAL)
 
     return () => clearInterval(intervalId)
