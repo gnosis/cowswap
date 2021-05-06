@@ -1,15 +1,15 @@
 import { useCallback } from 'react'
-import { useAddFee, useClearFee } from '../state/fee/hooks'
-import { registerOnWindow } from '../utils/misc'
-import { FeeQuoteParams, getFeeQuote } from '../utils/operator'
+import { useUpdateQuote, useClearQuote } from 'state/price/hooks'
+import { registerOnWindow } from 'utils/misc'
+import { FeeQuoteParams, getFeeQuote } from 'utils/operator'
 
 /**
  * @returns callback that fetches a new quote and update the state
  */
-export function useRefetchFeeCallback() {
-  const addFee = useAddFee()
-  const clearFee = useClearFee()
-  registerOnWindow({ addFee })
+export function useRefetchQuoteCallback() {
+  const updateQuote = useUpdateQuote()
+  const clearQuote = useClearQuote()
+  registerOnWindow({ addFee: updateQuote })
 
   return useCallback(
     async ({ sellToken, buyToken, amount, kind, chainId }: FeeQuoteParams) => {
@@ -19,14 +19,16 @@ export function useRefetchFeeCallback() {
         return null
       })
 
+      // TODO: Get price too
+
       if (fee) {
         // Update quote
-        addFee({ sellToken, buyToken, amount, fee, chainId, lastCheck: Date.now() })
+        updateQuote({ sellToken, buyToken, amount, fee, chainId, lastCheck: Date.now() })
       } else {
         // Clear the fee
-        clearFee({ chainId, token: sellToken })
+        clearQuote({ chainId, token: sellToken })
       }
     },
-    [addFee, clearFee]
+    [updateQuote, clearQuote]
   )
 }

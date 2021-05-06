@@ -1,6 +1,6 @@
 import { createReducer, PayloadAction } from '@reduxjs/toolkit'
 import { ChainId } from '@uniswap/sdk'
-import { updateFee, clearFee } from './actions'
+import { updateQuote, clearQuote } from './actions'
 import { Writable } from 'custom/types'
 import { PrefillStateRequired } from '../orders/reducer'
 import { FeeQuoteParams } from 'utils/operator'
@@ -15,28 +15,28 @@ export interface FeeInformation {
   amount: string
 }
 
-export interface FeeInformationObject extends Omit<FeeQuoteParams, 'kind'> {
+export interface QuoteInformationObject extends Omit<FeeQuoteParams, 'kind'> {
   fee: FeeInformation
+  // TODO: add other price information fields (following PRs)
   lastCheck: number
 }
 
-// {token address => FeeInformationObject} mapping
-export type FeesMap = Record<string, FeeInformationObject>
+// Map token addresses to their last quote information
+export type QuotesMap = Record<string, QuoteInformationObject>
 
-export type FeeInformationState = {
-  readonly [chainId in ChainId]?: Partial<FeesMap>
+export type QuoteInformationState = {
+  readonly [chainId in ChainId]?: Partial<QuotesMap>
 }
 
-const initialState: FeeInformationState = {}
+const initialState: QuoteInformationState = {}
 
-// makes sure there's always an object at state[chainId], state[chainId].feesMap
-function prefillState(
-  state: Writable<FeeInformationState>,
+// Makes sure there stat is initialized
+function initializeState(
+  state: Writable<QuoteInformationState>,
   { payload: { chainId } }: PayloadAction<PrefillStateRequired>
-): asserts state is Required<FeeInformationState> {
-  // asserts that state[chainId].feesMap is ok to access
+): asserts state is Required<QuoteInformationState> {
+  // Makes sure there stat is initialized
   const stateAtChainId = state[chainId]
-
   if (!stateAtChainId) {
     state[chainId] = {}
     return
@@ -45,14 +45,14 @@ function prefillState(
 
 export default createReducer(initialState, builder =>
   builder
-    .addCase(updateFee, (state, action) => {
-      prefillState(state, action)
+    .addCase(updateQuote, (state, action) => {
+      initializeState(state, action)
 
       const { sellToken, chainId } = action.payload
       state[chainId][sellToken] = action.payload
     })
-    .addCase(clearFee, (state, action) => {
-      prefillState(state, action)
+    .addCase(clearQuote, (state, action) => {
+      initializeState(state, action)
       const { token, chainId } = action.payload
       delete state[chainId][token]
     })

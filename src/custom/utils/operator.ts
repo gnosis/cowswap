@@ -3,7 +3,7 @@ import { getSigningSchemeApiValue, OrderCreation } from 'utils/signatures'
 import { APP_ID } from 'constants/index'
 import { registerOnWindow } from './misc'
 import { isDev } from './environments'
-import { FeeInformation } from 'state/fee/reducer'
+import { FeeInformation } from 'state/price/reducer'
 
 function getOperatorUrl(): Partial<Record<ChainId, string>> {
   if (isDev) {

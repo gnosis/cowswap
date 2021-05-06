@@ -5,13 +5,13 @@ import useIsWindowVisible from 'hooks/useIsWindowVisible'
 import { Field } from 'state/swap/actions'
 import { useCurrency } from 'hooks/Tokens'
 import useDebounce from 'hooks/useDebounce'
-import { useAllFees } from './hooks'
-import { useRefetchFeeCallback } from 'hooks/useRefetchFee'
+import { useAllQuotes } from './hooks'
+import { useRefetchQuoteCallback } from 'hooks/useRefetchFee'
 import { FeeQuoteParams } from 'utils/operator'
-import { FeeInformationObject } from './reducer'
+import { QuoteInformationObject } from './reducer'
 
 const DEBOUNCE_TIME = 350
-const REFETCH_FEE_CHECK_INTERVAL = 15000 // Every 15s
+const REFETCH_CHECK_INTERVAL = 10000 // Every 10s
 const RENEW_FEE_QUOTES_BEFORE_EXPIRATION_TIME = 30000 // Will renew the quote if there's less than 30 seconds left for the quote to expire
 const WAITING_TIME_BETWEEN_EQUAL_REQUESTS = 10000 // Prevents from sending the same request to often (max, every 10s)
 /**
@@ -24,15 +24,14 @@ function wasCheckedRecently(lastFeeCheck: number): boolean {
 /**
  * Returns true if the fee quote expires soon (in less than RENEW_FEE_QUOTES_BEFORE_EXPIRATION_TIME milliseconds)
  */
-function isExpiringSoon(quoteExpirationIsoDate: string): boolean {
-  const quoteExpirationDate = Date.parse(quoteExpirationIsoDate)
-  // const secondsLeft = (quoteExpirationDate.valueOf() - Date.now()) / 1000
-  // console.log(
-  //   `[state:fee:updater] Fee isExpiring in ${secondsLeft}. Refetch?`,
-  //   quoteExpirationDate <= Date.now() + RENEW_FEE_QUOTES_BEFORE_EXPIRATION_TIME
-  // )
+function isFeeExpiringSoon(quoteExpirationIsoDate: string): boolean {
+  const feeExpirationDate = Date.parse(quoteExpirationIsoDate)
+  const secondsLeft = (feeExpirationDate.valueOf() - Date.now()) / 1000
 
-  return quoteExpirationDate <= Date.now() + RENEW_FEE_QUOTES_BEFORE_EXPIRATION_TIME
+  const needRefetch = feeExpirationDate <= Date.now() + RENEW_FEE_QUOTES_BEFORE_EXPIRATION_TIME
+  console.log(`[state:price:updater] Fee isExpiring in ${secondsLeft}. Refetch?`, needRefetch)
+
+  return needRefetch
 }
 
 /**
@@ -40,7 +39,7 @@ function isExpiringSoon(quoteExpirationIsoDate: string): boolean {
  *
  * Quotes are only valid for a given token-pair and amount. If any of these parameter change, the fee needs to be re-fetched
  */
-function feeMatchesCurrentParameters(currentParams: FeeQuoteParams, feeInfo: FeeInformationObject): boolean {
+function feeMatchesCurrentParameters(currentParams: FeeQuoteParams, feeInfo: QuoteInformationObject): boolean {
   const { amount: currentAmount, sellToken: currentSellToken, buyToken: currentBuyToken } = currentParams
   const { amount, buyToken, sellToken } = feeInfo
 
@@ -50,7 +49,7 @@ function feeMatchesCurrentParameters(currentParams: FeeQuoteParams, feeInfo: Fee
 /**
  *  Decides if we need to refetch the fee information given the current parameters (selected by the user), and the current feeInfo (in the state)
  */
-function isRefetchQuoteRequired(currentParams: FeeQuoteParams, feeInfo?: FeeInformationObject): boolean {
+function isRefetchQuoteRequired(currentParams: FeeQuoteParams, feeInfo?: QuoteInformationObject): boolean {
   if (feeInfo) {
     if (!feeMatchesCurrentParameters(currentParams, feeInfo)) {
       // If the current parameters don't match the fee, the fee information is invalid and needs to be re-fetched
@@ -66,7 +65,7 @@ function isRefetchQuoteRequired(currentParams: FeeQuoteParams, feeInfo?: FeeInfo
       return false
     } else {
       // Re-fetch if the quote is expiring soon
-      return isExpiringSoon(feeInfo.fee.expirationDate)
+      return isFeeExpiringSoon(feeInfo.fee.expirationDate)
     }
   } else {
     // If there's no fee information, we always re-fetch
@@ -89,10 +88,11 @@ export default function FeesUpdater(): null {
 
   const sellCurrency = useCurrency(sellToken)
   const buyCurrency = useCurrency(buyToken)
-  const feesMap = useAllFees({ chainId })
+  const feesMap = useAllQuotes({ chainId })
   const quoteInfo = feesMap && sellToken ? feesMap[sellToken] : undefined
 
-  const refetchFee = useRefetchFeeCallback()
+  const refetchQuote = useRefetchQuoteCallback()
+  // TODO: Add refetchPrice
   const windowVisible = useIsWindowVisible()
 
   // Update if any parameter is changing
@@ -106,22 +106,23 @@ export default function FeesUpdater(): null {
     // Don't refetch if the amount is missing
     if (!amount) return
 
-    // Callback to re-fetch (when required)
-    const refetchFeeIfRequired = () => {
+    // Callback to re-fetch both the fee and the price
+    const refetchFeeAndPriceIfRequired = () => {
       const quoteParams = { buyToken, chainId, sellToken, kind, amount: amount.raw.toString() }
       if (isRefetchQuoteRequired(quoteParams, quoteInfo)) {
-        refetchFee(quoteParams).catch(error => console.error('Error re-fetching the fee', error))
+        refetchQuote(quoteParams).catch(error => console.error('Error re-fetching the fee', error))
       }
+      // TODO: refetchPrice if necesary
     }
 
-    // Refetch fee if any parameter changes
-    refetchFeeIfRequired()
+    // Refetch fee and price if any parameter changes
+    refetchFeeAndPriceIfRequired()
 
-    // Periodically re-fetch the fee, even if the user don't change the parameters
+    // Periodically re-fetch the fee/price, even if the user don't change the parameters
     // Note that refetchFee won't refresh if it doesn't need to (i.e. the quote is valid for a long time)
     const intervalId = setInterval(() => {
-      refetchFeeIfRequired()
-    }, REFETCH_FEE_CHECK_INTERVAL)
+      refetchFeeAndPriceIfRequired()
+    }, REFETCH_CHECK_INTERVAL)
 
     return () => clearInterval(intervalId)
   }, [
@@ -134,7 +135,7 @@ export default function FeesUpdater(): null {
     sellCurrency,
     buyCurrency,
     quoteInfo,
-    refetchFee
+    refetchQuote
   ])
 
   return null
