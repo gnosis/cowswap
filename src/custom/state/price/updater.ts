@@ -6,7 +6,7 @@ import { Field } from 'state/swap/actions'
 import { useCurrency } from 'hooks/Tokens'
 import useDebounce from 'hooks/useDebounce'
 import { useAllQuotes } from './hooks'
-import { useRefetchQuoteCallback } from 'hooks/useRefetchFee'
+import { useRefetchQuoteCallback } from 'hooks/useRefetchQuoteCallback'
 import { FeeQuoteParams } from 'utils/operator'
 import { QuoteInformationObject } from './reducer'
 
@@ -88,11 +88,10 @@ export default function FeesUpdater(): null {
 
   const sellCurrency = useCurrency(sellToken)
   const buyCurrency = useCurrency(buyToken)
-  const feesMap = useAllQuotes({ chainId })
-  const quoteInfo = feesMap && sellToken ? feesMap[sellToken] : undefined
+  const quotesMap = useAllQuotes({ chainId })
+  const quoteInfo = quotesMap && sellToken ? quotesMap[sellToken] : undefined
 
   const refetchQuote = useRefetchQuoteCallback()
-  // TODO: Add refetchPrice
   const windowVisible = useIsWindowVisible()
 
   // Update if any parameter is changing

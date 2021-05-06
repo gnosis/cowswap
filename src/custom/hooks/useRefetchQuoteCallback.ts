@@ -9,7 +9,7 @@ import { FeeQuoteParams, getFeeQuote } from 'utils/operator'
 export function useRefetchQuoteCallback() {
   const updateQuote = useUpdateQuote()
   const clearQuote = useClearQuote()
-  registerOnWindow({ addFee: updateQuote })
+  registerOnWindow({ updateQuote })
 
   return useCallback(
     async ({ sellToken, buyToken, amount, kind, chainId }: FeeQuoteParams) => {
