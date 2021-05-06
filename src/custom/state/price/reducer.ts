@@ -5,6 +5,8 @@ import { Writable } from 'custom/types'
 import { PrefillStateRequired } from '../orders/reducer'
 import { FeeQuoteParams } from 'utils/operator'
 
+// API Doc: https://protocol-rinkeby.dev.gnosisdev.com/api
+
 export const EMPTY_FEE = {
   feeAsCurrency: undefined,
   amount: '0'
@@ -15,8 +17,14 @@ export interface FeeInformation {
   amount: string
 }
 
+export interface PriceInformation {
+  token: string
+  amount: string
+}
+
 export interface QuoteInformationObject extends Omit<FeeQuoteParams, 'kind'> {
   fee: FeeInformation
+  price: PriceInformation
   // TODO: add other price information fields (following PRs)
   lastCheck: number
 }
