@@ -70,6 +70,11 @@ export function useDerivedSwapInfo(): DerivedSwapInfo {
     chainId
   })
 
+  useEffect(() => {
+    console.log('[useDerivedSwapInfo] Price quote: ', quote?.price.amount)
+    console.log('[useDerivedSwapInfo] Fee quote: ', quote?.fee?.amount)
+  }, [quote])
+
   const bestTradeExactIn = useTradeExactInWithFee({
     parsedAmount: isExactIn ? parsedAmount : undefined,
     outputCurrency,
@@ -268,7 +273,7 @@ export function useIsFeeGreaterThanInput({
 }): { isFeeGreater: boolean; fee: CurrencyAmount | null } {
   const quote = useQuote({ chainId, token: address })
 
-  if (!quote || !parsedAmount) return { isFeeGreater: false, fee: null }
+  if (!quote || !quote.fee || !parsedAmount) return { isFeeGreater: false, fee: null }
 
   const feeBigNumber = BigNumber.from(quote.fee.amount)
 
