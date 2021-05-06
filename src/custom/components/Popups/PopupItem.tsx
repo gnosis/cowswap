@@ -3,8 +3,6 @@ import styled from 'styled-components'
 import { PopupContent } from 'state/application/actions'
 import { default as Wrapper, Popup as PopupUni } from './PopupItemMod'
 
-// export const StyledPopupItem = styled(PopupItemMod)``
-
 export const PopupCustom = styled(PopupUni)`
   border: 2px solid ${({ theme }) => theme.black};
   box-shadow: 2px 2px 0 ${({ theme }) => theme.black};
