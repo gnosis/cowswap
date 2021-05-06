@@ -3,7 +3,7 @@ import { getSigningSchemeApiValue, OrderCreation } from 'utils/signatures'
 import { APP_ID } from 'constants/index'
 import { registerOnWindow } from './misc'
 import { isDev } from './environments'
-import { FeeInformation } from 'state/fee/reducer'
+import { FeeInformation, PriceInformation } from 'state/price/reducer'
 
 function getOperatorUrl(): Partial<Record<ChainId, string>> {
   if (isDev) {
@@ -219,7 +219,7 @@ async function _getJson(chainId: ChainId, url: string): Promise<any> {
   }
 }
 
-export async function getPriceQuote(params: PriceQuoteParams): Promise<FeeInformation> {
+export async function getPriceQuote(params: PriceQuoteParams): Promise<PriceInformation> {
   const { baseToken, quoteToken, amount, kind, chainId } = params
   const [checkedBaseToken, checkedQuoteToken] = [checkIfEther(baseToken, chainId), checkIfEther(quoteToken, chainId)]
   console.log('[util:operator] Get Price from API', params)
