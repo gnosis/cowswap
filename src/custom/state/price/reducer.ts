@@ -57,7 +57,8 @@ export default createReducer(initialState, builder =>
       const { sellToken, chainId } = action.payload
       state[chainId][sellToken] = {
         ...state[chainId][sellToken],
-        ...action.payload
+        ...action.payload,
+        fee: action.payload.fee || state[chainId][sellToken]?.fee
       }
     })
     .addCase(clearQuote, (state, action) => {

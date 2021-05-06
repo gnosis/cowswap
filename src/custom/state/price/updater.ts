@@ -32,7 +32,7 @@ function priceIsOld(quoteInfo?: QuoteInformationObject): boolean {
     return true
   }
   const isPriceOld = lastPriceCheck + PRICE_UPDATE_TIME < Date.now()
-  // console.log(`[state:price:updater] Price is old? `, isPriceOld)
+  console.log(`[state:price:updater] Price is old? `, isPriceOld)
   return isPriceOld
 }
 
@@ -43,8 +43,8 @@ function isFeeExpiringSoon(quoteExpirationIsoDate: string): boolean {
   const feeExpirationDate = Date.parse(quoteExpirationIsoDate)
   const needRefetch = feeExpirationDate <= Date.now() + RENEW_FEE_QUOTES_BEFORE_EXPIRATION_TIME
 
-  // const secondsLeft = (feeExpirationDate.valueOf() - Date.now()) / 1000
-  // console.log(`[state:price:updater] Fee isExpiring in ${secondsLeft}. Refetch?`, needRefetch)
+  const secondsLeft = (feeExpirationDate.valueOf() - Date.now()) / 1000
+  console.log(`[state:price:updater] Fee isExpiring in ${secondsLeft}. Refetch?`, needRefetch)
 
   return needRefetch
 }
@@ -128,6 +128,7 @@ export default function FeesUpdater(): null {
       const refetchPrice = priceIsOld(quoteInfo)
 
       if (refetchAll || refetchPrice) {
+        console.log('Update price. Fetch also fee?', refetchPrice)
         refetchQuote({
           quoteParams,
           fetchFee: refetchAll
