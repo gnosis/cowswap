@@ -2,10 +2,16 @@ import { useCallback } from 'react'
 import { useClearQuote, useUpdateQuote } from 'state/price/hooks'
 import { getCanonicalMarket, registerOnWindow } from 'utils/misc'
 import { FeeQuoteParams, getFeeQuote, getPriceQuote } from 'utils/operator'
+import { FeeInformation } from '../state/price/reducer'
 
 export interface RefetchQuoteCallbackParmams {
   quoteParams: FeeQuoteParams
   fetchFee: boolean
+}
+
+function handleError(err: any): undefined {
+  console.error('Error fetching price/fee', err)
+  return undefined
 }
 
 /**
@@ -22,18 +28,15 @@ export function useRefetchQuoteCallback() {
       const { baseToken, quoteToken } = getCanonicalMarket({ sellToken, buyToken, kind })
 
       // Get a new price quote
-      const pricePromise = getPriceQuote({ chainId, baseToken, quoteToken, amount, kind })
+      const pricePromise = getPriceQuote({ chainId, baseToken, quoteToken, amount, kind }).catch(handleError)
 
       // Get a new fee quote (if required)
       const feePromise = fetchFee
-        ? getFeeQuote({ chainId, sellToken, buyToken, amount, kind }).catch(err => {
-            console.error('Error fetching the fee', err)
-            return null
-          })
-        : Promise.resolve(null)
+        ? getFeeQuote({ chainId, sellToken, buyToken, amount, kind }).catch(handleError)
+        : undefined
 
       const [fee, price] = await Promise.all([feePromise, pricePromise])
-      if (fee || !fetchFee) {
+      if ((fee || !fetchFee) && price) {
         // Update quote
         updateQuote({
           sellToken,
@@ -43,7 +46,7 @@ export function useRefetchQuoteCallback() {
           chainId,
           lastCheck: Date.now(),
           // Fee is only updated when fetchFee=true
-          fee: fee || undefined
+          fee
         })
       } else {
         // Clear the fee
