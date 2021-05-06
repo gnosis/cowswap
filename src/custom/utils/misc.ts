@@ -1,5 +1,5 @@
 import { ChainId } from '@uniswap/sdk'
-import { OrderKind } from 'state/orders/actions'
+// import { OrderKind } from 'state/orders/actions'
 
 export const isTruthy = <T>(value: T | null | undefined | false): value is T => !!value
 
@@ -20,14 +20,14 @@ export function getChainIdValues(): ChainId[] {
   return ChainIdList.slice(ChainIdList.length / 2) as ChainId[]
 }
 
-export function getCanonicalMarket(sellToken: string, buyToken: string, kind: OrderKind) {
-  // TODO: Implement smarter logic https://github.com/gnosis/gp-ui/issues/331
+// export function getCanonicalMarket(sellToken: string, buyToken: string, kind: OrderKind) {
+//   // TODO: Implement smarter logic https://github.com/gnosis/gp-ui/issues/331
 
-  if (kind === 'sell') {
-  }
+//   if (kind === 'sell') {
+//   }
 
-  return {
-    quoteToken,
-    baseToken
-  }
-}
+//   return {
+//     quoteToken,
+//     baseToken
+//   }
+// }
