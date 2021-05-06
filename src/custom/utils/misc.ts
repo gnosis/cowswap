@@ -1,5 +1,5 @@
 import { ChainId } from '@uniswap/sdk'
-// import { OrderKind } from 'state/orders/actions'
+import { Market } from 'types/index'
 
 export const isTruthy = <T>(value: T | null | undefined | false): value is T => !!value
 
@@ -20,14 +20,30 @@ export function getChainIdValues(): ChainId[] {
   return ChainIdList.slice(ChainIdList.length / 2) as ChainId[]
 }
 
-// export function getCanonicalMarket(sellToken: string, buyToken: string, kind: OrderKind) {
-//   // TODO: Implement smarter logic https://github.com/gnosis/gp-ui/issues/331
+export function getCanonicalMarket({
+  sellToken,
+  buyToken,
+  kind
+}: {
+  sellToken: string
+  buyToken: string
+  kind: string
+}): Market {
+  // TODO: Implement smarter logic https://github.com/gnosis/gp-ui/issues/331
 
-//   if (kind === 'sell') {
-//   }
-
-//   return {
-//     quoteToken,
-//     baseToken
-//   }
-// }
+  // Not big reasoning on my selection of what is base and what is quote (important thing in this PR is just to do a consistent selection)
+  // The used reasoning is:
+  //    - If I sell apples, the quote is EUR (buy token)
+  //    - If I buy apples, the quote is EUR (sell token)
+  if (kind === 'sell') {
+    return {
+      baseToken: sellToken,
+      quoteToken: buyToken
+    }
+  } else {
+    return {
+      baseToken: buyToken,
+      quoteToken: sellToken
+    }
+  }
+}

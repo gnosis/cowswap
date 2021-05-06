@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 import { useClearQuote, useUpdateQuote } from 'state/price/hooks'
-import { registerOnWindow } from 'utils/misc'
+import { getCanonicalMarket, registerOnWindow } from 'utils/misc'
 import { FeeQuoteParams, getFeeQuote, getPriceQuote } from 'utils/operator'
 
 export interface RefetchQuoteCallbackParmams {
@@ -19,10 +19,7 @@ export function useRefetchQuoteCallback() {
   return useCallback(
     async ({ quoteParams, fetchFee }: RefetchQuoteCallbackParmams) => {
       const { sellToken, buyToken, amount, kind, chainId } = quoteParams
-
-      // TODO: Use an util for this
-      const baseToken = sellToken
-      const quoteToken = buyToken
+      const { baseToken, quoteToken } = getCanonicalMarket({ sellToken, buyToken, kind })
 
       // Get a new price quote
       const pricePromise = getPriceQuote({ chainId, baseToken, quoteToken, amount, kind })

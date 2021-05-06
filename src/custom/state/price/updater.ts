@@ -127,7 +127,6 @@ export default function FeesUpdater(): null {
       const refetchAll = isRefetchQuoteRequired(quoteParams, quoteInfo)
       const refetchPrice = priceIsOld(quoteInfo)
       if (refetchAll || refetchPrice) {
-        console.log('[state:price:updater] Update price. Fetch also fee?', refetchPrice)
         refetchQuote({
           quoteParams,
           fetchFee: refetchAll
