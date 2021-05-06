@@ -35,7 +35,7 @@ export const Popup = styled.div`
     }
   `}
 `
-const Fader = styled.div`
+export const Fader = styled.div`
   position: absolute;
   bottom: 0px;
   left: 0px;
