@@ -55,7 +55,7 @@ export default function Popups() {
       <FixedPopupColumn gap="20px" extraPadding={urlWarningActive}>
         {/* <ClaimPopup /> */}
         {activePopups.map(item => (
-          <PopupItem key={item.key} content={item.content} popKey={item.key} removeAfterMs={item.removeAfterMs} />
+          <PopupItem key={item.key} content={item.content} popKey={item.key} removeAfterMs={null} />
         ))}
       </FixedPopupColumn>
       <MobilePopupWrapper height={activePopups?.length > 0 ? 'fit-content' : 0}>
@@ -64,7 +64,7 @@ export default function Popups() {
             .slice(0)
             .reverse()
             .map(item => (
-              <PopupItem key={item.key} content={item.content} popKey={item.key} removeAfterMs={item.removeAfterMs} />
+              <PopupItem key={item.key} content={item.content} popKey={item.key} removeAfterMs={null} />
             ))}
         </MobilePopupInner>
       </MobilePopupWrapper>
