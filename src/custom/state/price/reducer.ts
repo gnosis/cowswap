@@ -23,9 +23,8 @@ export interface PriceInformation {
 }
 
 export interface QuoteInformationObject extends Omit<FeeQuoteParams, 'kind'> {
-  fee: FeeInformation
+  fee?: FeeInformation
   price: PriceInformation
-  // TODO: add other price information fields (following PRs)
   lastCheck: number
 }
 
@@ -55,9 +54,11 @@ export default createReducer(initialState, builder =>
   builder
     .addCase(updateQuote, (state, action) => {
       initializeState(state, action)
-
       const { sellToken, chainId } = action.payload
-      state[chainId][sellToken] = action.payload
+      state[chainId][sellToken] = {
+        ...state[chainId][sellToken],
+        ...action.payload
+      }
     })
     .addCase(clearQuote, (state, action) => {
       initializeState(state, action)

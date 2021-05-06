@@ -268,7 +268,7 @@ export function useIsFeeGreaterThanInput({
 }): { isFeeGreater: boolean; fee: CurrencyAmount | null } {
   const quote = useQuote({ chainId, token: address })
 
-  if (!quote || !parsedAmount) return { isFeeGreater: false, fee: null }
+  if (!quote || !quote.fee || !parsedAmount) return { isFeeGreater: false, fee: null }
 
   const feeBigNumber = BigNumber.from(quote.fee.amount)
 

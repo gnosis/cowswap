@@ -1,8 +1,11 @@
 import { createAction } from '@reduxjs/toolkit'
 import { ChainId } from '@uniswap/sdk'
-import { QuoteInformationObject } from './reducer'
+import { FeeInformation, QuoteInformationObject } from './reducer'
 
-export type UpdateQuoteParams = QuoteInformationObject
+// UpdateQuoteParams is QuoteInformationObject but with the fee optional
+export type UpdateQuoteParams = Omit<QuoteInformationObject, 'fee'> & {
+  fee?: FeeInformation
+}
 
 export interface ClearQuoteParams {
   token: string // token address,
