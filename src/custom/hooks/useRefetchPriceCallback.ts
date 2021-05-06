@@ -2,7 +2,6 @@ import { useCallback } from 'react'
 import { useClearQuote, useUpdateQuote } from 'state/price/hooks'
 import { getCanonicalMarket, registerOnWindow } from 'utils/misc'
 import { FeeQuoteParams, getFeeQuote, getPriceQuote } from 'utils/operator'
-import { FeeInformation } from '../state/price/reducer'
 
 export interface RefetchQuoteCallbackParmams {
   quoteParams: FeeQuoteParams
