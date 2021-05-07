@@ -110,7 +110,7 @@ function themeVariables(colorsTheme: Colors) {
       `,
       fontWeight: '800',
       border: `4px solid ${colorsTheme.black}`,
-      borderRadius: '9px',
+      borderRadius: '16px',
       boxShadow: `4px 4px 0px ${colorsTheme.black}`
     },
     buttonOutlined: {
@@ -120,7 +120,7 @@ function themeVariables(colorsTheme: Colors) {
       `,
       fontWeight: '800',
       border: `4px solid ${colorsTheme.black}`,
-      borderRadius: '9px',
+      borderRadius: '16px',
       boxShadow: `4px 4px 0px ${colorsTheme.black}`
     },
     buttonLight: {
