@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useRef } from 'react'
+import React, { useCallback, useContext, useEffect } from 'react'
 import { X } from 'react-feather'
 import { useSpring } from 'react-spring/web'
 import styled, { ThemeContext } from 'styled-components'
@@ -57,7 +57,6 @@ export default function PopupItem({
   popKey: string
   className?: string
 }) {
-  const node = useRef<HTMLDivElement>()
   const removePopup = useRemovePopup()
   const removeThisPopup = useCallback(() => removePopup(popKey), [popKey, removePopup])
   useEffect(() => {
@@ -99,7 +98,7 @@ export default function PopupItem({
   })
 
   return (
-    <Popup ref={node as any} className={className}>
+    <Popup className={className}>
       <StyledClose color={theme.text2} onClick={removeThisPopup} />
       {popupContent}
       {removeAfterMs !== null ? <AnimatedFader style={faderStyle} /> : null}
