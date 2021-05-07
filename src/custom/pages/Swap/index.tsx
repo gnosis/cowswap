@@ -14,6 +14,7 @@ import {
   ArrowWrapper as ArrowWrapperUni
 } from 'components/swap/styleds'
 import { AutoColumn } from 'components/Column'
+import Card from 'components/Card'
 import QuestionHelper from 'components/QuestionHelper'
 import { ButtonError, ButtonPrimary } from 'components/Button'
 import EthWethWrap, { Props as EthWethWrapProps } from 'components/swap/EthWethWrap'
@@ -44,6 +45,10 @@ const SwapModWrapper = styled(SwapMod)`
 
     ${AutoColumn} {
       grid-row-gap: 3px;
+    }
+
+    ${Card} > ${AutoColumn} {
+      margin: 6px auto 0;
     }
 
     ${ArrowWrapperUni} {
