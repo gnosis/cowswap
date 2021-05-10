@@ -2,6 +2,8 @@ import { useCallback } from 'react'
 import { useClearQuote, useUpdateQuote } from 'state/price/hooks'
 import { getCanonicalMarket, registerOnWindow } from 'utils/misc'
 import { FeeQuoteParams, getFeeQuote, getPriceQuote } from 'utils/operator'
+import { UnsupportedToken } from 'state/price/reducer'
+import { isFeeOrPriceInformation, isUnsupportedToken } from 'state/price/utils'
 
 export interface RefetchQuoteCallbackParmams {
   quoteParams: FeeQuoteParams
@@ -35,18 +37,24 @@ export function useRefetchQuoteCallback() {
         : undefined
 
       const [fee, price] = await Promise.all([feePromise, pricePromise])
-      if ((fee || !fetchFee) && price) {
+      if (isFeeOrPriceInformation(fee) && isFeeOrPriceInformation(price)) {
         // Update quote
-        updateQuote({
-          sellToken,
-          buyToken,
-          amount,
-          price,
-          chainId,
-          lastCheck: Date.now(),
-          // Fee is only updated when fetchFee=true
-          fee
-        })
+        // TODO: check this
+        !fetchFee &&
+          updateQuote({
+            sellToken,
+            buyToken,
+            amount,
+            price,
+            chainId,
+            lastCheck: Date.now(),
+            // Fee is only updated when fetchFee=true
+            fee
+          })
+      } else if (isUnsupportedToken(price) || isUnsupportedToken(fee)) {
+        const unsupportedToken = isUnsupportedToken(price) ? price : (fee as UnsupportedToken)
+        // unsupported token error, mark token as such
+        console.debug('[UNSUPPORTED TOKEN!]::', unsupportedToken.errorType, unsupportedToken.description)
       } else {
         // Clear the fee
         clearQuote({ chainId, token: sellToken })
