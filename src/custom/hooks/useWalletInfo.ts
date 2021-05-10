@@ -26,7 +26,7 @@ async function getWcPeerMetadata(connector: WalletConnectConnector): Promise<{ w
   if (meta) {
     return {
       walletName: meta.name,
-      icon: meta.icons.length > 0 ? meta.icons[0] : undefined
+      icon: meta.icons?.length > 0 ? meta.icons[0] : undefined
     }
   } else {
     return { walletName: undefined, icon: undefined }
