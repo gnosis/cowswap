@@ -28,7 +28,7 @@ export interface SwapModalFooterProps {
   swapErrorMessage: string | undefined
   disabledConfirm: boolean
   fee: { feeTitle: string; feeTooltip: string; feeAmount?: CurrencyAmount | null }
-  priceImpactWithoutFee?: Percent
+  // priceImpactWithoutFee?: Percent
 }
 
 export default function SwapModalFooter({
