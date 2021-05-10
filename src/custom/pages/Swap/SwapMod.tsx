@@ -57,6 +57,7 @@ import UnsupportedCurrencyFooter from 'components/swap/UnsupportedCurrencyFooter
 import { isTradeBetter } from 'utils/trades'
 import FeeInformationTooltip from 'components/swap/FeeInformationTooltip'
 import { SwapProps } from '.'
+import { logTradeDetails } from 'state/swap/utils'
 
 export default function Swap({
   history,
@@ -116,6 +117,9 @@ export default function Swap({
     currencies,
     inputError: swapInputError
   } = useDerivedSwapInfo()
+
+  // Log all trade information
+  logTradeDetails(v2Trade, allowedSlippage)
 
   // Checks if either currency is native ETH
   // MOD: adds this hook
