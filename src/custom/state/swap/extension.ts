@@ -47,19 +47,17 @@ export const stringToCurrency = (amount: string, currency: Currency) =>
  */
 export function useTradeExactInWithFee({
   parsedAmount: parsedInputAmount,
-  inputCurrency,
   outputCurrency,
   quote
-}: TradeParams): TradeWithFee | null {
+}: Omit<TradeParams, 'inputCurrency'>): TradeWithFee | null {
   // Original Uni trade hook
   const originalTrade = useTradeExactIn(parsedInputAmount, outputCurrency ?? undefined)
 
   // make sure we have a typed in amount, a fee, and a price
   // else we can assume the trade will be null
-  if (!parsedInputAmount || !originalTrade || !inputCurrency || !outputCurrency || !quote?.fee || !quote?.price)
-    return null
+  if (!parsedInputAmount || !originalTrade || !outputCurrency || !quote?.fee || !quote?.price) return null
 
-  const feeAsCurrency = stringToCurrency(quote.fee.amount, inputCurrency)
+  const feeAsCurrency = stringToCurrency(quote.fee.amount, parsedInputAmount.currency)
   // Check that fee amount is not greater than the user's input amt
   const isValidFee = feeAsCurrency.lessThan(parsedInputAmount)
   // If the feeAsCurrency value is higher than we are inputting, return undefined
