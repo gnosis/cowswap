@@ -17,6 +17,11 @@ export interface FeeInformation {
   amount: string
 }
 
+export interface UnsupportedToken {
+  errorType: string
+  description: string
+}
+
 export interface PriceInformation {
   token: string
   amount: string

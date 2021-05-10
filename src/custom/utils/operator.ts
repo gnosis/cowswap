@@ -3,7 +3,7 @@ import { getSigningSchemeApiValue, OrderCreation } from 'utils/signatures'
 import { APP_ID } from 'constants/index'
 import { registerOnWindow } from './misc'
 import { isDev } from './environments'
-import { FeeInformation, PriceInformation } from 'state/price/reducer'
+import { FeeInformation, PriceInformation, UnsupportedToken } from 'state/price/reducer'
 
 function getOperatorUrl(): Partial<Record<ChainId, string>> {
   if (isDev) {
@@ -203,11 +203,23 @@ function toApiAddress(address: string, chainId: ChainId): string {
   return address
 }
 
+function _checkResponseStatus(response: Response) {
+  switch (response.status) {
+    // Proper response we expect
+    case 200:
+    // Token not supported by the protocol (e.g. token with fee on transfer)
+    case 400:
+      return response
+    default:
+      return undefined
+  }
+}
+
 async function _getJson(chainId: ChainId, url: string): Promise<any> {
   let response: Response | undefined
   try {
     const responseMaybeOk = await _fetchGet(chainId, url)
-    response = responseMaybeOk.ok ? responseMaybeOk : undefined
+    response = _checkResponseStatus(responseMaybeOk)
   } catch (error) {
     // do nothing
   }
@@ -219,7 +231,7 @@ async function _getJson(chainId: ChainId, url: string): Promise<any> {
   }
 }
 
-export async function getPriceQuote(params: PriceQuoteParams): Promise<PriceInformation> {
+export async function getPriceQuote(params: PriceQuoteParams): Promise<PriceInformation | UnsupportedToken> {
   const { baseToken, quoteToken, amount, kind, chainId } = params
   const [checkedBaseToken, checkedQuoteToken] = [checkIfEther(baseToken, chainId), checkIfEther(quoteToken, chainId)]
   console.log('[util:operator] Get Price from API', params)
@@ -230,7 +242,7 @@ export async function getPriceQuote(params: PriceQuoteParams): Promise<PriceInfo
   )
 }
 
-export async function getFeeQuote(params: FeeQuoteParams): Promise<FeeInformation> {
+export async function getFeeQuote(params: FeeQuoteParams): Promise<FeeInformation | UnsupportedToken> {
   const { sellToken, buyToken, amount, kind, chainId } = params
   const [checkedSellAddress, checkedBuyAddress] = [checkIfEther(sellToken, chainId), checkIfEther(buyToken, chainId)]
   console.log('[util:operator] Get fee from API', params)
