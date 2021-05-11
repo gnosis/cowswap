@@ -4,6 +4,7 @@ import { getCanonicalMarket, registerOnWindow } from 'utils/misc'
 import { FeeQuoteParams, getFeeQuote, getPriceQuote } from 'utils/operator'
 import { UnsupportedToken } from 'state/price/reducer'
 import { isFeeOrPriceInformation, isUnsupportedToken } from 'state/price/utils'
+import { useAddUnsupportedToken, useDynamicallyUnsupportedTokens } from 'state/unsupportedTokens/hooks'
 
 export interface RefetchQuoteCallbackParmams {
   quoteParams: FeeQuoteParams
@@ -21,6 +22,8 @@ function handleError(err: any): undefined {
 export function useRefetchQuoteCallback() {
   const updateQuote = useUpdateQuote()
   const clearQuote = useClearQuote()
+  const unsupportedTokensMap = useDynamicallyUnsupportedTokens()
+  const addUnsupportedToken = useAddUnsupportedToken()
   registerOnWindow({ updateQuote })
 
   return useCallback(
@@ -37,10 +40,13 @@ export function useRefetchQuoteCallback() {
         : undefined
 
       const [fee, price] = await Promise.all([feePromise, pricePromise])
+      // use typecheck on returned fee/price response
+      // can be a valid FeeInformation/Price object
+      // or an UnsupportedToken error response
       if (isFeeOrPriceInformation(fee) && isFeeOrPriceInformation(price)) {
         // Update quote
         // TODO: check this
-        !fetchFee &&
+        if ((fee || !fetchFee) && price) {
           updateQuote({
             sellToken,
             buyToken,
@@ -51,15 +57,24 @@ export function useRefetchQuoteCallback() {
             // Fee is only updated when fetchFee=true
             fee
           })
+        }
       } else if (isUnsupportedToken(price) || isUnsupportedToken(fee)) {
         const unsupportedToken = isUnsupportedToken(price) ? price : (fee as UnsupportedToken)
         // unsupported token error, mark token as such
-        console.debug('[UNSUPPORTED TOKEN!]::', unsupportedToken.errorType, unsupportedToken.description)
+        // TODO: will likely change with server response including a data.address
+        // field for UnsupportedToken error responses
+        const address = unsupportedToken.description.split(' ')[2]
+        console.debug('[UNSUPPORTED TOKEN!]::', address)
+        if (unsupportedTokensMap?.[address]) return
+        addUnsupportedToken({
+          chainId,
+          address
+        })
       } else {
         // Clear the fee
         clearQuote({ chainId, token: sellToken })
       }
     },
-    [updateQuote, clearQuote]
+    [updateQuote, unsupportedTokensMap, addUnsupportedToken, clearQuote]
   )
 }
