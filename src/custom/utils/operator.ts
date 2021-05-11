@@ -194,7 +194,7 @@ export type PriceQuoteParams = Omit<FeeQuoteParams, 'sellToken' | 'buyToken'> & 
   quoteToken: string
 }
 
-export type ErrorHandlingResponse<T, E> = { data: T | null; error: E | null }
+export type ErrorHandlingResponse<T, E> = { data?: T; error?: E }
 
 function toApiAddress(address: string, chainId: ChainId): string {
   if (address === 'ETH') {
@@ -207,8 +207,8 @@ function toApiAddress(address: string, chainId: ChainId): string {
 
 async function _getJson<T, E>(chainId: ChainId, url: string): Promise<ErrorHandlingResponse<T, E>> {
   const response = {
-    data: null,
-    error: null
+    data: undefined,
+    error: undefined
   }
 
   try {
@@ -219,12 +219,13 @@ async function _getJson<T, E>(chainId: ChainId, url: string): Promise<ErrorHandl
       // if non-ok status is not unsupported token error, throw
       throw new Error('Error getting fee')
     } else {
+      const data = await responseMaybeOk.json()
       return {
         ...response,
         // response is good, 200, return as data
-        data: responseMaybeOk.status === 200 ? await responseMaybeOk.json() : null,
+        data: responseMaybeOk.status === 200 && data,
         // response is not good, but is an UnsupportedToken error to use
-        error: responseMaybeOk.status === 400 ? await responseMaybeOk.json() : null
+        error: responseMaybeOk.status === 400 && data
       }
     }
   } catch (error) {
