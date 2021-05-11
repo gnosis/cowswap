@@ -194,6 +194,8 @@ export type PriceQuoteParams = Omit<FeeQuoteParams, 'sellToken' | 'buyToken'> & 
   quoteToken: string
 }
 
+export type ErrorHandlingResponse<T, E> = { data: T | null; error: E | null }
+
 function toApiAddress(address: string, chainId: ChainId): string {
   if (address === 'ETH') {
     // TODO: Return magical address
@@ -203,36 +205,36 @@ function toApiAddress(address: string, chainId: ChainId): string {
   return address
 }
 
-function _checkResponseStatus(response: Response) {
-  switch (response.status) {
-    // Proper response we expect
-    case 200:
-      return response
-    // Token not supported by the protocol (e.g. token with fee on transfer)
-    case 400:
-      return response
-    default:
-      return undefined
+async function _getJson<T, E>(chainId: ChainId, url: string): Promise<ErrorHandlingResponse<T, E>> {
+  const response = {
+    data: null,
+    error: null
   }
-}
 
-async function _getJson(chainId: ChainId, url: string): Promise<any> {
-  let response: Response | undefined
   try {
     const responseMaybeOk = await _fetchGet(chainId, url)
-    response = _checkResponseStatus(responseMaybeOk)
-  } catch (error) {
-    // do nothing
-  }
 
-  if (!response) {
-    throw new Error('Error getting the fee')
-  } else {
-    return response.json()
+    // response may be unsupported token
+    if (!responseMaybeOk.ok && responseMaybeOk.status !== 400) {
+      // if non-ok status is not unsupported token error, throw
+      throw new Error('Error getting fee')
+    } else {
+      return {
+        ...response,
+        // response is good, 200, return as data
+        data: responseMaybeOk.status === 200 ? await responseMaybeOk.json() : null,
+        // response is not good, but is an UnsupportedToken error to use
+        error: responseMaybeOk.status === 400 ? await responseMaybeOk.json() : null
+      }
+    }
+  } catch (error) {
+    throw new Error(error)
   }
 }
 
-export async function getPriceQuote(params: PriceQuoteParams): Promise<PriceInformation | UnsupportedToken> {
+export async function getPriceQuote(
+  params: PriceQuoteParams
+): Promise<ErrorHandlingResponse<PriceInformation, UnsupportedToken>> {
   const { baseToken, quoteToken, amount, kind, chainId } = params
   const [checkedBaseToken, checkedQuoteToken] = [checkIfEther(baseToken, chainId), checkIfEther(quoteToken, chainId)]
   console.log('[util:operator] Get Price from API', params)
@@ -243,7 +245,9 @@ export async function getPriceQuote(params: PriceQuoteParams): Promise<PriceInfo
   )
 }
 
-export async function getFeeQuote(params: FeeQuoteParams): Promise<FeeInformation | UnsupportedToken> {
+export async function getFeeQuote(
+  params: FeeQuoteParams
+): Promise<ErrorHandlingResponse<FeeInformation, UnsupportedToken>> {
   const { sellToken, buyToken, amount, kind, chainId } = params
   const [checkedSellAddress, checkedBuyAddress] = [checkIfEther(sellToken, chainId), checkIfEther(buyToken, chainId)]
   console.log('[util:operator] Get fee from API', params)
@@ -257,7 +261,7 @@ export async function getFeeQuote(params: FeeQuoteParams): Promise<FeeInformatio
   )
 }
 
-export async function getOrder(chainId: ChainId, orderId: string): Promise<OrderMetaData | null> {
+export async function getOrder(chainId: ChainId, orderId: string): Promise<ErrorHandlingResponse<OrderMetaData, null>> {
   console.log('[util:operator] Get order for ', chainId, orderId)
   return _getJson(chainId, `/orders/${orderId}`)
 }
