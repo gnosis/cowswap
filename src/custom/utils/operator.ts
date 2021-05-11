@@ -207,6 +207,7 @@ function _checkResponseStatus(response: Response) {
   switch (response.status) {
     // Proper response we expect
     case 200:
+      return response
     // Token not supported by the protocol (e.g. token with fee on transfer)
     case 400:
       return response
