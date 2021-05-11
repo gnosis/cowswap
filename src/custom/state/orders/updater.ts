@@ -55,11 +55,11 @@ function _computeFulfilledSummary({
 async function fetchOrderPopupData(orderFromStore: Order, chainId: ChainId): Promise<OrderLogPopupMixData | null> {
   const orderFromApi = await getOrder(chainId, orderFromStore.id)
 
-  if (!isOrderFinalized(orderFromApi)) {
+  if (!isOrderFinalized(orderFromApi.data)) {
     return null
   }
 
-  const summary = _computeFulfilledSummary({ orderFromStore, orderFromApi })
+  const summary = _computeFulfilledSummary({ orderFromStore, orderFromApi: orderFromApi.data })
 
   return {
     id: orderFromStore.id,
