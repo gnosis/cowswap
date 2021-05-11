@@ -4,7 +4,7 @@ import { FixedSizeList } from 'react-window'
 import { Text } from 'rebass'
 import styled from 'styled-components'
 import { useActiveWeb3React } from 'hooks'
-import { WrappedTokenInfo, useCombinedActiveList } from 'state/lists/hooks'
+import { WrappedTokenInfo, useCombinedActiveList, TagInfo } from 'state/lists/hooks'
 import { useCurrencyBalance } from 'state/wallet/hooks'
 import { TYPE } from 'theme'
 import { useIsUserAddedToken, useAllInactiveTokens } from 'hooks/Tokens'
@@ -21,6 +21,16 @@ import { LightGreyCard } from 'components/Card'
 import TokenListLogo from 'assets/svg/tokenlist.svg'
 import QuestionHelper from 'components/QuestionHelper'
 import useTheme from 'hooks/useTheme'
+import { useDynamicallyUnsupportedTokens } from 'state/unsupportedTokens/hooks'
+
+const UNSUPPORTED_TOKEN_TAG = [
+  {
+    name: 'Unsupported',
+    description:
+      'This token is unsupported as it does not operate effectively with the Protocol. Please refer to the FAQ for more information regarding unsupported tokens.',
+    id: '0'
+  }
+]
 
 function currencyKey(currency: Currency): string {
   return currency instanceof Token ? currency.address : currency === ETHER ? 'ETHER' : ''
@@ -33,10 +43,10 @@ export const StyledBalanceText = styled(Text)`
   text-overflow: ellipsis;
 `
 
-const Tag = styled.div`
-  background-color: ${({ theme }) => theme.bg3};
+const Tag = styled.div<{ bg?: string }>`
+  background-color: ${({ bg, theme }) => bg || theme.bg3};
   color: ${({ theme }) => theme.text2};
-  font-size: 14px;
+  font-size: 13px;
   border-radius: 4px;
   padding: 0.25rem 0.3rem 0.25rem 0.3rem;
   max-width: 6rem;
@@ -68,20 +78,14 @@ const TokenListLogoWrapper = styled.img`
   height: 20px;
 `
 
-function TokenTags({ currency }: { currency: Currency }) {
-  if (!(currency instanceof WrappedTokenInfo)) {
-    return <span />
-  }
-
-  const tags = currency.tags
-  if (!tags || tags.length === 0) return <span />
-
+function TagDescriptor({ tags, bg }: { tags: TagInfo[]; bg?: string }) {
   const tag = tags[0]
-
   return (
     <TagContainer>
       <MouseoverTooltip text={tag.description}>
-        <Tag key={tag.id}>{tag.name}</Tag>
+        <Tag bg={bg} key={tag.id}>
+          {tag.name}
+        </Tag>
       </MouseoverTooltip>
       {tags.length > 1 ? (
         <MouseoverTooltip
@@ -97,10 +101,24 @@ function TokenTags({ currency }: { currency: Currency }) {
   )
 }
 
+function TokenTags({ currency, isUnsupported }: { currency: Currency; isUnsupported: boolean }) {
+  if (isUnsupported) return <TagDescriptor bg="#f3a1a1" tags={UNSUPPORTED_TOKEN_TAG} />
+
+  if (!(currency instanceof WrappedTokenInfo)) {
+    return <span />
+  }
+
+  const tags = currency.tags
+  if (!tags || tags.length === 0) return <span />
+
+  return <TagDescriptor tags={tags} />
+}
+
 function CurrencyRow({
   currency,
   onSelect,
   isSelected,
+  isUnsupported,
   otherSelected,
   style,
   BalanceComponent = Balance // gp-swap added
@@ -108,6 +126,7 @@ function CurrencyRow({
   currency: Currency
   onSelect: () => void
   isSelected: boolean
+  isUnsupported: boolean
   otherSelected: boolean
   style: CSSProperties
   BalanceComponent?: (params: { balance: CurrencyAmount }) => JSX.Element // gp-swap added
@@ -137,7 +156,7 @@ function CurrencyRow({
           {currency.name} {!isOnSelectedList && customAdded && '• Added by user'}
         </TYPE.darkGray>
       </Column>
-      <TokenTags currency={currency} />
+      <TokenTags currency={currency} isUnsupported={isUnsupported} />
       <RowFixed style={{ justifySelf: 'flex-end' }}>
         {/* {balance ? <Balance balance={balance} /> : account ? <Loader /> : null} */}
         {balance ? <BalanceComponent balance={balance} /> : account ? <Loader /> : null}
@@ -185,6 +204,7 @@ export default function CurrencyList({
   const inactiveTokens: {
     [address: string]: Token
   } = useAllInactiveTokens()
+  const dynamicallyUnsupportedTokens = useDynamicallyUnsupportedTokens(chainId)
 
   const Row = useCallback(
     ({ data, index, style }) => {
@@ -194,6 +214,7 @@ export default function CurrencyList({
       const handleSelect = () => onCurrencySelect(currency)
 
       const token = wrappedCurrency(currency, chainId)
+      const isUnsupported = Boolean(token && dynamicallyUnsupportedTokens?.[token.address.toLowerCase()])
 
       const showImport = inactiveTokens && token && Object.keys(inactiveTokens).includes(token.address)
 
@@ -215,40 +236,38 @@ export default function CurrencyList({
         )
       }
 
-      if (showImport && token) {
-        return (
-          <ImportRow
-            style={style}
-            token={token}
-            showImportView={showImportView}
-            setImportToken={setImportToken}
-            dim={true}
-          />
-        )
-      } else {
-        return (
-          <CurrencyRow
-            style={style}
-            currency={currency}
-            isSelected={isSelected}
-            onSelect={handleSelect}
-            otherSelected={otherSelected}
-            BalanceComponent={BalanceComponent} // gp-swap added
-          />
-        )
-      }
+      return showImport && token ? (
+        <ImportRow
+          style={style}
+          token={token}
+          showImportView={showImportView}
+          setImportToken={setImportToken}
+          dim={true}
+        />
+      ) : (
+        <CurrencyRow
+          style={style}
+          currency={currency}
+          isSelected={isSelected}
+          isUnsupported={isUnsupported}
+          onSelect={handleSelect}
+          otherSelected={otherSelected}
+          BalanceComponent={BalanceComponent} // gp-swap added
+        />
+      )
     },
     [
-      chainId,
-      inactiveTokens,
-      onCurrencySelect,
-      otherCurrency,
       selectedCurrency,
-      setImportToken,
-      showImportView,
+      otherCurrency,
+      chainId,
+      dynamicallyUnsupportedTokens,
+      inactiveTokens,
       breakIndex,
-      theme.text1,
-      BalanceComponent // gp-swap added
+      showImportView,
+      setImportToken,
+      BalanceComponent,
+      onCurrencySelect,
+      theme.text1
     ]
   )
 
