@@ -13,14 +13,17 @@ import HeaderMod, {
   BalanceText,
   AccountElement,
   HeaderElementWrap,
-  StyledNavLink
+  StyledNavLink,
+  StyledMenuButton
 } from './HeaderMod'
 import Menu from '../Menu'
+import { Moon, Sun } from 'react-feather'
 import styled from 'styled-components'
 import { status as appStatus } from '@src/../package.json'
 import { useActiveWeb3React } from 'hooks'
 import { useETHBalances } from 'state/wallet/hooks'
 import { SHORT_PRECISION } from 'constants/index'
+import { useDarkModeManager } from 'state/user/hooks'
 
 export const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
   [ChainId.RINKEBY]: 'Rinkeby',
@@ -96,6 +99,7 @@ export default function Header() {
   const { account, chainId } = useActiveWeb3React()
   const userEthBalance = useETHBalances(account ? [account] : [])?.[account ?? '']
   const nativeToken = chainId && (CHAIN_CURRENCY_LABELS[chainId] || 'ETH')
+  const [darkMode, toggleDarkMode] = useDarkModeManager()
 
   return (
     <HeaderModWrapper>
@@ -127,6 +131,9 @@ export default function Header() {
           </AccountElement>
         </HeaderElement>
         <HeaderElementWrap>
+          <StyledMenuButton onClick={() => toggleDarkMode()}>
+            {darkMode ? <Moon size={20} /> : <Sun size={20} />}
+          </StyledMenuButton>
           <Menu />
         </HeaderElementWrap>
       </HeaderControls>

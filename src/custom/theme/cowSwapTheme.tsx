@@ -1,7 +1,5 @@
 import { DefaultTheme, ThemeProvider as StyledComponentsThemeProvider, createGlobalStyle, css } from 'styled-components'
 import React, { useMemo } from 'react'
-import cowBg from 'assets/cow-swap/cow-bg.svg'
-import Logo from 'assets/cow-swap/cowswap-logo.svg'
 import Cursor1 from 'assets/cow-swap/cursor1.gif'
 import Cursor2 from 'assets/cow-swap/cursor2.gif'
 import Cursor3 from 'assets/cow-swap/cursor3.gif'
@@ -16,6 +14,7 @@ import {
   ThemedGlobalStyle as ThemedGlobalStyleUniswap
 } from '@src/theme'
 import { useIsDarkMode } from 'state/user/hooks'
+import { cowSwapBackground, cowSwapLogo } from './cowSwapAssets'
 
 export { TYPE } from '@src/theme'
 export * from '@src/theme/components'
@@ -25,45 +24,50 @@ export function colors(darkMode: boolean): Colors {
     ...colorsBaseTheme(darkMode),
 
     // ****** base ******
-    white: '#FFFFFF',
-    black: '#000000',
+    white: darkMode ? '#A5C0DB' : '#ffffff',
+    black: darkMode ? '#021E34' : '#000000',
 
     // ****** text ******
-    text1: darkMode ? '#000000' : '#000000',
+    text1: darkMode ? '#A5C0DB' : '#000000',
     text2: darkMode ? '#000000' : '#000000',
     text3: darkMode ? '#000000' : '#000000',
     text4: darkMode ? '#000000b8' : '#000000b8',
 
     // ****** backgrounds / greys ******
-    bg1: darkMode ? '#D5E9F0' : '#D5E9F0',
-    bg2: darkMode ? '#ffffff' : '#ffffff',
-    bg3: darkMode ? '#d5e8f0' : '#d5e8f0',
-    bg4: darkMode ? '#d5e8f0' : '#ffffff',
+    bg1: darkMode ? '#163861' : '#D5E9F0',
+    bg2: darkMode ? '#A5C0DB' : '#ffffff',
+    bg3: darkMode ? '#163861' : '#d5e8f0',
+    bg4: darkMode ? '#163861' : '#ffffff',
 
     // ****** specialty colors ******
-    advancedBG: darkMode ? '#d5e8f0' : '#d5e8f0',
+    advancedBG: darkMode ? '#163861' : '#d5e8f0',
 
     // ****** primary colors ******
-    primary1: darkMode ? '#FF784A' : '#FF784A',
+    primary1: darkMode ? '#e47651' : '#FF784A',
     primary4: darkMode ? '#ff5d25' : '#ff5d25',
-    primary5: darkMode ? '#FF784A' : '#FF784A',
+    primary5: darkMode ? '#e47651' : '#FF784A',
 
     // ****** color text ******
-    primaryText1: darkMode ? '#000000' : '#000000',
+    primaryText1: darkMode ? '#021E34' : '#000000',
 
     // ****** secondary colors ******
     secondary1: darkMode ? '#2172E5' : '#8958FF',
     secondary3: darkMode ? '#17000b26' : 'rgba(137,88,255,0.6)',
 
     // ****** other ******
-    border: darkMode ? '#000000' : '#000000',
-    disabled: darkMode ? '#afcbda' : '#afcbda'
+    border: darkMode ? '#021E34' : '#000000',
+    disabled: darkMode ? '#A5C0DB' : '#afcbda'
   }
 }
 
-function themeVariables(colorsTheme: Colors) {
+function themeVariables(darkMode: boolean, colorsTheme: Colors) {
   return {
-    logo: { src: Logo, alt: 'CowSwap Logo', width: '208px', height: '50px' },
+    logo: {
+      src: `data:image/svg+xml;base64,${cowSwapLogo(darkMode)}`,
+      alt: 'CowSwap Logo',
+      width: '208px',
+      height: '50px'
+    },
     cursor: css`
       cursor: url(${Cursor1}), auto;
       animation: cursor 1s infinite;
@@ -84,8 +88,14 @@ function themeVariables(colorsTheme: Colors) {
     `,
     body: {
       background: css`
-        background: url(${cowBg}) no-repeat 100% / cover fixed,
-          linear-gradient(180deg, rgba(164, 211, 227, 1) 5%, rgba(255, 255, 255, 1) 40%);
+        background: rgba(164, 211, 227, 1);
+        transition: background-color 2s ease-in-out, background-image 2s ease-in-out;
+        background: url(data:image/svg+xml;base64,${cowSwapBackground(darkMode)}) no-repeat 100% / cover fixed,
+          ${
+            darkMode
+              ? 'linear-gradient(180deg,rgba(20, 45, 78, 1) 10%, rgba(22, 58, 100, 1) 30%)'
+              : 'linear-gradient(180deg,rgba(164, 211, 227, 1) 5%, rgba(255, 255, 255, 1) 40%)'
+          };
         background-attachment: fixed;
       `
     },
@@ -162,7 +172,7 @@ export function theme(darkmode: boolean): DefaultTheme {
 
     // Overide Theme
     ...baseThemeVariables(darkmode, colorsTheme),
-    ...themeVariables(colorsTheme)
+    ...themeVariables(darkmode, colorsTheme)
   }
 }
 
