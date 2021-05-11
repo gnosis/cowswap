@@ -43,10 +43,10 @@ export type QuoteInformationState = {
 const initialState: QuoteInformationState = {}
 
 // Makes sure there stat is initialized
-function initializeState(
-  state: Writable<QuoteInformationState>,
+export function initializeState<T extends { [chainId in ChainId]?: any }>(
+  state: Writable<T>,
   { payload: { chainId } }: PayloadAction<PrefillStateRequired>
-): asserts state is Required<QuoteInformationState> {
+): asserts state is Required<T> {
   // Makes sure there stat is initialized
   const stateAtChainId = state[chainId]
   if (!stateAtChainId) {
@@ -58,7 +58,7 @@ function initializeState(
 export default createReducer(initialState, builder =>
   builder
     .addCase(updateQuote, (state, action) => {
-      initializeState(state, action)
+      initializeState<QuoteInformationState>(state, action)
       const { sellToken, chainId } = action.payload
       state[chainId][sellToken] = {
         ...state[chainId][sellToken],
