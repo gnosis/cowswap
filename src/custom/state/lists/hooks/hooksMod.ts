@@ -9,7 +9,13 @@ import DEFAULT_TOKEN_LIST from '@uniswap/default-token-list'
 import { TokenAddressMap, listToTokenMap, combineMaps, EMPTY_LIST } from '@src/state/lists/hooks'
 import sortByListPriority from 'utils/listSort'
 import UNSUPPORTED_TOKEN_LIST from 'constants/tokenLists/uniswap-v2-unsupported.tokenlist.json'
-import { addGpUnsupportedToken, GpUnsupportedTokensParams, removeGpUnsupportedToken } from '../actions'
+import {
+  addGpUnsupportedToken,
+  AddGpUnsupportedTokenParams,
+  RemoveGpUnsupportedTokenParams,
+  removeGpUnsupportedToken
+} from '../actions'
+import { UnsupportedToken } from 'utils/operator'
 
 // type TagDetails = Tags[keyof Tags]
 // export interface TagInfo extends TagDetails {
@@ -196,24 +202,23 @@ export function useIsListActive(url: string): boolean {
   return Boolean(activeListUrls?.includes(url))
 }
 
-export function useGpUnsupportedTokens(): Record<string, string> | {} {
-  // MOD: adds { chainId } support to the hooks
+export function useGpUnsupportedTokens(): UnsupportedToken | null {
   const { chainId } = useActiveWeb3React()
-  return useSelector<AppState, AppState['lists'][ChainId]['gpUnsupportedTokens']>(state =>
-    chainId ? state.lists[chainId].gpUnsupportedTokens : {}
+  return useSelector<AppState, AppState['lists'][ChainId]['gpUnsupportedTokens'] | null>(state =>
+    chainId ? state.lists[chainId].gpUnsupportedTokens : null
   )
 }
 
 export function useAddGpUnsupportedToken() {
   const dispatch = useDispatch()
 
-  return useCallback((params: GpUnsupportedTokensParams) => dispatch(addGpUnsupportedToken(params)), [dispatch])
+  return useCallback((params: AddGpUnsupportedTokenParams) => dispatch(addGpUnsupportedToken(params)), [dispatch])
 }
 
 export function useRemoveGpUnsupportedToken() {
   const dispatch = useDispatch()
 
-  return useCallback((params: GpUnsupportedTokensParams) => dispatch(removeGpUnsupportedToken(params)), [dispatch])
+  return useCallback((params: RemoveGpUnsupportedTokenParams) => dispatch(removeGpUnsupportedToken(params)), [dispatch])
 }
 
 export function useIsUnsupportedToken() {
@@ -221,11 +226,23 @@ export function useIsUnsupportedToken() {
   const allUnsupportedTokens = useUnsupportedTokenList()
   const gpUnsupportedTokens = useGpUnsupportedTokens()
 
-  const unsupportedTokensList = chainId
-    ? Object.keys(allUnsupportedTokens[chainId]).map(address => address.toLowerCase())
-    : []
-  const gpUnsupportedTokensList = chainId ? Object.keys(gpUnsupportedTokens).map(address => address.toLowerCase()) : []
-  const unsupportedTokensMap = new Set([...unsupportedTokensList, ...gpUnsupportedTokensList])
+  return useCallback(
+    (address?: string) => {
+      // map unsupported token addresses by chainId to it's address in lower case
+      const unsupportedTokensList = chainId
+        ? Object.keys(allUnsupportedTokens[chainId]).map(address => address.toLowerCase())
+        : []
+      // map unsupported GP tokens by chainId to it's address in lower case
+      const gpUnsupportedTokensList =
+        chainId && gpUnsupportedTokens ? Object.keys(gpUnsupportedTokens).map(address => address.toLowerCase()) : []
 
-  return (address?: string) => Boolean(address && unsupportedTokensMap.has(address.toLowerCase()))
+      // combine the lists to prepare for the Set init
+      const combined = unsupportedTokensList.concat(gpUnsupportedTokensList)
+      const unsupportedTokensMap = new Set(combined)
+
+      // Returns a predicate function determining a token's support by address against our Set
+      return Boolean(address && unsupportedTokensMap.has(address.toLowerCase()))
+    },
+    [allUnsupportedTokens, chainId, gpUnsupportedTokens]
+  )
 }
