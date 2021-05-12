@@ -32,12 +32,16 @@ export function logTradeDetails(trade: TradeWithFee | undefined, allowedSlippage
       `
       Type: BUY
       =========
-      Input Amount [w/FEE]: ${trade.inputAmount.toExact()}
+      Input Amount [w/FEE]: ${trade.inputAmountWithFee.toExact()}
       Output Amount:        ${trade.outputAmount.toExact()}
       =========
       Fee Amount [as SELL]: ${trade.fee?.feeAsCurrency?.toExact()} ${trade.inputAmount.currency.symbol}
       =========
-      Maximum Sold:         ${trade.maximumAmountIn(basisPointsToPercent(allowedSlippage)).toExact()}
+      Maximum Sold:         ${trade.fee?.feeAsCurrency &&
+        trade
+          .maximumAmountIn(basisPointsToPercent(allowedSlippage))
+          .add(trade.fee.feeAsCurrency)
+          .toExact()}
     `
     )
   }
