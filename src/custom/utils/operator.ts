@@ -37,8 +37,19 @@ const DEFAULT_HEADERS = {
  */
 export type OrderID = string
 
-export interface OrderPostError {
-  errorType: 'MissingOrderData' | 'InvalidSignature' | 'DuplicateOrder' | 'InsufficientFunds'
+enum ApiErrorCodes {
+  DuplicateOrder = 'DuplicateOrder',
+  InvalidSignature = 'InvalidSignature',
+  MissingOrderData = 'MissingOrderData',
+  InsufficientValidTo = 'InsufficientValidTo',
+  InsufficientFunds = 'InsufficientFunds',
+  InsufficientFee = 'InsufficientFee',
+  UnsupportedToken = 'UnsupportedToken',
+  WrongOwner = 'WrongOwner'
+}
+
+export interface ApiError {
+  errorType: ApiErrorCodes
   description: string
 }
 
@@ -99,22 +110,22 @@ function _fetchGet(chainId: ChainId, url: string) {
 async function _getErrorForBadPostOrderRequest(response: Response): Promise<string> {
   let errorMessage: string
   try {
-    const orderPostError: OrderPostError = await response.json()
+    const orderPostError: ApiError = await response.json()
 
     switch (orderPostError.errorType) {
-      case 'DuplicateOrder':
+      case ApiErrorCodes.DuplicateOrder:
         errorMessage = 'There was another identical order already submitted'
         break
 
-      case 'InsufficientFunds':
+      case ApiErrorCodes.InsufficientFunds:
         errorMessage = "The account doesn't have enough funds"
         break
 
-      case 'InvalidSignature':
+      case ApiErrorCodes.InvalidSignature:
         errorMessage = 'The order signature is invalid'
         break
 
-      case 'MissingOrderData':
+      case ApiErrorCodes.MissingOrderData:
         errorMessage = 'The order has missing information'
         break
 
