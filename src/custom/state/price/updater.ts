@@ -9,12 +9,14 @@ import { useAllQuotes } from './hooks'
 import { useRefetchQuoteCallback } from 'hooks/useRefetchPriceCallback'
 import { FeeQuoteParams } from 'utils/operator'
 import { QuoteInformationObject } from './reducer'
+import { useGpUnsupportedTokens } from 'state/lists/hooks/hooksMod'
 
 const DEBOUNCE_TIME = 350
 const REFETCH_CHECK_INTERVAL = 10000 // Every 10s
 const RENEW_FEE_QUOTES_BEFORE_EXPIRATION_TIME = 30000 // Will renew the quote if there's less than 30 seconds left for the quote to expire
 const WAITING_TIME_BETWEEN_EQUAL_REQUESTS = 5000 // Prevents from sending the same request to often (max, every 5s)
 const PRICE_UPDATE_TIME = 10000 // If the price is older than 10s, refresh
+const UNSUPPORTED_TOKEN_REFETCH_CHECK_INTERVAL = 30 * 60 * 1000 // if unsupported token was added > 30min ago, re-try
 
 /**
  * Returns true if the fee quote expires soon (in less than RENEW_FEE_QUOTES_BEFORE_EXPIRATION_TIME milliseconds)
@@ -106,6 +108,8 @@ export default function FeesUpdater(): null {
   const quotesMap = useAllQuotes({ chainId })
   const quoteInfo = quotesMap && sellToken ? quotesMap[sellToken] : undefined
 
+  const gpUnsupportedTokens = useGpUnsupportedTokens()
+
   const refetchQuote = useRefetchQuoteCallback()
   const windowVisible = useIsWindowVisible()
 
@@ -120,13 +124,22 @@ export default function FeesUpdater(): null {
     // Don't refetch if the amount is missing
     if (!amount) return
 
+    const unsupportedToken =
+      gpUnsupportedTokens?.[sellToken.toLowerCase()] || gpUnsupportedTokens?.[buyToken.toLowerCase()]
+
+    // IS an unsupported token and it's been greater than the threshold time
+    const unsupportedNeedsCheck =
+      unsupportedToken && Date.now() - unsupportedToken.dateAdded > UNSUPPORTED_TOKEN_REFETCH_CHECK_INTERVAL
+
     // Callback to re-fetch both the fee and the price
     const refetchQuoteIfRequired = () => {
       const quoteParams = { buyToken, chainId, sellToken, kind, amount: amount.raw.toString() }
 
-      const refetchAll = isRefetchQuoteRequired(quoteParams, quoteInfo)
-      const refetchPrice = priceIsOld(quoteInfo)
-      if (refetchAll || refetchPrice) {
+      // if no token is unsupported and needs refetching
+      const refetchAll = !unsupportedToken && isRefetchQuoteRequired(quoteParams, quoteInfo)
+      const refetchPrice = !unsupportedToken && priceIsOld(quoteInfo)
+
+      if (unsupportedNeedsCheck || refetchAll || refetchPrice) {
         refetchQuote({
           quoteParams,
           fetchFee: refetchAll,
@@ -155,7 +168,8 @@ export default function FeesUpdater(): null {
     sellCurrency,
     buyCurrency,
     quoteInfo,
-    refetchQuote
+    refetchQuote,
+    gpUnsupportedTokens
   ])
 
   return null
