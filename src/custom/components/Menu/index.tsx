@@ -101,7 +101,7 @@ export const CloseMenu = styled.button`
   display: grid;
   justify-content: space-between;
   align-items: center;
-  background: ${({ theme }) => theme.disabled};
+  background: ${({ theme }) => theme.header.menuFlyout.closeButtonBg};
   border: 0;
   color: ${({ theme }) => theme.black};
   height: 36px;

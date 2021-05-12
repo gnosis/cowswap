@@ -116,7 +116,7 @@ function themeVariables(darkMode: boolean, colorsTheme: Colors) {
         color: darkMode ? colorsTheme.text1 : colorsTheme.text2,
         colorHover: darkMode ? colorsTheme.text1 : colorsTheme.text2,
         colorHoverBg: darkMode ? colorsTheme.black : colorsTheme.disabled,
-        closeButtonBg: colorsTheme.bg3,
+        closeButtonBg: darkMode ? colorsTheme.white : colorsTheme.disabled,
         closeButtonColor: colorsTheme.black,
         seperatorColor: colorsTheme.disabled
       }
