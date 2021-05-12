@@ -22,6 +22,7 @@ import {
 } from 'state/lists/actions'
 import { ChainId } from '@uniswap/sdk'
 import { getChainIdValues } from 'utils/misc'
+import { UnsupportedToken } from 'utils/operator'
 
 // Mod: change state shape - adds network map
 export type ListsStateByNetwork = {
@@ -44,7 +45,7 @@ export interface ListsState {
   readonly activeListUrls: string[] | undefined
 
   // unsupported tokens
-  readonly gpUnsupportedTokens: Record<string, string>
+  readonly gpUnsupportedTokens: UnsupportedToken
 }
 
 export type ListState = ListsState['byUrl'][string]
@@ -87,9 +88,9 @@ const initialState: ListsStateByNetwork = {
 
 export default createReducer(initialState, builder =>
   builder
-    .addCase(addGpUnsupportedToken, (baseState, { payload: { chainId = DEFAULT_NETWORK_FOR_LISTS, address } }) => {
+    .addCase(addGpUnsupportedToken, (baseState, { payload: { chainId = DEFAULT_NETWORK_FOR_LISTS, ...restToken } }) => {
       const state = baseState[chainId]
-      state.gpUnsupportedTokens[address] = address
+      state.gpUnsupportedTokens[restToken.address] = restToken
     })
     .addCase(removeGpUnsupportedToken, (baseState, { payload: { chainId = DEFAULT_NETWORK_FOR_LISTS, address } }) => {
       const state = baseState[chainId]
