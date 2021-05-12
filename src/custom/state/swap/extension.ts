@@ -68,14 +68,17 @@ export function useTradeExactInWithFee({
     ...quote.fee,
     feeAsCurrency
   }
-  // calculate our output without any fee, consuming price
-  const outputAmountWithoutFee = stringToCurrency(quote.price.amount, outputCurrency)
+
+  // external price output as Currency
+  const outputAmount = stringToCurrency(quote.price.amount, outputCurrency)
+
   // set the Price object to attach to final Trade object
+  // Price = (quote.price.amount) / inputAmountAdjustedForFee
   const executionPrice = _constructTradePrice({
     // pass in our parsed sell amount (CurrencyAmount)
-    sellToken: parsedInputAmount,
+    sellToken: feeAdjustedAmount,
     // pass in our feeless outputAmount (CurrencyAmount)
-    buyToken: outputAmountWithoutFee,
+    buyToken: outputAmount,
     kind: 'sell',
     price: quote?.price
   })
@@ -83,8 +86,9 @@ export function useTradeExactInWithFee({
   // no price object or feeAdjusted amount? no trade
   if (!executionPrice || !feeAdjustedAmount) return null
 
-  // calculate our output using external price
-  const outputAmount = executionPrice.quote(feeAdjustedAmount)
+  // calculate our output without any fee, consuming price
+  // useful for calculating fees in buy token
+  const outputAmountWithoutFee = executionPrice.quote(parsedInputAmount)
 
   return {
     ...originalTrade,
@@ -119,16 +123,17 @@ export function useTradeExactOutWithFee({
     feeAsCurrency
   }
 
-  // calculate our output using external price
-  const inputAmount = stringToCurrency(quote.price.amount, inputCurrency)
+  // inputAmount without fee applied
+  // this is required for the Trade sdk to calculate slippage adjusted amounts
+  const inputAmountWithoutFee = stringToCurrency(quote.price.amount, inputCurrency)
   // We need to determine the fee after, as the parsedOutputAmount isn't known beforehand
   // Using feeInformation info, determine whether minimalFee greaterThan or lessThan feeRatio * sellAmount
-  const inputAmountWithFee = inputAmount.add(feeAsCurrency)
+  const inputAmountWithFee = inputAmountWithoutFee.add(feeAsCurrency)
 
   // per unit price
   const executionPrice = _constructTradePrice({
     // pass in our calculated inputAmount (CurrencyAmount)
-    sellToken: inputAmount,
+    sellToken: inputAmountWithoutFee,
     // pass in our parsed buy amount (CurrencyAmount)
     buyToken: parsedOutputAmount,
     kind: 'buy',
@@ -143,7 +148,7 @@ export function useTradeExactOutWithFee({
     ...outTrade,
     // overriding inputAmount is a hack
     // to allow us to not have to change Uni's pages/swap/index and use different method names
-    inputAmount: inputAmountWithFee,
+    inputAmount: inputAmountWithoutFee,
     inputAmountWithFee,
     minimumAmountOut: outTrade.minimumAmountOut,
     maximumAmountIn: outTrade.maximumAmountIn,
