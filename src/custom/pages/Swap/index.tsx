@@ -54,25 +54,27 @@ const SwapModWrapper = styled(SwapMod)`
     ${ArrowWrapperUni} {
       position: absolute;
       z-index: 2;
-      background: ${({ theme }) => theme.white};
-      border-radius: 9px;
-      width: 28px;
-      height: 28px;
+      background: ${({ theme }) => theme.swap?.arrowDown?.background};
+      border-radius: ${({ theme }) => theme.swap?.arrowDown?.borderRadius};
+      width: ${({ theme }) => theme.swap?.arrowDown?.width};
+      height: ${({ theme }) => theme.swap?.arrowDown?.height};
       display: flex;
       align-items: center;
       justify-content: center;
-      border: 2px solid ${({ theme }) => theme.disabled};
+      border: ${({ theme }) => `${theme.swap?.arrowDown?.borderSize} solid ${theme.swap?.arrowDown?.borderColor}`};
+      transition: transform 0.1s ease-in-out;
 
       &:hover {
         opacity: 1;
+        transform: translateY(1px);
 
         > svg {
-          stroke: ${({ theme }) => theme.black};
+          stroke: ${({ theme }) => theme.swap?.arrowDown?.colorHover};
         }
       }
 
       > svg {
-        stroke: #000000b8;
+        stroke: ${({ theme }) => theme.swap?.arrowDown?.color}
       }
     }
   }

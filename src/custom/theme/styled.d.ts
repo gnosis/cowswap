@@ -7,6 +7,8 @@ export interface Colors extends ColorsUniswap {
   purple: Color
   redShade: Color
   greenShade: Color
+  blueShade: Color
+  blueShade2: Color
   border: Color
   disabled: Color
 }
@@ -60,6 +62,16 @@ declare module 'styled-components' {
     }
     swap?: {
       headerSize?: string
+      arrowDown?: {
+        background: string
+        color: string
+        colorHover: string
+        borderRadius: string
+        width: string
+        height: string
+        borderColor: string
+        borderSize: string
+      }
     }
     currencyInput?: {
       background?: string
@@ -101,7 +113,7 @@ declare module 'styled-components' {
       boxShadow?: string
     }
     bgLinearGradient: FlattenSimpleInterpolation
-    version: string
+    footerColor: string
     networkCard: {
       background: string
       text: string

@@ -231,7 +231,7 @@ export default function AccountDetails({
         </LowerSection>
       ) : (
         <LowerSection>
-          <TYPE.body color={theme.text1}>Your activity will appear here...</TYPE.body>
+          <TYPE.body color={theme.text2}>Your activity will appear here...</TYPE.body>
         </LowerSection>
       )}
     </>

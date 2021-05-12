@@ -39,7 +39,7 @@ export function cowSwapBackground(darkMode: boolean): string {
       }
 
       .COW_BODY {
-        fill: ${darkMode ? '#a5c0db' : 'rgb(255, 255, 255)'}
+        fill: ${darkMode ? '#c5daef' : 'rgb(255, 255, 255)'}
       }
 
       .DARK_TREE {
@@ -340,8 +340,8 @@ export function cowSwapBackground(darkMode: boolean): string {
 export function cowSwapLogo(darkMode: boolean): string {
   const color = {
     black: darkMode ? '#042744' : '#000000',
-    white: darkMode ? '#A5C0DB' : '#ffffff',
-    letter: darkMode ? '#A5C0DB' : '#000000',
+    white: darkMode ? '#c5daef' : '#ffffff',
+    letter: darkMode ? '#c5daef' : '#000000',
     eyeLeftFill: darkMode ? '#FAD951' : '#FAD951',
     eyeRightFill: darkMode ? '#FAD951' : '#FAD951',
     shadow: darkMode ? '#7FA1C2' : '#B0B6C1'
