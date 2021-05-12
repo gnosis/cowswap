@@ -22,6 +22,8 @@ interface RejectedFetchTokenList extends PendingFetchTokenList {
   errorMessage: string
 }
 
+export type GpUnsupportedTokensParams = WithChainId & { address: string }
+
 //MOD: adds chainId to param
 export const fetchTokenList: Readonly<{
   pending: ActionCreatorWithPayload<PendingFetchTokenList>
@@ -43,3 +45,7 @@ export const disableList = createAction<WithChainIdAndUrl>('lists/disableList')
 // versioning
 export const acceptListUpdate = createAction<WithChainIdAndUrl>('lists/acceptListUpdate')
 export const rejectVersionUpdate = createAction<WithChainId & { version: Version }>('lists/rejectVersionUpdate')
+
+// add/remove unsupported token for gp
+export const addGpUnsupportedToken = createAction<GpUnsupportedTokensParams>('lists/addGpUnsupportedToken')
+export const removeGpUnsupportedToken = createAction<GpUnsupportedTokensParams>('lists/removeGpUnsupportedToken')

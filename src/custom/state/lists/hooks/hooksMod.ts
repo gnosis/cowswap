@@ -1,5 +1,5 @@
-import { useMemo } from 'react'
-import { useSelector } from 'react-redux'
+import { useCallback, useMemo } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { AppState } from '../..'
 import { ChainId } from '@uniswap/sdk'
 import { useActiveWeb3React } from 'hooks'
@@ -9,6 +9,7 @@ import DEFAULT_TOKEN_LIST from '@uniswap/default-token-list'
 import { TokenAddressMap, listToTokenMap, combineMaps, EMPTY_LIST } from '@src/state/lists/hooks'
 import sortByListPriority from 'utils/listSort'
 import UNSUPPORTED_TOKEN_LIST from 'constants/tokenLists/uniswap-v2-unsupported.tokenlist.json'
+import { addGpUnsupportedToken, GpUnsupportedTokensParams, removeGpUnsupportedToken } from '../actions'
 
 // type TagDetails = Tags[keyof Tags]
 // export interface TagInfo extends TagDetails {
@@ -193,4 +194,38 @@ export function useIsListActive(url: string): boolean {
   // MOD: added here to use the scoped functions
   const activeListUrls = useActiveListUrls()
   return Boolean(activeListUrls?.includes(url))
+}
+
+export function useGpUnsupportedTokens(): Record<string, string> | {} {
+  // MOD: adds { chainId } support to the hooks
+  const { chainId } = useActiveWeb3React()
+  return useSelector<AppState, AppState['lists'][ChainId]['gpUnsupportedTokens']>(state =>
+    chainId ? state.lists[chainId].gpUnsupportedTokens : {}
+  )
+}
+
+export function useAddGpUnsupportedToken() {
+  const dispatch = useDispatch()
+
+  return useCallback((params: GpUnsupportedTokensParams) => dispatch(addGpUnsupportedToken(params)), [dispatch])
+}
+
+export function useRemoveGpUnsupportedToken() {
+  const dispatch = useDispatch()
+
+  return useCallback((params: GpUnsupportedTokensParams) => dispatch(removeGpUnsupportedToken(params)), [dispatch])
+}
+
+export function useIsUnsupportedToken() {
+  const { chainId } = useActiveWeb3React()
+  const allUnsupportedTokens = useUnsupportedTokenList()
+  const gpUnsupportedTokens = useGpUnsupportedTokens()
+
+  const unsupportedTokensList = chainId
+    ? Object.keys(allUnsupportedTokens[chainId]).map(address => address.toLowerCase())
+    : []
+  const gpUnsupportedTokensList = chainId ? Object.keys(gpUnsupportedTokens).map(address => address.toLowerCase()) : []
+  const unsupportedTokensMap = new Set([...unsupportedTokensList, ...gpUnsupportedTokensList])
+
+  return (address?: string) => Boolean(address && unsupportedTokensMap.has(address.toLowerCase()))
 }

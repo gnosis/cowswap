@@ -10,7 +10,16 @@ import { getVersionUpgrade, VersionUpgrade } from '@uniswap/token-lists'
 import { TokenList } from '@uniswap/token-lists/dist/types'
 // import { DEFAULT_LIST_OF_LISTS } from '@src/constants/lists'
 import { updateVersion } from 'state/global/actions'
-import { acceptListUpdate, addList, fetchTokenList, removeList, enableList, disableList } from 'state/lists/actions'
+import {
+  acceptListUpdate,
+  addList,
+  fetchTokenList,
+  removeList,
+  enableList,
+  disableList,
+  addGpUnsupportedToken,
+  removeGpUnsupportedToken
+} from 'state/lists/actions'
 import { ChainId } from '@uniswap/sdk'
 import { getChainIdValues } from 'utils/misc'
 
@@ -33,6 +42,9 @@ export interface ListsState {
 
   // currently active lists
   readonly activeListUrls: string[] | undefined
+
+  // unsupported tokens
+  readonly gpUnsupportedTokens: Record<string, string>
 }
 
 export type ListState = ListsState['byUrl'][string]
@@ -57,7 +69,8 @@ const setInitialListState = (chainId: ChainId): ListsState => ({
         return memo
       }, {})
   },
-  activeListUrls: DEFAULT_ACTIVE_LIST_URLS_BY_NETWORK[chainId]
+  activeListUrls: DEFAULT_ACTIVE_LIST_URLS_BY_NETWORK[chainId],
+  gpUnsupportedTokens: {}
 })
 
 // MOD: change the intiialState shape
@@ -74,6 +87,14 @@ const initialState: ListsStateByNetwork = {
 
 export default createReducer(initialState, builder =>
   builder
+    .addCase(addGpUnsupportedToken, (baseState, { payload: { chainId = DEFAULT_NETWORK_FOR_LISTS, address } }) => {
+      const state = baseState[chainId]
+      state.gpUnsupportedTokens[address] = address
+    })
+    .addCase(removeGpUnsupportedToken, (baseState, { payload: { chainId = DEFAULT_NETWORK_FOR_LISTS, address } }) => {
+      const state = baseState[chainId]
+      delete state.gpUnsupportedTokens[address]
+    })
     .addCase(
       fetchTokenList.pending,
       (baseState, { payload: { chainId = DEFAULT_NETWORK_FOR_LISTS, requestId, url } }) => {
