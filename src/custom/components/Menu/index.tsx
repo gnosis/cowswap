@@ -11,6 +11,16 @@ export const StyledMenu = styled(MenuMod)`
   hr {
     margin: 15px 0;
   }
+
+  ${MenuItem},
+  ${InternalMenuItem} {
+    color: ${({ theme }) => theme.header.menuFlyout.color};
+    background: ${({ theme }) => theme.header.menuFlyout.background};
+    :hover {
+      color: ${({ theme }) => theme.header.menuFlyout.colorHover};
+      background: ${({ theme }) => theme.header.menuFlyout.colorHoverBg};
+    }
+  }
 `
 
 const Policy = styled(InternalMenuItem).attrs(attrs => ({

@@ -56,7 +56,7 @@ export function colors(darkMode: boolean): Colors {
 
     // ****** other ******
     border: darkMode ? '#021E34' : '#000000',
-    disabled: darkMode ? 'rgba(197, 218, 239, 0.5)' : '#afcbda'
+    disabled: darkMode ? 'rgba(197, 218, 239, 0.4)' : '#afcbda'
   }
 }
 
@@ -110,25 +110,34 @@ function themeVariables(darkMode: boolean, colorsTheme: Colors) {
       }
     },
     header: {
-      border: 'none'
+      border: 'none',
+      menuFlyout: {
+        background: 'transparent',
+        color: darkMode ? colorsTheme.text1 : colorsTheme.text2,
+        colorHover: darkMode ? colorsTheme.text1 : colorsTheme.text2,
+        colorHoverBg: darkMode ? colorsTheme.black : colorsTheme.disabled,
+        closeButtonBg: colorsTheme.bg3,
+        closeButtonColor: colorsTheme.black,
+        seperatorColor: colorsTheme.disabled
+      }
     },
     swap: {
       headerSize: '28px',
       arrowDown: {
-        background: `${darkMode ? colorsTheme.blueShade : colorsTheme.white}`,
-        color: `${darkMode ? colorsTheme.white : colorsTheme.black}`,
-        colorHover: `${darkMode ? colorsTheme.white : colorsTheme.black}`,
+        background: darkMode ? colorsTheme.blueShade : colorsTheme.white,
+        color: darkMode ? colorsTheme.white : colorsTheme.black,
+        colorHover: darkMode ? colorsTheme.white : colorsTheme.black,
         borderRadius: '9px',
         width: '28px',
         height: '28px',
-        borderColor: `${darkMode ? colorsTheme.blueShade2 : colorsTheme.disabled}`,
+        borderColor: darkMode ? colorsTheme.blueShade2 : colorsTheme.disabled,
         borderSize: `2px`
       }
     },
     buttonPrimary: {
       background: css`
         background: ${colorsTheme.primary1};
-        color: ${colorsTheme.text1};
+        color: ${colorsTheme.black};
       `,
       fontWeight: '800',
       border: `4px solid ${colorsTheme.black}`,
@@ -146,30 +155,34 @@ function themeVariables(darkMode: boolean, colorsTheme: Colors) {
       boxShadow: `4px 4px 0px ${colorsTheme.black}`
     },
     buttonLight: {
-      backgroundHover: `${colorsTheme.primary4}`,
+      backgroundHover: colorsTheme.primary4,
       fontWeight: '800',
       border: `4px solid ${colorsTheme.black}`,
       boxShadow: `4px 4px 0px ${colorsTheme.black}`
     },
     currencyInput: {
       background: `${darkMode ? colorsTheme.blueShade : colorsTheme.white}`,
-      color: `${colorsTheme.text1}`,
+      color: colorsTheme.text1,
       border: `2px solid ${darkMode ? colorsTheme.blueShade2 : colorsTheme.disabled}`
     },
     buttonCurrencySelect: {
-      background: `${colorsTheme.bg1}`,
+      background: colorsTheme.bg1,
       border: `2px solid ${colorsTheme.black}`,
       boxShadow: `2px 2px 0px ${colorsTheme.black}`,
-      color: `${darkMode ? colorsTheme.text2 : colorsTheme.text1}`,
-      colorSelected: `${darkMode ? colorsTheme.white : colorsTheme.text1}`
+      color: darkMode ? colorsTheme.text2 : colorsTheme.text1,
+      colorSelected: darkMode ? colorsTheme.white : colorsTheme.text1
     },
     bgLinearGradient: css`
       background-image: linear-gradient(270deg, ${colorsTheme.purple} 30%, ${colorsTheme.blue1} 70%);
     `,
-    footerColor: `${darkMode ? colorsTheme.text1 : colorsTheme.greenShade}`,
+    footerColor: darkMode ? colorsTheme.text1 : colorsTheme.greenShade,
     networkCard: {
       background: 'rgb(255 120 74 / 60%)',
       text: colorsTheme.text1
+    },
+    wallet: {
+      color: darkMode ? colorsTheme.text2 : colorsTheme.text1,
+      background: darkMode ? colorsTheme.white : colorsTheme.bg2
     }
   }
 }

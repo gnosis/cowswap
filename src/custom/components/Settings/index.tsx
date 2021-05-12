@@ -23,6 +23,7 @@ const Wrapper = styled(SettingsMod)`
     height: 35px;
     padding: 0;
     border-radius: 35px;
+    color: ${({ theme }) => theme.text1};
 
     &:hover,
     &:focus {
@@ -49,7 +50,7 @@ const Wrapper = styled(SettingsMod)`
     height: 20px;
     width: 20px;
     > * {
-      stroke: ${({ theme }) => theme.text2};
+      stroke: ${({ theme }) => theme.text1};
     }
   }
 

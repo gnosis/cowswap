@@ -13,7 +13,7 @@ import HeaderMod, {
   BalanceText,
   AccountElement,
   HeaderElementWrap,
-  StyledNavLink,
+  StyledNavLink as StyledNavLinkUni,
   StyledMenuButton
 } from './HeaderMod'
 import Menu from '../Menu'
@@ -24,6 +24,7 @@ import { useActiveWeb3React } from 'hooks'
 import { useETHBalances } from 'state/wallet/hooks'
 import { SHORT_PRECISION } from 'constants/index'
 import { useDarkModeManager } from 'state/user/hooks'
+import { darken } from 'polished'
 
 export const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
   [ChainId.RINKEBY]: 'Rinkeby',
@@ -42,6 +43,16 @@ export interface LinkType {
   title: string
   path: string
 }
+
+const StyledNavLink = styled(StyledNavLinkUni)`
+  transition: color 0.15s ease-in-out;
+  color: ${({ theme }) => darken(0.3, theme.text1)};
+
+  :hover,
+  :focus {
+    color: ${({ theme }) => theme.text1};
+  }
+`
 
 export const HeaderModWrapper = styled(HeaderMod)`
   ${Title} {

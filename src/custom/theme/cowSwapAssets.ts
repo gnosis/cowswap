@@ -177,7 +177,7 @@ export function cowSwapBackground(darkMode: boolean): string {
     ${darkMode &&
       `<!-- moon-and-stars -->
     <g id="MOON" transform="matrix(1, 0, 0, 1, 1703.076538, 87.224792)">
-      <path class="st0" d="M139.7,200.3c53.9-14.6,54.5-93.5,0.4-108.6c48-16,91.1,47.9,58,88.5C184.6,198,156.4,207.8,139.7,200.3z" style="fill: rgb(255, 255, 255);"/>
+      <path class="st0" d="M139.7,200.3c53.9-14.6,54.5-93.5,0.4-108.6c48-16,91.1,47.9,58,88.5C184.6,198,156.4,207.8,139.7,200.3z" style="fill: #c5daef;"/>
       
       <g id="STARS_RIGHT" class="st1" opacity="0.3">
         <path class="st0" d="M385.3,153.1c1.5,1.3,3.1,2.8,4.8,4.3c-1.3,1.4-2.8,3-4.3,4.6c-1.5-1.3-3.1-2.7-4.8-4.1 C382.4,156.4,383.9,154.7,385.3,153.1z" style="fill: rgb(255, 255, 255);"/>

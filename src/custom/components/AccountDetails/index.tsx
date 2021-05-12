@@ -6,7 +6,8 @@ import { AppDispatch } from 'state'
 import { clearAllTransactions } from 'state/transactions/actions'
 import { getExplorerLabel, shortenAddress } from 'utils'
 import { AutoRow } from 'components/Row'
-import Copy from 'components/AccountDetails/Copy'
+import Copy, { CopyIcon } from 'components/AccountDetails/Copy'
+import styled from 'styled-components'
 
 import { SUPPORTED_WALLETS } from 'constants/index'
 import { getEtherscanLink } from 'utils'
@@ -38,6 +39,16 @@ import {
   IconWrapper,
   renderTransactions
 } from './AccountDetailsMod'
+
+const Wrapper = styled.div`
+  color: ${({ theme }) => theme.text1};
+
+  ${WalletName},
+  ${AddressLink},
+  ${CopyIcon} {
+    color: ${({ theme }) => theme.text1};
+  }
+`
 
 type AbstractConnector = Pick<ReturnType<typeof useActiveWeb3React>, 'connector'>['connector']
 
@@ -118,7 +129,7 @@ export default function AccountDetails({
   const explorerLabel = chainId && account ? getExplorerLabel(chainId, account, 'address') : undefined
 
   return (
-    <>
+    <Wrapper>
       <UpperSection>
         <CloseIcon onClick={toggleWalletModal}>
           <CloseColor />
@@ -234,6 +245,6 @@ export default function AccountDetails({
           <TYPE.body color={theme.text2}>Your activity will appear here...</TYPE.body>
         </LowerSection>
       )}
-    </>
+    </Wrapper>
   )
 }

@@ -2,11 +2,23 @@ import React, { useMemo } from 'react'
 import { useWeb3React } from '@web3-react/core'
 import useENSName from 'hooks/useENSName'
 import { NetworkContextName } from 'constants/index'
+import styled from 'styled-components'
 
 import WalletModal from 'components/WalletModal'
-import { Web3StatusInner } from './Web3StatusMod'
+import { Web3StatusInner, Text, Web3StatusConnected } from './Web3StatusMod'
 import useRecentActivity, { TransactionAndOrder } from 'hooks/useRecentActivity'
 import { OrderStatus } from 'state/orders/actions'
+
+const Wrapper = styled.div`
+  ${Web3StatusConnected} {
+    color: ${({ theme }) => theme.wallet?.color};
+    background: ${({ theme }) => theme.wallet?.background};
+  }
+
+  ${Text} {
+    /* color: red !important; */
+  }
+`
 
 const isPending = (data: TransactionAndOrder) => data.status === OrderStatus.PENDING
 const isConfirmedOrExpired = (data: TransactionAndOrder) =>
@@ -38,12 +50,14 @@ export default function Web3Status() {
 
   return (
     <>
-      <Web3StatusInner pendingCount={pendingActivity.length} />
-      <WalletModal
-        ENSName={ENSName ?? undefined}
-        pendingTransactions={pendingActivity}
-        confirmedTransactions={confirmedAndExpiredActivity}
-      />
+      <Wrapper>
+        <Web3StatusInner pendingCount={pendingActivity.length} />
+        <WalletModal
+          ENSName={ENSName ?? undefined}
+          pendingTransactions={pendingActivity}
+          confirmedTransactions={confirmedAndExpiredActivity}
+        />
+      </Wrapper>
     </>
   )
 }

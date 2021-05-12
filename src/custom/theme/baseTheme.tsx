@@ -79,7 +79,16 @@ export function themeVariables(darkMode: boolean, colorsTheme: Colors) {
       }
     },
     header: {
-      border: `1px solid ${colorsTheme.border}`
+      border: `1px solid ${colorsTheme.border}`,
+      menuFlyout: {
+        background: colorsTheme.bg3,
+        color: colorsTheme.text2,
+        colorHover: colorsTheme.text2,
+        colorHoverBg: colorsTheme.bg3,
+        closeButtonBg: colorsTheme.bg3,
+        closeButtonColor: colorsTheme.black,
+        seperatorColor: colorsTheme.disabled
+      }
     },
     buttonSizes: {
       [ButtonSize.BIG]: css`
@@ -135,6 +144,10 @@ export function themeVariables(darkMode: boolean, colorsTheme: Colors) {
     networkCard: {
       background: 'rgba(243, 132, 30, 0.05)',
       text: colorsTheme.yellow2
+    },
+    wallet: {
+      color: colorsTheme.text1,
+      background: colorsTheme.bg1
     }
   }
 }
