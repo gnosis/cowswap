@@ -75,6 +75,13 @@ export interface OrderMetaData {
   signature: string
 }
 
+export interface UnsupportedToken {
+  [token: string]: {
+    address: string
+    dateAdded: number
+  }
+}
+
 function _getApiBaseUrl(chainId: ChainId): string {
   const baseUrl = API_BASE_URL[chainId]
 
