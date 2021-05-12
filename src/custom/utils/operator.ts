@@ -37,7 +37,7 @@ const DEFAULT_HEADERS = {
  */
 export type OrderID = string
 
-enum ApiErrorCodes {
+export enum ApiErrorCodes {
   DuplicateOrder = 'DuplicateOrder',
   InvalidSignature = 'InvalidSignature',
   MissingOrderData = 'MissingOrderData',
@@ -217,16 +217,16 @@ function toApiAddress(address: string, chainId: ChainId): string {
 async function _getJson(chainId: ChainId, url: string): Promise<any> {
   let response: Response | undefined
   try {
-    const responseMaybeOk = await _fetchGet(chainId, url)
-    response = responseMaybeOk.ok ? responseMaybeOk : undefined
-  } catch (error) {
-    // do nothing
-  }
-
-  if (!response) {
-    throw new Error('Error getting the fee')
-  } else {
-    return response.json()
+    response = await _fetchGet(chainId, url)
+  } finally {
+    if (!response) {
+      throw new Error(`Error getting query @ ${url}`)
+    } else if (!response.ok) {
+      const errorResponse = await response.json()
+      throw errorResponse
+    } else {
+      return response.json()
+    }
   }
 }
 
