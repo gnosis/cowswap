@@ -11,7 +11,7 @@ const UNSUPPORTED_TOKEN_TAG = [
   {
     name: 'Unsupported',
     description:
-      'This token is unsupported as it does not operate efficiently with the Protocol. Please refer to the FAQ link for more information.',
+      'This token is unsupported as it does not operate efficiently with Gnosis Protocol. Please refer to the FAQ for more information.',
     id: '0'
   }
 ]
