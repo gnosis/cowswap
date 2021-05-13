@@ -2,7 +2,6 @@ import { parseUnits } from '@ethersproject/units'
 import { getPriceQuote } from '@src/custom/utils/operator'
 import { basisPointsToPercent } from '@src/utils'
 import { ChainId, Fraction, JSBI, Pair, Route, Token, TokenAmount, Trade, TradeType, WETH } from '@uniswap/sdk'
-// import { BigNumber } from 'ethers'
 
 describe('Swap testing', () => {
   const WETH_MAINNET = new Token(ChainId.MAINNET, WETH[1].address, 18)
