@@ -121,8 +121,7 @@
   "jest": {
     "moduleNameMapper": {
       "@src/(.*)": "<rootDir>/src/$1"
-    },
-    "coveragePathIgnorePatterns": ["<rootDir>/src/*/*.d.ts"]
+    }
   },
   "eslintConfig": {
     "extends": "react-app",
