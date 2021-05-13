@@ -1,37 +1,47 @@
 import { parseUnits } from '@ethersproject/units'
+import { getCanonicalMarket } from '@src/custom/utils/misc'
 import { getPriceQuote } from '@src/custom/utils/operator'
 import { basisPointsToPercent } from '@src/utils'
 import { ChainId, Fraction, JSBI, Pair, Route, Token, TokenAmount, Trade, TradeType, WETH } from '@uniswap/sdk'
 
-describe('Swap testing', () => {
-  const WETH_MAINNET = new Token(ChainId.MAINNET, WETH[1].address, 18)
-  const DAI = new Token(ChainId.MAINNET, '0x6b175474e89094c44da98b954eedeac495271d0f', 18)
+const WETH_MAINNET = new Token(ChainId.MAINNET, WETH[1].address, 18)
+const DAI_MAINNET = new Token(ChainId.MAINNET, '0x6b175474e89094c44da98b954eedeac495271d0f', 18)
 
-  const pair12 = new Pair(
-    new TokenAmount(WETH_MAINNET, JSBI.BigInt(1000000000)),
-    new TokenAmount(DAI, JSBI.BigInt(2000000000))
-  )
-  // 1 WETH
-  const amountIn = parseUnits('1').toString()
-  const currencyIn = new TokenAmount(WETH_MAINNET, amountIn)
+const PAIR_WETH_DAI = new Pair(
+  new TokenAmount(WETH_MAINNET, JSBI.BigInt(1000000000)),
+  new TokenAmount(DAI_MAINNET, JSBI.BigInt(2000000000))
+)
 
-  describe('ExactIn: WETH/DAI', () => {
+describe('Swap PRICE Quote test', () => {
+  describe('ExactIn: WETH/DAI_MAINNET', () => {
     let inTrade, quote: any, extendedTradeIn: any
 
-    beforeEach(async () => {
-      inTrade = new Trade(new Route([pair12], WETH_MAINNET), currencyIn, TradeType.EXACT_INPUT)
+    // 1 WETH SELL
+    const amountIn = parseUnits('1').toString()
+    const currencyIn = new TokenAmount(WETH_MAINNET, amountIn)
 
+    beforeEach(async () => {
+      // make a new Trade object
+      inTrade = new Trade(new Route([PAIR_WETH_DAI], WETH_MAINNET), currencyIn, TradeType.EXACT_INPUT)
+
+      const { quoteToken, baseToken } = getCanonicalMarket({
+        sellToken: WETH_MAINNET.address,
+        buyToken: DAI_MAINNET.address,
+        kind: 'sell'
+      })
+
+      // get the WETH/DAI quote
       quote = await getPriceQuote({
         chainId: 1,
-        quoteToken: DAI.address,
-        baseToken: WETH_MAINNET.address,
+        quoteToken,
+        baseToken,
         amount: amountIn,
         kind: 'sell'
       })
 
       extendedTradeIn = {
         ...inTrade,
-        outputAmount: new TokenAmount(DAI, quote.amount),
+        outputAmount: new TokenAmount(DAI_MAINNET, quote.amount),
         maximumAmountIn: inTrade.maximumAmountIn,
         minimumAmountOut: inTrade.minimumAmountOut
       }
