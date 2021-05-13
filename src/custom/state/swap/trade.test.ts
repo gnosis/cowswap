@@ -46,7 +46,7 @@ describe('Swap testing', () => {
       // Calculate our expected output
       const expectedOutput = new Fraction(quote.amount).multiply(expectedSlippage)
       // Actual:
-      const uniSlippageCalculation = extendedTradeIn.minimumAmountOut(basisPointsToPercent(50)).raw.toString()
+      const actualOutput = extendedTradeIn.minimumAmountOut(basisPointsToPercent(50)).raw.toString()
 
       console.log(
         `
@@ -58,29 +58,29 @@ describe('Swap testing', () => {
       console.log(
         `
             EXPECTED SLIPPAGE OUTPUT:  ${expectedOutput.quotient.toString()}
-            ACTUAL SLIPPAGE OUTPUT:    ${uniSlippageCalculation}
+            ACTUAL SLIPPAGE OUTPUT:    ${actualOutput}
           `
       )
 
       // slippage expected and actual slippage do not match..
       expect(expectedSlippage.equalTo(actualSlippage)).toBeFalsy()
       // there is a slight mismatch...
-      expect(uniSlippageCalculation).not.toEqual(expectedOutput.quotient.toString())
+      expect(actualOutput).not.toEqual(expectedOutput.quotient.toString())
     })
 
     it('Expect PASS: ExactIN swap: 0.5% Slippage', async () => {
       // calculate slippage EXACTLY as uni does
       // first we convert basis points slippage 50 (0.005) to Percent
       // then we add to Fraction(1) and INVERT
-      const slippage = basisPointsToPercent(50)
-      const expectedSlippage = new Fraction('1').add(slippage).invert()
+      const slippagePercent = basisPointsToPercent(50)
+      const expectedSlippage = new Fraction('1').add(slippagePercent).invert()
 
       // multiply our quoted amount by the expectedSlippage
       const expectedOutput = new Fraction(quote.amount).multiply(expectedSlippage)
       // Actual:
-      const uniSlippageCalculation = extendedTradeIn.minimumAmountOut(slippage).raw.toString()
+      const actualSlippage = extendedTradeIn.minimumAmountOut(slippagePercent).raw.toString()
 
-      expect(uniSlippageCalculation).toEqual(expectedOutput.quotient.toString())
+      expect(actualSlippage).toEqual(expectedOutput.quotient.toString())
     })
   })
 })
