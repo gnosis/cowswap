@@ -2,13 +2,15 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { useCallback } from 'react'
 import { useClearQuote, useUpdateQuote } from 'state/price/hooks'
 import { getCanonicalMarket, registerOnWindow } from 'utils/misc'
-import { ApiErrorCodes, FeeQuoteParams, getFeeQuote, getPriceQuote } from 'utils/operator'
+import { ApiError, ApiErrorCodes, FeeQuoteParams, getFeeQuote, getPriceQuote } from 'utils/operator'
 import {
   useAddGpUnsupportedToken,
   useIsUnsupportedTokenGp,
   useRemoveGpUnsupportedToken
 } from 'state/lists/hooks/hooksMod'
 import { FeeInformation, PriceInformation } from 'state/price/reducer'
+import { AddGpUnsupportedTokenParams } from 'state/lists/actions'
+import { ChainId } from '@uniswap/sdk'
 
 export interface RefetchQuoteCallbackParmams {
   quoteParams: FeeQuoteParams
@@ -44,6 +46,36 @@ async function getQuote({
   const pricePromise = getPriceQuote({ chainId, baseToken, quoteToken, amount: exchangeAmount, kind })
 
   return Promise.all([pricePromise, feePromise])
+}
+
+function _isValidApiError(error: any): error is ApiError {
+  return 'errorType' in error !== undefined
+}
+
+function _handleUnsupportedToken({
+  chainId,
+  error,
+  addUnsupportedToken
+}: {
+  chainId: ChainId
+  error: unknown
+  addUnsupportedToken: (params: AddGpUnsupportedTokenParams) => void
+}) {
+  if (_isValidApiError(error)) {
+    // Unsupported token
+    if (error.errorType === ApiErrorCodes.UnsupportedToken) {
+      // TODO: will change with introduction of data prop in error responses
+      const unsupportedTokenAddress = error?.description?.split(' ')[2]
+
+      console.error('[useRefetchPriceCallback]::Unsupported token detected:', unsupportedTokenAddress, '- disabling.')
+
+      addUnsupportedToken({
+        chainId,
+        address: unsupportedTokenAddress.toLowerCase(),
+        dateAdded: Date.now()
+      })
+    }
+  }
 }
 
 /**
@@ -89,25 +121,7 @@ export function useRefetchQuoteCallback() {
           fee
         })
       } catch (error) {
-        const errorType = error?.errorType
-
-        // Unsupported token
-        if (errorType === ApiErrorCodes.UnsupportedToken) {
-          // TODO: will change with introduction of data prop in error responses
-          const unsupportedTokenAddress = error?.description?.split(' ')[2]
-
-          console.error(
-            '[useRefetchPriceCallback]::Unsupported token detected:',
-            unsupportedTokenAddress,
-            '- disabling.'
-          )
-
-          addUnsupportedToken({
-            chainId,
-            address: unsupportedTokenAddress.toLowerCase(),
-            dateAdded: Date.now()
-          })
-        }
+        _handleUnsupportedToken({ error, chainId, addUnsupportedToken })
 
         // Clear the quote
         clearQuote({ chainId, token: sellToken })
