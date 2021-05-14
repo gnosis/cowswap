@@ -65,6 +65,12 @@ export function getStatusIcon(connector?: AbstractConnector, walletInfo?: Connec
       </MouseoverTooltip>
     )
     /* eslint-enable jsx-a11y/accessible-emoji */
+  } else if (walletInfo?.icon) {
+    return (
+      <IconWrapper size={16}>
+        <img src={walletInfo.icon} alt={`${walletInfo?.walletName || 'wallet'} logo`} />
+      </IconWrapper>
+    )
   } else if (connector === injected) {
     return (
       <IconWrapper size={16}>
