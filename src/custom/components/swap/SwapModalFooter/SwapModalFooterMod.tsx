@@ -56,17 +56,13 @@ export default function SwapModalFooter({
     <>
       <AutoColumn gap="0px">
         <RowBetween align="center">
-          <Text
-            fontWeight={400}
-            fontSize={14}
-            // color={theme.text2}
-          >
+          <Text fontWeight={400} fontSize={14} color={theme.text2}>
             Price
           </Text>
           <Text
             fontWeight={500}
             fontSize={14}
-            color={theme.text1}
+            color={theme.text2}
             style={{
               justifyContent: 'center',
               alignItems: 'center',
@@ -84,22 +80,18 @@ export default function SwapModalFooter({
 
         <RowBetween>
           <RowFixed>
-            <TYPE.black
-              fontSize={14}
-              fontWeight={400}
-              // color={theme.text2}
-            >
+            <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
               {isExactIn ? 'Minimum received' : 'Maximum sold'}
             </TYPE.black>
             <QuestionHelper text={getMinimumReceivedTooltip(allowedSlippage, isExactIn)} />
           </RowFixed>
           <RowFixed>
-            <TYPE.black fontSize={14}>
+            <TYPE.black fontSize={14} color={theme.text2}>
               {trade.tradeType === TradeType.EXACT_INPUT
                 ? slippageAdjustedAmounts[Field.OUTPUT]?.toSignificant(SHORT_PRECISION) ?? '-'
                 : slippageAdjustedAmounts[Field.INPUT]?.toSignificant(SHORT_PRECISION) ?? '-'}
             </TYPE.black>
-            <TYPE.black fontSize={14} marginLeft={'4px'}>
+            <TYPE.black fontSize={14} marginLeft={'4px'} color={theme.text2}>
               {trade.tradeType === TradeType.EXACT_INPUT
                 ? trade.outputAmount.currency.symbol
                 : trade.inputAmount.currency.symbol}
@@ -126,16 +118,12 @@ export default function SwapModalFooter({
             {realizedLPFee ? realizedLPFee?.toSignificant(6) + ' ' + trade.inputAmount.currency.symbol : '-'}
           </TYPE.black> */}
           <RowFixed>
-            <TYPE.black
-              fontSize={14}
-              fontWeight={400}
-              // color={theme.text2}
-            >
+            <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
               {feeTitle}
             </TYPE.black>
             <QuestionHelper text={feeTooltip} />
           </RowFixed>
-          <TYPE.black fontSize={14}>
+          <TYPE.black fontSize={14} color={theme.text2}>
             {feeAmount ? feeAmount.toSignificant(DEFAULT_PRECISION) + ' ' + feeAmount.currency.symbol : '-'}
           </TYPE.black>
         </RowBetween>
