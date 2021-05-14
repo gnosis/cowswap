@@ -227,15 +227,14 @@ export function useIsUnsupportedTokenFromLists() {
   const allUnsupportedTokens = useUnsupportedTokenList()
 
   return useCallback(
-    (address?: string) => {
-      const checkSummedAddress = isAddress(address)
+    (addressToCheck?: string) => {
+      const checkSummedAddress = isAddress(addressToCheck)
 
-      if (!checkSummedAddress || !chainId) return false
+      if (!checkSummedAddress || !chainId || !allUnsupportedTokens[chainId][checkSummedAddress]) return false
 
-      return {
-        address: allUnsupportedTokens[chainId][checkSummedAddress].token.address,
-        dateAdded: null
-      }
+      const { address } = allUnsupportedTokens[chainId][checkSummedAddress].token
+
+      return Boolean(address)
     },
     [allUnsupportedTokens, chainId]
   )
