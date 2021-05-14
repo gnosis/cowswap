@@ -1,9 +1,19 @@
 import React from 'react'
+import styled from 'styled-components'
 import { CurrencyAmount } from '@uniswap/sdk'
 
 import { LONG_PRECISION } from 'constants/index'
 
 import CurrencyListMod, { StyledBalanceText } from './CurrencyListMod'
+import { MenuItem } from 'components/SearchModal/styleds'
+
+const Wrapper = styled.div`
+  ${MenuItem} {
+    &:hover {
+      background-color: ${({ theme }) => theme.bg4};
+    }
+  }
+`
 
 export function Balance({ balance }: { balance: CurrencyAmount }) {
   return <StyledBalanceText title={balance.toExact()}>{balance.toSignificant(LONG_PRECISION)}</StyledBalanceText>
@@ -13,5 +23,9 @@ export default function CurrencyList(
   ...paramsList: Parameters<typeof CurrencyListMod>
 ): ReturnType<typeof CurrencyListMod> {
   const [params] = paramsList
-  return <CurrencyListMod {...params} BalanceComponent={Balance} />
+  return (
+    <Wrapper>
+      <CurrencyListMod {...params} BalanceComponent={Balance} />
+    </Wrapper>
+  )
 }
