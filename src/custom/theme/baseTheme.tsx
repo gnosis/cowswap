@@ -55,7 +55,8 @@ export function colors(darkMode: boolean): Colors {
     blueShade2: '#011e34',
     border: darkMode ? '#3a3b5a' : 'rgb(58 59 90 / 10%)',
     disabled: darkMode ? '#31323e' : 'rgb(237, 238, 242)',
-    redShade: darkMode ? '#AE2C00' : '#AE2C00'
+    redShade: darkMode ? '#AE2C00' : '#AE2C00',
+    textLink: darkMode ? '#ffffff' : '#AE2C00'
   }
 }
 

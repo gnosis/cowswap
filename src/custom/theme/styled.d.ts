@@ -6,6 +6,7 @@ export { Color, Grids } from '@src/theme/styled'
 export interface Colors extends ColorsUniswap {
   purple: Color
   redShade: Color
+  textLink: Color
   greenShade: Color
   blueShade: Color
   blueShade2: Color

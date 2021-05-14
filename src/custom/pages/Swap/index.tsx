@@ -7,19 +7,19 @@ import { Text } from 'rebass'
 import { ButtonSize, TYPE } from 'theme/index'
 
 import SwapMod from './SwapMod'
-import { RowBetween, RowFixed } from 'components/Row'
+import { AutoRow, RowBetween, RowFixed } from 'components/Row'
 import {
   BottomGrouping as BottomGroupingUni,
   Wrapper as WrapperUni,
   ArrowWrapper as ArrowWrapperUni
 } from 'components/swap/styleds'
 import { AutoColumn } from 'components/Column'
+import { ClickableText } from 'pages/Pool/styleds'
 import Card from 'components/Card'
 import QuestionHelper from 'components/QuestionHelper'
 import { ButtonError, ButtonPrimary } from 'components/Button'
 import EthWethWrap, { Props as EthWethWrapProps } from 'components/swap/EthWethWrap'
 import { useReplaceSwapState, useSwapState } from 'state/swap/hooks'
-
 interface FeeGreaterMessageProp {
   fee: CurrencyAmount
 }
@@ -45,6 +45,14 @@ const SwapModWrapper = styled(SwapMod)`
 
     ${AutoColumn} {
       grid-row-gap: 3px;
+    }
+
+    .expertMode ${AutoColumn} {
+      grid-row-gap: 12px;
+    }
+
+    ${ClickableText} {
+      color: ${({ theme }) => theme.text1};
     }
 
     ${Card} > ${AutoColumn} {
@@ -76,6 +84,14 @@ const SwapModWrapper = styled(SwapMod)`
       > svg {
         stroke: ${({ theme }) => theme.swap?.arrowDown?.color}
       }
+    }
+
+    .expertMode ${ArrowWrapperUni} {
+      position: relative;
+    }
+
+    .expertMode ${AutoRow} {
+      padding: 0 1rem;
     }
   }
 `

@@ -56,8 +56,12 @@ export default function SwapModalFooter({
     <>
       <AutoColumn gap="0px">
         <RowBetween align="center">
-          <Text fontWeight={400} fontSize={14} color={theme.text2}>
-            Price
+          <Text
+            fontWeight={400}
+            fontSize={14}
+            // color={theme.text2}
+          >
+            Pricesssssssssss
           </Text>
           <Text
             fontWeight={500}
@@ -80,7 +84,11 @@ export default function SwapModalFooter({
 
         <RowBetween>
           <RowFixed>
-            <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
+            <TYPE.black
+              fontSize={14}
+              fontWeight={400}
+              // color={theme.text2}
+            >
               {isExactIn ? 'Minimum received' : 'Maximum sold'}
             </TYPE.black>
             <QuestionHelper text={getMinimumReceivedTooltip(allowedSlippage, isExactIn)} />
@@ -118,7 +126,11 @@ export default function SwapModalFooter({
             {realizedLPFee ? realizedLPFee?.toSignificant(6) + ' ' + trade.inputAmount.currency.symbol : '-'}
           </TYPE.black> */}
           <RowFixed>
-            <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
+            <TYPE.black
+              fontSize={14}
+              fontWeight={400}
+              // color={theme.text2}
+            >
               {feeTitle}
             </TYPE.black>
             <QuestionHelper text={feeTooltip} />

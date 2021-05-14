@@ -1,5 +1,8 @@
-import React, { useContext, useCallback } from 'react'
-import styled, { ThemeContext } from 'styled-components'
+import React, {
+  // useContext,
+  useCallback
+} from 'react'
+import styled from 'styled-components' // , { ThemeContext }
 import useENS from '../../hooks/useENS'
 import { useActiveWeb3React } from '../../hooks'
 import { ExternalLink, TYPE } from 'theme'
@@ -41,6 +44,7 @@ const Input = styled.input<{ error?: boolean }>`
   background-color: ${({ theme }) => theme.bg1};
   transition: color 300ms ${({ error }) => (error ? 'step-end' : 'step-start')};
   color: ${({ error, theme }) => (error ? theme.red1 : theme.primary1)};
+  color: red;
   overflow: hidden;
   text-overflow: ellipsis;
   font-weight: 500;
@@ -77,7 +81,7 @@ export default function AddressInputPanel({
   onChange: (value: string) => void
 }) {
   const { chainId } = useActiveWeb3React()
-  const theme = useContext(ThemeContext)
+  // const theme = useContext(ThemeContext)
 
   const { address, loading, name } = useENS(value)
 
@@ -98,7 +102,11 @@ export default function AddressInputPanel({
         <InputContainer>
           <AutoColumn gap="md">
             <RowBetween>
-              <TYPE.black color={theme.text2} fontWeight={500} fontSize={14}>
+              <TYPE.black
+                // color={theme.text2}
+                fontWeight={500}
+                fontSize={14}
+              >
                 Recipient
               </TYPE.black>
               {address && chainId && (

@@ -1,9 +1,9 @@
 import React from 'react'
 import { Price } from '@uniswap/sdk'
-import { useContext } from 'react'
+// import { useContext } from 'react'
 import { Repeat } from 'react-feather'
 import { Text } from 'rebass'
-import { ThemeContext } from 'styled-components'
+// import { ThemeContext } from 'styled-components'
 import { StyledBalanceMaxMini } from './styleds'
 
 interface TradePriceProps {
@@ -13,7 +13,7 @@ interface TradePriceProps {
 }
 
 export default function TradePrice({ price, showInverted, setShowInverted }: TradePriceProps) {
-  const theme = useContext(ThemeContext)
+  // const theme = useContext(ThemeContext)
 
   const formattedPrice = showInverted ? price?.toSignificant(6) : price?.invert()?.toSignificant(6)
 
@@ -26,7 +26,7 @@ export default function TradePrice({ price, showInverted, setShowInverted }: Tra
     <Text
       fontWeight={500}
       fontSize={14}
-      color={theme.text2}
+      // color={theme.text2}
       style={{ justifyContent: 'center', alignItems: 'center', display: 'flex' }}
     >
       {show ? (
