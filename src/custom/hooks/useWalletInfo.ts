@@ -72,7 +72,7 @@ export function useWalletInfo(): ConnectedWalletInfo {
   }, [connector])
 
   useEffect(() => {
-    if (account || web3Instance) {
+    if (account && web3Instance) {
       checkIsSmartContractWallet(account, web3Instance).then(setIsSmartContractWallet)
     }
   }, [account, web3Instance])
