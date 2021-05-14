@@ -61,7 +61,7 @@ export default function SwapModalFooter({
             fontSize={14}
             // color={theme.text2}
           >
-            Pricesssssssssss
+            Prices
           </Text>
           <Text
             fontWeight={500}
