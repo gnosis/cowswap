@@ -5,7 +5,7 @@ import { getCanonicalMarket, registerOnWindow } from 'utils/misc'
 import { ApiErrorCodes, FeeQuoteParams, getFeeQuote, getPriceQuote } from 'utils/operator'
 import {
   useAddGpUnsupportedToken,
-  useGpUnsupportedTokens,
+  useIsUnsupportedTokenGp,
   useRemoveGpUnsupportedToken
 } from 'state/lists/hooks/hooksMod'
 import { FeeInformation, PriceInformation } from 'state/price/reducer'
@@ -50,7 +50,7 @@ async function getQuote({
  * @returns callback that fetches a new quote and update the state
  */
 export function useRefetchQuoteCallback() {
-  const gpUnsupportedTokens = useGpUnsupportedTokens()
+  const isUnsupportedTokenGp = useIsUnsupportedTokenGp()
   // dispatchers
   const updateQuote = useUpdateQuote()
   const clearQuote = useClearQuote()
@@ -66,8 +66,7 @@ export function useRefetchQuoteCallback() {
         // Get the quote
         const [price, fee] = await getQuote(params)
 
-        const previouslyUnsupportedToken =
-          gpUnsupportedTokens && (gpUnsupportedTokens[sellToken] || gpUnsupportedTokens[buyToken])
+        const previouslyUnsupportedToken = isUnsupportedTokenGp(sellToken) || isUnsupportedTokenGp(buyToken)
         // can be a previously unsupported token which is now valid
         // so we check against map and remove it
         if (previouslyUnsupportedToken) {
@@ -91,7 +90,6 @@ export function useRefetchQuoteCallback() {
         })
       } catch (error) {
         const errorType = error?.errorType
-        console.error('Error getting the quote (price/fee):', errorType)
 
         // Unsupported token
         if (errorType === ApiErrorCodes.UnsupportedToken) {
@@ -115,6 +113,6 @@ export function useRefetchQuoteCallback() {
         clearQuote({ chainId, token: sellToken })
       }
     },
-    [gpUnsupportedTokens, updateQuote, removeGpUnsupportedToken, clearQuote, addUnsupportedToken]
+    [isUnsupportedTokenGp, updateQuote, removeGpUnsupportedToken, clearQuote, addUnsupportedToken]
   )
 }
