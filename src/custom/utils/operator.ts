@@ -37,6 +37,8 @@ const DEFAULT_HEADERS = {
  */
 export type OrderID = string
 
+// Conforms to backend API
+// https://github.com/gnosis/gp-v2-services/blob/0bd5f7743bebaa5acd3be13e35ede2326a096f14/orderbook/openapi.yml#L562
 export enum ApiErrorCodes {
   DuplicateOrder = 'DuplicateOrder',
   InvalidSignature = 'InvalidSignature',
