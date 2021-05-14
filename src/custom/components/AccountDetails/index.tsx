@@ -38,6 +38,8 @@ import {
   IconWrapper,
   renderTransactions
 } from './AccountDetailsMod'
+import { ConnectedWalletInfo, useWalletInfo } from 'hooks/useWalletInfo'
+import { MouseoverTooltip } from 'components/Tooltip/TooltipMod'
 
 type AbstractConnector = Pick<ReturnType<typeof useActiveWeb3React>, 'connector'>['connector']
 
@@ -52,8 +54,18 @@ export function formatConnectorName(connector?: AbstractConnector) {
   return <WalletName>Connected with {name}</WalletName>
 }
 
-export function getStatusIcon(connector?: AbstractConnector) {
-  if (connector === injected) {
+export function getStatusIcon(connector?: AbstractConnector, walletInfo?: ConnectedWalletInfo) {
+  if (walletInfo && !walletInfo.isSupportedWallet) {
+    /* eslint-disable jsx-a11y/accessible-emoji */
+    return (
+      <MouseoverTooltip text="Wallet not currently supported">
+        <IconWrapper role="img" aria-label="Warning sign. Wallet not supported">
+          ⚠️
+        </IconWrapper>
+      </MouseoverTooltip>
+    )
+    /* eslint-enable jsx-a11y/accessible-emoji */
+  } else if (connector === injected) {
     return (
       <IconWrapper size={16}>
         <Identicon />
@@ -104,6 +116,7 @@ export default function AccountDetails({
   openOptions
 }: AccountDetailsProps) {
   const { chainId, account, connector } = useActiveWeb3React()
+  const walletInfo = useWalletInfo()
   const theme = useContext(ThemeContext)
   const dispatch = useDispatch<AppDispatch>()
 
@@ -155,14 +168,14 @@ export default function AccountDetails({
                   {ENSName ? (
                     <>
                       <div>
-                        {getStatusIcon()}
+                        {getStatusIcon(connector, walletInfo)}
                         <p> {ENSName}</p>
                       </div>
                     </>
                   ) : (
                     <>
                       <div>
-                        {getStatusIcon()}
+                        {getStatusIcon(connector, walletInfo)}
                         <p> {account && shortenAddress(account)}</p>
                       </div>
                     </>
