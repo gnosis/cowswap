@@ -58,6 +58,15 @@ export const Content = styled.div`
     height: auto;
     margin: 24px auto;
   }
+
+  a {
+    color: ${({ theme }) => theme.text1};
+    transition: color 0.2s ease-in-out;
+
+    &:hover {
+      color: ${({ theme }) => theme.textLink};
+    }
+  }
 `
 
 export const GdocsListStyle = css`
