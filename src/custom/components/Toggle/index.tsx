@@ -6,17 +6,18 @@ export type ToggleProps = TogglePropsUni
 
 const Wrapper = styled(ToggleUni)`
   ${ToggleElement} {
-    color: ${({ theme }) => theme.black};
+    color: ${({ theme }) => theme.text1};
     border: 2px solid transparent;
     transition: border 0.2s ease-in-out;
 
     &:hover {
-      color: ${({ theme }) => theme.black};
-      border: 2px solid ${({ theme }) => theme.black};
+      color: ${({ theme }) => theme.text1};
+      border: 2px solid ${({ theme }) => theme.text1};
     }
   }
   .disabled {
     background: ${({ theme }) => theme.primary1};
+    color: ${({ theme }) => theme.text2};
   }
 `
 
