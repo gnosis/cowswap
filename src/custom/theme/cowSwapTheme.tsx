@@ -44,6 +44,7 @@ export function colors(darkMode: boolean): Colors {
 
     // ****** primary colors ******
     primary1: darkMode ? '#e47651' : '#FF784A',
+    primary3: darkMode ? '#e47651' : '#FF784A',
     primary4: darkMode ? '#ff5d25' : '#ff5d25',
     primary5: darkMode ? '#e47651' : '#FF784A',
 
