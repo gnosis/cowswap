@@ -185,7 +185,10 @@ export function Web3StatusInner({ pendingCount }: { pendingCount?: number }) {
       <Web3StatusConnected id="web3-status-connected" onClick={toggleWalletModal} pending={hasPendingTransactions}>
         {hasPendingTransactions ? (
           <RowBetween>
-            <Text>{pendingCount} Pending</Text> <Loader stroke="white" />
+            <Text>{pendingCount} Pending</Text>{' '}
+            <Loader
+            // stroke="white"
+            />
           </RowBetween>
         ) : (
           <>

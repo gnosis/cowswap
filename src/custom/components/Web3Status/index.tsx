@@ -5,18 +5,16 @@ import { NetworkContextName } from 'constants/index'
 import styled from 'styled-components'
 
 import WalletModal from 'components/WalletModal'
-import { Web3StatusInner, Text, Web3StatusConnected } from './Web3StatusMod'
+import { Web3StatusInner, Web3StatusConnected } from './Web3StatusMod'
 import useRecentActivity, { TransactionAndOrder } from 'hooks/useRecentActivity'
 import { OrderStatus } from 'state/orders/actions'
 
 const Wrapper = styled.div`
+  color: ${({ theme }) => theme.wallet?.color};
+
   ${Web3StatusConnected} {
     color: ${({ theme }) => theme.wallet?.color};
     background: ${({ theme }) => theme.wallet?.background};
-  }
-
-  ${Text} {
-    /* color: red !important; */
   }
 `
 
