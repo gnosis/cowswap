@@ -44,7 +44,6 @@ const Input = styled.input<{ error?: boolean }>`
   background-color: ${({ theme }) => theme.bg1};
   transition: color 300ms ${({ error }) => (error ? 'step-end' : 'step-start')};
   color: ${({ error, theme }) => (error ? theme.red1 : theme.primary1)};
-  color: red;
   overflow: hidden;
   text-overflow: ellipsis;
   font-weight: 500;
