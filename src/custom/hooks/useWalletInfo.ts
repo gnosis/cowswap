@@ -4,7 +4,7 @@ import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers'
 import useENSName from '@src/hooks/useENSName'
 import { useEffect, useState } from 'react'
-import { NetworkContextName } from 'constants/index'
+import { NetworkContextName, UNSUPPORTED_WC_WALLETS } from 'constants/index'
 import { getProviderType, WalletProvider } from 'connectors'
 import { useActiveWeb3Instance } from 'hooks/index'
 
@@ -32,6 +32,10 @@ async function checkIsSmartContractWallet(
   return code !== '0x'
 }
 
+function checkIsSupportedWallet(name: string | undefined, isSmartContractWallet: boolean): boolean {
+  return !isSmartContractWallet && !UNSUPPORTED_WC_WALLETS.has(name || '')
+}
+
 async function getWcPeerMetadata(connector: WalletConnectConnector): Promise<{ walletName?: string; icon?: string }> {
   const provider = (await connector.getProvider()) as WalletConnectProvider
   console.log('Meta: ', provider.walletMeta)
@@ -52,7 +56,6 @@ export function useWalletInfo(): ConnectedWalletInfo {
   const web3Instance = useActiveWeb3Instance()
   const [walletName, setWalletName] = useState<string>()
   const [icon, setIcon] = useState<string>()
-  // const [isSupportedWallet, setIsSupportedWallet] = useState(false)
   const [provider, setProvider] = useState<WalletProvider>()
   const [isSmartContractWallet, setIsSmartContractWallet] = useState(false)
   const contextNetwork = useWeb3React(NetworkContextName)
@@ -86,6 +89,6 @@ export function useWalletInfo(): ConnectedWalletInfo {
     walletName,
     icon,
     ensName: ENSName || undefined,
-    isSupportedWallet: true // TODO: We can do test of all wallets using WC, and see the ones we can support
+    isSupportedWallet: checkIsSupportedWallet(walletName, isSmartContractWallet)
   }
 }
