@@ -13,7 +13,7 @@ const Wrapper = styled.div`
   color: ${({ theme }) => theme.wallet?.color};
 
   ${Web3StatusConnected} {
-    color: ${({ theme }) => theme.wallet?.color};
+    color: ${({ theme }) => theme.wallet?.color}!important;
     background: ${({ theme }) => theme.wallet?.background};
   }
 `

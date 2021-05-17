@@ -12,6 +12,8 @@ import CurrencyInputPanelMod, {
   Container
 } from './CurrencyInputPanelMod'
 
+import { StyledLogo } from 'components/CurrencyLogo'
+
 export const Wrapper = styled.div<{ selected: boolean }>`
   // CSS Override
 
@@ -71,6 +73,10 @@ export const Wrapper = styled.div<{ selected: boolean }>`
         selected ? theme.buttonCurrencySelect.colorSelected : theme.buttonCurrencySelect.color};
       stroke-width: 1.5px;
     }
+  }
+
+  ${StyledLogo} {
+    background: ${({ theme }) => theme.bg1};
   }
 `
 

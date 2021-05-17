@@ -541,7 +541,7 @@ export default function Swap({
                 <FeesExceedFromAmountMessage />
               ) : (
                 <GreyCard style={{ textAlign: 'center' }}>
-                  <TYPE.main mb="4px">Insufficient liquidity for this trade.</TYPE.main>
+                  <TYPE.body mb="4px">Insufficient liquidity for this trade.</TYPE.body>
                   {singleHopOnly && <TYPE.main mb="4px">Try enabling multi-hop trades.</TYPE.main>}
                 </GreyCard>
               )

@@ -33,7 +33,7 @@ export const StyledBalanceText = styled(Text)`
   text-overflow: ellipsis;
 `
 
-const Tag = styled.div`
+export const Tag = styled.div`
   background-color: ${({ theme }) => theme.bg3};
   color: ${({ theme }) => theme.text2};
   font-size: 14px;

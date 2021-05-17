@@ -4,7 +4,8 @@ import { CurrencyAmount } from '@uniswap/sdk'
 
 import { LONG_PRECISION } from 'constants/index'
 
-import CurrencyListMod, { StyledBalanceText } from './CurrencyListMod'
+import CurrencyListMod, { StyledBalanceText, Tag } from './CurrencyListMod'
+import { StyledLogo } from 'components/CurrencyLogo'
 import { MenuItem } from 'components/SearchModal/styleds'
 
 const Wrapper = styled.div`
@@ -12,6 +13,15 @@ const Wrapper = styled.div`
     &:hover {
       background-color: ${({ theme }) => theme.bg4};
     }
+  }
+
+  ${StyledLogo} {
+    background: ${({ theme }) => theme.bg1};
+  }
+
+  ${Tag} {
+    background: ${({ theme }) => theme.bg2};
+    color: ${({ theme }) => theme.text2};
   }
 `
 

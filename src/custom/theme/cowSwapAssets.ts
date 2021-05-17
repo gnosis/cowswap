@@ -95,12 +95,10 @@ export function cowSwapBackground(darkMode: boolean): string {
       }
 
       #LASER_EYES_LEFT {
-        animation: flickerLaser 1s linear 5;
         transition: all 0.5s ease-in-out;
       }
 
       #LASER_EYES_RIGHT {
-        animation: flickerLaser 1.5s linear 6;
         transition: all 0.5s ease-in-out;
         
       }
