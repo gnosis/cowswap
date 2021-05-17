@@ -2,7 +2,7 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { useCallback } from 'react'
 import { useClearQuote, useUpdateQuote } from 'state/price/hooks'
 import { getCanonicalMarket, registerOnWindow } from 'utils/misc'
-import { ApiError, ApiErrorCodes, FeeQuoteParams, getFeeQuote, getPriceQuote } from 'utils/operator'
+import { FeeQuoteParams, getFeeQuote, getPriceQuote } from 'utils/operator'
 import {
   useAddGpUnsupportedToken,
   useIsUnsupportedTokenGp,
@@ -11,6 +11,7 @@ import {
 import { FeeInformation, PriceInformation } from 'state/price/reducer'
 import { AddGpUnsupportedTokenParams } from 'state/lists/actions'
 import { ChainId } from '@uniswap/sdk'
+import OperatorError, { ApiErrorCodes } from 'utils/operator/error'
 
 export interface RefetchQuoteCallbackParmams {
   quoteParams: FeeQuoteParams
@@ -48,8 +49,8 @@ async function getQuote({
   return Promise.all([pricePromise, feePromise])
 }
 
-function _isValidApiError(error: any): error is ApiError {
-  return 'errorType' in error !== undefined
+function _isValidOperatorError(error: any): error is OperatorError {
+  return error instanceof OperatorError
 }
 
 function _handleUnsupportedToken({
@@ -61,23 +62,26 @@ function _handleUnsupportedToken({
   error: unknown
   addUnsupportedToken: (params: AddGpUnsupportedTokenParams) => void
 }) {
-  if (_isValidApiError(error)) {
+  if (_isValidOperatorError(error)) {
     // Unsupported token
-    if (error.errorType === ApiErrorCodes.UnsupportedToken) {
+    if (error.type === ApiErrorCodes.UnsupportedToken) {
       // TODO: will change with introduction of data prop in error responses
-      const unsupportedTokenAddress = error?.description?.split(' ')[2]
+      const unsupportedTokenAddress = error.description.split(' ')[2]
 
-      console.error('[useRefetchPriceCallback]::Unsupported token detected:', unsupportedTokenAddress, '- disabling.')
+      console.error(`${error.message}: ${error.description} - disabling.`)
 
       addUnsupportedToken({
         chainId,
-        address: unsupportedTokenAddress.toLowerCase(),
+        address: unsupportedTokenAddress,
         dateAdded: Date.now()
       })
     } else {
-      // log error
-      console.error('Error getting quote from API', error)
+      // some other operator error occurred, log it
+      console.error(error)
     }
+  } else {
+    // non-operator error log it
+    console.error('An unknown error occurred:', error)
   }
 }
 
