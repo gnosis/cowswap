@@ -1,9 +1,10 @@
 import { ChainId, ETHER, WETH } from '@uniswap/sdk'
 import { getSigningSchemeApiValue, OrderCreation } from 'utils/signatures'
 import { APP_ID } from 'constants/index'
-import { registerOnWindow } from './misc'
-import { isDev } from './environments'
+import { registerOnWindow } from '../misc'
+import { isDev } from '../environments'
 import { FeeInformation, PriceInformation } from 'state/price/reducer'
+import OperatorError, { ApiError } from './error'
 
 function getOperatorUrl(): Partial<Record<ChainId, string>> {
   if (isDev) {
@@ -36,22 +37,6 @@ const DEFAULT_HEADERS = {
    where orderDigest = keccak256(orderStruct). bytes32.
  */
 export type OrderID = string
-
-export enum ApiErrorCodes {
-  DuplicateOrder = 'DuplicateOrder',
-  InvalidSignature = 'InvalidSignature',
-  MissingOrderData = 'MissingOrderData',
-  InsufficientValidTo = 'InsufficientValidTo',
-  InsufficientFunds = 'InsufficientFunds',
-  InsufficientFee = 'InsufficientFee',
-  UnsupportedToken = 'UnsupportedToken',
-  WrongOwner = 'WrongOwner'
-}
-
-export interface ApiError {
-  errorType: ApiErrorCodes
-  description: string
-}
 
 export interface OrderMetaData {
   creationDate: string
@@ -114,63 +99,6 @@ function _fetchGet(chainId: ChainId, url: string) {
   })
 }
 
-async function _getErrorForBadPostOrderRequest(response: Response): Promise<string> {
-  let errorMessage: string
-  try {
-    const orderPostError: ApiError = await response.json()
-
-    switch (orderPostError.errorType) {
-      case ApiErrorCodes.DuplicateOrder:
-        errorMessage = 'There was another identical order already submitted'
-        break
-
-      case ApiErrorCodes.InsufficientFunds:
-        errorMessage = "The account doesn't have enough funds"
-        break
-
-      case ApiErrorCodes.InvalidSignature:
-        errorMessage = 'The order signature is invalid'
-        break
-
-      case ApiErrorCodes.MissingOrderData:
-        errorMessage = 'The order has missing information'
-        break
-
-      default:
-        console.error('Unknown reason for bad order submission', orderPostError)
-        errorMessage = orderPostError.description
-        break
-    }
-  } catch (error) {
-    console.error('Error handling a 400 error. Likely a problem deserialising the JSON response')
-    errorMessage = 'The order was not accepted by the network'
-  }
-
-  return errorMessage
-}
-
-async function _getErrorForUnsuccessfulPostOrder(response: Response): Promise<string> {
-  let errorMessage: string
-  switch (response.status) {
-    case 400:
-      errorMessage = await _getErrorForBadPostOrderRequest(response)
-      break
-
-    case 403:
-      errorMessage = 'The order cannot be accepted. Your account is deny-listed.'
-      break
-
-    case 429:
-      errorMessage = 'The order cannot be accepted. Too many order placements. Please, retry in a minute'
-      break
-
-    case 500:
-    default:
-      errorMessage = 'Error adding an order'
-  }
-  return errorMessage
-}
-
 export async function postSignedOrder(params: { chainId: ChainId; order: OrderCreation }): Promise<OrderID> {
   const { chainId, order } = params
   console.log('[utils:operator] Post signed order for network', chainId, order)
@@ -184,7 +112,7 @@ export async function postSignedOrder(params: { chainId: ChainId; order: OrderCr
   // Handle response
   if (!response.ok) {
     // Raise an exception
-    const errorMessage = await _getErrorForUnsuccessfulPostOrder(response)
+    const errorMessage = await OperatorError.getErrorForUnsuccessfulPostOrder(response)
     throw new Error(errorMessage)
   }
 
@@ -229,8 +157,9 @@ async function _getJson(chainId: ChainId, url: string): Promise<any> {
     if (!response) {
       throw new Error(`Error getting query @ ${url}`)
     } else if (!response.ok) {
-      const errorResponse = await response.json()
-      throw errorResponse
+      // is backend error handled at this point
+      const errorResponse: ApiError = await response.json()
+      throw new OperatorError(errorResponse)
     } else {
       return response.json()
     }

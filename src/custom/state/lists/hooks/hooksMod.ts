@@ -16,6 +16,7 @@ import {
   removeGpUnsupportedToken
 } from '../actions'
 import { UnsupportedToken } from 'utils/operator'
+import { isAddress } from 'utils'
 
 // type TagDetails = Tags[keyof Tags]
 // export interface TagInfo extends TagDetails {
@@ -221,28 +222,47 @@ export function useRemoveGpUnsupportedToken() {
   return useCallback((params: RemoveGpUnsupportedTokenParams) => dispatch(removeGpUnsupportedToken(params)), [dispatch])
 }
 
-export function useIsUnsupportedToken() {
+export function useIsUnsupportedTokenFromLists() {
   const { chainId } = useActiveWeb3React()
   const allUnsupportedTokens = useUnsupportedTokenList()
+
+  return useCallback(
+    (addressToCheck?: string) => {
+      const checkSummedAddress = isAddress(addressToCheck)
+
+      if (!checkSummedAddress || !chainId || !allUnsupportedTokens[chainId][checkSummedAddress]) return false
+
+      const { address } = allUnsupportedTokens[chainId][checkSummedAddress].token
+
+      return Boolean(address)
+    },
+    [allUnsupportedTokens, chainId]
+  )
+}
+
+export function useIsUnsupportedTokenGp() {
+  const { chainId } = useActiveWeb3React()
   const gpUnsupportedTokens = useGpUnsupportedTokens()
 
   return useCallback(
     (address?: string) => {
-      // map unsupported token addresses by chainId to it's address in lower case
-      const unsupportedTokensList = chainId
-        ? Object.keys(allUnsupportedTokens[chainId]).map(address => address.toLowerCase())
-        : []
-      // map unsupported GP tokens by chainId to it's address in lower case
-      const gpUnsupportedTokensList =
-        chainId && gpUnsupportedTokens ? Object.keys(gpUnsupportedTokens).map(address => address.toLowerCase()) : []
+      if (!address || !chainId || !gpUnsupportedTokens) return false
 
-      // combine the lists to prepare for the Set init
-      const combined = unsupportedTokensList.concat(gpUnsupportedTokensList)
-      const unsupportedTokensMap = new Set(combined)
-
-      // Returns a predicate function determining a token's support by address against our Set
-      return Boolean(address && unsupportedTokensMap.has(address.toLowerCase()))
+      return gpUnsupportedTokens[address.toLowerCase()]
     },
-    [allUnsupportedTokens, chainId, gpUnsupportedTokens]
+    [chainId, gpUnsupportedTokens]
+  )
+}
+
+export function useIsUnsupportedToken() {
+  const isUnsupportedTokenFromList = useIsUnsupportedTokenFromLists()
+  const isUnsupportedTokenGp = useIsUnsupportedTokenGp()
+
+  return useCallback(
+    (address?: string) => {
+      // Returns a predicate function determining a token's support by address against our Set
+      return Boolean(isUnsupportedTokenFromList(address) || isUnsupportedTokenGp(address))
+    },
+    [isUnsupportedTokenFromList, isUnsupportedTokenGp]
   )
 }

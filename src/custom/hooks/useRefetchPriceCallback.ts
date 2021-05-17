@@ -2,13 +2,16 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { useCallback } from 'react'
 import { useClearQuote, useUpdateQuote } from 'state/price/hooks'
 import { getCanonicalMarket, registerOnWindow } from 'utils/misc'
-import { ApiErrorCodes, FeeQuoteParams, getFeeQuote, getPriceQuote } from 'utils/operator'
+import { FeeQuoteParams, getFeeQuote, getPriceQuote } from 'utils/operator'
 import {
   useAddGpUnsupportedToken,
-  useGpUnsupportedTokens,
+  useIsUnsupportedTokenGp,
   useRemoveGpUnsupportedToken
 } from 'state/lists/hooks/hooksMod'
 import { FeeInformation, PriceInformation } from 'state/price/reducer'
+import { AddGpUnsupportedTokenParams } from 'state/lists/actions'
+import { ChainId } from '@uniswap/sdk'
+import OperatorError, { ApiErrorCodes } from 'utils/operator/error'
 
 export interface RefetchQuoteCallbackParmams {
   quoteParams: FeeQuoteParams
@@ -46,11 +49,47 @@ async function getQuote({
   return Promise.all([pricePromise, feePromise])
 }
 
+function _isValidOperatorError(error: any): error is OperatorError {
+  return error instanceof OperatorError
+}
+
+function _handleUnsupportedToken({
+  chainId,
+  error,
+  addUnsupportedToken
+}: {
+  chainId: ChainId
+  error: unknown
+  addUnsupportedToken: (params: AddGpUnsupportedTokenParams) => void
+}) {
+  if (_isValidOperatorError(error)) {
+    // Unsupported token
+    if (error.type === ApiErrorCodes.UnsupportedToken) {
+      // TODO: will change with introduction of data prop in error responses
+      const unsupportedTokenAddress = error.description.split(' ')[2]
+
+      console.error(`${error.message}: ${error.description} - disabling.`)
+
+      addUnsupportedToken({
+        chainId,
+        address: unsupportedTokenAddress,
+        dateAdded: Date.now()
+      })
+    } else {
+      // some other operator error occurred, log it
+      console.error(error)
+    }
+  } else {
+    // non-operator error log it
+    console.error('An unknown error occurred:', error)
+  }
+}
+
 /**
  * @returns callback that fetches a new quote and update the state
  */
 export function useRefetchQuoteCallback() {
-  const gpUnsupportedTokens = useGpUnsupportedTokens()
+  const isUnsupportedTokenGp = useIsUnsupportedTokenGp()
   // dispatchers
   const updateQuote = useUpdateQuote()
   const clearQuote = useClearQuote()
@@ -66,8 +105,7 @@ export function useRefetchQuoteCallback() {
         // Get the quote
         const [price, fee] = await getQuote(params)
 
-        const previouslyUnsupportedToken =
-          gpUnsupportedTokens && (gpUnsupportedTokens[sellToken] || gpUnsupportedTokens[buyToken])
+        const previouslyUnsupportedToken = isUnsupportedTokenGp(sellToken) || isUnsupportedTokenGp(buyToken)
         // can be a previously unsupported token which is now valid
         // so we check against map and remove it
         if (previouslyUnsupportedToken) {
@@ -90,31 +128,12 @@ export function useRefetchQuoteCallback() {
           fee
         })
       } catch (error) {
-        const errorType = error?.errorType
-        console.error('Error getting the quote (price/fee):', errorType)
-
-        // Unsupported token
-        if (errorType === ApiErrorCodes.UnsupportedToken) {
-          // TODO: will change with introduction of data prop in error responses
-          const unsupportedTokenAddress = error?.description?.split(' ')[2]
-
-          console.error(
-            '[useRefetchPriceCallback]::Unsupported token detected:',
-            unsupportedTokenAddress,
-            '- disabling.'
-          )
-
-          addUnsupportedToken({
-            chainId,
-            address: unsupportedTokenAddress.toLowerCase(),
-            dateAdded: Date.now()
-          })
-        }
+        _handleUnsupportedToken({ error, chainId, addUnsupportedToken })
 
         // Clear the quote
         clearQuote({ chainId, token: sellToken })
       }
     },
-    [gpUnsupportedTokens, updateQuote, removeGpUnsupportedToken, clearQuote, addUnsupportedToken]
+    [isUnsupportedTokenGp, updateQuote, removeGpUnsupportedToken, clearQuote, addUnsupportedToken]
   )
 }

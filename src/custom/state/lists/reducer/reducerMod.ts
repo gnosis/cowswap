@@ -90,11 +90,11 @@ export default createReducer(initialState, builder =>
   builder
     .addCase(addGpUnsupportedToken, (baseState, { payload: { chainId = DEFAULT_NETWORK_FOR_LISTS, ...restToken } }) => {
       const state = baseState[chainId]
-      state.gpUnsupportedTokens[restToken.address] = restToken
+      state.gpUnsupportedTokens[restToken.address.toLowerCase()] = restToken
     })
     .addCase(removeGpUnsupportedToken, (baseState, { payload: { chainId = DEFAULT_NETWORK_FOR_LISTS, address } }) => {
       const state = baseState[chainId]
-      delete state.gpUnsupportedTokens[address]
+      delete state.gpUnsupportedTokens[address.toLowerCase()]
     })
     .addCase(
       fetchTokenList.pending,

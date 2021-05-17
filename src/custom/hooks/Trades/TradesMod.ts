@@ -167,7 +167,7 @@ export function useIsTransactionUnsupported(currencyIn?: Currency, currencyOut?:
   //     return true
   //   }
   // }
-  if (isUnsupported(tokenIn?.address) || isUnsupported(tokenOut?.address)) return true
+  return isUnsupported(tokenIn?.address) || isUnsupported(tokenOut?.address)
 
-  return false
+  // return false
 }
