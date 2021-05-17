@@ -248,7 +248,6 @@ export function useIsUnsupportedTokenGp() {
     (address?: string) => {
       if (!address || !chainId || !gpUnsupportedTokens) return false
 
-      // TODO: token addresses from backened unsupported error are lower case, this may change
       return gpUnsupportedTokens[address.toLowerCase()]
     },
     [chainId, gpUnsupportedTokens]
