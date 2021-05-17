@@ -1,19 +1,30 @@
 import { CanonicalMarketParams, getCanonicalMarket } from 'utils/misc'
-import { CurrencyAmount, Trade, Currency, JSBI, Token, TokenAmount, Price } from '@uniswap/sdk'
+import {
+  CurrencyAmount,
+  Trade,
+  Currency,
+  JSBI,
+  Token,
+  TokenAmount,
+  Price,
+  Percent,
+  TradeType,
+  Fraction
+} from '@uniswap/sdk'
 import { useTradeExactIn, useTradeExactOut } from 'hooks/Trades'
 import { FeeInformation, PriceInformation, QuoteInformationObject } from 'state/price/reducer'
 
-export type FeeForTrade = { feeAsCurrency: CurrencyAmount | undefined } & Pick<FeeInformation, 'amount'>
+export type FeeForTrade = { feeAsCurrency: CurrencyAmount } & Pick<FeeInformation, 'amount'>
 
 export type TradeWithFee = Trade & {
   inputAmountWithFee: CurrencyAmount
   outputAmountWithoutFee?: CurrencyAmount
-  fee?: FeeForTrade
+  fee: FeeForTrade
 }
 
 type TradeExecutionPrice = CanonicalMarketParams<CurrencyAmount | undefined> & { price?: PriceInformation }
 
-function _constructTradePrice({ sellToken, buyToken, kind, price }: TradeExecutionPrice): Price | undefined {
+export function _constructTradePrice({ sellToken, buyToken, kind, price }: TradeExecutionPrice): Price | undefined {
   if (!sellToken || !buyToken || !price) return
 
   let executionPrice: Price | undefined
@@ -29,6 +40,54 @@ function _constructTradePrice({ sellToken, buyToken, kind, price }: TradeExecuti
     executionPrice = new Price(baseToken.currency, quoteToken.currency, baseToken.raw.toString(), price.amount)
   }
   return executionPrice
+}
+
+export function _minimumAmountOutExtension(pct: Percent, trade: TradeWithFee) {
+  if (trade.tradeType === TradeType.EXACT_OUTPUT) {
+    return trade.outputAmount
+  }
+
+  const priceDisplayed = trade.executionPrice.invert().raw
+  const slippage = new Fraction('1').add(pct)
+  // slippage is applied to PRICE
+  const slippagePrice = priceDisplayed.multiply(slippage)
+  // newly constructed price with slippage applied
+  const minPrice = new Price(
+    trade.executionPrice.quoteCurrency,
+    trade.executionPrice.baseCurrency,
+    slippagePrice.denominator,
+    slippagePrice.numerator
+  )
+
+  const minimumAmountOut = minPrice.invert().quote(trade.inputAmountWithFee)
+
+  return minimumAmountOut
+}
+
+export function _maximumAmountInExtension(pct: Percent, trade: TradeWithFee) {
+  if (trade.tradeType === TradeType.EXACT_INPUT) {
+    return trade.inputAmount
+  }
+  const priceDisplayed = trade.executionPrice.invert().raw
+  const slippage = new Fraction('1').subtract(pct)
+  // slippage is applied to the price
+  const slippagePrice = priceDisplayed.multiply(slippage)
+  // construct new price using slippage price
+  const maxPrice = new Price(
+    trade.executionPrice.quoteCurrency,
+    trade.executionPrice.baseCurrency,
+    slippagePrice.denominator,
+    slippagePrice.numerator
+  )
+
+  // fee is in sell token so we
+  // add fee to the calculated input
+  const maximumAmountIn = maxPrice
+    .invert()
+    .quote(trade.outputAmount)
+    .add(trade.fee.feeAsCurrency)
+
+  return maximumAmountIn
 }
 
 interface TradeParams {
@@ -49,7 +108,7 @@ export function useTradeExactInWithFee({
   parsedAmount: parsedInputAmount,
   outputCurrency,
   quote
-}: Omit<TradeParams, 'inputCurrency'>): TradeWithFee | null {
+}: Omit<TradeParams, 'inputCurrency'>) {
   // Original Uni trade hook
   const originalTrade = useTradeExactIn(parsedInputAmount, outputCurrency ?? undefined)
 
@@ -95,8 +154,14 @@ export function useTradeExactInWithFee({
     inputAmountWithFee: feeAdjustedAmount,
     outputAmount,
     outputAmountWithoutFee,
-    minimumAmountOut: originalTrade.minimumAmountOut,
-    maximumAmountIn: originalTrade.maximumAmountIn,
+    minimumAmountOut(pct: Percent) {
+      // this refers to trade object being constructed
+      return _minimumAmountOutExtension(pct, this)
+    },
+    maximumAmountIn(pct: Percent) {
+      // this refers to this trade object being constructed
+      return _maximumAmountInExtension(pct, this)
+    },
     fee,
     executionPrice
   }
@@ -150,8 +215,14 @@ export function useTradeExactOutWithFee({
     // to allow us to not have to change Uni's pages/swap/index and use different method names
     inputAmount: inputAmountWithoutFee,
     inputAmountWithFee,
-    minimumAmountOut: outTrade.minimumAmountOut,
-    maximumAmountIn: outTrade.maximumAmountIn,
+    minimumAmountOut(pct: Percent) {
+      // this refers to trade object being constructed
+      return _minimumAmountOutExtension(pct, this)
+    },
+    maximumAmountIn(pct: Percent) {
+      // this refers to trade object being constructed
+      return _maximumAmountInExtension(pct, this)
+    },
     fee,
     executionPrice
   }

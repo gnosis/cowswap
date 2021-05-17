@@ -38,10 +38,7 @@ export function logTradeDetails(trade: TradeWithFee | undefined, allowedSlippage
       Fee Amount [as SELL]: ${trade.fee?.feeAsCurrency?.toExact()} ${trade.inputAmount.currency.symbol}
       =========
       Maximum Sold:         ${trade.fee?.feeAsCurrency &&
-        trade
-          .maximumAmountIn(basisPointsToPercent(allowedSlippage))
-          .add(trade.fee.feeAsCurrency)
-          .toExact()}
+        trade.maximumAmountIn(basisPointsToPercent(allowedSlippage)).toExact()}
     `
     )
   }
