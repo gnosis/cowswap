@@ -49,7 +49,9 @@ export function _minimumAmountOutExtension(pct: Percent, trade: TradeWithFee) {
 
   const priceDisplayed = trade.executionPrice.invert().raw
   const slippage = new Fraction('1').add(pct)
+  // slippage is applied to PRICE
   const slippagePrice = priceDisplayed.multiply(slippage)
+  // newly constructed price with slippage applied
   const minPrice = new Price(
     trade.executionPrice.quoteCurrency,
     trade.executionPrice.baseCurrency,
@@ -68,7 +70,9 @@ export function _maximumAmountInExtension(pct: Percent, trade: TradeWithFee) {
   }
   const priceDisplayed = trade.executionPrice.invert().raw
   const slippage = new Fraction('1').subtract(pct)
+  // slippage is applied to the price
   const slippagePrice = priceDisplayed.multiply(slippage)
+  // construct new price using slippage price
   const maxPrice = new Price(
     trade.executionPrice.quoteCurrency,
     trade.executionPrice.baseCurrency,
@@ -76,6 +80,8 @@ export function _maximumAmountInExtension(pct: Percent, trade: TradeWithFee) {
     slippagePrice.numerator
   )
 
+  // fee is in sell token so we
+  // add fee to the calculated input
   const maximumAmountIn = maxPrice
     .invert()
     .quote(trade.outputAmount)
@@ -149,9 +155,11 @@ export function useTradeExactInWithFee({
     outputAmount,
     outputAmountWithoutFee,
     minimumAmountOut(pct: Percent) {
+      // this refers to trade object being constructed
       return _minimumAmountOutExtension(pct, this)
     },
     maximumAmountIn(pct: Percent) {
+      // this refers to this trade object being constructed
       return _maximumAmountInExtension(pct, this)
     },
     fee,
@@ -208,9 +216,11 @@ export function useTradeExactOutWithFee({
     inputAmount: inputAmountWithoutFee,
     inputAmountWithFee,
     minimumAmountOut(pct: Percent) {
+      // this refers to trade object being constructed
       return _minimumAmountOutExtension(pct, this)
     },
     maximumAmountIn(pct: Percent) {
+      // this refers to trade object being constructed
       return _maximumAmountInExtension(pct, this)
     },
     fee,
