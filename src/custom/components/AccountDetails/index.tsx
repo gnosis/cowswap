@@ -62,7 +62,7 @@ export function getStatusIcon(connector?: AbstractConnector, walletInfo?: Connec
   if (walletInfo && !walletInfo.isSupportedWallet) {
     /* eslint-disable jsx-a11y/accessible-emoji */
     return (
-      <MouseoverTooltip text="Wallet not currently supported">
+      <MouseoverTooltip text="This wallet is not yet supported">
         <IconWrapper role="img" aria-label="Warning sign. Wallet not supported">
           ⚠️
         </IconWrapper>

@@ -636,7 +636,7 @@ export default function Swap({
           show={!isSupportedWallet}
           showDetailsText="Read more about unsupported wallets"
           detailsText="CowSwap requires offline signatures, which is currently not supported by some wallets."
-          detailsTitle="Wallet not supported"
+          detailsTitle="This wallet is not yet supported"
         />
       ) : !swapIsUnsupported ? (
         <AdvancedSwapDetailsDropdown trade={trade} />
