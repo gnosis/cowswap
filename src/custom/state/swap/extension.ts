@@ -24,7 +24,7 @@ export type TradeWithFee = Trade & {
 
 type TradeExecutionPrice = CanonicalMarketParams<CurrencyAmount | undefined> & { price?: PriceInformation }
 
-function _constructTradePrice({ sellToken, buyToken, kind, price }: TradeExecutionPrice): Price | undefined {
+export function _constructTradePrice({ sellToken, buyToken, kind, price }: TradeExecutionPrice): Price | undefined {
   if (!sellToken || !buyToken || !price) return
 
   let executionPrice: Price | undefined
@@ -42,7 +42,7 @@ function _constructTradePrice({ sellToken, buyToken, kind, price }: TradeExecuti
   return executionPrice
 }
 
-function _minimumAmountOutExtension(pct: Percent, trade: TradeWithFee) {
+export function _minimumAmountOutExtension(pct: Percent, trade: TradeWithFee) {
   if (trade.tradeType === TradeType.EXACT_OUTPUT) {
     return trade.outputAmount
   }
@@ -62,7 +62,7 @@ function _minimumAmountOutExtension(pct: Percent, trade: TradeWithFee) {
   return minimumAmountOut
 }
 
-function _maximumAmountInExtension(pct: Percent, trade: TradeWithFee) {
+export function _maximumAmountInExtension(pct: Percent, trade: TradeWithFee) {
   if (trade.tradeType === TradeType.EXACT_INPUT) {
     return trade.inputAmount
   }
