@@ -74,6 +74,9 @@ function _handleUnsupportedToken({
         address: unsupportedTokenAddress.toLowerCase(),
         dateAdded: Date.now()
       })
+    } else {
+      // log error
+      console.error('Error getting quote from API', error)
     }
   }
 }
