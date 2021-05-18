@@ -16,6 +16,7 @@ import {
 import { AutoColumn } from 'components/Column'
 import { ClickableText } from 'pages/Pool/styleds'
 import { InputContainer } from 'components/AddressInputPanel'
+import { GreyCard } from 'components/Card'
 import { StyledBalanceMaxMini } from 'components/swap/styleds'
 import Card from 'components/Card'
 import QuestionHelper from 'components/QuestionHelper'
@@ -63,6 +64,12 @@ const SwapModWrapper = styled(SwapMod)`
         > div > div {
           color: ${({ theme }) => theme.text1};
         }
+    }
+
+    ${GreyCard} {
+      > div {
+        color: ${({ theme }) => theme.text1};
+      }
     }
 
     ${InputContainer} > div > div > div {

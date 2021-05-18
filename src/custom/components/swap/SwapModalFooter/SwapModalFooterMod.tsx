@@ -86,12 +86,12 @@ export default function SwapModalFooter({
             <QuestionHelper text={getMinimumReceivedTooltip(allowedSlippage, isExactIn)} />
           </RowFixed>
           <RowFixed>
-            <TYPE.black fontSize={14} color={theme.text2}>
+            <TYPE.black fontSize={14}>
               {trade.tradeType === TradeType.EXACT_INPUT
                 ? slippageAdjustedAmounts[Field.OUTPUT]?.toSignificant(SHORT_PRECISION) ?? '-'
                 : slippageAdjustedAmounts[Field.INPUT]?.toSignificant(SHORT_PRECISION) ?? '-'}
             </TYPE.black>
-            <TYPE.black fontSize={14} marginLeft={'4px'} color={theme.text2}>
+            <TYPE.black fontSize={14} marginLeft={'4px'}>
               {trade.tradeType === TradeType.EXACT_INPUT
                 ? trade.outputAmount.currency.symbol
                 : trade.inputAmount.currency.symbol}
@@ -123,7 +123,7 @@ export default function SwapModalFooter({
             </TYPE.black>
             <QuestionHelper text={feeTooltip} />
           </RowFixed>
-          <TYPE.black fontSize={14} color={theme.text2}>
+          <TYPE.black fontSize={14}>
             {feeAmount ? feeAmount.toSignificant(DEFAULT_PRECISION) + ' ' + feeAmount.currency.symbol : '-'}
           </TYPE.black>
         </RowBetween>
