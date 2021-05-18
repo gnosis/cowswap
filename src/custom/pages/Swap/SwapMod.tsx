@@ -136,8 +136,7 @@ export default function Swap({
   // Is fee greater than input?
   const { isFeeGreater, fee } = useIsFeeGreaterThanInput({
     chainId,
-    address: INPUT.currencyId,
-    parsedAmount
+    address: INPUT.currencyId
   })
 
   const toggledVersion = useToggledVersion()

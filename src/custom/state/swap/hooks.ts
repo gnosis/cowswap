@@ -263,17 +263,15 @@ export function useDetectNativeToken(input?: CurrencyWithAddress, output?: Curre
 
 export function useIsFeeGreaterThanInput({
   address,
-  parsedAmount,
   chainId
 }: {
   address?: string
-  parsedAmount?: CurrencyAmount
   chainId?: ChainId
 }): { isFeeGreater: boolean; fee: CurrencyAmount | null } {
   const quote = useQuote({ chainId, token: address })
   const feeToken = useCurrency(address)
 
-  if (!quote?.fee || !parsedAmount || !feeToken) return { isFeeGreater: false, fee: null }
+  if (!quote?.fee || !feeToken) return { isFeeGreater: false, fee: null }
 
   return {
     isFeeGreater: quote.feeExceedsPrice,
