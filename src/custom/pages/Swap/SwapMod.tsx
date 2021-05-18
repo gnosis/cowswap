@@ -58,6 +58,7 @@ import { isTradeBetter } from 'utils/trades'
 import FeeInformationTooltip from 'components/swap/FeeInformationTooltip'
 import { SwapProps } from '.'
 import { useWalletInfo } from 'hooks/useWalletInfo'
+import { HashLink } from 'react-router-hash-link'
 
 export default function Swap({
   history,
@@ -635,7 +636,12 @@ export default function Swap({
         <UnsupportedCurrencyFooter
           show={!isSupportedWallet}
           showDetailsText="Read more about unsupported wallets"
-          detailsText="CowSwap requires offline signatures, which is currently not supported by some wallets."
+          detailsText={
+            <>
+              CowSwap requires offline signatures, which is currently not supported by some wallets. Read more on the{' '}
+              <HashLink to="/faq#wallet-not-supported">FAQ</HashLink>.
+            </>
+          }
           detailsTitle="This wallet is not yet supported"
         />
       ) : !swapIsUnsupported ? (
