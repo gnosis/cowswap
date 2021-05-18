@@ -2,12 +2,17 @@ import React from 'react'
 import { computeTradePriceBreakdown, FEE_TOOLTIP_MSG } from '../TradeSummary/TradeSummaryMod'
 import SwapModalFooterMod, { SwapModalFooterProps } from './SwapModalFooterMod'
 import { StyledBalanceMaxMini } from 'components/swap/styleds'
+import { RowBetween } from 'components/Row'
 import styled from 'styled-components'
 
 const Wrapper = styled.div`
   ${StyledBalanceMaxMini} {
     background: ${({ theme }) => theme.bg1};
     color: ${({ theme }) => theme.text1};
+  }
+
+  ${RowBetween} > div {
+    color: ${({ theme }) => theme.text2};
   }
 `
 
