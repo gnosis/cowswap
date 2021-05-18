@@ -10,7 +10,7 @@ import Copy from 'components/AccountDetails/Copy'
 
 import { SUPPORTED_WALLETS } from 'constants/index'
 import { getEtherscanLink } from 'utils'
-import { injected, walletconnect, walletlink, fortmatic, portis } from 'connectors'
+import { injected, walletconnect, walletlink, fortmatic, portis, WalletProvider } from 'connectors'
 import CoinbaseWalletIcon from 'assets/images/coinbaseWalletIcon.svg'
 import WalletConnectIcon from 'assets/images/walletConnectIcon.svg'
 import FortmaticIcon from 'assets/images/fortmaticIcon.png'
@@ -56,7 +56,18 @@ function getWalletName(connector?: AbstractConnector): string {
 
 export function formatConnectorName(connector?: AbstractConnector, walletInfo?: ConnectedWalletInfo) {
   const name = walletInfo?.walletName || getWalletName(connector)
-  return <WalletName>Connected with {name}</WalletName>
+  // In case the wallet is connected via WalletConnect and has wallet name set, add the suffix to be clear
+  // This to avoid confusion for instance when using Metamask mobile
+  // When name is not set, it defaults to WalletConnect already
+  const walletConnectSuffix =
+    walletInfo?.provider === WalletProvider.WALLET_CONNECT && walletInfo?.walletName ? ' (via WalletConnect)' : ''
+
+  return (
+    <WalletName>
+      Connected with {name}
+      {walletConnectSuffix}
+    </WalletName>
+  )
 }
 
 export function getStatusIcon(connector?: AbstractConnector, walletInfo?: ConnectedWalletInfo) {
