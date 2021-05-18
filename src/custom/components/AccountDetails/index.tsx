@@ -43,17 +43,19 @@ import { MouseoverTooltip } from 'components/Tooltip/TooltipMod'
 
 type AbstractConnector = Pick<ReturnType<typeof useActiveWeb3React>, 'connector'>['connector']
 
-export function formatConnectorName(connector?: AbstractConnector, walletInfo?: ConnectedWalletInfo) {
+function getWalletName(connector?: AbstractConnector): string {
   const { ethereum } = window
   const isMetaMask = !!(ethereum && ethereum.isMetaMask)
-  const name =
-    walletInfo?.walletName ||
-    Object.keys(SUPPORTED_WALLETS)
-      .filter(
-        k =>
-          SUPPORTED_WALLETS[k].connector === connector && (connector !== injected || isMetaMask === (k === 'METAMASK'))
-      )
-      .map(k => SUPPORTED_WALLETS[k].name)[0]
+
+  const walletTuple = Object.entries(SUPPORTED_WALLETS).filter(
+    ([walletType, { connector: walletConnector }]) =>
+      walletConnector === connector && (connector !== injected || isMetaMask === (walletType === 'METAMASK'))
+  )
+  return walletTuple[0]?.[1]?.name || 'Unknown wallet'
+}
+
+export function formatConnectorName(connector?: AbstractConnector, walletInfo?: ConnectedWalletInfo) {
+  const name = walletInfo?.walletName || getWalletName(connector)
   return <WalletName>Connected with {name}</WalletName>
 }
 
