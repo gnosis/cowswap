@@ -45,10 +45,9 @@ type AbstractConnector = Pick<ReturnType<typeof useActiveWeb3React>, 'connector'
 
 export function formatConnectorName(connector?: AbstractConnector, walletInfo?: ConnectedWalletInfo) {
   const { ethereum } = window
-  const { walletName } = walletInfo || {}
   const isMetaMask = !!(ethereum && ethereum.isMetaMask)
   const name =
-    walletName ||
+    walletInfo?.walletName ||
     Object.keys(SUPPORTED_WALLETS)
       .filter(
         k =>
