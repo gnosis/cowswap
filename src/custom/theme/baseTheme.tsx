@@ -102,6 +102,19 @@ export function themeVariables(darkMode: boolean, colorsTheme: Colors) {
         font-size: 12px;
       `
     },
+    swap: {
+      headerSize: '28px',
+      arrowDown: {
+        background: darkMode ? colorsTheme.blueShade : colorsTheme.white,
+        color: darkMode ? colorsTheme.white : colorsTheme.black,
+        colorHover: darkMode ? colorsTheme.white : colorsTheme.black,
+        borderRadius: '9px',
+        width: '28px',
+        height: '28px',
+        borderColor: darkMode ? colorsTheme.blueShade2 : colorsTheme.disabled,
+        borderSize: `2px`
+      }
+    },
     buttonPrimary: {
       background: css`
         background: transparent linear-gradient(270deg, ${colorsTheme.purple} 30%, ${colorsTheme.blue1} 70%);

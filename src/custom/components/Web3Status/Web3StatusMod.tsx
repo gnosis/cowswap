@@ -12,7 +12,7 @@ import WalletConnectIcon from 'assets/images/walletConnectIcon.svg'
 import { fortmatic, injected, portis, walletconnect, walletlink } from 'connectors'
 import { NetworkContextName } from 'constants/index'
 import useENSName from 'hooks/useENSName'
-// import { useHasSocks } from 'hooks/useSocksBalance'
+import { useHasSocks } from 'hooks/useSocksBalance'
 import { useWalletModalToggle } from 'state/application/hooks'
 import { isTransactionRecent, useAllTransactions } from 'state/transactions/hooks'
 import { TransactionDetails } from 'state/transactions/reducer'
@@ -123,11 +123,11 @@ export function newTransactionsFirst(a: TransactionDetails, b: TransactionDetail
   return b.addedTime - a.addedTime
 }
 
-// const SOCK = (
-//   <span role="img" aria-label="has socks emoji" style={{ marginTop: -4, marginBottom: -4 }}>
-//     🧦
-//   </span>
-// )
+const SOCK = (
+  <span role="img" aria-label="has socks emoji" style={{ marginTop: -4, marginBottom: -4 }}>
+    🧦
+  </span>
+)
 
 // eslint-disable-next-line react/prop-types
 function StatusIcon({ connector }: { connector: AbstractConnector }) {
@@ -177,7 +177,7 @@ export function Web3StatusInner({ pendingCount }: { pendingCount?: number }) {
   // const pending = sortedRecentTransactions.filter(tx => !tx.receipt).map(tx => tx.hash)
 
   const hasPendingTransactions = !!pendingCount
-  // const hasSocks = useHasSocks()
+  const hasSocks = useHasSocks()
   const toggleWalletModal = useWalletModalToggle()
 
   if (account) {
@@ -192,7 +192,7 @@ export function Web3StatusInner({ pendingCount }: { pendingCount?: number }) {
           </RowBetween>
         ) : (
           <>
-            {/* {hasSocks ? SOCK : null} */}
+            {hasSocks ? SOCK : null}
             <Text>{ENSName || shortenAddress(account)}</Text>
           </>
         )}

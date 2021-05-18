@@ -70,9 +70,9 @@ declare module 'styled-components' {
         seperatorColor?: string
       }
     }
-    swap?: {
-      headerSize?: string
-      arrowDown?: {
+    swap: {
+      headerSize: string
+      arrowDown: {
         background: string
         color: string
         colorHover: string

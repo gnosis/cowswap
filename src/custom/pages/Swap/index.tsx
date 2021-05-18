@@ -67,14 +67,14 @@ const SwapModWrapper = styled(SwapMod)`
     ${ArrowWrapperUni} {
       position: absolute;
       z-index: 2;
-      background: ${({ theme }) => theme.swap?.arrowDown?.background};
-      border-radius: ${({ theme }) => theme.swap?.arrowDown?.borderRadius};
-      width: ${({ theme }) => theme.swap?.arrowDown?.width};
-      height: ${({ theme }) => theme.swap?.arrowDown?.height};
+      background: ${({ theme }) => theme.swap.arrowDown.background};
+      border-radius: ${({ theme }) => theme.swap.arrowDown.borderRadius};
+      width: ${({ theme }) => theme.swap.arrowDown.width};
+      height: ${({ theme }) => theme.swap.arrowDown.height};
       display: flex;
       align-items: center;
       justify-content: center;
-      border: ${({ theme }) => `${theme.swap?.arrowDown?.borderSize} solid ${theme.swap?.arrowDown?.borderColor}`};
+      border: ${({ theme }) => `${theme.swap.arrowDown.borderSize} solid ${theme.swap.arrowDown.borderColor}`};
       transition: transform 0.1s ease-in-out;
 
       &:hover {
@@ -82,12 +82,12 @@ const SwapModWrapper = styled(SwapMod)`
         transform: translateY(1px);
 
         > svg {
-          stroke: ${({ theme }) => theme.swap?.arrowDown?.colorHover};
+          stroke: ${({ theme }) => theme.swap.arrowDown.colorHover};
         }
       }
 
       > svg {
-        stroke: ${({ theme }) => theme.swap?.arrowDown?.color}
+        stroke: ${({ theme }) => theme.swap.arrowDown.color}
       }
     }
 

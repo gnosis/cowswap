@@ -122,19 +122,6 @@ function themeVariables(darkMode: boolean, colorsTheme: Colors) {
         seperatorColor: colorsTheme.disabled
       }
     },
-    swap: {
-      headerSize: '28px',
-      arrowDown: {
-        background: darkMode ? colorsTheme.blueShade : colorsTheme.white,
-        color: darkMode ? colorsTheme.white : colorsTheme.black,
-        colorHover: darkMode ? colorsTheme.white : colorsTheme.black,
-        borderRadius: '9px',
-        width: '28px',
-        height: '28px',
-        borderColor: darkMode ? colorsTheme.blueShade2 : colorsTheme.disabled,
-        borderSize: `2px`
-      }
-    },
     buttonPrimary: {
       background: css`
         background: ${colorsTheme.primary1};
