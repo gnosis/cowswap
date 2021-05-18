@@ -155,9 +155,9 @@ export default function Faq() {
           </h3>
 
           <p>
-            <a href="https://research.paradigm.xyz/MEV">Defined</a> by the Paradigm research team, Maximum Extractable
-            Value (MEV) is “a measure of the profit a miner (or validator, sequencer, etc.) can make through their
-            ability to arbitrarily include, exclude, or re-order transactions within the blocks they produce.”
+            <a href="https://arxiv.org/abs/1904.05234">Defined</a> by Phil Daian,  MEV is a measure of the profit a miner 
+            (or validator, sequencer, etc.) can make through their ability to arbitrarily include, exclude, or re-order 
+            transactions within the blocks they produce.
           </p>
 
           <p>
@@ -253,6 +253,21 @@ export default function Faq() {
         <Content>
           <h2 id="protocol">Protocol</h2>
 
+          <h3 id="does-cowswap-have-a-token">Does CowSwap have a token?</h3>
+          
+          <p>
+            There's currently not a plan for a CowSwap specific token. At the moment the  value is already captured by GNO token, 
+            as CowSwap is built on top of Gnosis Protocol. If you are curious about how the value is captured, 
+            you can read this forum post {' '} <a href="https://forum.gnosis.io/t/gpv2-fee-model/1266"> 
+          </p>
+          
+          <p>
+            Be cautious, the CowSwap token listed on uniswap is not affiliated with this project in any way, 
+            shape or form. 
+            (Etherscan link of that token: {' '} <a href="https://etherscan.io/token/0xBF04E48C5d8880306591ef888cde201D3984Eb3E"> 
+            Please note that this is *not* associated with our project! 
+          </p>  
+          
           <h3 id="what-is-cowswap-s-fee-model">What is CowSwap’s fee model?</h3>
 
           <p>
@@ -307,6 +322,32 @@ export default function Faq() {
             across different protocols. Since orders only incur a cost if traded, active market makers can observe the
             orderbook and place counter orders (creating a CoW) to prevent settling trades via external liquidity.
           </p>
+            
+            <h3 id="what-are-gnosis-protocol-v2-solvers">
+            What are Gnosis Protocol v2 Solvers?
+          </h3>
+
+          <p>
+            In GPv2, instead of using a central operator or a constant function market maker to determine trade settlements, 
+            solvers compete against each other to submit the most optimal batch settlement solution. Each time a solver 
+            submits a successful batch settlement solution, the protocol rewards them with 1 GNO, meaning that the protocol 
+            rewards solvers at a rate of 1 GNO per batch. Anyone can become a solver, although, in order to become one, 
+            there are certain requirements:
+          </p>
+          <ol>
+            <li>
+              To become a solver, an Ethereum address needs to deposit a bond of 100 GNO tokens to GnosisDAO.
+            </li>
+            <li>
+              Once the 100 GNO tokens have been staked (locked up), GnosisDAO has to vote to approve or reject the 
+              Ethereum address that will identify the solver.
+            </li>  
+            <li>
+              Additionally, a solver must have the technical knowledge to create the appropriate batch 
+              settlement solutions or take the risk of being slashed by the GnosisDAO for wrongdoing.
+            </li>  
+           </ol>
+            
         </Content>
       </Page>
 
@@ -320,7 +361,16 @@ export default function Faq() {
 
           <h3 id="what-token-pairs-does-cowswap-allow-to-trade">What token pairs does CowSwap allow you to trade?</h3>
 
-          <p>Any valid ERC20 token pair for which there is some basic liquidity on a DEX (like Uniswap or Balancer).</p>
+          <p>Any valid ERC20 token pair for which there is some basic liquidity on a DEX (like Uniswap or Balancer) and that does not apply transfer fees.</p>
+          
+          <h3 id="what-token-pairs-does-cowswap-not-allow-to-trade">What token pairs does CowSwap NOT allow you to trade?</h3>
+
+          <p>
+            Unfortunately, CowSwap does not support some tokens. While these tokens implement the typical ERC20 interface, 
+            when calling the transfer and transferFrom methods, the actual amount the receiver will get will be smaller than 
+            the specified sent amount. This causes problems with CowSwap's settlement logic which expects the 
+            received amount (e.g. from a Uniswap interaction) to be fully transferable to the trader.
+          </p>
 
           <h3 id="why-is-cowswap-able-to-offer-gas-free-trades">Why is CowSwap able to offer gas-free trades?</h3>
 
@@ -413,6 +463,18 @@ export default function Faq() {
           <p>
             Yes, you can directly place buy and sell orders for ETH. Before the actual order is placed, the UI will
             allow you to wrap and unwrap ETH into WETH without needing to leave the dapp’s UI
+          </p>
+          
+          <h3 id="why-is-it-more-troublesome-to-trade-eth-to-erc20-than-erc20-to-eth">Why is it more troublesome to trade ETH to ERC20 token, than ERC20 token to ETH?</h3>
+
+          <p>
+            CowSwap needs to operate with WETH (wrapped ether) and when wrapping and unwrapping it, trading amounts may vary.
+          </p>
+          
+          <p>
+            The reason it may be more “troublesome” to place a sell order is because CowSwap needs to receive the ETH already wrapped, 
+            therefore the need for wrapping it before placing the trade. While when you place a buy order, the settlement contracts will be 
+            the one that unwraps the WETH of your trade. 
           </p>
 
           <hr />
