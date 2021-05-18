@@ -16,6 +16,12 @@ import {
 import { useIsDarkMode } from 'state/user/hooks'
 import { cowSwapBackground, cowSwapLogo } from './cowSwapAssets'
 
+// Modal override items
+import { HeaderText } from '@src/components/WalletModal/Option'
+import { AutoColumn } from 'components/Column'
+import { RowBetween } from 'components/Row'
+import { ModalContentWrapper } from 'components/Settings/SettingsMod'
+
 export { TYPE } from '@src/theme'
 export * from '@src/theme/components'
 
@@ -219,4 +225,18 @@ export const ThemedGlobalStyle = createGlobalStyle`
     background: ${({ theme }) => theme.bg4};
     color: ${({ theme }) => theme.text1};
   }
+
+  // START - Modal overrides
+  ${HeaderText} {
+    color: ${({ theme }) => theme.text2};
+  }
+
+  ${ModalContentWrapper} {
+    ${RowBetween} > div,
+    ${AutoColumn} > div {
+      color: ${({ theme }) => theme.text2};
+    }
+  }
+
+  // END - Modal overrides
 `
