@@ -26,6 +26,7 @@ const FeeTooltipLine = styled.p`
   justify-content: space-between;
   align-items: center;
   margin: 0;
+
   font-size: small;
 
   > .green {

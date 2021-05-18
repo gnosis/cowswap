@@ -1,5 +1,5 @@
 import React from 'react'
-import { computeTradePriceBreakdown, FEE_TOOLTIP_MSG } from '../TradeSummary'
+import { computeTradePriceBreakdown, FEE_TOOLTIP_MSG } from '../TradeSummary/TradeSummaryMod'
 import SwapModalFooterMod, { SwapModalFooterProps } from './SwapModalFooterMod'
 
 export default function SwapModalFooter(props: Omit<SwapModalFooterProps, 'fee' | 'priceImpactWithoutFee'>) {

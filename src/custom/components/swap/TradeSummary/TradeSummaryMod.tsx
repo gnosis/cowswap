@@ -48,7 +48,7 @@ export default function TradeSummary({ trade, allowedSlippage }: { trade: TradeW
       <AutoColumn style={{ padding: '0 16px' }}>
         <RowBetween>
           <RowFixed>
-            <TYPE.black fontSize={14} fontWeight={400} color={theme.text1}>
+            <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
               {isExactIn ? 'Minimum received' : 'Maximum sold'}
             </TYPE.black>
             <QuestionHelper text={getMinimumReceivedTooltip(allowedSlippage, isExactIn)} />
@@ -77,7 +77,7 @@ export default function TradeSummary({ trade, allowedSlippage }: { trade: TradeW
 
         <RowBetween>
           <RowFixed>
-            <TYPE.black fontSize={14} fontWeight={400} color={theme.text1}>
+            <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
               {/* Liquidity Provider Fee */}
               Fee
             </TYPE.black>
