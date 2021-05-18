@@ -307,6 +307,21 @@ export default function Faq() {
             across different protocols. Since orders only incur a cost if traded, active market makers can observe the
             orderbook and place counter orders (creating a CoW) to prevent settling trades via external liquidity.
           </p>
+
+          <h3 id="wallet-not-supported">Why is my wallet not supported?</h3>
+
+          <p>CowSwap uses offline signatures to offer gas free orders.</p>
+          <p>
+            Currently, Smart Contract (SC) wallets such as Gnosis Safe, Argent or Pillar are not supported because it
+            would require an on chain transaction to place the order, making it no longer gas free. We are working to
+            make this a possibility though, and support will be added soon.
+          </p>
+
+          <p>
+            But, even if your wallet is not a SC wallet, it might be unsupported in some cases. Not all wallets
+            implement the necessary signing methods from EIP712 standard. If that is the case for you, reach out to your
+            wallet developers and ask for it.
+          </p>
         </Content>
       </Page>
 
