@@ -24,8 +24,9 @@ export interface PriceInformation {
 
 export interface QuoteInformationObject extends Omit<FeeQuoteParams, 'kind'> {
   fee: FeeInformation
-  price: PriceInformation
+  price: PriceInformation | null
   lastCheck: number
+  feeExceedsPrice: boolean
 }
 
 // Map token addresses to their last quote information
