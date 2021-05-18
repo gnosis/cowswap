@@ -16,6 +16,7 @@ import {
 import { AutoColumn } from 'components/Column'
 import { ClickableText } from 'pages/Pool/styleds'
 import { InputContainer } from 'components/AddressInputPanel'
+import { StyledBalanceMaxMini } from 'components/swap/styleds'
 import Card from 'components/Card'
 import QuestionHelper from 'components/QuestionHelper'
 import { ButtonError, ButtonPrimary } from 'components/Button'
@@ -93,6 +94,11 @@ const SwapModWrapper = styled(SwapMod)`
       > svg {
         stroke: ${({ theme }) => theme.swap.arrowDown.color}
       }
+    }
+
+    ${StyledBalanceMaxMini} {
+      background: ${({ theme }) => theme.bg2};
+      color: ${({ theme }) => theme.text2};
     }
 
     .expertMode ${ArrowWrapperUni} {

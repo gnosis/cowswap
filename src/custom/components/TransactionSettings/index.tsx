@@ -1,7 +1,8 @@
 import React from 'react'
 import SlippageTabsMod, {
   SlippageTabsProps as SlippageTabsPropsMod,
-  FancyButton as FancyButtonUni
+  FancyButton as FancyButtonUni,
+  OptionCustom
 } from './TransactionSettingsMod'
 import styled from 'styled-components'
 
@@ -14,6 +15,15 @@ const Option = styled(FancyButtonUni)<{ active: boolean }>`
   color: ${({ theme }) => theme.text1};
   &:hover {
     cursor: pointer;
+  }
+`
+
+const Wrapper = styled.div`
+  ${OptionCustom} {
+    > div > input::placeholder {
+      opacity: 0.5;
+      color: ${({ theme }) => theme.text1};
+    }
   }
 `
 
@@ -43,5 +53,9 @@ export type ParseCustomSlippageFn = typeof parseCustomSlippage
 export type SlippageTabsProps = Omit<SlippageTabsPropsMod, 'parseCustomSlippageFn' | 'Option'>
 
 export default function SlippageTabs(params: SlippageTabsProps) {
-  return <SlippageTabsMod {...params} parseCustomSlippageFn={parseCustomSlippage} Option={Option} />
+  return (
+    <Wrapper>
+      <SlippageTabsMod {...params} parseCustomSlippageFn={parseCustomSlippage} Option={Option} />
+    </Wrapper>
+  )
 }
