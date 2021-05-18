@@ -1,8 +1,5 @@
-import React, {
-  // useContext,
-  useCallback
-} from 'react'
-import styled from 'styled-components' // , { ThemeContext }
+import React, { useContext, useCallback } from 'react'
+import styled, { ThemeContext } from 'styled-components'
 import useENS from '../../hooks/useENS'
 import { useActiveWeb3React } from '../../hooks'
 import { ExternalLink, TYPE } from 'theme'
@@ -30,7 +27,7 @@ const ContainerRow = styled.div<{ error: boolean }>`
   background-color: ${({ theme }) => theme.bg1};
 `
 
-const InputContainer = styled.div`
+export const InputContainer = styled.div`
   flex: 1;
   padding: 1rem;
 `
@@ -80,7 +77,7 @@ export default function AddressInputPanel({
   onChange: (value: string) => void
 }) {
   const { chainId } = useActiveWeb3React()
-  // const theme = useContext(ThemeContext)
+  const theme = useContext(ThemeContext)
 
   const { address, loading, name } = useENS(value)
 
@@ -101,11 +98,7 @@ export default function AddressInputPanel({
         <InputContainer>
           <AutoColumn gap="md">
             <RowBetween>
-              <TYPE.black
-                // color={theme.text2}
-                fontWeight={500}
-                fontSize={14}
-              >
+              <TYPE.black color={theme.text2} fontWeight={500} fontSize={14}>
                 Recipient
               </TYPE.black>
               {address && chainId && (
