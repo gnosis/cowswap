@@ -36,7 +36,7 @@ const CloseColor = styled(Close)`
   }
 `
 
-const Wrapper = styled.div`
+export const Wrapper = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap}
   margin: 0;
   padding: 0;

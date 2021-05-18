@@ -58,6 +58,10 @@ const SwapModWrapper = styled(SwapMod)`
 
     ${Card} > ${AutoColumn} {
       margin: 6px auto 0;
+
+        > div > div {
+          color: ${({ theme }) => theme.text1};
+        }
     }
 
     ${InputContainer} > div > div > div {
