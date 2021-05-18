@@ -1,11 +1,6 @@
 import { Currency, Pair } from '@uniswap/sdk'
-import React, {
-  useState,
-  // useContext,
-  useCallback,
-  ReactNode
-} from 'react'
-import styled from 'styled-components' // , { ThemeContext }
+import React, { useState, useContext, useCallback, ReactNode } from 'react'
+import styled, { ThemeContext } from 'styled-components'
 import { darken } from 'polished'
 import { useCurrencyBalance } from 'state/wallet/hooks'
 import CurrencySearchModal from 'components/SearchModal/CurrencySearchModal'
@@ -81,7 +76,7 @@ export const InputPanel = styled.div<{ hideInput?: boolean }>`
   ${({ theme }) => theme.flexColumnNoWrap}
   position: relative;
   border-radius: ${({ hideInput }) => (hideInput ? '8px' : '20px')};
-  /* background-color: ${({ theme }) => theme.bg2}; */
+  background-color: ${({ theme }) => theme.bg2};
   z-index: 1;
 `
 
@@ -161,7 +156,7 @@ export default function CurrencyInputPanel({
   const [modalOpen, setModalOpen] = useState(false)
   const { account } = useActiveWeb3React()
   const selectedCurrencyBalance = useCurrencyBalance(account ?? undefined, currency ?? undefined)
-  // const theme = useContext(ThemeContext)
+  const theme = useContext(ThemeContext)
 
   const handleDismissSearch = useCallback(() => {
     setModalOpen(false)
@@ -173,17 +168,13 @@ export default function CurrencyInputPanel({
         {!hideInput && (
           <LabelRow>
             <RowBetween>
-              <TYPE.body
-                // color={theme.text2}
-                fontWeight={500}
-                fontSize={14}
-              >
+              <TYPE.body color={theme.text2} fontWeight={500} fontSize={14}>
                 {label}
               </TYPE.body>
               {account && (
                 <TYPE.body
                   onClick={onMax}
-                  // color={theme.text2}
+                  color={theme.text2}
                   fontWeight={500}
                   fontSize={14}
                   style={{ display: 'inline', cursor: 'pointer' }}

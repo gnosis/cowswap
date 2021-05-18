@@ -11,6 +11,7 @@ import CurrencyInputPanelMod, {
   LabelRow,
   Container
 } from './CurrencyInputPanelMod'
+import { RowBetween } from 'components/Row'
 
 import { StyledLogo } from 'components/CurrencyLogo'
 
@@ -72,6 +73,15 @@ export const Wrapper = styled.div<{ selected: boolean }>`
       stroke: ${({ selected, theme }) =>
         selected ? theme.buttonCurrencySelect.colorSelected : theme.buttonCurrencySelect.color};
       stroke-width: 1.5px;
+    }
+  }
+
+  ${RowBetween} {
+    color: ${({ theme }) => theme.currencyInput?.color};
+
+    > div > div > span,
+    > div {
+      color: ${({ theme }) => theme.currencyInput?.color};
     }
   }
 
