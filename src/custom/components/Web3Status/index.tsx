@@ -15,6 +15,10 @@ const Wrapper = styled.div`
   ${Web3StatusConnected} {
     color: ${({ theme }) => theme.wallet?.color};
     background: ${({ theme }) => theme.wallet?.background};
+
+    > div > svg > path {
+      stroke: ${({ theme }) => theme.black};
+    }
   }
 `
 
