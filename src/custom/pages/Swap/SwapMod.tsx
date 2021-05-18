@@ -471,11 +471,7 @@ export default function Swap({
                 <AutoColumn gap="8px" style={{ padding: '0 16px' }}>
                   {Boolean(trade) && (
                     <RowBetween align="center">
-                      <Text
-                        fontWeight={500}
-                        fontSize={14}
-                        // color={theme.text2}
-                      >
+                      <Text fontWeight={500} fontSize={14} color={theme.text2}>
                         Price
                       </Text>
                       <TradePrice
@@ -487,20 +483,10 @@ export default function Swap({
                   )}
                   {allowedSlippage !== INITIAL_ALLOWED_SLIPPAGE && (
                     <RowBetween align="center">
-                      <ClickableText
-                        fontWeight={500}
-                        fontSize={14}
-                        // color={theme.text2}
-                        onClick={toggleSettings}
-                      >
+                      <ClickableText fontWeight={500} fontSize={14} color={theme.text2} onClick={toggleSettings}>
                         Slippage Tolerance
                       </ClickableText>
-                      <ClickableText
-                        fontWeight={500}
-                        fontSize={14}
-                        // color={theme.text2}
-                        onClick={toggleSettings}
-                      >
+                      <ClickableText fontWeight={500} fontSize={14} color={theme.text2} onClick={toggleSettings}>
                         {allowedSlippage / 100}%
                       </ClickableText>
                     </RowBetween>
@@ -541,7 +527,7 @@ export default function Swap({
                 <FeesExceedFromAmountMessage />
               ) : (
                 <GreyCard style={{ textAlign: 'center' }}>
-                  <TYPE.body mb="4px">Insufficient liquidity for this trade.</TYPE.body>
+                  <TYPE.main mb="4px">Insufficient liquidity for this trade.</TYPE.main>
                   {singleHopOnly && <TYPE.main mb="4px">Try enabling multi-hop trades.</TYPE.main>}
                 </GreyCard>
               )
