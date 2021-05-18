@@ -61,11 +61,7 @@ export default function SwapModalHeader({
         </RowFixed>
       </RowBetween>
       <RowFixed>
-        <ArrowDown
-          size="16"
-          // color={theme.text2}
-          style={{ marginLeft: '4px', minWidth: '16px' }}
-        />
+        <ArrowDown size="16" color={theme.text2} style={{ marginLeft: '4px', minWidth: '16px' }} />
       </RowFixed>
       <RowBetween align="flex-end">
         <RowFixed gap={'0px'}>
