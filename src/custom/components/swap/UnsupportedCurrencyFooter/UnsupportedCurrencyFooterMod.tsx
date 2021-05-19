@@ -117,7 +117,7 @@ UnsupportedCurrencyFooterParams) {
       </Modal>
       <ButtonEmpty padding={'0'} onClick={() => setShowDetails(true)}>
         {/* <TYPE.blue>Read more about unsupported assets</TYPE.blue> */}
-        <TYPE.blue>{showDetailsText}</TYPE.blue>
+        <TYPE.error error={!!showDetailsText}>{showDetailsText}</TYPE.error>
       </ButtonEmpty>
     </DetailsFooter>
   )
