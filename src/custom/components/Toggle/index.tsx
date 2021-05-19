@@ -5,6 +5,8 @@ import ToggleUni, { ToggleProps as TogglePropsUni, ToggleElement } from '@src/co
 export type ToggleProps = TogglePropsUni
 
 const Wrapper = styled(ToggleUni)`
+  background: ${({ theme }) => theme.bg4};
+
   ${ToggleElement} {
     color: ${({ theme }) => theme.text1};
     border: 2px solid transparent;

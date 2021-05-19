@@ -4,6 +4,7 @@ import SlippageTabsMod, {
   FancyButton as FancyButtonUni,
   OptionCustom
 } from './TransactionSettingsMod'
+import { RowFixed } from 'components/Row'
 import styled from 'styled-components'
 
 import { unstable_batchedUpdates as batchedUpdates } from 'react-dom'
@@ -11,8 +12,10 @@ import { unstable_batchedUpdates as batchedUpdates } from 'react-dom'
 const Option = styled(FancyButtonUni)<{ active: boolean }>`
   margin-right: 8px;
   border: 0;
-  background-color: ${({ active, theme }) => active && theme.primary1};
+  background-color: ${({ theme }) => theme.bg4};
   color: ${({ theme }) => theme.text1};
+  border: ${({ active, theme }) => active && `1px solid ${theme.primary1}`};
+
   &:hover {
     cursor: pointer;
   }
@@ -20,7 +23,32 @@ const Option = styled(FancyButtonUni)<{ active: boolean }>`
 
 const Wrapper = styled.div`
   ${OptionCustom} {
+    background-color: ${({ theme }) => theme.bg4};
+
+    > div > input {
+      background: transparent;
+    }
+
     > div > input::placeholder {
+      opacity: 0.5;
+      color: ${({ theme }) => theme.text1};
+    }
+  }
+  ${RowFixed} {
+    > div {
+      color: ${({ theme }) => theme.text1};
+    }
+
+    > button {
+      background-color: ${({ theme }) => theme.bg4};
+    }
+
+    > button > input {
+      background: transparent;
+    }
+
+    > button > input::placeholder {
+      background: transparent;
       opacity: 0.5;
       color: ${({ theme }) => theme.text1};
     }
