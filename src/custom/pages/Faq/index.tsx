@@ -155,7 +155,7 @@ export default function Faq() {
           </h3>
 
           <p>
-            <a href="https://arxiv.org/abs/1904.05234">Defined</a> by Phil Daian, MEV is a measure of the profit a miner
+            Defined by Phil Daian in the <a href="https://arxiv.org/abs/1904.05234"> paper Flash Boys 2.0 </a>, MEV is a measure of the profit a miner
             (or validator, sequencer, etc.) can make through their ability to arbitrarily include, exclude, or re-order
             transactions within the blocks they produce.
           </p>
