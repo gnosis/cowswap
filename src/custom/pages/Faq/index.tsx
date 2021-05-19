@@ -463,8 +463,8 @@ export default function Faq() {
             allow you to wrap and unwrap ETH into WETH without needing to leave the dapp’s UI
           </p>
 
-          <h3 id="why-is-it-more-troublesome-to-trade-eth-to-erc20-than-erc20-to-eth">
-            Why is it more troublesome to trade ETH to ERC20 token, than ERC20 token to ETH?
+          <h3 id="why-is-selling-eth-more-troublesome">
+            Why is selling ETH more troublesome?
           </h3>
 
           <p>
