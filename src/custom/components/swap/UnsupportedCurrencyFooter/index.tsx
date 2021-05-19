@@ -6,8 +6,10 @@ import { UNSUPPORTED_TOKENS_FAQ_URL } from 'constants/index'
 const DEFAULT_DETAILS_TEXT = (
   <div>
     CowSwap does not support all tokens. Some tokens implement similar, but logically different ERC20 contract methods
-    which do not operate optimally with Gnosis Protocol. For more information, please refer to the{' '}
-    <HashLink to={UNSUPPORTED_TOKENS_FAQ_URL}>FAQ</HashLink>.
+    which do not operate optimally with Gnosis Protocol.
+    <p>
+      For more information, please refer to the <HashLink to={UNSUPPORTED_TOKENS_FAQ_URL}>FAQ</HashLink>.
+    </p>
   </div>
 )
 const DEFAULT_DETAILS_TITLE = 'Unsupported Token'
