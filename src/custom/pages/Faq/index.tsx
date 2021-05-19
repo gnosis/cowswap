@@ -314,7 +314,7 @@ export default function Faq() {
           <p>
             Currently, Smart Contract (SC) wallets such as Gnosis Safe, Argent or Pillar are not supported because it
             would require signing an on-chain transaction to place the order, making it no longer gas free. We are working to
-            make this a possibility though, and support will be added soon.
+            make this a possibility and support will be added soon.
           </p>
 
           <p>
