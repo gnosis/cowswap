@@ -1,7 +1,12 @@
 import React from 'react'
+import styled from 'styled-components'
 import { HashLink } from 'react-router-hash-link'
-import UnsupportedCurrencyFooterMod, { UnsupportedCurrencyFooterParams } from './UnsupportedCurrencyFooterMod'
+import UnsupportedCurrencyFooterMod, {
+  UnsupportedCurrencyFooterParams,
+  DetailsFooter
+} from './UnsupportedCurrencyFooterMod'
 import { UNSUPPORTED_TOKENS_FAQ_URL } from 'constants/index'
+import { ButtonEmpty } from 'components/Button'
 
 const DEFAULT_DETAILS_TEXT = (
   <div>
@@ -13,6 +18,24 @@ const DEFAULT_DETAILS_TEXT = (
 const DEFAULT_DETAILS_TITLE = 'Unsupported Token'
 const DEFAULT_SHOW_DETAILS_TEXT = 'Read more about unsupported tokens'
 
+const Wrapper = styled.div`
+  position: relative;
+  width: 100%;
+  z-index: -1;
+
+  ${DetailsFooter} {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  ${ButtonEmpty} {
+    > div {
+      color: ${({ theme }) => theme.redShade};
+      text-decoration: underline;
+    }
+  }
+`
+
 export default function UnsupportedCurrencyFooter({
   detailsText = DEFAULT_DETAILS_TEXT,
   detailsTitle = DEFAULT_DETAILS_TITLE,
@@ -20,11 +43,13 @@ export default function UnsupportedCurrencyFooter({
   ...props
 }: UnsupportedCurrencyFooterParams) {
   return (
-    <UnsupportedCurrencyFooterMod
-      {...props}
-      detailsText={detailsText}
-      detailsTitle={detailsTitle}
-      showDetailsText={showDetailsText}
-    />
+    <Wrapper>
+      <UnsupportedCurrencyFooterMod
+        {...props}
+        detailsText={detailsText}
+        detailsTitle={detailsTitle}
+        showDetailsText={showDetailsText}
+      />
+    </Wrapper>
   )
 }
