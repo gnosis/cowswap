@@ -326,14 +326,13 @@ export default function Faq() {
           <p>
             In GPv2, instead of using a central operator or a constant function market maker to determine trade
             settlements, solvers compete against each other to submit the most optimal batch settlement solution. Each
-            time a solver submits a successful batch settlement solution, the protocol rewards them with 1 GNO, meaning
-            that the protocol rewards solvers at a rate of 1 GNO per batch. Anyone can become a solver, although, in
-            order to become one, there are certain requirements:
+            time a solver submits a successful batch settlement solution, the protocol rewards them with GNO. 
+            Anyone can become a solver, although, in order to become one, there are certain requirements:
           </p>
           <ol>
-            <li>To become a solver, an Ethereum address needs to deposit a bond of 100 GNO tokens to GnosisDAO.</li>
+            <li>To become a solver, an Ethereum address needs to deposit a bond of GNO tokens to GnosisDAO.</li>
             <li>
-              Once the 100 GNO tokens have been staked (locked up), GnosisDAO has to vote to approve or reject the
+              Once the GNO tokens have been staked (locked up), GnosisDAO has to vote to approve or reject the
               Ethereum address that will identify the solver.
             </li>
             <li>
