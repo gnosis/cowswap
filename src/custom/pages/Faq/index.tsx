@@ -262,11 +262,8 @@ export default function Faq() {
           </p>
 
           <p>
-            Be cautious, the{' '}
-            <a href="https://etherscan.io/token/0xBF04E48C5d8880306591ef888cde201D3984Eb3E">CowSwap token</a> listed on
-            Uniswap is not affiliated with this project in any way, shape or form. Please note that this is{' '}
-            <strong>not</strong>
-            associated with our project!
+            Be cautious, some people may create fake COW tokens, that are not affiliated with this project. Please note 
+            that any token listed in any AMM is  <strong>NOT</strong> associated with this project in any way, shape or form.
           </p>
 
           <h3 id="what-is-cowswap-s-fee-model">What is CowSwap’s fee model?</h3>
