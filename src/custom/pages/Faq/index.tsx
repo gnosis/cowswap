@@ -318,7 +318,7 @@ export default function Faq() {
           </p>
 
           <p>
-            But, even if your wallet is not a SC wallet, it might be unsupported in some cases. Not all wallets
+            Nevertheless, even if your wallet is not an SC wallet, it might be unsupported in some cases. Not all wallets
             implement the necessary signing methods from EIP712 standard. If that is the case for you, reach out to your
             wallet developers and ask for it.
           </p>
