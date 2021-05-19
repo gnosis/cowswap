@@ -638,7 +638,7 @@ export default function Swap({
           showDetailsText="Read more about unsupported wallets"
           detailsText={
             <>
-              CowSwap requires offline signatures, which is currently not supported by some wallets. Read more on the{' '}
+              CowSwap requires offline signatures, which is currently not supported by some wallets. Read more in the{' '}
               <HashLink to="/faq#wallet-not-supported">FAQ</HashLink>.
             </>
           }
