@@ -8,6 +8,8 @@ import { MenuItem } from 'components/SearchModal/styleds'
 import { MouseoverTooltip } from 'components/Tooltip'
 import { TagInfo, WrappedTokenInfo } from 'state/lists/hooks'
 import { Link } from 'react-router-dom'
+import { RowFixed } from 'components/Row'
+import { LightGreyCard } from 'components/Card'
 
 const UNSUPPORTED_TOKEN_TAG = [
   {
@@ -33,6 +35,10 @@ const Wrapper = styled.div`
 
   ${TagMod} {
     background: ${({ theme }) => theme.bg2};
+    color: ${({ theme }) => theme.text2};
+  }
+
+  ${LightGreyCard} ${RowFixed} > div {
     color: ${({ theme }) => theme.text2};
   }
 `
