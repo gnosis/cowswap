@@ -19,12 +19,12 @@ export interface FeeInformation {
 
 export interface PriceInformation {
   token: string
-  amount: string
+  amount: string | null
 }
 
 export interface QuoteInformationObject extends Omit<FeeQuoteParams, 'kind'> {
   fee: FeeInformation
-  price: PriceInformation | null
+  price: PriceInformation
   lastCheck: number
   feeExceedsPrice: boolean
 }
