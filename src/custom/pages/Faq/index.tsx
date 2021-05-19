@@ -468,16 +468,34 @@ export default function Faq() {
           </h3>
 
           <p>
-            CowSwap needs to operate with WETH (wrapped Ether), and when wrapping and unwrapping it, trading amounts may
-            vary.
+            CowSwap only operates with ERC20 tokens. ETH is the native Ethereum currency, which is not an ERC20 token.
+          </p>
+          
+          <p>
+            In order to sell ETH, you need to wrap it first to make it ERC20 compatible. Wrapping is done by making an 
+            ETH deposit into the WETH contract. After doing so, you will get a balance of WETH in the amount of ETH 
+            previously deposited.
+          </p>
+          
+          <p>
+            You can withdraw your ETH from the WETH contract at any time, and this is called unwrapping WETH.
+          </p>
+          
+          <p>
+            Wrapping and unwrapping ETH are simple Ethereum transactions not related to CowSwap, meaning gas costs 
+            for executing the transactions are involved.
           </p>
 
           <p>
-            The reason it may be more “troublesome” to place a sell order is because CowSwap needs to receive the ETH
-            already wrapped, therefore the need for wrapping it before placing the trade. Conversely, when placing a buy
-            order, the settlement contracts will be the one that unwraps the WETH of your trade.
+            Although CowSwap doesn't allow you to sell ETH directly, it will assist you with the wrapping/unwrapping, 
+            so you can easily handle ETH/WETH, as needed.
           </p>
-
+          
+          <p>
+            While ETH cannot be sold directly, it is possible to directly buy ETH. This is because CowSwap allows 
+            you to buy WETH and will directly unwrap it for you.
+          </p>
+          
           <hr />
 
           <p>
