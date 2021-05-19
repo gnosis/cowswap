@@ -310,17 +310,17 @@ export default function Faq() {
 
           <h3 id="wallet-not-supported">Why is my wallet not supported?</h3>
 
-          <p>CowSwap uses offline signatures to offer gas free orders.</p>
+          <p>CowSwap uses offline signatures to offer gasless orders.</p>
           <p>
             Currently, Smart Contract (SC) wallets such as Gnosis Safe, Argent or Pillar are not supported because it
-            would require signing an on-chain transaction to place the order, making it no longer gas free. We are working to
-            make this a possibility and support will be added soon.
+            would require signing an on-chain transaction to place the order, making it no longer gasless. We are
+            working to make this a possibility and support will be added soon.
           </p>
 
           <p>
-            Nevertheless, even if your wallet is not an SC wallet, it might be unsupported in some cases. Not all wallets
-            implement the necessary signing methods from EIP712 standard. If that is the case for you, reach out to your
-            wallet developers and ask for it.
+            Nevertheless, even if your wallet is not an SC wallet, it might be unsupported in some cases. Not all
+            wallets implement the necessary signing methods from EIP712 standard. If that is the case for you, reach out
+            to your wallet developers and ask for it.
           </p>
         </Content>
       </Page>
