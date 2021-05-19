@@ -15,6 +15,7 @@ const Wrapper = styled(SettingsMod)`
   ${RowFixed} {
     > div {
       color: ${({ theme }) => theme.text1};
+      opacity: 0.85;
     }
   }
 

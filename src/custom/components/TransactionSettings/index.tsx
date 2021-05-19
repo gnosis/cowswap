@@ -37,6 +37,7 @@ const Wrapper = styled.div`
   ${RowFixed} {
     > div {
       color: ${({ theme }) => theme.text1};
+      opacity: 0.85;
     }
 
     > button {
