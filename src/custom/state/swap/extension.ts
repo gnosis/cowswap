@@ -25,7 +25,7 @@ export type TradeWithFee = Trade & {
 type TradeExecutionPrice = CanonicalMarketParams<CurrencyAmount | undefined> & { price?: PriceInformation }
 
 export function _constructTradePrice({ sellToken, buyToken, kind, price }: TradeExecutionPrice): Price | undefined {
-  if (!sellToken || !buyToken || !price) return
+  if (!sellToken || !buyToken || !price?.amount) return
 
   let executionPrice: Price | undefined
   // get canonical market tokens
@@ -114,7 +114,7 @@ export function useTradeExactInWithFee({
 
   // make sure we have a typed in amount, a fee, and a price
   // else we can assume the trade will be null
-  if (!parsedInputAmount || !originalTrade || !outputCurrency || !quote?.fee || !quote?.price) return null
+  if (!parsedInputAmount || !originalTrade || !outputCurrency || !quote?.fee || !quote?.price.amount) return null
 
   const feeAsCurrency = stringToCurrency(quote.fee.amount, parsedInputAmount.currency)
   // Check that fee amount is not greater than the user's input amt
@@ -179,7 +179,7 @@ export function useTradeExactOutWithFee({
   // Original Uni trade hook
   const outTrade = useTradeExactOut(inputCurrency ?? undefined, parsedOutputAmount)
 
-  if (!outTrade || !parsedOutputAmount || !inputCurrency || !quote?.fee || !quote?.price) return null
+  if (!outTrade || !parsedOutputAmount || !inputCurrency || !quote?.fee || !quote?.price.amount) return null
 
   const feeAsCurrency = stringToCurrency(quote.fee.amount, inputCurrency)
   // set final fee object
@@ -213,7 +213,9 @@ export function useTradeExactOutWithFee({
     ...outTrade,
     // overriding inputAmount is a hack
     // to allow us to not have to change Uni's pages/swap/index and use different method names
-    inputAmount: inputAmountWithoutFee,
+    // in this case we need to show users the default inputAmount as the inputAmount adjusted for fee
+    // this is purely for display reasons and to keep it working with Uni's code.
+    inputAmount: inputAmountWithFee,
     inputAmountWithFee,
     minimumAmountOut(pct: Percent) {
       // this refers to trade object being constructed

@@ -134,7 +134,10 @@ export default function Swap({
   const isNativeInSwap = isNativeIn && !isWrappedOut
 
   // Is fee greater than input?
-  const { isFeeGreater, fee } = useIsFeeGreaterThanInput({ chainId, address: INPUT.currencyId, parsedAmount })
+  const { isFeeGreater, fee } = useIsFeeGreaterThanInput({
+    chainId,
+    address: INPUT.currencyId
+  })
 
   const toggledVersion = useToggledVersion()
   const tradesByVersion = {
@@ -510,7 +513,7 @@ export default function Swap({
           <BottomGrouping>
             {swapIsUnsupported ? (
               <ButtonPrimary buttonSize={ButtonSize.BIG} disabled={true}>
-                <TYPE.main mb="4px">Unsupported Asset</TYPE.main>
+                <TYPE.main mb="4px">Unsupported Token</TYPE.main>
               </ButtonPrimary>
             ) : !account ? (
               <ButtonLight buttonSize={ButtonSize.BIG} onClick={toggleWalletModal}>
@@ -552,7 +555,7 @@ export default function Swap({
                     'Approve ' + currencies[Field.INPUT]?.symbol
                   )}
                 </ButtonConfirmed>
-                {/* <ButtonError
+                <ButtonError
                   buttonSize={ButtonSize.BIG}
                   onClick={() => {
                     if (isExpertMode) {
@@ -570,16 +573,17 @@ export default function Swap({
                   width="48%"
                   id="swap-button"
                   disabled={
-                    !isValid || approval !== ApprovalState.APPROVED || (priceImpactSeverity > 3 && !isExpertMode)
+                    !isValid || approval !== ApprovalState.APPROVED // || (priceImpactSeverity > 3 && !isExpertMode)
                   }
-                  error={isValid && priceImpactSeverity > 2}
+                  // error={isValid && priceImpactSeverity > 2}
                 >
                   <Text fontSize={16} fontWeight={500}>
-                    {priceImpactSeverity > 3 && !isExpertMode
+                    {/* {priceImpactSeverity > 3 && !isExpertMode
                       ? `Price Impact High`
-                      : `Swap${priceImpactSeverity > 2 ? ' Anyway' : ''}`}
+                      : `Swap${priceImpactSeverity > 2 ? ' Anyway' : ''}`} */}
+                    Swap
                   </Text>
-                </ButtonError> */}
+                </ButtonError>
               </RowBetween>
             ) : (
               <ButtonError
