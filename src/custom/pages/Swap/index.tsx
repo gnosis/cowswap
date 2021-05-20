@@ -31,7 +31,7 @@ const BottomGrouping = styled(BottomGroupingUni)`
   }
 `
 
-const SwapModWrapper = styled(SwapMod)`
+const SwapModWrapper = styled(SwapMod)<{ confirmed?: boolean; disabled?: boolean }>`
   ${props => props.className} {
     // For now to target <SwapHeader /> without copying files...
     > div:first-child {
@@ -89,6 +89,8 @@ const SwapModWrapper = styled(SwapMod)`
     }
 
     ${Circle} {
+      background-color: ${({ theme, confirmed, disabled }) =>
+        disabled ? theme.bg2 : confirmed ? theme.green1 : theme.primary1};
       color: ${({ theme, confirmed, disabled }) => (disabled ? theme.text1 : confirmed ? theme.white : theme.text1)};
     }
 
