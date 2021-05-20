@@ -16,11 +16,13 @@ import HeaderMod, {
   StyledNavLink
 } from './HeaderMod'
 import Menu from '../Menu'
+import { StyledMenuButton } from 'components/Menu/MenuMod'
 import styled from 'styled-components'
 import { status as appStatus } from '@src/../package.json'
 import { useActiveWeb3React } from 'hooks'
 import { useETHBalances } from 'state/wallet/hooks'
 import { SHORT_PRECISION } from 'constants/index'
+import TwitterImage from 'assets/cow-swap/twitter.svg'
 
 export const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
   [ChainId.RINKEBY]: 'Rinkeby',
@@ -55,6 +57,21 @@ export const HeaderModWrapper = styled(HeaderMod)`
 const NetworkCard = styled(NetworkCardUni)`
   background-color: ${({ theme }) => theme.networkCard.background};
   color: ${({ theme }) => theme.networkCard.text};
+`
+
+const TwitterLink = styled(StyledMenuButton)`
+  width: 35px;
+  margin-left: 0.5rem;
+
+  > a {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: -3px;
+    background: url(${TwitterImage}) no-repeat 100% / contain;
+  }
 `
 
 export const LogoImage = styled.img.attrs(props => ({
@@ -127,6 +144,9 @@ export default function Header() {
           </AccountElement>
         </HeaderElement>
         <HeaderElementWrap>
+          <TwitterLink>
+            <a href="https://twitter.com/mevprotection" target="_blank" rel="noopener noreferrer" />
+          </TwitterLink>
           <Menu />
         </HeaderElementWrap>
       </HeaderControls>
