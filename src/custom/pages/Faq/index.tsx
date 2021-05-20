@@ -6,6 +6,28 @@ import { DISCORD_LINK } from 'constants/index'
 import { Link } from 'react-router-dom'
 
 const Wrapper = styled.div`
+  #table-container {
+    overflow-x: scroll;
+    margin: auto;
+    max-width: 80vw;
+
+    > table {
+      min-width: 800px;
+
+      thead, tr:nth-child(even) {
+          background: lightgrey;
+        }
+      }
+
+      th,
+      td {
+        min-width: 8.5rem;
+        text-align: left;
+        padding: 0.5rem 0.4rem;
+      }
+    }
+  }
+
   h2 {
     color: ${({ theme }) => theme.primary1};
   }
@@ -355,80 +377,102 @@ export default function Faq() {
               solutions, or take the risk of being slashed by the GnosisDAO for wrongdoing.
             </li>
           </ol>
-          
-          <h3 id="what-interactions-can-i-encounter-when-using-Cowswap">What interactions can I encounter when using CowSwap?</h3>
-          
-          <p><strong>Internal CowSwap Operations</strong></p>
-              <table>
+
+          <h3 id="what-interactions-can-i-encounter-when-using-Cowswap">
+            What interactions can I encounter when using CowSwap?
+          </h3>
+
+          <p>
+            <strong>Internal CowSwap Operations</strong>
+          </p>
+          <div id="table-container">
+            <table>
               <thead>
-              <tr>
-              <th style="text-align:center">Action</th>
-              <th style="text-align:center">Description</th>
-              <th style="text-align:center">Costs</th>
-              <th style="text-align:center">Action Performed</th>
-              <th style="text-align:center">Pay for gas?</th>
-              <th style="text-align:center">What do I need to pay the gas costs with?</th>
-              </tr>
+                <tr>
+                  <th>Action</th>
+                  <th>Description</th>
+                  <th>Costs</th>
+                  <th>Action Performed</th>
+                  <th>Pay for gas?</th>
+                  <th>What do I need to pay the gas costs with?</th>
+                </tr>
               </thead>
               <tbody>
-              <tr>
-              <td style="text-align:center">Approve token for trading</td>
-              <td style="text-align:center">Required step for being able to sell a token.Only needs to be done once. Afterward, you will be able to trade the token using gasless transactions!</td>
-              <td style="text-align:center">Regular Ethereum Tx.</td>
-              <td style="text-align:center">Set the token allowance for the <AllowanceManager></td>
-              <td style="text-align:center">Yes</td>
-              <td style="text-align:center">ETH</td>
-              </tr>
-              <tr>
-              <td style="text-align:center">Sing an Order</td>
-              <td style="text-align:center">Signature of a gasless off-chain order. You define your limit price and expiration date. The order will try to be executed using MEV protection, against different on-chain liquidity sources or other CowSwap users trading in the same block.</td>
-              <td style="text-align:center">Free</td>
-              <td style="text-align:center">None</td>
-              <td style="text-align:center">No</td>
-              <td style="text-align:center">Free</td>
-              </tr>
-              <tr>
-              <td style="text-align:center">Trade</td>
-              <td style="text-align:center">The trade will happen automatically if a CoW (Coincidence of Wants) is found, or if the order can be executed at the specified price in any on-chain liquidity source. You only pay fees if the trade is successful!</td>
-              <td style="text-align:center">Gnosis Protocol Fee which is paid either in your sell or buy token.</td>
-              <td style="text-align:center">Accept the trade details by executing your limit order</td>
-              <td style="text-align:center">No</td>
-              <td style="text-align:center">Paid in either Sell or Buy token</td>
-              </tr>
+                <tr>
+                  <td>Approve token for trading</td>
+                  <td>
+                    Required step for being able to sell a token.Only needs to be done once. Afterward, you will be able
+                    to trade the token using gasless transactions!
+                  </td>
+                  <td>Regular Ethereum Tx.</td>
+                  <td>Set the token allowance for the Allowance Manager</td>
+                  <td>Yes</td>
+                  <td>ETH</td>
+                </tr>
+                <tr>
+                  <td>Signing an Order</td>
+                  <td>
+                    Signature of a gasless off-chain order. You define your limit price and expiration date. The order
+                    will try to be executed using MEV protection against different on-chain liquidity sources or other
+                    CowSwap users trading in the same block.
+                  </td>
+                  <td>Free</td>
+                  <td>None</td>
+                  <td>No</td>
+                  <td>Free</td>
+                </tr>
+                <tr>
+                  <td>Trade</td>
+                  <td>
+                    The trade will happen automatically if a CoW (Coincidence of Wants) is found, or if the order can be
+                    executed at the specified price in any on-chain liquidity source. You only pay fees if the trade is
+                    successful!
+                  </td>
+                  <td>Gnosis Protocol Fee which is paid either in your sell or buy token.</td>
+                  <td>Accept the trade details by executing your limit order</td>
+                  <td>No</td>
+                  <td>Paid in either Sell or Buy token</td>
+                </tr>
               </tbody>
-              </table>
-           <p><strong>External CowSwap Operations</strong></p>
-              <table>
+            </table>
+          </div>
+          <p>
+            <strong>External CowSwap Operations</strong>
+          </p>
+          <div id="table-container">
+            <table>
               <thead>
-              <tr>
-              <th style="text-align:center">Action</th>
-              <th style="text-align:center">Description</th>
-              <th style="text-align:center">Costs</th>
-              <th style="text-align:center">Action Performed</th>
-              <th style="text-align:center">Pay for gas?</th>
-              <th style="text-align:center">What do I need to pay the gas costs with?</th>
-              </tr>
+                <tr>
+                  <th>Action</th>
+                  <th>Description</th>
+                  <th>Costs</th>
+                  <th>Action Performed</th>
+                  <th>Pay for gas?</th>
+                  <th>What do I need to pay the gas costs with?</th>
+                </tr>
               </thead>
               <tbody>
-              <tr>
-              <td style="text-align:center">Wrap ETH</td>
-              <td style="text-align:center">Converts native ETH into an ERC20 compatible token: WETH. Only required if you need to sell ETH.</td>
-              <td style="text-align:center">Regular Ethereum tx</td>
-              <td style="text-align:center">Send a deposit transaction to WETH contract.</td>
-              <td style="text-align:center">Yes</td>
-              <td style="text-align:center">ETH</td>
-              </tr>
-              <tr>
-              <td style="text-align:center">Unwrap ETH</td>
-              <td style="text-align:center">Regular Ethereum tx</td>
-              <td style="text-align:center">Regulat Ethereum tx</td>
-              <td style="text-align:center">Send a withdrawal transaction to WETH contract.</td>
-              <td style="text-align:center">Yes</td>
-              <td style="text-align:center">ETH</td>
-              </tr>
+                <tr>
+                  <td>Wrap ETH</td>
+                  <td>
+                    Converts native ETH into an ERC20 compatible token: WETH. Only required if you need to sell ETH.
+                  </td>
+                  <td>Regular Ethereum tx</td>
+                  <td>Send a deposit transaction to WETH contract.</td>
+                  <td>Yes</td>
+                  <td>ETH</td>
+                </tr>
+                <tr>
+                  <td>Unwrap ETH</td>
+                  <td>Regular Ethereum tx</td>
+                  <td>Regulat Ethereum tx</td>
+                  <td>Send a withdrawal transaction to WETH contract.</td>
+                  <td>Yes</td>
+                  <td>ETH</td>
+                </tr>
               </tbody>
-              </table>
-          
+            </table>
+          </div>
         </Content>
       </Page>
 
@@ -571,8 +615,8 @@ export default function Faq() {
           </p>
 
           <p>
-            Although CowSwap doesn't allow you to sell ETH directly, it will assist you with the wrapping/unwrapping, so
-            you can easily handle ETH/WETH, as needed.
+            Although CowSwap does not allow you to sell ETH directly, it will assist you with the wrapping/unwrapping,
+            so you can easily handle ETH/WETH, as needed.
           </p>
 
           <p>
