@@ -19,6 +19,7 @@ import QuestionHelper from 'components/QuestionHelper'
 import { ButtonError, ButtonPrimary } from 'components/Button'
 import EthWethWrap, { Props as EthWethWrapProps } from 'components/swap/EthWethWrap'
 import { useReplaceSwapState, useSwapState } from 'state/swap/hooks'
+import { Circle } from '@src/components/ProgressSteps'
 
 interface FeeGreaterMessageProp {
   fee: CurrencyAmount
@@ -85,6 +86,14 @@ const SwapModWrapper = styled(SwapMod)`
     }
     .expertMode ${AutoRow} {
       padding: 0 1rem;
+    }
+
+    ${Circle} {
+      color: ${({ theme, confirmed, disabled }) => (disabled ? theme.text1 : confirmed ? theme.white : theme.text1)};
+    }
+
+    ${AutoRow} svg > path {
+      stroke: ${({ theme }) => theme.text1};
     }
   }
 `

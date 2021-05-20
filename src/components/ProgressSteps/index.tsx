@@ -10,7 +10,7 @@ const Grouping = styled(RowBetween)`
   width: 50%;
 `
 
-const Circle = styled.div<{ confirmed?: boolean; disabled?: boolean }>`
+export const Circle = styled.div<{ confirmed?: boolean; disabled?: boolean }>`
   min-width: 20px;
   min-height: 20px;
   background-color: ${({ theme, confirmed, disabled }) =>
