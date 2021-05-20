@@ -70,7 +70,13 @@ const TwitterLink = styled(StyledMenuButton)`
     align-items: center;
     justify-content: center;
     margin-bottom: -3px;
-    background: url(${TwitterImage}) no-repeat 100% / contain;
+  }
+
+  > a > img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border: 0;
   }
 `
 
@@ -145,7 +151,9 @@ export default function Header() {
         </HeaderElement>
         <HeaderElementWrap>
           <TwitterLink>
-            <a href="https://twitter.com/mevprotection" target="_blank" rel="noopener noreferrer" />
+            <a href="https://twitter.com/mevprotection" target="_blank" rel="noopener noreferrer">
+              <img src={TwitterImage} alt="Follow CowSwap on Twitter!" />
+            </a>
           </TwitterLink>
           <Menu />
         </HeaderElementWrap>
