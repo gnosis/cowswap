@@ -1,4 +1,11 @@
-import { domain as domainGp, signOrder as signOrderGp, Order, Signature } from '@gnosis.pm/gp-v2-contracts'
+import {
+  domain as domainGp,
+  signOrder as signOrderGp,
+  EcdsaSignature,
+  Order,
+  Signature,
+  SigningOptions
+} from '@gnosis.pm/gp-v2-contracts'
 import { ChainId } from '@uniswap/sdk'
 
 import { GP_SETTLEMENT_CONTRACT_ADDRESS } from 'constants/index'
@@ -6,6 +13,15 @@ import { TypedDataDomain, Signer } from 'ethers'
 import { registerOnWindow } from './misc'
 
 export { OrderKind } from '@gnosis.pm/gp-v2-contracts'
+
+// For error codes, see:
+// - https://eth.wiki/json-rpc/json-rpc-error-codes-improvement-proposal
+// - https://www.jsonrpc.org/specification#error_object
+const METAMASK_SIGNATURE_ERROR_CODE = -32603
+const METHOD_NOT_FOUND_ERROR_CODE = -32601
+const V4_ERROR_MSG_REGEX = /eth_signTypedData_v4 does not exist/i
+const V3_ERROR_MSG_REGEX = /eth_signTypedData_v3 does not exist/i
+
 export type UnsignedOrder = Omit<Order, 'receiver'> & { receiver: string }
 
 export interface SignOrderParams {
@@ -13,6 +29,7 @@ export interface SignOrderParams {
   signer: Signer
   order: UnsignedOrder
   signingScheme: EcdsaSigningScheme
+  options?: SigningOptions
 }
 
 // posted to /api/v1/orders on Order creation
@@ -90,17 +107,73 @@ function _getDomain(chainId: ChainId): TypedDataDomain {
   return domainGp(chainId, settlementContract) // TODO: Fix types in NPM package
 }
 
-export async function signOrder(params: SignOrderParams): Promise<Signature> {
-  const { chainId, signer, order, signingScheme } = params
+async function _signOrder(params: SignOrderParams): Promise<Signature> {
+  const { chainId, signer, order, signingScheme, options } = params
 
   const domain = _getDomain(chainId)
   console.log('[utils:signature] signOrder', {
     domain,
     order,
-    signer
+    signer,
+    options
   })
 
-  return signOrderGp(domain, order, signer, getSigningSchemeLibValue(signingScheme))
+  return signOrderGp(domain, order, signer, getSigningSchemeLibValue(signingScheme), options)
 }
 
-registerOnWindow({ signature: { signOrder, getDomain: _getDomain } })
+export async function signOrder(
+  unsignedOrder: UnsignedOrder,
+  chainId: ChainId,
+  signer: Signer,
+  signingMethod: 'v4' | 'v3' | 'eth_sign' = 'v4'
+): Promise<{ signature: string; signingScheme: EcdsaSigningScheme }> {
+  const signingScheme = signingMethod === 'eth_sign' ? SigningScheme.ETHSIGN : SigningScheme.EIP712
+  let signature: Signature | null = null
+
+  const signatureParams: SignOrderParams = {
+    chainId,
+    signer,
+    order: unsignedOrder,
+    signingScheme,
+    options: { signTypedDataVersion: signingMethod === 'v3' ? signingMethod : undefined }
+  }
+
+  try {
+    signature = (await _signOrder(signatureParams)) as EcdsaSignature // Only ECDSA signing supported for now
+  } catch (e) {
+    if (e.code === METHOD_NOT_FOUND_ERROR_CODE) {
+      // Maybe the wallet returns the proper error code? We can only hope 🤞
+      console.log(`Failed with`, e.code, signingMethod, JSON.stringify(e))
+      switch (signingMethod) {
+        case 'v4':
+          return signOrder(unsignedOrder, chainId, signer, 'v3')
+        case 'v3':
+          return signOrder(unsignedOrder, chainId, signer, 'eth_sign')
+        default:
+          throw e
+      }
+    } else if (e.code === METAMASK_SIGNATURE_ERROR_CODE) {
+      // We tried to sign order the nice way.
+      // That works fine for regular MM addresses. Does not work for Hardware wallets, though.
+      // See https://github.com/MetaMask/metamask-extension/issues/10240#issuecomment-810552020
+      // So, when that specific error occurs, we know this is a problem with MM + HW.
+      // Then, we fallback to ETHSIGN.
+      return signOrder(unsignedOrder, chainId, signer, 'eth_sign')
+    } else if (V4_ERROR_MSG_REGEX.test(e.message)) {
+      // Failed with `v4`, and the wallet does not set the proper error code
+      console.log(`v4 failed`, e, JSON.stringify(e))
+      return signOrder(unsignedOrder, chainId, signer, 'v3')
+    } else if (V3_ERROR_MSG_REGEX.test(e.message)) {
+      // Failed with `v3`, and the wallet does not set the proper error code
+      console.log(`v3 failed`, e, JSON.stringify(e))
+      return signOrder(unsignedOrder, chainId, signer, 'eth_sign')
+    } else {
+      // Some other error signing. Let it bubble up.
+      console.error(e)
+      throw e
+    }
+  }
+  return { signature: signature.data.toString(), signingScheme }
+}
+
+registerOnWindow({ signature: { signOrder: _signOrder, getDomain: _getDomain } })
