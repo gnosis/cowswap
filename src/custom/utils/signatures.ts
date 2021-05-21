@@ -143,7 +143,6 @@ export async function signOrder(
   } catch (e) {
     if (e.code === METHOD_NOT_FOUND_ERROR_CODE) {
       // Maybe the wallet returns the proper error code? We can only hope 🤞
-      console.log(`Failed with`, e.code, signingMethod, JSON.stringify(e))
       switch (signingMethod) {
         case 'v4':
           return signOrder(unsignedOrder, chainId, signer, 'v3')
@@ -161,11 +160,9 @@ export async function signOrder(
       return signOrder(unsignedOrder, chainId, signer, 'eth_sign')
     } else if (V4_ERROR_MSG_REGEX.test(e.message)) {
       // Failed with `v4`, and the wallet does not set the proper error code
-      console.log(`v4 failed`, e, JSON.stringify(e))
       return signOrder(unsignedOrder, chainId, signer, 'v3')
     } else if (V3_ERROR_MSG_REGEX.test(e.message)) {
       // Failed with `v3`, and the wallet does not set the proper error code
-      console.log(`v3 failed`, e, JSON.stringify(e))
       return signOrder(unsignedOrder, chainId, signer, 'eth_sign')
     } else {
       // Some other error signing. Let it bubble up.
