@@ -464,7 +464,7 @@ export default function Faq() {
                 </tr>
                 <tr>
                   <td>Unwrap ETH</td>
-                  <td>Regular Ethereum tx</td>
+                  <td>Converts ERC20 compatible token WETH back to ETH. Only when you want to manually convert it to ETH.</td>
                   <td>Regulat Ethereum tx</td>
                   <td>Send a withdrawal transaction to WETH contract.</td>
                   <td>Yes</td>
