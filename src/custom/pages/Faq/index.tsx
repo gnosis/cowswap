@@ -401,7 +401,7 @@ export default function Faq() {
                 <tr>
                   <td>Approve token for trading</td>
                   <td>
-                    Required step for being able to sell a token.Only needs to be done once. Afterward, you will be able
+                    Required step for being able to sell a token. Only needs to be done once. Afterward, you will be able
                     to trade the token using gasless transactions!
                   </td>
                   <td>Regular Ethereum Tx.</td>
