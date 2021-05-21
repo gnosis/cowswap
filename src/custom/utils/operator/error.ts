@@ -19,7 +19,7 @@ export interface ApiError {
 const API_ERROR_CODE_DESCRIPTIONS = {
   [ApiErrorCodes.DuplicateOrder]: 'There was another identical order already submitted. Please try again.',
   [ApiErrorCodes.InsufficientFee]:
-    "The signed fee is insufficient. It's possible that is higher now for a change in gas prices, ether price, or the selling token price. Please try again so you get an updated fee quote.",
+    "The signed fee is insufficient. It's possible that is higher now due to a change in the gas price, ether price, or the sell token price. Please try again so you get an updated fee quote.",
   [ApiErrorCodes.InvalidSignature]:
     'The order signature is invalid. Check with you support in your Wallet app the support for off-chain signing.',
   [ApiErrorCodes.MissingOrderData]: 'The order has missing information',
