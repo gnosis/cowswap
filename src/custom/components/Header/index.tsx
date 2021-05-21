@@ -62,8 +62,11 @@ const NetworkCard = styled(NetworkCardUni)`
 const TwitterLink = styled(StyledMenuButton)`
   width: 35px;
   margin-left: 0.5rem;
+  padding: 0;
 
   > a {
+    ${({ theme }) => theme.cursor};
+    padding: 7px;
     width: 100%;
     height: 100%;
     display: flex;
