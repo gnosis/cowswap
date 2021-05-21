@@ -20,6 +20,21 @@ const UNSUPPORTED_TOKEN_TAG = [
   }
 ]
 
+const Tag = styled(TagMod)<{ bg?: string }>`
+  background: ${({ bg, theme }) => bg || theme.bg1};
+  max-width: 6.1rem;
+`
+
+const TagLink = styled(Tag)`
+  display: flex;
+  align-items: center;
+  font-size: x-small;
+  a {
+    color: inherit;
+    font-weight: bold;
+  }
+`
+
 const Wrapper = styled.div`
   ${MenuItem} {
     &:hover {
@@ -32,28 +47,15 @@ const Wrapper = styled.div`
   }
 
   ${TagMod} {
-    background: ${({ theme }) => theme.bg2};
     color: ${({ theme }) => theme.text2};
+  }
+
+  ${TagLink} {
+    color: ${({ theme }) => theme.text1};
   }
 
   ${LightGreyCard} ${RowFixed} > div {
     color: ${({ theme }) => theme.text2};
-  }
-`
-
-const Tag = styled(TagMod)<{ bg?: string }>`
-  background-color: ${({ bg, theme }) => bg || theme.bg3};
-  max-width: 6.1rem;
-`
-
-const TagLink = styled(Tag)`
-  display: flex;
-  align-items: center;
-  background-color: #3f77ff;
-  font-size: x-small;
-  a {
-    color: white;
-    font-weight: bold;
   }
 `
 
