@@ -43,7 +43,8 @@ import {
   useDerivedSwapInfo,
   useSwapActionHandlers,
   useSwapState,
-  useIsFeeGreaterThanInput
+  useIsFeeGreaterThanInput,
+  useIsSwapLoading
 } from 'state/swap/hooks'
 import { useExpertModeManager, useUserSlippageTolerance, useUserSingleHopOnly } from 'state/user/hooks'
 import { LinkStyledButton, ButtonSize, TYPE } from 'theme'
@@ -58,6 +59,7 @@ import { isTradeBetter } from 'utils/trades'
 import FeeInformationTooltip from 'components/swap/FeeInformationTooltip'
 import { SwapProps } from '.'
 import { logTradeDetails } from 'state/swap/utils'
+import { useGetQuoteAndStatus } from 'state/price/hooks'
 
 export default function Swap({
   history,
@@ -66,6 +68,7 @@ export default function Swap({
   SwitchToWethBtn,
   FeesExceedFromAmountMessage,
   BottomGrouping,
+  TradeLoading,
   className
 }: SwapProps) {
   const loadedUrlParams = useDefaultsFromURLSearch()
@@ -118,6 +121,14 @@ export default function Swap({
     currencies,
     inputError: swapInputError
   } = useDerivedSwapInfo()
+
+  const quoteInfo = useGetQuoteAndStatus({
+    chainId,
+    token: INPUT.currencyId
+  })
+
+  // detects trade load
+  const tradeLoading = useIsSwapLoading(quoteInfo, parsedAmount?.raw.toString(), INPUT.currencyId)
 
   // Log all trade information
   logTradeDetails(v2Trade, allowedSlippage)
@@ -526,15 +537,6 @@ export default function Swap({
               </ButtonPrimary>
             ) : !swapInputError && isNativeIn ? (
               <SwitchToWethBtn wrappedToken={wrappedToken} />
-            ) : noRoute && userHasSpecifiedInputOutput ? (
-              isFeeGreater ? (
-                <FeesExceedFromAmountMessage />
-              ) : (
-                <GreyCard style={{ textAlign: 'center' }}>
-                  <TYPE.main mb="4px">Insufficient liquidity for this trade.</TYPE.main>
-                  {singleHopOnly && <TYPE.main mb="4px">Try enabling multi-hop trades.</TYPE.main>}
-                </GreyCard>
-              )
             ) : showApproveFlow ? (
               <RowBetween>
                 <ButtonConfirmed
@@ -577,14 +579,29 @@ export default function Swap({
                   }
                   // error={isValid && priceImpactSeverity > 2}
                 >
-                  <Text fontSize={16} fontWeight={500}>
-                    {/* {priceImpactSeverity > 3 && !isExpertMode
+                  {tradeLoading ? (
+                    <TradeLoading showButton={false} />
+                  ) : (
+                    <Text fontSize={16} fontWeight={500}>
+                      {/* {priceImpactSeverity > 3 && !isExpertMode
                       ? `Price Impact High`
                       : `Swap${priceImpactSeverity > 2 ? ' Anyway' : ''}`} */}
-                    Swap
-                  </Text>
+                      Swap
+                    </Text>
+                  )}
                 </ButtonError>
               </RowBetween>
+            ) : tradeLoading ? (
+              <TradeLoading showButton />
+            ) : noRoute && userHasSpecifiedInputOutput ? (
+              isFeeGreater ? (
+                <FeesExceedFromAmountMessage />
+              ) : (
+                <GreyCard style={{ textAlign: 'center' }}>
+                  <TYPE.main mb="4px">Insufficient liquidity for this trade.</TYPE.main>
+                  {singleHopOnly && <TYPE.main mb="4px">Try enabling multi-hop trades.</TYPE.main>}
+                </GreyCard>
+              )
             ) : (
               <ButtonError
                 buttonSize={ButtonSize.BIG}
