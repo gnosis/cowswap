@@ -43,3 +43,41 @@ export function logTradeDetails(trade: TradeWithFee | undefined, allowedSlippage
     )
   }
 }
+
+export interface ComparisonParams {
+  typedAmount?: string
+  token?: string
+  fee?: string
+  price?: string
+}
+
+export function _compareLastTrade(current: ComparisonParams, previous: ComparisonParams) {
+  console.debug(
+    '[useDerivedSwapInfo]: Changed in Trade swap configuration detected:',
+
+    'Was:',
+    previous,
+
+    'Change:',
+    current.typedAmount !== previous?.typedAmount
+      ? '[Typed amount]:' + current.typedAmount + ' [Before]: ' + previous?.typedAmount
+      : current.fee !== previous?.fee
+      ? '[Fee amount]:' + current.fee + ' [Before]: ' + previous?.fee
+      : current.price !== previous?.price
+      ? '[Price amount]:' + current.price
+      : current.token !== previous?.token
+      ? '[Token]:' + current.token + ' [Before]: ' + previous?.token
+      : 'No meaningful change detected.'
+  )
+  const shouldUpdate =
+    // user input changed
+    current.typedAmount !== previous?.typedAmount ||
+    // user changed tokens
+    current.token !== previous?.token ||
+    // the fee changed
+    current.fee !== previous?.fee ||
+    // the price changed
+    current.price !== previous?.price
+
+  return shouldUpdate
+}
