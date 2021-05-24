@@ -1,6 +1,6 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { useCallback } from 'react'
-import { useClearQuote, useUpdateQuote } from 'state/price/hooks'
+import { useAllQuoteDispatch } from 'state/price/hooks'
 import { getCanonicalMarket, registerOnWindow } from 'utils/misc'
 import { FeeQuoteParams, getFeeQuote, getPriceQuote } from 'utils/operator'
 import {
@@ -113,8 +113,7 @@ function _handleUnsupportedToken({
 export function useRefetchQuoteCallback() {
   const isUnsupportedTokenGp = useIsUnsupportedTokenGp()
   // dispatchers
-  const updateQuote = useUpdateQuote()
-  const clearQuote = useClearQuote()
+  const [loadingQuote, updateQuote, clearQuote] = useAllQuoteDispatch()
   const addUnsupportedToken = useAddGpUnsupportedToken()
   const removeGpUnsupportedToken = useRemoveGpUnsupportedToken()
 
@@ -124,6 +123,9 @@ export function useRefetchQuoteCallback() {
     async (params: RefetchQuoteCallbackParmams) => {
       const { sellToken, buyToken, amount, chainId } = params.quoteParams
       try {
+        // we need to signal to other parts of the app
+        // that we are loading a new quote
+        loadingQuote(true)
         // Get the quote
         // price can be null if fee > price
         const [price, fee] = await getQuote(params)
@@ -158,8 +160,10 @@ export function useRefetchQuoteCallback() {
 
         // Clear the quote
         clearQuote({ chainId, token: sellToken })
+      } finally {
+        loadingQuote(false)
       }
     },
-    [isUnsupportedTokenGp, updateQuote, removeGpUnsupportedToken, clearQuote, addUnsupportedToken]
+    [loadingQuote, isUnsupportedTokenGp, updateQuote, removeGpUnsupportedToken, addUnsupportedToken, clearQuote]
   )
 }

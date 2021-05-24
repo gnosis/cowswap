@@ -1,6 +1,6 @@
 import { createReducer, PayloadAction } from '@reduxjs/toolkit'
 import { ChainId } from '@uniswap/sdk'
-import { updateQuote, clearQuote } from './actions'
+import { updateQuote, clearQuote, loadingQuote } from './actions'
 import { Writable } from 'custom/types'
 import { PrefillStateRequired } from '../orders/reducer'
 import { FeeQuoteParams } from 'utils/operator'
@@ -36,7 +36,7 @@ export type QuoteInformationState = {
   readonly [chainId in ChainId]?: Partial<QuotesMap>
 }
 
-const initialState: QuoteInformationState = {}
+const initialState: { loading: boolean; quotes: QuoteInformationState } = { loading: false, quotes: {} }
 
 // Makes sure there stat is initialized
 function initializeState(
@@ -53,12 +53,15 @@ function initializeState(
 
 export default createReducer(initialState, builder =>
   builder
-    .addCase(updateQuote, (state, action) => {
+    .addCase(loadingQuote, (state, action) => {
+      state.loading = action.payload
+    })
+    .addCase(updateQuote, ({ quotes: state }, action) => {
       initializeState(state, action)
       const { sellToken, chainId } = action.payload
       state[chainId][sellToken] = action.payload
     })
-    .addCase(clearQuote, (state, action) => {
+    .addCase(clearQuote, ({ quotes: state }, action) => {
       initializeState(state, action)
       const { token, chainId } = action.payload
       delete state[chainId][token]
