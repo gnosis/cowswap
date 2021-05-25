@@ -2,6 +2,11 @@
 # yarn lockfile v1
 
 
+"@anxolin/cow-runner-game@^0.1.4":
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/@anxolin/cow-runner-game/-/cow-runner-game-0.1.4.tgz#6ba258b22f58c8169f1fed78487468d970240df1"
+  integrity sha512-3+9zroz1sTTHPKRoZDtCEe8TXOQsxb7ybaZzw++nDVgyld2MAO2EdyoaOZHJX3DCtdLG8S6fxXqzwhzCO0jZZw==
+
 "@babel/code-frame@7.8.3":
   version "7.8.3"
   resolved "https://registry.yarnpkg.com/@babel/code-frame/-/code-frame-7.8.3.tgz#33e25903d7481181534e12ec0a25f16b6fcf419e"
