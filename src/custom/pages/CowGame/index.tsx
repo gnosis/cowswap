@@ -5,7 +5,7 @@ import { CowGame } from '@anxolin/cow-runner-game'
 
 const Wrapper = styled(Page)``
 
-export default function CowGame2() {
+export default function CowGamePage() {
   return (
     <Wrapper>
       <Title>Cow Game</Title>

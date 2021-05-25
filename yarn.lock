@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@anxolin/cow-runner-game@^0.1.4":
-  version "0.1.4"
-  resolved "https://registry.yarnpkg.com/@anxolin/cow-runner-game/-/cow-runner-game-0.1.4.tgz#6ba258b22f58c8169f1fed78487468d970240df1"
-  integrity sha512-3+9zroz1sTTHPKRoZDtCEe8TXOQsxb7ybaZzw++nDVgyld2MAO2EdyoaOZHJX3DCtdLG8S6fxXqzwhzCO0jZZw==
+"@anxolin/cow-runner-game@^0.2.2":
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/@anxolin/cow-runner-game/-/cow-runner-game-0.2.2.tgz#bc788de3a897006a34b88fe4daac7f09014323eb"
+  integrity sha512-vNkaKiYaJgV7+0Aiv6tNOYqujjH6r8ZPJd0XIViLj1yx70C+zjZ7BR1cWI4+Ck6Izw+/XxI2G5KbAqe/7vibvQ==
 
 "@anxolin/walletconnect-connector@6.1.9":
   version "6.1.9"
