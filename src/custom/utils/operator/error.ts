@@ -24,7 +24,7 @@ const API_ERROR_CODE_DESCRIPTIONS = {
     'The order signature is invalid. Check whether your Wallet app supports off-chain signing.',
   [ApiErrorCodes.MissingOrderData]: 'The order has missing information',
   [ApiErrorCodes.InsufficientValidTo]:
-    'The order you are signing is already expired. This can happen if you set a short expiration in the settings and then you take some time for signing the transaction. Please try again',
+    'The order you are signing is already expired. This can happen if you set a short expiration in the settings and waited too long before signing the transaction. Please try again.',
   [ApiErrorCodes.InsufficientFunds]: "The account doesn't have enough funds",
   [ApiErrorCodes.UnsupportedToken]:
     'One of the tokens you are trading is unsupported. Please read the FAQ for more info.',
