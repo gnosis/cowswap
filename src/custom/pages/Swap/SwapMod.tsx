@@ -59,6 +59,7 @@ import FeeInformationTooltip from 'components/swap/FeeInformationTooltip'
 import { SwapProps } from '.'
 import { useWalletInfo } from 'hooks/useWalletInfo'
 import { HashLink } from 'react-router-hash-link'
+import { logTradeDetails } from 'state/swap/utils'
 
 export default function Swap({
   history,
@@ -121,6 +122,9 @@ export default function Swap({
     inputError: swapInputError
   } = useDerivedSwapInfo()
 
+  // Log all trade information
+  logTradeDetails(v2Trade, allowedSlippage)
+
   // Checks if either currency is native ETH
   // MOD: adds this hook
   const { isNativeIn, isWrappedOut, native, wrappedToken } = useDetectNativeToken(
@@ -133,7 +137,10 @@ export default function Swap({
   const isNativeInSwap = isNativeIn && !isWrappedOut
 
   // Is fee greater than input?
-  const { isFeeGreater, fee } = useIsFeeGreaterThanInput({ chainId, address: INPUT.currencyId, parsedAmount })
+  const { isFeeGreater, fee } = useIsFeeGreaterThanInput({
+    chainId,
+    address: INPUT.currencyId
+  })
 
   const toggledVersion = useToggledVersion()
   const tradesByVersion = {
@@ -368,7 +375,7 @@ export default function Swap({
       <SwapPoolTabs active={'swap'} />
       <AppBody className={className}>
         <SwapHeader />
-        <Wrapper id="swap-page">
+        <Wrapper id="swap-page" className={isExpertMode ? 'expertMode' : ''}>
           <ConfirmSwapModal
             isOpen={showConfirm}
             trade={trade}
@@ -392,10 +399,7 @@ export default function Swap({
                   label={exactInLabel}
                   trade={trade}
                   showHelper={independentField === Field.OUTPUT}
-                  amountBeforeFees={
-                    trade?.fee?.feeAsCurrency &&
-                    trade?.inputAmount.subtract(trade.fee?.feeAsCurrency).toSignificant(DEFAULT_PRECISION)
-                  }
+                  amountBeforeFees={trade?.inputAmount.toSignificant(DEFAULT_PRECISION)}
                   amountAfterFees={trade?.inputAmountWithFee.toSignificant(DEFAULT_PRECISION)}
                   type="From"
                   feeAmount={trade?.fee?.feeAsCurrency?.toSignificant(DEFAULT_PRECISION)}
@@ -512,7 +516,7 @@ export default function Swap({
           <BottomGrouping>
             {swapIsUnsupported ? (
               <ButtonPrimary buttonSize={ButtonSize.BIG} disabled={true}>
-                <TYPE.main mb="4px">Unsupported Asset</TYPE.main>
+                <TYPE.main mb="4px">Unsupported Token</TYPE.main>
               </ButtonPrimary>
             ) : !account ? (
               <ButtonLight buttonSize={ButtonSize.BIG} onClick={toggleWalletModal}>
@@ -560,7 +564,7 @@ export default function Swap({
                     'Approve ' + currencies[Field.INPUT]?.symbol
                   )}
                 </ButtonConfirmed>
-                {/* <ButtonError
+                <ButtonError
                   buttonSize={ButtonSize.BIG}
                   onClick={() => {
                     if (isExpertMode) {
@@ -578,16 +582,17 @@ export default function Swap({
                   width="48%"
                   id="swap-button"
                   disabled={
-                    !isValid || approval !== ApprovalState.APPROVED || (priceImpactSeverity > 3 && !isExpertMode)
+                    !isValid || approval !== ApprovalState.APPROVED // || (priceImpactSeverity > 3 && !isExpertMode)
                   }
-                  error={isValid && priceImpactSeverity > 2}
+                  // error={isValid && priceImpactSeverity > 2}
                 >
                   <Text fontSize={16} fontWeight={500}>
-                    {priceImpactSeverity > 3 && !isExpertMode
+                    {/* {priceImpactSeverity > 3 && !isExpertMode
                       ? `Price Impact High`
-                      : `Swap${priceImpactSeverity > 2 ? ' Anyway' : ''}`}
+                      : `Swap${priceImpactSeverity > 2 ? ' Anyway' : ''}`} */}
+                    Swap
                   </Text>
-                </ButtonError> */}
+                </ButtonError>
               </RowBetween>
             ) : (
               <ButtonError
