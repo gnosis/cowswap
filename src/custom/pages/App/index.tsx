@@ -10,12 +10,27 @@ import TermsAndConditions from 'pages/TermsAndConditions'
 import About from 'pages/About'
 import Faq from 'pages/Faq'
 import CowGame from 'pages/CowGame'
+import CowGameModal from '@src/custom/components/CowGameModal/CowGameModal'
+import { useModalOpen, useToggleModal } from 'state/application/hooks'
+import { ApplicationModal } from '@src/state/application/actions'
+
+function TopLevelModals() {
+  // const open = useModalOpen(ApplicationModal.ADDRESS_CLAIM)
+  // const toggle = useToggleModal(ApplicationModal.ADDRESS_CLAIM)
+  // return <AddressClaimModal isOpen={open} onDismiss={toggle} />
+
+  const open = useModalOpen(ApplicationModal.COW_GAME)
+  const toggle = useToggleModal(ApplicationModal.COW_GAME)
+  return <CowGameModal isOpen={open} onDismiss={toggle} />
+}
 
 export const Wrapper = styled(AppMod)``
 
 export default function App() {
   return (
     <Wrapper>
+      <TopLevelModals />
+
       <Switch>
         <Route exact strict path="/swap" component={Swap} />
         <Route exact strict path="/swap/:outputCurrency" component={RedirectToSwap} />
