@@ -21,7 +21,7 @@ const API_ERROR_CODE_DESCRIPTIONS = {
   [ApiErrorCodes.InsufficientFee]:
     "The signed fee is insufficient. It's possible that is higher now due to a change in the gas price, ether price, or the sell token price. Please try again so you get an updated fee quote.",
   [ApiErrorCodes.InvalidSignature]:
-    'The order signature is invalid. Check with you support in your Wallet app the support for off-chain signing.',
+    'The order signature is invalid. Check whether your Wallet app supports off-chain signing.',
   [ApiErrorCodes.MissingOrderData]: 'The order has missing information',
   [ApiErrorCodes.InsufficientValidTo]:
     'The order you are signing is already expired. This can happen if you set a short expiration in the settings and then you take some time for signing the transaction. Please try again',
