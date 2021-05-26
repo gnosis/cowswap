@@ -188,7 +188,11 @@ const LongLoadText = styled.span`
 
 const LONG_LOAD_THRESHOLD = 4000
 
-const TradeLoading: React.FC<{ showButton: boolean }> = ({ showButton = false }: { showButton: boolean }) => {
+type Props = {
+  showButton: boolean
+}
+
+const TradeLoading: React.FC<Props> = ({ showButton = false }) => {
   const [isLongLoad, setIsLongLoad] = React.useState<boolean>(false)
 
   // change message if user waiting too long
