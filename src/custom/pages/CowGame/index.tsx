@@ -1,7 +1,7 @@
 import React from 'react'
 import Page, { Title, Content } from 'components/Page'
 import styled from 'styled-components'
-import { CowGame } from '@anxolin/cow-runner-game'
+import { CowGame } from '@gnosis.pm/cow-runner-game'
 
 const Wrapper = styled(Page)``
 

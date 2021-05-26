@@ -2,11 +2,6 @@
 # yarn lockfile v1
 
 
-"@anxolin/cow-runner-game@^0.2.2":
-  version "0.2.2"
-  resolved "https://registry.yarnpkg.com/@anxolin/cow-runner-game/-/cow-runner-game-0.2.2.tgz#bc788de3a897006a34b88fe4daac7f09014323eb"
-  integrity sha512-vNkaKiYaJgV7+0Aiv6tNOYqujjH6r8ZPJd0XIViLj1yx70C+zjZ7BR1cWI4+Ck6Izw+/XxI2G5KbAqe/7vibvQ==
-
 "@babel/code-frame@7.8.3":
   version "7.8.3"
   resolved "https://registry.yarnpkg.com/@babel/code-frame/-/code-frame-7.8.3.tgz#33e25903d7481181534e12ec0a25f16b6fcf419e"
@@ -1678,6 +1673,11 @@
     "@ethersproject/logger" "^5.1.0"
     "@ethersproject/properties" "^5.1.0"
     "@ethersproject/strings" "^5.1.0"
+
+"@gnosis.pm/cow-runner-game@^0.2.2":
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/@gnosis.pm/cow-runner-game/-/cow-runner-game-0.2.2.tgz#b349055ae22ec5e5cd91c5292983038761683c4a"
+  integrity sha512-tXjmOMpzgDYr72K1dzlHRNhwDAshxadCWWfSvUj5OiV4w/QNK/bpCBXQWth+OjB0+aLgV8SvXqZKtozY0EQ2CQ==
 
 "@gnosis.pm/gp-v2-contracts@^0.0.1-alpha.18":
   version "0.0.1-alpha.18"
