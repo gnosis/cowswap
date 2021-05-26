@@ -113,7 +113,7 @@ function _handleUnsupportedToken({
 export function useRefetchQuoteCallback() {
   const isUnsupportedTokenGp = useIsUnsupportedTokenGp()
   // dispatchers
-  const [loadingQuote, updateQuote, clearQuote] = useAllQuoteDispatch()
+  const [, updateQuote, clearQuote] = useAllQuoteDispatch()
   const addUnsupportedToken = useAddGpUnsupportedToken()
   const removeGpUnsupportedToken = useRemoveGpUnsupportedToken()
 
@@ -125,7 +125,6 @@ export function useRefetchQuoteCallback() {
       try {
         // we need to signal to other parts of the app
         // that we are loading a new quote
-        loadingQuote(true)
         // Get the quote
         // price can be null if fee > price
         const [price, fee] = await getQuote(params)
@@ -160,10 +159,8 @@ export function useRefetchQuoteCallback() {
 
         // Clear the quote
         clearQuote({ chainId, token: sellToken })
-      } finally {
-        loadingQuote(false)
       }
     },
-    [loadingQuote, isUnsupportedTokenGp, updateQuote, removeGpUnsupportedToken, addUnsupportedToken, clearQuote]
+    [isUnsupportedTokenGp, updateQuote, removeGpUnsupportedToken, addUnsupportedToken, clearQuote]
   )
 }

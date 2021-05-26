@@ -43,8 +43,7 @@ import {
   useDerivedSwapInfo,
   useSwapActionHandlers,
   useSwapState,
-  useIsFeeGreaterThanInput,
-  useIsSwapLoading
+  useIsFeeGreaterThanInput
 } from 'state/swap/hooks'
 import { useExpertModeManager, useUserSlippageTolerance, useUserSingleHopOnly } from 'state/user/hooks'
 import { LinkStyledButton, ButtonSize, TYPE } from 'theme'
@@ -59,7 +58,7 @@ import { isTradeBetter } from 'utils/trades'
 import FeeInformationTooltip from 'components/swap/FeeInformationTooltip'
 import { SwapProps } from '.'
 import { logTradeDetails } from 'state/swap/utils'
-import { useGetQuoteAndStatus } from 'state/price/hooks'
+import { useIsQuoteLoading } from 'state/price/hooks'
 
 export default function Swap({
   history,
@@ -122,13 +121,8 @@ export default function Swap({
     inputError: swapInputError
   } = useDerivedSwapInfo()
 
-  const quoteInfo = useGetQuoteAndStatus({
-    chainId,
-    token: INPUT.currencyId
-  })
-
   // detects trade load
-  const tradeLoading = useIsSwapLoading(quoteInfo, parsedAmount?.raw.toString(), INPUT.currencyId)
+  const quoteLoading = useIsQuoteLoading()
 
   // Log all trade information
   logTradeDetails(v2Trade, allowedSlippage)
@@ -579,7 +573,7 @@ export default function Swap({
                   }
                   // error={isValid && priceImpactSeverity > 2}
                 >
-                  {tradeLoading ? (
+                  {quoteLoading ? (
                     <TradeLoading showButton={false} />
                   ) : (
                     <Text fontSize={16} fontWeight={500}>
@@ -591,7 +585,7 @@ export default function Swap({
                   )}
                 </ButtonError>
               </RowBetween>
-            ) : tradeLoading ? (
+            ) : quoteLoading ? (
               <TradeLoading showButton />
             ) : noRoute && userHasSpecifiedInputOutput ? (
               isFeeGreater ? (

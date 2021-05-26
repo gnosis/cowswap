@@ -5,7 +5,7 @@ import useIsWindowVisible from 'hooks/useIsWindowVisible'
 import { Field } from 'state/swap/actions'
 import { useCurrency } from 'hooks/Tokens'
 import useDebounce from 'hooks/useDebounce'
-import { useAllQuotes } from './hooks'
+import { useAllQuotes, useLoadingQuote } from './hooks'
 import { useRefetchQuoteCallback } from 'hooks/useRefetchPriceCallback'
 import { FeeQuoteParams, UnsupportedToken } from 'utils/operator'
 import { QuoteInformationObject } from './reducer'
@@ -105,6 +105,7 @@ export default function FeesUpdater(): null {
     typedValue: rawTypedValue
   } = useSwapState()
 
+  const loadingQuote = useLoadingQuote()
   // Debounce the typed value to not refetch the fee too often
   // Fee API calculation/call
   const typedValue = useDebounce(rawTypedValue, DEBOUNCE_TIME)
@@ -145,11 +146,15 @@ export default function FeesUpdater(): null {
       const refetchPrice = !unsupportedToken && priceIsOld(quoteInfo)
 
       if (unsupportedNeedsCheck || refetchAll || refetchPrice) {
+        loadingQuote(true)
+
         refetchQuote({
           quoteParams,
           fetchFee: refetchAll,
           previousFee: quoteInfo?.fee
-        }).catch(error => console.error('Error re-fetching the quote', error))
+        })
+          .catch(error => console.error('Error re-fetching the quote', error))
+          .finally(() => loadingQuote(false))
       }
     }
 
@@ -174,7 +179,8 @@ export default function FeesUpdater(): null {
     buyCurrency,
     quoteInfo,
     refetchQuote,
-    isUnsupportedTokenGp
+    isUnsupportedTokenGp,
+    loadingQuote
   ])
 
   return null

@@ -14,19 +14,17 @@ import {
   useSwapState,
   validatedRecipient
 } from 'state/swap/hooks'
-import { useQuote } from '../price/hooks'
+import { useGetQuoteAndStatus, useQuote } from '../price/hooks'
 import { registerOnWindow } from 'utils/misc'
 import { TradeWithFee, useTradeExactInWithFee, useTradeExactOutWithFee, stringToCurrency } from './extension'
 import useParsedQueryString from 'hooks/useParsedQueryString'
-import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { useDispatch } from 'react-redux'
 import { SwapState } from 'state/swap/reducer'
 import { ParsedQs } from 'qs'
 import { DEFAULT_NETWORK_FOR_LISTS } from 'constants/lists'
 import { WETH_LOGO_URI, XDAI_LOGO_URI } from 'constants/index'
 import { WrappedTokenInfo } from '../lists/hooks'
-import { QuoteInformationObject } from 'state/price/reducer'
-import { ComparisonParams, _compareLastTrade } from './utils'
 
 export * from '@src/state/swap/hooks'
 
@@ -66,7 +64,7 @@ export function useDerivedSwapInfo(): DerivedSwapInfo {
   const isExactIn: boolean = independentField === Field.INPUT
   const parsedAmount = tryParseAmount(typedValue, (isExactIn ? inputCurrency : outputCurrency) ?? undefined)
 
-  const quote = useQuote({
+  const [quote, quoteLoading] = useGetQuoteAndStatus({
     token: inputCurrencyId,
     chainId
   })
@@ -87,7 +85,7 @@ export function useDerivedSwapInfo(): DerivedSwapInfo {
     quote
   })
 
-  const v2Trade = isExactIn ? bestTradeExactIn : bestTradeExactOut
+  const v2Trade = quoteLoading ? null : isExactIn ? bestTradeExactIn : bestTradeExactOut
 
   registerOnWindow({ trade: v2Trade })
 
@@ -279,46 +277,4 @@ export function useIsFeeGreaterThanInput({
     isFeeGreater: quote.feeExceedsPrice,
     fee: stringToCurrency(quote.fee.amount, feeToken)
   }
-}
-
-export function useIsSwapLoading(
-  [quote, quoteLoading]: [QuoteInformationObject | undefined, boolean],
-  typedAmount: string | undefined,
-  sellToken: string | undefined
-) {
-  // use a ref to last quote to compare without
-  // causing re-renders
-  const lastQuote = useRef<ComparisonParams>({})
-
-  return useMemo(() => {
-    // not possibly loading without these, bail early
-    if (!typedAmount || !sellToken) return false
-    // updating trades aren't always immediately updated after API price is queried
-    // so we check in other ways, like are the trade fee/price synced with redux updated amounts?
-    const shouldUpdate = _compareLastTrade(
-      {
-        typedAmount,
-        fee: quote?.fee.amount,
-        price: quote?.price.amount ?? undefined,
-        token: sellToken
-      },
-      lastQuote.current
-    )
-
-    const isLoading = shouldUpdate || quoteLoading
-
-    if (isLoading) {
-      if (quote) {
-        // if so, then set the ref object for next comparison
-        lastQuote.current = {}
-
-        lastQuote.current.typedAmount = typedAmount
-        lastQuote.current.token = sellToken
-        lastQuote.current.fee = quote.fee.amount
-        lastQuote.current.price = quote.price.amount ?? undefined
-      }
-    }
-
-    return isLoading
-  }, [quote, quoteLoading, sellToken, typedAmount])
 }
