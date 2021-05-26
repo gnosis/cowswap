@@ -1,12 +1,11 @@
 import React, { useMemo } from 'react'
-import { useWeb3React } from '@web3-react/core'
-import useENSName from 'hooks/useENSName'
-import { NetworkContextName } from 'constants/index'
 import styled from 'styled-components'
-
 import WalletModal from 'components/WalletModal'
 import { Web3StatusInner, Web3StatusConnected } from './Web3StatusMod'
+import { AbstractConnector } from '@web3-react/abstract-connector'
+import { getStatusIcon } from 'components/AccountDetails'
 import useRecentActivity, { TransactionAndOrder } from 'hooks/useRecentActivity'
+import { useWalletInfo } from 'hooks/useWalletInfo'
 import { OrderStatus } from 'state/orders/actions'
 
 const Wrapper = styled.div`
@@ -26,11 +25,14 @@ const isPending = (data: TransactionAndOrder) => data.status === OrderStatus.PEN
 const isConfirmedOrExpired = (data: TransactionAndOrder) =>
   data.status === OrderStatus.FULFILLED || data.status === OrderStatus.EXPIRED
 
-export default function Web3Status() {
-  const { active, account } = useWeb3React()
-  const contextNetwork = useWeb3React(NetworkContextName)
+function StatusIcon({ connector }: { connector: AbstractConnector }): JSX.Element | null {
+  const walletInfo = useWalletInfo()
+  return getStatusIcon(connector, walletInfo)
+}
 
-  const { ENSName } = useENSName(account ?? undefined)
+export default function Web3Status() {
+  const walletInfo = useWalletInfo()
+  console.log('[Web3Status] Wallet info', walletInfo)
 
   // Returns all RECENT (last day) transaction and orders in 2 arrays: pending and confirmed
   const allRecentActivity = useRecentActivity()
@@ -46,20 +48,19 @@ export default function Web3Status() {
     }
   }, [allRecentActivity])
 
-  if (!contextNetwork.active && !active) {
+  const { active, activeNetwork, ensName } = walletInfo
+  if (!activeNetwork && !active) {
     return null
   }
 
   return (
-    <>
-      <Wrapper>
-        <Web3StatusInner pendingCount={pendingActivity.length} />
-        <WalletModal
-          ENSName={ENSName ?? undefined}
-          pendingTransactions={pendingActivity}
-          confirmedTransactions={confirmedAndExpiredActivity}
-        />
-      </Wrapper>
-    </>
+    <Wrapper>
+      <Web3StatusInner pendingCount={pendingActivity.length} StatusIconComponent={StatusIcon} />
+      <WalletModal
+        ENSName={ensName}
+        pendingTransactions={pendingActivity}
+        confirmedTransactions={confirmedAndExpiredActivity}
+      />
+    </Wrapper>
   )
 }
