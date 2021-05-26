@@ -169,7 +169,7 @@ export default function Swap({
   )
   const showWrap: boolean = !isNativeInSwap && wrapType !== WrapType.NOT_APPLICABLE
   const { address: recipientAddress } = useENSAddress(recipient)
-  const trade = tradeLoading || showWrap ? undefined : tradeCurrentVersion
+  const trade = showWrap ? undefined : tradeCurrentVersion
   const defaultTrade = showWrap ? undefined : tradesByVersion[DEFAULT_VERSION]
 
   const betterTradeLinkV2: Version | undefined =
