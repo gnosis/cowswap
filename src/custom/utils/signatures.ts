@@ -4,7 +4,7 @@ import {
   EcdsaSignature,
   Order,
   Signature,
-  SigningOptions
+  TypedDataV3Signer
 } from '@gnosis.pm/gp-v2-contracts'
 import { ChainId } from '@uniswap/sdk'
 
@@ -29,7 +29,6 @@ export interface SignOrderParams {
   signer: Signer
   order: UnsignedOrder
   signingScheme: EcdsaSigningScheme
-  options?: SigningOptions
 }
 
 // posted to /api/v1/orders on Order creation
@@ -108,17 +107,16 @@ function _getDomain(chainId: ChainId): TypedDataDomain {
 }
 
 async function _signOrder(params: SignOrderParams): Promise<Signature> {
-  const { chainId, signer, order, signingScheme, options } = params
+  const { chainId, signer, order, signingScheme } = params
 
   const domain = _getDomain(chainId)
   console.log('[utils:signature] signOrder', {
     domain,
     order,
-    signer,
-    options
+    signer
   })
 
-  return signOrderGp(domain, order, signer, getSigningSchemeLibValue(signingScheme), options)
+  return signOrderGp(domain, order, signer, getSigningSchemeLibValue(signingScheme))
 }
 
 export async function signOrder(
@@ -132,10 +130,9 @@ export async function signOrder(
 
   const signatureParams: SignOrderParams = {
     chainId,
-    signer,
+    signer: signingMethod === 'v3' ? new TypedDataV3Signer(signer) : signer,
     order: unsignedOrder,
-    signingScheme,
-    options: { signTypedDataVersion: signingMethod === 'v3' ? signingMethod : undefined }
+    signingScheme
   }
 
   try {
