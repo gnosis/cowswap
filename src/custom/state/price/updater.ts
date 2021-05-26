@@ -4,12 +4,12 @@ import { useSwapState, tryParseAmount } from 'state/swap/hooks'
 import useIsWindowVisible from 'hooks/useIsWindowVisible'
 import { Field } from 'state/swap/actions'
 import { useCurrency } from 'hooks/Tokens'
-import useDebounce from 'hooks/useDebounce'
 import { useAllQuotes, useLoadingQuote } from './hooks'
 import { useRefetchQuoteCallback } from 'hooks/useRefetchPriceCallback'
 import { FeeQuoteParams, UnsupportedToken } from 'utils/operator'
 import { QuoteInformationObject } from './reducer'
 import { useIsUnsupportedTokenGp } from 'state/lists/hooks/hooksMod'
+import useDebounceWithForceUpdate from 'hooks/useDebounceWithForceUpdate'
 
 const DEBOUNCE_TIME = 350
 const REFETCH_CHECK_INTERVAL = 10000 // Every 10s
@@ -106,9 +106,14 @@ export default function FeesUpdater(): null {
   } = useSwapState()
 
   const loadingQuote = useLoadingQuote()
+  // pass independent field as a reference to use against
+  // any changes to determine if user has switched input fields
+  // useful to force debounce value to refresh
+  const forceUpdateRef = independentField
+
   // Debounce the typed value to not refetch the fee too often
   // Fee API calculation/call
-  const typedValue = useDebounce(rawTypedValue, DEBOUNCE_TIME)
+  const typedValue = useDebounceWithForceUpdate(rawTypedValue, DEBOUNCE_TIME, forceUpdateRef)
 
   const sellCurrency = useCurrency(sellToken)
   const buyCurrency = useCurrency(buyToken)
