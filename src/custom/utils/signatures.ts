@@ -128,9 +128,17 @@ export async function signOrder(
   const signingScheme = signingMethod === 'eth_sign' ? SigningScheme.ETHSIGN : SigningScheme.EIP712
   let signature: Signature | null = null
 
+  let _signer = signer
+  try {
+    _signer = signingMethod === 'v3' ? new TypedDataV3Signer(signer) : signer
+  } catch (e) {
+    console.error('Wallet not supported:', e)
+    throw new Error('Wallet not supported')
+  }
+
   const signatureParams: SignOrderParams = {
     chainId,
-    signer: signingMethod === 'v3' ? new TypedDataV3Signer(signer) : signer,
+    signer: _signer,
     order: unsignedOrder,
     signingScheme
   }
