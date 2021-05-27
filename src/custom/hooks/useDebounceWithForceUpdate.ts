@@ -1,38 +1,26 @@
+import useDebounce from '@src/hooks/useDebounce'
 import { useEffect, useState } from 'react'
 
 // modified from https://usehooks.com/useDebounce/
-export default function useDebounceWithForceUpdate<T>(
-  value: T,
-  delay: number,
-  forceUpdateRef?: string | number | boolean
-): T {
-  const [lastForceUpdateRef, setLastForceUpdateRef] = useState(forceUpdateRef)
-  const [debouncedValue, setDebouncedValue] = useState<T>(value)
+export default function useDebounceWithForceUpdate<T>(latestValue: T, delay: number, forceUpdateRef?: any): T {
+  // const value = useRef(latestValue)
+  const [value, setValue] = useState(latestValue)
+  const [needToUpdate, setNeedToUpdate] = useState(false)
 
-  // force update
+  // Force update
+  useEffect(() => setNeedToUpdate(true), [forceUpdateRef])
   useEffect(() => {
-    if (
-      (Boolean(value) && debouncedValue === undefined) ||
-      (Boolean(forceUpdateRef) && forceUpdateRef !== lastForceUpdateRef)
-    ) {
-      setDebouncedValue(value)
-      setLastForceUpdateRef(forceUpdateRef)
+    if (needToUpdate) {
+      setNeedToUpdate(false)
+      setValue(latestValue)
     }
-  }, [debouncedValue, forceUpdateRef, lastForceUpdateRef, value])
+  }, [needToUpdate, latestValue])
 
-  // Update debounced value after delay
+  // Debounce update
+  const debouncedValue = useDebounce(latestValue, delay)
   useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedValue(value)
-    }, delay)
-
-    // Cancel the timeout if value changes (also on delay change or unmount)
-    // This is how we prevent debounced value from updating if value is changed ...
-    // .. within the delay period. Timeout gets cleared and restarted.
-    return () => {
-      clearTimeout(handler)
-    }
-  }, [value, delay, debouncedValue])
+    setValue(debouncedValue)
+  }, [debouncedValue])
 
   return value
 }
