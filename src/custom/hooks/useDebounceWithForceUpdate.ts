@@ -2,11 +2,7 @@ import useDebounce from '@src/hooks/useDebounce'
 import { useEffect, useState } from 'react'
 
 // modified from https://usehooks.com/useDebounce/
-export default function useDebounceWithForceUpdate<T>(
-  latestValue: T,
-  delay: number,
-  forceUpdateRef?: string | number | boolean
-): T {
+export default function useDebounceWithForceUpdate<T>(latestValue: T, delay: number, forceUpdateRef?: any): T {
   // const value = useRef(latestValue)
   const [value, setValue] = useState(latestValue)
   const [needToUpdate, setNeedToUpdate] = useState(false)
