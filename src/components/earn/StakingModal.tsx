@@ -17,7 +17,7 @@ import { useApproveCallback, ApprovalState } from '../../hooks/useApproveCallbac
 import { splitSignature } from 'ethers/lib/utils'
 import { StakingInfo, useDerivedStakeInfo } from '../../state/stake/hooks'
 import { wrappedCurrencyAmount } from '../../utils/wrappedCurrency'
-import { TransactionResponse } from 'ethers_providers_alfetopito'
+import { TransactionResponse } from '@ethersproject/providers'
 import { useTransactionAdder } from '../../state/transactions/hooks'
 import { LoadingView, SubmittedView } from '../ModalViews'
 

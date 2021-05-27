@@ -1,4 +1,4 @@
-import { Web3Provider } from 'ethers_providers_alfetopito'
+import { Web3Provider } from '@ethersproject/providers'
 
 export default function getLibrary(provider: any): Web3Provider {
   const library = new Web3Provider(provider, 'any')

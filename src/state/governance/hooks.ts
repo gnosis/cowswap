@@ -6,7 +6,7 @@ import { useSingleCallResult, useSingleContractMultipleData } from '../multicall
 import { useActiveWeb3React } from '../../hooks'
 import { ethers, utils } from 'ethers'
 import { calculateGasMargin } from 'utils'
-import { TransactionResponse } from 'ethers_providers_alfetopito'
+import { TransactionResponse } from '@ethersproject/providers'
 import { useTransactionAdder } from '../transactions/hooks'
 import { useState, useEffect, useCallback } from 'react'
 import { abi as GOV_ABI } from '@uniswap/governance/build/GovernorAlpha.json'
