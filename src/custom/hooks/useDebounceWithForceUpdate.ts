@@ -14,13 +14,13 @@ export default function useDebounceWithForceUpdate<T>(latestValue: T, delay: num
       setNeedToUpdate(false)
       setValue(latestValue)
     }
-  }, [needToUpdate, latestValue, value])
+  }, [needToUpdate, latestValue])
 
   // Debounce update
   const debouncedValue = useDebounce(latestValue, delay)
   useEffect(() => {
     setValue(debouncedValue)
-  }, [debouncedValue, value])
+  }, [debouncedValue])
 
   return value
 }
