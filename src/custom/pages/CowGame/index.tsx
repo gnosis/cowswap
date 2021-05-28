@@ -8,7 +8,8 @@ const Wrapper = styled(Page)``
 export default function CowGamePage() {
   return (
     <Wrapper>
-      <Title>Cow Game</Title>
+      <Title>Run 🐮 Run!</Title>
+      <p>...and try not getting 🥪. MEV it's being letal these days.</p>
 
       <Content>
         <CowGame />
