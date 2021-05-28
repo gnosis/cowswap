@@ -165,7 +165,7 @@ export function Menu() {
         <InternalMenuItem to="/play" onClick={close}>
           <span role="img" aria-label="wizard-icon">
             🐮
-          </span>
+          </span>{' '}
           Game
         </InternalMenuItem>
 
