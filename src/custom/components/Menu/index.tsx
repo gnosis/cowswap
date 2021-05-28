@@ -162,6 +162,13 @@ export function Menu() {
           </span>
         </MenuItem>
 
+        <InternalMenuItem to="/play" onClick={close}>
+          <span role="img" aria-label="wizard-icon">
+            🐮
+          </span>
+          Game
+        </InternalMenuItem>
+
         <Separator />
 
         <Policy to="/terms-and-conditions" onClick={close}>
