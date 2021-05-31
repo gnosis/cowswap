@@ -59,6 +59,12 @@ export const useClearQuote = (): ClearPriceCallback => {
   return useCallback((clearQuoteParams: ClearQuoteParams) => dispatch(clearQuote(clearQuoteParams)), [dispatch])
 }
 
-export const useAllQuoteDispatch = (): [SetLoadPriceCallback, AddPriceCallback, ClearPriceCallback] => {
-  return [useSetLoadingQuote(), useUpdateQuote(), useClearQuote()]
+interface QuoteDispatchers {
+  setLoadingQuote: SetLoadPriceCallback
+  updateQuote: AddPriceCallback
+  clearQuote: ClearPriceCallback
+}
+
+export const useQuoteDispatchers = (): QuoteDispatchers => {
+  return { setLoadingQuote: useSetLoadingQuote(), updateQuote: useUpdateQuote(), clearQuote: useClearQuote() }
 }
