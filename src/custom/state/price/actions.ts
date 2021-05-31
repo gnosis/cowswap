@@ -9,7 +9,7 @@ export interface ClearQuoteParams {
   chainId: ChainId
 }
 
-export const loadingQuote = createAction<boolean>('price/loadingQuote')
+export const setLoadingQuote = createAction<boolean>('price/setLoadingQuote')
 export const updateQuote = createAction<UpdateQuoteParams>('price/updateQuote')
 export const clearQuote = createAction<ClearQuoteParams>('price/clearQuote')
 

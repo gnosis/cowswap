@@ -2,7 +2,7 @@ import { useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { AppDispatch, AppState } from 'state'
-import { updateQuote, clearQuote, UpdateQuoteParams, ClearQuoteParams, loadingQuote } from './actions'
+import { updateQuote, clearQuote, UpdateQuoteParams, ClearQuoteParams, setLoadingQuote } from './actions'
 import { QuoteInformationObject, QuotesMap } from './reducer'
 
 type SetLoadPriceCallback = (isLoading: boolean) => void
@@ -44,9 +44,9 @@ export const useGetQuoteAndStatus = (
   return [quote, isLoading]
 }
 
-export const useLoadingQuote = (): SetLoadPriceCallback => {
+export const useSetLoadingQuote = (): SetLoadPriceCallback => {
   const dispatch = useDispatch<AppDispatch>()
-  return useCallback((isLoading: boolean) => dispatch(loadingQuote(isLoading)), [dispatch])
+  return useCallback((isLoading: boolean) => dispatch(setLoadingQuote(isLoading)), [dispatch])
 }
 
 export const useUpdateQuote = (): AddPriceCallback => {
@@ -60,5 +60,5 @@ export const useClearQuote = (): ClearPriceCallback => {
 }
 
 export const useAllQuoteDispatch = (): [SetLoadPriceCallback, AddPriceCallback, ClearPriceCallback] => {
-  return [useLoadingQuote(), useUpdateQuote(), useClearQuote()]
+  return [useSetLoadingQuote(), useUpdateQuote(), useClearQuote()]
 }
