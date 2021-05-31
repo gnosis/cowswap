@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { RouteComponentProps } from 'react-router-dom'
 import styled, { ThemeContext } from 'styled-components'
 import { CurrencyAmount, Token } from '@uniswap/sdk'
@@ -192,17 +192,17 @@ type Props = {
   showButton: boolean
 }
 
-const TradeLoading: React.FC<Props> = ({ showButton = false }) => {
-  const [isLongLoad, setIsLongLoad] = React.useState<boolean>(false)
+const TradeLoading: React.FC<Props> = ({ showButton = false }: Props) => {
+  const [isLongLoad, setIsLongLoad] = useState<boolean>(false)
 
   // change message if user waiting too long
-  React.useEffect(() => {
+  useEffect(() => {
     const timeout = setTimeout(() => setIsLongLoad(true), LONG_LOAD_THRESHOLD)
 
     return () => clearTimeout(timeout)
   }, [])
 
-  const InsideContent = React.useCallback(
+  const InsideContent = useCallback(
     () => (
       <TYPE.main mb="4px">
         <Text fontSize={isLongLoad ? 14 : 40} fontWeight={500}>
