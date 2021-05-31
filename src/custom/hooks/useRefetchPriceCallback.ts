@@ -123,8 +123,6 @@ export function useRefetchQuoteCallback() {
     async (params: RefetchQuoteCallbackParmams) => {
       const { sellToken, buyToken, amount, chainId } = params.quoteParams
       try {
-        // we need to signal to other parts of the app
-        // that we are loading a new quote
         // Get the quote
         // price can be null if fee > price
         const [price, fee] = await getQuote(params)
