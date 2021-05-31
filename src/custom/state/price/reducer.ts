@@ -36,7 +36,9 @@ export type QuoteInformationState = {
   readonly [chainId in ChainId]?: Partial<QuotesMap>
 }
 
-const initialState: { loading: boolean; quotes: QuoteInformationState } = { loading: false, quotes: {} }
+type InitialState = { loading: boolean; quotes: QuoteInformationState }
+
+const initialState: InitialState = { loading: false, quotes: {} }
 
 // Makes sure there stat is initialized
 function initializeState(
