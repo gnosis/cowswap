@@ -96,7 +96,8 @@ export interface SwapProps extends RouteComponentProps {
   SwitchToWethBtn: React.FC<SwitchToWethBtnProps>
   FeesExceedFromAmountMessage: React.FC
   BottomGrouping: React.FC
-  TradeLoading: React.FC<{ showButton: boolean }>
+  TradeLoading: React.FC<TradeLoadingProps>
+  SwapButton: React.FC<SwapButtonProps>
   className?: string
 }
 
@@ -188,11 +189,11 @@ const LongLoadText = styled.span`
 
 const LONG_LOAD_THRESHOLD = 4000
 
-type Props = {
+type TradeLoadingProps = {
   showButton: boolean
 }
 
-const TradeLoading: React.FC<Props> = ({ showButton = false }: Props) => {
+const TradeLoading = ({ showButton = false }: TradeLoadingProps) => {
   const [isLongLoad, setIsLongLoad] = useState<boolean>(false)
 
   // change message if user waiting too long
@@ -223,6 +224,20 @@ const TradeLoading: React.FC<Props> = ({ showButton = false }: Props) => {
   )
 }
 
+interface SwapButtonProps extends TradeLoadingProps {
+  isLoading: boolean
+  swapLabel: string
+}
+
+const SwapButton = ({ swapLabel, isLoading, showButton }: SwapButtonProps) =>
+  isLoading ? (
+    <TradeLoading showButton={showButton} />
+  ) : (
+    <Text fontSize={16} fontWeight={500}>
+      {swapLabel}
+    </Text>
+  )
+
 export default function Swap(props: RouteComponentProps) {
   return (
     <SwapModWrapper
@@ -231,6 +246,7 @@ export default function Swap(props: RouteComponentProps) {
       SwitchToWethBtn={SwitchToWethBtn}
       FeesExceedFromAmountMessage={FeesExceedFromAmountMessage}
       BottomGrouping={BottomGrouping}
+      SwapButton={SwapButton}
       TradeLoading={TradeLoading}
       {...props}
     />
