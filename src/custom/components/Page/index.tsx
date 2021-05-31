@@ -84,6 +84,11 @@ export const Content = styled.div`
     }
   }
 
+  li > em {
+    background: ${({ theme }) => theme.redShade};
+    color: ${({ theme }) => theme.white};
+  }
+
   a {
     color: ${({ theme }) => theme.text1};
     transition: color 0.2s ease-in-out;
