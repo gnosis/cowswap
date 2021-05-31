@@ -67,7 +67,8 @@ export default function Swap({
   SwitchToWethBtn,
   FeesExceedFromAmountMessage,
   BottomGrouping,
-  TradeLoading,
+  // TradeLoading,
+  SwapButton,
   className
 }: SwapProps) {
   const loadedUrlParams = useDefaultsFromURLSearch()
@@ -231,11 +232,11 @@ export default function Swap({
       : parsedAmounts[dependentField]?.toSignificant(DEFAULT_PRECISION) ?? ''
   }
 
-  const route = trade?.route
+  // const route = trade?.route
   const userHasSpecifiedInputOutput = Boolean(
     currencies[Field.INPUT] && currencies[Field.OUTPUT] && parsedAmounts[independentField]?.greaterThan(JSBI.BigInt(0))
   )
-  const noRoute = !route
+  // const noRoute = !route
 
   // check whether the user has approved the router on the input token
   const [approval, approveCallback] = useApproveCallbackFromTrade(trade, allowedSlippage)
@@ -573,21 +574,16 @@ export default function Swap({
                   }
                   // error={isValid && priceImpactSeverity > 2}
                 >
-                  {quoteLoading ? (
-                    <TradeLoading showButton={false} />
-                  ) : (
-                    <Text fontSize={16} fontWeight={500}>
-                      {/* {priceImpactSeverity > 3 && !isExpertMode
+                  <SwapButton swapLabel="Swap" isLoading={quoteLoading} showButton={false} />
+                  {/* <Text fontSize={16} fontWeight={500}>
+                    {priceImpactSeverity > 3 && !isExpertMode
                       ? `Price Impact High`
-                      : `Swap${priceImpactSeverity > 2 ? ' Anyway' : ''}`} */}
-                      Swap
-                    </Text>
-                  )}
+                      : `Swap${priceImpactSeverity > 2 ? ' Anyway' : ''}`}
+                    Swap
+                  </Text> */}
                 </ButtonError>
               </RowBetween>
-            ) : quoteLoading ? (
-              <TradeLoading showButton />
-            ) : noRoute && userHasSpecifiedInputOutput ? (
+            ) : /* noRoute &&  */ !trade && !quoteLoading && userHasSpecifiedInputOutput ? (
               isFeeGreater ? (
                 <FeesExceedFromAmountMessage />
               ) : (
@@ -616,13 +612,14 @@ export default function Swap({
                 disabled={!isValid /*|| (priceImpactSeverity > 3 && !isExpertMode) */ || !!swapCallbackError}
                 // error={isValid && priceImpactSeverity > 2 && !swapCallbackError}
               >
-                <Text fontSize={20} fontWeight={500}>
+                <SwapButton swapLabel={swapInputError ? swapInputError : 'Swap'} showButton isLoading={quoteLoading} />
+                {/* <Text fontSize={20} fontWeight={500}>
                   {swapInputError ? swapInputError : 'Swap'
                   // : priceImpactSeverity > 3 && !isExpertMode
                   // ? `Price Impact Too High`
                   // : `Swap${priceImpactSeverity > 2 ? ' Anyway' : ''}`
                   }
-                </Text>
+                </Text> */}
               </ButtonError>
             )}
             {showApproveFlow && (
