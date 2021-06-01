@@ -1,5 +1,6 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { useCallback } from 'react'
+import { onlyResolvesLast } from 'awesome-only-resolves-last-promise'
 import { useClearQuote, useUpdateQuote } from 'state/price/hooks'
 import { getCanonicalMarket, registerOnWindow } from 'utils/misc'
 import { FeeQuoteParams, getFeeQuote, getPriceQuote } from 'utils/operator'
@@ -25,7 +26,7 @@ type WithFeeExceedsPrice = {
 
 type PriceInformationWithFee = PriceInformation & WithFeeExceedsPrice
 
-async function getQuote({
+async function _getQuote({
   quoteParams,
   fetchFee,
   previousFee
@@ -70,6 +71,9 @@ async function getQuote({
 
   return Promise.all([pricePromise, feePromise])
 }
+
+// wrap _getQuote and only resolve once on several calls
+const getQuote = onlyResolvesLast(_getQuote)
 
 function _isValidOperatorError(error: any): error is OperatorError {
   return error instanceof OperatorError
