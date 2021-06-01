@@ -9,7 +9,15 @@ export interface ClearQuoteParams {
   chainId: ChainId
 }
 
-export const setLoadingQuote = createAction<boolean>('price/setLoadingQuote')
+export interface SetLoadingQuoteParams {
+  // is it loading
+  loading: boolean
+  // indicator of a necessary hard load
+  // e.g param changes: user changes token, input amt, etc
+  quoteData?: Pick<QuoteInformationObject, 'sellToken' | 'chainId'>
+}
+
+export const setLoadingQuote = createAction<SetLoadingQuoteParams>('price/setLoadingQuote')
 export const updateQuote = createAction<UpdateQuoteParams>('price/updateQuote')
 export const clearQuote = createAction<ClearQuoteParams>('price/clearQuote')
 

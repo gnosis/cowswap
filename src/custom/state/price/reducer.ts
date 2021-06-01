@@ -56,7 +56,19 @@ function initializeState(
 export default createReducer(initialState, builder =>
   builder
     .addCase(setLoadingQuote, (state, action) => {
-      state.loading = action.payload
+      const { loading, quoteData } = action.payload
+      state.loading = loading
+      // we have quoteInfo - signals a hard load, set price to null
+      if (quoteData) {
+        const pseudoAction = { type: action.type, payload: quoteData }
+        // initialise state, if necessary
+        initializeState(state.quotes, pseudoAction)
+        // does our token exist in state?
+        const quotesState = state.quotes[quoteData.chainId][quoteData.sellToken]
+        if (quotesState) {
+          quotesState.price.amount = null
+        }
+      }
     })
     .addCase(updateQuote, ({ quotes: state }, action) => {
       initializeState(state, action)
