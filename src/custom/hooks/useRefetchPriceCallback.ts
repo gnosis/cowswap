@@ -1,6 +1,5 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { useCallback } from 'react'
-// import { onlyResolvesLast } from 'awesome-only-resolves-last-promise'
 import { useClearQuote, useUpdateQuote } from 'state/price/hooks'
 import { getCanonicalMarket, registerOnWindow } from 'utils/misc'
 import { FeeQuoteParams, getFeeQuote, getPriceQuote } from 'utils/operator'
