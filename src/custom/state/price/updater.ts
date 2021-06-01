@@ -151,7 +151,19 @@ export default function FeesUpdater(): null {
       const refetchPrice = !unsupportedToken && priceIsOld(quoteInfo)
 
       if (unsupportedNeedsCheck || refetchAll || refetchPrice) {
-        setLoadingQuote(true)
+        let quoteData: Pick<QuoteInformationObject, 'chainId' | 'sellToken'> | undefined = undefined
+        // did the trade parameters change? major update required
+        if (quoteInfo && !quoteUsingSameParameters(quoteParams, quoteInfo)) {
+          quoteData = { chainId, sellToken }
+        }
+
+        // here we can set the loading quote state differently
+        // if params changed we signal a major update has happened by passing quoteData
+        // which in state will wipe the price
+        setLoadingQuote({
+          loading: true,
+          quoteData
+        })
 
         refetchQuote({
           quoteParams,
@@ -159,7 +171,7 @@ export default function FeesUpdater(): null {
           previousFee: quoteInfo?.fee
         })
           .catch(error => console.error('Error re-fetching the quote', error))
-          .finally(() => setLoadingQuote(false))
+          .finally(() => setLoadingQuote({ loading: false }))
       }
     }
 
