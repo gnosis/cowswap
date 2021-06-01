@@ -267,7 +267,7 @@ export default function Faq() {
 
           <p>
             The code has been carefully tested, peer-reviewed and fully <a href="https://github.com/gnosis/gp-v2-contracts/blob/main/audits/GnosisProtocolV2May2021.pdf"> 
-            audited </a>. Although this can be seen as a step forward in terms of security, it&#39;s recommended to use the protocol at <strong>your own risk</strong>
+            audited</a>. Although this can be seen as a step forward in terms of security, it&#39;s recommended to use the protocol at <strong>your own risk</strong>.
           </p>
         </Content>
       </Page>
