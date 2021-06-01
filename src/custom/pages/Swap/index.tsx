@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { RouteComponentProps } from 'react-router-dom'
 import styled, { ThemeContext } from 'styled-components'
 import { CurrencyAmount, Token } from '@uniswap/sdk'
@@ -96,7 +96,8 @@ export interface SwapProps extends RouteComponentProps {
   SwitchToWethBtn: React.FC<SwitchToWethBtnProps>
   FeesExceedFromAmountMessage: React.FC
   BottomGrouping: React.FC
-  TradeLoading: React.FC<{ showButton: boolean }>
+  TradeLoading: React.FC<TradeLoadingProps>
+  SwapButton: React.FC<SwapButtonProps>
   className?: string
 }
 
@@ -188,23 +189,23 @@ const LongLoadText = styled.span`
 
 const LONG_LOAD_THRESHOLD = 4000
 
-type Props = {
-  showButton: boolean
+type TradeLoadingProps = {
+  showButton?: boolean
 }
 
-const TradeLoading: React.FC<Props> = ({ showButton = false }) => {
-  const [isLongLoad, setIsLongLoad] = React.useState<boolean>(false)
+const TradeLoading = ({ showButton = false }: TradeLoadingProps) => {
+  const [isLongLoad, setIsLongLoad] = useState<boolean>(false)
 
   // change message if user waiting too long
-  React.useEffect(() => {
+  useEffect(() => {
     const timeout = setTimeout(() => setIsLongLoad(true), LONG_LOAD_THRESHOLD)
 
     return () => clearTimeout(timeout)
   }, [])
 
-  const InsideContent = React.useCallback(
+  const InsideContent = useCallback(
     () => (
-      <TYPE.main mb="4px">
+      <TYPE.main display="flex" alignItems="center" maxHeight={20}>
         <Text fontSize={isLongLoad ? 14 : 40} fontWeight={500}>
           {isLongLoad && <LongLoadText>Hang in there. Calculating best price </LongLoadText>}
           <CenteredDots smaller={isLongLoad} />
@@ -223,6 +224,20 @@ const TradeLoading: React.FC<Props> = ({ showButton = false }) => {
   )
 }
 
+interface SwapButtonProps extends TradeLoadingProps {
+  isLoading: boolean
+  children: React.ReactNode
+}
+
+const SwapButton = ({ children, isLoading, showButton = false }: SwapButtonProps) =>
+  isLoading ? (
+    <TradeLoading showButton={showButton} />
+  ) : (
+    <Text fontSize={16} fontWeight={500}>
+      {children}
+    </Text>
+  )
+
 export default function Swap(props: RouteComponentProps) {
   return (
     <SwapModWrapper
@@ -231,6 +246,7 @@ export default function Swap(props: RouteComponentProps) {
       SwitchToWethBtn={SwitchToWethBtn}
       FeesExceedFromAmountMessage={FeesExceedFromAmountMessage}
       BottomGrouping={BottomGrouping}
+      SwapButton={SwapButton}
       TradeLoading={TradeLoading}
       {...props}
     />

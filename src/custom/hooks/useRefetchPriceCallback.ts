@@ -1,6 +1,6 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { useCallback } from 'react'
-import { useAllQuoteDispatch } from 'state/price/hooks'
+import { useQuoteDispatchers } from 'state/price/hooks'
 import { getCanonicalMarket, registerOnWindow } from 'utils/misc'
 import { FeeQuoteParams, getFeeQuote, getPriceQuote } from 'utils/operator'
 import {
@@ -113,7 +113,7 @@ function _handleUnsupportedToken({
 export function useRefetchQuoteCallback() {
   const isUnsupportedTokenGp = useIsUnsupportedTokenGp()
   // dispatchers
-  const [, updateQuote, clearQuote] = useAllQuoteDispatch()
+  const { updateQuote, clearQuote } = useQuoteDispatchers()
   const addUnsupportedToken = useAddGpUnsupportedToken()
   const removeGpUnsupportedToken = useRemoveGpUnsupportedToken()
 
@@ -123,8 +123,6 @@ export function useRefetchQuoteCallback() {
     async (params: RefetchQuoteCallbackParmams) => {
       const { sellToken, buyToken, amount, chainId } = params.quoteParams
       try {
-        // we need to signal to other parts of the app
-        // that we are loading a new quote
         // Get the quote
         // price can be null if fee > price
         const [price, fee] = await getQuote(params)

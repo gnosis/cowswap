@@ -4,7 +4,7 @@ import { useSwapState, tryParseAmount } from 'state/swap/hooks'
 import useIsWindowVisible from 'hooks/useIsWindowVisible'
 import { Field } from 'state/swap/actions'
 import { useCurrency } from 'hooks/Tokens'
-import { useAllQuotes, useLoadingQuote } from './hooks'
+import { useAllQuotes, useSetLoadingQuote } from './hooks'
 import { useRefetchQuoteCallback } from 'hooks/useRefetchPriceCallback'
 import { FeeQuoteParams, UnsupportedToken } from 'utils/operator'
 import { QuoteInformationObject } from './reducer'
@@ -105,12 +105,12 @@ export default function FeesUpdater(): null {
     typedValue: rawTypedValue
   } = useSwapState()
 
-  const loadingQuote = useLoadingQuote()
   // pass independent field as a reference to use against
   // any changes to determine if user has switched input fields
   // useful to force debounce value to refresh
   const forceUpdateRef = independentField
 
+  const setLoadingQuote = useSetLoadingQuote()
   // Debounce the typed value to not refetch the fee too often
   // Fee API calculation/call
   const typedValue = useDebounceWithForceUpdate(rawTypedValue, DEBOUNCE_TIME, forceUpdateRef)
@@ -151,7 +151,7 @@ export default function FeesUpdater(): null {
       const refetchPrice = !unsupportedToken && priceIsOld(quoteInfo)
 
       if (unsupportedNeedsCheck || refetchAll || refetchPrice) {
-        loadingQuote(true)
+        setLoadingQuote(true)
 
         refetchQuote({
           quoteParams,
@@ -159,7 +159,7 @@ export default function FeesUpdater(): null {
           previousFee: quoteInfo?.fee
         })
           .catch(error => console.error('Error re-fetching the quote', error))
-          .finally(() => loadingQuote(false))
+          .finally(() => setLoadingQuote(false))
       }
     }
 
@@ -185,7 +185,7 @@ export default function FeesUpdater(): null {
     quoteInfo,
     refetchQuote,
     isUnsupportedTokenGp,
-    loadingQuote
+    setLoadingQuote
   ])
 
   return null
