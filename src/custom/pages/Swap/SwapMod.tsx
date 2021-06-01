@@ -574,7 +574,7 @@ export default function Swap({
                   }
                   // error={isValid && priceImpactSeverity > 2}
                 >
-                  <SwapButton swapLabel="Swap" isLoading={quoteLoading} showButton={false} />
+                  <SwapButton isLoading={quoteLoading}>Swap</SwapButton>
                   {/* <Text fontSize={16} fontWeight={500}>
                     {priceImpactSeverity > 3 && !isExpertMode
                       ? `Price Impact High`
@@ -612,7 +612,7 @@ export default function Swap({
                 disabled={!isValid /*|| (priceImpactSeverity > 3 && !isExpertMode) */ || !!swapCallbackError}
                 // error={isValid && priceImpactSeverity > 2 && !swapCallbackError}
               >
-                <SwapButton swapLabel={swapInputError ? swapInputError : 'Swap'} showButton isLoading={quoteLoading} />
+                <SwapButton isLoading={quoteLoading}>{swapInputError ? swapInputError : 'Swap'}</SwapButton>
                 {/* <Text fontSize={20} fontWeight={500}>
                   {swapInputError ? swapInputError : 'Swap'
                   // : priceImpactSeverity > 3 && !isExpertMode

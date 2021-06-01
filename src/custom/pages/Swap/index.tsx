@@ -190,7 +190,7 @@ const LongLoadText = styled.span`
 const LONG_LOAD_THRESHOLD = 4000
 
 type TradeLoadingProps = {
-  showButton: boolean
+  showButton?: boolean
 }
 
 const TradeLoading = ({ showButton = false }: TradeLoadingProps) => {
@@ -205,7 +205,7 @@ const TradeLoading = ({ showButton = false }: TradeLoadingProps) => {
 
   const InsideContent = useCallback(
     () => (
-      <TYPE.main mb="4px">
+      <TYPE.main display="flex" alignItems="center" maxHeight={20}>
         <Text fontSize={isLongLoad ? 14 : 40} fontWeight={500}>
           {isLongLoad && <LongLoadText>Hang in there. Calculating best price </LongLoadText>}
           <CenteredDots smaller={isLongLoad} />
@@ -226,15 +226,15 @@ const TradeLoading = ({ showButton = false }: TradeLoadingProps) => {
 
 interface SwapButtonProps extends TradeLoadingProps {
   isLoading: boolean
-  swapLabel: string
+  children: React.ReactNode
 }
 
-const SwapButton = ({ swapLabel, isLoading, showButton }: SwapButtonProps) =>
+const SwapButton = ({ children, isLoading, showButton = false }: SwapButtonProps) =>
   isLoading ? (
     <TradeLoading showButton={showButton} />
   ) : (
     <Text fontSize={16} fontWeight={500}>
-      {swapLabel}
+      {children}
     </Text>
   )
 
