@@ -58,7 +58,7 @@ import { isTradeBetter } from 'utils/trades'
 import FeeInformationTooltip from 'components/swap/FeeInformationTooltip'
 import { SwapProps } from '.'
 import { logTradeDetails } from 'state/swap/utils'
-import { useIsQuoteLoading } from 'state/price/hooks'
+import { useGetQuoteAndStatus } from 'state/price/hooks'
 
 export default function Swap({
   history,
@@ -67,7 +67,6 @@ export default function Swap({
   SwitchToWethBtn,
   FeesExceedFromAmountMessage,
   BottomGrouping,
-  // TradeLoading,
   SwapButton,
   className
 }: SwapProps) {
@@ -123,7 +122,12 @@ export default function Swap({
   } = useDerivedSwapInfo()
 
   // detects trade load
-  const quoteLoading = useIsQuoteLoading()
+  const [quote, quoteLoading] = useGetQuoteAndStatus({ token: INPUT.currencyId, chainId })
+
+  // major quote load indication (param change, token change etc)
+  // opposite could be just a simple timeout check
+  const isQuoteHardLoading = quoteLoading && !quote?.price.amount
+  const isQuoteSoftLoading = quoteLoading && !isQuoteHardLoading
 
   // Log all trade information
   logTradeDetails(v2Trade, allowedSlippage)
@@ -574,7 +578,9 @@ export default function Swap({
                   }
                   // error={isValid && priceImpactSeverity > 2}
                 >
-                  <SwapButton isLoading={quoteLoading}>Swap</SwapButton>
+                  <SwapButton isHardLoading={isQuoteHardLoading} isSoftLoading={isQuoteSoftLoading}>
+                    Swap
+                  </SwapButton>
                   {/* <Text fontSize={16} fontWeight={500}>
                     {priceImpactSeverity > 3 && !isExpertMode
                       ? `Price Impact High`
@@ -583,7 +589,7 @@ export default function Swap({
                   </Text> */}
                 </ButtonError>
               </RowBetween>
-            ) : /* noRoute &&  */ !trade && !quoteLoading && userHasSpecifiedInputOutput ? (
+            ) : /* noRoute &&  */ !trade && !isQuoteHardLoading && userHasSpecifiedInputOutput ? (
               isFeeGreater ? (
                 <FeesExceedFromAmountMessage />
               ) : (
@@ -612,7 +618,9 @@ export default function Swap({
                 disabled={!isValid /*|| (priceImpactSeverity > 3 && !isExpertMode) */ || !!swapCallbackError}
                 // error={isValid && priceImpactSeverity > 2 && !swapCallbackError}
               >
-                <SwapButton isLoading={quoteLoading}>{swapInputError ? swapInputError : 'Swap'}</SwapButton>
+                <SwapButton isHardLoading={isQuoteHardLoading} isSoftLoading={isQuoteSoftLoading}>
+                  {swapInputError ? swapInputError : 'Swap'}
+                </SwapButton>
                 {/* <Text fontSize={20} fontWeight={500}>
                   {swapInputError ? swapInputError : 'Swap'
                   // : priceImpactSeverity > 3 && !isExpertMode

@@ -21,6 +21,8 @@ import { ButtonError, ButtonPrimary } from 'components/Button'
 import EthWethWrap, { Props as EthWethWrapProps } from 'components/swap/EthWethWrap'
 import { useReplaceSwapState, useSwapState } from 'state/swap/hooks'
 
+import loadingCow from 'assets/cow-swap/cow-load.gif'
+
 interface FeeGreaterMessageProp {
   fee: CurrencyAmount
 }
@@ -90,6 +92,23 @@ const SwapModWrapper = styled(SwapMod)`
   }
 `
 
+const fadeIn = `
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+`
+
+const LoadingCow = styled.img<{ maxWidth?: string }>`
+  max-width: ${({ maxWidth = '60px' }) => maxWidth};
+
+  animation: fadeIn 0.2s ease-out;
+`
+
 export interface SwapProps extends RouteComponentProps {
   FeeGreaterMessage: React.FC<FeeGreaterMessageProp>
   EthWethWrapMessage: React.FC<EthWethWrapProps>
@@ -98,6 +117,7 @@ export interface SwapProps extends RouteComponentProps {
   BottomGrouping: React.FC
   TradeLoading: React.FC<TradeLoadingProps>
   SwapButton: React.FC<SwapButtonProps>
+  LoadingCow: typeof LoadingCow
   className?: string
 }
 
@@ -166,17 +186,6 @@ function FeesExceedFromAmountMessage() {
   )
 }
 
-const fadeIn = `
-  @keyframes fadeIn {
-    0% {
-      opacity: 0;
-    }
-    100% {
-      opacity: 1;
-    }
-  }
-`
-
 const CenteredDots = styled(Dots)<{ smaller?: boolean }>`
   vertical-align: ${({ smaller = false }) => (smaller ? 'normal' : 'super')};
 `
@@ -225,16 +234,17 @@ const TradeLoading = ({ showButton = false }: TradeLoadingProps) => {
 }
 
 interface SwapButtonProps extends TradeLoadingProps {
-  isLoading: boolean
+  isHardLoading: boolean
+  isSoftLoading: boolean
   children: React.ReactNode
 }
 
-const SwapButton = ({ children, isLoading, showButton = false }: SwapButtonProps) =>
-  isLoading ? (
+const SwapButton = ({ children, isHardLoading, isSoftLoading, showButton = false }: SwapButtonProps) =>
+  isHardLoading ? (
     <TradeLoading showButton={showButton} />
   ) : (
     <Text fontSize={16} fontWeight={500}>
-      {children}
+      {children} {isSoftLoading && <LoadingCow src={loadingCow} maxWidth="30px" />}
     </Text>
   )
 
@@ -248,6 +258,7 @@ export default function Swap(props: RouteComponentProps) {
       BottomGrouping={BottomGrouping}
       SwapButton={SwapButton}
       TradeLoading={TradeLoading}
+      LoadingCow={LoadingCow}
       {...props}
     />
   )
