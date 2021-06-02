@@ -67,6 +67,10 @@ function getActivitySummary({
 
 const RowWrapper = styled(TransactionWrapper)`
   display: flex;
+
+  & > a {
+    width: 100%;
+  }
 `
 
 // override the href, pending and success props
