@@ -39,6 +39,7 @@ function determinePillColour(status: ActivityStatus, type: ActivityType) {
     case ActivityStatus.CONFIRMED:
       return PILL_COLOUR_MAP.CONFIRMED
     case ActivityStatus.EXPIRED:
+    case ActivityStatus.CANCELLED:
       return PILL_COLOUR_MAP.EXPIRED_ORDER
   }
 }
