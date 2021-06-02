@@ -9,6 +9,7 @@ import {
   clearOrders,
   fulfillOrder,
   expireOrder,
+  cancelOrder,
   updateLastCheckedBlock,
   Order,
   fulfillOrdersBatch,
@@ -37,6 +38,7 @@ type GetOrdersParams = Partial<Pick<GetRemoveOrderParams, 'chainId'>>
 type ClearOrdersParams = Pick<GetRemoveOrderParams, 'chainId'>
 type GetLastCheckedBlockParams = GetOrdersParams
 type ExpireOrderParams = GetRemoveOrderParams
+type CancelOrderParams = GetRemoveOrderParams
 interface ExpireOrdersBatchParams {
   ids: OrderID[]
   chainId: ChainId
@@ -52,6 +54,7 @@ type FulfillOrderCallback = (fulfillOrderParams: FulfillOrderParams) => void
 type FulfillOrdersBatchCallback = (fulfillOrdersBatchParams: FulfillOrdersBatchParams) => void
 type ExpireOrderCallback = (fulfillOrderParams: ExpireOrderParams) => void
 type ExpireOrdersBatchCallback = (expireOrdersBatchParams: ExpireOrdersBatchParams) => void
+type CancelOrderCallback = (cancelOrderParams: CancelOrderParams) => void
 type ClearOrdersCallback = (clearOrdersParams: ClearOrdersParams) => void
 type UpdateLastCheckedBlockCallback = (updateLastCheckedBlockParams: UpdateLastCheckedBlockParams) => void
 
@@ -84,7 +87,8 @@ export const useFindOrderById = ({ chainId }: GetOrdersParams): GetOrderByIdCall
       return (
         stateRef.current.fulfilled[id]?.order ||
         stateRef.current.pending[id]?.order ||
-        stateRef.current.expired[id]?.order
+        stateRef.current.expired[id]?.order ||
+        stateRef.current.cancelled[id]?.order
       )
     },
     [chainId]
@@ -100,6 +104,7 @@ export const useOrders = ({ chainId }: GetOrdersParams): Order[] => {
     const allOrders = Object.values(state.fulfilled)
       .concat(Object.values(state.pending))
       .concat(Object.values(state.expired))
+      .concat(Object.values(state.cancelled))
       .map(orderObject => orderObject?.order)
       .filter(isTruthy)
     return allOrders
@@ -115,7 +120,8 @@ export const useAllOrders = ({ chainId }: GetOrdersParams): PartialOrdersMap => 
     return {
       ...state.pending,
       ...state.fulfilled,
-      ...state.expired
+      ...state.expired,
+      ...state.cancelled
     }
   }, [state])
 }
@@ -195,6 +201,11 @@ export const useExpireOrdersBatch = (): ExpireOrdersBatchCallback => {
     (expireOrdersBatchParams: ExpireOrdersBatchParams) => dispatch(expireOrdersBatch(expireOrdersBatchParams)),
     [dispatch]
   )
+}
+
+export const useCancelPendingOrder = (): CancelOrderCallback => {
+  const dispatch = useDispatch<AppDispatch>()
+  return useCallback((cancelOrderParams: CancelOrderParams) => dispatch(cancelOrder(cancelOrderParams)), [dispatch])
 }
 
 export const useRemoveOrder = (): RemoveOrderCallback => {

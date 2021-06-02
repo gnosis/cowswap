@@ -10,7 +10,8 @@ import { OrderIDWithPopup, OrderTxTypes, PopupPayload, setPopupData } from './he
 const isSingleOrderChangeAction = isAnyOf(
   OrderActions.addPendingOrder,
   OrderActions.expireOrder,
-  OrderActions.fulfillOrder
+  OrderActions.fulfillOrder,
+  OrderActions.cancelOrder
 )
 const isPendingOrderAction = isAnyOf(OrderActions.addPendingOrder)
 const isSingleFulfillOrderAction = isAnyOf(OrderActions.fulfillOrder)
@@ -18,6 +19,7 @@ const isBatchOrderAction = isAnyOf(OrderActions.fulfillOrdersBatch, OrderActions
 const isBatchFulfillOrderAction = isAnyOf(OrderActions.fulfillOrdersBatch)
 const isFulfillOrderAction = isAnyOf(OrderActions.addPendingOrder, OrderActions.fulfillOrdersBatch)
 const isExpireOrdersAction = isAnyOf(OrderActions.expireOrdersBatch, OrderActions.expireOrder)
+const isCancelOrderAction = isAnyOf(OrderActions.cancelOrder)
 
 // on each Pending, Expired, Fulfilled order action
 // a corresponsing Popup action is dispatched
@@ -34,9 +36,9 @@ export const popupMiddleware: Middleware<{}, AppState> = store => next => action
 
     if (!orders) return
 
-    const { pending, fulfilled, expired } = orders
+    const { pending, fulfilled, expired, cancelled } = orders
 
-    const orderObject = pending?.[id] || fulfilled?.[id] || expired?.[id]
+    const orderObject = pending?.[id] || fulfilled?.[id] || expired?.[id] || cancelled?.[id]
 
     // look up Order.summary for Popup
     const summary = orderObject?.order.summary
@@ -53,6 +55,16 @@ export const popupMiddleware: Middleware<{}, AppState> = store => next => action
         id,
         status: OrderActions.OrderStatus.FULFILLED,
         descriptor: 'was traded'
+      })
+    } else if (isCancelOrderAction(action)) {
+      // action is order/cancelOrder
+      // Cancelled Order Popup
+      popup = setPopupData(OrderTxTypes.METATXN, {
+        success: true,
+        summary,
+        id,
+        status: OrderActions.OrderStatus.CANCELLED,
+        descriptor: 'was cancelled'
       })
     } else {
       // action is order/expireOrder
