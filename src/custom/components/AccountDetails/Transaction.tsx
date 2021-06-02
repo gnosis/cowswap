@@ -160,6 +160,8 @@ export default function Transaction({ hash: id }: { hash: string }) {
   const isCancelled = status === ActivityStatus.CANCELLED
 
   const onCancelClick = () => setShowCancelModal(true)
+  const onDismiss = () => setShowCancelModal(false)
+
   return (
     <RowWrapper>
       <TransactionState href={getEtherscanLink(chainId, id, 'transaction')}>
@@ -186,6 +188,7 @@ export default function Transaction({ hash: id }: { hash: string }) {
         </IconWrapper>
       </TransactionState>
       {isPending && <LinkStyledButton onClick={onCancelClick}>(cancel)</LinkStyledButton>}
+      <CancellationModal orderId={id} summary={activityData.summary} isOpen={showCancelModal} onDismiss={onDismiss} />
     </RowWrapper>
   )
 }
