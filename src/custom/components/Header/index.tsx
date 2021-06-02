@@ -13,14 +13,19 @@ import HeaderMod, {
   BalanceText,
   AccountElement,
   HeaderElementWrap,
-  StyledNavLink
+  StyledNavLink as StyledNavLinkUni,
+  StyledMenuButton
 } from './HeaderMod'
 import Menu from '../Menu'
+import { Moon, Sun } from 'react-feather'
 import styled from 'styled-components'
 import { status as appStatus } from '@src/../package.json'
 import { useActiveWeb3React } from 'hooks'
 import { useETHBalances } from 'state/wallet/hooks'
 import { SHORT_PRECISION } from 'constants/index'
+import { useDarkModeManager } from 'state/user/hooks'
+import { darken } from 'polished'
+import TwitterImage from 'assets/cow-swap/twitter.svg'
 
 export const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
   [ChainId.RINKEBY]: 'Rinkeby',
@@ -40,6 +45,16 @@ export interface LinkType {
   path: string
 }
 
+const StyledNavLink = styled(StyledNavLinkUni)`
+  transition: color 0.15s ease-in-out;
+  color: ${({ theme }) => darken(0.3, theme.text1)};
+
+  :hover,
+  :focus {
+    color: ${({ theme }) => theme.text1};
+  }
+`
+
 export const HeaderModWrapper = styled(HeaderMod)`
   ${Title} {
     margin: 0;
@@ -55,6 +70,30 @@ export const HeaderModWrapper = styled(HeaderMod)`
 const NetworkCard = styled(NetworkCardUni)`
   background-color: ${({ theme }) => theme.networkCard.background};
   color: ${({ theme }) => theme.networkCard.text};
+`
+
+const TwitterLink = styled(StyledMenuButton)`
+  margin-left: 0.5rem;
+  padding: 0;
+
+  > a {
+    ${({ theme }) => theme.cursor};
+    padding: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: -3px;
+    height: 35px;
+    width: 35px;
+  }
+
+  > a > img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border: 0;
+    display: flex;
+  }
 `
 
 export const LogoImage = styled.img.attrs(props => ({
@@ -96,6 +135,7 @@ export default function Header() {
   const { account, chainId } = useActiveWeb3React()
   const userEthBalance = useETHBalances(account ? [account] : [])?.[account ?? '']
   const nativeToken = chainId && (CHAIN_CURRENCY_LABELS[chainId] || 'ETH')
+  const [darkMode, toggleDarkMode] = useDarkModeManager()
 
   return (
     <HeaderModWrapper>
@@ -127,6 +167,14 @@ export default function Header() {
           </AccountElement>
         </HeaderElement>
         <HeaderElementWrap>
+          <TwitterLink>
+            <a href="https://twitter.com/mevprotection" target="_blank" rel="noopener noreferrer">
+              <img src={TwitterImage} alt="Follow CowSwap on Twitter!" />
+            </a>
+          </TwitterLink>
+          <StyledMenuButton onClick={() => toggleDarkMode()}>
+            {darkMode ? <Moon size={20} /> : <Sun size={20} />}
+          </StyledMenuButton>
           <Menu />
         </HeaderElementWrap>
       </HeaderControls>

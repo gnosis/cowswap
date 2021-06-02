@@ -57,6 +57,8 @@ import UnsupportedCurrencyFooter from 'components/swap/UnsupportedCurrencyFooter
 import { isTradeBetter } from 'utils/trades'
 import FeeInformationTooltip from 'components/swap/FeeInformationTooltip'
 import { SwapProps } from '.'
+import { useWalletInfo } from 'hooks/useWalletInfo'
+import { HashLink } from 'react-router-hash-link'
 import { logTradeDetails } from 'state/swap/utils'
 import { useGetQuoteAndStatus } from 'state/price/hooks'
 
@@ -97,6 +99,7 @@ export default function Swap({
     })
 
   const { account, chainId } = useActiveWeb3React()
+  const { isSupportedWallet } = useWalletInfo()
   const theme = useContext(ThemeContext)
 
   // toggle wallet when disconnected
@@ -529,6 +532,12 @@ export default function Swap({
               <ButtonLight buttonSize={ButtonSize.BIG} onClick={toggleWalletModal}>
                 Connect Wallet
               </ButtonLight>
+            ) : !isSupportedWallet ? (
+              <ButtonError buttonSize={ButtonSize.BIG} id="swap-button" disabled={!isSupportedWallet}>
+                <Text fontSize={20} fontWeight={500}>
+                  Wallet not supported
+                </Text>
+              </ButtonError>
             ) : showWrap ? (
               <ButtonPrimary buttonSize={ButtonSize.BIG} disabled={Boolean(wrapInputError)} onClick={onWrap}>
                 {wrapInputError ??
@@ -548,7 +557,10 @@ export default function Swap({
                 >
                   {approval === ApprovalState.PENDING ? (
                     <AutoRow gap="6px" justify="center">
-                      Approving <Loader stroke="white" />
+                      Approving{' '}
+                      <Loader
+                      // stroke="white"
+                      />
                     </AutoRow>
                   ) : approvalSubmitted && approval === ApprovalState.APPROVED ? (
                     'Approved'
@@ -644,7 +656,21 @@ export default function Swap({
           </BottomGrouping>
         </Wrapper>
       </AppBody>
-      {!swapIsUnsupported ? (
+      {!isSupportedWallet ? (
+        <UnsupportedCurrencyFooter
+          show={!isSupportedWallet}
+          showDetailsText="Read more about unsupported wallets"
+          detailsText={
+            <>
+              <p>CowSwap requires offline signatures, which is currently not supported by some wallets.</p>
+              <p>
+                Read more in the <HashLink to="/faq#wallet-not-supported">FAQ</HashLink>.
+              </p>
+            </>
+          }
+          detailsTitle="This wallet is not yet supported"
+        />
+      ) : !swapIsUnsupported ? (
         <AdvancedSwapDetailsDropdown trade={trade} />
       ) : (
         <UnsupportedCurrencyFooter show={swapIsUnsupported} currencies={[currencies.INPUT, currencies.OUTPUT]} />
