@@ -94,11 +94,9 @@ function CancellationModal(props: CancellationModalProps): JSX.Element | null {
 
   const onClick = useCallback(() => {
     setStatus('waiting for wallet')
+    setError('')
     cancelOrder(orderId)
-      .then(() => {
-        // TODO: toast notification
-        onDismiss()
-      })
+      .then(onDismiss)
       .catch(e => {
         setError(e.message)
         setStatus('error')
