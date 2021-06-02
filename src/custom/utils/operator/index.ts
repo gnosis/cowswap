@@ -1,5 +1,5 @@
 import { ChainId, ETHER, WETH } from '@uniswap/sdk'
-import { getSigningSchemeApiValue, OrderCreation } from 'utils/signatures'
+import { getSigningSchemeApiValue, OrderCancellation, OrderCreation } from 'utils/signatures'
 import { APP_ID } from 'constants/index'
 import { registerOnWindow } from '../misc'
 import { isDev } from '../environments'
@@ -129,6 +129,31 @@ export async function sendSignedOrder(params: {
   const uid = (await response.json()) as string
   console.log('[util:operator] Success posting the signed order', uid)
   return uid
+}
+
+type OrderCancellationParams = {
+  chainId: ChainId
+  cancellation: OrderCancellation
+  owner: string
+}
+
+export async function sendSignedOrderCancellation(params: OrderCancellationParams): Promise<void> {
+  const { chainId, cancellation, owner: from } = params
+
+  console.log('[utils:operator] Delete signed order for network', chainId, cancellation)
+
+  const response = await _delete(chainId, `/orders/${cancellation.orderUid}`, {
+    signature: cancellation.signature,
+    signingScheme: getSigningSchemeApiValue(cancellation.signingScheme),
+    from
+  })
+
+  if (!response.ok) {
+    // TODO: map responses
+    throw new Error('failed to delete')
+  }
+
+  console.log('[utils:operator] Cancelled order', cancellation.orderUid, chainId)
 }
 
 function checkIfEther(tokenAddress: string, chainId: ChainId) {
