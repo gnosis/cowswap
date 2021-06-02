@@ -3,7 +3,7 @@ import { isAddress, shortenAddress } from '@src/utils'
 import { AddPendingOrderParams, OrderStatus, OrderKind } from 'state/orders/actions'
 
 import { signOrder, UnsignedOrder } from 'utils/signatures'
-import { postSignedOrder } from 'utils/operator'
+import { sendSignedOrder } from 'utils/operator'
 import { Signer } from 'ethers'
 import { APP_ID, RADIX_DECIMAL, SHORTEST_PRECISION } from 'constants/index'
 
@@ -89,7 +89,7 @@ export async function postOrder(params: PostOrderParams): Promise<string> {
   const creationTime = new Date().toISOString()
 
   // Call API
-  const orderId = await postSignedOrder({
+  const orderId = await sendSignedOrder({
     chainId,
     order: {
       ...unsignedOrder,

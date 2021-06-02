@@ -104,7 +104,7 @@ function _delete(chainId: ChainId, url: string, data: any): Promise<Response> {
   return _fetch(chainId, url, 'DELETE', data)
 }
 
-export async function postSignedOrder(params: {
+export async function sendSignedOrder(params: {
   chainId: ChainId
   order: OrderCreation
   owner: string
@@ -209,4 +209,4 @@ export async function getOrder(chainId: ChainId, orderId: string): Promise<Order
 }
 
 // Register some globals for convenience
-registerOnWindow({ operator: { getFeeQuote, getOrder, postSignedOrder, apiGet: _get, apiPost: _post } })
+registerOnWindow({ operator: { getFeeQuote, getOrder, sendSignedOrder, apiGet: _get, apiPost: _post } })
