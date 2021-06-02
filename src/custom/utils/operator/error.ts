@@ -29,7 +29,7 @@ const API_ERROR_CODE_DESCRIPTIONS = {
   [ApiErrorCodes.UnsupportedToken]:
     'One of the tokens you are trading is unsupported. Please read the FAQ for more info.',
   [ApiErrorCodes.WrongOwner]:
-    "The signature is invalid. It's likely that the signing methods provided by your wallet doesn't comply with the standards required by CowSwap. Check whether your Wallet app supports off-chain signing (EIP-712 or ETHSIGN).",
+    "The signature is invalid.\n\nIt's likely that the signing method provided by your wallet doesn't comply with the standards required by CowSwap.\n\nCheck whether your Wallet app supports off-chain signing (EIP-712 or ETHSIGN).",
   UNHANDLED_ERROR: 'The order was not accepted by the network'
 }
 
