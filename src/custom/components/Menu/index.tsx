@@ -11,11 +11,20 @@ export const StyledMenu = styled(MenuMod)`
   hr {
     margin: 15px 0;
   }
+
+  ${MenuItem},
+  ${InternalMenuItem} {
+    color: ${({ theme }) => theme.header.menuFlyout.color};
+    background: ${({ theme }) => theme.header.menuFlyout.background};
+    :hover {
+      color: ${({ theme }) => theme.header.menuFlyout.colorHover};
+      background: ${({ theme }) => theme.header.menuFlyout.colorHoverBg};
+    }
+  }
 `
 
 const Policy = styled(InternalMenuItem).attrs(attrs => ({
-  ...attrs,
-  target: '_blank'
+  ...attrs
 }))`
   font-size: 0.8em;
   text-decoration: underline;
@@ -91,7 +100,7 @@ export const CloseMenu = styled.button`
   display: grid;
   justify-content: space-between;
   align-items: center;
-  background: ${({ theme }) => theme.disabled};
+  background: ${({ theme }) => theme.header.menuFlyout.closeButtonBg};
   border: 0;
   color: ${({ theme }) => theme.black};
   height: 36px;
@@ -140,13 +149,13 @@ export function Menu() {
         </MenuItem> */}
 
         <MenuItem id="link" href={CONTRACTS_CODE_LINK}>
-          <span onClick={close}>
+          <span aria-hidden="true" onClick={close} onKeyDown={close}>
             <Code size={14} />
             Code
           </span>
         </MenuItem>
         <MenuItem id="link" href={DISCORD_LINK}>
-          <span onClick={close}>
+          <span aria-hidden="true" onClick={close} onKeyDown={close}>
             <MessageCircle size={14} />
             Discord
           </span>
@@ -154,7 +163,7 @@ export function Menu() {
 
         <Separator />
 
-        <Policy to="/terms-and-conditions" onClick={close}>
+        <Policy to="/terms-and-conditions" onClick={close} onKeyDown={close}>
           Terms and conditions
         </Policy>
         {/* 

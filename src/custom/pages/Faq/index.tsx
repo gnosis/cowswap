@@ -6,6 +6,29 @@ import { DISCORD_LINK } from 'constants/index'
 import { Link } from 'react-router-dom'
 
 const Wrapper = styled.div`
+  #table-container {
+    overflow-x: scroll;
+    margin: auto;
+    max-width: 80vw;
+
+    > table {
+      min-width: 800px;
+
+      thead, tr:nth-child(even) {
+        background: ${({ theme }) => theme.bg2};
+        color: ${({ theme }) => theme.text2};
+        }
+      }
+
+      th,
+      td {
+        min-width: 8.5rem;
+        text-align: left;
+        padding: 0.5rem 0.4rem;
+      }
+    }
+  }
+
   h2 {
     color: ${({ theme }) => theme.primary1};
   }
@@ -20,7 +43,7 @@ const Wrapper = styled.div`
       transition: color 0.2s ease-in-out;
 
       &:hover {
-        color: ${({ theme }) => theme.redShade};
+        color: ${({ theme }) => theme.textLink};
       }
     }
 
@@ -41,7 +64,7 @@ const Wrapper = styled.div`
     }
 
     > p a {
-      color: ${({ theme }) => theme.redShade};
+      color: ${({ theme }) => theme.textLink};
     }
 
     > h3 {
@@ -155,9 +178,9 @@ export default function Faq() {
           </h3>
 
           <p>
-            Defined by Phil Daian in the <a href="https://arxiv.org/abs/1904.05234"> paper Flash Boys 2.0 </a>, MEV is a measure of the profit a miner
-            (or validator, sequencer, etc.) can make through their ability to arbitrarily include, exclude, or re-order
-            transactions within the blocks they produce.
+            Defined by Phil Daian in the <a href="https://arxiv.org/abs/1904.05234"> paper Flash Boys 2.0 </a>, MEV is a
+            measure of the profit a miner (or validator, sequencer, etc.) can make through their ability to arbitrarily
+            include, exclude, or re-order transactions within the blocks they produce.
           </p>
 
           <p>
@@ -197,7 +220,7 @@ export default function Faq() {
           <p>
             CowSwap leverages batch auctions with uniform clearing prices for all trades in the same batch. Because of
             the uniform clearing price, there is no need for ordering the transactions within a single batch. Because
-            everyone receives the same price across assets it’s not possible for <em>any</em> value to be extracted by
+            everyone receives the same price across assets it’s not possible for <b>any</b> value to be extracted by
             placing transactions in a certain order. This prevents the primary strategy used in MEV.
           </p>
 
@@ -243,8 +266,8 @@ export default function Faq() {
           </p>
 
           <p>
-            The code has been carefully tested and peer-reviewed. Although this can be seen as a step forward in terms
-            of security, it&#39;s recommended to use the protocol at <strong>your own risk</strong>
+            The code has been carefully tested, peer-reviewed and fully <a href="https://github.com/gnosis/gp-v2-contracts/blob/main/audits/GnosisProtocolV2May2021.pdf"> 
+            audited</a>. Although this can be seen as a step forward in terms of security, it&#39;s recommended to use the protocol at <strong>your own risk</strong>.
           </p>
         </Content>
       </Page>
@@ -262,8 +285,9 @@ export default function Faq() {
           </p>
 
           <p>
-            Be cautious, some people may create fake COW tokens, that are not affiliated with this project. Please note 
-            that any token listed in any AMM is  <strong>NOT</strong> associated with this project in any way, shape or form.
+            Be cautious, some people may create fake COW tokens, that are not affiliated with this project. Please note
+            that any token listed in any AMM is <strong>NOT</strong> associated with this project in any way, shape or
+            form.
           </p>
 
           <h3 id="what-is-cowswap-s-fee-model">What is CowSwap’s fee model?</h3>
@@ -278,8 +302,8 @@ export default function Faq() {
             (although it is only exposed to the user as one fee). As a user, you are only signing a message to submit
             your trade and the underlying solver will end up submitting the transaction for you. Essentially you are
             paying this &quot;base cost to execute the trade&quot; aka &quot;gas costs&quot; with your sell token and
-            the cost is already included in your price estimation. The protocol is currently subsidizing 90% of the gas
-            cost, while the protocol fee is currently switched off.
+            the cost is already included in your price estimation. The protocol is currently subsidizing a portion of the gas costs,
+            while the protocol fee is currently switched off.
           </p>
           <p>
             <strong>
@@ -321,25 +345,137 @@ export default function Faq() {
             orderbook and place counter orders (creating a CoW) to prevent settling trades via external liquidity.
           </p>
 
+          <h3 id="wallet-not-supported">Why is my wallet not supported?</h3>
+
+          <p>CowSwap uses offline signatures to offer gasless orders.</p>
+          <p>
+            Currently, Smart Contract (SC) wallets such as Gnosis Safe, Argent or Pillar are not supported because it
+            would require signing an on-chain transaction to place the order, making it no longer gasless. We are
+            working to make this a possibility and support will be added soon.
+          </p>
+
+          <p>
+            Nevertheless, even if your wallet is not an SC wallet, it might be unsupported in some cases. Not all
+            wallets implement the necessary signing methods from EIP712 standard. If that is the case for you, reach out
+            to your wallet developers and ask for it.
+          </p>
           <h3 id="what-are-gnosis-protocol-v2-solvers">What are Gnosis Protocol v2 Solvers?</h3>
 
           <p>
             In GPv2, instead of using a central operator or a constant function market maker to determine trade
             settlements, solvers compete against each other to submit the most optimal batch settlement solution. Each
-            time a solver submits a successful batch settlement solution, the protocol rewards them with GNO. 
-            Anyone can become a solver, although, in order to become one, there are certain requirements:
+            time a solver submits a successful batch settlement solution, the protocol rewards them with GNO. Anyone can
+            become a solver, although, in order to become one, there are certain requirements:
           </p>
           <ol>
             <li>To become a solver, an Ethereum address needs to deposit a bond of GNO tokens to GnosisDAO.</li>
             <li>
-              Once the GNO tokens have been staked (locked up), GnosisDAO has to vote to approve or reject the
-              Ethereum address that will identify the solver.
+              Once the GNO tokens have been staked (locked up), GnosisDAO has to vote to approve or reject the Ethereum
+              address that will identify the solver.
             </li>
             <li>
               Additionally, a solver must have the technical knowledge to create the appropriate batch settlement
               solutions, or take the risk of being slashed by the GnosisDAO for wrongdoing.
             </li>
           </ol>
+
+          <h3 id="what-interactions-can-i-encounter-when-using-Cowswap">
+            What interactions can I encounter when using CowSwap?
+          </h3>
+
+          <p>
+            <strong>Internal CowSwap Operations</strong>
+          </p>
+          <div id="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Action</th>
+                  <th>Description</th>
+                  <th>Costs</th>
+                  <th>Action Performed</th>
+                  <th>Pay for gas?</th>
+                  <th>What do I need to pay the gas costs with?</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Approve token for trading</td>
+                  <td>
+                    Required step for being able to sell a token. Only needs to be done once. Afterward, you will be
+                    able to trade the token using gasless transactions!
+                  </td>
+                  <td>Regular Ethereum Tx.</td>
+                  <td>Set the token allowance for the Allowance Manager</td>
+                  <td>Yes</td>
+                  <td>ETH</td>
+                </tr>
+                <tr>
+                  <td>Signing an Order</td>
+                  <td>
+                    Signature of a gasless off-chain order. You define your limit price and expiration date. The order
+                    will try to be executed using MEV protection against different on-chain liquidity sources or other
+                    CowSwap users trading in the same block.
+                  </td>
+                  <td>Free</td>
+                  <td>None</td>
+                  <td>No</td>
+                  <td>Free</td>
+                </tr>
+                <tr>
+                  <td>Trade</td>
+                  <td>
+                    The trade will happen automatically if a CoW (Coincidence of Wants) is found, or if the order can be
+                    executed at the specified price in any on-chain liquidity source. You only pay fees if the trade is
+                    successful!
+                  </td>
+                  <td>Gnosis Protocol Fee which is paid either in your sell or buy token.</td>
+                  <td>Accept the trade details by executing your limit order</td>
+                  <td>No</td>
+                  <td>Paid in either Sell or Buy token</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p>
+            <strong>External CowSwap Operations</strong>
+          </p>
+          <div id="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Action</th>
+                  <th>Description</th>
+                  <th>Costs</th>
+                  <th>Action Performed</th>
+                  <th>Pay for gas?</th>
+                  <th>What do I need to pay the gas costs with?</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Wrap ETH</td>
+                  <td>
+                    Converts native ETH into an ERC20 compatible token: WETH. Only required if you need to sell ETH.
+                  </td>
+                  <td>Regular Ethereum tx</td>
+                  <td>Send a deposit transaction to WETH contract.</td>
+                  <td>Yes</td>
+                  <td>ETH</td>
+                </tr>
+                <tr>
+                  <td>Unwrap ETH</td>
+                  <td>
+                    Converts ERC20 compatible token WETH back to ETH. Only when you want to manually convert it to ETH.
+                  </td>
+                  <td>Regulat Ethereum tx</td>
+                  <td>Send a withdrawal transaction to WETH contract.</td>
+                  <td>Yes</td>
+                  <td>ETH</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </Content>
       </Page>
 
@@ -462,39 +598,35 @@ export default function Faq() {
             allow you to wrap and unwrap ETH into WETH without needing to leave the dapp’s UI
           </p>
 
-          <h3 id="why-is-selling-eth-more-troublesome">
-            Why is selling ETH more troublesome?
-          </h3>
+          <h3 id="why-is-selling-eth-more-troublesome">Why is selling ETH more troublesome?</h3>
 
           <p>
             CowSwap only operates with ERC20 tokens. ETH is the native Ethereum currency, which is not an ERC20 token.
           </p>
-          
+
           <p>
-            In order to sell ETH, you need to wrap it first to make it ERC20 compatible. Wrapping is done by making an 
-            ETH deposit into the WETH contract. After doing so, you will get a balance of WETH in the amount of ETH 
+            In order to sell ETH, you need to wrap it first to make it ERC20 compatible. Wrapping is done by making an
+            ETH deposit into the WETH contract. After doing so, you will get a balance of WETH in the amount of ETH
             previously deposited.
           </p>
-          
+
+          <p>You can withdraw your ETH from the WETH contract at any time, and this is called unwrapping WETH.</p>
+
           <p>
-            You can withdraw your ETH from the WETH contract at any time, and this is called unwrapping WETH.
-          </p>
-          
-          <p>
-            Wrapping and unwrapping ETH are simple Ethereum transactions not related to CowSwap, meaning gas costs 
-            for executing the transactions are involved.
+            Wrapping and unwrapping ETH are simple Ethereum transactions not related to CowSwap, meaning gas costs for
+            executing the transactions are involved.
           </p>
 
           <p>
-            Although CowSwap doesn't allow you to sell ETH directly, it will assist you with the wrapping/unwrapping, 
+            Although CowSwap does not allow you to sell ETH directly, it will assist you with the wrapping/unwrapping,
             so you can easily handle ETH/WETH, as needed.
           </p>
-          
+
           <p>
-            While ETH cannot be sold directly, it is possible to directly buy ETH. This is because CowSwap allows 
-            you to buy WETH and will directly unwrap it for you.
+            While ETH cannot be sold directly, it is possible to directly buy ETH. This is because CowSwap allows you to
+            buy WETH and will directly unwrap it for you.
           </p>
-          
+
           <hr />
 
           <p>
