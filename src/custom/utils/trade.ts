@@ -46,7 +46,7 @@ function _getSummary(params: PostOrderParams): string {
   }
 }
 
-export async function postOrder(params: PostOrderParams): Promise<string> {
+export async function sendOrder(params: PostOrderParams): Promise<string> {
   const {
     kind,
     addPendingOrder,
