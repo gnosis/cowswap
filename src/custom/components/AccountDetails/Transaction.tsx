@@ -1,8 +1,8 @@
-import React from 'react'
 import { AlertCircle, CheckCircle, Triangle } from 'react-feather'
+import React, { useCallback, useState } from 'react'
 
 import { useActiveWeb3React } from 'hooks'
-import { getEtherscanLink } from 'utils'
+import { getEtherscanLink, shortenOrderId } from 'utils'
 import { RowFixed } from 'components/Row'
 import Loader from 'components/Loader'
 import {
@@ -13,8 +13,16 @@ import {
 } from './TransactionMod'
 import Pill from '../Pill'
 import styled from 'styled-components'
+import {
+  ConfirmationModalContent,
+  ConfirmationPendingContent,
+  TransactionErrorContent
+} from 'components/TransactionConfirmationModal'
 
 import { ActivityStatus, ActivityType, useActivityDescriptors } from 'hooks/useRecentActivity'
+import { useCancelOrder } from 'hooks/useCancelOrder'
+import Modal from 'components/Modal'
+import { ButtonPrimary } from 'components/Button'
 
 const PILL_COLOUR_MAP = {
   CONFIRMED: '#1b7b43',
@@ -62,6 +70,71 @@ const TransactionState = styled(OldTransactionState).attrs(
 )`
   ${(props): string | false => !!props.disableMouseActions && `pointer-events: none; cursor: none;`}
 `
+
+type CancellationModalProps = {
+  onDismiss: () => void
+  isOpen: boolean
+  orderId: string
+  summary: string | undefined
+}
+
+function CancellationModal(props: CancellationModalProps): JSX.Element | null {
+  const { orderId, isOpen, onDismiss, summary } = props
+  const shortId = shortenOrderId(orderId)
+
+  const [status, setStatus] = useState<'not started' | 'waiting for wallet' | 'error'>('not started')
+  const [error, setError] = useState('')
+  const cancelOrder = useCancelOrder()
+
+  const onClick = useCallback(() => {
+    setStatus('waiting for wallet')
+    cancelOrder(orderId)
+      .then(() => {
+        // TODO: toast notification
+        onDismiss()
+      })
+      .catch(e => {
+        setError(e.message)
+        setStatus('error')
+      })
+  }, [cancelOrder, onDismiss, orderId])
+
+  return (
+    <Modal isOpen={isOpen} onDismiss={onDismiss}>
+      {status === 'waiting for wallet' ? (
+        <ConfirmationPendingContent
+          onDismiss={onDismiss}
+          pendingText={`Soft cancelling order with id ${shortId}\n\n${summary}`}
+        />
+      ) : status === 'error' ? (
+        <TransactionErrorContent onDismiss={onDismiss} message={error || 'Failed to cancel order'} />
+      ) : (
+        <>
+          <ConfirmationModalContent
+            title="Cancel order"
+            onDismiss={onDismiss}
+            topContent={() => (
+              <>
+                <p>
+                  Are you sure you want to cancel the order <em>{shortId}</em>?
+                </p>
+                <p>{summary}</p>
+                <p>Keep in mind this is a soft cancellation, and will be taken into account in a best effort basis.</p>
+                <p>
+                  This means that a solver might already have included the order in a solution even if this cancellation
+                  is successful.
+                </p>
+              </>
+            )}
+            bottomContent={() =>
+              status === 'not started' && <ButtonPrimary onClick={onClick}>Cancel order</ButtonPrimary>
+            }
+          />
+        </>
+      )}
+    </Modal>
+  )
+}
 
 export default function Transaction({ hash: id }: { hash: string }) {
   const { chainId } = useActiveWeb3React()
