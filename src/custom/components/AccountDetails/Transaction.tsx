@@ -48,7 +48,7 @@ function getActivitySummary({
 
   const isMeta = type === ActivityType.ORDER && status !== ActivityStatus.CONFIRMED
 
-  // add arrow indiciating clickable link if not meta tx
+  // add arrow indicating clickable link if not meta tx
   const suffix = !isMeta ? ' ↗' : ''
   const baseSummary = summary ?? id
 
