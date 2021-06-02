@@ -158,6 +158,7 @@ export default function Transaction({ hash: id }: { hash: string }) {
   const isConfirmed = status === ActivityStatus.CONFIRMED
   const isExpired = status === ActivityStatus.EXPIRED
   const isCancelled = status === ActivityStatus.CANCELLED
+  const isCancellable = isPending && type === ActivityType.ORDER
 
   const onCancelClick = () => setShowCancelModal(true)
   const onDismiss = () => setShowCancelModal(false)
@@ -187,7 +188,7 @@ export default function Transaction({ hash: id }: { hash: string }) {
           )}
         </IconWrapper>
       </TransactionState>
-      {isPending && <LinkStyledButton onClick={onCancelClick}>(cancel)</LinkStyledButton>}
+      {isCancellable && <LinkStyledButton onClick={onCancelClick}>(cancel)</LinkStyledButton>}
       <CancellationModal orderId={id} summary={activityData.summary} isOpen={showCancelModal} onDismiss={onDismiss} />
     </RowWrapper>
   )
