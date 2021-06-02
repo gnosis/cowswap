@@ -1,5 +1,5 @@
-import { AlertCircle, CheckCircle, Triangle } from 'react-feather'
 import React, { useCallback, useState } from 'react'
+import { AlertCircle, CheckCircle, XCircle, Triangle } from 'react-feather'
 
 import { useActiveWeb3React } from 'hooks'
 import { getEtherscanLink, shortenOrderId } from 'utils'
@@ -154,6 +154,7 @@ export default function Transaction({ hash: id }: { hash: string }) {
   const isPending = status === ActivityStatus.PENDING
   const isConfirmed = status === ActivityStatus.CONFIRMED
   const isExpired = status === ActivityStatus.EXPIRED
+  const isCancelled = status === ActivityStatus.CANCELLED
 
   return (
     <RowWrapper>
@@ -173,6 +174,8 @@ export default function Transaction({ hash: id }: { hash: string }) {
             <CheckCircle size="16" />
           ) : isExpired ? (
             <AlertCircle size="16" />
+          ) : isCancelled ? (
+            <XCircle size="16" />
           ) : (
             <Triangle size="16" />
           )}
