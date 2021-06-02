@@ -38,7 +38,7 @@ const StyledLogo = styled.img`
   margin-left: 6px;
 `
 
-function ConfirmationPendingContent({ onDismiss, pendingText }: { onDismiss: () => void; pendingText: string }) {
+export function ConfirmationPendingContent({ onDismiss, pendingText }: { onDismiss: () => void; pendingText: string }) {
   return (
     <Wrapper>
       <Section>
