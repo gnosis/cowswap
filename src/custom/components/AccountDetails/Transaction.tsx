@@ -64,6 +64,10 @@ function getActivitySummary({
   return baseSummary + suffix
 }
 
+const RowWrapper = styled(TransactionWrapper)`
+  display: flex;
+`
+
 // override the href, pending and success props
 // override mouse actions via CSS when we dont want a clickable row
 const TransactionState = styled(OldTransactionState).attrs(
@@ -152,7 +156,7 @@ export default function Transaction({ hash: id }: { hash: string }) {
   const isExpired = status === ActivityStatus.EXPIRED
 
   return (
-    <TransactionWrapper>
+    <RowWrapper>
       <TransactionState href={getEtherscanLink(chainId, id, 'transaction')}>
         <RowFixed>
           {activity && (
@@ -174,6 +178,6 @@ export default function Transaction({ hash: id }: { hash: string }) {
           )}
         </IconWrapper>
       </TransactionState>
-    </TransactionWrapper>
+    </RowWrapper>
   )
 }
