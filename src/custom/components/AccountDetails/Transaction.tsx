@@ -21,6 +21,7 @@ import {
 
 import { ActivityStatus, ActivityType, useActivityDescriptors } from 'hooks/useRecentActivity'
 import { useCancelOrder } from 'hooks/useCancelOrder'
+import { LinkStyledButton } from 'theme'
 import Modal from 'components/Modal'
 import { ButtonPrimary } from 'components/Button'
 
@@ -147,6 +148,8 @@ export default function Transaction({ hash: id }: { hash: string }) {
   // returns info related to activity: TransactionDetails | Order
   const activityData = useActivityDescriptors({ id, chainId })
 
+  const [showCancelModal, setShowCancelModal] = useState(false)
+
   if (!activityData || !chainId) return null
 
   const { activity, status, type } = activityData
@@ -156,6 +159,7 @@ export default function Transaction({ hash: id }: { hash: string }) {
   const isExpired = status === ActivityStatus.EXPIRED
   const isCancelled = status === ActivityStatus.CANCELLED
 
+  const onCancelClick = () => setShowCancelModal(true)
   return (
     <RowWrapper>
       <TransactionState href={getEtherscanLink(chainId, id, 'transaction')}>
@@ -181,6 +185,7 @@ export default function Transaction({ hash: id }: { hash: string }) {
           )}
         </IconWrapper>
       </TransactionState>
+      {isPending && <LinkStyledButton onClick={onCancelClick}>(cancel)</LinkStyledButton>}
     </RowWrapper>
   )
 }
