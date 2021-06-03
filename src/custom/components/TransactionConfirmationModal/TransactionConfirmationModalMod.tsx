@@ -54,7 +54,7 @@ export function ConfirmationPendingContent({ onDismiss, pendingText }: { onDismi
             Waiting For Confirmation
           </Text>
           <AutoColumn gap="12px" justify={'center'}>
-            <Text fontWeight={600} fontSize={14} color="" textAlign="center">
+            <Text fontWeight={600} fontSize={14} color="" textAlign="center" style={{ whiteSpace: 'pre-wrap' }}>
               {pendingText}
             </Text>
           </AutoColumn>
