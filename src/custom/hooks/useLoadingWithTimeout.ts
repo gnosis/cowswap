@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-export default function useDelayedLoading(isLoading: boolean, time: number) {
+export default function useLoadingWithTimeout(isLoading: boolean, time: number) {
   const [delayedLoad, setDelayedLoad] = useState(isLoading)
 
   useEffect(() => {
