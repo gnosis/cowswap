@@ -149,8 +149,9 @@ export async function sendSignedOrderCancellation(params: OrderCancellationParam
   })
 
   if (!response.ok) {
-    // TODO: map responses
-    throw new Error('failed to delete')
+    // Raise an exception
+    const errorMessage = await OperatorError.getErrorForUnsuccessfulPostOrder(response, 'Error cancelling order')
+    throw new Error(errorMessage)
   }
 
   console.log('[utils:operator] Cancelled order', cancellation.orderUid, chainId)
