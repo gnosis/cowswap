@@ -19,8 +19,8 @@ const TradePriceMod = styled(TradePriceModComponent)`
 
 const LoadingCowComponent = ({ showCow }: { showCow: boolean }) => (
   <>
-    <AnimatedImg src={loadingCowGif} showLoader={showCow} />
-    <AnimatedImg src={repeat} showLoader={!showCow} width="50px" />
+    <AnimatedImg src={loadingCowGif} showLoader={showCow} title="Prices updating..." />
+    <AnimatedImg src={repeat} showLoader={!showCow} width="30px" padding="6px" />
   </>
 )
 

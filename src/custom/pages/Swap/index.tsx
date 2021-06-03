@@ -137,6 +137,7 @@ const fadeIn = `
 
 interface LoadingCowImgProps {
   maxWidth?: string
+  padding?: string
   showLoader: boolean
 }
 
@@ -144,6 +145,7 @@ export const AnimatedImg = styled.img<LoadingCowImgProps>`
   position: absolute;
   width: ${({ width = '30px' }) => width};
   max-width: ${({ maxWidth = '60px' }) => maxWidth};
+  padding: ${({ padding = 0 }) => padding};
   right: ${({ showLoader }) => (showLoader ? '30px' : '0px')};
 
   transition: right 0.3s ease-in-out;
