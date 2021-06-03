@@ -184,6 +184,9 @@ export const soundMiddleware: Middleware<{}, AppState> = store => next => action
     getMoooooSuccess().play()
   } else if (isExpireOrdersAction(action)) {
     getMoooooError().play()
+  } else if (isCancelOrderAction(action)) {
+    // TODO: find a unique sound for order cancellation
+    getMoooooError().play()
   }
 
   return result
