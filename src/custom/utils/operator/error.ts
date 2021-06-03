@@ -8,7 +8,8 @@ export enum ApiErrorCodes {
   InsufficientFunds = 'InsufficientFunds',
   InsufficientFee = 'InsufficientFee',
   UnsupportedToken = 'UnsupportedToken',
-  WrongOwner = 'WrongOwner'
+  WrongOwner = 'WrongOwner',
+  OrderNotFound = 'OrderNotFound'
 }
 
 export interface ApiError {
@@ -30,6 +31,7 @@ const API_ERROR_CODE_DESCRIPTIONS = {
     'One of the tokens you are trading is unsupported. Please read the FAQ for more info.',
   [ApiErrorCodes.WrongOwner]:
     "The signature is invalid.\n\nIt's likely that the signing method provided by your wallet doesn't comply with the standards required by CowSwap.\n\nCheck whether your Wallet app supports off-chain signing (EIP-712 or ETHSIGN).",
+  [ApiErrorCodes.OrderNotFound]: 'The order you are trying to cancel does not exist',
   UNHANDLED_ERROR: 'The order was not accepted by the network'
 }
 
