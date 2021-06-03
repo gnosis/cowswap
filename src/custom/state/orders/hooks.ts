@@ -109,7 +109,7 @@ export const useOrders = ({ chainId }: GetOrdersParams): Order[] => {
     const allOrders = Object.values(state.fulfilled)
       .concat(Object.values(state.pending))
       .concat(Object.values(state.expired))
-      .concat(Object.values(state.cancelled))
+      .concat(Object.values(state.cancelled || {}))
       .map(orderObject => orderObject?.order)
       .filter(isTruthy)
     return allOrders
