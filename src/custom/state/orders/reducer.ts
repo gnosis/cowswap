@@ -96,6 +96,7 @@ export default createReducer(initialState, builder =>
       delete state[chainId].pending[id]
       delete state[chainId].fulfilled[id]
       delete state[chainId].expired[id]
+      delete state[chainId].cancelled[id]
     })
     .addCase(fulfillOrder, (state, action) => {
       prefillState(state, action)
