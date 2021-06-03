@@ -59,7 +59,7 @@ export default class OperatorError extends Error {
       return OperatorError.apiErrorDetails.UNHANDLED_ERROR
     }
   }
-  static async getErrorForUnsuccessfulPostOrder(response: Response) {
+  static async getErrorForUnsuccessfulPostOrder(response: Response, defaultResponse = 'Error performing operation') {
     switch (response.status) {
       case 400:
         return this.getErrorMessage(response)
@@ -72,7 +72,7 @@ export default class OperatorError extends Error {
 
       case 500:
       default:
-        return 'Error adding an order'
+        return defaultResponse
     }
   }
   constructor(apiError: ApiError) {
