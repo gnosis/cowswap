@@ -60,7 +60,7 @@ export const popupMiddleware: Middleware<{}, AppState> = store => next => action
       // action is order/cancelOrder
       // Cancelled Order Popup
       popup = setPopupData(OrderTxTypes.METATXN, {
-        success: false,
+        success: true,
         summary,
         id,
         status: OrderActions.OrderStatus.CANCELLED,
