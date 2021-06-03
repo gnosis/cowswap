@@ -12,12 +12,18 @@ export interface TradePriceProps {
   setShowInverted: (showInverted: boolean) => void
 }
 
+interface TradePriceModProps {
+  LoadingCow: JSX.Element
+  className?: string
+}
+
 export default function TradePrice({
   price,
   showInverted,
   setShowInverted,
-  LoadingCow
-}: TradePriceProps & { LoadingCow: JSX.Element }) {
+  LoadingCow,
+  className
+}: TradePriceProps & TradePriceModProps) {
   const theme = useContext(ThemeContext)
   const formattedPrice = showInverted ? price?.toSignificant(6) : price?.invert()?.toSignificant(6)
 
@@ -32,6 +38,7 @@ export default function TradePrice({
       fontSize={14}
       color={theme.text2}
       style={{ justifyContent: 'center', alignItems: 'center', display: 'flex' }}
+      className={className}
     >
       {show ? (
         <>
