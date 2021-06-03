@@ -94,7 +94,10 @@ function CancellationModal(props: CancellationModalProps): JSX.Element | null {
 
   const [status, setStatus] = useState<'not started' | 'waiting for wallet' | 'error'>('not started')
   const [error, setError] = useState('')
+  const [showMore, setShowMore] = useState(false)
   const cancelOrder = useCancelOrder()
+
+  const toggleShowMore = () => setShowMore(showMore => !showMore)
 
   const onClick = useCallback(() => {
     setStatus('waiting for wallet')
@@ -127,11 +130,19 @@ function CancellationModal(props: CancellationModalProps): JSX.Element | null {
                   Are you sure you want to cancel the order <em>{shortId}</em>?
                 </p>
                 <p>{summary}</p>
-                <p>Keep in mind this is a soft cancellation, and will be taken into account in a best effort basis.</p>
                 <p>
-                  This means that a solver might already have included the order in a solution even if this cancellation
-                  is successful.
+                  Keep in mind this is a soft cancellation{' '}
+                  <LinkStyledButton onClick={toggleShowMore}>[{showMore ? '- less' : '+ more'}]</LinkStyledButton>
                 </p>
+                {showMore && (
+                  <>
+                    <p>It will be taken into account in a best effort basis.</p>
+                    <p>
+                      This means that a solver might already have included the order in a solution even if this
+                      cancellation is successful.
+                    </p>
+                  </>
+                )}
               </>
             )}
             bottomContent={() =>
