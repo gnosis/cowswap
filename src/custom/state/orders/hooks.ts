@@ -65,7 +65,12 @@ export const useOrder = ({ id, chainId }: GetRemoveOrderParams): Order | undefin
     const orders = state.orders[chainId]
 
     if (!orders) return undefined
-    return orders?.fulfilled[id]?.order || orders?.pending[id]?.order || orders?.expired[id]?.order
+    return (
+      orders?.fulfilled[id]?.order ||
+      orders?.pending[id]?.order ||
+      orders?.expired[id]?.order ||
+      orders?.cancelled[id]?.order
+    )
   })
 }
 
