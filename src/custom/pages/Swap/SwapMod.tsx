@@ -238,6 +238,7 @@ export default function Swap({
   const userHasSpecifiedInputOutput = Boolean(
     currencies[Field.INPUT] && currencies[Field.OUTPUT] && parsedAmounts[independentField]?.greaterThan(JSBI.BigInt(0))
   )
+  const noValidSwap = !trade && !quoteLoading && !quote
   // const noRoute = !route
 
   // check whether the user has approved the router on the input token
@@ -596,7 +597,7 @@ export default function Swap({
                   </Text> */}
                 </ButtonError>
               </RowBetween>
-            ) : /* noRoute &&  */ !trade && !isGettingNewQuote && userHasSpecifiedInputOutput ? (
+            ) : /* noRoute &&  */ userHasSpecifiedInputOutput && noValidSwap ? (
               isFeeGreater ? (
                 <FeesExceedFromAmountMessage />
               ) : (
