@@ -73,6 +73,15 @@ export function useIsQuoteRefreshing() {
   return isRefreshingQuote
 }
 
+export function useIsQuoteSoftLoading() {
+  const { chainId } = useActiveWeb3React()
+  const {
+    INPUT: { currencyId }
+  } = useSwapState()
+  const { isRefreshingQuote } = useGetQuoteAndStatus({ token: currencyId, chainId })
+  return isRefreshingQuote
+}
+
 export const useSetNewQuoteLoad = (): GetNewQuoteCallback => {
   const dispatch = useDispatch<AppDispatch>()
   return useCallback((quoteLoadingParams: SetLoadingQuoteParams) => dispatch(setNewQuoteLoad(quoteLoadingParams)), [
