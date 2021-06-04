@@ -192,7 +192,7 @@ export default function Transaction({ hash: id }: { hash: string }) {
           )}
           <TransactionStatusText>{getActivitySummary({ activityData, id })}</TransactionStatusText>
         </RowFixed>
-        <IconWrapper pending={isPending} success={isConfirmed}>
+        <IconWrapper pending={isPending} success={isConfirmed || isCancelled}>
           {isPending ? (
             <Loader />
           ) : isConfirmed ? (
