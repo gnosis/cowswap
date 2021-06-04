@@ -206,8 +206,19 @@ export default function Transaction({ hash: id }: { hash: string }) {
           )}
         </IconWrapper>
       </TransactionState>
-      {isCancellable && <LinkStyledButton onClick={onCancelClick}>(cancel)</LinkStyledButton>}
-      <CancellationModal orderId={id} summary={activityData.summary} isOpen={showCancelModal} onDismiss={onDismiss} />
+      {isCancellable && (
+        <>
+          <LinkStyledButton onClick={onCancelClick}>(cancel)</LinkStyledButton>
+          {showCancelModal && (
+            <CancellationModal
+              orderId={id}
+              summary={activityData.summary}
+              isOpen={showCancelModal}
+              onDismiss={onDismiss}
+            />
+          )}
+        </>
+      )}
     </RowWrapper>
   )
 }
