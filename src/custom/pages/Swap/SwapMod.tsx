@@ -336,6 +336,7 @@ export default function Swap({
   // show approve flow when: no error on inputs, not approved or pending, or approved in current session
   // never show if price impact is above threshold in non expert mode
   const showApproveFlow =
+    !showLoader &&
     !swapInputError &&
     (approval === ApprovalState.NOT_APPROVED ||
       approval === ApprovalState.PENDING ||
@@ -544,6 +545,12 @@ export default function Swap({
                   Wallet not supported
                 </Text>
               </ButtonError>
+            ) : independentField === Field.INPUT && parsedAmount && currencyBalances.INPUT?.lessThan(parsedAmount) ? (
+              <ButtonPrimary buttonSize={ButtonSize.BIG} disabled={true}>
+                <Text fontSize={16} fontWeight={900}>
+                  Insufficient {parsedAmount.currency.symbol || ''} balance
+                </Text>
+              </ButtonPrimary>
             ) : showWrap ? (
               <ButtonPrimary buttonSize={ButtonSize.BIG} disabled={Boolean(wrapInputError)} onClick={onWrap}>
                 {wrapInputError ??
