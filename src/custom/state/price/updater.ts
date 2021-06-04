@@ -115,7 +115,7 @@ export default function FeesUpdater(): null {
   // pass independent field as a reference to use against
   // any changes to determine if user has switched input fields
   // useful to force debounce value to refresh
-  const forceUpdateRef = independentField
+  const forceUpdateRef = !!rawTypedValue ? independentField : undefined
 
   const { setNewQuoteLoad, setRefreshQuoteLoad } = useQuoteDispatchers()
   // Debounce the typed value to not refetch the fee too often
