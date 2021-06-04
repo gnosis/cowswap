@@ -125,7 +125,7 @@ export default function Swap({
   } = useDerivedSwapInfo()
 
   // detects trade load
-  const { isGettingNewQuote, isRefreshingQuote } = useGetQuoteAndStatus({ token: INPUT.currencyId, chainId })
+  const { quote, isGettingNewQuote, isRefreshingQuote } = useGetQuoteAndStatus({ token: INPUT.currencyId, chainId })
 
   // Log all trade information
   logTradeDetails(v2Trade, allowedSlippage)
@@ -238,7 +238,13 @@ export default function Swap({
   const userHasSpecifiedInputOutput = Boolean(
     currencies[Field.INPUT] && currencies[Field.OUTPUT] && parsedAmounts[independentField]?.greaterThan(JSBI.BigInt(0))
   )
-  const noValidSwap = !trade && !quoteLoading && !quote
+
+  const quoteFetchActivity = isRefreshingQuote || isGettingNewQuote
+  // no trade by itself does not mean invalidSwap
+  // we could be in initial state w/no trade
+  // but if we dont have a trade AND nothing is loading AND there is no quote
+  // then we can confidently say we are in a no valid trade state, or "Insufficient Liquidity"
+  const noValidSwap = !trade && !quoteFetchActivity && !quote
   // const noRoute = !route
 
   // check whether the user has approved the router on the input token
@@ -586,9 +592,7 @@ export default function Swap({
                   }
                   // error={isValid && priceImpactSeverity > 2}
                 >
-                  <SwapButton isHardLoading={isGettingNewQuote} isSoftLoading={isRefreshingQuote}>
-                    Swap
-                  </SwapButton>
+                  <SwapButton isLoading={isGettingNewQuote}>Swap</SwapButton>
                   {/* <Text fontSize={16} fontWeight={500}>
                     {priceImpactSeverity > 3 && !isExpertMode
                       ? `Price Impact High`
@@ -597,15 +601,13 @@ export default function Swap({
                   </Text> */}
                 </ButtonError>
               </RowBetween>
+            ) : isFeeGreater ? (
+              <FeesExceedFromAmountMessage />
             ) : /* noRoute &&  */ userHasSpecifiedInputOutput && noValidSwap ? (
-              isFeeGreater ? (
-                <FeesExceedFromAmountMessage />
-              ) : (
-                <GreyCard style={{ textAlign: 'center' }}>
-                  <TYPE.main mb="4px">Insufficient liquidity for this trade.</TYPE.main>
-                  {singleHopOnly && <TYPE.main mb="4px">Try enabling multi-hop trades.</TYPE.main>}
-                </GreyCard>
-              )
+              <GreyCard style={{ textAlign: 'center' }}>
+                <TYPE.main mb="4px">Insufficient liquidity for this trade.</TYPE.main>
+                {singleHopOnly && <TYPE.main mb="4px">Try enabling multi-hop trades.</TYPE.main>}
+              </GreyCard>
             ) : (
               <ButtonError
                 buttonSize={ButtonSize.BIG}
@@ -626,9 +628,7 @@ export default function Swap({
                 disabled={!isValid /*|| (priceImpactSeverity > 3 && !isExpertMode) */ || !!swapCallbackError}
                 // error={isValid && priceImpactSeverity > 2 && !swapCallbackError}
               >
-                <SwapButton isHardLoading={isGettingNewQuote} isSoftLoading={isRefreshingQuote}>
-                  {swapInputError ? swapInputError : 'Swap'}
-                </SwapButton>
+                <SwapButton isLoading={isGettingNewQuote}>{swapInputError ? swapInputError : 'Swap'}</SwapButton>
                 {/* <Text fontSize={20} fontWeight={500}>
                   {swapInputError ? swapInputError : 'Swap'
                   // : priceImpactSeverity > 3 && !isExpertMode
