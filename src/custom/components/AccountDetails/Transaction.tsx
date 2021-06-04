@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { AlertCircle, CheckCircle, XCircle, Triangle } from 'react-feather'
 
 import { useActiveWeb3React } from 'hooks'
@@ -98,6 +98,11 @@ function CancellationModal(props: CancellationModalProps): JSX.Element | null {
   const cancelOrder = useCancelOrder()
 
   const toggleShowMore = () => setShowMore(showMore => !showMore)
+
+  useEffect(() => {
+    // Reset status every time orderId changes to avoid race conditions
+    setStatus('not started')
+  }, [orderId])
 
   const onClick = useCallback(() => {
     setStatus('waiting for wallet')
