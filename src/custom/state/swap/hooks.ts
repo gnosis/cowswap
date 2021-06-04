@@ -64,7 +64,7 @@ export function useDerivedSwapInfo(): DerivedSwapInfo {
   const isExactIn: boolean = independentField === Field.INPUT
   const parsedAmount = tryParseAmount(typedValue, (isExactIn ? inputCurrency : outputCurrency) ?? undefined)
 
-  const [quote] = useGetQuoteAndStatus({
+  const { quote } = useGetQuoteAndStatus({
     token: inputCurrencyId,
     chainId
   })
