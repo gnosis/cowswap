@@ -43,12 +43,20 @@ export const useIsQuoteLoading = () =>
     return state.price.loading
   })
 
-export const useGetQuoteAndStatus = (
-  params: Partial<ClearQuoteParams>
-): [QuoteInformationObject | undefined, boolean] => {
+interface UseGetQuoteAndStatus {
+  quote?: QuoteInformationObject
+  isGettingNewQuote: boolean
+  isRefreshingQuote: boolean
+}
+
+export const useGetQuoteAndStatus = (params: Partial<ClearQuoteParams>): UseGetQuoteAndStatus => {
   const quote = useQuote(params)
   const isLoading = useIsQuoteLoading()
-  return [quote, isLoading]
+
+  const isGettingNewQuote = Boolean(isLoading && !quote?.price.amount)
+  const isRefreshingQuote = Boolean(isLoading && quote?.price.amount)
+
+  return { quote, isGettingNewQuote, isRefreshingQuote }
 }
 
 export const useSetLoadingQuote = (): SetLoadPriceCallback => {

@@ -125,12 +125,7 @@ export default function Swap({
   } = useDerivedSwapInfo()
 
   // detects trade load
-  const [quote, quoteLoading] = useGetQuoteAndStatus({ token: INPUT.currencyId, chainId })
-
-  // major quote load indication (param change, token change etc)
-  // opposite could be just a simple timeout check
-  const isQuoteHardLoading = quoteLoading && !quote?.price.amount
-  const isQuoteSoftLoading = quoteLoading && !isQuoteHardLoading
+  const { isGettingNewQuote, isRefreshingQuote } = useGetQuoteAndStatus({ token: INPUT.currencyId, chainId })
 
   // Log all trade information
   logTradeDetails(v2Trade, allowedSlippage)
@@ -590,7 +585,7 @@ export default function Swap({
                   }
                   // error={isValid && priceImpactSeverity > 2}
                 >
-                  <SwapButton isHardLoading={isQuoteHardLoading} isSoftLoading={isQuoteSoftLoading}>
+                  <SwapButton isHardLoading={isGettingNewQuote} isSoftLoading={isRefreshingQuote}>
                     Swap
                   </SwapButton>
                   {/* <Text fontSize={16} fontWeight={500}>
@@ -601,7 +596,7 @@ export default function Swap({
                   </Text> */}
                 </ButtonError>
               </RowBetween>
-            ) : /* noRoute &&  */ !trade && !isQuoteHardLoading && userHasSpecifiedInputOutput ? (
+            ) : /* noRoute &&  */ !trade && !isGettingNewQuote && userHasSpecifiedInputOutput ? (
               isFeeGreater ? (
                 <FeesExceedFromAmountMessage />
               ) : (
@@ -630,7 +625,7 @@ export default function Swap({
                 disabled={!isValid /*|| (priceImpactSeverity > 3 && !isExpertMode) */ || !!swapCallbackError}
                 // error={isValid && priceImpactSeverity > 2 && !swapCallbackError}
               >
-                <SwapButton isHardLoading={isQuoteHardLoading} isSoftLoading={isQuoteSoftLoading}>
+                <SwapButton isHardLoading={isGettingNewQuote} isSoftLoading={isRefreshingQuote}>
                   {swapInputError ? swapInputError : 'Swap'}
                 </SwapButton>
                 {/* <Text fontSize={20} fontWeight={500}>
