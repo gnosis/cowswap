@@ -244,7 +244,7 @@ export default function Swap({
   // we could be in initial state w/no trade
   // but if we dont have a trade AND nothing is loading AND there is no quote
   // then we can confidently say we are in a no valid trade state, or "Insufficient Liquidity"
-  const noValidSwap = !trade && !quoteFetchActivity && !quote
+  const swapIsTrulyInvalid = !trade && !quoteFetchActivity && !quote
   // const noRoute = !route
 
   // check whether the user has approved the router on the input token
@@ -265,6 +265,10 @@ export default function Swap({
 
   // the callback to execute the swap
   const { callback: swapCallback, error: swapCallbackError } = useSwapCallback(trade, allowedSlippage, recipient)
+
+  // hacky check for some loading behaviour not related to quote loading
+  // TODO: these flaky,brittle conditionals should be
+  const showLoader = isGettingNewQuote || (userHasSpecifiedInputOutput && !!swapCallbackError && !swapIsTrulyInvalid)
 
   // const { priceImpactWithoutFee } = computeTradePriceBreakdown(trade)
 
@@ -592,7 +596,7 @@ export default function Swap({
                   }
                   // error={isValid && priceImpactSeverity > 2}
                 >
-                  <SwapButton isLoading={isGettingNewQuote}>Swap</SwapButton>
+                  <SwapButton isLoading={showLoader}>Swap</SwapButton>
                   {/* <Text fontSize={16} fontWeight={500}>
                     {priceImpactSeverity > 3 && !isExpertMode
                       ? `Price Impact High`
@@ -603,7 +607,7 @@ export default function Swap({
               </RowBetween>
             ) : isFeeGreater ? (
               <FeesExceedFromAmountMessage />
-            ) : /* noRoute &&  */ userHasSpecifiedInputOutput && noValidSwap ? (
+            ) : /* noRoute &&  */ userHasSpecifiedInputOutput && swapIsTrulyInvalid ? (
               <GreyCard style={{ textAlign: 'center' }}>
                 <TYPE.main mb="4px">Insufficient liquidity for this trade.</TYPE.main>
                 {singleHopOnly && <TYPE.main mb="4px">Try enabling multi-hop trades.</TYPE.main>}
@@ -628,7 +632,8 @@ export default function Swap({
                 disabled={!isValid /*|| (priceImpactSeverity > 3 && !isExpertMode) */ || !!swapCallbackError}
                 // error={isValid && priceImpactSeverity > 2 && !swapCallbackError}
               >
-                <SwapButton isLoading={isGettingNewQuote}>{swapInputError ? swapInputError : 'Swap'}</SwapButton>
+                {/* there is swapCallbackError and swap isn't invalid */}
+                <SwapButton isLoading={showLoader}>{swapInputError ? swapInputError : 'Swap'}</SwapButton>
                 {/* <Text fontSize={20} fontWeight={500}>
                   {swapInputError ? swapInputError : 'Swap'
                   // : priceImpactSeverity > 3 && !isExpertMode
