@@ -14,10 +14,11 @@ export interface SetLoadingQuoteParams {
   loading: boolean
   // indicator of a necessary hard load
   // e.g param changes: user changes token, input amt, etc
-  quoteData?: Pick<QuoteInformationObject, 'sellToken' | 'chainId'>
+  quoteData: Pick<QuoteInformationObject, 'sellToken' | 'chainId'>
 }
 
-export const setLoadingQuote = createAction<SetLoadingQuoteParams>('price/setLoadingQuote')
+export const setNewQuoteLoad = createAction<SetLoadingQuoteParams>('price/setNewQuoteLoad')
+export const setRefreshQuoteLoad = createAction<Pick<SetLoadingQuoteParams, 'loading'>>('price/setRefreshQuoteLoad')
 export const updateQuote = createAction<UpdateQuoteParams>('price/updateQuote')
 export const clearQuote = createAction<ClearQuoteParams>('price/clearQuote')
 

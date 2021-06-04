@@ -7,12 +7,14 @@ import {
   clearQuote,
   UpdateQuoteParams,
   ClearQuoteParams,
-  setLoadingQuote,
-  SetLoadingQuoteParams
+  setNewQuoteLoad,
+  SetLoadingQuoteParams,
+  setRefreshQuoteLoad
 } from './actions'
 import { QuoteInformationObject, QuotesMap } from './reducer'
 
-type SetLoadPriceCallback = (quoteLoadingParams: SetLoadingQuoteParams) => void
+type GetNewQuoteCallback = (quoteLoadingParams: SetLoadingQuoteParams) => void
+type RefreshCurrentQuoteCallback = (quoteLoadingParams: Pick<SetLoadingQuoteParams, 'loading'>) => void
 type AddPriceCallback = (addFeeParams: UpdateQuoteParams) => void
 type ClearPriceCallback = (clearFeeParams: ClearQuoteParams) => void
 
@@ -59,11 +61,19 @@ export const useGetQuoteAndStatus = (params: Partial<ClearQuoteParams>): UseGetQ
   return { quote, isGettingNewQuote, isRefreshingQuote }
 }
 
-export const useSetLoadingQuote = (): SetLoadPriceCallback => {
+export const useSetNewQuoteLoad = (): GetNewQuoteCallback => {
   const dispatch = useDispatch<AppDispatch>()
-  return useCallback((quoteLoadingParams: SetLoadingQuoteParams) => dispatch(setLoadingQuote(quoteLoadingParams)), [
+  return useCallback((quoteLoadingParams: SetLoadingQuoteParams) => dispatch(setNewQuoteLoad(quoteLoadingParams)), [
     dispatch
   ])
+}
+
+export const useSetRefreshQuoteLoad = (): RefreshCurrentQuoteCallback => {
+  const dispatch = useDispatch<AppDispatch>()
+  return useCallback(
+    (quoteLoadingParams: Pick<SetLoadingQuoteParams, 'loading'>) => dispatch(setRefreshQuoteLoad(quoteLoadingParams)),
+    [dispatch]
+  )
 }
 
 export const useUpdateQuote = (): AddPriceCallback => {
@@ -77,11 +87,17 @@ export const useClearQuote = (): ClearPriceCallback => {
 }
 
 interface QuoteDispatchers {
-  setLoadingQuote: SetLoadPriceCallback
+  setNewQuoteLoad: GetNewQuoteCallback
+  setRefreshQuoteLoad: RefreshCurrentQuoteCallback
   updateQuote: AddPriceCallback
   clearQuote: ClearPriceCallback
 }
 
 export const useQuoteDispatchers = (): QuoteDispatchers => {
-  return { setLoadingQuote: useSetLoadingQuote(), updateQuote: useUpdateQuote(), clearQuote: useClearQuote() }
+  return {
+    setNewQuoteLoad: useSetNewQuoteLoad(),
+    setRefreshQuoteLoad: useSetRefreshQuoteLoad(),
+    updateQuote: useUpdateQuote(),
+    clearQuote: useClearQuote()
+  }
 }
