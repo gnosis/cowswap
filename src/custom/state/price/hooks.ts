@@ -63,7 +63,8 @@ export const useGetQuoteAndStatus = (params: Partial<ClearQuoteParams>): UseGetQ
   return { quote, isGettingNewQuote, isRefreshingQuote }
 }
 
-export function useIsQuoteSoftLoading() {
+// syntactic sugar for not needing to pass swapstate
+export function useIsQuoteRefreshing() {
   const { chainId } = useActiveWeb3React()
   const {
     INPUT: { currencyId }
