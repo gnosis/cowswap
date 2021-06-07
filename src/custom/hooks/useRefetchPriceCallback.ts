@@ -97,7 +97,13 @@ function _handleQuoteError({ quoteData, error, addUnsupportedToken, clearQuote, 
           dateAdded: Date.now()
         })
       }
-      case ApiErrorCodes.NotFound:
+      case ApiErrorCodes.NotFound: {
+        console.error(`${error.message}: ${error.description}!`)
+        return clearQuote({
+          token: quoteData.sellToken,
+          chainId: quoteData.chainId
+        })
+      }
       case ApiErrorCodes.FeeExceedsFrom: {
         console.error(`${error.message}: ${error.description}!`)
         return updateQuote({
