@@ -116,3 +116,8 @@ export function formatOrderId(orderId: string): string {
   // 0x is at index 0 of orderId, shorten. Else return id as is
   return has0x?.index === 0 ? shortenOrderId(orderId, 2, orderId.length) : orderId
 }
+
+// To properly handle PromiseSettleResult which returns and object
+export function checkPromiseStatus<T, E = undefined>(promiseResult: PromiseSettledResult<T>, nonFulfilledReturn: E) {
+  return promiseResult.status === 'fulfilled' ? promiseResult.value : nonFulfilledReturn
+}
