@@ -94,7 +94,7 @@ function CancellationModal(props: CancellationModalProps): JSX.Element | null {
   const { orderId, isOpen, onDismiss, summary } = props
   const shortId = shortenOrderId(orderId)
 
-  const [status, setStatus] = useState<'not started' | 'waiting for wallet'>('not started')
+  const [isWaitingSignature, setIsWaitingSignature] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [showMore, setShowMore] = useState(false)
   const cancelOrder = useCancelOrder()
@@ -103,13 +103,14 @@ function CancellationModal(props: CancellationModalProps): JSX.Element | null {
 
   useEffect(() => {
     // Reset status every time orderId changes to avoid race conditions
-    setStatus('not started')
+    setIsWaitingSignature(false)
     setError(null)
   }, [orderId])
 
   const onClick = useCallback(() => {
-    setStatus('waiting for wallet')
+    setIsWaitingSignature(true)
     setError(null)
+
     cancelOrder(orderId)
       .then(onDismiss)
       .catch(e => {
@@ -119,13 +120,13 @@ function CancellationModal(props: CancellationModalProps): JSX.Element | null {
 
   return (
     <Modal isOpen={isOpen} onDismiss={onDismiss}>
-      {status === 'waiting for wallet' ? (
+      {error !== null ? (
+        <TransactionErrorContent onDismiss={onDismiss} message={error || 'Failed to cancel order'} />
+      ) : isWaitingSignature ? (
         <ConfirmationPendingContent
           onDismiss={onDismiss}
           pendingText={`Soft cancelling order with id ${shortId}\n\n${summary}`}
         />
-      ) : error !== null ? (
-        <TransactionErrorContent onDismiss={onDismiss} message={error || 'Failed to cancel order'} />
       ) : (
         <>
           <ConfirmationModalContent
@@ -152,9 +153,7 @@ function CancellationModal(props: CancellationModalProps): JSX.Element | null {
                 )}
               </>
             )}
-            bottomContent={() =>
-              status === 'not started' && <ButtonPrimary onClick={onClick}>Cancel order</ButtonPrimary>
-            }
+            bottomContent={() => <ButtonPrimary onClick={onClick}>Cancel order</ButtonPrimary>}
           />
         </>
       )}
