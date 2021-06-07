@@ -135,7 +135,7 @@ function CancellationModal(props: CancellationModalProps): JSX.Element | null {
             topContent={() => (
               <>
                 <p>
-                  Are you sure you want to cancel the order <em>{shortId}</em>?
+                  Are you sure you want to cancel order <em>{shortId}</em>?
                 </p>
                 <p>{summary}</p>
                 <p>
