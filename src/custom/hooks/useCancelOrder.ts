@@ -12,7 +12,7 @@ export const useCancelOrder = () => {
         return
       }
       const signer = library.getSigner()
-      await sendOrderCancellation({ chainId, orderId, signer, account, cancelPendingOrder })
+      return sendOrderCancellation({ chainId, orderId, signer, account, cancelPendingOrder })
     },
     [account, cancelPendingOrder, chainId, library]
   )
