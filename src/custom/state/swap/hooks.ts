@@ -25,6 +25,7 @@ import { ParsedQs } from 'qs'
 import { DEFAULT_NETWORK_FOR_LISTS } from 'constants/lists'
 import { WETH_LOGO_URI, XDAI_LOGO_URI } from 'constants/index'
 import { WrappedTokenInfo } from '../lists/hooks'
+import { ApiErrorCodes } from 'utils/operator/error'
 
 export * from '@src/state/swap/hooks'
 
@@ -274,7 +275,7 @@ export function useIsFeeGreaterThanInput({
   if (!quote?.fee || !feeToken) return { isFeeGreater: false, fee: null }
 
   return {
-    isFeeGreater: quote.feeExceedsPrice,
+    isFeeGreater: quote.error === ApiErrorCodes.FeeExceedsFrom,
     fee: stringToCurrency(quote.fee.amount, feeToken)
   }
 }
