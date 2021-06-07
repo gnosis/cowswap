@@ -14,6 +14,7 @@ export enum ApiErrorCodes {
   InsufficientFee = 'InsufficientFee',
   UnsupportedToken = 'UnsupportedToken',
   WrongOwner = 'WrongOwner',
+  // NotFound = InsufficientLiquidity
   NotFound = 'NotFound',
   FeeExceedsFrom = 'FeeExceedsFrom'
 }
