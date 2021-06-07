@@ -4,6 +4,7 @@ import { updateQuote, clearQuote } from './actions'
 import { Writable } from 'custom/types'
 import { PrefillStateRequired } from '../orders/reducer'
 import { FeeQuoteParams } from 'utils/operator'
+import { ApiErrorCodes } from 'utils/operator/error'
 
 // API Doc: https://protocol-rinkeby.dev.gnosisdev.com/api
 
@@ -23,10 +24,10 @@ export interface PriceInformation {
 }
 
 export interface QuoteInformationObject extends FeeQuoteParams {
-  fee: FeeInformation
-  price: PriceInformation
+  fee?: FeeInformation
+  price?: PriceInformation
   lastCheck: number
-  feeExceedsPrice: boolean
+  error?: ApiErrorCodes
 }
 
 // Map token addresses to their last quote information
