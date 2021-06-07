@@ -153,7 +153,7 @@ function CancellationModal(props: CancellationModalProps): JSX.Element | null {
                 )}
               </>
             )}
-            bottomContent={() => <ButtonPrimary onClick={onClick}>Cancel order</ButtonPrimary>}
+            bottomContent={() => <ButtonPrimary onClick={onClick}>Request cancellation</ButtonPrimary>}
           />
         </>
       )}
