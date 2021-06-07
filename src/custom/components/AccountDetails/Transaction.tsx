@@ -94,8 +94,8 @@ function CancellationModal(props: CancellationModalProps): JSX.Element | null {
   const { orderId, isOpen, onDismiss, summary } = props
   const shortId = shortenOrderId(orderId)
 
-  const [status, setStatus] = useState<'not started' | 'waiting for wallet' | 'error'>('not started')
-  const [error, setError] = useState('')
+  const [status, setStatus] = useState<'not started' | 'waiting for wallet'>('not started')
+  const [error, setError] = useState<string | null>(null)
   const [showMore, setShowMore] = useState(false)
   const cancelOrder = useCancelOrder()
 
@@ -104,16 +104,16 @@ function CancellationModal(props: CancellationModalProps): JSX.Element | null {
   useEffect(() => {
     // Reset status every time orderId changes to avoid race conditions
     setStatus('not started')
+    setError(null)
   }, [orderId])
 
   const onClick = useCallback(() => {
     setStatus('waiting for wallet')
-    setError('')
+    setError(null)
     cancelOrder(orderId)
       .then(onDismiss)
       .catch(e => {
         setError(e.message)
-        setStatus('error')
       })
   }, [cancelOrder, onDismiss, orderId])
 
@@ -124,7 +124,7 @@ function CancellationModal(props: CancellationModalProps): JSX.Element | null {
           onDismiss={onDismiss}
           pendingText={`Soft cancelling order with id ${shortId}\n\n${summary}`}
         />
-      ) : status === 'error' ? (
+      ) : error !== null ? (
         <TransactionErrorContent onDismiss={onDismiss} message={error || 'Failed to cancel order'} />
       ) : (
         <>
