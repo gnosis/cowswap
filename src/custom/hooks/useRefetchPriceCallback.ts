@@ -97,18 +97,20 @@ function _handleQuoteError({ quoteData, error, addUnsupportedToken, clearQuote, 
           dateAdded: Date.now()
         })
       }
-      case ApiErrorCodes.NotFound: {
-        console.error(`${error.message}: ${error.description}!`)
-        return clearQuote({
-          token: quoteData.sellToken,
-          chainId: quoteData.chainId
-        })
-      }
       case ApiErrorCodes.FeeExceedsFrom: {
         console.error(`${error.message}: ${error.description}!`)
         return updateQuote({
           ...quoteData,
           error: error.type
+        })
+      }
+      // to be explicity tho it's the same as default
+      // we should clear quote if fee/price is invalid due to not found or no liquidity
+      case ApiErrorCodes.NotFound: {
+        console.error(`${error.message}: ${error.description}!`)
+        return clearQuote({
+          token: quoteData.sellToken,
+          chainId: quoteData.chainId
         })
       }
       default: {
