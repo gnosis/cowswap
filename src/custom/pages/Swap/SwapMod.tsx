@@ -1,4 +1,4 @@
-import { CurrencyAmount, JSBI, Token, Trade, TradeType } from '@uniswap/sdk'
+import { CurrencyAmount, /* JSBI, */ Token, Trade, TradeType } from '@uniswap/sdk'
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { ArrowDown } from 'react-feather'
 import ReactGA from 'react-ga'
@@ -60,6 +60,8 @@ import { SwapProps } from '.'
 import { useWalletInfo } from 'hooks/useWalletInfo'
 import { HashLink } from 'react-router-hash-link'
 import { logTradeDetails } from 'state/swap/utils'
+import { isInsufficientLiquidityError } from 'state/price/utils'
+import { useQuote } from 'state/price/hooks'
 
 export default function Swap({
   history,
@@ -121,6 +123,11 @@ export default function Swap({
     currencies,
     inputError: swapInputError
   } = useDerivedSwapInfo()
+
+  const quote = useQuote({
+    token: INPUT.currencyId,
+    chainId
+  })
 
   // Log all trade information
   logTradeDetails(v2Trade, allowedSlippage)
@@ -229,11 +236,11 @@ export default function Swap({
       : parsedAmounts[dependentField]?.toSignificant(DEFAULT_PRECISION) ?? ''
   }
 
-  const route = trade?.route
-  const userHasSpecifiedInputOutput = Boolean(
-    currencies[Field.INPUT] && currencies[Field.OUTPUT] && parsedAmounts[independentField]?.greaterThan(JSBI.BigInt(0))
-  )
-  const noRoute = !route
+  // const route = trade?.route
+  // const userHasSpecifiedInputOutput = Boolean(
+  //   currencies[Field.INPUT] && currencies[Field.OUTPUT] && parsedAmounts[independentField]?.greaterThan(JSBI.BigInt(0))
+  // )
+  // const noRoute = !route
 
   // check whether the user has approved the router on the input token
   const [approval, approveCallback] = useApproveCallbackFromTrade(trade, allowedSlippage)
@@ -535,15 +542,14 @@ export default function Swap({
               </ButtonPrimary>
             ) : !swapInputError && isNativeIn ? (
               <SwitchToWethBtn wrappedToken={wrappedToken} />
-            ) : noRoute && userHasSpecifiedInputOutput ? (
-              isFeeGreater ? (
-                <FeesExceedFromAmountMessage />
-              ) : (
-                <GreyCard style={{ textAlign: 'center' }}>
-                  <TYPE.main mb="4px">Insufficient liquidity for this trade.</TYPE.main>
-                  {singleHopOnly && <TYPE.main mb="4px">Try enabling multi-hop trades.</TYPE.main>}
-                </GreyCard>
-              )
+            ) : isFeeGreater ? (
+              <FeesExceedFromAmountMessage />
+            ) : isInsufficientLiquidityError(quote?.error) ? (
+              // ) : noRoute && userHasSpecifiedInputOutput ? (
+              <GreyCard style={{ textAlign: 'center' }}>
+                <TYPE.main mb="4px">Insufficient liquidity for this trade.</TYPE.main>
+                {singleHopOnly && <TYPE.main mb="4px">Try enabling multi-hop trades.</TYPE.main>}
+              </GreyCard>
             ) : showApproveFlow ? (
               <RowBetween>
                 <ButtonConfirmed
@@ -624,7 +630,8 @@ export default function Swap({
                   // fontSize={20}
                   fontWeight={500}
                 >
-                  {swapInputError ? swapInputError : 'Swap'
+                  {/* TODO: replace with loader once merged */}
+                  {swapInputError ? swapInputError : trade ? 'Swap' : 'Loading...'
                   // : priceImpactSeverity > 3 && !isExpertMode
                   // ? `Price Impact Too High`
                   // : `Swap${priceImpactSeverity > 2 ? ' Anyway' : ''}`
