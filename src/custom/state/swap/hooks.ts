@@ -272,10 +272,12 @@ export function useIsFeeGreaterThanInput({
   const quote = useQuote({ chainId, token: address })
   const feeToken = useCurrency(address)
 
-  if (!quote?.fee || !feeToken) return { isFeeGreater: false, fee: null }
+  return useMemo(() => {
+    if (!quote || !feeToken) return { isFeeGreater: false, fee: null }
 
-  return {
-    isFeeGreater: quote.error === ApiErrorCodes.FeeExceedsFrom,
-    fee: stringToCurrency(quote.fee.amount, feeToken)
-  }
+    return {
+      isFeeGreater: quote.error === ApiErrorCodes.FeeExceedsFrom,
+      fee: quote.fee ? stringToCurrency(quote.fee.amount, feeToken) : null
+    }
+  }, [feeToken, quote])
 }
