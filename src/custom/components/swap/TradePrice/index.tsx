@@ -16,7 +16,7 @@ const TradePriceMod = styled(TradePriceModComponent)`
     overflow: hidden;
   }
 `
-
+const COW_LOADING_TIME = 4000
 const LoadingCowComponent = ({ showCow }: { showCow: boolean }) => (
   <>
     <AnimatedImg src={loadingCowGif} showLoader={showCow} title="Updating prices..." />
@@ -26,7 +26,7 @@ const LoadingCowComponent = ({ showCow }: { showCow: boolean }) => (
 
 export default function TradePrice(props: TradePriceProps) {
   const isRefreshingQuote = useIsQuoteRefreshing()
-  const showCow = useLoadingWithTimeout(isRefreshingQuote, 4000)
+  const showCow = useLoadingWithTimeout(isRefreshingQuote, COW_LOADING_TIME)
 
   return <TradePriceMod {...props} LoadingCow={<LoadingCowComponent showCow={showCow} />} />
 }
