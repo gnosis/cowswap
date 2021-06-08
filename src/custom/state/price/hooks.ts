@@ -2,11 +2,19 @@ import { useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { AppDispatch, AppState } from 'state'
-import { updateQuote, clearQuote, UpdateQuoteParams, ClearQuoteParams } from './actions'
+import {
+  updateQuote,
+  clearQuote,
+  UpdateQuoteParams,
+  ClearQuoteParams,
+  SetQuoteErrorParams,
+  setQuoteError
+} from './actions'
 import { QuoteInformationObject, QuotesMap } from './reducer'
 
 type AddPriceCallback = (addFeeParams: UpdateQuoteParams) => void
 type ClearPriceCallback = (clearFeeParams: ClearQuoteParams) => void
+type SetQuoteErrorCallback = (setQuoteErrorParams: SetQuoteErrorParams) => void
 
 export const useAllQuotes = ({
   chainId
@@ -38,4 +46,11 @@ export const useUpdateQuote = (): AddPriceCallback => {
 export const useClearQuote = (): ClearPriceCallback => {
   const dispatch = useDispatch<AppDispatch>()
   return useCallback((clearQuoteParams: ClearQuoteParams) => dispatch(clearQuote(clearQuoteParams)), [dispatch])
+}
+
+export const useSetQuoteError = (): SetQuoteErrorCallback => {
+  const dispatch = useDispatch<AppDispatch>()
+  return useCallback((setQuoteErrorParams: SetQuoteErrorParams) => dispatch(setQuoteError(setQuoteErrorParams)), [
+    dispatch
+  ])
 }
