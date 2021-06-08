@@ -28,6 +28,8 @@ export interface QuoteInformationObject extends FeeQuoteParams {
   price?: PriceInformation
   error?: ApiErrorCodes
   lastCheck: number
+  // TODO: remove
+  feeExceedsPrice: boolean
 }
 
 // Map token addresses to their last quote information
