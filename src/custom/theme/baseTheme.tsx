@@ -162,6 +162,11 @@ export function themeVariables(darkMode: boolean, colorsTheme: Colors) {
     wallet: {
       color: colorsTheme.text1,
       background: colorsTheme.bg1
+    },
+    cowGame: {
+      darkMode: css`
+        ${darkMode && 'filter: invert(1); mix-blend-mode: luminosity;'}
+      `
     }
   }
 }
