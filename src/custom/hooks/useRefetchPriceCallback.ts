@@ -19,8 +19,8 @@ export interface RefetchQuoteCallbackParmams {
   fetchFee: boolean
   previousFee?: FeeInformation
   handlers: {
-    handleSetLoadCb: Function
-    handleHideLoadCb: Function
+    handleSetLoadCb: () => void
+    handleHideLoadCb: () => void
   }
 }
 
