@@ -25,8 +25,6 @@ import { ButtonError, ButtonPrimary } from 'components/Button'
 import EthWethWrap, { Props as EthWethWrapProps } from 'components/swap/EthWethWrap'
 import { useReplaceSwapState, useSwapState } from 'state/swap/hooks'
 
-import loadingCow from 'assets/cow-swap/cow-load.gif'
-
 interface FeeGreaterMessageProp {
   fee: CurrencyAmount
 }
@@ -139,53 +137,19 @@ const fadeIn = `
 
 interface LoadingCowImgProps {
   maxWidth?: string
+  padding?: string
   showLoader: boolean
 }
 
-const LoadingCowImg = styled.img<LoadingCowImgProps>`
+export const AnimatedImg = styled.img<LoadingCowImgProps>`
+  position: absolute;
+  width: ${({ width = '30px' }) => width};
   max-width: ${({ maxWidth = '60px' }) => maxWidth};
-  opacity: ${({ showLoader }) => (showLoader ? 1 : 0)};
+  padding: ${({ padding = 0 }) => padding};
+  right: ${({ showLoader }) => (showLoader ? '30px' : '0px')};
 
-  transition: opacity 0.4s ease-in-out;
+  transition: right 0.3s ease-in-out;
 `
-
-type LoadingCowProps = {
-  isSoftLoading: boolean
-} & { maxWidth?: string; src: string }
-
-const LOADING_COW_TIMER = 4000
-
-function LoadingCow(props: LoadingCowProps) {
-  const { isSoftLoading, ...rest } = props
-  const [showCow, setShowCow] = useState(isSoftLoading)
-
-  useEffect(() => {
-    let timeout: NodeJS.Timeout | undefined
-    // price is being queried
-    if (isSoftLoading) {
-      // isn't currently showing cow or hasnt yet been updated here
-      // so we clear any running timeouts ready to clear local loading state
-      // and essentially reset them
-      clearTimeout(timeout as NodeJS.Timeout)
-      setShowCow(true)
-    } else {
-      // no longer loading
-      // reset timeout to clear local loading state after LOADING_COW_TIMER ms
-      if (showCow) {
-        timeout = setTimeout(() => {
-          clearTimeout(timeout as NodeJS.Timeout)
-          setShowCow(false)
-        }, LOADING_COW_TIMER)
-      }
-    }
-
-    return () => clearTimeout(timeout as NodeJS.Timeout)
-    // Disable exhaustive deps as this only needs to be aware of the softLoading prop
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isSoftLoading])
-
-  return <LoadingCowImg showLoader={showCow} {...rest} />
-}
 
 export interface SwapProps extends RouteComponentProps {
   FeeGreaterMessage: React.FC<FeeGreaterMessageProp>
@@ -195,7 +159,6 @@ export interface SwapProps extends RouteComponentProps {
   BottomGrouping: React.FC
   TradeLoading: React.FC<TradeLoadingProps>
   SwapButton: React.FC<SwapButtonProps>
-  // LoadingCow: typeof LoadingCow
   className?: string
 }
 
@@ -317,12 +280,12 @@ interface SwapButtonProps extends TradeLoadingProps {
   children: React.ReactNode
 }
 
-const SwapButton = ({ children, isHardLoading, isSoftLoading, showButton = false }: SwapButtonProps) =>
+const SwapButton = ({ children, isHardLoading, showButton = false }: SwapButtonProps) =>
   isHardLoading ? (
     <TradeLoading showButton={showButton} />
   ) : (
     <Text fontSize={16} fontWeight={500}>
-      {children} {<LoadingCow src={loadingCow} isSoftLoading={isSoftLoading} maxWidth="20px" />}
+      {children}
     </Text>
   )
 
@@ -336,7 +299,6 @@ export default function Swap(props: RouteComponentProps) {
       BottomGrouping={BottomGrouping}
       SwapButton={SwapButton}
       TradeLoading={TradeLoading}
-      // LoadingCow={LoadingCow}
       {...props}
     />
   )

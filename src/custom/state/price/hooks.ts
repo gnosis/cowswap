@@ -1,3 +1,5 @@
+import { useActiveWeb3React } from '@src/hooks'
+import { useSwapState } from '@src/state/swap/hooks'
 import { useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -59,6 +61,16 @@ export const useGetQuoteAndStatus = (params: Partial<ClearQuoteParams>): UseGetQ
   const isRefreshingQuote = Boolean(isLoading && quote?.price.amount)
 
   return { quote, isGettingNewQuote, isRefreshingQuote }
+}
+
+// syntactic sugar for not needing to pass swapstate
+export function useIsQuoteRefreshing() {
+  const { chainId } = useActiveWeb3React()
+  const {
+    INPUT: { currencyId }
+  } = useSwapState()
+  const { isRefreshingQuote } = useGetQuoteAndStatus({ token: currencyId, chainId })
+  return isRefreshingQuote
 }
 
 export const useSetNewQuoteLoading = (): GetNewQuoteCallback => {

@@ -18,7 +18,9 @@ export interface SetLoadingQuoteParams {
 }
 
 export const setNewQuoteLoading = createAction<SetLoadingQuoteParams>('price/setNewQuoteLoading')
-export const setRefreshQuoteLoading = createAction<Pick<SetLoadingQuoteParams, 'loading'>>('price/setRefreshQuoteLoading')
+export const setRefreshQuoteLoading = createAction<Pick<SetLoadingQuoteParams, 'loading'>>(
+  'price/setRefreshQuoteLoading'
+)
 export const updateQuote = createAction<UpdateQuoteParams>('price/updateQuote')
 export const clearQuote = createAction<ClearQuoteParams>('price/clearQuote')
 
