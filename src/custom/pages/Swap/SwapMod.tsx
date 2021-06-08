@@ -1,4 +1,4 @@
-import { CurrencyAmount, /* JSBI, */ Token, Trade, TradeType } from '@uniswap/sdk'
+import { CurrencyAmount, JSBI, Token, Trade, TradeType } from '@uniswap/sdk'
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { ArrowDown } from 'react-feather'
 import ReactGA from 'react-ga'
@@ -61,7 +61,7 @@ import { useWalletInfo } from 'hooks/useWalletInfo'
 import { HashLink } from 'react-router-hash-link'
 import { logTradeDetails } from 'state/swap/utils'
 import { isInsufficientLiquidityError } from 'state/price/utils'
-import { useQuote } from 'state/price/hooks'
+import { useGetQuoteAndStatus } from 'state/price/hooks'
 
 export default function Swap({
   history,
@@ -70,6 +70,8 @@ export default function Swap({
   SwitchToWethBtn,
   FeesExceedFromAmountMessage,
   BottomGrouping,
+  // TradeLoading,
+  SwapButton,
   className
 }: SwapProps) {
   const loadedUrlParams = useDefaultsFromURLSearch()
@@ -124,7 +126,7 @@ export default function Swap({
     inputError: swapInputError
   } = useDerivedSwapInfo()
 
-  const quote = useQuote({
+  const [quote, quoteLoading] = useGetQuoteAndStatus({
     token: INPUT.currencyId,
     chainId
   })
@@ -237,9 +239,9 @@ export default function Swap({
   }
 
   // const route = trade?.route
-  // const userHasSpecifiedInputOutput = Boolean(
-  //   currencies[Field.INPUT] && currencies[Field.OUTPUT] && parsedAmounts[independentField]?.greaterThan(JSBI.BigInt(0))
-  // )
+  const userHasSpecifiedInputOutput = Boolean(
+    currencies[Field.INPUT] && currencies[Field.OUTPUT] && parsedAmounts[independentField]?.greaterThan(JSBI.BigInt(0))
+  )
   // const noRoute = !route
 
   // check whether the user has approved the router on the input token
@@ -595,17 +597,24 @@ export default function Swap({
                   }
                   // error={isValid && priceImpactSeverity > 2}
                 >
-                  <Text
-                    // fontSize={16}
-                    fontWeight={500}
-                  >
-                    {/* {priceImpactSeverity > 3 && !isExpertMode
+                  <SwapButton isLoading={quoteLoading}>Swap</SwapButton>
+                  {/* <Text fontSize={16} fontWeight={500}>
+                    {priceImpactSeverity > 3 && !isExpertMode
                       ? `Price Impact High`
-                      : `Swap${priceImpactSeverity > 2 ? ' Anyway' : ''}`} */}
+                      : `Swap${priceImpactSeverity > 2 ? ' Anyway' : ''}`}
                     Swap
-                  </Text>
+                  </Text> */}
                 </ButtonError>
               </RowBetween>
+            ) : /* noRoute &&  */ !trade && !quoteLoading && userHasSpecifiedInputOutput ? (
+              isFeeGreater ? (
+                <FeesExceedFromAmountMessage />
+              ) : (
+                <GreyCard style={{ textAlign: 'center' }}>
+                  <TYPE.main mb="4px">Insufficient liquidity for this trade.</TYPE.main>
+                  {singleHopOnly && <TYPE.main mb="4px">Try enabling multi-hop trades.</TYPE.main>}
+                </GreyCard>
+              )
             ) : (
               <ButtonError
                 buttonSize={ButtonSize.BIG}
@@ -626,17 +635,14 @@ export default function Swap({
                 disabled={!isValid /*|| (priceImpactSeverity > 3 && !isExpertMode) */ || !!swapCallbackError}
                 // error={isValid && priceImpactSeverity > 2 && !swapCallbackError}
               >
-                <Text
-                  // fontSize={20}
-                  fontWeight={500}
-                >
-                  {/* TODO: replace with loader once merged */}
-                  {swapInputError ? swapInputError : trade ? 'Swap' : 'Loading...'
+                <SwapButton isLoading={quoteLoading}>{swapInputError ? swapInputError : 'Swap'}</SwapButton>
+                {/* <Text fontSize={20} fontWeight={500}>
+                  {swapInputError ? swapInputError : 'Swap'
                   // : priceImpactSeverity > 3 && !isExpertMode
                   // ? `Price Impact Too High`
                   // : `Swap${priceImpactSeverity > 2 ? ' Anyway' : ''}`
                   }
-                </Text>
+                </Text> */}
               </ButtonError>
             )}
             {showApproveFlow && (

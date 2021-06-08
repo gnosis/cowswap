@@ -12,6 +12,7 @@ export interface ClearQuoteParams {
 
 export type SetQuoteErrorParams = UpdateQuoteParams & { error: ApiErrorCodes }
 
+export const setLoadingQuote = createAction<boolean>('price/setLoadingQuote')
 export const updateQuote = createAction<UpdateQuoteParams>('price/updateQuote')
 export const clearQuote = createAction<ClearQuoteParams>('price/clearQuote')
 export const setQuoteError = createAction<SetQuoteErrorParams>('price/setQuoteError')
