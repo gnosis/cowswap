@@ -4,7 +4,7 @@ import { useSwapState, tryParseAmount } from 'state/swap/hooks'
 import useIsWindowVisible from 'hooks/useIsWindowVisible'
 import { Field } from 'state/swap/actions'
 import { useCurrency } from 'hooks/Tokens'
-import { useAllQuotes, useSetLoadingQuote } from './hooks'
+import { useAllQuotes, useQuoteDispatchers } from './hooks'
 import { useRefetchQuoteCallback } from 'hooks/useRefetchPriceCallback'
 import { FeeQuoteParams, UnsupportedToken } from 'utils/operator'
 import { QuoteInformationObject } from './reducer'
@@ -117,7 +117,7 @@ export default function FeesUpdater(): null {
   // useful to force debounce value to refresh
   const forceUpdateRef = independentField
 
-  const setLoadingQuote = useSetLoadingQuote()
+  const { setNewQuoteLoading, setRefreshQuoteLoading } = useQuoteDispatchers()
   // Debounce the typed value to not refetch the fee too often
   // Fee API calculation/call
   const typedValue = useDebounceWithForceUpdate(rawTypedValue, DEBOUNCE_TIME, forceUpdateRef)
@@ -158,27 +158,20 @@ export default function FeesUpdater(): null {
       const refetchPrice = !unsupportedToken && priceIsOld(quoteInfo)
 
       if (unsupportedNeedsCheck || refetchAll || refetchPrice) {
-        let quoteData: Pick<QuoteInformationObject, 'chainId' | 'sellToken'> | undefined = undefined
-        // did the trade parameters change? major update required
-        if (quoteInfo && !quoteUsingSameParameters(quoteParams, quoteInfo)) {
-          quoteData = { chainId, sellToken }
-        }
-
-        // here we can set the loading quote state differently
-        // if params changed we signal a major update has happened by passing quoteData
-        // which in state will wipe the price
-        setLoadingQuote({
-          loading: true,
-          quoteData
-        })
+        const shouldFetchNewQuote = quoteInfo && !quoteUsingSameParameters(quoteParams, quoteInfo)
 
         refetchQuote({
           quoteParams,
           fetchFee: refetchAll,
-          previousFee: quoteInfo?.fee
-        })
-          .catch(error => console.error('Error re-fetching the quote', error))
-          .finally(() => setLoadingQuote({ loading: false }))
+          previousFee: quoteInfo?.fee,
+          handlers: {
+            setLoadingCallback: () =>
+              shouldFetchNewQuote
+                ? setNewQuoteLoading({ loading: true, quoteData: { sellToken, chainId } })
+                : setRefreshQuoteLoading({ loading: true }),
+            hideLoadingCallback: () => setRefreshQuoteLoading({ loading: false })
+          }
+        }).catch(error => console.error('Error re-fetching the quote', error))
       }
     }
 
@@ -204,7 +197,8 @@ export default function FeesUpdater(): null {
     quoteInfo,
     refetchQuote,
     isUnsupportedTokenGp,
-    setLoadingQuote
+    setNewQuoteLoading,
+    setRefreshQuoteLoading
   ])
 
   return null

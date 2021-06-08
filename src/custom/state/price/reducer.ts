@@ -1,6 +1,6 @@
 import { createReducer, PayloadAction } from '@reduxjs/toolkit'
 import { ChainId } from '@uniswap/sdk'
-import { updateQuote, clearQuote, setLoadingQuote } from './actions'
+import { updateQuote, clearQuote, setNewQuoteLoading, setRefreshQuoteLoading } from './actions'
 import { Writable } from 'custom/types'
 import { PrefillStateRequired } from '../orders/reducer'
 import { FeeQuoteParams } from 'utils/operator'
@@ -55,20 +55,22 @@ function initializeState(
 
 export default createReducer(initialState, builder =>
   builder
-    .addCase(setLoadingQuote, (state, action) => {
+    .addCase(setNewQuoteLoading, (state, action) => {
       const { loading, quoteData } = action.payload
       state.loading = loading
       // we have quoteInfo - signals a hard load, set price to null
-      if (quoteData) {
-        const pseudoAction = { type: action.type, payload: quoteData }
-        // initialise state, if necessary
-        initializeState(state.quotes, pseudoAction)
-        // does our token exist in state?
-        const quotesState = state.quotes[quoteData.chainId][quoteData.sellToken]
-        if (quotesState) {
-          quotesState.price.amount = null
-        }
+      const pseudoAction = { type: action.type, payload: quoteData }
+      // initialise state, if necessary
+      initializeState(state.quotes, pseudoAction)
+      // does our token exist in state?
+      const quotesState = state.quotes[quoteData.chainId][quoteData.sellToken]
+      if (quotesState) {
+        quotesState.price.amount = null
       }
+    })
+    .addCase(setRefreshQuoteLoading, (state, action) => {
+      const { loading } = action.payload
+      state.loading = loading
     })
     .addCase(updateQuote, ({ quotes: state }, action) => {
       initializeState(state, action)
