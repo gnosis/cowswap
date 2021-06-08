@@ -117,7 +117,7 @@ export default function FeesUpdater(): null {
   // useful to force debounce value to refresh
   const forceUpdateRef = independentField
 
-  const { setNewQuoteLoad, setRefreshQuoteLoad } = useQuoteDispatchers()
+  const { setNewQuoteLoading, setRefreshQuoteLoading } = useQuoteDispatchers()
   // Debounce the typed value to not refetch the fee too often
   // Fee API calculation/call
   const typedValue = useDebounceWithForceUpdate(rawTypedValue, DEBOUNCE_TIME, forceUpdateRef)
@@ -165,11 +165,11 @@ export default function FeesUpdater(): null {
           fetchFee: refetchAll,
           previousFee: quoteInfo?.fee,
           handlers: {
-            handleSetLoadCb: () =>
+            setLoadingCallback: () =>
               shouldFetchNewQuote
-                ? setNewQuoteLoad({ loading: true, quoteData: { sellToken, chainId } })
-                : setRefreshQuoteLoad({ loading: true }),
-            handleHideLoadCb: () => setRefreshQuoteLoad({ loading: false })
+                ? setNewQuoteLoading({ loading: true, quoteData: { sellToken, chainId } })
+                : setRefreshQuoteLoading({ loading: true }),
+            hideLoadingCallback: () => setRefreshQuoteLoading({ loading: false })
           }
         }).catch(error => console.error('Error re-fetching the quote', error))
       }
@@ -197,8 +197,8 @@ export default function FeesUpdater(): null {
     quoteInfo,
     refetchQuote,
     isUnsupportedTokenGp,
-    setNewQuoteLoad,
-    setRefreshQuoteLoad
+    setNewQuoteLoading,
+    setRefreshQuoteLoading
   ])
 
   return null

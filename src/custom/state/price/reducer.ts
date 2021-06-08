@@ -1,6 +1,6 @@
 import { createReducer, PayloadAction } from '@reduxjs/toolkit'
 import { ChainId } from '@uniswap/sdk'
-import { updateQuote, clearQuote, setNewQuoteLoad, setRefreshQuoteLoad } from './actions'
+import { updateQuote, clearQuote, setNewQuoteLoading, setRefreshQuoteLoading } from './actions'
 import { Writable } from 'custom/types'
 import { PrefillStateRequired } from '../orders/reducer'
 import { FeeQuoteParams } from 'utils/operator'
@@ -55,7 +55,7 @@ function initializeState(
 
 export default createReducer(initialState, builder =>
   builder
-    .addCase(setNewQuoteLoad, (state, action) => {
+    .addCase(setNewQuoteLoading, (state, action) => {
       const { loading, quoteData } = action.payload
       state.loading = loading
       // we have quoteInfo - signals a hard load, set price to null
@@ -68,7 +68,7 @@ export default createReducer(initialState, builder =>
         quotesState.price.amount = null
       }
     })
-    .addCase(setRefreshQuoteLoad, (state, action) => {
+    .addCase(setRefreshQuoteLoading, (state, action) => {
       const { loading } = action.payload
       state.loading = loading
     })

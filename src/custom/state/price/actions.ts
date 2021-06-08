@@ -17,8 +17,8 @@ export interface SetLoadingQuoteParams {
   quoteData: Pick<QuoteInformationObject, 'sellToken' | 'chainId'>
 }
 
-export const setNewQuoteLoad = createAction<SetLoadingQuoteParams>('price/setNewQuoteLoad')
-export const setRefreshQuoteLoad = createAction<Pick<SetLoadingQuoteParams, 'loading'>>('price/setRefreshQuoteLoad')
+export const setNewQuoteLoading = createAction<SetLoadingQuoteParams>('price/setNewQuoteLoading')
+export const setRefreshQuoteLoading = createAction<Pick<SetLoadingQuoteParams, 'loading'>>('price/setRefreshQuoteLoading')
 export const updateQuote = createAction<UpdateQuoteParams>('price/updateQuote')
 export const clearQuote = createAction<ClearQuoteParams>('price/clearQuote')
 

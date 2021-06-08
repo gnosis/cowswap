@@ -7,9 +7,9 @@ import {
   clearQuote,
   UpdateQuoteParams,
   ClearQuoteParams,
-  setNewQuoteLoad,
+  setNewQuoteLoading,
   SetLoadingQuoteParams,
-  setRefreshQuoteLoad
+  setRefreshQuoteLoading
 } from './actions'
 import { QuoteInformationObject, QuotesMap } from './reducer'
 
@@ -61,17 +61,18 @@ export const useGetQuoteAndStatus = (params: Partial<ClearQuoteParams>): UseGetQ
   return { quote, isGettingNewQuote, isRefreshingQuote }
 }
 
-export const useSetNewQuoteLoad = (): GetNewQuoteCallback => {
+export const useSetNewQuoteLoading = (): GetNewQuoteCallback => {
   const dispatch = useDispatch<AppDispatch>()
-  return useCallback((quoteLoadingParams: SetLoadingQuoteParams) => dispatch(setNewQuoteLoad(quoteLoadingParams)), [
+  return useCallback((quoteLoadingParams: SetLoadingQuoteParams) => dispatch(setNewQuoteLoading(quoteLoadingParams)), [
     dispatch
   ])
 }
 
-export const useSetRefreshQuoteLoad = (): RefreshCurrentQuoteCallback => {
+export const useSetRefreshQuoteLoading = (): RefreshCurrentQuoteCallback => {
   const dispatch = useDispatch<AppDispatch>()
   return useCallback(
-    (quoteLoadingParams: Pick<SetLoadingQuoteParams, 'loading'>) => dispatch(setRefreshQuoteLoad(quoteLoadingParams)),
+    (quoteLoadingParams: Pick<SetLoadingQuoteParams, 'loading'>) =>
+      dispatch(setRefreshQuoteLoading(quoteLoadingParams)),
     [dispatch]
   )
 }
@@ -87,16 +88,16 @@ export const useClearQuote = (): ClearPriceCallback => {
 }
 
 interface QuoteDispatchers {
-  setNewQuoteLoad: GetNewQuoteCallback
-  setRefreshQuoteLoad: RefreshCurrentQuoteCallback
+  setNewQuoteLoading: GetNewQuoteCallback
+  setRefreshQuoteLoading: RefreshCurrentQuoteCallback
   updateQuote: AddPriceCallback
   clearQuote: ClearPriceCallback
 }
 
 export const useQuoteDispatchers = (): QuoteDispatchers => {
   return {
-    setNewQuoteLoad: useSetNewQuoteLoad(),
-    setRefreshQuoteLoad: useSetRefreshQuoteLoad(),
+    setNewQuoteLoading: useSetNewQuoteLoading(),
+    setRefreshQuoteLoading: useSetRefreshQuoteLoading(),
     updateQuote: useUpdateQuote(),
     clearQuote: useClearQuote()
   }
