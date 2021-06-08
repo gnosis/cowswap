@@ -17,7 +17,7 @@ export default function useLoadingWithTimeout(isLoading: boolean, time: number) 
       // reset timeout to clear local loading state after `time` ms
       if (delayedLoad) {
         timeout = setTimeout(() => {
-          clearTimeout(timeout as NodeJS.Timeout)
+          timeout && clearTimeout(timeout)
           setDelayedLoad(false)
         }, time)
       }
