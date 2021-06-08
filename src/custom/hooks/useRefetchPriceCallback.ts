@@ -13,6 +13,7 @@ import { AddGpUnsupportedTokenParams } from 'state/lists/actions'
 import OperatorError, { ApiErrorCodes } from 'utils/operator/error'
 import { onlyResolvesLast } from 'utils/async'
 import { ClearQuoteParams, SetQuoteErrorParams } from 'state/price/actions'
+import { getPromiseFulfilledValue, isPromiseFulfilled } from '../utils'
 
 export interface RefetchQuoteCallbackParmams {
   quoteParams: FeeQuoteParams
@@ -20,7 +21,7 @@ export interface RefetchQuoteCallbackParmams {
   previousFee?: FeeInformation
 }
 
-type QuoteResult = [PriceInformation, FeeInformation]
+type QuoteResult = [PromiseSettledResult<PriceInformation>, PromiseSettledResult<FeeInformation>]
 
 async function _getQuote({ quoteParams, fetchFee, previousFee }: RefetchQuoteCallbackParmams): Promise<QuoteResult> {
   const { sellToken, buyToken, amount, kind, chainId } = quoteParams
@@ -61,7 +62,10 @@ async function _getQuote({ quoteParams, fetchFee, previousFee }: RefetchQuoteCal
           })
         )
 
-  return Promise.all([pricePromise, feePromise])
+  // Promise.allSettled does NOT throw on 1 promise rejection
+  // instead it returns PromiseSettledResult - which we can decide to consume later
+  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/allSettled
+  return Promise.allSettled([pricePromise, feePromise])
 }
 
 // wrap _getQuote and only resolve once on several calls
@@ -72,7 +76,7 @@ function _isValidOperatorError(error: any): error is OperatorError {
 }
 
 interface HandleQuoteErrorParams {
-  quoteData: QuoteInformationObject
+  quoteData: QuoteInformationObject | FeeQuoteParams
   error: unknown
   addUnsupportedToken: (params: AddGpUnsupportedTokenParams) => void
   clearQuote: (params: ClearQuoteParams) => void
@@ -99,11 +103,14 @@ function _handleQuoteError({
           dateAdded: Date.now()
         })
       }
+      // Fee/Price query returns error
+      // e.g Insufficient Liquidity or Fee exceeds Price
       case ApiErrorCodes.FeeExceedsFrom:
       case ApiErrorCodes.NotFound: {
         console.error(`${error.message}: ${error.description}!`)
         return setQuoteError({
           ...quoteData,
+          lastCheck: Date.now(),
           error: error.type
         })
       }
@@ -137,7 +144,9 @@ export function useRefetchQuoteCallback() {
 
   return useCallback(
     async (params: RefetchQuoteCallbackParmams) => {
-      const { sellToken, buyToken, chainId } = params.quoteParams
+      let quoteData: FeeQuoteParams | QuoteInformationObject = params.quoteParams
+
+      const { sellToken, buyToken, chainId } = quoteData
       try {
         // Get the quote
         // price can be null if fee > price
@@ -148,6 +157,26 @@ export function useRefetchQuoteCallback() {
         }
 
         const [price, fee] = data as QuoteResult
+
+        // Promise.allSettled (L68) does NOT throw whole promise on first reject
+        // we don't want it to, we are waiting for FEE and PRICE, if only one fails, why throw both away?
+        // e.g FEE comes in OK, but Fee > Price, we throw an FEE_EXCEEDS_PRICE error but keep fee promise resolved value
+        // to save into state and use
+        quoteData = {
+          ...params.quoteParams,
+          fee: getPromiseFulfilledValue(fee, undefined),
+          price: getPromiseFulfilledValue(price, undefined),
+          lastCheck: Date.now()
+        }
+
+        // check the PromiseSettledValue/PromiseRejectedResult
+        // returned by Promise.allSettled
+        if (!isPromiseFulfilled(fee)) {
+          // fee error takes precedence
+          throw fee.reason
+        } else if (!isPromiseFulfilled(price)) {
+          throw price.reason
+        }
 
         const previouslyUnsupportedToken = isUnsupportedTokenGp(sellToken) || isUnsupportedTokenGp(buyToken)
         // can be a previously unsupported token which is now valid
@@ -162,18 +191,17 @@ export function useRefetchQuoteCallback() {
         }
 
         // Update quote
-        updateQuote({
-          ...params.quoteParams,
-          fee,
-          price,
-          lastCheck: Date.now()
-        })
+        updateQuote(quoteData)
       } catch (error) {
-        const quoteData = {
-          ...params.quoteParams,
-          lastCheck: Date.now()
-        }
-        _handleQuoteError({ error, quoteData, setQuoteError, clearQuote, addUnsupportedToken })
+        // handle any errors in quote fetch
+        // we re-use the quoteData object in scope to save values into state
+        _handleQuoteError({
+          error,
+          quoteData,
+          setQuoteError,
+          clearQuote,
+          addUnsupportedToken
+        })
       }
     },
     [isUnsupportedTokenGp, updateQuote, removeGpUnsupportedToken, setQuoteError, clearQuote, addUnsupportedToken]
