@@ -10,7 +10,7 @@ export default function useLoadingWithTimeout(isLoading: boolean, time: number) 
       // isn't currently showing cow or hasnt yet been updated here
       // so we clear any running timeouts ready to clear local loading state
       // and essentially reset them
-      clearTimeout(timeout as NodeJS.Timeout)
+      timeout && clearTimeout(timeout)
       setDelayedLoad(true)
     } else {
       // no longer loading
@@ -23,7 +23,7 @@ export default function useLoadingWithTimeout(isLoading: boolean, time: number) 
       }
     }
 
-    return () => clearTimeout(timeout as NodeJS.Timeout)
+    return () => timeout && clearTimeout(timeout)
     // Disable exhaustive deps as this only needs to be aware of the softLoading prop
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading])
