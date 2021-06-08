@@ -124,17 +124,6 @@ const SwapModWrapper = styled(SwapMod)`
   }
 `
 
-const fadeIn = `
-  @keyframes fadeIn {
-    0% {
-      opacity: 0;
-    }
-    100% {
-      opacity: 1;
-    }
-  }
-`
-
 interface LoadingCowImgProps {
   maxWidth?: string
   padding?: string
@@ -227,6 +216,17 @@ function FeesExceedFromAmountMessage() {
   )
 }
 
+const fadeIn = `
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+`
+
 const CenteredDots = styled(Dots)<{ smaller?: boolean }>`
   vertical-align: ${({ smaller = false }) => (smaller ? 'normal' : 'super')};
 `
@@ -276,7 +276,6 @@ const TradeLoading = ({ showButton = false }: TradeLoadingProps) => {
 
 interface SwapButtonProps extends TradeLoadingProps {
   isHardLoading: boolean
-  isSoftLoading: boolean
   children: React.ReactNode
 }
 

@@ -125,7 +125,7 @@ export default function Swap({
   } = useDerivedSwapInfo()
 
   // detects trade load
-  const { isGettingNewQuote, isRefreshingQuote } = useGetQuoteAndStatus({ token: INPUT.currencyId, chainId })
+  const { isGettingNewQuote } = useGetQuoteAndStatus({ token: INPUT.currencyId, chainId })
 
   // Log all trade information
   logTradeDetails(v2Trade, allowedSlippage)
@@ -585,9 +585,7 @@ export default function Swap({
                   }
                   // error={isValid && priceImpactSeverity > 2}
                 >
-                  <SwapButton isHardLoading={isGettingNewQuote} isSoftLoading={isRefreshingQuote}>
-                    Swap
-                  </SwapButton>
+                  <SwapButton isHardLoading={isGettingNewQuote}>Swap</SwapButton>
                   {/* <Text fontSize={16} fontWeight={500}>
                     {priceImpactSeverity > 3 && !isExpertMode
                       ? `Price Impact High`
@@ -625,9 +623,7 @@ export default function Swap({
                 disabled={!isValid /*|| (priceImpactSeverity > 3 && !isExpertMode) */ || !!swapCallbackError}
                 // error={isValid && priceImpactSeverity > 2 && !swapCallbackError}
               >
-                <SwapButton isHardLoading={isGettingNewQuote} isSoftLoading={isRefreshingQuote}>
-                  {swapInputError ? swapInputError : 'Swap'}
-                </SwapButton>
+                <SwapButton isHardLoading={isGettingNewQuote}>{swapInputError ? swapInputError : 'Swap'}</SwapButton>
                 {/* <Text fontSize={20} fontWeight={500}>
                   {swapInputError ? swapInputError : 'Swap'
                   // : priceImpactSeverity > 3 && !isExpertMode
