@@ -122,7 +122,7 @@ export async function sendSignedOrder(params: {
   // Handle response
   if (!response.ok) {
     // Raise an exception
-    const errorMessage = await OperatorError.getErrorForUnsuccessfulPostOrder(response)
+    const errorMessage = await OperatorError.getErrorForUnsuccessfulOperation(response, 'create')
     throw new Error(errorMessage)
   }
 
@@ -149,8 +149,9 @@ export async function sendSignedOrderCancellation(params: OrderCancellationParam
   })
 
   if (!response.ok) {
-    // TODO: map responses
-    throw new Error('failed to delete')
+    // Raise an exception
+    const errorMessage = await OperatorError.getErrorForUnsuccessfulOperation(response, 'delete')
+    throw new Error(errorMessage)
   }
 
   console.log('[utils:operator] Cancelled order', cancellation.orderUid, chainId)
