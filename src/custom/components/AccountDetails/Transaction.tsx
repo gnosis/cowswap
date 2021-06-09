@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { AlertCircle, CheckCircle, XCircle, Triangle } from 'react-feather'
+import { HashLink } from 'react-router-hash-link'
 
 import { useActiveWeb3React } from 'hooks'
 import { getEtherscanLink, shortenOrderId } from 'utils'
@@ -120,10 +121,9 @@ function RequestCancellationModal(props: RequestCancellationModalProps): JSX.Ele
           </p>
           {showMore && (
             <>
-              <p>It will be taken into account in a best effort basis.</p>
               <p>
                 This means that a solver might already have included the order in a solution even if this cancellation
-                is successful.
+                is successful. Read more in the <HashLink to="/faq#can-i-cancel-an-order">FAQ</HashLink>.
               </p>
             </>
           )}
