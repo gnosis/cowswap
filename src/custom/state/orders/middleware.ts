@@ -4,7 +4,7 @@ import { addPopup } from 'state/application/actions'
 import { AppState } from 'state'
 import * as OrderActions from './actions'
 
-import { OrderIDWithPopup, OrderTxTypes, PopupPayload, setPopupData } from './helpers'
+import { OrderIDWithPopup, OrderTxTypes, PopupPayload, buildCancellationPopupSummary, setPopupData } from './helpers'
 
 // action syntactic sugar
 const isSingleOrderChangeAction = isAnyOf(
@@ -61,10 +61,8 @@ export const popupMiddleware: Middleware<{}, AppState> = store => next => action
       // Cancelled Order Popup
       popup = setPopupData(OrderTxTypes.METATXN, {
         success: true,
-        summary,
-        id,
-        status: OrderActions.OrderStatus.CANCELLED,
-        descriptor: 'was cancelled'
+        summary: buildCancellationPopupSummary(id, summary),
+        id
       })
     } else {
       // action is order/expireOrder
