@@ -1,9 +1,11 @@
 import React from 'react'
+import styled from 'styled-components'
 
-import { formatOrderId } from 'utils'
+import { formatOrderId, shortenOrderId } from 'utils'
 import { OrderID } from 'utils/operator'
 import { addPopup } from 'state/application/actions'
 import { OrderStatus } from './actions'
+import { CancellationSummary } from 'components/AccountDetails/Transaction'
 
 type OrderStatusExtended = OrderStatus | 'submitted'
 
@@ -55,17 +57,27 @@ function setOrderSummary({ id, summary, status, descriptor }: SetOrderSummaryPar
     : summary
 }
 
+const Wrapper = styled.div`
+  & > p:first-child {
+    margin-top: 0;
+  }
+
+  & > p:last-chid {
+    margin-bottom: 0;
+  }
+`
+
 export function buildCancellationPopupSummary(id: string, summary: string | undefined): JSX.Element {
   // TODO: style this!
   // TODO: this probably shouldn't be here anyway :shrug:
   return (
-    <div>
+    <Wrapper>
       <p>The order has been cancelled</p>
       <p>
-        Order <em>{id.slice(0, 8)}</em>:
+        Order <strong>{shortenOrderId(id)}</strong>:
       </p>
-      <p style={{ color: 'grey' }}>{summary}</p>
-    </div>
+      <CancellationSummary as="p">{summary}</CancellationSummary>
+    </Wrapper>
   )
 }
 
