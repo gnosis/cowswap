@@ -176,7 +176,7 @@ export default function Faq() {
           <h3 id="why-is-cowswap-a-meta-dex-aggregator">Why is CowSwap a Meta DEX aggregator?</h3>
           <p>
             Cowswap is built on top of the Gnosis protocol which matches trades via batch auctions on a variety of on-chain liquidity.
-            Trades can be settled via underlying on-chain AMMs directly or via DEX Aggregators, depending on which pool /path offers 
+            Trades can be settled via underlying on-chain AMMs directly or via DEX Aggregators, depending on which pool/path offers 
             the best price. It is thus essentially acting as a DexAggregator of the DexAggregators.  In addition to that, before 
             finding the best trading price for a trade from the available on-chain liquidity, Gnosis Protocol first checks if it 
             can find a coincidence of wants within the existing batch to offer an even better price than any pool can.
