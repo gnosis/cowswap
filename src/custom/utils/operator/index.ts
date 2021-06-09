@@ -122,7 +122,7 @@ export async function sendSignedOrder(params: {
   // Handle response
   if (!response.ok) {
     // Raise an exception
-    const errorMessage = await OperatorError.getErrorForUnsuccessfulOperation(response, 'create')
+    const errorMessage = await OperatorError.getErrorFromStatusCode(response, 'create')
     throw new Error(errorMessage)
   }
 
@@ -150,7 +150,7 @@ export async function sendSignedOrderCancellation(params: OrderCancellationParam
 
   if (!response.ok) {
     // Raise an exception
-    const errorMessage = await OperatorError.getErrorForUnsuccessfulOperation(response, 'delete')
+    const errorMessage = await OperatorError.getErrorFromStatusCode(response, 'delete')
     throw new Error(errorMessage)
   }
 
