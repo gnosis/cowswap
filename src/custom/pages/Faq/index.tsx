@@ -173,7 +173,7 @@ export default function Faq() {
             features while placing gas free trades.
           </p>
 
-          <h3 id="why-is-cowswap-a-meta-dex-aggregator">Why is CowSwap a Meta DEX aggregator?</h3>
+          <h3 id="why-is-cowswap-a-meta-dex-aggregator">What makes CowSwap a "Meta" DEX aggregator?</h3>
           <p>
             Cowswap is built on top of the Gnosis protocol which matches trades via batch auctions on a variety of on-chain liquidity.
             Trades can be settled via underlying on-chain AMMs directly or via DEX Aggregators, depending on which pool/path offers 
