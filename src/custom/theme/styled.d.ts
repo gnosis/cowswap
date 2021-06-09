@@ -132,8 +132,5 @@ declare module 'styled-components' {
       background?: string
       color?: string
     }
-    cowGame: {
-      darkMode: FlattenSimpleInterpolation
-    }
   }
 }

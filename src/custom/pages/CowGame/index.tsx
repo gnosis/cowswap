@@ -10,10 +10,7 @@ const Wrapper = styled(Page)`
   }
 
   ${Content} {
-    ${({ theme }) => theme.cowGame.darkMode};
-
     h1 {
-      color: ${({ theme }) => theme.text2};
       animation: blinker 0.6s cubic-bezier(1, 0, 0, 1) infinite alternate;
     }
   }
