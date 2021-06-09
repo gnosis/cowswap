@@ -83,6 +83,57 @@ const TransactionState = styled(OldTransactionState).attrs(
   ${(props): string | false => !!props.disableMouseActions && `pointer-events: none; cursor: none;`}
 `
 
+export const CancellationSummary = styled.span`
+  padding: 12px;
+  margin: 0;
+  border-radius: 6px;
+  background: ${({ theme }) => theme.bg4};
+`
+
+type RequestCancellationModalProps = {
+  onDismiss: () => void
+  onClick: () => void
+  summary?: string
+  shortId: string
+}
+
+function RequestCancellationModal(props: RequestCancellationModalProps): JSX.Element {
+  const { onDismiss, onClick, summary, shortId } = props
+
+  const [showMore, setShowMore] = useState(false)
+
+  const toggleShowMore = () => setShowMore(showMore => !showMore)
+
+  return (
+    <ConfirmationModalContent
+      title={`Cancel order ${shortId}`}
+      onDismiss={onDismiss}
+      topContent={() => (
+        <>
+          <p>
+            Are you sure you want to cancel order <strong>{shortId}</strong>?
+          </p>
+          <CancellationSummary>{summary}</CancellationSummary>
+          <p>
+            Keep in mind this is a soft cancellation{' '}
+            <LinkStyledButton onClick={toggleShowMore}>[{showMore ? '- less' : '+ more'}]</LinkStyledButton>
+          </p>
+          {showMore && (
+            <>
+              <p>It will be taken into account in a best effort basis.</p>
+              <p>
+                This means that a solver might already have included the order in a solution even if this cancellation
+                is successful.
+              </p>
+            </>
+          )}
+        </>
+      )}
+      bottomContent={() => <ButtonPrimary onClick={onClick}>Request cancellation</ButtonPrimary>}
+    />
+  )
+}
+
 type CancellationModalProps = {
   onDismiss: () => void
   isOpen: boolean
@@ -96,10 +147,7 @@ function CancellationModal(props: CancellationModalProps): JSX.Element | null {
 
   const [isWaitingSignature, setIsWaitingSignature] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [showMore, setShowMore] = useState(false)
   const cancelOrder = useCancelOrder()
-
-  const toggleShowMore = () => setShowMore(showMore => !showMore)
 
   useEffect(() => {
     // Reset status every time orderId changes to avoid race conditions
@@ -128,34 +176,7 @@ function CancellationModal(props: CancellationModalProps): JSX.Element | null {
           pendingText={`Soft cancelling order with id ${shortId}\n\n${summary}`}
         />
       ) : (
-        <>
-          <ConfirmationModalContent
-            title="Cancel order"
-            onDismiss={onDismiss}
-            topContent={() => (
-              <>
-                <p>
-                  Are you sure you want to cancel order <em>{shortId}</em>?
-                </p>
-                <p>{summary}</p>
-                <p>
-                  Keep in mind this is a soft cancellation{' '}
-                  <LinkStyledButton onClick={toggleShowMore}>[{showMore ? '- less' : '+ more'}]</LinkStyledButton>
-                </p>
-                {showMore && (
-                  <>
-                    <p>It will be taken into account in a best effort basis.</p>
-                    <p>
-                      This means that a solver might already have included the order in a solution even if this
-                      cancellation is successful.
-                    </p>
-                  </>
-                )}
-              </>
-            )}
-            bottomContent={() => <ButtonPrimary onClick={onClick}>Request cancellation</ButtonPrimary>}
-          />
-        </>
+        <RequestCancellationModal onDismiss={onDismiss} onClick={onClick} summary={summary} shortId={shortId} />
       )}
     </Modal>
   )
