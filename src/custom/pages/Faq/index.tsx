@@ -178,8 +178,7 @@ export default function Faq() {
             Cowswap is built on top of the Gnosis protocol which matches trades via batch auctions for a variety of on-chain liquidity sources.
             Trades can be settled via underlying on-chain AMMs directly or via DEX Aggregators, depending on which pool/path offers 
             the best price. It is thus essentially acting as a DexAggregator of the DexAggregators.  In addition to that, before 
-            finding the best trading price for a trade from the available on-chain liquidity, Gnosis Protocol first checks if it 
-            can find a coincidence of wants within the existing batch to offer an even better price than any pool can.
+            finding the best price for a trade from available on-chain liquidity, Gnosis Protocol first seeks a coincidence of wants within the existing batch to offer an even better price than any pool can.
           </p>          
           
           <h3 id="what-is-mev-and-how-much-mev-has-been-extracted-from-users-to-date">
