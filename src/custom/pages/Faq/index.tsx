@@ -590,7 +590,7 @@ export default function Faq() {
           </p>
 
           <h3 id="why-does-the-ui-dapp-have-a-warning-fees-exceed-from-amount">
-            Why does the UI dapp have a warning ”Fees exceed From amount”?
+            Why does the UI dapp have a warning &ldquo;Fees exceed From amount&rdquo;?
           </h3>
 
           <p>
