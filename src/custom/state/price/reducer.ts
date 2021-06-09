@@ -1,9 +1,10 @@
 import { createReducer, PayloadAction } from '@reduxjs/toolkit'
 import { ChainId } from '@uniswap/sdk'
-import { updateQuote, clearQuote, setNewQuoteLoading, setRefreshQuoteLoading } from './actions'
+import { updateQuote, clearQuote, setQuoteError, setNewQuoteLoading, setRefreshQuoteLoading } from './actions'
 import { Writable } from 'custom/types'
 import { PrefillStateRequired } from '../orders/reducer'
 import { FeeQuoteParams } from 'utils/operator'
+import { ApiErrorCodes } from 'utils/operator/error'
 
 // API Doc: https://protocol-rinkeby.dev.gnosisdev.com/api
 
@@ -23,10 +24,10 @@ export interface PriceInformation {
 }
 
 export interface QuoteInformationObject extends FeeQuoteParams {
-  fee: FeeInformation
-  price: PriceInformation
+  fee?: FeeInformation
+  price?: PriceInformation
+  error?: ApiErrorCodes
   lastCheck: number
-  feeExceedsPrice: boolean
 }
 
 // Map token addresses to their last quote information
@@ -64,7 +65,7 @@ export default createReducer(initialState, builder =>
       initializeState(state.quotes, pseudoAction)
       // does our token exist in state?
       const quotesState = state.quotes[quoteData.chainId][quoteData.sellToken]
-      if (quotesState) {
+      if (quotesState?.price) {
         quotesState.price.amount = null
       }
     })
@@ -72,6 +73,12 @@ export default createReducer(initialState, builder =>
       const { loading } = action.payload
       state.loading = loading
     })
+    .addCase(setQuoteError, ({ quotes: state }, action) => {
+      initializeState(state, action)
+      const { sellToken, chainId } = action.payload
+      state[chainId][sellToken] = action.payload
+    })
+
     .addCase(updateQuote, ({ quotes: state }, action) => {
       initializeState(state, action)
       const { sellToken, chainId } = action.payload

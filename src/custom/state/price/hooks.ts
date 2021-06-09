@@ -11,7 +11,9 @@ import {
   ClearQuoteParams,
   setNewQuoteLoading,
   SetLoadingQuoteParams,
-  setRefreshQuoteLoading
+  setRefreshQuoteLoading,
+  SetQuoteErrorParams,
+  setQuoteError
 } from './actions'
 import { QuoteInformationObject, QuotesMap } from './reducer'
 
@@ -19,6 +21,7 @@ type GetNewQuoteCallback = (quoteLoadingParams: SetLoadingQuoteParams) => void
 type RefreshCurrentQuoteCallback = (quoteLoadingParams: Pick<SetLoadingQuoteParams, 'loading'>) => void
 type AddPriceCallback = (addFeeParams: UpdateQuoteParams) => void
 type ClearPriceCallback = (clearFeeParams: ClearQuoteParams) => void
+type SetQuoteErrorCallback = (setQuoteErrorParams: SetQuoteErrorParams) => void
 
 export const useAllQuotes = ({
   chainId
@@ -57,8 +60,8 @@ export const useGetQuoteAndStatus = (params: Partial<ClearQuoteParams>): UseGetQ
   const quote = useQuote(params)
   const isLoading = useIsQuoteLoading()
 
-  const isGettingNewQuote = Boolean(isLoading && !quote?.price.amount)
-  const isRefreshingQuote = Boolean(isLoading && quote?.price.amount)
+  const isGettingNewQuote = Boolean(isLoading && !quote?.price?.amount)
+  const isRefreshingQuote = Boolean(isLoading && quote?.price?.amount)
 
   return { quote, isGettingNewQuote, isRefreshingQuote }
 }
@@ -99,11 +102,19 @@ export const useClearQuote = (): ClearPriceCallback => {
   return useCallback((clearQuoteParams: ClearQuoteParams) => dispatch(clearQuote(clearQuoteParams)), [dispatch])
 }
 
+export const useSetQuoteError = (): SetQuoteErrorCallback => {
+  const dispatch = useDispatch<AppDispatch>()
+  return useCallback((setQuoteErrorParams: SetQuoteErrorParams) => dispatch(setQuoteError(setQuoteErrorParams)), [
+    dispatch
+  ])
+}
+
 interface QuoteDispatchers {
   setNewQuoteLoading: GetNewQuoteCallback
   setRefreshQuoteLoading: RefreshCurrentQuoteCallback
   updateQuote: AddPriceCallback
   clearQuote: ClearPriceCallback
+  setQuoteError: SetQuoteErrorCallback
 }
 
 export const useQuoteDispatchers = (): QuoteDispatchers => {
@@ -111,6 +122,7 @@ export const useQuoteDispatchers = (): QuoteDispatchers => {
     setNewQuoteLoading: useSetNewQuoteLoading(),
     setRefreshQuoteLoading: useSetRefreshQuoteLoading(),
     updateQuote: useUpdateQuote(),
-    clearQuote: useClearQuote()
+    clearQuote: useClearQuote(),
+    setQuoteError: useSetQuoteError()
   }
 }
