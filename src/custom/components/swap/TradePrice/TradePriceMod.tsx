@@ -1,7 +1,7 @@
 import React from 'react'
 import { Price } from '@uniswap/sdk'
 import { useContext } from 'react'
-// import { Repeat } from 'react-feather'
+import { Repeat } from 'react-feather'
 import { Text } from 'rebass'
 import { ThemeContext } from 'styled-components'
 import { StyledBalanceMaxMini } from 'components/swap/styleds'
@@ -13,7 +13,6 @@ export interface TradePriceProps {
 }
 
 interface TradePriceModProps {
-  LoadingCow: JSX.Element
   className?: string
 }
 
@@ -21,7 +20,6 @@ export default function TradePrice({
   price,
   showInverted,
   setShowInverted,
-  LoadingCow,
   className
 }: TradePriceProps & TradePriceModProps) {
   const theme = useContext(ThemeContext)
@@ -44,8 +42,7 @@ export default function TradePrice({
         <>
           {formattedPrice ?? '-'} {label}
           <StyledBalanceMaxMini onClick={() => setShowInverted(!showInverted)}>
-            {LoadingCow}
-            {/* <Repeat size={14} /> */}
+            <Repeat size={14} />
           </StyledBalanceMaxMini>
         </>
       ) : (

@@ -71,6 +71,7 @@ export default function Swap({
   FeesExceedFromAmountMessage,
   BottomGrouping,
   SwapButton,
+  ArrowWrapperLoader,
   className
 }: SwapProps) {
   const loadedUrlParams = useDefaultsFromURLSearch()
@@ -427,7 +428,8 @@ export default function Swap({
                 justify={isExpertMode ? 'space-between' : 'center'}
                 // style={{ padding: '0 1rem' }}
               >
-                <ArrowWrapper clickable>
+                {/* <ArrowWrapper clickable> */}
+                <ArrowWrapperLoader>
                   <ArrowDown
                     size="16"
                     onClick={() => {
@@ -436,7 +438,8 @@ export default function Swap({
                     }}
                     color={currencies[Field.INPUT] && currencies[Field.OUTPUT] ? theme.primary1 : theme.text2}
                   />
-                </ArrowWrapper>
+                  {/* </ArrowWrapper> */}
+                </ArrowWrapperLoader>
                 {recipient === null && !showWrap && isExpertMode ? (
                   <LinkStyledButton id="add-recipient-button" onClick={() => onChangeRecipient('')}>
                     + Add a send (optional)
