@@ -19,9 +19,8 @@ import QuestionHelper from 'components/QuestionHelper'
 import { ButtonError, ButtonPrimary } from 'components/Button'
 import EthWethWrap, { Props as EthWethWrapProps } from 'components/swap/EthWethWrap'
 import { useReplaceSwapState, useSwapState } from 'state/swap/hooks'
-import { ArrowWrapperLoader } from './ArrowWrapperLoader'
-import useLoadingWithTimeout from 'hooks/useLoadingWithTimeout'
-import { useIsQuoteRefreshing } from 'state/price/hooks'
+import { ArrowWrapperLoader, ArrowWrapperProps, Wrapper as ArrowWrapper } from './ArrowWrapperLoader'
+
 interface FeeGreaterMessageProp {
   fee: CurrencyAmount
 }
@@ -80,12 +79,16 @@ const SwapModWrapper = styled(SwapMod)`
       color: ${({ theme }) => theme.text2};
     }
 
-    .expertMode ${ArrowWrapperLoader} {
+    .expertMode ${ArrowWrapper} {
       position: relative;
     }
 
     .expertMode ${AutoRow} {
       padding: 0 1rem;
+    }
+
+    ${AutoRow} {
+      z-index: 2;
     }
 
     ${AutoRow} svg > path {
@@ -101,7 +104,7 @@ export interface SwapProps extends RouteComponentProps {
   BottomGrouping: React.FC
   TradeLoading: React.FC<TradeLoadingProps>
   SwapButton: React.FC<SwapButtonProps>
-  ArrowWrapperLoader: React.FC<{ showLoader: boolean }>
+  ArrowWrapperLoader: React.FC<ArrowWrapperProps>
   className?: string
 }
 
@@ -243,10 +246,6 @@ const SwapButton = ({ children, showLoading, showButton = false }: SwapButtonPro
   )
 
 export default function Swap(props: RouteComponentProps) {
-  const COW_LOADING_TIME = 4000
-  const isRefreshingQuote = useIsQuoteRefreshing()
-  const showLoader = useLoadingWithTimeout(isRefreshingQuote, COW_LOADING_TIME)
-
   return (
     <SwapModWrapper
       FeeGreaterMessage={FeeGreaterMessage}
@@ -256,7 +255,7 @@ export default function Swap(props: RouteComponentProps) {
       BottomGrouping={BottomGrouping}
       SwapButton={SwapButton}
       TradeLoading={TradeLoading}
-      ArrowWrapperLoader={<ArrowWrapperLoader showLoader={showLoader} />}
+      ArrowWrapperLoader={ArrowWrapperLoader}
       {...props}
     />
   )

@@ -109,8 +109,8 @@ export function themeVariables(darkMode: boolean, colorsTheme: Colors) {
         color: darkMode ? colorsTheme.white : colorsTheme.black,
         colorHover: darkMode ? colorsTheme.white : colorsTheme.black,
         borderRadius: '9px',
-        width: '28px',
-        height: '28px',
+        width: '30px',
+        height: '30px',
         borderColor: darkMode ? colorsTheme.blueShade2 : colorsTheme.disabled,
         borderSize: `2px`
       }
