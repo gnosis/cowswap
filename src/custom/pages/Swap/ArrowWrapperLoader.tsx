@@ -12,18 +12,17 @@ export function ArrowWrapperLoader({ children }: ArrowWrapperProps) {
   const COW_LOADING_TIME = 4000
   const isRefreshingQuote = useIsQuoteRefreshing()
   const showLoader = useLoadingWithTimeout(isRefreshingQuote, COW_LOADING_TIME)
-  // const showLoader = true
+
   return (
     <Wrapper showLoader={showLoader}>
       {children}
-      {showLoader && <img src={loadingCowGif} alt="Loading prices..." />}
+      <div>{showLoader && <img src={loadingCowGif} alt="Loading prices..." />}</div>
     </Wrapper>
   )
 }
 
 export const Wrapper = styled.div<{ showLoader: boolean }>`
   position: absolute;
-  z-index: 2;
   background: ${({ theme }) => theme.swap.arrowDown.background};
   border-radius: ${({ theme }) => theme.swap.arrowDown.borderRadius};
   width: ${({ theme }) => theme.swap.arrowDown.width};
@@ -48,24 +47,37 @@ export const Wrapper = styled.div<{ showLoader: boolean }>`
   > svg {
     stroke: ${({ theme }) => theme.swap.arrowDown.color};
     backface-visibility: hidden;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 4px;
+    margin: 0;
+    position: absolute;
 
     ${({ showLoader }) =>
       showLoader
         ? css`
-            animation: slideout 1s linear 1;
+            height: 0;
+            width: 0;
           `
         : null}
   }
 
-  > img {
+  > div {
+    backface-visibility: hidden;
+    transform: rotateY(180deg);
+    background: ${({ theme }) => theme.swap.arrowDown.background};
+    border-radius: ${({ theme }) => theme.swap.arrowDown.borderRadius};
+    width: ${({ theme }) => theme.swap.arrowDown.width};
+    height: ${({ theme }) => theme.swap.arrowDown.height};
+  }
+
+  > div > img {
     height: 100%;
     width: 100%;
     object-fit: contain;
     padding: 2px 2px 0;
     object-position: bottom;
-    backface-visibility: hidden;
-    transform: rotateY(180deg);
-    ${({ showLoader }) => (showLoader ? css`` : null)}
   }
 
   ${({ showLoader }) =>
@@ -79,7 +91,6 @@ export const Wrapper = styled.div<{ showLoader: boolean }>`
           overflow: visible;
           padding: 0;
           border: transparent;
-          z-index: initial;
           transform: translateX(-100%) rotateY(-180deg);
 
           &::before,
@@ -100,7 +111,7 @@ export const Wrapper = styled.div<{ showLoader: boolean }>`
             background-size: 800%;
             width: calc(100% + 4px);
             height: calc(100% + 4px);
-            z-index: 2;
+            z-index: -1;
             animation: steam 7s linear infinite;
             border-radius: 11px;
           }
