@@ -99,20 +99,25 @@ function _fetchGet(chainId: ChainId, url: string) {
   })
 }
 
-export async function postSignedOrder(params: { chainId: ChainId; order: OrderCreation }): Promise<OrderID> {
-  const { chainId, order } = params
+export async function postSignedOrder(params: {
+  chainId: ChainId
+  order: OrderCreation
+  owner: string
+}): Promise<OrderID> {
+  const { chainId, order, owner } = params
   console.log('[utils:operator] Post signed order for network', chainId, order)
 
   // Call API
   const response = await _post(chainId, `/orders`, {
     ...order,
-    signingScheme: getSigningSchemeApiValue(order.signingScheme)
+    signingScheme: getSigningSchemeApiValue(order.signingScheme),
+    from: owner
   })
 
   // Handle response
   if (!response.ok) {
     // Raise an exception
-    const errorMessage = await OperatorError.getErrorForUnsuccessfulPostOrder(response)
+    const errorMessage = await OperatorError.getErrorFromStatusCode(response)
     throw new Error(errorMessage)
   }
 

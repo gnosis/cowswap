@@ -173,6 +173,14 @@ export default function Faq() {
             features while placing gas free trades.
           </p>
 
+          <h3 id="why-is-cowswap-a-meta-dex-aggregator">What makes CowSwap a "Meta" DEX aggregator?</h3>
+          <p>
+            Cowswap is built on top of the Gnosis protocol which matches trades via batch auctions for a variety of on-chain liquidity sources.
+            Trades can be settled via underlying on-chain AMMs directly or via DEX Aggregators, depending on which pool/path offers 
+            the best price. It is thus essentially acting as a DexAggregator of the DexAggregators.  In addition to that, before 
+            finding the best price for a trade from available on-chain liquidity, Gnosis Protocol first seeks a coincidence of wants within the existing batch to offer an even better price than any pool can.
+          </p>          
+          
           <h3 id="what-is-mev-and-how-much-mev-has-been-extracted-from-users-to-date">
             What is MEV and how much MEV has been extracted from users to date?
           </h3>
@@ -220,7 +228,7 @@ export default function Faq() {
           <p>
             CowSwap leverages batch auctions with uniform clearing prices for all trades in the same batch. Because of
             the uniform clearing price, there is no need for ordering the transactions within a single batch. Because
-            everyone receives the same price across assets it’s not possible for <em>any</em> value to be extracted by
+            everyone receives the same price across assets it’s not possible for <b>any</b> value to be extracted by
             placing transactions in a certain order. This prevents the primary strategy used in MEV.
           </p>
 
@@ -266,8 +274,16 @@ export default function Faq() {
           </p>
 
           <p>
-            The code has been carefully tested and peer-reviewed. Although this can be seen as a step forward in terms
-            of security, it&#39;s recommended to use the protocol at <strong>your own risk</strong>
+            The code has been carefully tested, peer-reviewed and fully{' '}
+            <a
+              href="https://github.com/gnosis/gp-v2-contracts/blob/main/audits/GnosisProtocolV2May2021.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              audited
+            </a>
+            . Although this can be seen as a step forward in terms of security, it&#39;s recommended to use the protocol
+            at <strong>your own risk</strong>.
           </p>
         </Content>
       </Page>
@@ -302,8 +318,8 @@ export default function Faq() {
             (although it is only exposed to the user as one fee). As a user, you are only signing a message to submit
             your trade and the underlying solver will end up submitting the transaction for you. Essentially you are
             paying this &quot;base cost to execute the trade&quot; aka &quot;gas costs&quot; with your sell token and
-            the cost is already included in your price estimation. The protocol is currently subsidizing 90% of the gas
-            cost, while the protocol fee is currently switched off.
+            the cost is already included in your price estimation. The protocol is currently subsidizing a portion of
+            the gas costs, while the protocol fee is currently switched off.
           </p>
           <p>
             <strong>
