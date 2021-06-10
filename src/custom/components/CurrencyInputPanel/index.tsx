@@ -1,7 +1,9 @@
 // import { darken } from 'polished'
 import React from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { darken } from 'polished'
+import useLoadingWithTimeout from 'hooks/useLoadingWithTimeout'
+import { useIsQuoteRefreshing } from 'state/price/hooks'
 
 import CurrencyInputPanelMod, {
   CurrencyInputPanelProps,
@@ -15,7 +17,7 @@ import { RowBetween } from 'components/Row'
 
 import { StyledLogo } from 'components/CurrencyLogo'
 
-export const Wrapper = styled.div<{ selected: boolean }>`
+export const Wrapper = styled.div<{ selected: boolean; showLoader: boolean }>`
   // CSS Override
 
   ${InputPanel} {
@@ -53,7 +55,43 @@ export const Wrapper = styled.div<{ selected: boolean }>`
       theme.currencyInput?.border ? theme.currencyInput?.border : `border: 1px solid ${theme.bg2}`};
   }
 
+  ${({ showLoader, theme }) =>
+    showLoader
+      ? css`
+          #swap-currency-output ${Container} {
+            position: relative;
+            display: inline-block;
+
+            overflow: hidden;
+            &::after {
+              position: absolute;
+              top: 0;
+              right: 0;
+              bottom: 0;
+              left: 0;
+              transform: translateX(-100%);
+              background-image: linear-gradient(
+                90deg,
+                rgba(255, 255, 255, 0) 0,
+                ${theme.shimmer1} 20%,
+                ${theme.shimmer2} 60%,
+                rgba(255, 255, 255, 0)
+              );
+              animation: shimmer 2s infinite;
+              content: '';
+            }
+
+            @keyframes shimmer {
+              100% {
+                transform: translateX(100%);
+              }
+            }
+          }
+        `
+      : null}
+
   ${CurrencySelectMod} {
+    z-index: 2;
     color: ${({ selected, theme }) =>
       selected ? theme.buttonCurrencySelect.colorSelected : theme.buttonCurrencySelect.color};
     transition: background-color 0.2s ease-in-out;
@@ -88,8 +126,10 @@ export const Wrapper = styled.div<{ selected: boolean }>`
 
 export function CurrencyInputPanel(props: CurrencyInputPanelProps) {
   const { currency } = props
+  const isRefreshingQuote = useIsQuoteRefreshing()
+  const showLoader = useLoadingWithTimeout(isRefreshingQuote, 4000)
   return (
-    <Wrapper selected={!!currency}>
+    <Wrapper selected={!!currency} showLoader={showLoader}>
       <CurrencyInputPanelMod {...props} />
     </Wrapper>
   )
