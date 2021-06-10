@@ -40,8 +40,6 @@ export const Wrapper = styled.div<{ showLoader: boolean }>`
   transition: transform 0.25s;
 
   &:hover {
-    transform: translateY(1px);
-
     > svg {
       stroke: ${({ theme }) => theme.swap.arrowDown.colorHover};
     }
