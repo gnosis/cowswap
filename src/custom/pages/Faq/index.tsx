@@ -585,7 +585,7 @@ export default function Faq() {
           <p>Yes! You can request to cancel any order while it is still pending.</p>
           <p>Keep in mind even though the request to cancel an order succeeds, the order might still be executed.</p>
           <p>
-            That is because when the offline order cancellation is received, a settlement may have already been
+            That is because when the offline order cancellation is received, a settlement solution may have already been
             prepared by one of the solvers and sent to the Ethereum network.
           </p>
 
