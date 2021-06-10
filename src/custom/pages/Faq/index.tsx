@@ -583,6 +583,7 @@ export default function Faq() {
           <h3 id="can-i-cancel-an-order">Can I cancel an order?</h3>
 
           <p>Yes! You can request to cancel any order while it is still pending.</p>
+          <p>Cancellations, like orders, are free and require no gas to be paid.</p>
           <p>Keep in mind even though the request to cancel an order succeeds, the order might still be executed.</p>
           <p>
             That is because when the offline order cancellation is received, a settlement solution may have already been
