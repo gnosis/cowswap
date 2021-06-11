@@ -19,7 +19,8 @@ import QuestionHelper from 'components/QuestionHelper'
 import { ButtonError, ButtonPrimary } from 'components/Button'
 import EthWethWrap, { Props as EthWethWrapProps } from 'components/swap/EthWethWrap'
 import { useReplaceSwapState, useSwapState } from 'state/swap/hooks'
-import { ArrowWrapperLoader, ArrowWrapperProps, Wrapper as ArrowWrapper } from './ArrowWrapperLoader'
+import { ArrowWrapperLoader, ArrowWrapperProps, Wrapper as ArrowWrapper } from 'components/ArrowWrapperLoader'
+import { LONG_LOAD_THRESHOLD } from 'constants/index'
 
 interface FeeGreaterMessageProp {
   fee: CurrencyAmount
@@ -193,8 +194,6 @@ const LongLoadText = styled.span`
 
   ${fadeIn}
 `
-
-const LONG_LOAD_THRESHOLD = 4000
 
 type TradeLoadingProps = {
   showButton?: boolean

@@ -16,6 +16,7 @@ import CurrencyInputPanelMod, {
 import { RowBetween } from 'components/Row'
 
 import { StyledLogo } from 'components/CurrencyLogo'
+import { LONG_LOAD_THRESHOLD } from 'constants/index'
 
 export const Wrapper = styled.div<{ selected: boolean; showLoader: boolean }>`
   // CSS Override
@@ -127,7 +128,7 @@ export const Wrapper = styled.div<{ selected: boolean; showLoader: boolean }>`
 export function CurrencyInputPanel(props: CurrencyInputPanelProps) {
   const { currency } = props
   const isRefreshingQuote = useIsQuoteRefreshing()
-  const showLoader = useLoadingWithTimeout(isRefreshingQuote, 4000)
+  const showLoader = useLoadingWithTimeout(isRefreshingQuote, LONG_LOAD_THRESHOLD)
   return (
     <Wrapper selected={!!currency} showLoader={showLoader}>
       <CurrencyInputPanelMod {...props} />

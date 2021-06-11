@@ -3,15 +3,15 @@ import styled, { css } from 'styled-components'
 import loadingCowGif from 'assets/cow-swap/cow-load.gif'
 import useLoadingWithTimeout from 'hooks/useLoadingWithTimeout'
 import { useIsQuoteRefreshing } from 'state/price/hooks'
+import { LONG_LOAD_THRESHOLD } from 'constants/index'
 
 export interface ArrowWrapperProps {
   children: React.ReactNode
 }
 
 export function ArrowWrapperLoader({ children }: ArrowWrapperProps) {
-  const COW_LOADING_TIME = 4000
   const isRefreshingQuote = useIsQuoteRefreshing()
-  const showLoader = useLoadingWithTimeout(isRefreshingQuote, COW_LOADING_TIME)
+  const showLoader = useLoadingWithTimeout(isRefreshingQuote, LONG_LOAD_THRESHOLD)
 
   return (
     <Wrapper showLoader={showLoader}>
@@ -23,15 +23,14 @@ export function ArrowWrapperLoader({ children }: ArrowWrapperProps) {
 
 export const Wrapper = styled.div<{ showLoader: boolean }>`
   position: absolute;
-  background: ${({ theme }) => theme.swap.arrowDown.background};
-  border-radius: ${({ theme }) => theme.swap.arrowDown.borderRadius};
-  width: ${({ theme }) => theme.swap.arrowDown.width};
-  height: ${({ theme }) => theme.swap.arrowDown.height};
   display: flex;
   align-items: center;
   justify-content: center;
+  background: ${({ theme }) => theme.swap.arrowDown.background};
+  width: ${({ theme }) => theme.swap.arrowDown.width};
+  height: ${({ theme }) => theme.swap.arrowDown.height};
   border: ${({ theme }) => `${theme.swap.arrowDown.borderSize} solid ${theme.swap.arrowDown.borderColor}`};
-  transition: transform 0.1s ease-in-out;
+  border-radius: ${({ theme }) => theme.swap.arrowDown.borderRadius};
   padding: 0;
   cursor: pointer;
   transform-style: preserve-3d;
