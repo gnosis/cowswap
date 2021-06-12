@@ -78,15 +78,14 @@ export const Wrapper = styled.div<{ showLoader: boolean }>`
   > div > img {
     height: 100%;
     width: 100%;
-    object-fit: contain;
     padding: 2px 2px 0;
+    object-fit: contain;
     object-position: bottom;
   }
 
   ${({ showLoader }) =>
     showLoader
       ? css`
-          cursor: initial;
           position: absolute;
           display: flex;
           align-items: center;
@@ -94,6 +93,7 @@ export const Wrapper = styled.div<{ showLoader: boolean }>`
           overflow: visible;
           padding: 0;
           border: transparent;
+          cursor: initial;
           transform: translateX(-100%) rotateY(-180deg);
 
           &::before,
