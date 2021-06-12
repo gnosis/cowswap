@@ -16,7 +16,11 @@ export function ArrowWrapperLoader({ children }: ArrowWrapperProps) {
   return (
     <Wrapper showLoader={showLoader}>
       {children}
-      <div>{showLoader && <img src={loadingCowGif} alt="Loading prices..." />}</div>
+      {showLoader && (
+        <div>
+          <img src={loadingCowGif} alt="Loading prices..." />
+        </div>
+      )}
     </Wrapper>
   )
 }
