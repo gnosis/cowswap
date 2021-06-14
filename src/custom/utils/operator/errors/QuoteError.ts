@@ -1,0 +1,66 @@
+export interface QuoteErrorObject {
+  errorType: QuoteErrorCodes
+  description: string
+}
+
+// Conforms to backend API
+// https://github.com/gnosis/gp-v2-services/blob/0bd5f7743bebaa5acd3be13e35ede2326a096f14/orderbook/openapi.yml#L562
+export enum QuoteErrorCodes {
+  InsufficientLiquidity = 'InsufficientLiquidity',
+  FeeExceedsFrom = 'FeeExceedsFrom'
+}
+
+export enum QuoteErrorDetails {
+  InsufficientLiquidity = 'Token pair selected has insufficient liquidity',
+  FeeExceedsFrom = 'Current fee exceeds input "from" amount.',
+  UNHANDLED_ERROR = 'An unknown error occurred while fetching the quote'
+}
+
+export default class QuoteError extends Error {
+  name = 'QuoteErrorObject'
+  type: QuoteErrorCodes
+  description: QuoteErrorObject['description']
+
+  // Status 400 errors
+  // https://github.com/gnosis/gp-v2-services/blob/9014ae55412a356e46343e051aefeb683cc69c41/orderbook/openapi.yml#L563
+  static quoteErrorDetails = QuoteErrorDetails
+
+  static async getErrorMessage(response: Response) {
+    try {
+      const orderPostError: QuoteErrorObject = await response.json()
+
+      if (orderPostError.errorType) {
+        return QuoteError.quoteErrorDetails[orderPostError.errorType]
+      } else {
+        console.error('Unknown reason for bad quote fetch', orderPostError)
+        return orderPostError.description
+      }
+    } catch (error) {
+      console.error('Error handling 400/404 error. Likely a problem deserialising the JSON response')
+      return QuoteError.quoteErrorDetails.UNHANDLED_ERROR
+    }
+  }
+
+  static async getErrorFromStatusCode(response: Response) {
+    switch (response.status) {
+      case 400:
+      case 404:
+        return this.getErrorMessage(response)
+
+      case 500:
+      default:
+        return 'Error fetching quote'
+    }
+  }
+  constructor(quoteError: QuoteErrorObject) {
+    super(quoteError.description)
+
+    this.type = quoteError.errorType
+    this.description = quoteError.description
+    this.message = QuoteError.quoteErrorDetails[quoteError.errorType]
+  }
+}
+
+export function _isValidQuoteError(error: any): error is QuoteError {
+  return error instanceof QuoteError
+}
