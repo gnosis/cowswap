@@ -4,7 +4,8 @@ import { APP_ID } from 'constants/index'
 import { registerOnWindow } from '../misc'
 import { isDev } from '../environments'
 import { FeeInformation, PriceInformation } from 'state/price/reducer'
-import OperatorError, { ApiError } from './error'
+import OperatorError, { ApiErrorObject } from 'utils/operator/errors/OperatorError'
+import QuoteError, { QuoteErrorObject } from 'utils/operator/errors/QuoteError'
 
 function getOperatorUrl(): Partial<Record<ChainId, string>> {
   if (isDev) {
@@ -153,8 +154,8 @@ function toApiAddress(address: string, chainId: ChainId): string {
 
   return address
 }
-
-async function _getJson(chainId: ChainId, url: string): Promise<any> {
+type RequestType = 'Order' | 'Quote'
+async function _getJson(chainId: ChainId, url: string, type: RequestType): Promise<any> {
   let response: Response | undefined
   let json
   try {
@@ -165,8 +166,16 @@ async function _getJson(chainId: ChainId, url: string): Promise<any> {
       throw new Error(`Error getting query @ ${url}`)
     } else if (!response.ok) {
       // is backend error handled at this point
-      const errorResponse: ApiError = json
-      throw new OperatorError(errorResponse)
+      let errorResponse: QuoteErrorObject | ApiErrorObject | undefined = undefined
+      let error: QuoteError | OperatorError
+      if (type === 'Order') {
+        errorResponse = json as ApiErrorObject
+        error = new OperatorError(errorResponse)
+      } else {
+        errorResponse = json as QuoteErrorObject
+        error = new QuoteError(errorResponse)
+      }
+      throw error
     } else {
       return json
     }
@@ -180,7 +189,8 @@ export async function getPriceQuote(params: PriceQuoteParams): Promise<PriceInfo
 
   return _getJson(
     chainId,
-    `/markets/${toApiAddress(checkedBaseToken, chainId)}-${toApiAddress(checkedQuoteToken, chainId)}/${kind}/${amount}`
+    `/markets/${toApiAddress(checkedBaseToken, chainId)}-${toApiAddress(checkedQuoteToken, chainId)}/${kind}/${amount}`,
+    'Quote'
   )
 }
 
@@ -194,13 +204,14 @@ export async function getFeeQuote(params: FeeQuoteParams): Promise<FeeInformatio
     `/fee?sellToken=${toApiAddress(checkedSellAddress, chainId)}&buyToken=${toApiAddress(
       checkedBuyAddress,
       chainId
-    )}&amount=${amount}&kind=${kind}`
+    )}&amount=${amount}&kind=${kind}`,
+    'Quote'
   )
 }
 
 export async function getOrder(chainId: ChainId, orderId: string): Promise<OrderMetaData | null> {
   console.log('[util:operator] Get order for ', chainId, orderId)
-  return _getJson(chainId, `/orders/${orderId}`)
+  return _getJson(chainId, `/orders/${orderId}`, 'Order')
 }
 
 // Register some globals for convenience
