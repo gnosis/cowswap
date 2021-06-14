@@ -85,7 +85,7 @@ function _handleQuoteError({
   quoteData,
   error,
   addUnsupportedToken,
-  clearQuote,
+  // clearQuote,
   setQuoteError
 }: HandleQuoteErrorParams) {
   if (isValidOperatorError(error) || isValidQuoteError(error)) {
@@ -114,14 +114,28 @@ function _handleQuoteError({
       }
       default: {
         // some other operator error occurred, log it
+        // and set price/fee to undefined
         console.error(error)
-        // Clear the quote
-        return clearQuote({ chainId: quoteData.chainId, token: quoteData.sellToken })
+        return setQuoteError({
+          ...quoteData,
+          fee: undefined,
+          price: undefined,
+          lastCheck: Date.now(),
+          error: QuoteErrorCodes.UNHANDLED_ERROR
+        })
       }
     }
   } else {
     // non-operator error log it
+    // and set price/fee to undefined
     console.error('An unknown error occurred:', error)
+    return setQuoteError({
+      ...quoteData,
+      fee: undefined,
+      price: undefined,
+      lastCheck: Date.now(),
+      error: QuoteErrorCodes.UNHANDLED_ERROR
+    })
   }
 }
 
@@ -135,7 +149,7 @@ export function useRefetchQuoteCallback() {
   const addUnsupportedToken = useAddGpUnsupportedToken()
   const removeGpUnsupportedToken = useRemoveGpUnsupportedToken()
 
-  registerOnWindow({ updateQuote, addUnsupportedToken, removeGpUnsupportedToken })
+  registerOnWindow({ updateQuote, clearQuote, setQuoteError, addUnsupportedToken, removeGpUnsupportedToken })
 
   return useCallback(
     async (params: RefetchQuoteCallbackParmams) => {
@@ -163,7 +177,7 @@ export function useRefetchQuoteCallback() {
           price: getPromiseFulfilledValue(price, undefined),
           lastCheck: Date.now()
         }
-
+        console.debug('setQuoteError quoteData', quoteData)
         // check the promise fulfilled values
         // handle if rejected
         if (!isPromiseFulfilled(fee)) {
