@@ -14,7 +14,8 @@ export enum ApiErrorCodes {
   InsufficientFee = 'InsufficientFee',
   UnsupportedToken = 'UnsupportedToken',
   WrongOwner = 'WrongOwner',
-  NotFound = 'NotFound'
+  NotFound = 'NotFound',
+  UNHANDLED_ERROR = 'UNHANDLED_ERROR'
 }
 
 export enum ApiErrorCodeDetails {
