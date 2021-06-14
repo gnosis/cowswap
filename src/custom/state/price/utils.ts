@@ -7,3 +7,7 @@ export function isFeeGreaterThanPriceError(error?: QuoteErrorCodes): boolean {
 export function isInsufficientLiquidityError(error?: QuoteErrorCodes): boolean {
   return error === QuoteErrorCodes.InsufficientLiquidity
 }
+
+export function isUnhandledQuoteError(error?: QuoteErrorCodes): boolean {
+  return error === QuoteErrorCodes.UNHANDLED_ERROR
+}
