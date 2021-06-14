@@ -1,6 +1,6 @@
 import { Token, TokenAmount, JSBI, Currency, CurrencyAmount, TradeType } from '@uniswap/sdk'
 import { QuoteInformationObject } from 'state/price/reducer'
-import { TradeGp, _constructTradePrice } from './TradeGp'
+import TradeGp, { _constructTradePrice } from './TradeGp'
 
 interface TradeParams {
   parsedAmount?: CurrencyAmount
