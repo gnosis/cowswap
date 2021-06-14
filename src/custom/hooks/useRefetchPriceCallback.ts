@@ -177,7 +177,6 @@ export function useRefetchQuoteCallback() {
           price: getPromiseFulfilledValue(price, undefined),
           lastCheck: Date.now()
         }
-        console.debug('setQuoteError quoteData', quoteData)
         // check the promise fulfilled values
         // handle if rejected
         if (!isPromiseFulfilled(fee)) {
