@@ -275,12 +275,12 @@ const TradeLoading = ({ showButton = false }: TradeLoadingProps) => {
 }
 
 interface SwapButtonProps extends TradeLoadingProps {
-  isHardLoading: boolean
+  showLoading: boolean
   children: React.ReactNode
 }
 
-const SwapButton = ({ children, isHardLoading, showButton = false }: SwapButtonProps) =>
-  isHardLoading ? (
+const SwapButton = ({ children, showLoading, showButton = false }: SwapButtonProps) =>
+  showLoading ? (
     <TradeLoading showButton={showButton} />
   ) : (
     <Text fontSize={16} fontWeight={500}>
