@@ -148,4 +148,3 @@ export default class TradeGp {
     return _maximumAmountIn(slippageTolerance, this)
   }
 }
-export {}
