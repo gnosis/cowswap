@@ -16,7 +16,7 @@ export enum QuoteErrorCodes {
 export enum QuoteErrorDetails {
   InsufficientLiquidity = 'Token pair selected has insufficient liquidity',
   FeeExceedsFrom = 'Current fee exceeds input "from" amount',
-  UNHANDLED_ERROR = 'An error occurred while fetching quote information'
+  UNHANDLED_ERROR = 'An error occurred while fetching the quote information'
 }
 
 export function mapOperatorErrorToQuoteError(errorType?: ApiErrorCodes): QuoteErrorObject {
