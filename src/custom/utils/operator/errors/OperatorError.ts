@@ -81,6 +81,6 @@ export default class OperatorError extends Error {
   }
 }
 
-export function _isValidOperatorError(error: any): error is OperatorError {
+export function isValidOperatorError(error: any): error is OperatorError {
   return error instanceof OperatorError
 }

@@ -13,8 +13,8 @@ import { AddGpUnsupportedTokenParams } from 'state/lists/actions'
 import { onlyResolvesLast } from 'utils/async'
 import { ClearQuoteParams, SetQuoteErrorParams } from 'state/price/actions'
 import { getPromiseFulfilledValue, isPromiseFulfilled } from 'utils/misc'
-import QuoteError, { QuoteErrorCodes, _isValidQuoteError } from 'utils/operator/errors/QuoteError'
-import { ApiErrorCodes, _isValidOperatorError } from 'utils/operator/errors/OperatorError'
+import QuoteError, { QuoteErrorCodes, isValidQuoteError } from 'utils/operator/errors/QuoteError'
+import { ApiErrorCodes, isValidOperatorError } from 'utils/operator/errors/OperatorError'
 
 export interface RefetchQuoteCallbackParmams {
   quoteParams: FeeQuoteParams
@@ -88,7 +88,7 @@ function _handleQuoteError({
   clearQuote,
   setQuoteError
 }: HandleQuoteErrorParams) {
-  if (_isValidOperatorError(error) || _isValidQuoteError(error)) {
+  if (isValidOperatorError(error) || isValidQuoteError(error)) {
     switch (error.type) {
       case ApiErrorCodes.UnsupportedToken: {
         // TODO: will change with introduction of data prop in error responses

@@ -73,6 +73,6 @@ export default class QuoteError extends Error {
   }
 }
 
-export function _isValidQuoteError(error: any): error is QuoteError {
+export function isValidQuoteError(error: any): error is QuoteError {
   return error instanceof QuoteError
 }
