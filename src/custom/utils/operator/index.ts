@@ -5,7 +5,7 @@ import { registerOnWindow } from '../misc'
 import { isDev } from '../environments'
 import { FeeInformation, PriceInformation } from 'state/price/reducer'
 import OperatorError, { ApiErrorObject } from 'utils/operator/errors/OperatorError'
-import QuoteError, { QuoteErrorObject } from 'utils/operator/errors/QuoteError'
+import QuoteError, { mapOperatorErrorToQuoteError } from 'utils/operator/errors/QuoteError'
 
 function getOperatorUrl(): Partial<Record<ChainId, string>> {
   if (isDev) {
@@ -162,18 +162,22 @@ async function _getJson(chainId: ChainId, url: string, type: RequestType): Promi
     response = await _fetchGet(chainId, url)
     json = await response.json()
   } finally {
+    const genericError = new Error(`Error getting query of type ${type} @ ${url}`)
     if (!response || !json) {
-      throw new Error(`Error getting query @ ${url}`)
+      throw genericError
     } else if (!response.ok) {
       // is backend error handled at this point
-      let errorResponse: QuoteErrorObject | ApiErrorObject | undefined = undefined
-      let error: QuoteError | OperatorError
+      const errorResponse: ApiErrorObject = json
+      let error: QuoteError | OperatorError | Error
       if (type === 'Order') {
-        errorResponse = json as ApiErrorObject
         error = new OperatorError(errorResponse)
+      } else if (type === 'Quote') {
+        // we need to map the backend error codes to match our own for quotes
+        const mappedError = mapOperatorErrorToQuoteError(errorResponse.errorType)
+        error = new QuoteError(mappedError)
       } else {
-        errorResponse = json as QuoteErrorObject
-        error = new QuoteError(errorResponse)
+        // shouldn't get here but best to handle
+        error = genericError
       }
       throw error
     } else {

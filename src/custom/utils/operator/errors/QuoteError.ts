@@ -1,3 +1,5 @@
+import { ApiErrorCodes } from './OperatorError'
+
 export interface QuoteErrorObject {
   errorType: QuoteErrorCodes
   description: string
@@ -7,13 +9,23 @@ export interface QuoteErrorObject {
 // https://github.com/gnosis/gp-v2-services/blob/0bd5f7743bebaa5acd3be13e35ede2326a096f14/orderbook/openapi.yml#L562
 export enum QuoteErrorCodes {
   InsufficientLiquidity = 'InsufficientLiquidity',
-  FeeExceedsFrom = 'FeeExceedsFrom'
+  FeeExceedsFrom = 'FeeExceedsFrom',
+  UNHANDLED_ERROR = 'UNHANDLED_ERROR'
 }
 
 export enum QuoteErrorDetails {
   InsufficientLiquidity = 'Token pair selected has insufficient liquidity',
-  FeeExceedsFrom = 'Current fee exceeds input "from" amount.',
+  FeeExceedsFrom = 'Current fee exceeds input "from" amount',
   UNHANDLED_ERROR = 'An unknown error occurred while fetching the quote'
+}
+
+export function mapOperatorErrorToQuoteError(errorType: ApiErrorCodes): QuoteErrorObject {
+  switch (errorType) {
+    case ApiErrorCodes.NotFound:
+      return { errorType: QuoteErrorCodes.InsufficientLiquidity, description: QuoteErrorDetails.InsufficientLiquidity }
+    default:
+      return { errorType: QuoteErrorCodes.UNHANDLED_ERROR, description: QuoteErrorDetails.UNHANDLED_ERROR }
+  }
 }
 
 export default class QuoteError extends Error {
