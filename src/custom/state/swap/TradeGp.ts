@@ -92,7 +92,7 @@ interface TradeGpConstructor {
  * Represents a trade executed against a list of pairs.
  * Does not account for slippage, i.e. trades that front run this trade and move the price.
  */
-export class TradeGp {
+export default class TradeGp {
   /**
    * The type of the trade, either exact in or exact out.
    */
