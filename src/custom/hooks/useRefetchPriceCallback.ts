@@ -67,9 +67,6 @@ async function _getQuote({ quoteParams, fetchFee, previousFee }: RefetchQuoteCal
       : // fee exceeds our price, is invalid
         Promise.reject(FEE_EXCEEDS_FROM_ERROR)
 
-  // Promise.allSettled does NOT throw on 1 promise rejection
-  // instead it returns PromiseSettledResult - which we can decide to consume later
-  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/allSettled
   return Promise.allSettled([pricePromise, feePromise])
 }
 
@@ -160,10 +157,6 @@ export function useRefetchQuoteCallback() {
 
         const [price, fee] = data as QuoteResult
 
-        // Promise.allSettled (L68) does NOT throw whole promise on first reject
-        // we don't want it to, we are waiting for FEE and PRICE, if only one fails, why throw both away?
-        // e.g FEE comes in OK, but Fee > Price, we throw an FEE_EXCEEDS_PRICE error but keep fee promise resolved value
-        // to save into state and use
         quoteData = {
           ...params.quoteParams,
           fee: getPromiseFulfilledValue(fee, undefined),
@@ -171,8 +164,8 @@ export function useRefetchQuoteCallback() {
           lastCheck: Date.now()
         }
 
-        // check the PromiseSettledValue/PromiseRejectedResult
-        // returned by Promise.allSettled
+        // check the promise fulfilled values
+        // handle if rejected
         if (!isPromiseFulfilled(fee)) {
           // fee error takes precedence
           throw fee.reason
