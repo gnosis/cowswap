@@ -17,7 +17,7 @@ import { ExternalLink } from 'theme'
 import AccountDetails from 'components/AccountDetails'
 
 import Modal from '../Modal'
-import Option from './Option'
+import Option from 'components/WalletModal/Option'
 import PendingView from './PendingView'
 
 const CloseIcon = styled.div`
