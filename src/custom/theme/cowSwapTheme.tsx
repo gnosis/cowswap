@@ -64,7 +64,7 @@ export function colors(darkMode: boolean): Colors {
 
     // ****** other ******
     border: darkMode ? '#021E34' : '#000000',
-    disabled: darkMode ? 'rgba(197, 218, 239, 0.4)' : '#afcbda'
+    disabled: darkMode ? 'rgb(197 218 239 / 35%)' : '#afcbda'
   }
 }
 

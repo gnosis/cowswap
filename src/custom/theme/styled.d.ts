@@ -1,4 +1,4 @@
-import { Colors as ColorsUniswap } from '@src/theme/styled'
+import { Color, Colors as ColorsUniswap } from '@src/theme/styled'
 import { ButtonSize } from 'theme'
 export { Color, Grids } from '@src/theme/styled'
 
@@ -13,7 +13,7 @@ export interface Colors extends ColorsUniswap {
   border: Color
   disabled: Color
   shimmer1: Color
-  shimmer2: color
+  shimmer2: Color
 }
 
 declare module 'styled-components' {

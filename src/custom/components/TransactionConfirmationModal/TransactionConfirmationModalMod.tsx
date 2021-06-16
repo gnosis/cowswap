@@ -14,19 +14,20 @@ import MetaMaskLogo from 'assets/images/metamask.png'
 import { getEtherscanLink, getExplorerLabel } from 'utils'
 import { useActiveWeb3React } from 'hooks'
 import useAddTokenToMetamask from 'hooks/useAddTokenToMetamask'
+import { BottomSection } from './index'
 
 const Wrapper = styled.div`
   width: 100%;
 `
-const Section = styled(AutoColumn)`
+export const Section = styled(AutoColumn)`
   padding: 24px;
 `
 
-const BottomSection = styled(Section)`
-  background-color: ${({ theme }) => theme.bg2};
-  border-bottom-left-radius: 20px;
-  border-bottom-right-radius: 20px;
-`
+// const BottomSection = styled(Section)`
+//   background-color: ${({ theme }) => theme.bg2};
+//   border-bottom-left-radius: 20px;
+//   border-bottom-right-radius: 20px;
+// `
 
 const ConfirmedIcon = styled(ColumnCenter)`
   padding: 60px 0;
@@ -188,7 +189,7 @@ export function TransactionErrorContent({ message, onDismiss }: { message: strin
   )
 }
 
-interface ConfirmationModalProps {
+export interface ConfirmationModalProps {
   isOpen: boolean
   onDismiss: () => void
   hash: string | undefined

@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { ExternalLink } from 'theme'
+import { SubHeader } from './index'
 
 export const InfoCard = styled.button<{ active?: boolean }>`
   background-color: ${({ theme, active }) => (active ? theme.bg3 : theme.bg2)};
@@ -24,7 +25,7 @@ const OptionCard = styled(InfoCard as any)`
   padding: 1rem;
 `
 
-const OptionCardLeft = styled.div`
+export const OptionCardLeft = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap};
   justify-content: center;
   height: 100%;
@@ -67,11 +68,11 @@ export const HeaderText = styled.div`
   font-weight: 500;
 `
 
-export const SubHeader = styled.div`
-  color: ${({ theme }) => theme.text1};
-  margin-top: 10px;
-  font-size: 12px;
-`
+// export const SubHeader = styled.div`
+//   color: ${({ theme }) => theme.text1};
+//   margin-top: 10px;
+//   font-size: 12px;
+// `
 
 const IconWrapper = styled.div<{ size?: number | null }>`
   ${({ theme }) => theme.flexColumnNoWrap};
