@@ -112,31 +112,18 @@ function _handleQuoteError({
           error: error.type
         })
       }
-      default: {
-        // some other operator error occurred, log it
-        // and set price/fee to undefined
-        console.error(error)
-        return setQuoteError({
-          ...quoteData,
-          fee: undefined,
-          price: undefined,
-          lastCheck: Date.now(),
-          error: QuoteErrorCodes.UNHANDLED_ERROR
-        })
-      }
     }
-  } else {
-    // non-operator error log it
-    // and set price/fee to undefined
-    console.error('An unknown error occurred:', error)
-    return setQuoteError({
-      ...quoteData,
-      fee: undefined,
-      price: undefined,
-      lastCheck: Date.now(),
-      error: QuoteErrorCodes.UNHANDLED_ERROR
-    })
   }
+  // non-operator/quote error
+  // log it and set price/fee to undefined
+  console.error('An unhandled error has occurred:', error)
+  return setQuoteError({
+    ...quoteData,
+    fee: undefined,
+    price: undefined,
+    lastCheck: Date.now(),
+    error: QuoteErrorCodes.UNHANDLED_ERROR
+  })
 }
 
 /**
