@@ -68,8 +68,6 @@ const Wrapper = styled.div`
 `
 
 export function buildCancellationPopupSummary(id: string, summary: string | undefined): JSX.Element {
-  // TODO: style this!
-  // TODO: this probably shouldn't be here anyway :shrug:
   return (
     <Wrapper>
       <p>The order has been cancelled</p>
