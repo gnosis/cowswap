@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { AlertCircle, CheckCircle, XCircle, Triangle } from 'react-feather'
-import { HashLink } from 'react-router-hash-link'
 
 import { useActiveWeb3React } from 'hooks'
 import { getEtherscanLink, shortenOrderId } from 'utils'
@@ -123,7 +122,11 @@ function RequestCancellationModal(props: RequestCancellationModalProps): JSX.Ele
             <>
               <p>
                 This means that a solver might already have included the order in a solution even if this cancellation
-                is successful. Read more in the <HashLink to="/faq#can-i-cancel-an-order">FAQ</HashLink>.
+                is successful. Read more in the{' '}
+                <a target="_blank" href="/#/faq#can-i-cancel-an-order">
+                  FAQ
+                </a>
+                .
               </p>
             </>
           )}
