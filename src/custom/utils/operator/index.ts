@@ -186,21 +186,17 @@ async function _handleQuoteResponse(response: Response) {
 export async function getPriceQuote(params: PriceQuoteParams): Promise<PriceInformation> {
   const { baseToken, quoteToken, amount, kind, chainId } = params
   const [checkedBaseToken, checkedQuoteToken] = [checkIfEther(baseToken, chainId), checkIfEther(quoteToken, chainId)]
-  console.log('[util:operator] Get Price from API', params)
+  console.log('[util:operator] Get price from API', params)
 
-  try {
-    const response = await _fetchGet(
-      chainId,
-      `/markets/${toApiAddress(checkedBaseToken, chainId)}-${toApiAddress(
-        checkedQuoteToken,
-        chainId
-      )}/${kind}/${amount}`
-    )
-
-    return _handleQuoteResponse(response)
-  } catch (error) {
+  const response = await _fetchGet(
+    chainId,
+    `/markets/${toApiAddress(checkedBaseToken, chainId)}-${toApiAddress(checkedQuoteToken, chainId)}/${kind}/${amount}`
+  ).catch(error => {
+    console.error('Error getting price quote:', error)
     throw new QuoteError(UNHANDLED_QUOTE_ERROR)
-  }
+  })
+
+  return _handleQuoteResponse(response)
 }
 
 export async function getFeeQuote(params: FeeQuoteParams): Promise<FeeInformation> {
@@ -208,18 +204,18 @@ export async function getFeeQuote(params: FeeQuoteParams): Promise<FeeInformatio
   const [checkedSellAddress, checkedBuyAddress] = [checkIfEther(sellToken, chainId), checkIfEther(buyToken, chainId)]
   console.log('[util:operator] Get fee from API', params)
 
-  try {
-    const response = await _fetchGet(
-      chainId,
-      `/fee?sellToken=${toApiAddress(checkedSellAddress, chainId)}&buyToken=${toApiAddress(
-        checkedBuyAddress,
-        chainId
-      )}&amount=${amount}&kind=${kind}`
-    )
-    return _handleQuoteResponse(response)
-  } catch (error) {
+  const response = await _fetchGet(
+    chainId,
+    `/fee?sellToken=${toApiAddress(checkedSellAddress, chainId)}&buyToken=${toApiAddress(
+      checkedBuyAddress,
+      chainId
+    )}&amount=${amount}&kind=${kind}`
+  ).catch(error => {
+    console.error('Error getting fee quote:', error)
     throw new QuoteError(UNHANDLED_QUOTE_ERROR)
-  }
+  })
+
+  return _handleQuoteResponse(response)
 }
 
 export async function getOrder(chainId: ChainId, orderId: string): Promise<OrderMetaData | null> {
@@ -234,6 +230,7 @@ export async function getOrder(chainId: ChainId, orderId: string): Promise<Order
       return response.json()
     }
   } catch (error) {
+    console.error('Error getting order information:', error)
     throw new OperatorError(UNHANDLED_ORDER_ERROR)
   }
 }
