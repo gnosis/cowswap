@@ -47,8 +47,12 @@ function _mapActionToErrorDetail(action?: ApiActionType) {
       return ApiErrorCodeDetails.UNHANDLED_CREATE_ERROR
     // default and last case..
     case 'delete':
-    default:
       return ApiErrorCodeDetails.UNHANDLED_DELETE_ERROR
+    default:
+      console.error(
+        '[OperatorError::_mapActionToErrorDetails] Uncaught error mapping error action type to server error. Please try again later.'
+      )
+      return 'Something failed. Please try again later.'
   }
 }
 
