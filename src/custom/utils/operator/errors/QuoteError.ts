@@ -16,10 +16,10 @@ export enum QuoteErrorCodes {
 export enum QuoteErrorDetails {
   InsufficientLiquidity = 'Token pair selected has insufficient liquidity',
   FeeExceedsFrom = 'Current fee exceeds input "from" amount',
-  UNHANDLED_ERROR = 'An unknown error occurred while fetching the quote'
+  UNHANDLED_ERROR = 'An error occurred while fetching the quote information'
 }
 
-export function mapOperatorErrorToQuoteError(errorType: ApiErrorCodes): QuoteErrorObject {
+export function mapOperatorErrorToQuoteError(errorType?: ApiErrorCodes): QuoteErrorObject {
   switch (errorType) {
     case ApiErrorCodes.NotFound:
       return { errorType: QuoteErrorCodes.InsufficientLiquidity, description: QuoteErrorDetails.InsufficientLiquidity }
@@ -37,12 +37,14 @@ export default class QuoteError extends Error {
   // https://github.com/gnosis/gp-v2-services/blob/9014ae55412a356e46343e051aefeb683cc69c41/orderbook/openapi.yml#L563
   static quoteErrorDetails = QuoteErrorDetails
 
-  static async getErrorMessage(response: Response) {
+  private static async _getErrorMessage(response: Response) {
     try {
       const orderPostError: QuoteErrorObject = await response.json()
 
       if (orderPostError.errorType) {
-        return QuoteError.quoteErrorDetails[orderPostError.errorType]
+        const errorMessage = QuoteError.quoteErrorDetails[orderPostError.errorType]
+        // shouldn't fall through as this error constructor expects the error code to exist but just in case
+        return errorMessage || 'Error type exists but no valid error details found.'
       } else {
         console.error('Unknown reason for bad quote fetch', orderPostError)
         return orderPostError.description
@@ -57,10 +59,14 @@ export default class QuoteError extends Error {
     switch (response.status) {
       case 400:
       case 404:
-        return this.getErrorMessage(response)
+        return this._getErrorMessage(response)
 
       case 500:
       default:
+        console.error(
+          '[QuoteError::getErrorFromStatusCode] Error fetching quote, status code:',
+          response.status || 'unknown'
+        )
         return 'Error fetching quote'
     }
   }

@@ -4,8 +4,13 @@ import { APP_ID } from 'constants/index'
 import { registerOnWindow } from '../misc'
 import { isDev } from '../environments'
 import { FeeInformation, PriceInformation } from 'state/price/reducer'
-import OperatorError, { ApiErrorObject } from 'utils/operator/errors/OperatorError'
-import QuoteError, { mapOperatorErrorToQuoteError } from 'utils/operator/errors/QuoteError'
+import OperatorError, { ApiErrorCodeDetails, ApiErrorCodes, ApiErrorObject } from 'utils/operator/errors/OperatorError'
+import QuoteError, {
+  mapOperatorErrorToQuoteError,
+  QuoteErrorCodes,
+  QuoteErrorDetails,
+  QuoteErrorObject
+} from 'utils/operator/errors/QuoteError'
 
 function getOperatorUrl(): Partial<Record<ChainId, string>> {
   if (isDev) {
@@ -154,48 +159,44 @@ function toApiAddress(address: string, chainId: ChainId): string {
 
   return address
 }
-type RequestType = 'Order' | 'Quote'
-async function _getJson(chainId: ChainId, url: string, type: RequestType): Promise<any> {
-  let response: Response | undefined
-  let json
-  try {
-    response = await _fetchGet(chainId, url)
-    json = await response.json()
-  } finally {
-    const genericError = new Error(`Error getting query of type ${type} @ ${url}`)
-    if (!response || !json) {
-      throw genericError
-    } else if (!response.ok) {
-      // is backend error handled at this point
-      const errorResponse: ApiErrorObject = json
-      let error: QuoteError | OperatorError | Error
-      if (type === 'Order') {
-        error = new OperatorError(errorResponse)
-      } else if (type === 'Quote') {
-        // we need to map the backend error codes to match our own for quotes
-        const mappedError = mapOperatorErrorToQuoteError(errorResponse.errorType)
-        error = new QuoteError(mappedError)
-      } else {
-        // shouldn't get here but best to handle
-        error = genericError
-      }
-      throw error
-    } else {
-      return json
-    }
+
+const UNHANDLED_QUOTE_ERROR: QuoteErrorObject = {
+  errorType: QuoteErrorCodes.UNHANDLED_ERROR,
+  description: QuoteErrorDetails.UNHANDLED_ERROR
+}
+
+const UNHANDLED_ORDER_ERROR: ApiErrorObject = {
+  errorType: ApiErrorCodes.UNHANDLED_ERROR,
+  description: ApiErrorCodeDetails.UNHANDLED_ERROR
+}
+
+async function _handleQuoteResponse(response: Response) {
+  if (!response.ok) {
+    const responseNotOkJson: ApiErrorObject = await response.json()
+    const errorType = responseNotOkJson.errorType
+
+    // we need to map the backend error codes to match our own for quotes
+    const mappedError = mapOperatorErrorToQuoteError(errorType)
+    throw new QuoteError(mappedError)
+  } else {
+    return response.json()
   }
 }
 
 export async function getPriceQuote(params: PriceQuoteParams): Promise<PriceInformation> {
   const { baseToken, quoteToken, amount, kind, chainId } = params
   const [checkedBaseToken, checkedQuoteToken] = [checkIfEther(baseToken, chainId), checkIfEther(quoteToken, chainId)]
-  console.log('[util:operator] Get Price from API', params)
+  console.log('[util:operator] Get price from API', params)
 
-  return _getJson(
+  const response = await _fetchGet(
     chainId,
-    `/markets/${toApiAddress(checkedBaseToken, chainId)}-${toApiAddress(checkedQuoteToken, chainId)}/${kind}/${amount}`,
-    'Quote'
-  )
+    `/markets/${toApiAddress(checkedBaseToken, chainId)}-${toApiAddress(checkedQuoteToken, chainId)}/${kind}/${amount}`
+  ).catch(error => {
+    console.error('Error getting price quote:', error)
+    throw new QuoteError(UNHANDLED_QUOTE_ERROR)
+  })
+
+  return _handleQuoteResponse(response)
 }
 
 export async function getFeeQuote(params: FeeQuoteParams): Promise<FeeInformation> {
@@ -203,19 +204,35 @@ export async function getFeeQuote(params: FeeQuoteParams): Promise<FeeInformatio
   const [checkedSellAddress, checkedBuyAddress] = [checkIfEther(sellToken, chainId), checkIfEther(buyToken, chainId)]
   console.log('[util:operator] Get fee from API', params)
 
-  return _getJson(
+  const response = await _fetchGet(
     chainId,
     `/fee?sellToken=${toApiAddress(checkedSellAddress, chainId)}&buyToken=${toApiAddress(
       checkedBuyAddress,
       chainId
-    )}&amount=${amount}&kind=${kind}`,
-    'Quote'
-  )
+    )}&amount=${amount}&kind=${kind}`
+  ).catch(error => {
+    console.error('Error getting fee quote:', error)
+    throw new QuoteError(UNHANDLED_QUOTE_ERROR)
+  })
+
+  return _handleQuoteResponse(response)
 }
 
 export async function getOrder(chainId: ChainId, orderId: string): Promise<OrderMetaData | null> {
   console.log('[util:operator] Get order for ', chainId, orderId)
-  return _getJson(chainId, `/orders/${orderId}`, 'Order')
+  try {
+    const response = await _fetchGet(chainId, `/orders/${orderId}`)
+
+    if (!response.ok) {
+      const errorResponse: ApiErrorObject = await response.json()
+      throw new OperatorError(errorResponse)
+    } else {
+      return response.json()
+    }
+  } catch (error) {
+    console.error('Error getting order information:', error)
+    throw new OperatorError(UNHANDLED_ORDER_ERROR)
+  }
 }
 
 // Register some globals for convenience
