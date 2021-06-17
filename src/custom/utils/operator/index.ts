@@ -197,8 +197,8 @@ const UNHANDLED_QUOTE_ERROR: QuoteErrorObject = {
 }
 
 const UNHANDLED_ORDER_ERROR: ApiErrorObject = {
-  errorType: ApiErrorCodes.UNHANDLED_ERROR,
-  description: ApiErrorCodeDetails.UNHANDLED_ERROR
+  errorType: ApiErrorCodes.UNHANDLED_CREATE_ERROR,
+  description: ApiErrorCodeDetails.UNHANDLED_CREATE_ERROR
 }
 
 async function _handleQuoteResponse(response: Response) {
