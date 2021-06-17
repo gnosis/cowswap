@@ -37,7 +37,7 @@ export default class QuoteError extends Error {
   // https://github.com/gnosis/gp-v2-services/blob/9014ae55412a356e46343e051aefeb683cc69c41/orderbook/openapi.yml#L563
   static quoteErrorDetails = QuoteErrorDetails
 
-  static async getErrorMessage(response: Response) {
+  private static async _getErrorMessage(response: Response) {
     try {
       const orderPostError: QuoteErrorObject = await response.json()
 
@@ -57,10 +57,14 @@ export default class QuoteError extends Error {
     switch (response.status) {
       case 400:
       case 404:
-        return this.getErrorMessage(response)
+        return this._getErrorMessage(response)
 
       case 500:
       default:
+        console.error(
+          '[QuoteError::getErrorFromStatusCode] Error fetching quote, status code:',
+          response.status || 'unknown'
+        )
         return 'Error fetching quote'
     }
   }

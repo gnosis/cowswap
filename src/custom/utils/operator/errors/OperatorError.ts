@@ -40,7 +40,7 @@ export default class OperatorError extends Error {
   // https://github.com/gnosis/gp-v2-services/blob/9014ae55412a356e46343e051aefeb683cc69c41/orderbook/openapi.yml#L563
   static apiErrorDetails = ApiErrorCodeDetails
 
-  static async getErrorMessage(response: Response) {
+  private static async _getErrorMessage(response: Response) {
     try {
       const orderPostError: ApiErrorObject = await response.json()
 
@@ -51,7 +51,7 @@ export default class OperatorError extends Error {
         return orderPostError.description
       }
     } catch (error) {
-      console.error('Error handling a 400 error. Likely a problem deserialising the JSON response')
+      console.error('Error handling a 400/404 error. Likely a problem deserialising the JSON response')
       return OperatorError.apiErrorDetails.UNHANDLED_ERROR
     }
   }
@@ -60,7 +60,7 @@ export default class OperatorError extends Error {
     switch (response.status) {
       case 400:
       case 404:
-        return this.getErrorMessage(response)
+        return this._getErrorMessage(response)
 
       case 403:
         return 'The order cannot be accepted. Your account is deny-listed.'
@@ -70,6 +70,10 @@ export default class OperatorError extends Error {
 
       case 500:
       default:
+        console.error(
+          '[OperatorError::getErrorFromStatusCode] Error adding an order, status code:',
+          response.status || 'unknown'
+        )
         return 'Error adding an order'
     }
   }
