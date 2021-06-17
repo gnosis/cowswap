@@ -10,6 +10,8 @@ export const SHORT_PRECISION = 4
 export const SHORTEST_PRECISION = 3
 export const LONG_PRECISION = 10
 
+export const LONG_LOAD_THRESHOLD = 2000
+
 export const APP_ID = Number(process.env.REACT_APP_ID)
 
 // reexport all Uniswap constants everything
@@ -28,13 +30,7 @@ export const SUPPORTED_WALLETS = Object.keys(SUPPORTED_WALLETS_UNISWAP).reduce((
 }, {} as { [key: string]: WalletInfo })
 
 // Smart contract wallets are filtered out by default, no need to add them to this list
-export const UNSUPPORTED_WC_WALLETS = new Set([
-  'DeFi Wallet',
-  'TokenPocket',
-  '1inch Wallet',
-  'Pillar Wallet',
-  'WallETH'
-])
+export const UNSUPPORTED_WC_WALLETS = new Set(['DeFi Wallet', '1inch Wallet', 'Pillar Wallet', 'WallETH'])
 
 // TODO: When contracts are deployed, we can load this from the NPM package
 export const GP_SETTLEMENT_CONTRACT_ADDRESS: Partial<Record<ChainId, string>> = {

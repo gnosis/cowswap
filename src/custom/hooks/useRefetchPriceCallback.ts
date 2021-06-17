@@ -16,7 +16,7 @@ import { getPromiseFulfilledValue, isPromiseFulfilled } from 'utils/misc'
 import QuoteError, { QuoteErrorCodes, isValidQuoteError } from 'utils/operator/errors/QuoteError'
 import { ApiErrorCodes, isValidOperatorError } from 'utils/operator/errors/OperatorError'
 
-export interface RefetchQuoteCallbackParmams {
+export interface RefetchQuoteCallbackParams {
   quoteParams: FeeQuoteParams
   fetchFee: boolean
   previousFee?: FeeInformation
@@ -33,7 +33,7 @@ const FEE_EXCEEDS_FROM_ERROR = new QuoteError({
   description: QuoteError.quoteErrorDetails.FeeExceedsFrom
 })
 
-async function _getQuote({ quoteParams, fetchFee, previousFee }: RefetchQuoteCallbackParmams): Promise<QuoteResult> {
+async function _getQuote({ quoteParams, fetchFee, previousFee }: RefetchQuoteCallbackParams): Promise<QuoteResult> {
   const { sellToken, buyToken, amount, kind, chainId } = quoteParams
   const { baseToken, quoteToken } = getCanonicalMarket({ sellToken, buyToken, kind })
 
@@ -139,7 +139,7 @@ export function useRefetchQuoteCallback() {
   registerOnWindow({ updateQuote, clearQuote, setQuoteError, addUnsupportedToken, removeGpUnsupportedToken })
 
   return useCallback(
-    async (params: RefetchQuoteCallbackParmams) => {
+    async (params: RefetchQuoteCallbackParams) => {
       let quoteData: FeeQuoteParams | QuoteInformationObject = params.quoteParams
       const { setLoadingCallback, hideLoadingCallback } = params.handlers
 
