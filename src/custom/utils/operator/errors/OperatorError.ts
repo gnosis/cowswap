@@ -72,7 +72,7 @@ export default class OperatorError extends Error {
       if (orderPostError.errorType) {
         const errorMessage = OperatorError.apiErrorDetails[orderPostError.errorType]
         // shouldn't fall through as this error constructor expects the error code to exist but just in case
-        return errorMessage || 'Error type exists but no valid error details found.'
+        return errorMessage || orderPostError.errorType
       } else {
         console.error('Unknown reason for bad order submission', orderPostError)
         return orderPostError.description
