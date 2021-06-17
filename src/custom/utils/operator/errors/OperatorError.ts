@@ -45,7 +45,9 @@ export default class OperatorError extends Error {
       const orderPostError: ApiErrorObject = await response.json()
 
       if (orderPostError.errorType) {
-        return OperatorError.apiErrorDetails[orderPostError.errorType]
+        const errorMessage = OperatorError.apiErrorDetails[orderPostError.errorType]
+        // shouldn't fall through as this error constructor expects the error code to exist but just in case
+        return errorMessage || 'Error type exists but no valid error details found.'
       } else {
         console.error('Unknown reason for bad order submission', orderPostError)
         return orderPostError.description

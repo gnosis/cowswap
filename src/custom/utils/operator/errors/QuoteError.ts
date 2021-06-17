@@ -42,7 +42,9 @@ export default class QuoteError extends Error {
       const orderPostError: QuoteErrorObject = await response.json()
 
       if (orderPostError.errorType) {
-        return QuoteError.quoteErrorDetails[orderPostError.errorType]
+        const errorMessage = QuoteError.quoteErrorDetails[orderPostError.errorType]
+        // shouldn't fall through as this error constructor expects the error code to exist but just in case
+        return errorMessage || 'Error type exists but no valid error details found.'
       } else {
         console.error('Unknown reason for bad quote fetch', orderPostError)
         return orderPostError.description
