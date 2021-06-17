@@ -15,8 +15,8 @@ export enum QuoteErrorCodes {
 
 export enum QuoteErrorDetails {
   InsufficientLiquidity = 'Token pair selected has insufficient liquidity',
-  FeeExceedsFrom = 'Current fee exceeds input "from" amount',
-  UNHANDLED_ERROR = 'An error occurred while fetching the quote information'
+  FeeExceedsFrom = 'Current fee exceeds entered "from" amount',
+  UNHANDLED_ERROR = 'Quote fetch failed. This may be due to a server or network connectivity issue. Please try again later.'
 }
 
 export function mapOperatorErrorToQuoteError(errorType?: ApiErrorCodes): QuoteErrorObject {
@@ -37,7 +37,7 @@ export default class QuoteError extends Error {
   // https://github.com/gnosis/gp-v2-services/blob/9014ae55412a356e46343e051aefeb683cc69c41/orderbook/openapi.yml#L563
   static quoteErrorDetails = QuoteErrorDetails
 
-  private static async _getErrorMessage(response: Response) {
+  public static async getErrorMessage(response: Response) {
     try {
       const orderPostError: QuoteErrorObject = await response.json()
 
@@ -59,7 +59,7 @@ export default class QuoteError extends Error {
     switch (response.status) {
       case 400:
       case 404:
-        return this._getErrorMessage(response)
+        return this.getErrorMessage(response)
 
       case 500:
       default:

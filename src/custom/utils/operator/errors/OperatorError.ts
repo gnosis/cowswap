@@ -1,3 +1,5 @@
+type ApiActionType = 'get' | 'create' | 'delete'
+
 export interface ApiErrorObject {
   errorType: ApiErrorCodes
   description: string
@@ -16,6 +18,7 @@ export enum ApiErrorCodes {
   WrongOwner = 'WrongOwner',
   NotFound = 'NotFound',
   OrderNotFound = 'OrderNotFound',
+  UNHANDLED_GET_ERROR = 'UNHANDLED_GET_ERROR',
   UNHANDLED_CREATE_ERROR = 'UNHANDLED_CREATE_ERROR',
   UNHANDLED_DELETE_ERROR = 'UNHANDLED_DELETE_ERROR'
 }
@@ -30,10 +33,23 @@ export enum ApiErrorCodeDetails {
   UnsupportedToken = 'One of the tokens you are trading is unsupported. Please read the FAQ for more info.',
   WrongOwner = "The signature is invalid.\n\nIt's likely that the signing method provided by your wallet doesn't comply with the standards required by CowSwap.\n\nCheck whether your Wallet app supports off-chain signing (EIP-712 or ETHSIGN).",
   NotFound = 'Token pair selected has insufficient liquidity',
-  FeeExceedsFrom = 'Fee amount for selected pair exceeds "from" amount',
   OrderNotFound = 'The order you are trying to cancel does not exist',
+  UNHANDLED_GET_ERROR = 'Order fetch failed. This may be due to a server or network connectivity issue. Please try again later.',
   UNHANDLED_CREATE_ERROR = 'The order was not accepted by the network',
   UNHANDLED_DELETE_ERROR = 'The order cancellation was not accepted by the network'
+}
+
+function _mapActionToErrorDetail(action?: ApiActionType) {
+  switch (action) {
+    case 'get':
+      return ApiErrorCodeDetails.UNHANDLED_GET_ERROR
+    case 'create':
+      return ApiErrorCodeDetails.UNHANDLED_CREATE_ERROR
+    // default and last case..
+    case 'delete':
+    default:
+      return ApiErrorCodeDetails.UNHANDLED_DELETE_ERROR
+  }
 }
 
 export default class OperatorError extends Error {
@@ -45,7 +61,7 @@ export default class OperatorError extends Error {
   // https://github.com/gnosis/gp-v2-services/blob/9014ae55412a356e46343e051aefeb683cc69c41/orderbook/openapi.yml#L563
   static apiErrorDetails = ApiErrorCodeDetails
 
-  private static async _getErrorMessage(response: Response, action: 'create' | 'delete') {
+  public static async getErrorMessage(response: Response, action: ApiActionType) {
     try {
       const orderPostError: ApiErrorObject = await response.json()
 
@@ -59,16 +75,14 @@ export default class OperatorError extends Error {
       }
     } catch (error) {
       console.error('Error handling a 400 error. Likely a problem deserialising the JSON response')
-      return action === 'create'
-        ? ApiErrorCodeDetails.UNHANDLED_CREATE_ERROR
-        : ApiErrorCodeDetails.UNHANDLED_DELETE_ERROR
+      return _mapActionToErrorDetail(action)
     }
   }
   static async getErrorFromStatusCode(response: Response, action: 'create' | 'delete') {
     switch (response.status) {
       case 400:
       case 404:
-        return this._getErrorMessage(response, action)
+        return this.getErrorMessage(response, action)
 
       case 403:
         return `The order cannot be ${action === 'create' ? 'accepted' : 'cancelled'}. Your account is deny-listed.`
