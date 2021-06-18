@@ -7,7 +7,6 @@ import { Link } from 'react-router-dom'
 
 const Wrapper = styled.div`
   #table-container {
-    overflow-x: scroll;
     margin: auto;
     max-width: 80vw;
 
