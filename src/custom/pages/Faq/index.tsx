@@ -12,7 +12,7 @@ const Wrapper = styled.div`
     max-width: 80vw;
 
     > table {
-      min-width: 800px;
+      width: 100%;
 
       thead, tr:nth-child(even) {
         background: ${({ theme }) => theme.bg2};
@@ -22,7 +22,6 @@ const Wrapper = styled.div`
 
       th,
       td {
-        min-width: 8.5rem;
         text-align: left;
         padding: 0.5rem 0.4rem;
       }
