@@ -1,10 +1,16 @@
 import { ChainId, ETHER, WETH } from '@uniswap/sdk'
-import { getSigningSchemeApiValue, OrderCreation } from 'utils/signatures'
+import { getSigningSchemeApiValue, OrderCancellation, OrderCreation } from 'utils/signatures'
 import { APP_ID } from 'constants/index'
 import { registerOnWindow } from '../misc'
 import { isDev } from '../environments'
 import { FeeInformation, PriceInformation } from 'state/price/reducer'
-import OperatorError, { ApiError } from './error'
+import OperatorError, { ApiErrorCodeDetails, ApiErrorCodes, ApiErrorObject } from 'utils/operator/errors/OperatorError'
+import QuoteError, {
+  mapOperatorErrorToQuoteError,
+  QuoteErrorCodes,
+  QuoteErrorDetails,
+  QuoteErrorObject
+} from 'utils/operator/errors/QuoteError'
 
 function getOperatorUrl(): Partial<Record<ChainId, string>> {
   if (isDev) {
@@ -83,23 +89,28 @@ export function getOrderLink(chainId: ChainId, orderId: OrderID): string {
   return baseUrl + `/orders/${orderId}`
 }
 
-function _post(chainId: ChainId, url: string, data: any): Promise<Response> {
+function _fetch(chainId: ChainId, url: string, method: 'GET' | 'POST' | 'DELETE', data?: any): Promise<Response> {
   const baseUrl = _getApiBaseUrl(chainId)
   return fetch(baseUrl + url, {
     headers: DEFAULT_HEADERS,
-    method: 'POST',
-    body: JSON.stringify(data)
+    method,
+    body: data !== undefined ? JSON.stringify(data) : data
   })
 }
 
-function _fetchGet(chainId: ChainId, url: string) {
-  const baseUrl = _getApiBaseUrl(chainId)
-  return fetch(baseUrl + url, {
-    headers: DEFAULT_HEADERS
-  })
+function _post(chainId: ChainId, url: string, data: any): Promise<Response> {
+  return _fetch(chainId, url, 'POST', data)
 }
 
-export async function postSignedOrder(params: {
+function _get(chainId: ChainId, url: string): Promise<Response> {
+  return _fetch(chainId, url, 'GET')
+}
+
+function _delete(chainId: ChainId, url: string, data: any): Promise<Response> {
+  return _fetch(chainId, url, 'DELETE', data)
+}
+
+export async function sendSignedOrder(params: {
   chainId: ChainId
   order: OrderCreation
   owner: string
@@ -117,13 +128,39 @@ export async function postSignedOrder(params: {
   // Handle response
   if (!response.ok) {
     // Raise an exception
-    const errorMessage = await OperatorError.getErrorFromStatusCode(response)
+    const errorMessage = await OperatorError.getErrorFromStatusCode(response, 'create')
     throw new Error(errorMessage)
   }
 
   const uid = (await response.json()) as string
   console.log('[util:operator] Success posting the signed order', uid)
   return uid
+}
+
+type OrderCancellationParams = {
+  chainId: ChainId
+  cancellation: OrderCancellation
+  owner: string
+}
+
+export async function sendSignedOrderCancellation(params: OrderCancellationParams): Promise<void> {
+  const { chainId, cancellation, owner: from } = params
+
+  console.log('[utils:operator] Delete signed order for network', chainId, cancellation)
+
+  const response = await _delete(chainId, `/orders/${cancellation.orderUid}`, {
+    signature: cancellation.signature,
+    signingScheme: getSigningSchemeApiValue(cancellation.signingScheme),
+    from
+  })
+
+  if (!response.ok) {
+    // Raise an exception
+    const errorMessage = await OperatorError.getErrorFromStatusCode(response, 'delete')
+    throw new Error(errorMessage)
+  }
+
+  console.log('[utils:operator] Cancelled order', cancellation.orderUid, chainId)
 }
 
 function checkIfEther(tokenAddress: string, chainId: ChainId) {
@@ -154,34 +191,43 @@ function toApiAddress(address: string, chainId: ChainId): string {
   return address
 }
 
-async function _getJson(chainId: ChainId, url: string): Promise<any> {
-  let response: Response | undefined
-  let json
-  try {
-    response = await _fetchGet(chainId, url)
-    json = await response.json()
-  } finally {
-    if (!response || !json) {
-      throw new Error(`Error getting query @ ${url}`)
-    } else if (!response.ok) {
-      // is backend error handled at this point
-      const errorResponse: ApiError = json
-      throw new OperatorError(errorResponse)
-    } else {
-      return json
-    }
+const UNHANDLED_QUOTE_ERROR: QuoteErrorObject = {
+  errorType: QuoteErrorCodes.UNHANDLED_ERROR,
+  description: QuoteErrorDetails.UNHANDLED_ERROR
+}
+
+const UNHANDLED_ORDER_ERROR: ApiErrorObject = {
+  errorType: ApiErrorCodes.UNHANDLED_CREATE_ERROR,
+  description: ApiErrorCodeDetails.UNHANDLED_CREATE_ERROR
+}
+
+async function _handleQuoteResponse(response: Response) {
+  if (!response.ok) {
+    const responseNotOkJson: ApiErrorObject = await response.json()
+    const errorType = responseNotOkJson.errorType
+
+    // we need to map the backend error codes to match our own for quotes
+    const mappedError = mapOperatorErrorToQuoteError(errorType)
+    throw new QuoteError(mappedError)
+  } else {
+    return response.json()
   }
 }
 
 export async function getPriceQuote(params: PriceQuoteParams): Promise<PriceInformation> {
   const { baseToken, quoteToken, amount, kind, chainId } = params
   const [checkedBaseToken, checkedQuoteToken] = [checkIfEther(baseToken, chainId), checkIfEther(quoteToken, chainId)]
-  console.log('[util:operator] Get Price from API', params)
+  console.log('[util:operator] Get price from API', params)
 
-  return _getJson(
+  const response = await _get(
     chainId,
     `/markets/${toApiAddress(checkedBaseToken, chainId)}-${toApiAddress(checkedQuoteToken, chainId)}/${kind}/${amount}`
-  )
+  ).catch(error => {
+    console.error('Error getting price quote:', error)
+    throw new QuoteError(UNHANDLED_QUOTE_ERROR)
+  })
+
+  return _handleQuoteResponse(response)
 }
 
 export async function getFeeQuote(params: FeeQuoteParams): Promise<FeeInformation> {
@@ -189,19 +235,36 @@ export async function getFeeQuote(params: FeeQuoteParams): Promise<FeeInformatio
   const [checkedSellAddress, checkedBuyAddress] = [checkIfEther(sellToken, chainId), checkIfEther(buyToken, chainId)]
   console.log('[util:operator] Get fee from API', params)
 
-  return _getJson(
+  const response = await _get(
     chainId,
     `/fee?sellToken=${toApiAddress(checkedSellAddress, chainId)}&buyToken=${toApiAddress(
       checkedBuyAddress,
       chainId
     )}&amount=${amount}&kind=${kind}`
-  )
+  ).catch(error => {
+    console.error('Error getting fee quote:', error)
+    throw new QuoteError(UNHANDLED_QUOTE_ERROR)
+  })
+
+  return _handleQuoteResponse(response)
 }
 
 export async function getOrder(chainId: ChainId, orderId: string): Promise<OrderMetaData | null> {
   console.log('[util:operator] Get order for ', chainId, orderId)
-  return _getJson(chainId, `/orders/${orderId}`)
+  try {
+    const response = await _get(chainId, `/orders/${orderId}`)
+
+    if (!response.ok) {
+      const errorResponse: ApiErrorObject = await response.json()
+      throw new OperatorError(errorResponse)
+    } else {
+      return response.json()
+    }
+  } catch (error) {
+    console.error('Error getting order information:', error)
+    throw new OperatorError(UNHANDLED_ORDER_ERROR)
+  }
 }
 
 // Register some globals for convenience
-registerOnWindow({ operator: { getFeeQuote, getOrder, postSignedOrder, apiGet: _fetchGet, apiPost: _post } })
+registerOnWindow({ operator: { getFeeQuote, getOrder, sendSignedOrder, apiGet: _get, apiPost: _post } })

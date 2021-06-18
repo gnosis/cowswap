@@ -10,12 +10,13 @@ import {
 } from 'state/lists/hooks/hooksMod'
 import { FeeInformation, PriceInformation, QuoteInformationObject } from 'state/price/reducer'
 import { AddGpUnsupportedTokenParams } from 'state/lists/actions'
-import OperatorError, { ApiErrorCodes } from 'utils/operator/error'
 import { onlyResolvesLast } from 'utils/async'
 import { ClearQuoteParams, SetQuoteErrorParams } from 'state/price/actions'
 import { getPromiseFulfilledValue, isPromiseFulfilled } from 'utils/misc'
+import QuoteError, { QuoteErrorCodes, isValidQuoteError } from 'utils/operator/errors/QuoteError'
+import { ApiErrorCodes, isValidOperatorError } from 'utils/operator/errors/OperatorError'
 
-export interface RefetchQuoteCallbackParmams {
+export interface RefetchQuoteCallbackParams {
   quoteParams: FeeQuoteParams
   fetchFee: boolean
   previousFee?: FeeInformation
@@ -27,7 +28,12 @@ export interface RefetchQuoteCallbackParmams {
 
 type QuoteResult = [PromiseSettledResult<PriceInformation>, PromiseSettledResult<FeeInformation>]
 
-async function _getQuote({ quoteParams, fetchFee, previousFee }: RefetchQuoteCallbackParmams): Promise<QuoteResult> {
+const FEE_EXCEEDS_FROM_ERROR = new QuoteError({
+  errorType: QuoteErrorCodes.FeeExceedsFrom,
+  description: QuoteError.quoteErrorDetails.FeeExceedsFrom
+})
+
+async function _getQuote({ quoteParams, fetchFee, previousFee }: RefetchQuoteCallbackParams): Promise<QuoteResult> {
   const { sellToken, buyToken, amount, kind, chainId } = quoteParams
   const { baseToken, quoteToken } = getCanonicalMarket({ sellToken, buyToken, kind })
 
@@ -59,25 +65,13 @@ async function _getQuote({ quoteParams, fetchFee, previousFee }: RefetchQuoteCal
     !feeExceedsPrice && exchangeAmount
       ? getPriceQuote({ chainId, baseToken, quoteToken, amount: exchangeAmount, kind })
       : // fee exceeds our price, is invalid
-        Promise.reject(
-          new OperatorError({
-            errorType: ApiErrorCodes.FeeExceedsFrom,
-            description: OperatorError.apiErrorDetails.FeeExceedsFrom
-          })
-        )
+        Promise.reject(FEE_EXCEEDS_FROM_ERROR)
 
-  // Promise.allSettled does NOT throw on 1 promise rejection
-  // instead it returns PromiseSettledResult - which we can decide to consume later
-  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/allSettled
   return Promise.allSettled([pricePromise, feePromise])
 }
 
 // wrap _getQuote and only resolve once on several calls
 const getQuote = onlyResolvesLast<QuoteResult>(_getQuote)
-
-function _isValidOperatorError(error: any): error is OperatorError {
-  return error instanceof OperatorError
-}
 
 interface HandleQuoteErrorParams {
   quoteData: QuoteInformationObject | FeeQuoteParams
@@ -91,10 +85,10 @@ function _handleQuoteError({
   quoteData,
   error,
   addUnsupportedToken,
-  clearQuote,
+  // clearQuote,
   setQuoteError
 }: HandleQuoteErrorParams) {
-  if (_isValidOperatorError(error)) {
+  if (isValidOperatorError(error) || isValidQuoteError(error)) {
     switch (error.type) {
       case ApiErrorCodes.UnsupportedToken: {
         // TODO: will change with introduction of data prop in error responses
@@ -109,8 +103,8 @@ function _handleQuoteError({
       }
       // Fee/Price query returns error
       // e.g Insufficient Liquidity or Fee exceeds Price
-      case ApiErrorCodes.FeeExceedsFrom:
-      case ApiErrorCodes.NotFound: {
+      case QuoteErrorCodes.FeeExceedsFrom:
+      case QuoteErrorCodes.InsufficientLiquidity: {
         console.error(`${error.message}: ${error.description}!`)
         return setQuoteError({
           ...quoteData,
@@ -118,17 +112,18 @@ function _handleQuoteError({
           error: error.type
         })
       }
-      default: {
-        // some other operator error occurred, log it
-        console.error(error)
-        // Clear the quote
-        return clearQuote({ chainId: quoteData.chainId, token: quoteData.sellToken })
-      }
     }
-  } else {
-    // non-operator error log it
-    console.error('An unknown error occurred:', error)
   }
+  // non-operator/quote error
+  // log it and set price/fee to undefined
+  console.error('An unhandled error has occurred:', error)
+  return setQuoteError({
+    ...quoteData,
+    fee: undefined,
+    price: undefined,
+    lastCheck: Date.now(),
+    error: QuoteErrorCodes.UNHANDLED_ERROR
+  })
 }
 
 /**
@@ -141,10 +136,10 @@ export function useRefetchQuoteCallback() {
   const addUnsupportedToken = useAddGpUnsupportedToken()
   const removeGpUnsupportedToken = useRemoveGpUnsupportedToken()
 
-  registerOnWindow({ updateQuote, addUnsupportedToken, removeGpUnsupportedToken })
+  registerOnWindow({ updateQuote, clearQuote, setQuoteError, addUnsupportedToken, removeGpUnsupportedToken })
 
   return useCallback(
-    async (params: RefetchQuoteCallbackParmams) => {
+    async (params: RefetchQuoteCallbackParams) => {
       let quoteData: FeeQuoteParams | QuoteInformationObject = params.quoteParams
       const { setLoadingCallback, hideLoadingCallback } = params.handlers
 
@@ -163,19 +158,14 @@ export function useRefetchQuoteCallback() {
 
         const [price, fee] = data as QuoteResult
 
-        // Promise.allSettled (L68) does NOT throw whole promise on first reject
-        // we don't want it to, we are waiting for FEE and PRICE, if only one fails, why throw both away?
-        // e.g FEE comes in OK, but Fee > Price, we throw an FEE_EXCEEDS_PRICE error but keep fee promise resolved value
-        // to save into state and use
         quoteData = {
           ...params.quoteParams,
           fee: getPromiseFulfilledValue(fee, undefined),
           price: getPromiseFulfilledValue(price, undefined),
           lastCheck: Date.now()
         }
-
-        // check the PromiseSettledValue/PromiseRejectedResult
-        // returned by Promise.allSettled
+        // check the promise fulfilled values
+        // handle if rejected
         if (!isPromiseFulfilled(fee)) {
           // fee error takes precedence
           throw fee.reason
