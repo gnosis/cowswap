@@ -115,7 +115,11 @@ function FeeGreaterMessage({ fee }: FeeGreaterMessageProp) {
   return (
     <RowBetween>
       <RowFixed>
-        <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
+        <TYPE.black
+          fontSize={14}
+          fontWeight={400}
+          // color={theme.text2}
+        >
           Fee
         </TYPE.black>
         <QuestionHelper text="GP Swap has 0 gas fees. A portion of the sell amount in each trade goes to the GP Protocol." />

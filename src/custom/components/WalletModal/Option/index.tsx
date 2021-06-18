@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import OptionMod, { InfoCard, OptionCardClickable, HeaderText } from './OptionMod'
+import OptionMod, { InfoCard, OptionCardClickable, HeaderText, SubHeader } from './OptionMod'
 
 const Wrapper = styled.div<{ clickable?: boolean; active?: boolean }>`
   ${InfoCard} {
@@ -23,16 +23,10 @@ const Wrapper = styled.div<{ clickable?: boolean; active?: boolean }>`
     }
   }
 
-  ${HeaderText} {
+  ${HeaderText},
+  ${SubHeader} {
     color: ${({ theme }) => theme.text2};
-    background: red;
   }
-`
-
-export const SubHeader = styled.div`
-  color: ${({ theme }) => theme.text1};
-  margin-top: 10px;
-  font-size: 12px;
 `
 
 export default function Option(props: {

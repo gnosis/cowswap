@@ -1,7 +1,7 @@
 import { AbstractConnector } from '@web3-react/abstract-connector'
 import React from 'react'
 import styled from 'styled-components'
-import Option from './Option'
+import Option from 'components/WalletModal/Option'
 import { SUPPORTED_WALLETS } from 'constants/index'
 import { injected } from 'connectors'
 import { darken } from 'polished'
