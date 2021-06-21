@@ -8,21 +8,33 @@ import { Link } from 'react-router-dom'
 const Wrapper = styled.div`
   #table-container {
     margin: auto;
-    max-width: 80vw;
+    max-width: 100%;
 
     > table {
       width: 100%;
+      border-spacing: 1px;
+      color: ${({ theme }) => theme.text1};
 
-      thead, tr:nth-child(even) {
-        background: ${({ theme }) => theme.bg2};
-        color: ${({ theme }) => theme.text2};
-        }
+      > thead {
+        background: ${({ theme }) => theme.tableHeadBG};
+      }
+
+      > tbody > tr {
+        background: ${({ theme }) => theme.tableRowBG};
       }
 
       th,
       td {
         text-align: left;
-        padding: 0.5rem 0.4rem;
+        padding: 6px 12px;
+
+        &:not(:first-child) {
+          text-align: center;
+        }
+      }
+
+      th {
+        padding: 16px 12px;
       }
     }
   }
@@ -392,7 +404,7 @@ export default function Faq() {
             <table>
               <thead>
                 <tr>
-                  <th />
+                  <th>Action</th>
                   <th>Signed tx (free / gasless)</th>
                   <th>Ethereum tx (costs gas)</th>
                 </tr>
@@ -403,7 +415,7 @@ export default function Faq() {
                   <td />
                   <td>
                     <span role="img" aria-label="approve token in an ethereum tx and costs gas">
-                      ✔
+                      ✅
                     </span>
                   </td>
                 </tr>
@@ -412,7 +424,7 @@ export default function Faq() {
                   <td />
                   <td>
                     <span role="img" aria-label="wrap/unwrap ETH in an ethereum tx and costs gas">
-                      ✔
+                      ✅
                     </span>
                   </td>
                 </tr>
@@ -420,7 +432,7 @@ export default function Faq() {
                   <td>Submit order</td>
                   <td>
                     <span role="img" aria-label="submit order is a signed tx and costs no gas">
-                      ✔
+                      ✅
                     </span>
                   </td>
                   <td />
@@ -429,7 +441,7 @@ export default function Faq() {
                   <td>Cancel order</td>
                   <td>
                     <span role="img" aria-label="cancel order is a signed tx and costs no gas">
-                      ✔
+                      ✅
                     </span>
                   </td>
                   <td />
