@@ -17,6 +17,7 @@ import { getPromiseFulfilledValue, isPromiseFulfilled } from 'utils/misc'
 import QuoteError, { QuoteErrorCodes, isValidQuoteError } from 'utils/operator/errors/QuoteError'
 import { ApiErrorCodes, isValidOperatorError } from 'utils/operator/errors/OperatorError'
 import BigNumberJs from 'bignumber.js'
+import { OrderKind } from '@gnosis.pm/gp-v2-contracts'
 
 export interface RefetchQuoteCallbackParams {
   quoteParams: FeeQuoteParams
@@ -78,11 +79,18 @@ async function _getBestPriceQuote(params: PriceQuoteParams): Promise<PriceInform
   if (priceQuotes.length > 0) {
     const amounts = priceQuotes.map(quote => quote.amount).filter(Boolean) as string[]
 
-    // Take the best price
-    // TODO: Probably for buy orders is the minimum
+    // Take the best price: Aggregate all the amounts into a single one.
+    //  - Use maximum of all the result for "Sell orders":
+    //        You want to get the maximum number of buy tokens
+    //  - Use minimum "Buy orders":
+    //        You want to spend the min number of sell tokens
+    const aggregationFunction = params.kind === OrderKind.SELL ? 'max' : 'min'
+    const amount = BigNumberJs[aggregationFunction](...amounts).toString(10)
+    // console.log('Aggregated amounts', aggregationFunction, amounts, amount)
+
     return {
       token: priceQuotes[0].token,
-      amount: BigNumberJs.max(...amounts).toString(10)
+      amount
     }
   } else {
     throw new PriceQuoteError('Error querying price from APIs', params, [priceResult, paraSwapPriceResult])
