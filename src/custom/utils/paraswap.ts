@@ -5,6 +5,7 @@ import { PriceQuoteParams } from 'utils/operator'
 import { OptimalRatesWithPartnerFees, RateOptions } from 'paraswap/build/types'
 import { ChainId } from '@uniswap/sdk'
 import { PriceInformation } from 'state/price/reducer'
+import { getTokensFromMarket } from './misc'
 
 type ParaSwapPriceQuote = OptimalRatesWithPartnerFees
 
@@ -29,19 +30,28 @@ function getParaswapChainId(chainId: ChainId): NetworkID | null {
 }
 
 export function toPriceInformation(priceRaw: ParaSwapPriceQuote | null): PriceInformation | null {
-  console.log('toPriceInformation', priceRaw)
-  if (!priceRaw) {
+  if (!priceRaw || !priceRaw.details) {
     return null
   }
 
-  return {
-    amount: priceRaw.destAmount,
-    token: priceRaw.details?.tokenTo || 'anxo'
+  const { destAmount, srcAmount, details, side } = priceRaw
+  if (side === SwapSide.SELL) {
+    return {
+      amount: destAmount,
+      token: details.tokenTo
+    }
+  } else {
+    return {
+      amount: srcAmount,
+      token: details.tokenFrom
+    }
   }
 }
 
 export async function getPriceQuote(params: PriceQuoteParams): Promise<ParaSwapPriceQuote | null> {
-  const { baseToken, quoteToken, amount, kind, chainId } = params
+  const { baseToken: baseTokenAux, quoteToken: quoteTokenAux, amount, kind, chainId } = params
+  const baseToken = toErc20Address(baseTokenAux, chainId)
+  const quoteToken = toErc20Address(quoteTokenAux, chainId)
 
   let paraSwap = parSwapLibs.get(chainId)
   if (!paraSwap) {
@@ -55,10 +65,15 @@ export async function getPriceQuote(params: PriceQuoteParams): Promise<ParaSwapP
   }
 
   console.log('[util:paraswap] Get price from Paraswap', params)
-  const sellToken = toErc20Address(baseToken, chainId)
-  const buyToken = toErc20Address(quoteToken, chainId)
+
+  // Buy/sell token and side (sell/buy)
+  const { sellToken, buyToken } = getTokensFromMarket({ baseToken, quoteToken, kind })
   const swapSide = kind === OrderKind.BUY ? SwapSide.BUY : SwapSide.SELL
+
+  // https://developers.paraswap.network/api/get-rate-for-a-token-pair
   const options: RateOptions | undefined = undefined
+
+  // Get price
   const rateResult = await paraSwap.getRate(sellToken, buyToken, amount, swapSide, options)
 
   if ('destAmount' in rateResult) {
