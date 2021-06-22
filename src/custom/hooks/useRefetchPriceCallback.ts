@@ -47,7 +47,7 @@ class PriceQuoteError extends Error {
 }
 
 type PriceSource = 'gnosis-protocol' | 'paraswap'
-type PriceInformationWithSource = PriceInformation & { source: PriceSource }
+type PriceInformationWithSource = PriceInformation & { source: PriceSource; data?: any }
 
 /**
  *
@@ -62,15 +62,15 @@ async function _getBestPriceQuote(params: PriceQuoteParams): Promise<PriceInform
   const [priceResult, paraSwapPriceResult] = await Promise.allSettled([pricePromise, paraSwapPricePromise])
   const price = getPromiseFulfilledValue(priceResult, null)
   const paraswapPriceRaw = getPromiseFulfilledValue(paraSwapPriceResult, null)
-  const paraswapPrice = toPriceInformation(paraswapPriceRaw)
 
   // Prepare an array with all successful estimations
   const priceQuotes: Array<PriceInformationWithSource> = []
   if (price) {
     priceQuotes.push({ ...price, source: 'gnosis-protocol' })
   }
-  if (paraswapPrice) {
-    priceQuotes.push({ ...paraswapPrice, source: 'paraswap' })
+  if (paraswapPriceRaw) {
+    const paraswapPrice = toPriceInformation(paraswapPriceRaw)
+    paraswapPrice && priceQuotes.push({ ...paraswapPrice, source: 'paraswap', data: paraswapPriceRaw })
   }
 
   console.log('[hooks::useRefetchPriceCallback] _getBestPriceQuote', priceQuotes)
