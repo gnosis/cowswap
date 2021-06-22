@@ -40,7 +40,7 @@ export const WrapCardContainer = styled.div`
   > ${WrapCardWrapper} {
     &:nth-of-type(1) {
       background-color: transparent;
-      color: ${({ theme }) => theme.wallet.color};
+      color: ${({ theme }) => theme.text1};
     }
 
     &:nth-of-type(2) {
@@ -62,6 +62,7 @@ export const WrapCardContainer = styled.div`
     right: 0;
     margin: auto;
     background: ${({ theme }) => theme.white};
+    stroke: ${({ theme }) => theme.black};
     width: 24px;
     height: 24px;
     border-radius: 24px;

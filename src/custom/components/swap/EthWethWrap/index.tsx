@@ -26,7 +26,7 @@ import {
 
 const Wrapper = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap}
-  background: ${({ theme }) => theme.bg2};
+  background: ${({ theme }) => theme.bg4};
   align-items: center;
   color: ${({ theme }) => theme.text1};
   justify-content: center;
@@ -53,19 +53,21 @@ const ModalMessage = styled.p`
   flex-flow: row wrap;
   padding: 0 8px;
   width: 100%;
-  color: ${({ theme }) => theme.wallet.color};
+  line-height: 1.7;
+  color: ${({ theme }) => theme.text1};
 `
 
 const ModalWrapper = styled(Wrapper)`
   margin: 0 auto;
 
   > h2 {
-    color: ${({ theme }) => theme.wallet.color};
+    color: ${({ theme }) => theme.text1};
   }
 `
 
 const WarningWrapper = styled(Wrapper)`
   ${({ theme }) => theme.flexRowNoWrap}
+  background: transparent;
   padding: 0;
   margin: 0;
   color: ${({ theme }) => theme.redShade};
@@ -107,7 +109,7 @@ const ErrorWrapper = styled(BalanceLabel)`
   width: 100%;
   margin: 12px auto 0;
   font-size: 12px;
-  background-color: #ffefea;
+  background-color: ${({ theme }) => theme.bgError};
   color: ${({ theme }) => theme.redShade};
 `
 

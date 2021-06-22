@@ -31,6 +31,7 @@ export function colors(darkMode: boolean): Colors {
     bg1: darkMode ? '#1E1F2C' : '#FFFFFF',
     bg2: darkMode ? '#2C2D3F' : '#F7F8FA',
     bg3: darkMode ? '#1E1F2C' : '#EDEEF2',
+    bgError: darkMode ? 'rgb(212 56 12 / 15%)' : '#ffefea',
 
     // ****** specialty colors ******
     advancedBG: darkMode ? '#2B2D3F' : 'rgb(247 248 250)',
@@ -55,7 +56,7 @@ export function colors(darkMode: boolean): Colors {
     blueShade2: '#011e34',
     border: darkMode ? '#3a3b5a' : 'rgb(58 59 90 / 10%)',
     disabled: darkMode ? '#31323e' : 'rgb(237, 238, 242)',
-    redShade: darkMode ? '#842100' : '#AE2C00',
+    redShade: darkMode ? '#e23900' : '#842100',
     textLink: darkMode ? '#ffffff' : '#AE2C00',
     shimmer1: darkMode ? 'rgb(22 56 97 / 20%)' : 'rgb(175 203 218 / 20%)',
     shimmer2: darkMode ? 'rgb(22 56 97 / 50%)' : 'rgb(175 203 218 / 40%)'
