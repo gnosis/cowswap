@@ -86,12 +86,10 @@ async function _getBestPriceQuote(params: PriceQuoteParams): Promise<PriceInform
     //        You want to spend the min number of sell tokens
     const aggregationFunction = params.kind === OrderKind.SELL ? 'max' : 'min'
     const amount = BigNumberJs[aggregationFunction](...amounts).toString(10)
+    const token = priceQuotes[0].token
     // console.log('Aggregated amounts', aggregationFunction, amounts, amount)
 
-    return {
-      token: priceQuotes[0].token,
-      amount
-    }
+    return { token, amount }
   } else {
     throw new PriceQuoteError('Error querying price from APIs', params, [priceResult, paraSwapPriceResult])
   }
