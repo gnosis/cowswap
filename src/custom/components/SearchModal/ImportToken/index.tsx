@@ -1,13 +1,16 @@
 import React from 'react'
 import styled from 'styled-components'
 import { ImportToken as ImportTokenMod, ImportProps, Wrapper as WrapperMod } from './ImportTokenMod'
+import Card from 'components/Card'
+import { AutoRow } from 'components/Row'
+import { StyledLogo } from 'components/CurrencyLogo'
 
 const Wrapper = styled.div`
   ${WrapperMod} {
-    background: red;
-    /* ${`.token-warning-container`} {
-      background: ${({ theme }) => theme.bg4};
-    } */
+    ${Card} ${AutoRow},
+    ${Card} ${AutoRow} > ${StyledLogo} ~ div {
+      color: ${({ theme }) => theme.text2};
+    }
   }
 `
 
@@ -15,7 +18,6 @@ export function ImportToken(props: ImportProps) {
   return (
     <Wrapper>
       <ImportTokenMod {...props} />
-      <h1>Test!!!!!!!!!</h1>
     </Wrapper>
   )
 }

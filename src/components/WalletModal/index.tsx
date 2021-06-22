@@ -18,7 +18,7 @@ import AccountDetails from 'components/AccountDetails'
 
 import Modal from '../Modal'
 import Option from 'components/WalletModal/Option'
-import PendingView from './PendingView'
+import PendingView from 'components/WalletModal/PendingView'
 
 const CloseIcon = styled.div`
   position: absolute;
