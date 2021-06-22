@@ -46,7 +46,7 @@ class PriceQuoteError extends Error {
   }
 }
 
-type PriceSource = 'api' | 'paraswap'
+type PriceSource = 'gnosis-protocol' | 'paraswap'
 type PriceInformationWithSource = PriceInformation & { source: PriceSource }
 
 /**
@@ -67,7 +67,7 @@ async function _getBestPriceQuote(params: PriceQuoteParams): Promise<PriceInform
   // Prepare an array with all successful estimations
   const priceQuotes: Array<PriceInformationWithSource> = []
   if (price) {
-    priceQuotes.push({ ...price, source: 'api' })
+    priceQuotes.push({ ...price, source: 'gnosis-protocol' })
   }
   if (paraswapPrice) {
     priceQuotes.push({ ...paraswapPrice, source: 'paraswap' })
