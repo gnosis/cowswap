@@ -16,10 +16,10 @@ const parSwapLibs: Map<ChainId, ParaSwap> = new Map()
 function getParaswapChainId(chainId: ChainId): NetworkID | null {
   switch (chainId) {
     case ChainId.MAINNET:
-    case ChainId.RINKEBY:
+    // case ChainId.RINKEBY: // Rinkeby is supported by the SDK but not from the API
+    // case ChainId.XDAI: // xDAI not supported for now
     case ChainId.KOVAN:
     case ChainId.ROPSTEN:
-      // case ChainId.XDAI: // xDAI not supported for now
       return chainId
 
     default:
