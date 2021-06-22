@@ -12,7 +12,7 @@ type ParaSwapPriceQuote = OptimalRatesWithPartnerFees
 // Provided manually just to make sure it matches what GPv2 backend is using, although the value used  is the current SDK default
 const API_URL = 'https://apiv4.paraswap.io/v2'
 
-const parSwapLibs: Map<ChainId, ParaSwap> = new Map()
+const paraSwapLibs: Map<ChainId, ParaSwap> = new Map()
 
 function getParaswapChainId(chainId: ChainId): NetworkID | null {
   switch (chainId) {
@@ -53,7 +53,7 @@ export async function getPriceQuote(params: PriceQuoteParams): Promise<ParaSwapP
   const baseToken = toErc20Address(baseTokenAux, chainId)
   const quoteToken = toErc20Address(quoteTokenAux, chainId)
 
-  let paraSwap = parSwapLibs.get(chainId)
+  let paraSwap = paraSwapLibs.get(chainId)
   if (!paraSwap) {
     const networkId = getParaswapChainId(chainId)
     if (networkId == null) {
@@ -61,7 +61,7 @@ export async function getPriceQuote(params: PriceQuoteParams): Promise<ParaSwapP
       return null
     }
     paraSwap = new ParaSwap(networkId, API_URL)
-    parSwapLibs.set(chainId, paraSwap)
+    paraSwapLibs.set(chainId, paraSwap)
   }
 
   console.log('[util:paraswap] Get price from Paraswap', params)
