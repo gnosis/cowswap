@@ -16,10 +16,9 @@ const paraSwapLibs: Map<ChainId, ParaSwap> = new Map()
 
 function getParaswapChainId(chainId: ChainId): NetworkID | null {
   switch (chainId) {
-    // case ChainId.RINKEBY: // Rinkeby is supported by the SDK but not from the API
-    // case ChainId.XDAI: // xDAI not supported for now
+    // Only Mainnnet and Ropsten supported
+    //  See https://developers.paraswap.network/api/list-all-tokens
     case ChainId.MAINNET:
-    case ChainId.KOVAN:
     case ChainId.ROPSTEN:
       return chainId
 
