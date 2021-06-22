@@ -3,6 +3,7 @@ import React from 'react'
 import SwapModalHeaderMod, { SwapModalHeaderProps } from './SwapModalHeaderMod'
 import { AutoColumn } from 'components/Column'
 import styled from 'styled-components'
+import { StyledLogo } from 'components/CurrencyLogo'
 
 const Wrapper = styled.div`
   svg {
@@ -11,6 +12,10 @@ const Wrapper = styled.div`
 
   ${AutoColumn} > div > div {
     color: ${({ theme }) => theme.text1};
+  }
+
+  ${StyledLogo} {
+    stroke: ${({ theme }) => theme.text2};
   }
 `
 
