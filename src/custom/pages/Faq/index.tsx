@@ -483,7 +483,7 @@ export default function Faq() {
                 <strong>Cancel an order (Sign cancellation)</strong> <br />
                 Signature of a gasless off-chain cancellation request. This cancellation is considered
                 &ldquo;soft&rdquo; as it might not be placed with enough time for the solvers to take into
-                consideration. See more at <ContentLink href={'#can-i-cancel-an-order'}>this FAQ entry</ContentLink>.
+                consideration. See more via <ContentLink href={'#can-i-cancel-an-order'}>this FAQ entry</ContentLink>.
               </p>
             </li>
           </ul>
