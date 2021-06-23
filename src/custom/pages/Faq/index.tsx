@@ -453,7 +453,7 @@ export default function Faq() {
             <li>
               <p>
                 <strong>Approve token</strong> <br />
-                Required step for being able to sell a token. Only needs to be done once. Afterwards, you will be able
+                One-time-only, required step for being able to sell a token. Afterwards, you will be able
                 to trade the token using gasless transactions.
               </p>
             </li>
