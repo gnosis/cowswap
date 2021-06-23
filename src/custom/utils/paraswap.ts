@@ -2,7 +2,7 @@ import { OrderKind } from '@gnosis.pm/gp-v2-contracts'
 import { ParaSwap, SwapSide, NetworkID } from 'paraswap'
 import { toErc20Address } from 'utils/tokens'
 import { PriceQuoteParams } from 'utils/operator'
-import { OptimalRatesWithPartnerFees, RateOptions } from 'paraswap/build/types'
+import { OptimalRatesWithPartnerFees, APIError, RateOptions } from 'paraswap/build/types'
 import { ChainId } from '@uniswap/sdk'
 import { PriceInformation } from 'state/price/reducer'
 import { getTokensFromMarket } from './misc'
@@ -47,6 +47,12 @@ export function toPriceInformation(priceRaw: ParaSwapPriceQuote | null): PriceIn
   }
 }
 
+function isGetRateSuccess(
+  rateResult: OptimalRatesWithPartnerFees | APIError
+): rateResult is OptimalRatesWithPartnerFees {
+  return !!(rateResult as OptimalRatesWithPartnerFees).destAmount
+}
+
 export async function getPriceQuote(params: PriceQuoteParams): Promise<ParaSwapPriceQuote | null> {
   const { baseToken: baseTokenAux, quoteToken: quoteTokenAux, amount, kind, chainId } = params
   const baseToken = toErc20Address(baseTokenAux, chainId)
@@ -75,11 +81,11 @@ export async function getPriceQuote(params: PriceQuoteParams): Promise<ParaSwapP
   // Get price
   const rateResult = await paraSwap.getRate(sellToken, buyToken, amount, swapSide, options)
 
-  if ('destAmount' in rateResult) {
-    // Success: rateResult is an OptimalRatesWithPartnerFees
+  if (isGetRateSuccess(rateResult)) {
+    // Success getting the price
     return rateResult
   } else {
-    // Error: rateResult is an ApiError
+    // Error getting the price
     throw rateResult
   }
 }
