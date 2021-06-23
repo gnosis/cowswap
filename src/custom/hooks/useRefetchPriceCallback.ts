@@ -91,11 +91,13 @@ async function _getBestPriceQuote(params: PriceQuoteParams): Promise<PriceInform
   }
 
   if (errorsGetPrice.length > 0) {
-    console.error('[hooks::useRefetchPriceCallback] Some API failed or timed out', errorsGetPrice)
+    const sourceNames = errorsGetPrice.map(e => e.source).join(', ')
+    console.error('[hooks::useRefetchPriceCallback] Some API failed or timed out: ' + sourceNames, errorsGetPrice)
   }
-  console.log('[hooks::useRefetchPriceCallback] Get best price', priceQuotes)
 
   if (priceQuotes.length > 0) {
+    const sourceNames = priceQuotes.map(p => p.source).join(', ')
+    console.log('[hooks::useRefetchPriceCallback] Get best price succeeded for ' + sourceNames, priceQuotes)
     const amounts = priceQuotes.map(quote => quote.amount).filter(Boolean) as string[]
 
     // Take the best price: Aggregate all the amounts into a single one.
@@ -107,6 +109,12 @@ async function _getBestPriceQuote(params: PriceQuoteParams): Promise<PriceInform
     const amount = BigNumberJs[aggregationFunction](...amounts).toString(10)
     const token = priceQuotes[0].token
     // console.log('Aggregated amounts', aggregationFunction, amounts, amount)
+
+    const winningPrices = priceQuotes
+      .filter(quote => quote.amount === amount)
+      .map(p => p.source)
+      .join(', ')
+    console.log('[hooks::useRefetchPriceCallback] Winning price: ' + winningPrices)
 
     return { token, amount }
   } else {
