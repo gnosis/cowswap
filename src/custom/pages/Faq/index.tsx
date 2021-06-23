@@ -467,7 +467,7 @@ export default function Faq() {
             <li>
               <p>
                 <strong>Unwrap ETH</strong> <br />
-                Converts ERC20 compatible token WETH back to ETH. Only when you want to manually convert it to ETH.
+                Unwrap: convert ERC20 compatible token WETH back into native ETH. Only when you want to manually convert it to ETH.
               </p>
             </li>
             <li>
