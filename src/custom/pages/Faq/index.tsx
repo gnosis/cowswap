@@ -8,21 +8,37 @@ import { Link } from 'react-router-dom'
 const Wrapper = styled.div`
   #table-container {
     margin: auto;
-    max-width: 80vw;
+    max-width: 100%;
 
     > table {
       width: 100%;
+      border-spacing: 1px;
+      color: ${({ theme }) => theme.text1};
 
-      thead, tr:nth-child(even) {
-        background: ${({ theme }) => theme.bg2};
-        color: ${({ theme }) => theme.text2};
-        }
+      > thead {
+        background: ${({ theme }) => theme.tableHeadBG};
+      }
+
+      > tbody > tr {
+        background: ${({ theme }) => theme.tableRowBG};
+      }
+
+      > tbody > tr > td > span[role='img'] {
+        font-size: 18px;
       }
 
       th,
       td {
         text-align: left;
-        padding: 0.5rem 0.4rem;
+        padding: 6px 12px;
+
+        &:not(:first-child) {
+          text-align: center;
+        }
+      }
+
+      th {
+        padding: 16px 12px;
       }
     }
   }
@@ -76,10 +92,6 @@ const Wrapper = styled.div`
 
   ol > li {
     margin-bottom: 0.5rem;
-  }
-
-  span[role='img'] {
-    font-size: 1.8em;
   }
 `
 
@@ -392,7 +404,7 @@ export default function Faq() {
             <table>
               <thead>
                 <tr>
-                  <th />
+                  <th>Action</th>
                   <th>Signed tx (free / gasless)</th>
                   <th>Ethereum tx (costs gas)</th>
                 </tr>
@@ -403,7 +415,7 @@ export default function Faq() {
                   <td />
                   <td>
                     <span role="img" aria-label="approve token in an ethereum tx and costs gas">
-                      ✔
+                      ✅
                     </span>
                   </td>
                 </tr>
@@ -412,7 +424,7 @@ export default function Faq() {
                   <td />
                   <td>
                     <span role="img" aria-label="wrap/unwrap ETH in an ethereum tx and costs gas">
-                      ✔
+                      ✅
                     </span>
                   </td>
                 </tr>
@@ -420,7 +432,7 @@ export default function Faq() {
                   <td>Submit order</td>
                   <td>
                     <span role="img" aria-label="submit order is a signed tx and costs no gas">
-                      ✔
+                      ✅
                     </span>
                   </td>
                   <td />
@@ -429,7 +441,7 @@ export default function Faq() {
                   <td>Cancel order</td>
                   <td>
                     <span role="img" aria-label="cancel order is a signed tx and costs no gas">
-                      ✔
+                      ✅
                     </span>
                   </td>
                   <td />
@@ -439,30 +451,36 @@ export default function Faq() {
           </div>
           <ul>
             <li>
-              <strong>Approve token</strong>:
               <p>
+                <strong>Approve token</strong> <br />
                 Required step for being able to sell a token. Only needs to be done once. Afterwards, you will be able
                 to trade the token using gasless transactions.
               </p>
             </li>
             <li>
-              <strong>Wrap / Unwrap ETH</strong>:
               <p>
+                <strong>Wrap ETH</strong> <br />
                 Converts native ETH into an ERC20 compatible token: WETH. Only required if you need to sell ETH.
+              </p>
+            </li>
+
+            <li>
+              <p>
+                <strong>Unwrap ETH</strong> <br />
                 Converts ERC20 compatible token WETH back to ETH. Only when you want to manually convert it to ETH.
               </p>
             </li>
             <li>
-              <strong>Submit order (Sign order)</strong>:
               <p>
+                <strong>Submit order (Sign order)</strong> <br />
                 Signature of a gasless off-chain order. You define your limit price and expiration date. The order will
                 try to be executed using MEV protection against different on-chain liquidity sources or other CowSwap
                 users trading in the same block.
               </p>
             </li>
             <li>
-              <strong>Cancel an order (Sign cancellation)</strong>:
               <p>
+                <strong>Cancel an order (Sign cancellation)</strong> <br />
                 Signature of a gasless off-chain cancellation request. This cancellation is considered
                 &ldquo;soft&rdquo; as it might not be placed with enough time for the solvers to take into
                 consideration. See more at <ContentLink href={'#can-i-cancel-an-order'}>this FAQ entry</ContentLink>.
