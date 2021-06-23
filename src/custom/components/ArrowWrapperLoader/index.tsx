@@ -6,7 +6,11 @@ import useLoadingWithTimeout from 'hooks/useLoadingWithTimeout'
 import { useIsQuoteRefreshing } from 'state/price/hooks'
 import { LONG_LOAD_THRESHOLD } from 'constants/index'
 
-const ArrowDownIcon = styled(ArrowDown)<{ showLoader: boolean }>`
+interface ShowLoaderProp {
+  $showloader: boolean | undefined
+}
+
+const ArrowDownIcon = styled(ArrowDown)<ShowLoaderProp>`
   stroke: ${({ theme }) => theme.swap.arrowDown.color};
   backface-visibility: hidden;
   width: 100%;
@@ -16,16 +20,15 @@ const ArrowDownIcon = styled(ArrowDown)<{ showLoader: boolean }>`
   margin: 0;
   position: absolute;
 
-  ${({ showLoader }) =>
-    showLoader
-      ? css`
-          height: 0;
-          width: 0;
-        `
-      : null}
+  ${({ $showloader }) =>
+    $showloader &&
+    css`
+      height: 0;
+      width: 0;
+    `}
 `
 
-export const Wrapper = styled.div<{ showLoader: boolean }>`
+export const Wrapper = styled.div<ShowLoaderProp>`
   position: absolute;
   display: flex;
   align-items: center;
@@ -64,58 +67,49 @@ export const Wrapper = styled.div<{ showLoader: boolean }>`
     object-position: bottom;
   }
 
-  ${({ showLoader }) =>
-    showLoader
-      ? css`
-          position: absolute;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          overflow: visible;
-          padding: 0;
-          border: transparent;
-          transform: translateX(-100%) rotateY(-180deg);
+  ${({ $showloader }) =>
+    $showloader &&
+    css`
+      position: absolute;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: visible;
+      padding: 0;
+      border: transparent;
+      transform: translateX(-100%) rotateY(-180deg);
 
-          &::before,
-          &::after {
-            content: '';
-            position: absolute;
-            left: -2px;
-            top: -2px;
-            background: linear-gradient(
-              45deg,
-              #e57751,
-              #c5daef,
-              #275194,
-              ${({ theme }) => theme.bg4},
-              #c5daef,
-              #1b5a7a
-            );
-            background-size: 800%;
-            width: calc(100% + 4px);
-            height: calc(100% + 4px);
-            z-index: -1;
-            animation: steam 7s linear infinite;
-            border-radius: 11px;
-          }
+      &::before,
+      &::after {
+        content: '';
+        position: absolute;
+        left: -2px;
+        top: -2px;
+        background: linear-gradient(45deg, #e57751, #c5daef, #275194, ${({ theme }) => theme.bg4}, #c5daef, #1b5a7a);
+        background-size: 800%;
+        width: calc(100% + 4px);
+        height: calc(100% + 4px);
+        z-index: -1;
+        animation: steam 7s linear infinite;
+        border-radius: 11px;
+      }
 
-          &::after {
-            filter: blur(10px);
-          }
+      &::after {
+        filter: blur(10px);
+      }
 
-          @keyframes steam {
-            0% {
-              background-position: 0 0;
-            }
-            50% {
-              background-position: 400% 0;
-            }
-            100% {
-              background-position: 0 0;
-            }
-          }
-        `
-      : null}
+      @keyframes steam {
+        0% {
+          background-position: 0 0;
+        }
+        50% {
+          background-position: 400% 0;
+        }
+        100% {
+          background-position: 0 0;
+        }
+      }
+    `}
 `
 
 export interface ArrowWrapperLoaderProps {
@@ -132,8 +126,8 @@ export function ArrowWrapperLoader({ onSwitchTokens, setApprovalSubmitted }: Arr
   }
 
   return (
-    <Wrapper showLoader={showLoader} onClick={handleClick}>
-      <ArrowDownIcon showLoader={showLoader} />
+    <Wrapper $showloader={showLoader ? true : undefined} onClick={handleClick}>
+      <ArrowDownIcon $showloader={showLoader ? true : undefined} />
       {showLoader && (
         <div>
           <img src={loadingCowGif} alt="Loading prices..." />
