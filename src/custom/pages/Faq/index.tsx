@@ -23,6 +23,10 @@ const Wrapper = styled.div`
         background: ${({ theme }) => theme.tableRowBG};
       }
 
+      > tbody > tr > td > span[role='img'] {
+        font-size: 18px;
+      }
+
       th,
       td {
         text-align: left;
@@ -88,10 +92,6 @@ const Wrapper = styled.div`
 
   ol > li {
     margin-bottom: 0.5rem;
-  }
-
-  span[role='img'] {
-    font-size: 1.8em;
   }
 `
 
@@ -451,30 +451,36 @@ export default function Faq() {
           </div>
           <ul>
             <li>
-              <strong>Approve token</strong>:
               <p>
+                <strong>Approve token</strong> <br />
                 Required step for being able to sell a token. Only needs to be done once. Afterwards, you will be able
                 to trade the token using gasless transactions.
               </p>
             </li>
             <li>
-              <strong>Wrap / Unwrap ETH</strong>:
               <p>
+                <strong>Wrap ETH</strong> <br />
                 Converts native ETH into an ERC20 compatible token: WETH. Only required if you need to sell ETH.
+              </p>
+            </li>
+
+            <li>
+              <p>
+                <strong>Unwrap ETH</strong> <br />
                 Converts ERC20 compatible token WETH back to ETH. Only when you want to manually convert it to ETH.
               </p>
             </li>
             <li>
-              <strong>Submit order (Sign order)</strong>:
               <p>
+                <strong>Submit order (Sign order)</strong> <br />
                 Signature of a gasless off-chain order. You define your limit price and expiration date. The order will
                 try to be executed using MEV protection against different on-chain liquidity sources or other CowSwap
                 users trading in the same block.
               </p>
             </li>
             <li>
-              <strong>Cancel an order (Sign cancellation)</strong>:
               <p>
+                <strong>Cancel an order (Sign cancellation)</strong> <br />
                 Signature of a gasless off-chain cancellation request. This cancellation is considered
                 &ldquo;soft&rdquo; as it might not be placed with enough time for the solvers to take into
                 consideration. See more at <ContentLink href={'#can-i-cancel-an-order'}>this FAQ entry</ContentLink>.
