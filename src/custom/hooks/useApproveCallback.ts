@@ -6,11 +6,12 @@ import { computeSlippageAdjustedAmounts } from 'utils/prices'
 import { useMemo } from 'react'
 import { GP_ALLOWANCE_MANAGER_CONTRACT_ADDRESS } from 'constants/index'
 import TradeGp from 'state/swap/TradeGp'
+import { ZERO_PERCENT } from 'constants/misc'
 
 export { ApprovalState } from '@src/hooks/useApproveCallback'
 
 // export function useApproveCallbackFromTrade(trade?: Trade, allowedSlippage = 0) {
-export function useApproveCallbackFromTrade(trade?: TradeGp, allowedSlippage = 0) {
+export function useApproveCallbackFromTrade(trade?: TradeGp, allowedSlippage = ZERO_PERCENT) {
   const { chainId } = useActiveWeb3React()
 
   const amountToApprove = useMemo(() => {
