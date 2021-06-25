@@ -18,7 +18,7 @@ export type QuoteError =
   | 'unsupported-token'
   | 'offline-browser'
 
-export type SetQuoteErrorParams = UpdateQuoteParams & { error: QuoteError }
+export type SetQuoteErrorParams = UpdateQuoteParams & { error?: QuoteError }
 
 export const getNewQuoteStart = createAction<GetQuoteParams>('price/getNewQuoteStart')
 export const refreshQuoteStart = createAction('price/refreshQuoteStart')

@@ -157,6 +157,11 @@ export default function FeesUpdater(): null {
         setQuoteError({ ...quoteParams, error: 'offline-browser' })
       }
       return
+    } else {
+      // If we are online, we make sure we reset the offline-error
+      if (quoteInfo?.error === 'offline-browser') {
+        setQuoteError({ ...quoteParams, error: undefined })
+      }
     }
 
     const unsupportedToken =
