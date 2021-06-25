@@ -1,4 +1,5 @@
 import React from 'react'
+import { Percent } from '@uniswap/sdk-core'
 import styled from 'styled-components/macro'
 import { useLastTruthy } from 'hooks/useLast'
 import { AdvancedSwapDetails /* , AdvancedSwapDetailsProps */ } from 'components/swap/AdvancedSwapDetails'
@@ -13,7 +14,7 @@ const AdvancedDetailsFooter = styled.div<{ show: boolean }>`
 
 interface AdvancedSwapDetailsProps {
   trade?: TradeGp
-  allowedSlippage: number
+  allowedSlippage: Percent
 }
 
 export default function AdvancedSwapDetailsDropdown({ trade, ...rest }: AdvancedSwapDetailsProps) {
