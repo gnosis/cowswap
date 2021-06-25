@@ -32,6 +32,7 @@ import { CurrencyModalView } from 'components/SearchModal/CurrencySearchModal'
 import { ListRowProps } from '.'
 import { useActiveWeb3React } from 'hooks/web3'
 import { DEFAULT_NETWORK_FOR_LISTS } from 'constants/lists'
+import { supportedChainId } from 'utils/supportedChainId'
 
 const Wrapper = styled(Column)`
   width: 100%;
@@ -105,7 +106,9 @@ const ListRow = memo(function ListRow({
 }: // }: { listUrl: string }) {
 ListRowProps & { listUrl: string }) {
   // We default to a chainId if none is available
-  const { chainId = DEFAULT_NETWORK_FOR_LISTS } = useActiveWeb3React()
+  const { chainId: connectedChainId } = useActiveWeb3React()
+  const chainId = supportedChainId(connectedChainId) ?? DEFAULT_NETWORK_FOR_LISTS
+
   // const listsByUrl = useAppSelector<AppState, AppState['lists']['byUrl']>(state => state.lists.byUrl)
   const listsByUrl = useAppSelector((state) => state.lists[chainId].byUrl)
   const dispatch = useAppDispatch()

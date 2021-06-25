@@ -3,7 +3,8 @@ import React from 'react'
 import styled from 'styled-components'
 import { RowFixed } from 'components/Row'
 import SettingsMod, { StyledMenuButton, MenuFlyout, StyledMenuIcon, EmojiWrapper } from './SettingsMod'
-import { Percent } from '@uniswap/sdk'
+import { Percent } from '@uniswap/sdk-core'
+import { INITIAL_ALLOWED_SLIPPAGE_PERCENT } from 'constants'
 
 const Wrapper = styled(SettingsMod)`
   ${MenuFlyout} {
@@ -136,5 +137,5 @@ function SettingsButton({ toggleSettings, expertMode }: SettingsButtonProps) {
 }
 
 export default function SettingsTab() {
-  return <Wrapper SettingsButton={SettingsButton} />
+  return <Wrapper SettingsButton={SettingsButton} placeholderSlippage={INITIAL_ALLOWED_SLIPPAGE_PERCENT} />
 }
