@@ -1,5 +1,5 @@
 import { Trans } from '@lingui/macro'
-// import { Currency,  Percent , TradeType } from '@uniswap/sdk-core'
+import { /* Currency,  */ Percent /* , TradeType */ } from '@uniswap/sdk-core'
 // import { Trade as V2Trade } from '@uniswap/v2-sdk'
 // import { Trade as V3Trade } from '@uniswap/v3-sdk'
 import React, { ReactNode, useCallback, useMemo } from 'react'
@@ -56,8 +56,7 @@ export default function ConfirmSwapModal({
   attemptingTxn: boolean
   txHash: string | undefined
   recipient: string | null
-  // allowedSlippage: Percent
-  allowedSlippage: number
+  allowedSlippage: Percent
   onAcceptChanges: () => void
   onConfirm: () => void
   swapErrorMessage: ReactNode | undefined

@@ -1,5 +1,5 @@
 // import { Trans } from '@lingui/macro'
-// import { Percent, Currency, TradeType } from '@uniswap/sdk-core'
+import { Percent /*, Currency, TradeType */ } from '@uniswap/sdk-core'
 // import { Trade as V2Trade } from '@uniswap/v2-sdk'
 // import { Trade as V3Trade } from '@uniswap/v3-sdk'
 import React /* , { useContext, useMemo } */ from 'react'
@@ -16,9 +16,8 @@ import TradeSummary from '../TradeSummary'
 
 export interface AdvancedSwapDetailsProps {
   // trade?: V2Trade<Currency, Currency, TradeType> | V3Trade<Currency, Currency, TradeType>
-  // allowedSlippage: Percent
   trade?: TradeGp
-  allowedSlippage: number
+  allowedSlippage: Percent
 }
 
 export function AdvancedSwapDetails({ trade, allowedSlippage }: AdvancedSwapDetailsProps) {

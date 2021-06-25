@@ -1,5 +1,5 @@
 import { Trans } from '@lingui/macro'
-import { Currency, TradeType, CurrencyAmount } from '@uniswap/sdk-core'
+import { Currency, Percent, TradeType, CurrencyAmount } from '@uniswap/sdk-core'
 // import { Trade as V2Trade } from '@uniswap/v2-sdk'
 // import { Trade as V3Trade } from '@uniswap/v3-sdk'
 import React, { useContext, useMemo, useState } from 'react'
@@ -20,7 +20,7 @@ import { getMinimumReceivedTooltip } from 'utils/tooltips'
 
 export interface SwapModalFooterProps {
   trade: TradeGp
-  allowedSlippage: number
+  allowedSlippage: Percent
   onConfirm: () => void
   swapErrorMessage: React.ReactNode | undefined
   disabledConfirm: boolean

@@ -49,7 +49,7 @@ export const ArrowWrapper = styled.div`
 // MOD
 export interface SwapModalHeaderProps {
   trade: TradeGp
-  allowedSlippage: number
+  allowedSlippage: Percent
   recipient: string | null
   showAcceptChanges: boolean
   priceImpactWithoutFee?: Percent
