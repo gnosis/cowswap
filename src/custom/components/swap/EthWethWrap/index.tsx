@@ -2,7 +2,7 @@ import React, { useState, useCallback, useMemo, useEffect, ReactNode } from 'rea
 import styled from 'styled-components'
 import { TransactionResponse } from '@ethersproject/providers'
 import { AlertTriangle } from 'react-feather'
-import { Currency, Token, CurrencyAmount } from '@uniswap/sdk'
+import { Currency, Token, CurrencyAmount } from '@uniswap/sdk-core'
 
 import { ButtonSecondary, ButtonPrimary } from 'components/Button'
 import Loader from 'components/Loader'
@@ -13,7 +13,7 @@ import { useIsTransactionPending } from 'state/transactions/hooks'
 
 import Modal from 'components/Modal'
 import { useGasPrices } from 'state/gas/hooks'
-import { useActiveWeb3React } from 'hooks'
+import { useActiveWeb3React } from 'hooks/web3'
 import { BigNumber } from 'ethers'
 import {
   DEFAULT_GAS_FEE,
@@ -23,6 +23,7 @@ import {
   _setNativeLowBalanceError,
   _getAvailableTransactions,
 } from './helpers'
+import { t, Trans } from '@lingui/macro'
 
 const Wrapper = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap}
@@ -122,7 +123,9 @@ const ButtonWrapper = styled.div`
 
 const ErrorMessage = ({ error }: { error: Error }) => (
   <ErrorWrapper>
-    <strong>{error.message}</strong>
+    <strong>
+      <Trans>{error.message}</Trans>
+    </strong>
   </ErrorWrapper>
 )
 
@@ -136,8 +139,8 @@ const WarningLabel = ({ children }: { children?: ReactNode }) => (
 export interface Props {
   account?: string
   native: Currency
-  nativeInput?: CurrencyAmount
-  wrapped: Token
+  nativeInput?: CurrencyAmount<Currency>
+  wrapped: Token & { listURI: string }
   wrapCallback: () => Promise<TransactionResponse>
 }
 
@@ -159,10 +162,10 @@ export default function EthWethWrap({ account, native, nativeInput, wrapped, wra
     const amount = BigNumber.from(gas).mul(MINIMUM_TXS).mul(AVG_APPROVE_COST_GWEI)
 
     return {
-      multiTxCost: CurrencyAmount.ether(amount.toString()),
-      singleTxCost: CurrencyAmount.ether(amount.div(MINIMUM_TXS).toString()),
+      multiTxCost: CurrencyAmount.fromRawAmount(native, amount.toString()),
+      singleTxCost: CurrencyAmount.fromFractionalAmount(native, amount.toString(), MINIMUM_TXS),
     }
-  }, [gasPrice])
+  }, [gasPrice, native])
 
   const isWrapPending = useIsTransactionPending(pendingHash)
   const [nativeBalance, wrappedBalance] = useCurrencyBalances(account, [native, wrapped])
@@ -215,27 +218,33 @@ export default function EthWethWrap({ account, native, nativeInput, wrapped, wra
       {/* Conditional Confirmation modal */}
       <Modal isOpen={modalOpen} onDismiss={() => setModalOpen(false)}>
         <ModalWrapper>
-          <h2>Confirm {nativeSymbol} wrap</h2>
+          <h2>
+            <Trans>Confirm {nativeSymbol} wrap</Trans>
+          </h2>
           <ModalMessage>
             <span>
-              CowSwap is a gasless exchange. <strong>{nativeSymbol}</strong> however, is required for paying{' '}
-              <strong>
-                on-chain transaction costs associated with enabling tokens and the wrapping/unwrapping of {nativeSymbol}
-                /{wrappedSymbol}
-              </strong>
-              , respectively.
+              <Trans>
+                CowSwap is a gasless exchange. <strong>{nativeSymbol}</strong> however, is required for paying{' '}
+                <strong>
+                  on-chain transaction costs associated with enabling tokens and the wrapping/unwrapping of{' '}
+                  {nativeSymbol}/{wrappedSymbol}
+                </strong>
+                , respectively.
+              </Trans>
             </span>
           </ModalMessage>
           <ModalMessage>
             <span>
-              At current gas prices, your remaining {nativeSymbol} balance after confirmation would be{' '}
-              {!txsRemaining ? (
-                <strong>insufficient for any further on-chain transactions.</strong>
-              ) : (
-                <>
-                  sufficient for <strong>up to {txsRemaining} wrapping, unwrapping, or enabling operation(s)</strong>.
-                </>
-              )}
+              <Trans>
+                At current gas prices, your remaining {nativeSymbol} balance after confirmation would be{' '}
+                {!txsRemaining ? (
+                  <strong>insufficient for any further on-chain transactions.</strong>
+                ) : (
+                  <>
+                    sufficient for <strong>up to {txsRemaining} wrapping, unwrapping, or enabling operation(s)</strong>.
+                  </>
+                )}
+              </Trans>
             </span>
           </ModalMessage>
           <WrappingVisualisation
@@ -249,10 +258,10 @@ export default function EthWethWrap({ account, native, nativeInput, wrapped, wra
           />
           <ButtonWrapper>
             <ButtonSecondary padding="0.5rem" maxWidth="30%" onClick={(): void => setModalOpen(false)}>
-              Cancel
+              <Trans>Cancel</Trans>
             </ButtonSecondary>
             <ButtonPrimary disabled={loading} padding="0.5rem" maxWidth="70%" onClick={handleWrap}>
-              {loading ? <Loader /> : `Wrap my ${nativeSymbol} anyways`}
+              {loading ? <Loader /> : t`Wrap my ${nativeSymbol} anyways`}
             </ButtonPrimary>
           </ButtonWrapper>
         </ModalWrapper>
@@ -277,7 +286,7 @@ export default function EthWethWrap({ account, native, nativeInput, wrapped, wra
       />
       {/* Wrap CTA */}
       <ButtonPrimary disabled={loading} padding="0.5rem" onClick={handlePrimaryAction}>
-        {loading ? <Loader /> : `Wrap my ${nativeSymbol}`}
+        {loading ? <Loader /> : t`Wrap my ${nativeSymbol}`}
       </ButtonPrimary>
     </Wrapper>
   )
