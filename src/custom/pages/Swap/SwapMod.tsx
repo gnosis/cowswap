@@ -22,7 +22,7 @@ import Loader from 'components/Loader'
 import { /* Row, */ AutoRow, RowBetween /* RowFixed */ } from 'components/Row'
 // import BetterTradeLink from 'components/swap/BetterTradeLink'
 import confirmPriceImpactWithoutFee from 'components/swap/confirmPriceImpactWithoutFee'
-import ConfirmSwapModal from '@src/components/swap/ConfirmSwapModal'
+import ConfirmSwapModal from 'components/swap/ConfirmSwapModal'
 
 import { ArrowWrapper /* BottomGrouping, Dots, */, SwapCallbackError, Wrapper } from 'components/swap/styleds'
 import SwapHeader from 'components/swap/SwapHeader'
@@ -60,7 +60,7 @@ import { maxAmountSpend } from 'utils/maxAmountSpend'
 // import { warningSeverity } from 'utils/prices'
 import AppBody from 'pages/AppBody'
 
-import { INITIAL_ALLOWED_SLIPPAGE, DEFAULT_PRECISION } from 'constants/index'
+import { DEFAULT_PRECISION, INITIAL_ALLOWED_SLIPPAGE_PERCENT } from 'constants/index'
 import { computeSlippageAdjustedAmounts } from 'utils/prices'
 import { ClickableText } from 'pages/Pool/styleds'
 import FeeInformationTooltip from 'components/swap/FeeInformationTooltip'
@@ -71,6 +71,7 @@ import { isFeeGreaterThanPriceError, isInsufficientLiquidityError, isUnhandledQu
 import { useGetQuoteAndStatus } from 'state/price/hooks'
 import { SwapProps } from '.'
 import TradeGp from 'state/swap/TradeGp'
+import AdvancedSwapDetailsDropdown from 'components/swap/AdvancedSwapDetailsDropdown'
 
 /* 
 const StyledInfo = styled(Info)`
@@ -271,19 +272,15 @@ export default function Swap({
       : parsedAmounts[dependentField]?.toSignificant(DEFAULT_PRECISION) ?? '',
   }
 
-  // const userHasSpecifiedInputOutput = Boolean(
-  //   currencies[Field.INPUT] && currencies[Field.OUTPUT] && parsedAmounts[independentField]?.greaterThan(JSBI.BigInt(0))
-  // )
-  // const routeNotFound = !trade?.route
-  // const isLoadingRoute = toggledVersion === Version.v3 && V3TradeState.LOADING === v3TradeState
+  /* const userHasSpecifiedInputOutput = Boolean(
+    currencies[Field.INPUT] && currencies[Field.OUTPUT] && parsedAmounts[independentField]?.greaterThan(JSBI.BigInt(0))
+  )
+  const routeNotFound = !trade?.route
+  const isLoadingRoute = toggledVersion === Version.v3 && V3TradeState.LOADING === v3TradeState */
 
   // check whether the user has approved the router on the input token
   const [approvalState, approveCallback] = useApproveCallbackFromTrade(trade, allowedSlippage)
-  const {
-    state: signatureState,
-    signatureData,
-    gatherPermitSignature,
-  } = useERC20PermitFromTrade(trade, allowedSlippage)
+  const { state: signatureState, gatherPermitSignature } = useERC20PermitFromTrade(trade, allowedSlippage)
 
   const handleApprove = useCallback(async () => {
     if (signatureState === UseERC20PermitState.NOT_SIGNED && gatherPermitSignature) {
@@ -314,12 +311,7 @@ export default function Swap({
   const showMaxButton = Boolean(maxInputAmount?.greaterThan(0) && !parsedAmounts[Field.INPUT]?.equalTo(maxInputAmount))
 
   // the callback to execute the swap
-  const { callback: swapCallback, error: swapCallbackError } = useSwapCallback(
-    trade,
-    allowedSlippage,
-    recipient,
-    signatureData
-  )
+  const { callback: swapCallback, error: swapCallbackError } = useSwapCallback(trade, allowedSlippage, recipient)
 
   const [singleHopOnly] = useUserSingleHopOnly()
 
@@ -641,25 +633,25 @@ export default function Swap({
               */
               <Card padding={showWrap ? '.25rem 1rem 0 1rem' : '0px'} borderRadius={'20px'}>
                 <AutoColumn gap="8px" style={{ padding: '0 16px' }}>
-                  {Boolean(trade) && (
+                  {trade && (
                     <RowBetween align="center">
                       <Text fontWeight={500} fontSize={14} color={theme.text2}>
                         <Trans>Price</Trans>
                       </Text>
                       <TradePrice
-                        price={trade?.executionPrice}
+                        price={trade.executionPrice}
                         showInverted={showInverted}
                         setShowInverted={setShowInverted}
                       />
                     </RowBetween>
                   )}
-                  {allowedSlippage !== INITIAL_ALLOWED_SLIPPAGE && (
+                  {!allowedSlippage.equalTo(INITIAL_ALLOWED_SLIPPAGE_PERCENT) && (
                     <RowBetween align="center">
                       <ClickableText fontWeight={500} fontSize={14} color={theme.text2} onClick={toggleSettings}>
                         <Trans>Slippage Tolerance</Trans>
                       </ClickableText>
                       <ClickableText fontWeight={500} fontSize={14} color={theme.text2} onClick={toggleSettings}>
-                        {allowedSlippage / 100}%
+                        {allowedSlippage.toSignificant(2)}%
                       </ClickableText>
                     </RowBetween>
                   )}
@@ -781,7 +773,9 @@ export default function Swap({
                         // >
                         //   <HelpCircle size="20" color={'white'} style={{ marginLeft: '8px' }} />
                         // </MouseoverTooltip>
-                        <Trans>Approve </Trans> + currencies[Field.INPUT]?.symbol
+                        <>
+                          <Trans>Approve </Trans> {currencies[Field.INPUT]?.symbol}
+                        </>
                       )}
                     </AutoRow>
                   </ButtonConfirmed>
@@ -882,7 +876,7 @@ export default function Swap({
           detailsTitle="This wallet is not yet supported"
         />
       ) : !swapIsUnsupported ? (
-        <AdvancedSwapDetailsDropdown trade={trade} />
+        <AdvancedSwapDetailsDropdown trade={trade} allowedSlippage={allowedSlippage} />
       ) : (
         <UnsupportedCurrencyFooter show={swapIsUnsupported} currencies={[currencies.INPUT, currencies.OUTPUT]} />
       )}
