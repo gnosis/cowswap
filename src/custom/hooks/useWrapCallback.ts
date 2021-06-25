@@ -10,6 +10,8 @@ import { useWETHContract } from 'hooks/useContract'
 import { RADIX_HEX } from 'constants/index'
 import { WETH9_EXTENDED } from 'constants/tokens'
 import { t } from '@lingui/macro'
+import { SupportedChainId as ChainId } from 'constants/chains'
+import { supportedChainId } from 'utils/supportedChainId'
 
 export enum WrapType {
   NOT_APPLICABLE,
@@ -26,6 +28,7 @@ interface WrapUnwrapCallback {
 type TransactionAdder = ReturnType<typeof useTransactionAdder>
 
 interface GetWrapUnwrapCallback {
+  chainId?: ChainId
   isWrap: boolean
   balance?: CurrencyAmount<Currency>
   inputAmount?: CurrencyAmount<Currency>
@@ -36,8 +39,8 @@ interface GetWrapUnwrapCallback {
 const NOT_APPLICABLE = { wrapType: WrapType.NOT_APPLICABLE }
 
 function _getWrapUnwrapCallback(params: GetWrapUnwrapCallback): WrapUnwrapCallback {
-  const { native, wrapped } = getChainCurrencySymbols()
-  const { isWrap, balance, inputAmount, addTransaction, wethContract } = params
+  const { chainId, isWrap, balance, inputAmount, addTransaction, wethContract } = params
+  const { native, wrapped } = getChainCurrencySymbols(chainId)
   const symbol = isWrap ? native : wrapped
 
   // Check if user has enough balance for wrap/unwrap
@@ -94,7 +97,8 @@ export default function useWrapCallback(
   inputAmount: CurrencyAmount<Currency> | undefined,
   isEthTradeOverride?: boolean
 ): WrapUnwrapCallback {
-  const { chainId, account } = useActiveWeb3React()
+  const { chainId: connectedChainId, account } = useActiveWeb3React()
+  const chainId = supportedChainId(connectedChainId)
   const wethContract = useWETHContract()
   const balance = useCurrencyBalance(account ?? undefined, inputCurrency)
   // we can always parse the amount typed as the input currency, since wrapping is 1:1
@@ -112,6 +116,7 @@ export default function useWrapCallback(
       return NOT_APPLICABLE
     } else {
       return _getWrapUnwrapCallback({
+        chainId,
         isWrap: isWrappingEther,
         balance,
         inputAmount,

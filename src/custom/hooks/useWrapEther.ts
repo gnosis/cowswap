@@ -1,5 +1,5 @@
 import { useCallback } from 'react'
-import { CurrencyAmount } from '@uniswap/sdk'
+import { CurrencyAmount, Currency } from '@uniswap/sdk-core'
 
 import { useTransactionAdder } from '@src/state/transactions/hooks'
 
@@ -11,7 +11,7 @@ export function useWrapEther() {
   const weth = useWETHContract()
 
   const wrapCallback = useCallback(
-    async (amount: CurrencyAmount): Promise<string | undefined> => {
+    async (amount: CurrencyAmount<Currency>): Promise<string | undefined> => {
       console.log('Wrapping ETH!', amount.quotient.toString(), weth)
 
       if (!weth) {

@@ -1,4 +1,3 @@
-// import { ChainId, TokenAmount } from '@uniswap/sdk'
 import React, { PropsWithChildren /*, { useState }*/ } from 'react'
 import { Text } from 'rebass'
 import { NavLink } from 'react-router-dom'

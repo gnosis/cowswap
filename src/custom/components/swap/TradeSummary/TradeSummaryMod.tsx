@@ -1,7 +1,7 @@
 import { Trans } from '@lingui/macro'
 import React, { useContext } from 'react'
 import { ThemeContext } from 'styled-components'
-import { CurrencyAmount, Currency, TradeType } from '@uniswap/sdk-core'
+import { CurrencyAmount, Currency, Percent, TradeType } from '@uniswap/sdk-core'
 
 import { Field } from 'state/swap/actions'
 import { TYPE } from 'theme'
@@ -34,7 +34,7 @@ export function computeTradePriceBreakdown(trade?: TradeGp | null): {
 export const FEE_TOOLTIP_MSG =
   'On CowSwap you sign your order (hence no gas costs!). The fees are covering your gas costs already.'
 
-export default function TradeSummary({ trade, allowedSlippage }: { trade: TradeGp; allowedSlippage: number }) {
+export default function TradeSummary({ trade, allowedSlippage }: { trade: TradeGp; allowedSlippage: Percent }) {
   const theme = useContext(ThemeContext)
   // const { priceImpactWithoutFee, realizedLPFee } = computeTradePriceBreakdown(trade)
   const { /*priceImpactWithoutFee,*/ realizedFee } = React.useMemo(() => computeTradePriceBreakdown(trade), [trade])
