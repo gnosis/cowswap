@@ -1,7 +1,7 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { RouteComponentProps } from 'react-router-dom'
 import styled, { ThemeContext } from 'styled-components'
-import { CurrencyAmount, Token } from '@uniswap/sdk'
+import { CurrencyAmount, Currency, Token } from '@uniswap/sdk-core'
 import { Text } from 'rebass'
 
 import { ButtonSize, TYPE } from 'theme/index'
@@ -23,7 +23,7 @@ import { ArrowWrapperLoader, ArrowWrapperLoaderProps, Wrapper as ArrowWrapper } 
 import { LONG_LOAD_THRESHOLD } from 'constants/index'
 
 interface FeeGreaterMessageProp {
-  fee: CurrencyAmount
+  fee: CurrencyAmount<Currency>
 }
 
 const BottomGrouping = styled(BottomGroupingUni)`
