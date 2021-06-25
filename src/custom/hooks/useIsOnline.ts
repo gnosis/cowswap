@@ -11,7 +11,6 @@ export default function useIsOnline(): boolean {
   const [online, setOnline] = useState<boolean>(isOnline())
   const updateOnlineState = useCallback(() => {
     const onlineNew = isOnline()
-    console.log('Update isOnline to ', onlineNew)
     setOnline(onlineNew)
   }, [setOnline])
 
