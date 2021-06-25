@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { isTransactionRecent, useAllTransactions } from 'state/transactions/hooks'
 import { useAllOrders, useOrders } from 'state/orders/hooks'
-import { useActiveWeb3React } from 'hooks'
+import { useActiveWeb3React } from 'hooks/web3'
 import { Order, OrderStatus } from 'state/orders/actions'
 import { TransactionDetails } from 'state/transactions/reducer'
 

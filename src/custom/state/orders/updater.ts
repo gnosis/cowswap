@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef } from 'react'
-import { useActiveWeb3React } from 'hooks'
+import { useActiveWeb3React } from 'hooks/web3'
 import { OrderFulfillmentData, Order } from './actions'
 import { Log } from '@ethersproject/abstract-provider'
 import { usePendingOrders, useFulfillOrdersBatch, useExpireOrdersBatch } from './hooks'

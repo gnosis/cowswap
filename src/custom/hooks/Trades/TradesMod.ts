@@ -7,7 +7,7 @@ import { Currency /* , CurrencyAmount, Pair, Token, Trade */ } from '@uniswap/sd
 // import { PairState, usePairs } from '../data/Reserves'
 import { wrappedCurrency } from 'utils/wrappedCurrency'
 
-import { useActiveWeb3React } from 'hooks'
+import { useActiveWeb3React } from 'hooks/web3'
 // import { useUnsupportedTokens } from './Tokens'
 // import { useUserSingleHopOnly } from 'state/user/hooks'
 import { useIsUnsupportedToken } from 'state/lists/hooks/hooksMod'

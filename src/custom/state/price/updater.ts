@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { useActiveWeb3React } from 'hooks'
+import { useActiveWeb3React } from 'hooks/web3'
 import { useSwapState, tryParseAmount } from 'state/swap/hooks'
 import useIsWindowVisible from 'hooks/useIsWindowVisible'
 import { Field } from 'state/swap/actions'

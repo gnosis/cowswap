@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { AlertCircle, CheckCircle, XCircle, Triangle } from 'react-feather'
 
-import { useActiveWeb3React } from 'hooks'
+import { useActiveWeb3React } from 'hooks/web3'
 import { getEtherscanLink, shortenOrderId } from 'utils'
 import { RowFixed } from 'components/Row'
 import Loader from 'components/Loader'

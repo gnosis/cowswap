@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useGasPrices, useUpdateGasPrices, getGasPrices } from './hooks'
-import { useActiveWeb3React } from 'hooks'
+import { useActiveWeb3React } from 'hooks/web3'
 import { GAS_PRICE_UPDATE_THRESHOLD } from 'constants/index'
 
 function needsGasUpdate(now: number, lastUpdated: number, threshold: number) {

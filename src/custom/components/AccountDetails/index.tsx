@@ -1,7 +1,7 @@
 import React, { useCallback, useContext } from 'react'
 import { batch, useDispatch } from 'react-redux'
 import { ThemeContext } from 'styled-components'
-import { useActiveWeb3React } from 'hooks'
+import { useActiveWeb3React } from 'hooks/web3'
 import { AppDispatch } from 'state'
 import { clearAllTransactions } from 'state/transactions/actions'
 import { getExplorerLabel, shortenAddress } from 'utils'
