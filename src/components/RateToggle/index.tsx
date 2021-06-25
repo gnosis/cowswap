@@ -20,7 +20,13 @@ export default function RateToggle({
   const isSorted = tokenA && tokenB && tokenA.sortsBefore(tokenB)
 
   return tokenA && tokenB ? (
-    <div style={{ width: 'fit-content', display: 'flex', alignItems: 'center' }} onClick={handleRateToggle}>
+    // eslint-disable-next-line jsx-a11y/click-events-have-key-events
+    <div
+      style={{ width: 'fit-content', display: 'flex', alignItems: 'center' }}
+      onClick={handleRateToggle}
+      role="button"
+      tabIndex={0}
+    >
       <ToggleWrapper width="fit-content">
         <ToggleElement isActive={isSorted} fontSize="12px">
           <Trans>{isSorted ? currencyA.symbol : currencyB.symbol} price</Trans>
