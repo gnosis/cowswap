@@ -1,5 +1,5 @@
 // import JSBI from 'jsbi'
-import { Currency, CurrencyAmount /* , Fraction, Percent, TradeType */ } from '@uniswap/sdk-core'
+import { Currency, CurrencyAmount, Percent /* , Fraction, TradeType */ } from '@uniswap/sdk-core'
 // import { Trade as V2Trade } from '@uniswap/v2-sdk'
 // import { Trade as V3Trade } from '@uniswap/v3-sdk'
 /* import {
@@ -9,7 +9,6 @@ import { Currency, CurrencyAmount /* , Fraction, Percent, TradeType */ } from '@
   BLOCKED_PRICE_IMPACT_NON_EXPERT,
 } from 'constants/misc' */
 import { Field } from 'state/swap/actions'
-import { basisPointsToPercent } from 'utils'
 import TradeGp from 'state/swap/TradeGp'
 
 /* const THIRTY_BIPS_FEE = new Percent(JSBI.BigInt(30), JSBI.BigInt(10000))
@@ -81,12 +80,11 @@ export function warningSeverity(priceImpact: Percent | undefined): WarningSeveri
 export function computeSlippageAdjustedAmounts(
   //   trade: Trade | undefined,
   trade: TradeGp | undefined,
-  allowedSlippage: number
+  allowedSlippage: Percent
 ): { [field in Field]?: CurrencyAmount<Currency> } {
-  const pct = basisPointsToPercent(allowedSlippage)
   return {
-    [Field.INPUT]: trade?.maximumAmountIn(pct),
-    [Field.OUTPUT]: trade?.minimumAmountOut(pct),
+    [Field.INPUT]: trade?.maximumAmountIn(allowedSlippage),
+    [Field.OUTPUT]: trade?.minimumAmountOut(allowedSlippage),
   }
 }
 
