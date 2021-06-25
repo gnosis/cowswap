@@ -1,7 +1,7 @@
 import React, { memo, useCallback, useMemo, useRef, useState, useEffect } from 'react'
 import { Settings, CheckCircle } from 'react-feather'
 import ReactGA from 'react-ga'
-import { useAppDispatch, useAppSelector } from 'state/hooks'
+import { useAppDispatch, useAppSelector } from '@src/state/hooks'
 import { usePopper } from 'react-popper'
 import styled from 'styled-components/macro'
 import { useFetchListCallback } from '../../hooks/useFetchListCallback'

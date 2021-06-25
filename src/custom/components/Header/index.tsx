@@ -27,6 +27,8 @@ import { useDarkModeManager } from 'state/user/hooks'
 import { darken } from 'polished'
 import TwitterImage from 'assets/cow-swap/twitter.svg'
 
+import { supportedChainId } from 'utils/supportedChainId'
+
 export const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
   [ChainId.RINKEBY]: 'Rinkeby',
   [ChainId.ROPSTEN]: 'Ropsten',
@@ -132,7 +134,9 @@ const UniIcon = styled.div`
 `
 
 export default function Header() {
-  const { account, chainId } = useActiveWeb3React()
+  const { account, chainId: connectedChainId } = useActiveWeb3React()
+  const chainId = supportedChainId(connectedChainId)
+
   const userEthBalance = useETHBalances(account ? [account] : [])?.[account ?? '']
   const nativeToken = chainId && (CHAIN_CURRENCY_LABELS[chainId] || 'ETH')
   const [darkMode, toggleDarkMode] = useDarkModeManager()

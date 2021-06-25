@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { ArrowUpCircle } from 'react-feather'
-import useDebouncedChangeHandler from 'utils/useDebouncedChangeHandler'
+import useDebouncedChangeHandler from 'hooks/useDebouncedChangeHandler'
 
 interface WrapperProps {
   top?: string
