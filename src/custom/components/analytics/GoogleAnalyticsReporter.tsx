@@ -1,12 +1,12 @@
-import { useActiveWeb3React } from '@src/hooks'
+import { useActiveWeb3React } from 'hooks/web3'
 import { useEffect } from 'react'
 import ReactGA from 'react-ga'
 import { RouteComponentProps } from 'react-router-dom'
 import { NETWORK_LABELS as NETWORK_LABELS_HEADER } from 'components/Header'
-import { ChainId } from '@uniswap/sdk'
+import { SupportedChainId as ChainId } from 'constants/chains'
 
 const NETWORK_DIMENSION = 'dimension1'
-export const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
+export const NETWORK_LABELS: { [chainId in ChainId | number]?: string } = {
   ...NETWORK_LABELS_HEADER,
   [ChainId.MAINNET]: 'Mainnet', // The header doesn't have Mainnet
 }

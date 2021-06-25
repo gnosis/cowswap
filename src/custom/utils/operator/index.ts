@@ -1,4 +1,5 @@
-import { ChainId, ETHER, WETH } from '@uniswap/sdk'
+import { ExtendedEther as ETHER, WETH9_EXTENDED as WETH } from 'constants/tokens'
+import { SupportedChainId as ChainId } from 'constants/chains'
 import { getSigningSchemeApiValue, OrderCancellation, OrderCreation } from 'utils/signatures'
 import { APP_ID } from 'constants/index'
 import { registerOnWindow } from '../misc'
@@ -165,7 +166,7 @@ export async function sendSignedOrderCancellation(params: OrderCancellationParam
 
 function checkIfEther(tokenAddress: string, chainId: ChainId) {
   let checkedAddress = tokenAddress
-  if (tokenAddress === ETHER.symbol) {
+  if (tokenAddress === ETHER.onChain(chainId).symbol) {
     checkedAddress = WETH[chainId].address
   }
 

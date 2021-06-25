@@ -5,7 +5,7 @@ import { AutoColumn } from 'components/Column'
 import { DynamicSection } from 'pages/AddLiquidity/styled'
 import { TYPE } from 'theme'
 import { RowBetween } from 'components/Row'
-import { ButtonRadioChecked } from 'components/Button'
+import { ButtonRadioChecked } from '@src/components/Button'
 import styled from 'styled-components/macro'
 
 const ResponsiveText = styled(TYPE.label)`

@@ -1,4 +1,4 @@
-import { ChainId } from '@uniswap/sdk'
+import { SupportedChainId as ChainId } from 'constants/chains'
 import { useCallback, useMemo, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 

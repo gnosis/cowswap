@@ -154,7 +154,7 @@ export default function FeesUpdater(): null {
 
     // Callback to re-fetch both the fee and the price
     const refetchQuoteIfRequired = () => {
-      const quoteParams = { buyToken, chainId, sellToken, kind, amount: amount.raw.toString() }
+      const quoteParams = { buyToken, chainId, sellToken, kind, amount: amount.quotient.toString() }
 
       // if no token is unsupported and needs refetching
       const refetchAll = !unsupportedToken && isRefetchQuoteRequired(quoteParams, quoteInfo)

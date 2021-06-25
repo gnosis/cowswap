@@ -23,7 +23,7 @@ const isCancelOrderAction = isAnyOf(OrderActions.cancelOrder)
 
 // on each Pending, Expired, Fulfilled order action
 // a corresponsing Popup action is dispatched
-export const popupMiddleware: Middleware<{}, AppState> = (store) => (next) => (action) => {
+export const popupMiddleware: Middleware<Record<string, unknown>, AppState> = (store) => (next) => (action) => {
   const result = next(action)
 
   let idsAndPopups: OrderIDWithPopup[] = []
@@ -161,7 +161,7 @@ function getMoooooError(): HTMLAudioElement {
 
 // on each Pending, Expired, Fulfilled order action
 // a corresponsing sound is dispatched
-export const soundMiddleware: Middleware<{}, AppState> = (store) => (next) => (action) => {
+export const soundMiddleware: Middleware<Record<string, unknown>, AppState> = (store) => (next) => (action) => {
   const result = next(action)
 
   if (isBatchOrderAction(action)) {

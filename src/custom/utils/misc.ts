@@ -1,4 +1,4 @@
-import { ChainId } from '@uniswap/sdk'
+import { SupportedChainId as ChainId } from 'constants/chains'
 import { Market } from 'types/index'
 
 export const isTruthy = <T>(value: T | null | undefined | false): value is T => !!value

@@ -79,7 +79,7 @@ describe('Swap PRICE Quote test', () => {
         // THEN --> expected inputAmountMinusFee = 1 - 0.1
         const expectedInputWithFee = '900000000000000000'
         const actualInputWithFee = trade.inputAmountWithoutFee.subtract(trade.fee.feeAsCurrency)
-        expect(expectedInputWithFee).toEqual(actualInputWithFee.raw.toString())
+        expect(expectedInputWithFee).toEqual(actualInputWithFee.quotient.toString())
       })
       it('Has the correct execution price', () => {
         // WHEN --> Price_displayed => Sold_tokens / Received_tokens
@@ -150,7 +150,7 @@ describe('Swap PRICE Quote test', () => {
         // WHEN --> Estimated_sold_before_fee + Fee
         // THEN --> From = 1000000000000000000 + 100000000000000000 = 1100000000000000000
         const expectedSoldAmount = 1000000000000000000 + 100000000000000000
-        const actualSoldAmount = trade.inputAmountWithFee.raw.toString()
+        const actualSoldAmount = trade.inputAmountWithFee.quotient.toString()
         expect(expectedSoldAmount.toString()).toEqual(actualSoldAmount)
       })
       it('Display price correct', () => {

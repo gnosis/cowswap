@@ -1,4 +1,4 @@
-import { ChainId } from '@uniswap/sdk'
+import { SupportedChainId as ChainId } from 'constants/chains'
 import { createReducer } from '@reduxjs/toolkit'
 import { updateGasPrices, UpdateGasPrices } from './actions'
 

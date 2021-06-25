@@ -7,7 +7,7 @@ import { getOrder, OrderMetaData } from 'utils/operator'
 import { SHORT_PRECISION, EXPIRED_ORDERS_BUFFER, CHECK_EXPIRED_ORDERS_INTERVAL } from 'constants/index'
 import { stringToCurrency } from '../swap/extension'
 import { OPERATOR_API_POLL_INTERVAL } from './consts'
-import { ChainId } from '@uniswap/sdk'
+import { SupportedChainId as ChainId } from 'constants/chains'
 
 type OrderLogPopupMixData = OrderFulfillmentData & Pick<Log, 'transactionHash'> & Partial<Pick<Order, 'summary'>>
 

@@ -6,7 +6,7 @@ import {
 import { updateVersion } from 'state/global/actions'
 import { fetchTokenList, acceptListUpdate, addList, removeList, enableList } from 'state/lists/actions'
 import reducer, { ListsStateByNetwork } from '.'
-import { ChainId } from '@uniswap/sdk'
+import { SupportedChainId as ChainId } from 'constants/chains'
 
 const STUB_TOKEN_LIST = {
   name: '',

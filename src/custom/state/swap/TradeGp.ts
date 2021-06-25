@@ -34,7 +34,7 @@ export function _constructTradePrice({
     executionPrice = new Price<Currency, Currency>(
       // baseToken.currency,
       // quoteToken.currency,
-      // baseToken.currency.raw,
+      // baseToken.currency.quotient,
       // price.amount
       // TODO: CHECK THIS IS THE SAME AS THE ABOVE ON THE OLDER SDK
       { baseAmount: baseToken, quoteAmount: CurrencyAmount.fromRawAmount(quoteToken.currency, price.amount) }

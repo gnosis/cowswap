@@ -20,7 +20,7 @@ import {
   addGpUnsupportedToken,
   removeGpUnsupportedToken,
 } from 'state/lists/actions'
-import { ChainId } from '@uniswap/sdk'
+import { SupportedChainId as ChainId } from 'constants/chains'
 import { getChainIdValues } from 'utils/misc'
 import { UnsupportedToken } from 'utils/operator'
 

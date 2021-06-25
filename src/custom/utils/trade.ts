@@ -64,9 +64,9 @@ export async function sendOrder(params: PostOrderParams): Promise<string> {
   } = params
 
   // fee adjusted input amount
-  const sellAmount = inputAmount.raw.toString(RADIX_DECIMAL)
+  const sellAmount = inputAmount.quotient.toString(RADIX_DECIMAL)
   // slippage adjusted output amount
-  const buyAmount = outputAmount.raw.toString(RADIX_DECIMAL)
+  const buyAmount = outputAmount.quotient.toString(RADIX_DECIMAL)
 
   // Prepare order
   const summary = _getSummary(params)
@@ -80,7 +80,7 @@ export async function sendOrder(params: PostOrderParams): Promise<string> {
     buyAmount,
     validTo,
     appData,
-    feeAmount: feeAmount?.raw.toString() || '0',
+    feeAmount: feeAmount?.quotient.toString() || '0',
     kind,
     receiver,
     partiallyFillable: false, // Always fill or kill

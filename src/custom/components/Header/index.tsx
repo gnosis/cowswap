@@ -1,5 +1,5 @@
 import React from 'react'
-import { ChainId } from '@uniswap/sdk'
+import { SupportedChainId as ChainId } from 'constants/chains'
 import Web3Status from 'components/Web3Status'
 
 import HeaderMod, {

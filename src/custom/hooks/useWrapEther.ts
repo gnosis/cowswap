@@ -12,7 +12,7 @@ export function useWrapEther() {
 
   const wrapCallback = useCallback(
     async (amount: CurrencyAmount): Promise<string | undefined> => {
-      console.log('Wrapping ETH!', amount.raw.toString(), weth)
+      console.log('Wrapping ETH!', amount.quotient.toString(), weth)
 
       if (!weth) {
         // callback not reachable anyway when `weth` is not set
@@ -21,7 +21,7 @@ export function useWrapEther() {
       }
 
       try {
-        const txReceipt = await weth.deposit({ value: `0x${amount.raw.toString(16)}` })
+        const txReceipt = await weth.deposit({ value: `0x${amount.quotient.toString(16)}` })
         addTransaction(txReceipt, { summary: `Wrap ${amount.toSignificant(DEFAULT_PRECISION)} ETH to WETH` })
         console.log('Wrapped!', amount)
         return txReceipt

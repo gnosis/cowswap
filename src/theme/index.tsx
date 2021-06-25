@@ -189,12 +189,12 @@ export const TYPE = {
 }
 
 export const ThemedGlobalStyle = createGlobalStyle`
-html {
-  color: ${({ theme }) => theme.text1};
-  background-color: ${({ theme }) => theme.bg1} !important;
-}
+  html {
+    color: ${({ theme }) => theme.text1};
+    background-color: ${({ theme }) => theme.bg1} !important;
+  }
 
-a {
- color: ${({ theme }) => theme.blue1}; 
-}
+  a {
+  color: ${({ theme }) => theme.blue1}; 
+  }
 `

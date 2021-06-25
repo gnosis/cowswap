@@ -4,7 +4,7 @@ import { ExternalLink, TYPE } from 'theme'
 
 import { version as WEB_VERSION } from '@src/../package.json'
 import { version as CONTRACTS_VERSION } from '@gnosis.pm/gp-v2-contracts/package.json'
-import { ChainId } from '@uniswap/sdk'
+import { SupportedChainId as ChainId } from 'constants/chains'
 import { getEtherscanLink } from 'utils'
 import { CODE_LINK, GP_ALLOWANCE_MANAGER_CONTRACT_ADDRESS, GP_SETTLEMENT_CONTRACT_ADDRESS } from 'constants/index'
 import { DEFAULT_NETWORK_FOR_LISTS } from 'constants/lists'

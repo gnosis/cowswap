@@ -9,8 +9,7 @@ import {
   TypedDataV3Signer,
   IntChainIdTypedDataV4Signer,
 } from '@gnosis.pm/gp-v2-contracts'
-import { ChainId } from '@uniswap/sdk'
-
+import { SupportedChainId as ChainId } from 'constants/chains'
 import { GP_SETTLEMENT_CONTRACT_ADDRESS } from 'constants/index'
 import { TypedDataDomain, Signer } from 'ethers'
 import { registerOnWindow } from './misc'

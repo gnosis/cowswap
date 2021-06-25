@@ -8,7 +8,7 @@ import { ButtonSize } from 'theme'
 import { DefaultTheme, ThemeProvider as StyledComponentsThemeProvider, createGlobalStyle, css } from 'styled-components'
 import React, { useMemo } from 'react'
 
-import { theme as themeUniswap, ThemedGlobalStyle as ThemedGlobalStyleUniswap } from '@src/theme'
+import { theme as themeUniswap } from '@src/theme'
 import { useIsDarkMode } from 'state/user/hooks'
 
 export { TYPE } from '@src/theme'
