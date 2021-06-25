@@ -19,7 +19,7 @@ export default function Updater(): null {
   // const { library } = useActiveWeb3React()
   const { chainId: connectedChainId, library } = useActiveWeb3React()
   // chainId returns number or undefined we need to map against supported chains
-  const chainId = supportedChainId(connectedChainId ?? DEFAULT_NETWORK_FOR_LISTS) ?? DEFAULT_NETWORK_FOR_LISTS
+  const chainId = supportedChainId(connectedChainId) ?? DEFAULT_NETWORK_FOR_LISTS
 
   const dispatch = useAppDispatch()
   const isWindowVisible = useIsWindowVisible()
