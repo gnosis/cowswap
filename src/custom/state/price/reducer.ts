@@ -85,8 +85,8 @@ export default createReducer(initialState, builder =>
      */
     .addCase(updateQuote, (state, action) => {
       const quotes = state.quotes
-      initializeState(quotes, action)
       const { sellToken, chainId } = action.payload
+      initializeState(quotes, action)
 
       // Updates the new price
       quotes[chainId][sellToken] = { ...action.payload, lastCheck: Date.now() }
@@ -98,11 +98,12 @@ export default createReducer(initialState, builder =>
      */
     .addCase(setQuoteError, (state, action) => {
       const quotes = state.quotes
+      const payload = action.payload
+      const { sellToken, chainId } = payload
       initializeState(quotes, action)
-      const { sellToken, chainId } = action.payload
 
       // Sets the error information
-      quotes[chainId][sellToken] = { ...action.payload, lastCheck: Date.now() }
+      quotes[chainId][sellToken] = { ...payload, lastCheck: Date.now() }
       state.loading = false
     })
 )
