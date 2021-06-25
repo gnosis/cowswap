@@ -1,5 +1,5 @@
 import React from 'react'
-import { CurrencyAmount, Currency } from '@uniswap/sdk'
+import { CurrencyAmount, Currency } from '@uniswap/sdk-core'
 import styled from 'styled-components'
 import CurrencyLogo from 'components/CurrencyLogo'
 import { DEFAULT_PRECISION } from 'constants/index'
@@ -71,8 +71,8 @@ export const WrapCardContainer = styled.div`
 
 interface WrapCardProps {
   symbol: string
-  balance?: CurrencyAmount
-  amountToWrap?: CurrencyAmount
+  balance?: CurrencyAmount<Currency>
+  amountToWrap?: CurrencyAmount<Currency>
   currency: Currency
 }
 
