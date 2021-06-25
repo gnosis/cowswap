@@ -33,7 +33,7 @@ const EMPTY_STORE = {
     byUrl: {},
     activeListUrls: undefined,
   },
-  [ChainId.GÖRLI]: {
+  [ChainId.GOERLI]: {
     byUrl: {},
     activeListUrls: undefined,
   },

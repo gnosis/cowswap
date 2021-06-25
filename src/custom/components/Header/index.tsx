@@ -30,7 +30,7 @@ import TwitterImage from 'assets/cow-swap/twitter.svg'
 export const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
   [ChainId.RINKEBY]: 'Rinkeby',
   [ChainId.ROPSTEN]: 'Ropsten',
-  [ChainId.GÖRLI]: 'Görli',
+  [ChainId.GOERLI]: 'Görli',
   [ChainId.KOVAN]: 'Kovan',
   [ChainId.XDAI]: 'xDAI',
 }

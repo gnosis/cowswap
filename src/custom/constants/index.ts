@@ -1,7 +1,16 @@
-import { ChainId, Token, Fraction } from '@uniswap/sdk'
-import { GPv2Settlement, GPv2AllowanceManager } from '@gnosis.pm/gp-v2-contracts/networks.json'
-import { SUPPORTED_WALLETS as SUPPORTED_WALLETS_UNISWAP, WalletInfo } from '@src/constants/index'
+import { Token, Fraction, Percent } from '@uniswap/sdk-core'
 
+import { GPv2Settlement, GPv2AllowanceManager } from '@gnosis.pm/gp-v2-contracts/networks.json'
+import {
+  INITIAL_ALLOWED_SLIPPAGE,
+  SUPPORTED_WALLETS as SUPPORTED_WALLETS_UNISWAP,
+  WalletInfo,
+} from '@src/constants/index'
+
+import JSBI from 'jsbi'
+import { SupportedChainId as ChainId } from 'constants/chains'
+
+export const INITIAL_ALLOWED_SLIPPAGE_PERCENT = new Percent(JSBI.BigInt(INITIAL_ALLOWED_SLIPPAGE), JSBI.BigInt(10000))
 export const RADIX_DECIMAL = 10
 export const RADIX_HEX = 16
 
@@ -51,7 +60,7 @@ export const BUY_ETHER_TOKEN: { [chainId in ChainId]: Token } = {
   [ChainId.MAINNET]: new Token(ChainId.MAINNET, BUY_ETHER_ADDRESS, 18, 'ETH', 'Ether'),
   [ChainId.RINKEBY]: new Token(ChainId.RINKEBY, BUY_ETHER_ADDRESS, 18, 'ETH', 'Ether'),
   [ChainId.ROPSTEN]: new Token(ChainId.ROPSTEN, BUY_ETHER_ADDRESS, 18, 'ETH', 'Ether'),
-  [ChainId.GÖRLI]: new Token(ChainId.GÖRLI, BUY_ETHER_ADDRESS, 18, 'ETH', 'Ether'),
+  [ChainId.GOERLI]: new Token(ChainId.GOERLI, BUY_ETHER_ADDRESS, 18, 'ETH', 'Ether'),
   [ChainId.KOVAN]: new Token(ChainId.KOVAN, BUY_ETHER_ADDRESS, 18, 'ETH', 'Ether'),
   [ChainId.XDAI]: new Token(ChainId.XDAI, BUY_ETHER_ADDRESS, 18, 'xDAI', 'xDAI'),
 }
@@ -81,7 +90,7 @@ export const GAS_FEE_ENDPOINTS = {
   // No ropsten = main
   [ChainId.ROPSTEN]: 'https://safe-relay.gnosis.io/api/v1/gas-station/',
   [ChainId.RINKEBY]: 'https://safe-relay.rinkeby.gnosis.io/api/v1/gas-station/',
-  [ChainId.GÖRLI]: 'https://safe-relay.goerli.gnosis.io/api/v1/gas-station/',
+  [ChainId.GOERLI]: 'https://safe-relay.goerli.gnosis.io/api/v1/gas-station/',
   // no kovan = main
   [ChainId.KOVAN]: 'https://safe-relay.kovan.gnosis.io/api/v1/gas-station/',
   // TODO: xdai? = main
