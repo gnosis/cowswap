@@ -140,7 +140,7 @@ export interface Props {
   account?: string
   native: Currency
   nativeInput?: CurrencyAmount<Currency>
-  wrapped: Token & { listURI: string }
+  wrapped: Token & { logoURI: string }
   wrapCallback: () => Promise<TransactionResponse>
 }
 
