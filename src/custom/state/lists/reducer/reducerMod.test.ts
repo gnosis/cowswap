@@ -32,26 +32,32 @@ const EMPTY_STORE = {
   [ChainId.MAINNET]: {
     byUrl: {},
     activeListUrls: undefined,
+    gpUnsupportedTokens: {},
   },
   [ChainId.GOERLI]: {
     byUrl: {},
     activeListUrls: undefined,
+    gpUnsupportedTokens: {},
   },
   [ChainId.KOVAN]: {
     byUrl: {},
     activeListUrls: undefined,
+    gpUnsupportedTokens: {},
   },
   [ChainId.RINKEBY]: {
     byUrl: {},
     activeListUrls: undefined,
+    gpUnsupportedTokens: {},
   },
   [ChainId.ROPSTEN]: {
     byUrl: {},
     activeListUrls: undefined,
+    gpUnsupportedTokens: {},
   },
   [ChainId.XDAI]: {
     byUrl: {},
     activeListUrls: undefined,
+    gpUnsupportedTokens: {},
   },
 }
 
@@ -96,6 +102,7 @@ describe('list reducer', () => {
               },
             },
             activeListUrls: undefined,
+            gpUnsupportedTokens: {},
           },
         })
 
@@ -110,6 +117,7 @@ describe('list reducer', () => {
             },
           },
           activeListUrls: undefined,
+          gpUnsupportedTokens: {},
         })
       })
     })
@@ -134,6 +142,7 @@ describe('list reducer', () => {
             },
           },
           activeListUrls: undefined,
+          gpUnsupportedTokens: {},
         })
       })
 
@@ -154,6 +163,7 @@ describe('list reducer', () => {
             },
           },
           activeListUrls: undefined,
+          gpUnsupportedTokens: {},
         })
       })
 
@@ -175,6 +185,7 @@ describe('list reducer', () => {
             },
           },
           activeListUrls: undefined,
+          gpUnsupportedTokens: {},
         })
       })
       it('does not save to current if list is newer minor version', () => {
@@ -195,6 +206,7 @@ describe('list reducer', () => {
             },
           },
           activeListUrls: undefined,
+          gpUnsupportedTokens: {},
         })
       })
       it('does not save to pending if list is newer major version', () => {
@@ -215,6 +227,7 @@ describe('list reducer', () => {
             },
           },
           activeListUrls: undefined,
+          gpUnsupportedTokens: {},
         })
       })
     })
@@ -225,6 +238,7 @@ describe('list reducer', () => {
         expect(getStoreSlice(CHAIN_ID)).toEqual({
           byUrl: {},
           activeListUrls: undefined,
+          gpUnsupportedTokens: {},
         })
       })
 
@@ -241,6 +255,7 @@ describe('list reducer', () => {
               },
             },
             activeListUrls: undefined,
+            gpUnsupportedTokens: {},
           },
         })
         store.dispatch(fetchTokenList.rejected({ requestId: 'request-id', errorMessage: 'abcd', url: 'fake-url' }))
@@ -254,6 +269,7 @@ describe('list reducer', () => {
             },
           },
           activeListUrls: undefined,
+          gpUnsupportedTokens: {},
         })
       })
     })
@@ -273,6 +289,7 @@ describe('list reducer', () => {
           },
         },
         activeListUrls: undefined,
+        gpUnsupportedTokens: {},
       })
     })
     it('no op for existing list', () => {
@@ -288,6 +305,7 @@ describe('list reducer', () => {
             },
           },
           activeListUrls: undefined,
+          gpUnsupportedTokens: {},
         },
       })
       store.dispatch(addList({ url: 'fake-url', chainId: CHAIN_ID }))
@@ -301,6 +319,7 @@ describe('list reducer', () => {
           },
         },
         activeListUrls: undefined,
+        gpUnsupportedTokens: {},
       })
     })
   })
@@ -320,6 +339,7 @@ describe('list reducer', () => {
             },
           },
           activeListUrls: undefined,
+          gpUnsupportedTokens: {},
         },
       })
       store.dispatch(acceptListUpdate({ url: 'fake-url', chainId: CHAIN_ID }))
@@ -333,6 +353,7 @@ describe('list reducer', () => {
           },
         },
         activeListUrls: undefined,
+        gpUnsupportedTokens: {},
       })
     })
   })
@@ -352,12 +373,14 @@ describe('list reducer', () => {
             },
           },
           activeListUrls: undefined,
+          gpUnsupportedTokens: {},
         },
       })
       store.dispatch(removeList({ url: 'fake-url', chainId: CHAIN_ID }))
       expect(getStoreSlice(CHAIN_ID)).toEqual({
         byUrl: {},
         activeListUrls: undefined,
+        gpUnsupportedTokens: {},
       })
     })
     it('Removes from active lists if active list is removed', () => {
@@ -373,6 +396,7 @@ describe('list reducer', () => {
             },
           },
           activeListUrls: ['fake-url'],
+          gpUnsupportedTokens: {},
         },
       })
       store.dispatch(removeList({ url: 'fake-url', chainId: CHAIN_ID }))
@@ -398,6 +422,7 @@ describe('list reducer', () => {
             },
           },
           activeListUrls: undefined,
+          gpUnsupportedTokens: {},
         },
       })
       store.dispatch(enableList({ url: 'fake-url', chainId: CHAIN_ID }))
@@ -426,6 +451,7 @@ describe('list reducer', () => {
             },
           },
           activeListUrls: undefined,
+          gpUnsupportedTokens: {},
         },
       })
       store.dispatch(enableList({ url: 'fake-url-invalid', chainId: CHAIN_ID }))
@@ -460,6 +486,7 @@ describe('list reducer', () => {
             },
           },
           activeListUrls: undefined,
+          gpUnsupportedTokens: {},
         },
       })
       store.dispatch(enableList({ url: 'fake-url', chainId: CHAIN_ID }))
@@ -499,6 +526,7 @@ describe('list reducer', () => {
               },
             },
             activeListUrls: undefined,
+            gpUnsupportedTokens: {},
           },
         })
         store.dispatch(updateVersion({ chainId: CHAIN_ID }))
@@ -554,6 +582,7 @@ describe('list reducer', () => {
               },
             },
             activeListUrls: undefined,
+            gpUnsupportedTokens: {},
             lastInitializedDefaultListOfLists: ['https://unpkg.com/@uniswap/default-token-list@latest'],
           },
         })

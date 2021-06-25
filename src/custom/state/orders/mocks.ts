@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { batch } from 'react-redux'
-import { Token } from '@uniswap/sdk'
+import { Token } from '@uniswap/sdk-core'
 
 import { Order, OrderStatus, OrderKind } from './actions'
 import { useActiveWeb3React } from 'hooks/web3'
