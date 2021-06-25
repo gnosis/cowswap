@@ -8,16 +8,19 @@ import useInterval from 'hooks/useInterval'
 import useIsWindowVisible from 'hooks/useIsWindowVisible'
 import { acceptListUpdate } from 'state/lists/actions'
 import { useActiveListUrls } from 'state/lists/hooks'
-import { useAllInactiveTokens } from 'hooks/Tokens'
 import { DEFAULT_NETWORK_FOR_LISTS, UNSUPPORTED_LIST_URLS } from 'constants/lists'
 import { useAppDispatch } from 'state/hooks'
 // MOD: add updateVersion for chainId change init
 import { updateVersion } from 'state/global/actions'
+import { supportedChainId } from 'utils/supportedChainId'
 
 export default function Updater(): null {
   // MOD: chainId
   // const { library } = useActiveWeb3React()
-  const { chainId = DEFAULT_NETWORK_FOR_LISTS, library } = useActiveWeb3React()
+  const { chainId: connectedChainId, library } = useActiveWeb3React()
+  // chainId returns number or undefined we need to map against supported chains
+  const chainId = supportedChainId(connectedChainId ?? DEFAULT_NETWORK_FOR_LISTS) ?? DEFAULT_NETWORK_FOR_LISTS
+
   const dispatch = useAppDispatch()
   const isWindowVisible = useIsWindowVisible()
 
@@ -25,7 +28,7 @@ export default function Updater(): null {
   const lists = useAllLists()
   const activeListUrls = useActiveListUrls()
 
-  // TODO: removed in V3, review this is ok
+  // TODO: removed in V3, review if this is ok
   // initiate loading
   // useAllInactiveTokens()
 
@@ -96,13 +99,12 @@ export default function Updater(): null {
     // }, [dispatch, lists, activeListUrls])
   }, [dispatch, lists, activeListUrls, chainId])
 
-  // TODO: removed in V3, review
   // automatically initialise lists if chainId changes
-  // useEffect(() => {
-  //   if (chainId) {
-  //     dispatch(updateVersion({ chainId }))
-  //   }
-  // }, [chainId, dispatch])
+  useEffect(() => {
+    if (chainId) {
+      dispatch(updateVersion({ chainId }))
+    }
+  }, [chainId, dispatch])
 
   return null
 }
