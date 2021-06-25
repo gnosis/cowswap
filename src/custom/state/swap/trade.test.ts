@@ -1,18 +1,16 @@
+import JSBI from 'jsbi'
 import { parseUnits } from '@ethersproject/units'
-import { DEFAULT_PRECISION, LONG_PRECISION } from '@src/custom/constants'
-import { basisPointsToPercent } from '@src/utils'
-import { ChainId, Fraction, Pair, Percent, Token, TokenAmount, Trade, WETH } from '@uniswap/sdk'
+import { DEFAULT_PRECISION, INITIAL_ALLOWED_SLIPPAGE, LONG_PRECISION } from '@src/custom/constants'
+import { CurrencyAmount, Fraction, Percent, Token, Price, Currency, TradeType } from '@uniswap/sdk-core'
 import { stringToCurrency } from './extension'
+import { SupportedChainId as ChainId } from 'constants/chains'
+import { WETH9_EXTENDED as WETH } from 'constants/tokens'
 
-import { _constructTradePrice, _maximumAmountIn, _minimumAmountOut } from './TradeGp'
+import Trade, { _constructTradePrice } from './TradeGp'
+import TradeGp from './TradeGp'
 
 const WETH_MAINNET = new Token(ChainId.MAINNET, WETH[1].address, 18)
 const DAI_MAINNET = new Token(ChainId.MAINNET, '0x6b175474e89094c44da98b954eedeac495271d0f', 18)
-
-const PAIR_WETH_DAI = new Pair(
-  CurrencyAmount.fromRawAmount(WETH_MAINNET, parseUnits('100000000').toString()),
-  CurrencyAmount.fromRawAmount(DAI_MAINNET, parseUnits('400000000000').toString())
-)
 
 describe('Swap PRICE Quote test', () => {
   // mocked price response for in trade
@@ -35,16 +33,11 @@ describe('Swap PRICE Quote test', () => {
   const currencyIn = CurrencyAmount.fromRawAmount(WETH_MAINNET, MOCKED_PRICE_IN.long)
   const currencyOut = CurrencyAmount.fromRawAmount(DAI_MAINNET, MOCKED_PRICE_OUT.long)
 
-  const tradeOptions = { maxHops: 1, maxNumResults: 1 }
-
   describe('SELL', () => {
-    let tradeSdk, trade: any
+    let trade: TradeGp
 
     describe('1 WETH --> DAI @ 0.5% slippage', () => {
       beforeAll(() => {
-        // make a new Trade object
-        tradeSdk = Trade.bestTradeExactIn([PAIR_WETH_DAI], currencyIn, currencyOut.currency, tradeOptions)[0]
-
         const feeAsCurrency = CurrencyAmount.fromRawAmount(WETH_MAINNET, MOCKED_FEE_AMOUNT.long)
 
         const executionPrice = _constructTradePrice({
@@ -52,33 +45,27 @@ describe('Swap PRICE Quote test', () => {
           buyToken: currencyOut,
           kind: 'sell',
           price: { amount: MOCKED_PRICE_OUT.long, token: DAI_MAINNET.name || 'token' },
-        })
+        }) as Price<Currency, Currency>
 
-        trade = {
-          ...tradeSdk,
+        trade = new Trade({
           executionPrice,
           // sell orders: we show user on UI inputAmount with no fee calculation
-          inputAmount: tradeSdk.inputAmount,
-          inputAmountWithFee: tradeSdk.inputAmount.subtract(feeAsCurrency),
-          inputAmountWithoutFee: tradeSdk.inputAmount,
+          inputAmount: currencyIn,
+          inputAmountWithFee: currencyIn.subtract(feeAsCurrency),
+          outputAmountWithoutFee: currencyIn,
           outputAmount: currencyOut,
-          maximumAmountIn(pct: Percent) {
-            return _maximumAmountIn(pct, this)
-          },
-          minimumAmountOut(pct: Percent) {
-            return _minimumAmountOut(pct, this)
-          },
           fee: {
             amount: MOCKED_FEE_AMOUNT.long,
             feeAsCurrency,
           },
-        }
+          tradeType: TradeType.EXACT_INPUT,
+        })
       })
       it('Uses proper input amount WITHOUT fee in trade object', () => {
         // WHEN --> Sold_tokens => From_amount - Fee
         // THEN --> expected inputAmountMinusFee = 1 - 0.1
         const expectedInputWithFee = '900000000000000000'
-        const actualInputWithFee = trade.inputAmountWithoutFee.subtract(trade.fee.feeAsCurrency)
+        const actualInputWithFee = trade.inputAmount.subtract(trade.fee.feeAsCurrency)
         expect(expectedInputWithFee).toEqual(actualInputWithFee.quotient.toString())
       })
       it('Has the correct execution price', () => {
@@ -90,7 +77,7 @@ describe('Swap PRICE Quote test', () => {
       })
       it('Shows the proper minimumAmountOut', () => {
         // GIVEN --> slippage is set @ 0.5%
-        const slippage = basisPointsToPercent(50)
+        const slippage = new Percent(JSBI.BigInt(INITIAL_ALLOWED_SLIPPAGE), JSBI.BigInt(10000))
         // Min_price => Price_displayed * (1+slippage)
         // Min_price_displayed = 0.000225 * (1.005) = 0.000226125
 
@@ -104,13 +91,10 @@ describe('Swap PRICE Quote test', () => {
   })
 
   describe('BUY', () => {
-    let tradeSdk, trade: any
+    let trade: TradeGp
 
     describe('4000 DAI --> WETH @ 0.5% slippage', () => {
       beforeAll(() => {
-        // make a new Trade object
-        tradeSdk = Trade.bestTradeExactOut([PAIR_WETH_DAI], currencyIn.currency, currencyOut, tradeOptions)[0]
-
         const feeAsCurrency = CurrencyAmount.fromRawAmount(WETH_MAINNET, MOCKED_FEE_AMOUNT.long)
 
         // API response for buy order as TokenAmount
@@ -123,26 +107,21 @@ describe('Swap PRICE Quote test', () => {
           buyToken: currencyOut,
           kind: 'buy',
           price: { amount: MOCKED_PRICE_IN.long, token: WETH_MAINNET.name || 'token' },
-        })
+        }) as Price<Currency, Currency>
 
-        trade = {
-          ...tradeSdk,
+        trade = new Trade({
           executionPrice,
           // fee is in selltoken so for buy orders we set inputAmount as inputAmountWithFee
           inputAmount: apiBuyPriceAsCurrencyWithFee,
           inputAmountWithFee: apiBuyPriceAsCurrencyWithFee,
-          inputAmountWithoutFee: apiBuyPriceAsCurrency,
-          maximumAmountIn(pct: Percent) {
-            return _maximumAmountIn(pct, this)
-          },
-          minimumAmountOut(pct: Percent) {
-            return _minimumAmountOut(pct, this)
-          },
+          outputAmount: currencyOut,
+          outputAmountWithoutFee: currencyOut,
           fee: {
             amount: MOCKED_FEE_AMOUNT.long,
             feeAsCurrency,
           },
-        }
+          tradeType: TradeType.EXACT_OUTPUT,
+        })
       })
 
       it('Shows correct sold amount', () => {
@@ -165,8 +144,9 @@ describe('Swap PRICE Quote test', () => {
       })
       it('Price with 0.5% slippage correct', () => {
         const displayPrice = trade.executionPrice.invert()
+        const userSlippage = new Percent(JSBI.BigInt(INITIAL_ALLOWED_SLIPPAGE), JSBI.BigInt(10000))
         // 0.995
-        const slippage = new Fraction('1').subtract(basisPointsToPercent(50))
+        const slippage = new Fraction('1').subtract(userSlippage)
 
         // GIVEN 0.5% slippage & displayPrice = 4000
         // WHEN Max_price => Price_displayed * (1-slippage)
@@ -181,8 +161,9 @@ describe('Swap PRICE Quote test', () => {
         // THEN
         // 4000000000000000000000 / 3980 + 100000000000000000 = 1,105025125e18
         // 1,105025125e18 * 1e-18 = 1,105025125
+        const userSlippage = new Percent(JSBI.BigInt(INITIAL_ALLOWED_SLIPPAGE), JSBI.BigInt(10000))
         const expectedMaximumSold = '1.105025125'
-        const actualMaximumSold = trade.maximumAmountIn(basisPointsToPercent(50)).toSignificant(LONG_PRECISION)
+        const actualMaximumSold = trade.maximumAmountIn(userSlippage).toSignificant(LONG_PRECISION)
         expect(expectedMaximumSold).toEqual(actualMaximumSold)
       })
     })
