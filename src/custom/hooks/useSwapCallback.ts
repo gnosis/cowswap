@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { Currency, Ether as ETHER, Percent, TradeType, CurrencyAmount } from '@uniswap/sdk-core'
 
-import { BIPS_BASE, INITIAL_ALLOWED_SLIPPAGE, RADIX_DECIMAL } from 'constants/index'
+import { INITIAL_ALLOWED_SLIPPAGE_PERCENT } from 'constants/index'
 
 import { useAddPendingOrder } from 'state/orders/hooks'
 
@@ -53,7 +53,7 @@ const _computeInputAmountForSignature = (params: {
 // and the user has approved the slippage adjusted input amount for the trade
 export function useSwapCallback(
   trade: TradeGp | undefined, // trade to execute, required
-  allowedSlippage: number = INITIAL_ALLOWED_SLIPPAGE, // in bips
+  allowedSlippage: Percent = INITIAL_ALLOWED_SLIPPAGE_PERCENT, // in bips
   recipientAddressOrName: string | null // the ENS name or address of the recipient of the trade, or null if swap should be returned to sender
 ): { state: SwapCallbackState; callback: null | (() => Promise<string>); error: string | null } {
   const { account, chainId, library } = useActiveWeb3React()
@@ -104,7 +104,7 @@ export function useSwapCallback(
           tradeType,
         } = trade
 
-        const slippagePercent = new Percent(allowedSlippage.toString(RADIX_DECIMAL), BIPS_BASE)
+        const slippagePercent = allowedSlippage
         const kind = trade.tradeType === TradeType.EXACT_INPUT ? OrderKind.SELL : OrderKind.BUY
         const validTo = calculateValidTo(deadline)
 
