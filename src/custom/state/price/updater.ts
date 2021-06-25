@@ -64,7 +64,6 @@ function isRefetchQuoteRequired(
   quoteInformation?: QuoteInformationObject
 ): boolean {
   // If there's no quote/fee information, we always re-fetch
-  // we need to check that there is also no error otherwise this will loop
   if (!quoteInformation) {
     return true
   }
