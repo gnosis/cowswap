@@ -10,7 +10,6 @@ import React, { useMemo } from 'react'
 
 import {
   theme as themeUniswap,
-  FixedGlobalStyle as FixedGlobalStyleUniswap,
   ThemedGlobalStyle as ThemedGlobalStyleUniswap
 } from '@src/theme'
 import { useIsDarkMode } from 'state/user/hooks'
@@ -187,16 +186,17 @@ export default function ThemeProvider({ children }: { children: React.ReactNode 
   return <StyledComponentsThemeProvider theme={themeObject}>{children}</StyledComponentsThemeProvider>
 }
 
-export const FixedGlobalStyle = createGlobalStyle`
-  // Uniswap default
-  ${FixedGlobalStyleUniswap}
-`
+export const FixedGlobalStyle = createGlobalStyle``
 
 export const ThemedGlobalStyle = createGlobalStyle`
   // Uniswap default
-  ${ThemedGlobalStyleUniswap}
+  a {
+    color: ${({ theme }) => theme.blue1}; 
+  }
 
   html {
+    // Uniswap default
+    color: ${({ theme }) => theme.text1};
     background-image: ${({ theme }) => `linear-gradient(0deg, ${theme.bg1} 0%, ${theme.bg2} 100%)`};
   }
 

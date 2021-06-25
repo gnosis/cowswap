@@ -10,8 +10,8 @@ const WETH_MAINNET = new Token(ChainId.MAINNET, WETH[1].address, 18)
 const DAI_MAINNET = new Token(ChainId.MAINNET, '0x6b175474e89094c44da98b954eedeac495271d0f', 18)
 
 const PAIR_WETH_DAI = new Pair(
-  new TokenAmount(WETH_MAINNET, parseUnits('100000000').toString()),
-  new TokenAmount(DAI_MAINNET, parseUnits('400000000000').toString())
+  CurrencyAmount.fromRawAmount(WETH_MAINNET, parseUnits('100000000').toString()),
+  CurrencyAmount.fromRawAmount(DAI_MAINNET, parseUnits('400000000000').toString())
 )
 
 describe('Swap PRICE Quote test', () => {
@@ -32,8 +32,8 @@ describe('Swap PRICE Quote test', () => {
     long: parseUnits('0.1', WETH_MAINNET.decimals).toString()
   }
 
-  const currencyIn = new TokenAmount(WETH_MAINNET, MOCKED_PRICE_IN.long)
-  const currencyOut = new TokenAmount(DAI_MAINNET, MOCKED_PRICE_OUT.long)
+  const currencyIn = CurrencyAmount.fromRawAmount(WETH_MAINNET, MOCKED_PRICE_IN.long)
+  const currencyOut = CurrencyAmount.fromRawAmount(DAI_MAINNET, MOCKED_PRICE_OUT.long)
 
   const tradeOptions = { maxHops: 1, maxNumResults: 1 }
 
@@ -45,7 +45,7 @@ describe('Swap PRICE Quote test', () => {
         // make a new Trade object
         tradeSdk = Trade.bestTradeExactIn([PAIR_WETH_DAI], currencyIn, currencyOut.currency, tradeOptions)[0]
 
-        const feeAsCurrency = new TokenAmount(WETH_MAINNET, MOCKED_FEE_AMOUNT.long)
+        const feeAsCurrency = CurrencyAmount.fromRawAmount(WETH_MAINNET, MOCKED_FEE_AMOUNT.long)
 
         const executionPrice = _constructTradePrice({
           sellToken: currencyIn.subtract(feeAsCurrency),
@@ -111,7 +111,7 @@ describe('Swap PRICE Quote test', () => {
         // make a new Trade object
         tradeSdk = Trade.bestTradeExactOut([PAIR_WETH_DAI], currencyIn.currency, currencyOut, tradeOptions)[0]
 
-        const feeAsCurrency = new TokenAmount(WETH_MAINNET, MOCKED_FEE_AMOUNT.long)
+        const feeAsCurrency = CurrencyAmount.fromRawAmount(WETH_MAINNET, MOCKED_FEE_AMOUNT.long)
 
         // API response for buy order as TokenAmount
         const apiBuyPriceAsCurrency = stringToCurrency(MOCKED_PRICE_IN.long, currencyIn.currency)

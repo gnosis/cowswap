@@ -3,6 +3,7 @@ import React from 'react'
 import styled from 'styled-components'
 import { RowFixed } from 'components/Row'
 import SettingsMod, { StyledMenuButton, MenuFlyout, StyledMenuIcon, EmojiWrapper } from './SettingsMod'
+import { Percent } from '@uniswap/sdk'
 
 const Wrapper = styled(SettingsMod)`
   ${MenuFlyout} {
@@ -115,6 +116,7 @@ export interface SettingsButtonProps {
 
 export interface SettingsTabProp extends WithClassName {
   SettingsButton: React.FC<SettingsButtonProps>
+  placeholderSlippage: Percent
 }
 
 function SettingsButton({ toggleSettings, expertMode }: SettingsButtonProps) {

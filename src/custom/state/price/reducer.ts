@@ -1,5 +1,5 @@
 import { createReducer, PayloadAction } from '@reduxjs/toolkit'
-import { ChainId } from '@uniswap/sdk'
+import { SupportedChainId as ChainId } from 'constants/chains'
 import { updateQuote, clearQuote, setQuoteError, setNewQuoteLoading, setRefreshQuoteLoading } from './actions'
 import { Writable } from 'custom/types'
 import { PrefillStateRequired } from '../orders/reducer'
@@ -10,7 +10,7 @@ import { QuoteErrorCodes } from 'utils/operator/errors/QuoteError'
 
 export const EMPTY_FEE = {
   feeAsCurrency: undefined,
-  amount: '0'
+  amount: '0',
 }
 
 export interface FeeInformation {
@@ -54,7 +54,7 @@ function initializeState(
   }
 }
 
-export default createReducer(initialState, builder =>
+export default createReducer(initialState, (builder) =>
   builder
     .addCase(setNewQuoteLoading, (state, action) => {
       const { loading, quoteData } = action.payload

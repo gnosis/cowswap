@@ -1,4 +1,4 @@
-import { useActiveWeb3React } from '@src/hooks'
+import { useActiveWeb3React } from '@src/hooks/web3'
 import { useApproveCallback } from '@src/hooks/useApproveCallback'
 import { Field } from '@src/state/swap/actions'
 import { computeSlippageAdjustedAmounts } from 'utils/prices'
@@ -21,7 +21,7 @@ export function useApproveCallbackFromTrade(trade?: TradeGp, allowedSlippage = 0
     return undefined
   }, [trade, allowedSlippage])
 
-  const allowanceManager = chainId && GP_ALLOWANCE_MANAGER_CONTRACT_ADDRESS[chainId]
+  const allowanceManager = chainId ? GP_ALLOWANCE_MANAGER_CONTRACT_ADDRESS[chainId] : undefined
 
   return useApproveCallback(amountToApprove, allowanceManager)
 }

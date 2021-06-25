@@ -42,7 +42,7 @@ const StyledLogo = styled.img`
 export function ConfirmationPendingContent({
   onDismiss,
   pendingText,
-  inline
+  inline,
 }: {
   onDismiss: () => void
   pendingText: ReactNode
@@ -83,7 +83,7 @@ export function TransactionSubmittedContent({
   chainId,
   hash,
   currencyToAdd,
-  inline
+  inline,
 }: {
   onDismiss: () => void
   hash: string | undefined
@@ -151,7 +151,7 @@ export function ConfirmationModalContent({
   title,
   bottomContent,
   onDismiss,
-  topContent
+  topContent,
 }: {
   title: ReactNode
   onDismiss: () => void
@@ -223,7 +223,7 @@ export default function TransactionConfirmationModal({
   hash,
   pendingText,
   content,
-  currencyToAdd
+  currencyToAdd,
 }: ConfirmationModalProps) {
   const { chainId } = useActiveWeb3React()
 

@@ -32,7 +32,7 @@ import {
   MULTICALL2_ADDRESSES,
   V2_ROUTER_ADDRESS,
   ENS_REGISTRAR_ADDRESSES,
-  SOCKS_CONTROLLER_ADDRESSES
+  SOCKS_CONTROLLER_ADDRESSES,
 } from 'constants/addresses'
 import { abi as NFTPositionManagerABI } from '@uniswap/v3-periphery/artifacts/contracts/NonfungiblePositionManager.sol/NonfungiblePositionManager.json'
 import { useMemo } from 'react'
@@ -124,7 +124,7 @@ export function useGovernanceContracts(): (Contract | null)[] {
       return []
     }
 
-    return GOVERNANCE_ADDRESSES.filter(addressMap => Boolean(addressMap[chainId])).map(addressMap => {
+    return GOVERNANCE_ADDRESSES.filter((addressMap) => Boolean(addressMap[chainId])).map((addressMap) => {
       try {
         return getContract(addressMap[chainId], GOVERNANCE_ABI, library, account ? account : undefined)
       } catch (error) {

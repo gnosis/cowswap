@@ -1,16 +1,16 @@
-import { Token, TokenAmount, JSBI, Currency, CurrencyAmount, TradeType } from '@uniswap/sdk'
+import { Token, Currency, CurrencyAmount, TradeType } from '@uniswap/sdk-core'
+import JSBI from 'jsbi'
 import { QuoteInformationObject } from 'state/price/reducer'
 import TradeGp, { _constructTradePrice } from './TradeGp'
 
 interface TradeParams {
-  parsedAmount?: CurrencyAmount
+  parsedAmount?: CurrencyAmount<Currency>
   inputCurrency?: Currency | null
   outputCurrency?: Currency | null
   quote?: QuoteInformationObject
 }
 
-export const stringToCurrency = (amount: string, currency: Currency) =>
-  currency instanceof Token ? new TokenAmount(currency, JSBI.BigInt(amount)) : CurrencyAmount.ether(JSBI.BigInt(amount))
+export const stringToCurrency = (amount: string, currency: Currency) => CurrencyAmount.fromRawAmount(currency, JSBI.BigInt(amount))
 
 /**
  * useTradeExactInWithFee

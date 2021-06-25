@@ -12,7 +12,7 @@ import { SwapCallbackError } from './styleds'
 export default function SwapModalFooter({
   onConfirm,
   swapErrorMessage,
-  disabledConfirm
+  disabledConfirm,
 }: {
   trade: V2Trade<Currency, Currency, TradeType> | V3Trade<Currency, Currency, TradeType>
   onConfirm: () => void

@@ -1,18 +1,20 @@
+import { Currency, CurrencyAmount } from '@uniswap/sdk-core'
+import { useMemo } from 'react'
 import { TransactionResponse } from '@ethersproject/providers'
 import { getChainCurrencySymbols } from 'utils/xdai/hack'
-import { Currency, CurrencyAmount, currencyEquals, ETHER, WETH } from '@uniswap/sdk'
 import { Contract } from 'ethers'
-import { useMemo } from 'react'
 import { useTransactionAdder } from 'state/transactions/hooks'
 import { useCurrencyBalance } from 'state/wallet/hooks'
-import { useActiveWeb3React } from 'hooks/index'
+import { useActiveWeb3React } from 'hooks/web3'
 import { useWETHContract } from 'hooks/useContract'
 import { RADIX_HEX } from 'constants/index'
+import { WETH9_EXTENDED } from 'constants/tokens'
+import { t } from '@lingui/macro'
 
 export enum WrapType {
   NOT_APPLICABLE,
   WRAP,
-  UNWRAP
+  UNWRAP,
 }
 
 interface WrapUnwrapCallback {
@@ -25,8 +27,8 @@ type TransactionAdder = ReturnType<typeof useTransactionAdder>
 
 interface GetWrapUnwrapCallback {
   isWrap: boolean
-  balance?: CurrencyAmount
-  inputAmount?: CurrencyAmount
+  balance?: CurrencyAmount<Currency>
+  inputAmount?: CurrencyAmount<Currency>
   addTransaction: TransactionAdder
   wethContract: Contract
 }
@@ -42,7 +44,7 @@ function _getWrapUnwrapCallback(params: GetWrapUnwrapCallback): WrapUnwrapCallba
   const sufficientBalance = !!(inputAmount && balance && !balance.lessThan(inputAmount))
   const isZero = balance && !inputAmount
 
-  const inputError = isZero ? `Enter an amount` : !sufficientBalance ? `Insufficient ${symbol} balance` : undefined
+  const inputError = isZero ? t`Enter an amount` : !sufficientBalance ? t`Insufficient ${symbol} balance` : undefined
 
   // Create wrap/unwrap callback if sufficient balance
   let wrapUnwrapCallback: (() => Promise<TransactionResponse>) | undefined
@@ -51,11 +53,11 @@ function _getWrapUnwrapCallback(params: GetWrapUnwrapCallback): WrapUnwrapCallba
     let summary: string
 
     if (isWrap) {
-      wrapUnwrap = () => wethContract.deposit({ value: `0x${inputAmount.raw.toString(RADIX_HEX)}` })
-      summary = `Wrap ${inputAmount.toSignificant(6)} ${native} to ${wrapped}`
+      wrapUnwrap = () => wethContract.deposit({ value: `0x${inputAmount.quotient.toString(RADIX_HEX)}` })
+      summary = t`Wrap ${inputAmount.toSignificant(6)} ${native} to ${wrapped}`
     } else {
-      wrapUnwrap = () => wethContract.withdraw(`0x${inputAmount.raw.toString(RADIX_HEX)}`)
-      summary = `Unwrap ${inputAmount.toSignificant(6)} ${wrapped} to ${native}`
+      wrapUnwrap = () => wethContract.withdraw(`0x${inputAmount.quotient.toString(RADIX_HEX)}`)
+      summary = t`Unwrap ${inputAmount.toSignificant(6)} ${wrapped} to ${native}`
     }
 
     wrapUnwrapCallback = async () => {
@@ -66,7 +68,7 @@ function _getWrapUnwrapCallback(params: GetWrapUnwrapCallback): WrapUnwrapCallba
         return txReceipt
       } catch (error) {
         const actionName = WrapType.WRAP ? 'wrapping' : 'unwrapping'
-        console.error(`Error ${actionName} ${symbol}`, error)
+        console.error(t`Error ${actionName} ${symbol}`, error)
 
         throw error.message ? error : new Error(error)
       }
@@ -76,7 +78,7 @@ function _getWrapUnwrapCallback(params: GetWrapUnwrapCallback): WrapUnwrapCallba
   return {
     wrapType: isWrap ? WrapType.WRAP : WrapType.UNWRAP,
     execute: wrapUnwrapCallback,
-    inputError
+    inputError,
   }
 }
 
@@ -89,7 +91,7 @@ function _getWrapUnwrapCallback(params: GetWrapUnwrapCallback): WrapUnwrapCallba
 export default function useWrapCallback(
   inputCurrency: Currency | undefined,
   outputCurrency: Currency | undefined,
-  inputAmount: CurrencyAmount | undefined,
+  inputAmount: CurrencyAmount<Currency> | undefined,
   isEthTradeOverride?: boolean
 ): WrapUnwrapCallback {
   const { chainId, account } = useActiveWeb3React()
@@ -100,10 +102,11 @@ export default function useWrapCallback(
 
   return useMemo(() => {
     if (!wethContract || !chainId || !inputCurrency || !outputCurrency) return NOT_APPLICABLE
+    const weth = WETH9_EXTENDED[chainId]
+    if (!weth) return NOT_APPLICABLE
 
-    const isWrappingEther =
-      inputCurrency === ETHER && (isEthTradeOverride || currencyEquals(WETH[chainId], outputCurrency))
-    const isUnwrappingWeth = currencyEquals(WETH[chainId], inputCurrency) && outputCurrency === ETHER
+    const isWrappingEther = inputCurrency.isNative && (isEthTradeOverride || weth.equals(outputCurrency))
+    const isUnwrappingWeth = weth.equals(inputCurrency) && outputCurrency.isNative
 
     if (!isWrappingEther && !isUnwrappingWeth) {
       return NOT_APPLICABLE
@@ -113,7 +116,7 @@ export default function useWrapCallback(
         balance,
         inputAmount,
         addTransaction,
-        wethContract
+        wethContract,
       })
     }
   }, [wethContract, chainId, inputCurrency, outputCurrency, isEthTradeOverride, balance, inputAmount, addTransaction])

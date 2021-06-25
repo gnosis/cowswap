@@ -1,30 +1,13 @@
 import DEFAULT_TOKEN_LIST from '@uniswap/default-token-list'
-import { ChainId } from '@uniswap/sdk-core'
-import { Tags, TokenList } from '@uniswap/token-lists'
+import { TokenList } from '@uniswap/token-lists'
 import { useMemo } from 'react'
 import { useAppSelector } from 'state/hooks'
 import sortByListPriority from 'utils/listSort'
 import UNSUPPORTED_TOKEN_LIST from '../../constants/tokenLists/uniswap-v2-unsupported.tokenlist.json'
-import { AppState } from '../index'
+import { AppState } from '@src/state'
 import { UNSUPPORTED_LIST_URLS } from './../../constants/lists'
 import { WrappedTokenInfo } from './wrappedTokenInfo'
 
-type TagDetails = Tags[keyof Tags]
-export interface TagInfo extends TagDetails {
-  id: string
-}
-
-/**
- * An empty result, useful as a default.
- */
-export const EMPTY_LIST: TokenAddressMap = {
-  [ChainId.KOVAN]: {},
-  [ChainId.RINKEBY]: {},
-  [ChainId.ROPSTEN]: {},
-  [ChainId.GÖRLI]: {},
-  [ChainId.MAINNET]: {},
-  [ChainId.XDAI]: {}
-}
 export type TokenAddressMap = Readonly<{
   [chainId: number]: Readonly<{ [tokenAddress: string]: { token: WrappedTokenInfo; list: TokenList } }>
 }>
@@ -48,9 +31,9 @@ export function listToTokenMap(list: TokenList): TokenAddressMap {
         ...tokenMap[token.chainId],
         [token.address]: {
           token,
-          list
-        }
-      }
+          list,
+        },
+      },
     }
   }, {})
   listCache?.set(list, map)
@@ -60,7 +43,7 @@ export function listToTokenMap(list: TokenList): TokenAddressMap {
 const TRANSFORMED_DEFAULT_TOKEN_LIST = listToTokenMap(DEFAULT_TOKEN_LIST)
 
 export function useAllLists(): AppState['lists']['byUrl'] {
-  return useAppSelector(state => state.lists.byUrl)
+  return useAppSelector((state) => state.lists.byUrl)
 }
 
 export function combineMaps(map1: TokenAddressMap, map2: TokenAddressMap): TokenAddressMap {
@@ -70,7 +53,7 @@ export function combineMaps(map1: TokenAddressMap, map2: TokenAddressMap): Token
     4: { ...map1[4], ...map2[4] },
     5: { ...map1[5], ...map2[5] },
     42: { ...map1[42], ...map2[42] },
-    100: { ...map1[100], ...map2[100] }
+    100: { ...map1[100], ...map2[100] },
   }
 }
 
@@ -100,13 +83,13 @@ export function useCombinedTokenMapFromUrls(urls: string[] | undefined): TokenAd
 
 // filter out unsupported lists
 export function useActiveListUrls(): string[] | undefined {
-  return useAppSelector(state => state.lists.activeListUrls)?.filter(url => !UNSUPPORTED_LIST_URLS.includes(url))
+  return useAppSelector((state) => state.lists.activeListUrls)?.filter((url) => !UNSUPPORTED_LIST_URLS.includes(url))
 }
 
 export function useInactiveListUrls(): string[] {
   const lists = useAllLists()
   const allActiveListUrls = useActiveListUrls()
-  return Object.keys(lists).filter(url => !allActiveListUrls?.includes(url) && !UNSUPPORTED_LIST_URLS.includes(url))
+  return Object.keys(lists).filter((url) => !allActiveListUrls?.includes(url) && !UNSUPPORTED_LIST_URLS.includes(url))
 }
 
 // get all the tokens from active lists, combine with local default tokens
@@ -125,10 +108,10 @@ export function useUnsupportedTokenList(): TokenAddressMap {
   const loadedUnsupportedListMap = useCombinedTokenMapFromUrls(UNSUPPORTED_LIST_URLS)
 
   // format into one token address map
-  return useMemo(() => combineMaps(localUnsupportedListMap, loadedUnsupportedListMap), [
-    localUnsupportedListMap,
-    loadedUnsupportedListMap
-  ])
+  return useMemo(
+    () => combineMaps(localUnsupportedListMap, loadedUnsupportedListMap),
+    [localUnsupportedListMap, loadedUnsupportedListMap]
+  )
 }
 
 export function useIsListActive(url: string): boolean {

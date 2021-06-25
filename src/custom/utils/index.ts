@@ -1,21 +1,19 @@
-import { ChainId } from '@uniswap/sdk'
+import {  Percent } from '@uniswap/sdk-core'
+import JSBI from 'jsbi'
 import { ORDER_ID_SHORT_LENGTH } from '../constants'
 import { getExplorerOrderLink } from './explorer'
 
 const GP_ORDER_ID_LENGTH = 114 // 112 (56 bytes in hex) + 2 (it's prefixed with "0x")
 
 export {
-  basisPointsToPercent,
-  calculateGasMargin,
-  calculateSlippageAmount,
-  escapeRegExp,
-  getContract,
-  getProviderOrSigner,
-  getRouterContract,
-  getSigner,
   isAddress,
+  shortenAddress,
+  getSigner,
+  getProviderOrSigner,
+  getContract,
+  escapeRegExp,
   isTokenOnList,
-  shortenAddress
+  formattedFeeAmount,
 } from '@src/utils'
 
 const ETHERSCAN_PREFIXES: { [chainId in ChainId]: string } = {
@@ -115,4 +113,9 @@ export function formatOrderId(orderId: string): string {
 
   // 0x is at index 0 of orderId, shorten. Else return id as is
   return has0x?.index === 0 ? shortenOrderId(orderId, 2, orderId.length) : orderId
+}
+
+// converts a basis points value to a sdk percent
+export function basisPointsToPercent(num: number): Percent {
+  return new Percent(JSBI.BigInt(num), JSBI.BigInt(10000))
 }

@@ -1,22 +1,19 @@
-import { CurrencyAmount, /* Percent,  Trade, */ TradeType } from '@uniswap/sdk'
+import { Trans } from '@lingui/macro'
+import { Currency, TradeType, CurrencyAmount } from '@uniswap/sdk-core'
+// import { Trade as V2Trade } from '@uniswap/v2-sdk'
+// import { Trade as V3Trade } from '@uniswap/v3-sdk'
 import React, { useContext, useMemo, useState } from 'react'
-import { Repeat } from 'react-feather'
 import { Text } from 'rebass'
+import { ButtonError } from 'components/Button'
+import { AutoRow, RowBetween, RowFixed } from 'components/Row'
+import { SwapCallbackError, StyledBalanceMaxMini } from 'components/swap/styleds'
+import { Repeat } from 'react-feather'
 import { ThemeContext } from 'styled-components'
 import { Field } from 'state/swap/actions'
 import { TYPE } from 'theme'
-import {
-  computeSlippageAdjustedAmounts,
-  //   computeTradePriceBreakdown,
-  formatExecutionPrice
-  // warningSeverity
-} from 'utils/prices'
-import { ButtonError } from 'components/Button'
+import { computeSlippageAdjustedAmounts, formatExecutionPrice } from 'utils/prices'
 import { AutoColumn } from 'components/Column'
 import QuestionHelper from 'components/QuestionHelper'
-import { AutoRow, RowBetween, RowFixed } from 'components/Row'
-// import FormattedPriceImpact from 'components/swap/FormattedPriceImpact'
-import { StyledBalanceMaxMini, SwapCallbackError } from 'components/swap/styleds'
 import TradeGp from 'state/swap/TradeGp'
 import { DEFAULT_PRECISION, SHORT_PRECISION } from 'constants/index'
 import { getMinimumReceivedTooltip } from 'utils/tooltips'
@@ -25,35 +22,39 @@ export interface SwapModalFooterProps {
   trade: TradeGp
   allowedSlippage: number
   onConfirm: () => void
-  swapErrorMessage: string | undefined
+  swapErrorMessage: React.ReactNode | undefined
   disabledConfirm: boolean
-  fee: { feeTitle: string; feeTooltip: string; feeAmount?: CurrencyAmount | null }
-  // priceImpactWithoutFee?: Percent
+  fee: { feeTitle: string; feeTooltip: string; feeAmount?: CurrencyAmount<Currency> | null }
 }
 
 export default function SwapModalFooter({
-  trade,
   onConfirm,
-  allowedSlippage,
   swapErrorMessage,
   disabledConfirm,
-  fee
-}: SwapModalFooterProps) {
+  trade,
+  allowedSlippage,
+  fee,
+}: /* 
+  {
+  trade: V2Trade<Currency, Currency, TradeType> | V3Trade<Currency, Currency, TradeType>
+  onConfirm: () => void
+  swapErrorMessage: ReactNode | undefined
+  disabledConfirm: boolean
+} */
+SwapModalFooterProps) {
   const [showInverted, setShowInverted] = useState<boolean>(false)
   const theme = useContext(ThemeContext)
-  const slippageAdjustedAmounts = useMemo(() => computeSlippageAdjustedAmounts(trade, allowedSlippage), [
-    allowedSlippage,
-    trade
-  ])
+  const slippageAdjustedAmounts = useMemo(
+    () => computeSlippageAdjustedAmounts(trade, allowedSlippage),
+    [allowedSlippage, trade]
+  )
   const { feeTitle, feeTooltip, feeAmount } = fee
-
-  // const { priceImpactWithoutFee , realizedLPFee } = useMemo(() => computeTradePriceBreakdown(trade), [trade])
-  // const severity = warningSeverity(priceImpactWithoutFee)
 
   const isExactIn = trade.tradeType === TradeType.EXACT_INPUT
 
   return (
     <>
+      {/* TODO V3 GP: remove this code and move to SwapModalHeader */}
       <AutoColumn gap="0px">
         <RowBetween align="center">
           <Text fontWeight={400} fontSize={14} color={theme.text2}>
@@ -68,7 +69,7 @@ export default function SwapModalFooter({
               alignItems: 'center',
               display: 'flex',
               textAlign: 'right',
-              paddingLeft: '10px'
+              paddingLeft: '10px',
             }}
           >
             {formatExecutionPrice(trade, showInverted)}
@@ -133,12 +134,11 @@ export default function SwapModalFooter({
         <ButtonError
           onClick={onConfirm}
           disabled={disabledConfirm}
-          // error={severity > 2}
           style={{ margin: '10px 0 0 0' }}
           id="confirm-swap-or-send"
         >
           <Text fontSize={20} fontWeight={500}>
-            {/*severity > 2 ? 'Swap Anyway' :*/ 'Confirm Swap'}
+            <Trans>Confirm Swap</Trans>
           </Text>
         </ButtonError>
 

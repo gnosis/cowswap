@@ -1,94 +1,68 @@
-import { useCallback, useMemo } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { AppState } from '../..'
-import { ChainId } from '@uniswap/sdk'
-import { useActiveWeb3React } from 'hooks'
-import { DEFAULT_NETWORK_FOR_LISTS, UNSUPPORTED_LIST_URLS } from 'constants/lists'
-import { TokenList } from '@uniswap/token-lists'
 import DEFAULT_TOKEN_LIST from '@uniswap/default-token-list'
-import { TokenAddressMap, listToTokenMap, combineMaps, EMPTY_LIST } from '@src/state/lists/hooks'
+import { TokenList } from '@uniswap/token-lists'
+import { useCallback, useMemo } from 'react'
+import { useAppDispatch, useAppSelector } from 'state/hooks'
 import sortByListPriority from 'utils/listSort'
 import UNSUPPORTED_TOKEN_LIST from 'constants/tokenLists/uniswap-v2-unsupported.tokenlist.json'
+import { AppState } from '../..'
+import { DEFAULT_NETWORK_FOR_LISTS, UNSUPPORTED_LIST_URLS } from 'constants/lists'
+import { useActiveWeb3React } from 'hooks/web3'
+import { TokenAddressMap, listToTokenMap, combineMaps } from '@src/state/lists/hooks'
 import {
   addGpUnsupportedToken,
   AddGpUnsupportedTokenParams,
   RemoveGpUnsupportedTokenParams,
-  removeGpUnsupportedToken
+  removeGpUnsupportedToken,
 } from '../actions'
 import { UnsupportedToken } from 'utils/operator'
 import { isAddress } from 'utils'
+import { SupportedChainId as ChainId } from 'constants/chains'
 
-// type TagDetails = Tags[keyof Tags]
-// export interface TagInfo extends TagDetails {
-//   id: string
-// }
+/* type TagDetails = Tags[keyof Tags]
+export interface TagInfo extends TagDetails {
+  id: string
+} */
 
-// /**
-//  * Token instances created from token info.
-//  */
-// export class WrappedTokenInfo extends Token {
-//   public readonly tokenInfo: TokenInfo
-//   public readonly tags: TagInfo[]
-//   constructor(tokenInfo: TokenInfo, tags: TagInfo[]) {
-//     super(tokenInfo.chainId, tokenInfo.address, tokenInfo.decimals, tokenInfo.symbol, tokenInfo.name)
-//     this.tokenInfo = tokenInfo
-//     this.tags = tags
-//   }
-//   public get logoURI(): string | undefined {
-//     return this.tokenInfo.logoURI
-//   }
-// }
+/**
+ * An empty result, useful as a default.
+ */
 
-// export type TokenAddressMap = Readonly<
-//   { [chainId in ChainId]: Readonly<{ [tokenAddress: string]: { token: WrappedTokenInfo; list: TokenList } }> }
-// >
+export const EMPTY_LIST: TokenAddressMap = {
+  [ChainId.KOVAN]: {},
+  [ChainId.RINKEBY]: {},
+  [ChainId.ROPSTEN]: {},
+  [ChainId.GOERLI]: {},
+  [ChainId.MAINNET]: {},
+  [ChainId.XDAI]: {},
+}
 
-// /**
-//  * An empty result, useful as a default.
-//  */
-// export const EMPTY_LIST: TokenAddressMap = {
-//   [ChainId.KOVAN]: {},
-//   [ChainId.RINKEBY]: {},
-//   [ChainId.ROPSTEN]: {},
-//   [ChainId.GÖRLI]: {},
-//   [ChainId.MAINNET]: {},
-//   [ChainId.XDAI]: {}
-// }
+/* const listCache: WeakMap<TokenList, TokenAddressMap> | null =
+  typeof WeakMap !== 'undefined' ? new WeakMap<TokenList, TokenAddressMap>() : null
 
-// const listCache: WeakMap<TokenList, TokenAddressMap> | null =
-//   typeof WeakMap !== 'undefined' ? new WeakMap<TokenList, TokenAddressMap>() : null
+export function listToTokenMap(list: TokenList): TokenAddressMap {
+  const result = listCache?.get(list)
+  if (result) return result
 
-// export function listToTokenMap(list: TokenList): TokenAddressMap {
-//   const result = listCache?.get(list)
-//   if (result) return result
-
-//   const map = list.tokens.reduce<TokenAddressMap>(
-//     (tokenMap, tokenInfo) => {
-//       const tags: TagInfo[] =
-//         tokenInfo.tags
-//           ?.map(tagId => {
-//             if (!list.tags?.[tagId]) return undefined
-//             return { ...list.tags[tagId], id: tagId }
-//           })
-//           ?.filter((x): x is TagInfo => Boolean(x)) ?? []
-//       const token = new WrappedTokenInfo(tokenInfo, tags)
-//       if (tokenMap[token.chainId][token.address] !== undefined) throw Error('Duplicate tokens.')
-//       return {
-//         ...tokenMap,
-//         [token.chainId]: {
-//           ...tokenMap[token.chainId],
-//           [token.address]: {
-//             token,
-//             list: list
-//           }
-//         }
-//       }
-//     },
-//     { ...EMPTY_LIST }
-//   )
-//   listCache?.set(list, map)
-//   return map
-// }
+  const map = list.tokens.reduce<TokenAddressMap>((tokenMap, tokenInfo) => {
+    const token = new WrappedTokenInfo(tokenInfo, list)
+    if (tokenMap[token.chainId]?.[token.address] !== undefined) {
+      console.error(new Error(`Duplicate token! ${token.address}`))
+      return tokenMap
+    }
+    return {
+      ...tokenMap,
+      [token.chainId]: {
+        ...tokenMap[token.chainId],
+        [token.address]: {
+          token,
+          list
+        }
+      }
+    }
+  }, {})
+  listCache?.set(list, map)
+  return map
+} */
 
 export function useAllLists(): {
   readonly [url: string]: {
@@ -100,19 +74,19 @@ export function useAllLists(): {
 } {
   // MOD: adds { chainId } support to the hooks
   const { chainId = DEFAULT_NETWORK_FOR_LISTS } = useActiveWeb3React()
-  // return useSelector<AppState, AppState['lists']['byUrl']>(state => state.lists.byUrl)
-  return useSelector<AppState, AppState['lists'][ChainId]['byUrl']>(state => state.lists[chainId].byUrl)
+  // return useAppSelector<AppState, AppState['lists']['byUrl']>(state => state.lists.byUrl)
+  return useAppSelector<AppState, AppState['lists'][ChainId]['byUrl']>((state) => state.lists[chainId].byUrl)
 }
 
-// export function combineMaps(map1: TokenAddressMap, map2: TokenAddressMap): TokenAddressMap {
-//   return {
-//     1: { ...map1[1], ...map2[1] },
-//     3: { ...map1[3], ...map2[3] },
-//     4: { ...map1[4], ...map2[4] },
-//     5: { ...map1[5], ...map2[5] },
-//     42: { ...map1[42], ...map2[42] },
-//     100: { ...map1[100], ...map2[100] }
-//   }
+/* export function combineMaps(map1: TokenAddressMap, map2: TokenAddressMap): TokenAddressMap {
+  return {
+    1: { ...map1[1], ...map2[1] },
+    3: { ...map1[3], ...map2[3] },
+    4: { ...map1[4], ...map2[4] },
+    5: { ...map1[5], ...map2[5] },
+    42: { ...map1[42], ...map2[42] },
+    100: { ...map1[100], ...map2[100] }
+  } */
 
 // merge tokens contained within lists from urls
 export function useCombinedTokenMapFromUrls(urls: string[] | undefined): TokenAddressMap {
@@ -146,9 +120,9 @@ export function useCombinedTokenMapFromUrls(urls: string[] | undefined): TokenAd
 export function useActiveListUrls(): string[] | undefined {
   // MOD: adds { chainId } support to the hooks
   const { chainId = DEFAULT_NETWORK_FOR_LISTS } = useActiveWeb3React()
-  return useSelector<AppState, AppState['lists'][ChainId]['activeListUrls']>(
-    state => state.lists[chainId].activeListUrls
-  )?.filter(url => !UNSUPPORTED_LIST_URLS[chainId].includes(url))
+  return useAppSelector<AppState, AppState['lists'][ChainId]['activeListUrls']>(
+    (state) => state.lists[chainId].activeListUrls
+  )?.filter((url) => !UNSUPPORTED_LIST_URLS[chainId].includes(url))
 }
 
 export function useInactiveListUrls(): string[] {
@@ -157,7 +131,7 @@ export function useInactiveListUrls(): string[] {
   const lists = useAllLists()
   const allActiveListUrls = useActiveListUrls()
   return Object.keys(lists).filter(
-    url => !allActiveListUrls?.includes(url) && !UNSUPPORTED_LIST_URLS[chainId].includes(url)
+    (url) => !allActiveListUrls?.includes(url) && !UNSUPPORTED_LIST_URLS[chainId].includes(url)
   )
 }
 
@@ -205,19 +179,19 @@ export function useIsListActive(url: string): boolean {
 
 export function useGpUnsupportedTokens(): UnsupportedToken | null {
   const { chainId } = useActiveWeb3React()
-  return useSelector<AppState, AppState['lists'][ChainId]['gpUnsupportedTokens'] | null>(state =>
+  return useAppSelector<AppState, AppState['lists'][ChainId]['gpUnsupportedTokens'] | null>((state) =>
     chainId ? state.lists[chainId].gpUnsupportedTokens : null
   )
 }
 
 export function useAddGpUnsupportedToken() {
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
 
   return useCallback((params: AddGpUnsupportedTokenParams) => dispatch(addGpUnsupportedToken(params)), [dispatch])
 }
 
 export function useRemoveGpUnsupportedToken() {
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
 
   return useCallback((params: RemoveGpUnsupportedTokenParams) => dispatch(removeGpUnsupportedToken(params)), [dispatch])
 }

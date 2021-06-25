@@ -1,4 +1,4 @@
-import { useActiveWeb3React } from '@src/hooks'
+import { useActiveWeb3React } from 'hooks/web3'
 import { useSwapState } from '@src/state/swap/hooks'
 import { useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -13,7 +13,7 @@ import {
   SetLoadingQuoteParams,
   setRefreshQuoteLoading,
   SetQuoteErrorParams,
-  setQuoteError
+  setQuoteError,
 } from './actions'
 import { QuoteInformationObject, QuotesMap } from './reducer'
 
@@ -24,9 +24,9 @@ type ClearPriceCallback = (clearFeeParams: ClearQuoteParams) => void
 type SetQuoteErrorCallback = (setQuoteErrorParams: SetQuoteErrorParams) => void
 
 export const useAllQuotes = ({
-  chainId
+  chainId,
 }: Partial<Pick<ClearQuoteParams, 'chainId'>>): Partial<QuotesMap> | undefined => {
-  return useSelector<AppState, Partial<QuotesMap> | undefined>(state => {
+  return useSelector<AppState, Partial<QuotesMap> | undefined>((state) => {
     const quotes = chainId && state.price.quotes[chainId]
 
     if (!quotes) return {}
@@ -36,7 +36,7 @@ export const useAllQuotes = ({
 }
 
 export const useQuote = ({ token, chainId }: Partial<ClearQuoteParams>): QuoteInformationObject | undefined => {
-  return useSelector<AppState, QuoteInformationObject | undefined>(state => {
+  return useSelector<AppState, QuoteInformationObject | undefined>((state) => {
     const fees = chainId && state.price.quotes[chainId]
 
     if (!fees) return undefined
@@ -46,7 +46,7 @@ export const useQuote = ({ token, chainId }: Partial<ClearQuoteParams>): QuoteIn
 }
 
 export const useIsQuoteLoading = () =>
-  useSelector<AppState, boolean>(state => {
+  useSelector<AppState, boolean>((state) => {
     return state.price.loading
   })
 
@@ -70,7 +70,7 @@ export const useGetQuoteAndStatus = (params: Partial<ClearQuoteParams>): UseGetQ
 export function useIsQuoteRefreshing() {
   const { chainId } = useActiveWeb3React()
   const {
-    INPUT: { currencyId }
+    INPUT: { currencyId },
   } = useSwapState()
   const { isRefreshingQuote } = useGetQuoteAndStatus({ token: currencyId, chainId })
   return isRefreshingQuote
@@ -78,9 +78,10 @@ export function useIsQuoteRefreshing() {
 
 export const useSetNewQuoteLoading = (): GetNewQuoteCallback => {
   const dispatch = useDispatch<AppDispatch>()
-  return useCallback((quoteLoadingParams: SetLoadingQuoteParams) => dispatch(setNewQuoteLoading(quoteLoadingParams)), [
-    dispatch
-  ])
+  return useCallback(
+    (quoteLoadingParams: SetLoadingQuoteParams) => dispatch(setNewQuoteLoading(quoteLoadingParams)),
+    [dispatch]
+  )
 }
 
 export const useSetRefreshQuoteLoading = (): RefreshCurrentQuoteCallback => {
@@ -104,9 +105,10 @@ export const useClearQuote = (): ClearPriceCallback => {
 
 export const useSetQuoteError = (): SetQuoteErrorCallback => {
   const dispatch = useDispatch<AppDispatch>()
-  return useCallback((setQuoteErrorParams: SetQuoteErrorParams) => dispatch(setQuoteError(setQuoteErrorParams)), [
-    dispatch
-  ])
+  return useCallback(
+    (setQuoteErrorParams: SetQuoteErrorParams) => dispatch(setQuoteError(setQuoteErrorParams)),
+    [dispatch]
+  )
 }
 
 interface QuoteDispatchers {
@@ -123,6 +125,6 @@ export const useQuoteDispatchers = (): QuoteDispatchers => {
     setRefreshQuoteLoading: useSetRefreshQuoteLoading(),
     updateQuote: useUpdateQuote(),
     clearQuote: useClearQuote(),
-    setQuoteError: useSetQuoteError()
+    setQuoteError: useSetQuoteError(),
   }
 }

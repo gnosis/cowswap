@@ -103,7 +103,7 @@ function CurrencyRow({
   onSelect,
   isSelected,
   otherSelected,
-  style
+  style,
 }: {
   currency: Currency
   onSelect: () => void
@@ -188,7 +188,7 @@ export default function CurrencyList({
   otherCurrency,
   fixedListRef,
   showImportView,
-  setImportToken
+  setImportToken,
 }: {
   height: number
   currencies: Currency[]

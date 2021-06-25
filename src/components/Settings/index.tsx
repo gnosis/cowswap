@@ -233,7 +233,7 @@ export default function SettingsTab({ placeholderSlippage }: { placeholderSlippa
                 toggle={() => {
                   ReactGA.event({
                     category: 'Routing',
-                    action: singleHopOnly ? 'disable single hop' : 'enable single hop'
+                    action: singleHopOnly ? 'disable single hop' : 'enable single hop',
                   })
                   setSingleHopOnly(!singleHopOnly)
                 }}

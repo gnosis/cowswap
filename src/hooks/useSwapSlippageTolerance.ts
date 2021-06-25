@@ -4,7 +4,7 @@ import { Trade as V2Trade } from '@uniswap/v2-sdk'
 import { useMemo } from 'react'
 import { useUserSlippageToleranceWithDefault } from '../state/user/hooks'
 
-const V2_SWAP_DEFAULT_SLIPPAGE = new Percent(50, 10_000) // .50%
+export const V2_SWAP_DEFAULT_SLIPPAGE = new Percent(50, 10_000) // .50%
 const V3_SWAP_DEFAULT_SLIPPAGE = new Percent(50, 10_000) // .50%
 const ONE_TENTHS_PERCENT = new Percent(10, 10_000) // .10%
 

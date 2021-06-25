@@ -1,16 +1,16 @@
 import { useAllLists } from 'state/lists/hooks'
 import { getVersionUpgrade, minVersionBump, VersionUpgrade } from '@uniswap/token-lists'
 import { useCallback, useEffect } from 'react'
-import { useDispatch } from 'react-redux'
-import { useActiveWeb3React } from 'hooks'
+
+import { useActiveWeb3React } from 'hooks/web3'
 import { useFetchListCallback } from 'hooks/useFetchListCallback'
 import useInterval from 'hooks/useInterval'
 import useIsWindowVisible from 'hooks/useIsWindowVisible'
-import { AppDispatch } from 'state'
 import { acceptListUpdate } from 'state/lists/actions'
 import { useActiveListUrls } from 'state/lists/hooks'
 import { useAllInactiveTokens } from 'hooks/Tokens'
 import { DEFAULT_NETWORK_FOR_LISTS, UNSUPPORTED_LIST_URLS } from 'constants/lists'
+import { useAppDispatch } from 'state/hooks'
 // MOD: add updateVersion for chainId change init
 import { updateVersion } from 'state/global/actions'
 
@@ -18,15 +18,16 @@ export default function Updater(): null {
   // MOD: chainId
   // const { library } = useActiveWeb3React()
   const { chainId = DEFAULT_NETWORK_FOR_LISTS, library } = useActiveWeb3React()
-  const dispatch = useDispatch<AppDispatch>()
+  const dispatch = useAppDispatch()
   const isWindowVisible = useIsWindowVisible()
 
   // get all loaded lists, and the active urls
   const lists = useAllLists()
   const activeListUrls = useActiveListUrls()
 
+  // TODO: removed in V3, review this is ok
   // initiate loading
-  useAllInactiveTokens()
+  // useAllInactiveTokens()
 
   const fetchList = useFetchListCallback()
   const fetchAllListsCallback = useCallback(() => {
@@ -95,12 +96,13 @@ export default function Updater(): null {
     // }, [dispatch, lists, activeListUrls])
   }, [dispatch, lists, activeListUrls, chainId])
 
+  // TODO: removed in V3, review
   // automatically initialise lists if chainId changes
-  useEffect(() => {
-    if (chainId) {
-      dispatch(updateVersion({ chainId }))
-    }
-  }, [chainId, dispatch])
+  // useEffect(() => {
+  //   if (chainId) {
+  //     dispatch(updateVersion({ chainId }))
+  //   }
+  // }, [chainId, dispatch])
 
   return null
 }

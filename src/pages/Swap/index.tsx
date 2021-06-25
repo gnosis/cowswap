@@ -47,7 +47,7 @@ import {
   useDefaultsFromURLSearch,
   useDerivedSwapInfo,
   useSwapActionHandlers,
-  useSwapState
+  useSwapState,
 } from '@src/state/swap/hooks'
 import { useExpertModeManager, useUserSingleHopOnly } from 'state/user/hooks'
 import { HideSmall, LinkStyledButton, TYPE } from 'theme'
@@ -74,7 +74,7 @@ export default function Swap({ history }: RouteComponentProps) {
   // token warning stuff
   const [loadedInputCurrency, loadedOutputCurrency] = [
     useCurrency(loadedUrlParams?.inputCurrencyId),
-    useCurrency(loadedUrlParams?.outputCurrencyId)
+    useCurrency(loadedUrlParams?.outputCurrencyId),
   ]
   const [dismissTokenWarning, setDismissTokenWarning] = useState<boolean>(
     process.env.REACT_APP_DISABLE_TOKEN_WARNING === 'true'
@@ -117,14 +117,14 @@ export default function Swap({ history }: RouteComponentProps) {
     currencyBalances,
     parsedAmount,
     currencies,
-    inputError: swapInputError
+    inputError: swapInputError,
   } = useDerivedSwapInfo(toggledVersion)
 
-  const { wrapType, execute: onWrap, inputError: wrapInputError } = useWrapCallback(
-    currencies[Field.INPUT],
-    currencies[Field.OUTPUT],
-    typedValue
-  )
+  const {
+    wrapType,
+    execute: onWrap,
+    inputError: wrapInputError,
+  } = useWrapCallback(currencies[Field.INPUT], currencies[Field.OUTPUT], typedValue)
   const showWrap: boolean = wrapType !== WrapType.NOT_APPLICABLE
   const { address: recipientAddress } = useENSAddress(recipient)
 
@@ -133,11 +133,11 @@ export default function Swap({ history }: RouteComponentProps) {
       showWrap
         ? {
             [Field.INPUT]: parsedAmount,
-            [Field.OUTPUT]: parsedAmount
+            [Field.OUTPUT]: parsedAmount,
           }
         : {
             [Field.INPUT]: independentField === Field.INPUT ? parsedAmount : trade?.inputAmount,
-            [Field.OUTPUT]: independentField === Field.OUTPUT ? parsedAmount : trade?.outputAmount
+            [Field.OUTPUT]: independentField === Field.OUTPUT ? parsedAmount : trade?.outputAmount,
           },
     [independentField, parsedAmount, showWrap, trade]
   )
@@ -181,14 +181,14 @@ export default function Swap({ history }: RouteComponentProps) {
     tradeToConfirm: undefined,
     attemptingTxn: false,
     swapErrorMessage: undefined,
-    txHash: undefined
+    txHash: undefined,
   })
 
   const formattedAmounts = {
     [independentField]: typedValue,
     [dependentField]: showWrap
       ? parsedAmounts[independentField]?.toExact() ?? ''
-      : parsedAmounts[dependentField]?.toSignificant(6) ?? ''
+      : parsedAmounts[dependentField]?.toSignificant(6) ?? '',
   }
 
   const userHasSpecifiedInputOutput = Boolean(
@@ -199,10 +199,11 @@ export default function Swap({ history }: RouteComponentProps) {
 
   // check whether the user has approved the router on the input token
   const [approvalState, approveCallback] = useApproveCallbackFromTrade(trade, allowedSlippage)
-  const { state: signatureState, signatureData, gatherPermitSignature } = useERC20PermitFromTrade(
-    trade,
-    allowedSlippage
-  )
+  const {
+    state: signatureState,
+    signatureData,
+    gatherPermitSignature,
+  } = useERC20PermitFromTrade(trade, allowedSlippage)
 
   const handleApprove = useCallback(async () => {
     if (signatureState === UseERC20PermitState.NOT_SIGNED && gatherPermitSignature) {
@@ -251,7 +252,7 @@ export default function Swap({ history }: RouteComponentProps) {
     }
     setSwapState({ attemptingTxn: true, tradeToConfirm, showConfirm, swapErrorMessage: undefined, txHash: undefined })
     swapCallback()
-      .then(hash => {
+      .then((hash) => {
         setSwapState({ attemptingTxn: false, tradeToConfirm, showConfirm, swapErrorMessage: undefined, txHash: hash })
 
         ReactGA.event({
@@ -266,17 +267,17 @@ export default function Swap({ history }: RouteComponentProps) {
             trade?.inputAmount?.currency?.symbol,
             trade?.outputAmount?.currency?.symbol,
             getTradeVersion(trade),
-            singleHopOnly ? 'SH' : 'MH'
-          ].join('/')
+            singleHopOnly ? 'SH' : 'MH',
+          ].join('/'),
         })
       })
-      .catch(error => {
+      .catch((error) => {
         setSwapState({
           attemptingTxn: false,
           tradeToConfirm,
           showConfirm,
           swapErrorMessage: error.message,
-          txHash: undefined
+          txHash: undefined,
         })
       })
   }, [
@@ -288,7 +289,7 @@ export default function Swap({ history }: RouteComponentProps) {
     recipientAddress,
     account,
     trade,
-    singleHopOnly
+    singleHopOnly,
   ])
 
   // errors
@@ -331,7 +332,7 @@ export default function Swap({ history }: RouteComponentProps) {
   }, [attemptingTxn, showConfirm, swapErrorMessage, trade, txHash])
 
   const handleInputSelect = useCallback(
-    inputCurrency => {
+    (inputCurrency) => {
       setApprovalSubmitted(false) // reset 2 step UI for approvals
       onCurrencySelection(Field.INPUT, inputCurrency)
     },
@@ -342,9 +343,10 @@ export default function Swap({ history }: RouteComponentProps) {
     maxInputAmount && onUserInput(Field.INPUT, maxInputAmount.toExact())
   }, [maxInputAmount, onUserInput])
 
-  const handleOutputSelect = useCallback(outputCurrency => onCurrencySelection(Field.OUTPUT, outputCurrency), [
-    onCurrencySelection
-  ])
+  const handleOutputSelect = useCallback(
+    (outputCurrency) => onCurrencySelection(Field.OUTPUT, outputCurrency),
+    [onCurrencySelection]
+  )
 
   const swapIsUnsupported = useIsSwapUnsupported(currencies?.INPUT, currencies?.OUTPUT)
 
@@ -453,7 +455,7 @@ export default function Swap({ history }: RouteComponentProps) {
                             alignItems: 'center',
                             height: '24px',
                             lineHeight: '120%',
-                            marginLeft: '0.75rem'
+                            marginLeft: '0.75rem',
                           }}
                         >
                           <ArrowLeft color={theme.text3} size={12} /> &nbsp;
@@ -477,7 +479,7 @@ export default function Swap({ history }: RouteComponentProps) {
                         justifyContent: 'space-between',
                         height: '24px',
                         opacity: 0.8,
-                        marginLeft: '0.25rem'
+                        marginLeft: '0.25rem',
                       }}
                     >
                       <TYPE.black fontSize={12}>
@@ -596,7 +598,7 @@ export default function Swap({ history }: RouteComponentProps) {
                             attemptingTxn: false,
                             swapErrorMessage: undefined,
                             showConfirm: true,
-                            txHash: undefined
+                            txHash: undefined,
                           })
                         }
                       }}
@@ -632,7 +634,7 @@ export default function Swap({ history }: RouteComponentProps) {
                         attemptingTxn: false,
                         swapErrorMessage: undefined,
                         showConfirm: true,
-                        txHash: undefined
+                        txHash: undefined,
                       })
                     }
                   }}
