@@ -8,8 +8,8 @@ import useInterval from '../../hooks/useInterval'
 import useIsWindowVisible from '../../hooks/useIsWindowVisible'
 import { acceptListUpdate } from './actions'
 import { useActiveListUrls } from './hooks'
-import { UNSUPPORTED_LIST_URLS } from 'constants/lists'
-import { useAppDispatch } from 'state/hooks'
+import { UNSUPPORTED_LIST_URLS } from '@src/constants/lists'
+import { useAppDispatch } from '@src/state/hooks'
 
 export default function Updater(): null {
   const { library } = useActiveWeb3React()

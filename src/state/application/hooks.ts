@@ -1,8 +1,8 @@
 import { useCallback, useMemo } from 'react'
-import { useAppDispatch, useAppSelector } from 'state/hooks'
+import { useAppDispatch, useAppSelector } from '@src/state/hooks'
 import { useActiveWeb3React } from '../../hooks/web3'
-import { AppState } from '../index'
-import { addPopup, ApplicationModal, PopupContent, removePopup, setOpenModal } from 'state/application/actions'
+import { AppState } from '@src/state'
+import { addPopup, ApplicationModal, PopupContent, removePopup, setOpenModal } from '@src/state/application/actions'
 
 export function useBlockNumber(): number | undefined {
   const { chainId } = useActiveWeb3React()
