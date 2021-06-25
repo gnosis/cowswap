@@ -53,23 +53,37 @@ function initializeState(
   }
 }
 
+function getResetPrice(sellToken: string, buyToken: string, kind: string) {
+  return {
+    amount: null,
+    token: kind ? sellToken : buyToken
+  }
+}
+
 export default createReducer(initialState, builder =>
   builder
     /**
      * Gets a new quote
      */
     .addCase(getNewQuoteStart, (state, action) => {
-      initializeState(state.quotes, action)
       const quoteData = action.payload
+      const { sellToken, buyToken, amount, chainId, kind } = quoteData
+      initializeState(state.quotes, action)
+
+      // Reset quote params
+      const quotes = state.quotes[quoteData.chainId]
+      quotes[quoteData.sellToken] = {
+        sellToken,
+        buyToken,
+        amount,
+        chainId,
+        kind,
+        price: getResetPrice(sellToken, buyToken, kind),
+        lastCheck: Date.now()
+      }
 
       // Activate loader
       state.loading = true
-
-      // Reset price old price, if necessary
-      const quotesState = state.quotes[quoteData.chainId][quoteData.sellToken]
-      if (quotesState?.price) {
-        quotesState.price.amount = null
-      }
     })
 
     /**
@@ -85,11 +99,17 @@ export default createReducer(initialState, builder =>
      */
     .addCase(updateQuote, (state, action) => {
       const quotes = state.quotes
-      const { sellToken, chainId } = action.payload
+      const payload = action.payload
+      const { sellToken, chainId } = payload
       initializeState(quotes, action)
 
       // Updates the new price
-      quotes[chainId][sellToken] = { ...action.payload, lastCheck: Date.now() }
+      const quoteInformation = quotes[chainId][sellToken]
+      if (quoteInformation) {
+        quotes[chainId][sellToken] = { ...quoteInformation, ...payload }
+      }
+
+      // Stop the loader
       state.loading = false
     })
 
@@ -99,11 +119,20 @@ export default createReducer(initialState, builder =>
     .addCase(setQuoteError, (state, action) => {
       const quotes = state.quotes
       const payload = action.payload
-      const { sellToken, chainId } = payload
+      const { sellToken, buyToken, kind, chainId } = payload
       initializeState(quotes, action)
 
       // Sets the error information
-      quotes[chainId][sellToken] = { ...payload, lastCheck: Date.now() }
+      const quoteInformation = quotes[chainId][sellToken]
+      if (quoteInformation) {
+        quotes[chainId][sellToken] = {
+          ...quoteInformation,
+          ...payload,
+          price: getResetPrice(sellToken, buyToken, kind)
+        }
+      }
+
+      // Stop the loader
       state.loading = false
     })
 )

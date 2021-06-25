@@ -252,7 +252,7 @@ export function useRefetchQuoteCallback() {
           refreshQuoteStart()
         } else {
           // Get new quote
-          getNewQuoteStart({ sellToken, chainId })
+          getNewQuoteStart(quoteParams)
         }
 
         // Get the quote
@@ -271,7 +271,7 @@ export function useRefetchQuoteCallback() {
         // e.g FEE comes in OK, but Fee > Price, we throw an FEE_EXCEEDS_PRICE error but keep fee promise resolved value
         // to save into state and use
         quoteData = {
-          ...params.quoteParams,
+          ...quoteParams,
           fee: getPromiseFulfilledValue(fee, undefined),
           price: getPromiseFulfilledValue(price, undefined)
         }

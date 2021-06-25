@@ -1,4 +1,5 @@
 import { createAction } from '@reduxjs/toolkit'
+import { FeeQuoteParams } from 'utils/operator'
 import { ChainId } from '@uniswap/sdk'
 import { QuoteInformationObject } from './reducer'
 
@@ -9,7 +10,7 @@ export interface ClearQuoteParams {
   chainId: ChainId
 }
 
-export type GetQuoteParams = Pick<QuoteInformationObject, 'sellToken' | 'chainId'>
+export type GetQuoteParams = FeeQuoteParams
 
 export type QuoteError =
   | 'fetch-quote-error'
