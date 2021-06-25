@@ -14,19 +14,19 @@ export type TransactionAndOrder =
 
 export enum ActivityType {
   ORDER = 'order',
-  TX = 'tx'
+  TX = 'tx',
 }
 
 export enum ActivityStatus {
   PENDING,
   CONFIRMED,
   EXPIRED,
-  CANCELLED
+  CANCELLED,
 }
 
 enum TxReceiptStatus {
   PENDING,
-  CONFIRMED
+  CONFIRMED,
 }
 
 // One FULL day in MS (milliseconds not Microsoft)
@@ -53,12 +53,12 @@ export default function useRecentActivity() {
     // Filter out any pending/fulfilled orders OLDER than 1 day
     // and adjust order object to match TransactionDetail addedTime format
     // which is used later in app to render list of activity
-    const adjustedOrders = allNonEmptyOrders.filter(isOrderRecent).map(order => {
+    const adjustedOrders = allNonEmptyOrders.filter(isOrderRecent).map((order) => {
       // we need to essentially match TransactionDetails type which uses "addedTime" for date checking
       // and time in MS vs ISO string as Orders uses
       return {
         ...order,
-        addedTime: Date.parse(order.creationTime)
+        addedTime: Date.parse(order.creationTime),
       }
     })
 
@@ -71,12 +71,12 @@ export default function useRecentActivity() {
     // which is used later in app to render list of activity
     const adjustedTransactions = Object.values(allTransactions)
       .filter(isTransactionRecent)
-      .map(tx => {
+      .map((tx) => {
         return {
           ...tx,
           // we need to adjust Transaction object and add "id" + "status" to match Orders type
           id: tx.hash,
-          status: tx.receipt ? OrderStatus.FULFILLED : OrderStatus.PENDING
+          status: tx.receipt ? OrderStatus.FULFILLED : OrderStatus.PENDING,
         }
       })
 
@@ -151,7 +151,7 @@ export function useActivityDescriptors({ chainId, id }: { chainId?: number; id: 
       activity,
       summary,
       status,
-      type
+      type,
     }
   }, [chainId, order, tx])
 }

@@ -1,4 +1,4 @@
-import {  Percent } from '@uniswap/sdk-core'
+import { Percent } from '@uniswap/sdk-core'
 import JSBI from 'jsbi'
 import { ORDER_ID_SHORT_LENGTH } from '../constants'
 import { getExplorerOrderLink } from './explorer'
@@ -22,7 +22,7 @@ const ETHERSCAN_PREFIXES: { [chainId in ChainId]: string } = {
   4: 'rinkeby.',
   5: 'goerli.',
   42: 'kovan.',
-  100: 'xdai.'
+  100: 'xdai.',
 }
 
 export type BlockExplorerLinkType = 'transaction' | 'token' | 'address' | 'block'

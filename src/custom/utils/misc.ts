@@ -4,7 +4,7 @@ import { Market } from 'types/index'
 export const isTruthy = <T>(value: T | null | undefined | false): value is T => !!value
 
 export const delay = <T = void>(ms = 100, result?: T): Promise<T> =>
-  new Promise(resolve => setTimeout(resolve, ms, result))
+  new Promise((resolve) => setTimeout(resolve, ms, result))
 
 export function isPromiseFulfilled<T>(
   promiseResult: PromiseSettledResult<T>
@@ -50,12 +50,12 @@ export function getCanonicalMarket<T>({ sellToken, buyToken, kind }: CanonicalMa
   if (kind === 'sell') {
     return {
       baseToken: sellToken,
-      quoteToken: buyToken
+      quoteToken: buyToken,
     }
   } else {
     return {
       baseToken: buyToken,
-      quoteToken: sellToken
+      quoteToken: sellToken,
     }
   }
 }

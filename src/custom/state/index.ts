@@ -32,7 +32,7 @@ const UNISWAP_REDUCERS = {
   mintV3,
   burn,
   burnV3,
-  multicall
+  multicall,
 }
 
 const reducers = {
@@ -40,7 +40,7 @@ const reducers = {
   lists,
   orders,
   price,
-  gas
+  gas,
 }
 
 const PERSISTED_KEYS: string[] = ['user', 'transactions', 'orders', 'lists', 'gas']
@@ -51,9 +51,9 @@ const store = configureStore({
     ...getDefaultMiddleware({ thunk: false }),
     save({ states: PERSISTED_KEYS, debounce: 1000 }),
     popupMiddleware,
-    soundMiddleware
+    soundMiddleware,
   ],
-  preloadedState: load({ states: PERSISTED_KEYS })
+  preloadedState: load({ states: PERSISTED_KEYS }),
 })
 
 // this instantiate the app / reducers in several places using the default chainId

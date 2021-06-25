@@ -44,7 +44,7 @@ export enum ProposalState {
   Succeeded,
   Queued,
   Expired,
-  Executed
+  Executed,
 }
 
 const GovernanceInterface = new ethers.utils.Interface(GOV_ABI)
@@ -72,22 +72,21 @@ function useDataFromEventLogs():
     }[][]
   | undefined {
   const { library, chainId } = useActiveWeb3React()
-  const [formattedEvents, setFormattedEvents] = useState<
-    { description: string; details: { target: string; functionSig: string; callData: string }[] }[][]
-  >()
+  const [formattedEvents, setFormattedEvents] =
+    useState<{ description: string; details: { target: string; functionSig: string; callData: string }[] }[][]>()
 
   const govContracts = useGovernanceContracts()
 
   // create filters for ProposalCreated events
   const filters = useMemo(
     () =>
-      govContracts?.filter(govContract => !!govContract)?.length > 0
+      govContracts?.filter((govContract) => !!govContract)?.length > 0
         ? govContracts
             .filter((govContract): govContract is ethers.Contract => !!govContract)
-            .map(contract => ({
+            .map((contract) => ({
               ...contract.filters.ProposalCreated(),
               fromBlock: 10861678, // TODO could optimize this on a per-contract basis, this is the safe value
-              toBlock: 'latest'
+              toBlock: 'latest',
             }))
         : undefined,
     [govContracts]
@@ -105,12 +104,12 @@ function useDataFromEventLogs():
     let stale = false
 
     if (!formattedEvents) {
-      Promise.all(filters.map(filter => library.getLogs(filter)))
-        .then(governanceContractsProposalEvents => {
+      Promise.all(filters.map((filter) => library.getLogs(filter)))
+        .then((governanceContractsProposalEvents) => {
           if (stale) return
 
-          const formattedEventData = governanceContractsProposalEvents.map(proposalEvents => {
-            return proposalEvents.map(event => {
+          const formattedEventData = governanceContractsProposalEvents.map((proposalEvents) => {
+            return proposalEvents.map((event) => {
               const eventParsed = GovernanceInterface.parseLog(event).args
               return {
                 description: eventParsed.description,
@@ -122,16 +121,16 @@ function useDataFromEventLogs():
                   return {
                     target,
                     functionSig: name,
-                    callData: decoded.join(', ')
+                    callData: decoded.join(', '),
                   }
-                })
+                }),
               }
             })
           })
 
           setFormattedEvents(formattedEventData)
         })
-        .catch(error => {
+        .catch((error) => {
           if (stale) return
 
           console.error('Failed to fetch proposals', error)
@@ -155,14 +154,14 @@ export function useAllProposalData(): ProposalData[] {
   const proposalCount = useLatestProposalCount()
 
   const addresses = useMemo(() => {
-    return chainId === SupportedChainId.MAINNET ? GOVERNANCE_ADDRESSES.map(addressMap => addressMap[chainId]) : []
+    return chainId === SupportedChainId.MAINNET ? GOVERNANCE_ADDRESSES.map((addressMap) => addressMap[chainId]) : []
   }, [chainId])
 
   const proposalIndexes = useMemo(() => {
     return chainId === SupportedChainId.MAINNET
       ? [
           typeof proposalCount === 'number' ? new Array(proposalCount).fill(0).map((_, i) => [i + 1]) : [], // dynamic for current governor alpha
-          [[1], [2], [3], [4]] // hardcoded for governor alpha V0
+          [[1], [2], [3], [4]], // hardcoded for governor alpha V0
         ]
       : []
   }, [chainId, proposalCount])
@@ -201,9 +200,9 @@ export function useAllProposalData(): ProposalData[] {
     const formattedEvents = allFormattedEvents[governanceContractIndex]
 
     if (
-      !proposalsCallData?.every(p => Boolean(p.result)) ||
-      !proposalStatesCallData?.every(p => Boolean(p.result)) ||
-      !formattedEvents?.every(p => Boolean(p))
+      !proposalsCallData?.every((p) => Boolean(p.result)) ||
+      !proposalStatesCallData?.every((p) => Boolean(p.result)) ||
+      !formattedEvents?.every((p) => Boolean(p))
     ) {
       results.push([])
       continue
@@ -227,7 +226,7 @@ export function useAllProposalData(): ProposalData[] {
           startBlock,
           endBlock: parseInt(proposal?.result?.endBlock?.toString()),
           details: formattedEvents[i].details,
-          governorIndex: governanceContractIndex
+          governorIndex: governanceContractIndex,
         }
       })
     )
@@ -238,7 +237,7 @@ export function useAllProposalData(): ProposalData[] {
 
 export function useProposalData(governorIndex: number, id: string): ProposalData | undefined {
   const allProposalData = useAllProposalData()
-  return allProposalData?.filter(p => p.governorIndex === governorIndex)?.find(p => p.id === id)
+  return allProposalData?.filter((p) => p.governorIndex === governorIndex)?.find((p) => p.id === id)
 }
 
 // get the users delegatee if it exists
@@ -283,12 +282,12 @@ export function useDelegateCallback(): (delegatee: string | undefined) => undefi
       if (!library || !chainId || !account || !isAddress(delegatee ?? '')) return undefined
       const args = [delegatee]
       if (!uniContract) throw new Error('No UNI Contract!')
-      return uniContract.estimateGas.delegate(...args, {}).then(estimatedGasLimit => {
+      return uniContract.estimateGas.delegate(...args, {}).then((estimatedGasLimit) => {
         return uniContract
           .delegate(...args, { value: null, gasLimit: calculateGasMargin(estimatedGasLimit) })
           .then((response: TransactionResponse) => {
             addTransaction(response, {
-              summary: `Delegated votes`
+              summary: `Delegated votes`,
             })
             return response.hash
           })
@@ -311,12 +310,12 @@ export function useVoteCallback(): {
     (proposalId: string | undefined, support: boolean) => {
       if (!account || !latestGovernanceContract || !proposalId) return
       const args = [proposalId, support]
-      return latestGovernanceContract.estimateGas.castVote(...args, {}).then(estimatedGasLimit => {
+      return latestGovernanceContract.estimateGas.castVote(...args, {}).then((estimatedGasLimit) => {
         return latestGovernanceContract
           .castVote(...args, { value: null, gasLimit: calculateGasMargin(estimatedGasLimit) })
           .then((response: TransactionResponse) => {
             addTransaction(response, {
-              summary: `Voted ${support ? 'for ' : 'against'} proposal ${proposalId}`
+              summary: `Voted ${support ? 'for ' : 'against'} proposal ${proposalId}`,
             })
             return response.hash
           })

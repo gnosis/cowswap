@@ -14,7 +14,7 @@ import HeaderMod, {
   AccountElement,
   HeaderElementWrap,
   StyledNavLink as StyledNavLinkUni,
-  StyledMenuButton
+  StyledMenuButton,
 } from './HeaderMod'
 import Menu from '../Menu'
 import { Moon, Sun } from 'react-feather'
@@ -32,11 +32,11 @@ export const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
   [ChainId.ROPSTEN]: 'Ropsten',
   [ChainId.GÖRLI]: 'Görli',
   [ChainId.KOVAN]: 'Kovan',
-  [ChainId.XDAI]: 'xDAI'
+  [ChainId.XDAI]: 'xDAI',
 }
 
 const CHAIN_CURRENCY_LABELS: { [chainId in ChainId]?: string } = {
-  [ChainId.XDAI]: 'xDAI'
+  [ChainId.XDAI]: 'xDAI',
 }
 
 export interface LinkType {
@@ -96,11 +96,11 @@ const TwitterLink = styled(StyledMenuButton)`
   }
 `
 
-export const LogoImage = styled.img.attrs(props => ({
+export const LogoImage = styled.img.attrs((props) => ({
   src: props.theme.logo.src,
   alt: props.theme.logo.alt,
   width: props.theme.logo.width,
-  height: props.theme.logo.height
+  height: props.theme.logo.height,
 }))`
   object-fit: contain;
 

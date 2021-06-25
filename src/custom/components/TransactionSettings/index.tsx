@@ -2,7 +2,7 @@ import React from 'react'
 import SlippageTabsMod, {
   SlippageTabsProps as SlippageTabsPropsMod,
   FancyButton as FancyButtonUni,
-  OptionCustom
+  OptionCustom,
 } from './TransactionSettingsMod'
 import { RowFixed } from 'components/Row'
 import styled from 'styled-components'

@@ -14,7 +14,7 @@ import {
   Order,
   fulfillOrdersBatch,
   FulfillOrdersBatchParams,
-  expireOrdersBatch
+  expireOrdersBatch,
 } from './actions'
 import { OrdersState, PartialOrdersMap } from './reducer'
 import { isTruthy } from 'utils/misc'
@@ -61,7 +61,7 @@ type UpdateLastCheckedBlockCallback = (updateLastCheckedBlockParams: UpdateLastC
 type GetOrderByIdCallback = (id: OrderID) => Order | undefined
 
 export const useOrder = ({ id, chainId }: GetRemoveOrderParams): Order | undefined => {
-  return useSelector<AppState, Order | undefined>(state => {
+  return useSelector<AppState, Order | undefined>((state) => {
     const orders = state.orders[chainId]
 
     if (!orders) return undefined
@@ -77,7 +77,7 @@ export const useOrder = ({ id, chainId }: GetRemoveOrderParams): Order | undefin
 // used to extract Order.summary before showing popup
 // TODO: put the whole logic inside Popup middleware
 export const useFindOrderById = ({ chainId }: GetOrdersParams): GetOrderByIdCallback => {
-  const state = useSelector<AppState, OrdersState[ChainId] | undefined>(state => chainId && state.orders?.[chainId])
+  const state = useSelector<AppState, OrdersState[ChainId] | undefined>((state) => chainId && state.orders?.[chainId])
 
   // stable ref, so we don't recreate the function
   const stateRef = useRef(state)
@@ -101,7 +101,7 @@ export const useFindOrderById = ({ chainId }: GetOrdersParams): GetOrderByIdCall
 }
 
 export const useOrders = ({ chainId }: GetOrdersParams): Order[] => {
-  const state = useSelector<AppState, OrdersState[ChainId]>(state => chainId && state.orders?.[chainId])
+  const state = useSelector<AppState, OrdersState[ChainId]>((state) => chainId && state.orders?.[chainId])
 
   return useMemo(() => {
     if (!state) return []
@@ -110,14 +110,14 @@ export const useOrders = ({ chainId }: GetOrdersParams): Order[] => {
       .concat(Object.values(state.pending))
       .concat(Object.values(state.expired))
       .concat(Object.values(state.cancelled || {}))
-      .map(orderObject => orderObject?.order)
+      .map((orderObject) => orderObject?.order)
       .filter(isTruthy)
     return allOrders
   }, [state])
 }
 
 export const useAllOrders = ({ chainId }: GetOrdersParams): PartialOrdersMap => {
-  const state = useSelector<AppState, OrdersState[ChainId] | undefined>(state => chainId && state.orders?.[chainId])
+  const state = useSelector<AppState, OrdersState[ChainId] | undefined>((state) => chainId && state.orders?.[chainId])
 
   return useMemo(() => {
     if (!state) return {}
@@ -126,21 +126,21 @@ export const useAllOrders = ({ chainId }: GetOrdersParams): PartialOrdersMap => 
       ...state.pending,
       ...state.fulfilled,
       ...state.expired,
-      ...state.cancelled
+      ...state.cancelled,
     }
   }, [state])
 }
 
 export const usePendingOrders = ({ chainId }: GetOrdersParams): Order[] => {
   const state = useSelector<AppState, PartialOrdersMap | undefined>(
-    state => chainId && state.orders?.[chainId]?.pending
+    (state) => chainId && state.orders?.[chainId]?.pending
   )
 
   return useMemo(() => {
     if (!state) return []
 
     const allOrders = Object.values(state)
-      .map(orderObject => orderObject?.order)
+      .map((orderObject) => orderObject?.order)
       .filter(isTruthy)
     return allOrders
   }, [state])
@@ -148,14 +148,14 @@ export const usePendingOrders = ({ chainId }: GetOrdersParams): Order[] => {
 
 export const useFulfilledOrders = ({ chainId }: GetOrdersParams): Order[] => {
   const state = useSelector<AppState, PartialOrdersMap | undefined>(
-    state => chainId && state.orders?.[chainId]?.fulfilled
+    (state) => chainId && state.orders?.[chainId]?.fulfilled
   )
 
   return useMemo(() => {
     if (!state) return []
 
     const allOrders = Object.values(state)
-      .map(orderObject => orderObject?.order)
+      .map((orderObject) => orderObject?.order)
       .filter(isTruthy)
     return allOrders
   }, [state])
@@ -163,14 +163,14 @@ export const useFulfilledOrders = ({ chainId }: GetOrdersParams): Order[] => {
 
 export const useExpiredOrders = ({ chainId }: GetOrdersParams): Order[] => {
   const state = useSelector<AppState, PartialOrdersMap | undefined>(
-    state => chainId && state.orders?.[chainId]?.expired
+    (state) => chainId && state.orders?.[chainId]?.expired
   )
 
   return useMemo(() => {
     if (!state) return []
 
     const allOrders = Object.values(state)
-      .map(orderObject => orderObject?.order)
+      .map((orderObject) => orderObject?.order)
       .filter(isTruthy)
     return allOrders
   }, [state])
@@ -224,7 +224,7 @@ export const useClearOrders = (): ClearOrdersCallback => {
 }
 
 export const useLastCheckedBlock = ({ chainId }: GetLastCheckedBlockParams): number => {
-  return useSelector<AppState, number>(state => {
+  return useSelector<AppState, number>((state) => {
     if (!chainId) return 0
 
     return state.orders?.[chainId]?.lastCheckedBlock ?? ContractDeploymentBlocks[chainId] ?? 0

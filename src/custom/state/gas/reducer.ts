@@ -8,7 +8,7 @@ export type GasState = {
 
 const initialState: GasState = {}
 
-export default createReducer(initialState, builder =>
+export default createReducer(initialState, (builder) =>
   builder.addCase(updateGasPrices, (state, action) => {
     const { chainId, ...rest } = action.payload
 

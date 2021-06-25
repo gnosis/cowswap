@@ -18,7 +18,7 @@ const Wrapper = styled.div<WrapperProps>`
       top,
       right,
       bottom,
-      left
+      left,
     })}
 
     display: flex;

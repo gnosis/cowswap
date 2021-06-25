@@ -7,7 +7,7 @@ export default function TokenWarningModal({
   isOpen,
   tokens,
   onConfirm,
-  onDismiss
+  onDismiss,
 }: {
   isOpen: boolean
   tokens: Token[]

@@ -16,7 +16,7 @@ function LabeledArrow({}: { fee: FeeAmount }) {
 }
 
 export default memo(function SwapRoute({
-  trade
+  trade,
 }: {
   trade: V2Trade<Currency, Currency, TradeType> | V3Trade<Currency, Currency, TradeType>
 }) {

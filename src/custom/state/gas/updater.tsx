@@ -20,10 +20,10 @@ export default function GasUpdater(): null {
     // since last update, then:
     if (!updated || needsGasUpdate(now, updated, GAS_PRICE_UPDATE_THRESHOLD)) {
       getGasPrices(chainId)
-        .then(gas => {
+        .then((gas) => {
           updateGasPrices({
             ...gas,
-            chainId
+            chainId,
           })
         })
         // on error we log and keep state as it was

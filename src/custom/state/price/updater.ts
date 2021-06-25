@@ -61,7 +61,7 @@ function quoteUsingSameParameters(currentParams: FeeQuoteParams, quoteInfo: Quot
     amount: currentAmount,
     sellToken: currentSellToken,
     buyToken: currentBuyToken,
-    kind: currentKind
+    kind: currentKind,
   } = currentParams
   const { amount, buyToken, sellToken, kind } = quoteInfo
 
@@ -112,7 +112,7 @@ export default function FeesUpdater(): null {
     INPUT: { currencyId: sellToken },
     OUTPUT: { currencyId: buyToken },
     independentField,
-    typedValue: rawTypedValue
+    typedValue: rawTypedValue,
   } = useSwapState()
 
   // pass independent field as a reference to use against
@@ -172,9 +172,9 @@ export default function FeesUpdater(): null {
               shouldFetchNewQuote
                 ? setNewQuoteLoading({ loading: true, quoteData: { sellToken, chainId } })
                 : setRefreshQuoteLoading({ loading: true }),
-            hideLoadingCallback: () => setRefreshQuoteLoading({ loading: false })
-          }
-        }).catch(error => console.error('Error re-fetching the quote', error))
+            hideLoadingCallback: () => setRefreshQuoteLoading({ loading: false }),
+          },
+        }).catch((error) => console.error('Error re-fetching the quote', error))
       }
     }
 
@@ -201,7 +201,7 @@ export default function FeesUpdater(): null {
     refetchQuote,
     isUnsupportedTokenGp,
     setNewQuoteLoading,
-    setRefreshQuoteLoading
+    setRefreshQuoteLoading,
   ])
 
   return null

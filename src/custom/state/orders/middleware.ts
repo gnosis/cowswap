@@ -23,7 +23,7 @@ const isCancelOrderAction = isAnyOf(OrderActions.cancelOrder)
 
 // on each Pending, Expired, Fulfilled order action
 // a corresponsing Popup action is dispatched
-export const popupMiddleware: Middleware<{}, AppState> = store => next => action => {
+export const popupMiddleware: Middleware<{}, AppState> = (store) => (next) => (action) => {
   const result = next(action)
 
   let idsAndPopups: OrderIDWithPopup[] = []
@@ -54,7 +54,7 @@ export const popupMiddleware: Middleware<{}, AppState> = store => next => action
         summary,
         id,
         status: OrderActions.OrderStatus.FULFILLED,
-        descriptor: 'was traded'
+        descriptor: 'was traded',
       })
     } else if (isCancelOrderAction(action)) {
       // action is order/cancelOrder
@@ -62,7 +62,7 @@ export const popupMiddleware: Middleware<{}, AppState> = store => next => action
       popup = setPopupData(OrderTxTypes.METATXN, {
         success: true,
         summary: buildCancellationPopupSummary(id, summary),
-        id
+        id,
       })
     } else {
       // action is order/expireOrder
@@ -71,13 +71,13 @@ export const popupMiddleware: Middleware<{}, AppState> = store => next => action
         success: false,
         summary,
         id,
-        status: OrderActions.OrderStatus.EXPIRED
+        status: OrderActions.OrderStatus.EXPIRED,
       })
     }
 
     idsAndPopups.push({
       id,
-      popup
+      popup,
     })
   } else if (isBatchOrderAction(action)) {
     const { chainId } = action.payload
@@ -99,14 +99,14 @@ export const popupMiddleware: Middleware<{}, AppState> = store => next => action
           summary,
           id,
           status: OrderActions.OrderStatus.FULFILLED,
-          descriptor: 'was traded'
+          descriptor: 'was traded',
         })
 
         return { id, popup }
       })
     } else {
       // construct Expired Order Popups for each Order
-      idsAndPopups = action.payload.ids.map(id => {
+      idsAndPopups = action.payload.ids.map((id) => {
         const orderObject = pending?.[id] || fulfilled?.[id] || expired?.[id]
 
         const summary = orderObject?.order.summary
@@ -115,7 +115,7 @@ export const popupMiddleware: Middleware<{}, AppState> = store => next => action
           success: false,
           summary,
           id,
-          status: OrderActions.OrderStatus.EXPIRED
+          status: OrderActions.OrderStatus.EXPIRED,
         })
 
         return { id, popup }
@@ -161,7 +161,7 @@ function getMoooooError(): HTMLAudioElement {
 
 // on each Pending, Expired, Fulfilled order action
 // a corresponsing sound is dispatched
-export const soundMiddleware: Middleware<{}, AppState> = store => next => action => {
+export const soundMiddleware: Middleware<{}, AppState> = (store) => (next) => (action) => {
   const result = next(action)
 
   if (isBatchOrderAction(action)) {

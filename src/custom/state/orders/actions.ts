@@ -8,7 +8,7 @@ export enum OrderStatus {
   PENDING = 'pending',
   FULFILLED = 'fulfilled',
   EXPIRED = 'expired',
-  CANCELLED = 'cancelled'
+  CANCELLED = 'cancelled',
 }
 
 // used internally by dapp
@@ -70,6 +70,5 @@ export const cancelOrder = createAction<ChangeOrderStatusParams>('order/cancelOr
 
 export const clearOrders = createAction<{ chainId: ChainId }>('order/clearOrders')
 
-export const updateLastCheckedBlock = createAction<{ chainId: ChainId; lastCheckedBlock: number }>(
-  'order/updateLastCheckedBlock'
-)
+export const updateLastCheckedBlock =
+  createAction<{ chainId: ChainId; lastCheckedBlock: number }>('order/updateLastCheckedBlock')

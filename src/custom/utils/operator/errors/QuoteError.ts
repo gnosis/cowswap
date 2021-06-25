@@ -10,13 +10,13 @@ export interface QuoteErrorObject {
 export enum QuoteErrorCodes {
   InsufficientLiquidity = 'InsufficientLiquidity',
   FeeExceedsFrom = 'FeeExceedsFrom',
-  UNHANDLED_ERROR = 'UNHANDLED_ERROR'
+  UNHANDLED_ERROR = 'UNHANDLED_ERROR',
 }
 
 export enum QuoteErrorDetails {
   InsufficientLiquidity = 'Token pair selected has insufficient liquidity',
   FeeExceedsFrom = 'Current fee exceeds entered "from" amount',
-  UNHANDLED_ERROR = 'Quote fetch failed. This may be due to a server or network connectivity issue. Please try again later.'
+  UNHANDLED_ERROR = 'Quote fetch failed. This may be due to a server or network connectivity issue. Please try again later.',
 }
 
 export function mapOperatorErrorToQuoteError(errorType?: ApiErrorCodes): QuoteErrorObject {

@@ -39,12 +39,16 @@ if (typeof analyticsId === 'string') {
   ReactGA.initialize(analyticsId, {
     gaOptions: {
       storage: 'none',
-      storeGac: false
-    }
+      storeGac: false,
+    },
   })
   ReactGA.set({
     anonymizeIp: true,
-    customBrowserType: !isMobile ? 'desktop' : 'web3' in window || 'ethereum' in window ? 'mobileWeb3' : 'mobileRegular'
+    customBrowserType: !isMobile
+      ? 'desktop'
+      : 'web3' in window || 'ethereum' in window
+      ? 'mobileWeb3'
+      : 'mobileRegular',
   })
 } else {
   ReactGA.initialize('test', { testMode: true, debug: true })

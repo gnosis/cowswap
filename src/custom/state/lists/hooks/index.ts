@@ -8,5 +8,5 @@ export {
   useAllLists,
   useCombinedInactiveList,
   useCombinedTokenMapFromUrls,
-  useUnsupportedTokenList
+  useUnsupportedTokenList,
 } from './hooksMod'

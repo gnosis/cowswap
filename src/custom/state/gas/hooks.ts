@@ -23,7 +23,7 @@ export async function getGasPrices(chainId: ChainId = DEFAULT_NETWORK_FOR_LISTS)
 }
 
 export function useGasPrices(chainId?: ChainId) {
-  return useSelector<AppState, GasState[ChainId] | null>(state => {
+  return useSelector<AppState, GasState[ChainId] | null>((state) => {
     return chainId ? state.gas[chainId] : null
   })
 }

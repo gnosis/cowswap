@@ -19,7 +19,7 @@ function isOrderFinalized(orderFromApi: OrderMetaData | null): boolean {
 
 function _computeFulfilledSummary({
   orderFromStore,
-  orderFromApi
+  orderFromApi,
 }: {
   orderFromStore?: Order
   orderFromApi: OrderMetaData | null
@@ -65,7 +65,7 @@ async function fetchOrderPopupData(orderFromStore: Order, chainId: ChainId): Pro
     id: orderFromStore.id,
     fulfillmentTime: new Date().toISOString(),
     transactionHash: '', // there's no need  for a txHash as we'll link the notification to the Explorer
-    summary
+    summary,
   }
 }
 
@@ -80,7 +80,7 @@ export function EventUpdater(): null {
       // Iterate over pending orders fetching operator order data, async
       // Returns a null when the order isn't finalized/not found
       const unfilteredOrdersData: (OrderLogPopupMixData | null)[] = await Promise.all(
-        pending.map(async orderFromStore => fetchOrderPopupData(orderFromStore, chainId))
+        pending.map(async (orderFromStore) => fetchOrderPopupData(orderFromStore, chainId))
       )
 
       // Additional step filtering out `null` entries, due to lack of async reduce
@@ -89,7 +89,7 @@ export function EventUpdater(): null {
 
       fulfillOrdersBatch({
         ordersData,
-        chainId
+        chainId,
       })
     },
     [fulfillOrdersBatch]
@@ -127,7 +127,7 @@ export function ExpiredOrdersWatcher(): null {
       // but don't clearInterval so we can restart when there are new orders
       if (pendingOrdersRef.current.length === 0) return
 
-      const expiredOrders = pendingOrdersRef.current.filter(order => {
+      const expiredOrders = pendingOrdersRef.current.filter((order) => {
         // validTo is either a Date or unix timestamp in seconds
         const validTo = typeof order.validTo === 'number' ? new Date(order.validTo * 1000) : order.validTo
 
@@ -139,7 +139,7 @@ export function ExpiredOrdersWatcher(): null {
 
       expireOrdersBatch({
         chainId,
-        ids: expiredIds
+        ids: expiredIds,
       })
     }
 

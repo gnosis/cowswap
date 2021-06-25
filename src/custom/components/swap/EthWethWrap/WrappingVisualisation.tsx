@@ -14,7 +14,7 @@ const WrappingVisualisation = ({
   wrapped,
   wrappedBalance,
   wrappedSymbol,
-  nativeInput
+  nativeInput,
 }: {
   nativeSymbol: string
   nativeBalance: CurrencyAmount | undefined

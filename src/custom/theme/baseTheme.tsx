@@ -8,10 +8,7 @@ import { ButtonSize } from 'theme'
 import { DefaultTheme, ThemeProvider as StyledComponentsThemeProvider, createGlobalStyle, css } from 'styled-components'
 import React, { useMemo } from 'react'
 
-import {
-  theme as themeUniswap,
-  ThemedGlobalStyle as ThemedGlobalStyleUniswap
-} from '@src/theme'
+import { theme as themeUniswap, ThemedGlobalStyle as ThemedGlobalStyleUniswap } from '@src/theme'
 import { useIsDarkMode } from 'state/user/hooks'
 
 export { TYPE } from '@src/theme'
@@ -57,7 +54,7 @@ export function colors(darkMode: boolean): Colors {
     redShade: darkMode ? '#842100' : '#AE2C00',
     textLink: darkMode ? '#ffffff' : '#AE2C00',
     shimmer1: darkMode ? 'rgb(22 56 97 / 20%)' : 'rgb(175 203 218 / 20%)',
-    shimmer2: darkMode ? 'rgb(22 56 97 / 50%)' : 'rgb(175 203 218 / 40%)'
+    shimmer2: darkMode ? 'rgb(22 56 97 / 50%)' : 'rgb(175 203 218 / 40%)',
   }
 }
 
@@ -66,7 +63,7 @@ export function themeVariables(darkMode: boolean, colorsTheme: Colors) {
     body: {
       background: css`
         background: radial-gradient(50% 50%, ${colorsTheme.primary1} 0%, ${colorsTheme.bg1} 100%) 0 -30vh no-repeat;
-      `
+      `,
     },
     logo: { src: `${darkMode ? LogoDark : Logo}`, alt: 'GP Logo', width: '24px', height: 'auto' },
     appBody: {
@@ -77,8 +74,8 @@ export function themeVariables(darkMode: boolean, colorsTheme: Colors) {
       padding: '1rem',
       maxWidth: {
         normal: '420px',
-        content: '620px'
-      }
+        content: '620px',
+      },
     },
     header: {
       border: `1px solid ${colorsTheme.border}`,
@@ -89,8 +86,8 @@ export function themeVariables(darkMode: boolean, colorsTheme: Colors) {
         colorHoverBg: colorsTheme.bg3,
         closeButtonBg: colorsTheme.bg3,
         closeButtonColor: colorsTheme.black,
-        seperatorColor: colorsTheme.disabled
-      }
+        seperatorColor: colorsTheme.disabled,
+      },
     },
     buttonSizes: {
       [ButtonSize.BIG]: css`
@@ -101,7 +98,7 @@ export function themeVariables(darkMode: boolean, colorsTheme: Colors) {
       `,
       [ButtonSize.SMALL]: css`
         font-size: 12px;
-      `
+      `,
     },
     swap: {
       headerSize: '28px',
@@ -113,8 +110,8 @@ export function themeVariables(darkMode: boolean, colorsTheme: Colors) {
         width: '30px',
         height: '30px',
         borderColor: darkMode ? colorsTheme.blueShade2 : colorsTheme.disabled,
-        borderSize: `2px`
-      }
+        borderSize: `2px`,
+      },
     },
     buttonPrimary: {
       background: css`
@@ -123,7 +120,7 @@ export function themeVariables(darkMode: boolean, colorsTheme: Colors) {
       fontWeight: '500',
       border: '0',
       borderRadius: '9px',
-      boxShadow: 'none'
+      boxShadow: 'none',
     },
     buttonOutlined: {
       background: css`
@@ -132,7 +129,7 @@ export function themeVariables(darkMode: boolean, colorsTheme: Colors) {
       fontWeight: '500',
       border: '0',
       borderRadius: '9px',
-      boxShadow: 'none'
+      boxShadow: 'none',
     },
     buttonLight: {
       fontWeight: '500',
@@ -140,17 +137,17 @@ export function themeVariables(darkMode: boolean, colorsTheme: Colors) {
       borderHover: '1px solid transparent',
       boxShadow: 'none',
       backgroundHover: `${colorsTheme.primary4}`,
-      borderRadius: '9px'
+      borderRadius: '9px',
     },
     currencyInput: {
       background: `${colorsTheme.bg1}`,
-      border: `1px solid ${colorsTheme.bg2}`
+      border: `1px solid ${colorsTheme.bg2}`,
     },
     buttonCurrencySelect: {
       background: `linear-gradient(270deg, ${colorsTheme.purple} 0%, ${colorsTheme.blue1} 100%)`,
       color: `${colorsTheme.white}`,
       colorSelected: `${colorsTheme.text1}`,
-      boxShadow: '0px 6px 10px rgba(0, 0, 0, 0.075)'
+      boxShadow: '0px 6px 10px rgba(0, 0, 0, 0.075)',
     },
     bgLinearGradient: css`
       background-image: linear-gradient(270deg, ${colorsTheme.purple} 30%, ${colorsTheme.blue1} 70%);
@@ -158,12 +155,12 @@ export function themeVariables(darkMode: boolean, colorsTheme: Colors) {
     footerColor: colorsTheme.text1,
     networkCard: {
       background: 'rgba(243, 132, 30, 0.05)',
-      text: colorsTheme.yellow2
+      text: colorsTheme.yellow2,
     },
     wallet: {
       color: colorsTheme.text1,
-      background: colorsTheme.bg1
-    }
+      background: colorsTheme.bg1,
+    },
   }
 }
 
@@ -174,7 +171,7 @@ export function theme(darkmode: boolean): DefaultTheme {
     ...colorsTheme,
 
     // Overide Theme
-    ...themeVariables(darkmode, colorsTheme)
+    ...themeVariables(darkmode, colorsTheme),
   }
 }
 

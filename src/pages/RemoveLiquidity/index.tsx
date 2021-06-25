@@ -49,8 +49,8 @@ const DEFAULT_REMOVE_LIQUIDITY_SLIPPAGE_TOLERANCE = new Percent(5, 100)
 export default function RemoveLiquidity({
   history,
   match: {
-    params: { currencyIdA, currencyIdB }
-  }
+    params: { currencyIdA, currencyIdB },
+  },
 }: RouteComponentProps<{ currencyIdA: string; currencyIdB: string }>) {
   const [currencyA, currencyB] = [useCurrency(currencyIdA) ?? undefined, useCurrency(currencyIdB) ?? undefined]
   const { account, chainId, library } = useActiveWeb3React()
@@ -88,7 +88,7 @@ export default function RemoveLiquidity({
     [Field.CURRENCY_A]:
       independentField === Field.CURRENCY_A ? typedValue : parsedAmounts[Field.CURRENCY_A]?.toSignificant(6) ?? '',
     [Field.CURRENCY_B]:
-      independentField === Field.CURRENCY_B ? typedValue : parsedAmounts[Field.CURRENCY_B]?.toSignificant(6) ?? ''
+      independentField === Field.CURRENCY_B ? typedValue : parsedAmounts[Field.CURRENCY_B]?.toSignificant(6) ?? '',
   }
 
   const atMaxAmount = parsedAmounts[Field.LIQUIDITY_PERCENT]?.equalTo(new Percent('1'))
@@ -132,15 +132,18 @@ export default function RemoveLiquidity({
     [_onUserInput]
   )
 
-  const onLiquidityInput = useCallback((typedValue: string): void => onUserInput(Field.LIQUIDITY, typedValue), [
-    onUserInput
-  ])
-  const onCurrencyAInput = useCallback((typedValue: string): void => onUserInput(Field.CURRENCY_A, typedValue), [
-    onUserInput
-  ])
-  const onCurrencyBInput = useCallback((typedValue: string): void => onUserInput(Field.CURRENCY_B, typedValue), [
-    onUserInput
-  ])
+  const onLiquidityInput = useCallback(
+    (typedValue: string): void => onUserInput(Field.LIQUIDITY, typedValue),
+    [onUserInput]
+  )
+  const onCurrencyAInput = useCallback(
+    (typedValue: string): void => onUserInput(Field.CURRENCY_A, typedValue),
+    [onUserInput]
+  )
+  const onCurrencyBInput = useCallback(
+    (typedValue: string): void => onUserInput(Field.CURRENCY_B, typedValue),
+    [onUserInput]
+  )
 
   // tx sending
   const addTransaction = useTransactionAdder()
@@ -154,7 +157,7 @@ export default function RemoveLiquidity({
 
     const amountsMin = {
       [Field.CURRENCY_A]: calculateSlippageAmount(currencyAmountA, allowedSlippage)[0],
-      [Field.CURRENCY_B]: calculateSlippageAmount(currencyAmountB, allowedSlippage)[0]
+      [Field.CURRENCY_B]: calculateSlippageAmount(currencyAmountB, allowedSlippage)[0],
     }
 
     if (!currencyA || !currencyB) throw new Error('missing tokens')
@@ -178,7 +181,7 @@ export default function RemoveLiquidity({
           amountsMin[currencyBIsETH ? Field.CURRENCY_A : Field.CURRENCY_B].toString(),
           amountsMin[currencyBIsETH ? Field.CURRENCY_B : Field.CURRENCY_A].toString(),
           account,
-          deadline.toHexString()
+          deadline.toHexString(),
         ]
       }
       // removeLiquidity
@@ -191,7 +194,7 @@ export default function RemoveLiquidity({
           amountsMin[Field.CURRENCY_A].toString(),
           amountsMin[Field.CURRENCY_B].toString(),
           account,
-          deadline.toHexString()
+          deadline.toHexString(),
         ]
       }
     }
@@ -210,7 +213,7 @@ export default function RemoveLiquidity({
           false,
           signatureData.v,
           signatureData.r,
-          signatureData.s
+          signatureData.s,
         ]
       }
       // removeLiquidityETHWithPermit
@@ -227,7 +230,7 @@ export default function RemoveLiquidity({
           false,
           signatureData.v,
           signatureData.r,
-          signatureData.s
+          signatureData.s,
         ]
       }
     } else {
@@ -235,17 +238,17 @@ export default function RemoveLiquidity({
     }
 
     const safeGasEstimates: (BigNumber | undefined)[] = await Promise.all(
-      methodNames.map(methodName =>
+      methodNames.map((methodName) =>
         router.estimateGas[methodName](...args)
           .then(calculateGasMargin)
-          .catch(error => {
+          .catch((error) => {
             console.error(`estimateGas failed`, methodName, args, error)
             return undefined
           })
       )
     )
 
-    const indexOfSuccessfulEstimation = safeGasEstimates.findIndex(safeGasEstimate =>
+    const indexOfSuccessfulEstimation = safeGasEstimates.findIndex((safeGasEstimate) =>
       BigNumber.isBigNumber(safeGasEstimate)
     )
 
@@ -258,7 +261,7 @@ export default function RemoveLiquidity({
 
       setAttemptingTxn(true)
       await router[methodName](...args, {
-        gasLimit: safeGasEstimate
+        gasLimit: safeGasEstimate,
       })
         .then((response: TransactionResponse) => {
           setAttemptingTxn(false)
@@ -266,7 +269,7 @@ export default function RemoveLiquidity({
           addTransaction(response, {
             summary: t`Remove ${parsedAmounts[Field.CURRENCY_A]?.toSignificant(3)} ${
               currencyA?.symbol
-            } and ${parsedAmounts[Field.CURRENCY_B]?.toSignificant(3)} ${currencyB?.symbol}`
+            } and ${parsedAmounts[Field.CURRENCY_B]?.toSignificant(3)} ${currencyB?.symbol}`,
           })
 
           setTxHash(response.hash)
@@ -274,7 +277,7 @@ export default function RemoveLiquidity({
           ReactGA.event({
             category: 'Liquidity',
             action: 'Remove',
-            label: [currencyA?.symbol, currencyB?.symbol].join('/')
+            label: [currencyA?.symbol, currencyB?.symbol].join('/'),
           })
         })
         .catch((error: Error) => {

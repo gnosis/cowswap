@@ -105,7 +105,7 @@ export default function StakingModal({ isOpen, onDismiss, stakingInfo, userLiqui
           )
           .then((response: TransactionResponse) => {
             addTransaction(response, {
-              summary: t`Deposit liquidity`
+              summary: t`Deposit liquidity`,
             })
             setHash(response.hash)
           })
@@ -168,7 +168,7 @@ export default function StakingModal({ isOpen, onDismiss, stakingInfo, userLiqui
             currency={stakingInfo.stakedAmount.currency}
             pair={dummyPair}
             label={''}
-            renderBalance={amount => <Trans>Available to deposit: {formatCurrencyAmount(amount, 4)}</Trans>}
+            renderBalance={(amount) => <Trans>Available to deposit: {formatCurrencyAmount(amount, 4)}</Trans>}
             id="stake-liquidity-token"
           />
 

@@ -28,7 +28,7 @@ const NETWORK_URLS: {
   [SupportedChainId.GOERLI]: `https://goerli.infura.io/v3/${INFURA_KEY}`,
   [SupportedChainId.KOVAN]: `https://kovan.infura.io/v3/${INFURA_KEY}`,
   [SupportedChainId.ARBITRUM_KOVAN]: `https://kovan5.arbitrum.io/rpc`,
-  [SupportedChainId.ARBITRUM_ONE]: `https://arb1.arbitrum.io/rpc`
+  [SupportedChainId.ARBITRUM_ONE]: `https://arb1.arbitrum.io/rpc`,
 }
 
 const SUPPORTED_CHAIN_IDS: SupportedChainId[] = [
@@ -38,12 +38,12 @@ const SUPPORTED_CHAIN_IDS: SupportedChainId[] = [
   SupportedChainId.RINKEBY,
   SupportedChainId.ROPSTEN,
   SupportedChainId.ARBITRUM_KOVAN,
-  SupportedChainId.ARBITRUM_ONE
+  SupportedChainId.ARBITRUM_ONE,
 ]
 
 export const network = new NetworkConnector({
   urls: NETWORK_URLS,
-  defaultChainId: 1
+  defaultChainId: 1,
 })
 
 let networkLibrary: Web3Provider | undefined
@@ -52,7 +52,7 @@ export function getNetworkLibrary(): Web3Provider {
 }
 
 export const injected = new InjectedConnector({
-  supportedChainIds: SUPPORTED_CHAIN_IDS
+  supportedChainIds: SUPPORTED_CHAIN_IDS,
 })
 
 export const walletconnect = new WalletConnectConnector({
@@ -60,19 +60,19 @@ export const walletconnect = new WalletConnectConnector({
   rpc: NETWORK_URLS,
   bridge: WALLETCONNECT_BRIDGE_URL,
   qrcode: true,
-  pollingInterval: 15000
+  pollingInterval: 15000,
 })
 
 // mainnet only
 export const fortmatic = new FortmaticConnector({
   apiKey: FORMATIC_KEY ?? '',
-  chainId: 1
+  chainId: 1,
 })
 
 // mainnet only
 export const portis = new PortisConnector({
   dAppId: PORTIS_ID ?? '',
-  networks: [1]
+  networks: [1],
 })
 
 // mainnet only
@@ -80,5 +80,5 @@ export const walletlink = new WalletLinkConnector({
   url: NETWORK_URLS[1],
   appName: 'Uniswap',
   // TODO: review UNISWAP_LOGO_URL
-  appLogoUrl: UNISWAP_LOGO_URL
+  appLogoUrl: UNISWAP_LOGO_URL,
 })

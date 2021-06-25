@@ -18,18 +18,18 @@ describe('Swap PRICE Quote test', () => {
   // mocked price response for in trade
   const MOCKED_PRICE_OUT = {
     short: '4000',
-    long: parseUnits('4000', DAI_MAINNET.decimals).toString()
+    long: parseUnits('4000', DAI_MAINNET.decimals).toString(),
   }
 
   // movked price response for out trade
   const MOCKED_PRICE_IN = {
     short: '1',
-    long: parseUnits('1', WETH_MAINNET.decimals).toString()
+    long: parseUnits('1', WETH_MAINNET.decimals).toString(),
   }
 
   const MOCKED_FEE_AMOUNT = {
     short: '0.1',
-    long: parseUnits('0.1', WETH_MAINNET.decimals).toString()
+    long: parseUnits('0.1', WETH_MAINNET.decimals).toString(),
   }
 
   const currencyIn = CurrencyAmount.fromRawAmount(WETH_MAINNET, MOCKED_PRICE_IN.long)
@@ -51,7 +51,7 @@ describe('Swap PRICE Quote test', () => {
           sellToken: currencyIn.subtract(feeAsCurrency),
           buyToken: currencyOut,
           kind: 'sell',
-          price: { amount: MOCKED_PRICE_OUT.long, token: DAI_MAINNET.name || 'token' }
+          price: { amount: MOCKED_PRICE_OUT.long, token: DAI_MAINNET.name || 'token' },
         })
 
         trade = {
@@ -70,8 +70,8 @@ describe('Swap PRICE Quote test', () => {
           },
           fee: {
             amount: MOCKED_FEE_AMOUNT.long,
-            feeAsCurrency
-          }
+            feeAsCurrency,
+          },
         }
       })
       it('Uses proper input amount WITHOUT fee in trade object', () => {
@@ -122,7 +122,7 @@ describe('Swap PRICE Quote test', () => {
           sellToken: currencyIn,
           buyToken: currencyOut,
           kind: 'buy',
-          price: { amount: MOCKED_PRICE_IN.long, token: WETH_MAINNET.name || 'token' }
+          price: { amount: MOCKED_PRICE_IN.long, token: WETH_MAINNET.name || 'token' },
         })
 
         trade = {
@@ -140,8 +140,8 @@ describe('Swap PRICE Quote test', () => {
           },
           fee: {
             amount: MOCKED_FEE_AMOUNT.long,
-            feeAsCurrency
-          }
+            feeAsCurrency,
+          },
         }
       })
 

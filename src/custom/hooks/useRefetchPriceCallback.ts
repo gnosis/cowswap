@@ -6,7 +6,7 @@ import { FeeQuoteParams, getFeeQuote, getPriceQuote } from 'utils/operator'
 import {
   useAddGpUnsupportedToken,
   useIsUnsupportedTokenGp,
-  useRemoveGpUnsupportedToken
+  useRemoveGpUnsupportedToken,
 } from 'state/lists/hooks/hooksMod'
 import { FeeInformation, PriceInformation, QuoteInformationObject } from 'state/price/reducer'
 import { AddGpUnsupportedTokenParams } from 'state/lists/actions'
@@ -30,7 +30,7 @@ type QuoteResult = [PromiseSettledResult<PriceInformation>, PromiseSettledResult
 
 const FEE_EXCEEDS_FROM_ERROR = new QuoteError({
   errorType: QuoteErrorCodes.FeeExceedsFrom,
-  description: QuoteError.quoteErrorDetails.FeeExceedsFrom
+  description: QuoteError.quoteErrorDetails.FeeExceedsFrom,
 })
 
 async function _getQuote({ quoteParams, fetchFee, previousFee }: RefetchQuoteCallbackParams): Promise<QuoteResult> {
@@ -86,7 +86,7 @@ function _handleQuoteError({
   error,
   addUnsupportedToken,
   // clearQuote,
-  setQuoteError
+  setQuoteError,
 }: HandleQuoteErrorParams) {
   if (isValidOperatorError(error) || isValidQuoteError(error)) {
     switch (error.type) {
@@ -98,7 +98,7 @@ function _handleQuoteError({
         return addUnsupportedToken({
           chainId: quoteData.chainId,
           address: unsupportedTokenAddress,
-          dateAdded: Date.now()
+          dateAdded: Date.now(),
         })
       }
       // Fee/Price query returns error
@@ -109,7 +109,7 @@ function _handleQuoteError({
         return setQuoteError({
           ...quoteData,
           lastCheck: Date.now(),
-          error: error.type
+          error: error.type,
         })
       }
     }
@@ -122,7 +122,7 @@ function _handleQuoteError({
     fee: undefined,
     price: undefined,
     lastCheck: Date.now(),
-    error: QuoteErrorCodes.UNHANDLED_ERROR
+    error: QuoteErrorCodes.UNHANDLED_ERROR,
   })
 }
 
@@ -162,7 +162,7 @@ export function useRefetchQuoteCallback() {
           ...params.quoteParams,
           fee: getPromiseFulfilledValue(fee, undefined),
           price: getPromiseFulfilledValue(price, undefined),
-          lastCheck: Date.now()
+          lastCheck: Date.now(),
         }
         // check the promise fulfilled values
         // handle if rejected
@@ -181,7 +181,7 @@ export function useRefetchQuoteCallback() {
 
           removeGpUnsupportedToken({
             chainId,
-            address: previouslyUnsupportedToken.address.toLowerCase()
+            address: previouslyUnsupportedToken.address.toLowerCase(),
           })
         }
 
@@ -195,7 +195,7 @@ export function useRefetchQuoteCallback() {
           quoteData,
           setQuoteError,
           clearQuote,
-          addUnsupportedToken
+          addUnsupportedToken,
         })
       } finally {
         // end loading status regardless of error or resolve

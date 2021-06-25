@@ -14,7 +14,7 @@ export function _isLowBalanceCheck({
   threshold,
   txCost,
   nativeInput,
-  balance
+  balance,
 }: {
   threshold: CurrencyAmount
   txCost: CurrencyAmount
@@ -29,7 +29,7 @@ export function _isLowBalanceCheck({
 export const _getAvailableTransactions = ({
   nativeBalance,
   nativeInput,
-  singleTxCost
+  singleTxCost,
 }: {
   nativeBalance?: CurrencyAmount
   nativeInput?: CurrencyAmount

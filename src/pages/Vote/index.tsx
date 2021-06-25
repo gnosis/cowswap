@@ -17,7 +17,7 @@ import {
   ProposalState,
   useAllProposalData,
   useUserDelegatee,
-  useUserVotes
+  useUserVotes,
 } from '../../state/governance/hooks'
 import DelegateModal from '../../components/vote/DelegateModal'
 import { useTokenBalance } from '../../state/wallet/hooks'

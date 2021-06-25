@@ -209,7 +209,7 @@ const UniIcon = styled.div`
 const activeClassName = 'ACTIVE'
 
 const StyledNavLink = styled(NavLink).attrs({
-  activeClassName
+  activeClassName,
 })`
   ${({ theme }) => theme.flexRowNoWrap}
   align-items: left;
@@ -238,7 +238,7 @@ const StyledNavLink = styled(NavLink).attrs({
 `
 
 const StyledExternalLink = styled(ExternalLink).attrs({
-  activeClassName
+  activeClassName,
 })<{ isActive?: boolean }>`
   ${({ theme }) => theme.flexRowNoWrap}
   align-items: left;

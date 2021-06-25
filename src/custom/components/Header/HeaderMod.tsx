@@ -202,7 +202,7 @@ export const Title = styled.a`
 const activeClassName = 'ACTIVE'
 
 export const StyledNavLink = styled(NavLink).attrs({
-  activeClassName
+  activeClassName,
 })`
   ${({ theme }) => theme.flexRowNoWrap}
   align-items: left;
@@ -229,7 +229,7 @@ export const StyledNavLink = styled(NavLink).attrs({
 `
 
 export const StyledExternalLink = styled(ExternalLink).attrs({
-  activeClassName
+  activeClassName,
 })<{ isActive?: boolean }>`
   ${({ theme }) => theme.flexRowNoWrap}
   align-items: left;

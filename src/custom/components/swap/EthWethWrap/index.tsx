@@ -21,7 +21,7 @@ import {
   AVG_APPROVE_COST_GWEI,
   _isLowBalanceCheck,
   _setNativeLowBalanceError,
-  _getAvailableTransactions
+  _getAvailableTransactions,
 } from './helpers'
 
 const Wrapper = styled.div`
@@ -37,14 +37,14 @@ const Wrapper = styled.div`
   font-size: smaller;
 
   > ${ButtonPrimary} {
-      background: #62d9ff;
-      width: 100%;
-      padding: 6px;
-      margin: 6px auto 0;
+    background: #62d9ff;
+    width: 100%;
+    padding: 6px;
+    margin: 6px auto 0;
 
-      &:disabled {
-        background-color: ${({ theme }) => theme.disabled}
-      }
+    &:disabled {
+      background-color: ${({ theme }) => theme.disabled};
+    }
   }
 `
 
@@ -156,13 +156,11 @@ export default function EthWethWrap({ account, native, nativeInput, wrapped, wra
     // when/if implemented
     const gas = gasPrice?.standard || DEFAULT_GAS_FEE
 
-    const amount = BigNumber.from(gas)
-      .mul(MINIMUM_TXS)
-      .mul(AVG_APPROVE_COST_GWEI)
+    const amount = BigNumber.from(gas).mul(MINIMUM_TXS).mul(AVG_APPROVE_COST_GWEI)
 
     return {
       multiTxCost: CurrencyAmount.ether(amount.toString()),
-      singleTxCost: CurrencyAmount.ether(amount.div(MINIMUM_TXS).toString())
+      singleTxCost: CurrencyAmount.ether(amount.div(MINIMUM_TXS).toString()),
     }
   }, [gasPrice])
 
@@ -176,9 +174,9 @@ export default function EthWethWrap({ account, native, nativeInput, wrapped, wra
         threshold: multiTxCost,
         nativeInput,
         balance: nativeBalance,
-        txCost: singleTxCost
+        txCost: singleTxCost,
       }),
-      txsRemaining: _getAvailableTransactions({ nativeBalance, nativeInput, singleTxCost })
+      txsRemaining: _getAvailableTransactions({ nativeBalance, nativeInput, singleTxCost }),
     }),
     [multiTxCost, nativeBalance, singleTxCost, nativeInput]
   )

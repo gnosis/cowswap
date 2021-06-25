@@ -20,7 +20,7 @@ import VoteModal from '../../components/vote/VoteModal'
 import {
   AVERAGE_BLOCK_TIME_IN_SECS,
   COMMON_CONTRACT_NAMES,
-  DEFAULT_AVERAGE_BLOCK_TIME_IN_SECS
+  DEFAULT_AVERAGE_BLOCK_TIME_IN_SECS,
 } from '../../constants/governance'
 import { ZERO_ADDRESS } from '../../constants/misc'
 import { UNI } from '../../constants/tokens'
@@ -32,7 +32,7 @@ import {
   ProposalState,
   useProposalData,
   useUserDelegatee,
-  useUserVotesAsOfBlock
+  useUserVotesAsOfBlock,
 } from '../../state/governance/hooks'
 import { useTokenBalance } from '../../state/wallet/hooks'
 import { ExternalLink, StyledInternalLink, TYPE } from '../../theme'
@@ -121,8 +121,8 @@ const ProposerAddressLink = styled(ExternalLink)`
 
 export default function VotePage({
   match: {
-    params: { governorIndex, id }
-  }
+    params: { governorIndex, id },
+  },
 }: RouteComponentProps<{ governorIndex: string; id: string }>) {
   const { chainId, account } = useActiveWeb3React()
 

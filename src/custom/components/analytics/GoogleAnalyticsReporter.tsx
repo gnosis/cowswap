@@ -8,7 +8,7 @@ import { ChainId } from '@uniswap/sdk'
 const NETWORK_DIMENSION = 'dimension1'
 export const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
   ...NETWORK_LABELS_HEADER,
-  [ChainId.MAINNET]: 'Mainnet' // The header doesn't have Mainnet
+  [ChainId.MAINNET]: 'Mainnet', // The header doesn't have Mainnet
 }
 
 export default function GoogleAnalyticsReporter({ location: { pathname, search } }: RouteComponentProps): null {
@@ -18,7 +18,7 @@ export default function GoogleAnalyticsReporter({ location: { pathname, search }
   useEffect(() => {
     const networkInfo = (chainId && NETWORK_LABELS[chainId]) || 'Not connected'
     ReactGA.set({
-      [NETWORK_DIMENSION]: networkInfo
+      [NETWORK_DIMENSION]: networkInfo,
     })
   }, [chainId])
 

@@ -33,7 +33,7 @@ const BottomGrouping = styled(BottomGroupingUni)`
 `
 
 const SwapModWrapper = styled(SwapMod)`
-  ${props => props.className} {
+  ${(props) => props.className} {
     // For now to target <SwapHeader /> without copying files...
     > div:first-child {
       padding: 0 12px 4px;
@@ -60,9 +60,9 @@ const SwapModWrapper = styled(SwapMod)`
     ${Card} > ${AutoColumn} {
       margin: 6px auto 0;
 
-        > div > div {
-          color: ${({ theme }) => theme.text1};
-        }
+      > div > div {
+        color: ${({ theme }) => theme.text1};
+      }
     }
 
     ${GreyCard} {
@@ -153,7 +153,7 @@ function SwitchToWethBtn({ wrappedToken }: SwitchToWethBtnProps) {
           outputCurrencyId: OUTPUT.currencyId,
           typedValue,
           recipient: null,
-          field: independentField
+          field: independentField,
         })
       }
     >

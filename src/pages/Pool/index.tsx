@@ -134,7 +134,7 @@ export default function Pool() {
         </MenuItem>
       ),
       link: '/add/ETH',
-      external: false
+      external: false,
     },
     {
       content: (
@@ -144,7 +144,7 @@ export default function Pool() {
         </MenuItem>
       ),
       link: '/migrate/v2',
-      external: false
+      external: false,
     },
     {
       content: (
@@ -154,7 +154,7 @@ export default function Pool() {
         </MenuItem>
       ),
       link: '/pool/v2',
-      external: false
+      external: false,
     },
     {
       content: (
@@ -164,8 +164,8 @@ export default function Pool() {
         </MenuItem>
       ),
       link: 'https://docs.uniswap.org/',
-      external: true
-    }
+      external: true,
+    },
   ]
 
   return (
@@ -267,7 +267,7 @@ export default function Pool() {
                   margin: '0 4px',
                   borderRadius: '12px',
                   width: 'fit-content',
-                  fontSize: '14px'
+                  fontSize: '14px',
                 }}
               >
                 <Layers size={14} style={{ marginRight: '8px' }} />
@@ -284,7 +284,7 @@ export default function Pool() {
                     margin: '0 4px',
                     borderRadius: '12px',
                     width: 'fit-content',
-                    fontSize: '14px'
+                    fontSize: '14px',
                   }}
                 >
                   <ChevronsRight size={16} style={{ marginRight: '8px' }} />

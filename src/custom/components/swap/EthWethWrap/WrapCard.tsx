@@ -47,7 +47,7 @@ export const WrapCardContainer = styled.div`
       background-color: ${({ theme }) => theme.bg1};
     }
 
-    > ${BalanceLabel}:last-of-type{
+    > ${BalanceLabel}:last-of-type {
       margin: 0;
       font-size: 12px;
     }

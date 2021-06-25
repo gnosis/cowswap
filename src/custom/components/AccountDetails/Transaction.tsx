@@ -9,14 +9,14 @@ import {
   TransactionWrapper,
   TransactionState as OldTransactionState,
   TransactionStatusText,
-  IconWrapper
+  IconWrapper,
 } from './TransactionMod'
 import Pill from '../Pill'
 import styled from 'styled-components'
 import {
   ConfirmationModalContent,
   ConfirmationPendingContent,
-  TransactionErrorContent
+  TransactionErrorContent,
 } from 'components/TransactionConfirmationModal'
 
 import { ActivityStatus, ActivityType, useActivityDescriptors } from 'hooks/useRecentActivity'
@@ -30,7 +30,7 @@ const PILL_COLOUR_MAP = {
   PENDING_ORDER: '#8958FF',
   PENDING_TX: '#2b68fa',
   EXPIRED_ORDER: '#b94d54',
-  CANCELLED_ORDER: '#808080'
+  CANCELLED_ORDER: '#808080',
 }
 
 function determinePillColour(status: ActivityStatus, type: ActivityType) {
@@ -49,7 +49,7 @@ function determinePillColour(status: ActivityStatus, type: ActivityType) {
 
 function getActivitySummary({
   id,
-  activityData
+  activityData,
 }: {
   id: string
   activityData: ReturnType<typeof useActivityDescriptors>
@@ -102,7 +102,7 @@ function RequestCancellationModal(props: RequestCancellationModalProps): JSX.Ele
 
   const [showMore, setShowMore] = useState(false)
 
-  const toggleShowMore = () => setShowMore(showMore => !showMore)
+  const toggleShowMore = () => setShowMore((showMore) => !showMore)
 
   return (
     <ConfirmationModalContent
@@ -164,7 +164,7 @@ function CancellationModal(props: CancellationModalProps): JSX.Element | null {
 
     cancelOrder(orderId)
       .then(onDismiss)
-      .catch(e => {
+      .catch((e) => {
         setError(e.message)
       })
   }, [cancelOrder, onDismiss, orderId])

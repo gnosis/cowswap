@@ -43,7 +43,7 @@ import {
   useV3MintState,
   useV3MintActionHandlers,
   useRangeHopCallbacks,
-  useV3DerivedMintInfo
+  useV3DerivedMintInfo,
 } from 'state/mint/v3/hooks'
 import { FeeAmount, NonfungiblePositionManager } from '@uniswap/v3-sdk'
 import { useV3PositionFromTokenId } from 'hooks/useV3Positions'
@@ -61,9 +61,9 @@ const DEFAULT_ADD_IN_RANGE_SLIPPAGE_TOLERANCE = new Percent(50, 10_000)
 
 export default function AddLiquidity({
   match: {
-    params: { currencyIdA, currencyIdB, feeAmount: feeAmountFromUrl, tokenId }
+    params: { currencyIdA, currencyIdB, feeAmount: feeAmountFromUrl, tokenId },
   },
-  history
+  history,
 }: RouteComponentProps<{ currencyIdA?: string; currencyIdB?: string; feeAmount?: string; tokenId?: string }>) {
   const { account, chainId, library } = useActiveWeb3React()
   const theme = useContext(ThemeContext)
@@ -116,7 +116,7 @@ export default function AddLiquidity({
     outOfRange,
     depositADisabled,
     depositBDisabled,
-    invertPrice
+    invertPrice,
   } = useV3DerivedMintInfo(
     currencyA ?? undefined,
     currencyB ?? undefined,
@@ -125,13 +125,8 @@ export default function AddLiquidity({
     existingPosition
   )
 
-  const {
-    onFieldAInput,
-    onFieldBInput,
-    onLeftRangeInput,
-    onRightRangeInput,
-    onStartPriceInput
-  } = useV3MintActionHandlers(noLiquidity)
+  const { onFieldAInput, onFieldBInput, onLeftRangeInput, onRightRangeInput, onStartPriceInput } =
+    useV3MintActionHandlers(noLiquidity)
 
   const isValid = !errorMessage && !invalidRange
 
@@ -147,12 +142,12 @@ export default function AddLiquidity({
   // get formatted amounts
   const formattedAmounts = {
     [independentField]: typedValue,
-    [dependentField]: parsedAmounts[dependentField]?.toSignificant(6) ?? ''
+    [dependentField]: parsedAmounts[dependentField]?.toSignificant(6) ?? '',
   }
 
   const usdcValues = {
     [Field.CURRENCY_A]: useUSDCValue(parsedAmounts[Field.CURRENCY_A]),
-    [Field.CURRENCY_B]: useUSDCValue(parsedAmounts[Field.CURRENCY_B])
+    [Field.CURRENCY_B]: useUSDCValue(parsedAmounts[Field.CURRENCY_B]),
   }
 
   // get the max amounts user can add
@@ -160,7 +155,7 @@ export default function AddLiquidity({
     (accumulator, field) => {
       return {
         ...accumulator,
-        [field]: maxAmountSpend(currencyBalances[field])
+        [field]: maxAmountSpend(currencyBalances[field]),
       }
     },
     {}
@@ -170,7 +165,7 @@ export default function AddLiquidity({
     (accumulator, field) => {
       return {
         ...accumulator,
-        [field]: maxAmounts[field]?.equalTo(parsedAmounts[field] ?? '0')
+        [field]: maxAmounts[field]?.equalTo(parsedAmounts[field] ?? '0'),
       }
     },
     {}
@@ -207,20 +202,20 @@ export default function AddLiquidity({
               tokenId,
               slippageTolerance: allowedSlippage,
               deadline: deadline.toString(),
-              useNative
+              useNative,
             })
           : NonfungiblePositionManager.addCallParameters(position, {
               slippageTolerance: allowedSlippage,
               recipient: account,
               deadline: deadline.toString(),
               useNative,
-              createPool: noLiquidity
+              createPool: noLiquidity,
             })
 
       let txn: { to: string; data: string; value: string } = {
         to: NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId],
         data: calldata,
-        value
+        value,
       }
 
       if (argentWalletContract) {
@@ -236,14 +231,14 @@ export default function AddLiquidity({
           {
             to: txn.to,
             data: txn.data,
-            value: txn.value
-          }
+            value: txn.value,
+          },
         ]
         const data = argentWalletContract.interface.encodeFunctionData('wc_multiCall', [batch])
         txn = {
           to: argentWalletContract.address,
           data,
-          value: '0x0'
+          value: '0x0',
         }
       }
 
@@ -252,10 +247,10 @@ export default function AddLiquidity({
       library
         .getSigner()
         .estimateGas(txn)
-        .then(estimate => {
+        .then((estimate) => {
           const newTxn = {
             ...txn,
-            gasLimit: calculateGasMargin(estimate)
+            gasLimit: calculateGasMargin(estimate),
           }
 
           return library
@@ -266,17 +261,17 @@ export default function AddLiquidity({
               addTransaction(response, {
                 summary: noLiquidity
                   ? t`Create pool and add ${currencyA?.symbol}/${currencyB?.symbol} V3 liquidity`
-                  : t`Add ${currencyA?.symbol}/${currencyB?.symbol} V3 liquidity`
+                  : t`Add ${currencyA?.symbol}/${currencyB?.symbol} V3 liquidity`,
               })
               setTxHash(response.hash)
               ReactGA.event({
                 category: 'Liquidity',
                 action: 'Add',
-                label: [currencies[Field.CURRENCY_A]?.symbol, currencies[Field.CURRENCY_B]?.symbol].join('/')
+                label: [currencies[Field.CURRENCY_A]?.symbol, currencies[Field.CURRENCY_B]?.symbol].join('/'),
               })
             })
         })
-        .catch(error => {
+        .catch((error) => {
           console.error('Failed to send transaction', error)
           setAttemptingTxn(false)
           // we only care if the error is something _other_ than the user rejected the tx
@@ -549,7 +544,7 @@ export default function AddLiquidity({
                             display: 'flex',
                             flexDirection: 'column',
                             alignItems: 'center',
-                            padding: ' 1.5rem 1.25rem'
+                            padding: ' 1.5rem 1.25rem',
                           }}
                         >
                           <AlertCircle color={theme.text1} size={32} style={{ marginBottom: '12px', opacity: 0.8 }} />

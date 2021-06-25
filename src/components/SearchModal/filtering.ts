@@ -20,7 +20,7 @@ export function createTokenFilterFunction<T extends Token | TokenInfo>(search: s
   const lowerSearchParts = search
     .toLowerCase()
     .split(/\s+/)
-    .filter(s => s.length > 0)
+    .filter((s) => s.length > 0)
 
   if (lowerSearchParts.length === 0) return alwaysTrue
 
@@ -28,9 +28,9 @@ export function createTokenFilterFunction<T extends Token | TokenInfo>(search: s
     const sParts = s
       .toLowerCase()
       .split(/\s+/)
-      .filter(s => s.length > 0)
+      .filter((s) => s.length > 0)
 
-    return lowerSearchParts.every(p => p.length === 0 || sParts.some(sp => sp.startsWith(p) || sp.endsWith(p)))
+    return lowerSearchParts.every((p) => p.length === 0 || sParts.some((sp) => sp.startsWith(p) || sp.endsWith(p)))
   }
 
   return ({ name, symbol }: T): boolean => Boolean((symbol && matchesSearch(symbol)) || (name && matchesSearch(name)))
@@ -49,7 +49,7 @@ export function useSortedTokensByQuery(tokens: Token[] | undefined, searchQuery:
     const symbolMatch = searchQuery
       .toLowerCase()
       .split(/\s+/)
-      .filter(s => s.length > 0)
+      .filter((s) => s.length > 0)
 
     if (symbolMatch.length > 1) {
       return tokens
@@ -60,7 +60,7 @@ export function useSortedTokensByQuery(tokens: Token[] | undefined, searchQuery:
     const rest: Token[] = []
 
     // sort tokens by exact match -> subtring on symbol match -> rest
-    tokens.map(token => {
+    tokens.map((token) => {
       if (token.symbol?.toLowerCase() === symbolMatch[0]) {
         return exactMatches.push(token)
       } else if (token.symbol?.toLowerCase().startsWith(searchQuery.toLowerCase().trim())) {

@@ -14,7 +14,7 @@ import { Field, typeInput } from './actions'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 
 export function useBurnState(): AppState['burn'] {
-  return useAppSelector(state => state.burn)
+  return useAppSelector((state) => state.burn)
 }
 
 export function useDerivedBurnInfo(
@@ -45,7 +45,7 @@ export function useDerivedBurnInfo(
   const tokens = {
     [Field.CURRENCY_A]: tokenA,
     [Field.CURRENCY_B]: tokenB,
-    [Field.LIQUIDITY]: pair?.liquidityToken
+    [Field.LIQUIDITY]: pair?.liquidityToken,
   }
 
   // liquidity values
@@ -70,7 +70,7 @@ export function useDerivedBurnInfo(
       : undefined
   const liquidityValues: { [Field.CURRENCY_A]?: CurrencyAmount<Token>; [Field.CURRENCY_B]?: CurrencyAmount<Token> } = {
     [Field.CURRENCY_A]: liquidityValueA,
-    [Field.CURRENCY_B]: liquidityValueB
+    [Field.CURRENCY_B]: liquidityValueB,
   }
 
   let percentToRemove: Percent = new Percent('0', '100')
@@ -119,7 +119,7 @@ export function useDerivedBurnInfo(
     [Field.CURRENCY_B]:
       tokenB && percentToRemove && percentToRemove.greaterThan('0') && liquidityValueB
         ? CurrencyAmount.fromRawAmount(tokenB, percentToRemove.multiply(liquidityValueB.quotient).quotient)
-        : undefined
+        : undefined,
   }
 
   let error: string | undefined
@@ -147,6 +147,6 @@ export function useBurnActionHandlers(): {
   )
 
   return {
-    onUserInput
+    onUserInput,
   }
 }

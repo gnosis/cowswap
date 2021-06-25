@@ -16,12 +16,10 @@ import { useAppDispatch, useAppSelector } from 'state/hooks'
 const ZERO = JSBI.BigInt(0)
 
 export function useMintState(): AppState['mint'] {
-  return useAppSelector(state => state.mint)
+  return useAppSelector((state) => state.mint)
 }
 
-export function useMintActionHandlers(
-  noLiquidity: boolean | undefined
-): {
+export function useMintActionHandlers(noLiquidity: boolean | undefined): {
   onFieldAInput: (typedValue: string) => void
   onFieldBInput: (typedValue: string) => void
 } {
@@ -43,7 +41,7 @@ export function useMintActionHandlers(
 
   return {
     onFieldAInput,
-    onFieldBInput
+    onFieldBInput,
   }
 }
 
@@ -73,7 +71,7 @@ export function useDerivedMintInfo(
   const currencies: { [field in Field]?: Currency } = useMemo(
     () => ({
       [Field.CURRENCY_A]: currencyA ?? undefined,
-      [Field.CURRENCY_B]: currencyB ?? undefined
+      [Field.CURRENCY_B]: currencyB ?? undefined,
     }),
     [currencyA, currencyB]
   )
@@ -95,11 +93,11 @@ export function useDerivedMintInfo(
   // balances
   const balances = useCurrencyBalances(account ?? undefined, [
     currencies[Field.CURRENCY_A],
-    currencies[Field.CURRENCY_B]
+    currencies[Field.CURRENCY_B],
   ])
   const currencyBalances: { [field in Field]?: CurrencyAmount<Currency> } = {
     [Field.CURRENCY_A]: balances[0],
-    [Field.CURRENCY_B]: balances[1]
+    [Field.CURRENCY_B]: balances[1],
   }
 
   // amounts
@@ -136,7 +134,7 @@ export function useDerivedMintInfo(
   const parsedAmounts: { [field in Field]: CurrencyAmount<Currency> | undefined } = useMemo(() => {
     return {
       [Field.CURRENCY_A]: independentField === Field.CURRENCY_A ? independentAmount : dependentAmount,
-      [Field.CURRENCY_B]: independentField === Field.CURRENCY_A ? dependentAmount : independentAmount
+      [Field.CURRENCY_B]: independentField === Field.CURRENCY_A ? dependentAmount : independentAmount,
     }
   }, [dependentAmount, independentAmount, independentField])
 
@@ -212,6 +210,6 @@ export function useDerivedMintInfo(
     noLiquidity,
     liquidityMinted,
     poolTokenPercentage,
-    error
+    error,
   }
 }

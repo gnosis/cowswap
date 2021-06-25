@@ -23,7 +23,7 @@ export const ManageLists = (props: {
     acceptListUpdate: (url: string) => acceptListUpdate({ url, chainId }),
     removeList: (url: string) => removeList({ url, chainId }),
     disableList: (url: string) => disableList({ url, chainId }),
-    enableList: (url: string) => enableList({ url, chainId })
+    enableList: (url: string) => enableList({ url, chainId }),
   }
   return <ManageListsMod {...props} unsupportedListUrls={UNSUPPORTED_LIST_URLS[chainId]} listRowProps={listRowProps} />
 }

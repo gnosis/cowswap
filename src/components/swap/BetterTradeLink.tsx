@@ -24,7 +24,7 @@ const ResponsiveButton = styled(ButtonPrimary)`
 
 export default function BetterTradeLink({
   version,
-  otherTradeNonexistent = false
+  otherTradeNonexistent = false,
 }: {
   version: Version
   otherTradeNonexistent: boolean
@@ -37,8 +37,8 @@ export default function BetterTradeLink({
       ...location,
       search: `?${stringify({
         ...search,
-        use: version !== DEFAULT_VERSION ? version : undefined
-      })}`
+        use: version !== DEFAULT_VERSION ? version : undefined,
+      })}`,
     }
   }, [location, search, version])
 

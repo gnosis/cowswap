@@ -23,7 +23,7 @@ import { useUserSingleHopOnly } from 'state/user/hooks'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 
 export function useSwapState(): AppState['swap'] {
-  return useAppSelector(state => state.swap)
+  return useAppSelector((state) => state.swap)
 }
 
 export function useSwapActionHandlers(): {
@@ -38,7 +38,7 @@ export function useSwapActionHandlers(): {
       dispatch(
         selectCurrency({
           field,
-          currencyId: currency.isToken ? currency.address : currency.isNative ? 'ETH' : ''
+          currencyId: currency.isToken ? currency.address : currency.isNative ? 'ETH' : '',
         })
       )
     },
@@ -67,7 +67,7 @@ export function useSwapActionHandlers(): {
     onSwitchTokens,
     onCurrencySelection,
     onUserInput,
-    onChangeRecipient
+    onChangeRecipient,
   }
 }
 
@@ -92,7 +92,7 @@ export function tryParseAmount<T extends Currency>(value?: string, currency?: T)
 export const BAD_RECIPIENT_ADDRESSES: { [address: string]: true } = {
   '0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f': true, // v2 factory
   '0xf164fC0Ec4E93095b804a4795bBe1e041497b92a': true, // v2 router 01
-  '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D': true // v2 router 02
+  '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D': true, // v2 router 02
 }
 
 /**
@@ -106,17 +106,15 @@ export function involvesAddress(
 ): boolean {
   const path = trade instanceof V2Trade ? trade.route.path : trade.route.tokenPath
   return (
-    path.some(token => token.address === checksummedAddress) ||
+    path.some((token) => token.address === checksummedAddress) ||
     (trade instanceof V2Trade
-      ? trade.route.pairs.some(pair => pair.liquidityToken.address === checksummedAddress)
+      ? trade.route.pairs.some((pair) => pair.liquidityToken.address === checksummedAddress)
       : false)
   )
 }
 
 // from the current swap inputs, compute the best trade and return it.
-export function useDerivedSwapInfo(
-  toggledVersion: Version
-): {
+export function useDerivedSwapInfo(toggledVersion: Version): {
   currencies: { [field in Field]?: Currency }
   currencyBalances: { [field in Field]?: CurrencyAmount<Currency> }
   parsedAmount: CurrencyAmount<Currency> | undefined
@@ -135,7 +133,7 @@ export function useDerivedSwapInfo(
     typedValue,
     [Field.INPUT]: { currencyId: inputCurrencyId },
     [Field.OUTPUT]: { currencyId: outputCurrencyId },
-    recipient
+    recipient,
   } = useSwapState()
 
   const inputCurrency = useCurrency(inputCurrencyId)
@@ -145,17 +143,17 @@ export function useDerivedSwapInfo(
 
   const relevantTokenBalances = useCurrencyBalances(account ?? undefined, [
     inputCurrency ?? undefined,
-    outputCurrency ?? undefined
+    outputCurrency ?? undefined,
   ])
 
   const isExactIn: boolean = independentField === Field.INPUT
   const parsedAmount = tryParseAmount(typedValue, (isExactIn ? inputCurrency : outputCurrency) ?? undefined)
 
   const bestV2TradeExactIn = useV2TradeExactIn(isExactIn ? parsedAmount : undefined, outputCurrency ?? undefined, {
-    maxHops: singleHopOnly ? 1 : undefined
+    maxHops: singleHopOnly ? 1 : undefined,
   })
   const bestV2TradeExactOut = useV2TradeExactOut(inputCurrency ?? undefined, !isExactIn ? parsedAmount : undefined, {
-    maxHops: singleHopOnly ? 1 : undefined
+    maxHops: singleHopOnly ? 1 : undefined,
   })
 
   const bestV3TradeExactIn = useBestV3TradeExactIn(isExactIn ? parsedAmount : undefined, outputCurrency ?? undefined)
@@ -166,12 +164,12 @@ export function useDerivedSwapInfo(
 
   const currencyBalances = {
     [Field.INPUT]: relevantTokenBalances[0],
-    [Field.OUTPUT]: relevantTokenBalances[1]
+    [Field.OUTPUT]: relevantTokenBalances[1],
   }
 
   const currencies: { [field in Field]?: Currency } = {
     [Field.INPUT]: inputCurrency ?? undefined,
-    [Field.OUTPUT]: outputCurrency ?? undefined
+    [Field.OUTPUT]: outputCurrency ?? undefined,
   }
 
   let inputError: string | undefined
@@ -218,7 +216,7 @@ export function useDerivedSwapInfo(
     v2Trade: v2Trade ?? undefined,
     v3TradeState: v3Trade,
     toggledTrade,
-    allowedSlippage
+    allowedSlippage,
   }
 }
 
@@ -265,14 +263,14 @@ export function queryParametersToSwapState(parsedQs: ParsedQs): SwapState {
 
   return {
     [Field.INPUT]: {
-      currencyId: inputCurrency
+      currencyId: inputCurrency,
     },
     [Field.OUTPUT]: {
-      currencyId: outputCurrency
+      currencyId: outputCurrency,
     },
     typedValue: parseTokenAmountURLParameter(parsedQs.exactAmount),
     independentField: parseIndependentFieldURLParameter(parsedQs.exactField),
-    recipient
+    recipient,
   }
 }
 
@@ -297,7 +295,7 @@ export function useDefaultsFromURLSearch():
         field: parsed.independentField,
         inputCurrencyId: parsed[Field.INPUT].currencyId,
         outputCurrencyId: parsed[Field.OUTPUT].currencyId,
-        recipient: parsed.recipient
+        recipient: parsed.recipient,
       })
     )
 

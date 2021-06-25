@@ -21,7 +21,7 @@ function _getContractsUrls(chainId: ChainId, contractAddressMap: typeof GP_SETTL
 
 const LOGO_MAP = {
   github,
-  etherscan
+  etherscan,
 }
 
 const VERSIONS: Record<
@@ -32,26 +32,26 @@ const VERSIONS: Record<
     version: 'v' + WEB_VERSION,
     href() {
       return CODE_LINK
-    }
+    },
   },
   'Allowance manager contract': {
     version: 'v' + CONTRACTS_VERSION,
     href(chainId: ChainId) {
       return {
         etherscan: _getContractsUrls(chainId, GP_ALLOWANCE_MANAGER_CONTRACT_ADDRESS),
-        github: `https://github.com/gnosis/gp-v2-contracts/blob/v${CONTRACTS_VERSION}/src/contracts/GPv2AllowListAuthentication.sol`
+        github: `https://github.com/gnosis/gp-v2-contracts/blob/v${CONTRACTS_VERSION}/src/contracts/GPv2AllowListAuthentication.sol`,
       }
-    }
+    },
   },
   'Settlement contract': {
     version: 'v' + CONTRACTS_VERSION,
     href(chainId: ChainId) {
       return {
         etherscan: _getContractsUrls(chainId, GP_SETTLEMENT_CONTRACT_ADDRESS),
-        github: `https://github.com/gnosis/gp-v2-contracts/blob/v${CONTRACTS_VERSION}/src/contracts/GPv2Settlement.sol`
+        github: `https://github.com/gnosis/gp-v2-contracts/blob/v${CONTRACTS_VERSION}/src/contracts/GPv2Settlement.sol`,
       }
-    }
-  }
+    },
+  },
 }
 
 const versionsList = Object.keys(VERSIONS)
@@ -100,7 +100,7 @@ const Version = ({ className }: { className?: string }) => {
   return (
     <StyledPolling className={className}>
       {/* it's hardcoded anyways */}
-      {versionsList.map(key => {
+      {versionsList.map((key) => {
         const { href, version } = VERSIONS[key]
 
         const chainHref = href(chainId)

@@ -30,8 +30,8 @@ function fetchClaimMapping(): Promise<ClaimAddressMapping> {
     (FETCH_CLAIM_MAPPING_PROMISE = fetch(
       `https://raw.githubusercontent.com/Uniswap/mrkl-drop-data-chunks/final/chunks/mapping.json`
     )
-      .then(res => res.json())
-      .catch(error => {
+      .then((res) => res.json())
+      .catch((error) => {
         console.error('Failed to get claims mapping', error)
         FETCH_CLAIM_MAPPING_PROMISE = null
       }))
@@ -45,8 +45,8 @@ function fetchClaimFile(key: string): Promise<{ [address: string]: UserClaimData
     (FETCH_CLAIM_FILE_PROMISES[key] = fetch(
       `https://raw.githubusercontent.com/Uniswap/mrkl-drop-data-chunks/final/chunks/${key}.json`
     )
-      .then(res => res.json())
-      .catch(error => {
+      .then((res) => res.json())
+      .catch((error) => {
         console.error(`Failed to get claim file mapping for starting address ${key}`, error)
         delete FETCH_CLAIM_FILE_PROMISES[key]
       }))
@@ -62,7 +62,7 @@ function fetchClaim(account: string): Promise<UserClaimData> {
   return (
     FETCH_CLAIM_PROMISES[account] ??
     (FETCH_CLAIM_PROMISES[account] = fetchClaimMapping()
-      .then(mapping => {
+      .then((mapping) => {
         const sorted = Object.keys(mapping).sort((a, b) => (a.toLowerCase() < b.toLowerCase() ? -1 : 1))
 
         for (const startingAddress of sorted) {
@@ -78,11 +78,11 @@ function fetchClaim(account: string): Promise<UserClaimData> {
         throw new Error(`Claim for ${formatted} was not found after searching all mappings`)
       })
       .then(fetchClaimFile)
-      .then(result => {
+      .then((result) => {
         if (result[formatted]) return result[formatted]
         throw new Error(`Claim for ${formatted} was not found in claim file!`)
       })
-      .catch(error => {
+      .catch((error) => {
         console.debug('Claim fetch failed', error)
         throw error
       }))
@@ -100,19 +100,19 @@ export function useUserClaimData(account: string | null | undefined): UserClaimD
     if (!account || chainId !== 1) return
 
     fetchClaim(account)
-      .then(accountClaimInfo =>
-        setClaimInfo(claimInfo => {
+      .then((accountClaimInfo) =>
+        setClaimInfo((claimInfo) => {
           return {
             ...claimInfo,
-            [account]: accountClaimInfo
+            [account]: accountClaimInfo,
           }
         })
       )
       .catch(() => {
-        setClaimInfo(claimInfo => {
+        setClaimInfo((claimInfo) => {
           return {
             ...claimInfo,
-            [account]: null
+            [account]: null,
           }
         })
       })
@@ -143,9 +143,7 @@ export function useUserUnclaimedAmount(account: string | null | undefined): Curr
   return CurrencyAmount.fromRawAmount(uni, JSBI.BigInt(userClaimData.amount))
 }
 
-export function useClaimCallback(
-  account: string | null | undefined
-): {
+export function useClaimCallback(account: string | null | undefined): {
   claimCallback: () => Promise<string>
 } {
   // get claim data for this account
@@ -157,18 +155,18 @@ export function useClaimCallback(
   const addTransaction = useTransactionAdder()
   const distributorContract = useMerkleDistributorContract()
 
-  const claimCallback = async function() {
+  const claimCallback = async function () {
     if (!claimData || !account || !library || !chainId || !distributorContract) return
 
     const args = [claimData.index, account, claimData.amount, claimData.proof]
 
-    return distributorContract.estimateGas['claim'](...args, {}).then(estimatedGasLimit => {
+    return distributorContract.estimateGas['claim'](...args, {}).then((estimatedGasLimit) => {
       return distributorContract
         .claim(...args, { value: null, gasLimit: calculateGasMargin(estimatedGasLimit) })
         .then((response: TransactionResponse) => {
           addTransaction(response, {
             summary: `Claimed ${unclaimedAmount?.toSignificant(4)} UNI`,
-            claim: { recipient: account }
+            claim: { recipient: account },
           })
           return response.hash
         })

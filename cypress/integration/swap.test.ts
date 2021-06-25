@@ -7,9 +7,7 @@ describe('Swap', () => {
   })
 
   it.skip('zero swap amount', () => {
-    cy.get('#swap-currency-input .token-amount-input')
-      .type('0.0', { delay: 200 })
-      .should('have.value', '0.0')
+    cy.get('#swap-currency-input .token-amount-input').type('0.0', { delay: 200 }).should('have.value', '0.0')
   })
 
   it('invalid swap amount', () => {
@@ -17,9 +15,7 @@ describe('Swap', () => {
   })
 
   it.skip('can enter an amount into output', () => {
-    cy.get('#swap-currency-output .token-amount-input')
-      .type('0.001', { delay: 200 })
-      .should('have.value', '0.001')
+    cy.get('#swap-currency-output .token-amount-input').type('0.001', { delay: 200 }).should('have.value', '0.001')
   })
 
   it('zero output amount', () => {

@@ -37,7 +37,7 @@ import {
   AddressLink,
   LowerSection,
   IconWrapper,
-  renderTransactions
+  renderTransactions,
 } from './AccountDetailsMod'
 import { ConnectedWalletInfo, useWalletInfo } from 'hooks/useWalletInfo'
 import { MouseoverTooltip } from 'components/Tooltip/TooltipMod'
@@ -146,7 +146,7 @@ export default function AccountDetails({
   pendingTransactions,
   confirmedTransactions,
   ENSName,
-  openOptions
+  openOptions,
 }: AccountDetailsProps) {
   const { chainId, account, connector } = useActiveWeb3React()
   const walletInfo = useWalletInfo()

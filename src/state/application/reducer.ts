@@ -5,7 +5,7 @@ import {
   removePopup,
   updateBlockNumber,
   ApplicationModal,
-  setOpenModal
+  setOpenModal,
 } from 'state/application/actions'
 
 type PopupList = Array<{ key: string; show: boolean; content: PopupContent; removeAfterMs: number | null }>

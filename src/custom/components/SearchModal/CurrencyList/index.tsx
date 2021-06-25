@@ -16,8 +16,8 @@ const UNSUPPORTED_TOKEN_TAG = [
     name: 'Unsupported',
     description:
       'This token is unsupported as it does not operate optimally with Gnosis Protocol. Please refer to the FAQ for more information.',
-    id: '0'
-  }
+    id: '0',
+  },
 ]
 
 const Tag = styled(TagMod)<{ bg?: string }>`
@@ -88,7 +88,7 @@ function TokenTags({ currency, isUnsupported }: { currency: Currency; isUnsuppor
     return (
       <TagDescriptor bg="#f3a1a1" tags={UNSUPPORTED_TOKEN_TAG}>
         <TagLink>
-          <HashLink to={UNSUPPORTED_TOKENS_FAQ_URL} target="_blank" onClick={e => e.stopPropagation()}>
+          <HashLink to={UNSUPPORTED_TOKENS_FAQ_URL} target="_blank" onClick={(e) => e.stopPropagation()}>
             FAQ
           </HashLink>
         </TagLink>
