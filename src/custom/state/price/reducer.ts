@@ -72,14 +72,16 @@ export default createReducer(initialState, builder =>
 
       // Reset quote params
       const quotes = state.quotes[quoteData.chainId]
-      quotes[quoteData.sellToken] = {
+      quotes[sellToken] = {
         sellToken,
         buyToken,
         amount,
         chainId,
         kind,
-        price: getResetPrice(sellToken, buyToken, kind),
-        lastCheck: Date.now()
+        // Update last checked price
+        lastCheck: Date.now(),
+        // Reset price
+        price: getResetPrice(sellToken, buyToken, kind)
       }
 
       // Activate loader
@@ -89,7 +91,22 @@ export default createReducer(initialState, builder =>
     /**
      * Refresh quote
      */
-    .addCase(refreshQuoteStart, state => {
+    .addCase(refreshQuoteStart, (state, action) => {
+      const quoteData = action.payload
+      const { sellToken, chainId } = quoteData
+      initializeState(state.quotes, action)
+
+      // Update Quote info
+      const quotes = state.quotes[chainId]
+      const quoteInfo = quotes[sellToken]
+      if (quoteInfo) {
+        quotes[sellToken] = {
+          ...quoteInfo,
+          // Update last checked price
+          lastCheck: Date.now()
+        }
+      }
+
       // Activates loader
       state.loading = true
     })
