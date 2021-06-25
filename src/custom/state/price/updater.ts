@@ -10,6 +10,7 @@ import { FeeQuoteParams, UnsupportedToken } from 'utils/operator'
 import { QuoteInformationObject } from './reducer'
 import { useIsUnsupportedTokenGp } from 'state/lists/hooks/hooksMod'
 import useDebounceWithForceUpdate from 'hooks/useDebounceWithForceUpdate'
+import useIsOnline from 'hooks/useIsOnline'
 
 const DEBOUNCE_TIME = 350
 const REFETCH_CHECK_INTERVAL = 10000 // Every 10s
@@ -133,6 +134,8 @@ export default function FeesUpdater(): null {
 
   const refetchQuote = useRefetchQuoteCallback()
   const windowVisible = useIsWindowVisible()
+  const isOnline = useIsOnline()
+  console.log('Is isOnline', isOnline)
 
   // Update if any parameter is changing
   useEffect(() => {
