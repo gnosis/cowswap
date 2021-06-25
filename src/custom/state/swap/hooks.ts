@@ -4,7 +4,7 @@ import { t } from '@lingui/macro'
 // import { useBestV3TradeExactIn, useBestV3TradeExactOut, V3TradeState } from '../../hooks/useBestV3Trade'
 import useENS from 'hooks/useENS'
 // import { parseUnits } from '@ethersproject/units'
-import { Currency, CurrencyAmount, Percent /* TradeType, */ } from '@uniswap/sdk-core'
+import { Currency, CurrencyAmount, Percent, Token /* TradeType, */ } from '@uniswap/sdk-core'
 // import { Trade as V2Trade } from '@uniswap/v2-sdk'
 import { ParsedQs } from 'qs'
 import { useCallback, useEffect, useMemo, useState } from 'react'
@@ -393,9 +393,12 @@ interface CurrencyWithAddress {
 
 export function useDetectNativeToken(input?: CurrencyWithAddress, output?: CurrencyWithAddress, chainId?: ChainId) {
   return useMemo(() => {
-    const wrappedToken = Object.assign(WETH[chainId || DEFAULT_NETWORK_FOR_LISTS].wrapped, {
-      logoURI: chainId === ChainId.XDAI ? XDAI_LOGO_URI : WETH_LOGO_URI,
-    })
+    const wrappedToken: Token & { logoURI: string } = Object.assign(
+      WETH[chainId || DEFAULT_NETWORK_FOR_LISTS].wrapped,
+      {
+        logoURI: chainId === ChainId.XDAI ? XDAI_LOGO_URI : WETH_LOGO_URI,
+      }
+    )
 
     const native = ETHER.onChain(chainId || DEFAULT_NETWORK_FOR_LISTS)
 
