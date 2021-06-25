@@ -2,7 +2,7 @@ import PositionListItem from 'components/PositionListItem'
 import React from 'react'
 import { Trans } from '@lingui/macro'
 import styled from 'styled-components/macro'
-import { MEDIA_WIDTHS } from 'theme'
+import { MEDIA_WIDTHS } from '@src/theme'
 import { PositionDetails } from 'types/position'
 
 const DesktopHeader = styled.div`
