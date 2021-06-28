@@ -195,6 +195,6 @@ export const ThemedGlobalStyle = createGlobalStyle`
   }
 
   a {
-  color: ${({ theme }) => theme.blue1}; 
+    color: ${({ theme }) => theme.blue1}; 
   }
 `
