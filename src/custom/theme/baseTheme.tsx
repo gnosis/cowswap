@@ -93,6 +93,7 @@ export function themeVariables(darkMode: boolean, colorsTheme: Colors) {
     buttonSizes: {
       [ButtonSize.BIG]: css`
         font-size: 26px;
+        min-height: 60px;
       `,
       [ButtonSize.DEFAULT]: css`
         font-size: 16px;
