@@ -504,7 +504,7 @@ export default function Swap({
               </ArrowWrapper>
               */}
               {/* GP ARROW SWITCHER */}
-              <AutoColumn justify="space-between">
+              <AutoColumn justify="space-between" style={{ margin: '3px 0' }}>
                 <AutoRow
                   justify={isExpertMode ? 'space-between' : 'center'}
                   // style={{ padding: '0 1rem' }}
