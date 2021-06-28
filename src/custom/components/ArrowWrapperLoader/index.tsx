@@ -1,5 +1,5 @@
 import React from 'react'
-import styled, { css } from 'styled-components'
+import styled from 'styled-components'
 import loadingCowGif from 'assets/cow-swap/cow-load.gif'
 import { ArrowDown } from 'react-feather'
 import useLoadingWithTimeout from 'hooks/useLoadingWithTimeout'
@@ -7,10 +7,10 @@ import { useIsQuoteRefreshing } from 'state/price/hooks'
 import { LONG_LOAD_THRESHOLD } from 'constants/index'
 
 interface ShowLoaderProp {
-  $showloader: boolean | undefined
+  showloader: boolean
 }
 
-const ArrowDownIcon = styled(ArrowDown)<ShowLoaderProp>`
+const ArrowDownIcon = styled(ArrowDown)`
   stroke: ${({ theme }) => theme.swap.arrowDown.color};
   backface-visibility: hidden;
   width: 100%;
@@ -19,13 +19,6 @@ const ArrowDownIcon = styled(ArrowDown)<ShowLoaderProp>`
   padding: 4px;
   margin: 0;
   position: absolute;
-
-  ${({ $showloader }) =>
-    $showloader &&
-    css`
-      height: 0;
-      width: 0;
-    `}
 `
 
 export const Wrapper = styled.div<ShowLoaderProp>`
@@ -50,6 +43,15 @@ export const Wrapper = styled.div<ShowLoaderProp>`
     }
   }
 
+  
+  ${({ showloader }) => showloader &&
+  `
+    > ${ArrowDownIcon} {
+      height: 0;
+      width: 0;
+    }
+  `}
+
   > div {
     backface-visibility: hidden;
     transform: rotateY(180deg);
@@ -67,9 +69,9 @@ export const Wrapper = styled.div<ShowLoaderProp>`
     object-position: bottom;
   }
 
-  ${({ $showloader }) =>
-    $showloader &&
-    css`
+  ${({ showloader, theme }) =>
+    showloader &&
+    `
       position: absolute;
       display: flex;
       align-items: center;
@@ -77,7 +79,7 @@ export const Wrapper = styled.div<ShowLoaderProp>`
       overflow: visible;
       padding: 0;
       border: transparent;
-      transform: translateX(-100%) rotateY(-180deg);
+      transform: translateX(-100%) rotateY(-180deg);  
 
       &::before,
       &::after {
@@ -85,7 +87,7 @@ export const Wrapper = styled.div<ShowLoaderProp>`
         position: absolute;
         left: -2px;
         top: -2px;
-        background: linear-gradient(45deg, #e57751, #c5daef, #275194, ${({ theme }) => theme.bg4}, #c5daef, #1b5a7a);
+        background: linear-gradient(45deg, #e57751, #c5daef, #275194, ${theme.bg4}, #c5daef, #1b5a7a);
         background-size: 800%;
         width: calc(100% + 4px);
         height: calc(100% + 4px);
@@ -126,8 +128,8 @@ export function ArrowWrapperLoader({ onSwitchTokens, setApprovalSubmitted }: Arr
   }
 
   return (
-    <Wrapper $showloader={showLoader ? true : undefined} onClick={handleClick}>
-      <ArrowDownIcon $showloader={showLoader ? true : undefined} />
+    <Wrapper showloader={showLoader} onClick={handleClick}>
+      <ArrowDownIcon />
       {showLoader && (
         <div>
           <img src={loadingCowGif} alt="Loading prices..." />
