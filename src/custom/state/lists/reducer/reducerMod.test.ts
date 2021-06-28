@@ -77,6 +77,7 @@ describe('list reducer', () => {
       it('sets pending', () => {
         store.dispatch(fetchTokenList.pending({ chainId: CHAIN_ID, requestId: 'request-id', url: 'fake-url' }))
         expect(getStoreSlice(CHAIN_ID)).toEqual({
+          activeListUrls: undefined,
           byUrl: {
             'fake-url': {
               error: null,
@@ -86,6 +87,7 @@ describe('list reducer', () => {
             },
           },
           selectedListUrl: undefined,
+          gpUnsupportedTokens: {},
         })
       })
 
@@ -403,6 +405,7 @@ describe('list reducer', () => {
       expect(getStoreSlice(CHAIN_ID)).toEqual({
         byUrl: {},
         activeListUrls: [],
+        gpUnsupportedTokens: {},
       })
     })
   })
@@ -436,6 +439,7 @@ describe('list reducer', () => {
           },
         },
         activeListUrls: ['fake-url'],
+        gpUnsupportedTokens: {},
       })
     })
     it('adds to url keys if not present already on enable', () => {
@@ -471,6 +475,7 @@ describe('list reducer', () => {
           },
         },
         activeListUrls: ['fake-url-invalid'],
+        gpUnsupportedTokens: {},
       })
     })
     it('enable works if list already added', () => {
@@ -500,6 +505,7 @@ describe('list reducer', () => {
           },
         },
         activeListUrls: ['fake-url'],
+        gpUnsupportedTokens: {},
       })
     })
   })
