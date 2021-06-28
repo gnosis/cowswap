@@ -1,4 +1,4 @@
-import React, { Suspense, PropsWithChildren } from 'react'
+import React, { Suspense, /* PropsWithChildren, */ ReactNode } from 'react'
 import { Route, Switch } from 'react-router-dom'
 import styled from 'styled-components/macro'
 import GoogleAnalyticsReporter from 'components/analytics/GoogleAnalyticsReporter'
@@ -79,7 +79,7 @@ const Marginer = styled.div`
 //   return <AddressClaimModal isOpen={open} onDismiss={toggle} />
 // }
 
-export default function App(props?: PropsWithChildren<void>) {
+export default function App(props?: { children?: ReactNode }) {
   return (
     <ErrorBoundary>
       <Suspense fallback={null}>
