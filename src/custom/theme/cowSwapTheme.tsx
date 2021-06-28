@@ -6,7 +6,12 @@ import Cursor3 from 'assets/cow-swap/cursor3.gif'
 import Cursor4 from 'assets/cow-swap/cursor4.gif'
 
 import { Colors } from 'theme/styled'
-import { colors as colorsBaseTheme, themeVariables as baseThemeVariables } from 'theme/baseTheme'
+import {
+  colors as colorsBaseTheme,
+  themeVariables as baseThemeVariables,
+  UniFixedGlobalStyle,
+  UniThemedGlobalStyle,
+} from 'theme/baseTheme'
 
 import { theme as themeUniswap } from '@src/theme'
 import { useIsDarkMode } from 'state/user/hooks'
@@ -196,13 +201,14 @@ export default function ThemeProvider({ children }: { children: React.ReactNode 
   return <StyledComponentsThemeProvider theme={themeObject}>{children}</StyledComponentsThemeProvider>
 }
 
-export const FixedGlobalStyle = createGlobalStyle``
+export const FixedGlobalStyle = createGlobalStyle`
+  // Uni mixin
+  ${UniFixedGlobalStyle}
+`
 
 export const ThemedGlobalStyle = createGlobalStyle`
-  // Custom
-  html, body {
-    font-family: "inter", arial;
-  }
+  // Uni mixin
+  ${UniThemedGlobalStyle}
 
   html {
     color: ${({ theme }) => theme.text1};
