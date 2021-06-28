@@ -249,7 +249,7 @@ export function useRefetchQuoteCallback() {
         // Start action: Either new quote or refreshing quote
         if (isJustPriceRefresh) {
           // Refresh the quote
-          refreshQuoteStart()
+          refreshQuoteStart({ sellToken, chainId })
         } else {
           // Get new quote
           getNewQuoteStart(quoteParams)
