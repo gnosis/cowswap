@@ -122,7 +122,7 @@
     "start": "REACT_APP_DISABLE_TOKEN_WARNING=true yarn compile-contract-types && craco start",
     "start:service-worker": "yarn build && yarn serve -s build",
     "start:default": "craco start",
-    "build": "yarn compile-contract-types && craco build",
+    "build": "yarn compile-contract-types && yarn compile-v3-contract-types && craco build",
     "ipfs:build": "cross-env PUBLIC_URL=\".\" craco build",
     "ipfs:publish": "ipfs-deploy build -p infura -O",
     "test": "NODE_PATH=src/custom craco test --env=jsdom",
