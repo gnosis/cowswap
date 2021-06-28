@@ -9,12 +9,11 @@ import { AutoColumn } from 'components/Column'
 import CurrencyLogo from 'components/CurrencyLogo'
 import { useActiveWeb3React } from 'hooks/web3'
 import { Currency /* , Token */ } from '@uniswap/sdk-core'
-// import { useUnsupportedTokens } from 'hooks/Tokens'
 // import { ExplorerDataType, getExplorerLink } from '../../utils/getExplorerLink'
 import { Trans } from '@lingui/macro'
 // MOD
 import { getEtherscanLink } from 'utils'
-import { useIsUnsupportedToken } from 'state/lists/hooks/hooksMod'
+import { useIsUnsupportedToken } from 'state/lists/hooks'
 
 export const DetailsFooter = styled.div<{ show: boolean }>`
   padding-top: calc(16px + 2rem);
