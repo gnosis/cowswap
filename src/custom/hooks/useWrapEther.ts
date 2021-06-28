@@ -5,13 +5,14 @@ import { useTransactionAdder } from '@src/state/transactions/hooks'
 
 import { useWETHContract } from 'hooks/useContract'
 import { DEFAULT_PRECISION } from '../constants'
+import { ContractTransaction } from 'ethers'
 
 export function useWrapEther() {
   const addTransaction = useTransactionAdder()
   const weth = useWETHContract()
 
   const wrapCallback = useCallback(
-    async (amount: CurrencyAmount<Currency>): Promise<string | undefined> => {
+    async (amount: CurrencyAmount<Currency>): Promise<ContractTransaction | string | undefined> => {
       console.log('Wrapping ETH!', amount.quotient.toString(), weth)
 
       if (!weth) {

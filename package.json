@@ -134,6 +134,7 @@
     "cypress": "cypress open",
     "compile-contract-types": "yarn compile-external-abi-types",
     "compile-external-abi-types": "typechain --target ethers-v5 --out-dir src/abis/types './src/abis/**/*.json'",
+    "compile-v3-contract-types": "typechain --target ethers-v5 --out-dir src/types/v3 './node_modules/@uniswap/?(v3-core|v3-periphery)/artifacts/contracts/**/*.json'",
     "postinstall": "yarn compile-contract-types",
     "i18n:extract": "lingui extract --locale en-US",
     "i18n:compile": "lingui compile"
