@@ -47,7 +47,7 @@ const SwapModWrapper = styled(SwapMod)`
     }
 
     ${AutoColumn} {
-      grid-row-gap: 3px;
+      grid-row-gap: 10px;
     }
 
     .expertMode ${AutoColumn} {

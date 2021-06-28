@@ -4,10 +4,10 @@ import { Currency, CurrencyAmount, Token, TradeType } from '@uniswap/sdk-core'
 // import { Trade as V3Trade } from '@uniswap/v3-sdk'
 // import { AdvancedSwapDetails } from 'components/swap/AdvancedSwapDetails'
 import UnsupportedCurrencyFooter from 'components/swap/UnsupportedCurrencyFooter'
-// import { MouseoverTooltip, MouseoverTooltipContent } from 'components/Tooltip'
+import { MouseoverTooltip /* , MouseoverTooltipContent */ } from 'components/Tooltip'
 // import JSBI from 'jsbi'
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
-import { ArrowDown /* , ArrowLeft, CheckCircle, HelpCircle, Info */ } from 'react-feather'
+import { ArrowDown /* , ArrowLeft, CheckCircle, HelpCircle, Info */, CheckCircle, HelpCircle } from 'react-feather'
 import ReactGA from 'react-ga'
 // import { Link, RouteComponentProps } from 'react-router-dom'
 import { Text } from 'rebass'
@@ -734,49 +734,49 @@ export default function Swap({
                     }
                   >
                     <AutoRow justify="space-between" style={{ flexWrap: 'nowrap' }}>
-                      <span style={{ display: 'flex', alignItems: 'center' }}>
-                        <CurrencyLogo
-                          currency={currencies[Field.INPUT]}
-                          size={'20px'}
-                          style={{ marginRight: '8px', flexShrink: 0 }}
-                        />
+                      <span
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-evenly',
+                          width: '100%',
+                          fontSize: '13px',
+                        }}
+                      >
+                        <CurrencyLogo currency={currencies[Field.INPUT]} size={'20px'} style={{ flexShrink: 0 }} />
                         {/* we need to shorten this string on mobile */}
                         {approvalState === ApprovalState.APPROVED || signatureState === UseERC20PermitState.SIGNED ? (
                           <Trans>You can now trade {currencies[Field.INPUT]?.symbol}</Trans>
                         ) : (
                           <Trans>Allow the Uniswap Protocol to use your {currencies[Field.INPUT]?.symbol}</Trans>
                         )}
+                        {approvalState === ApprovalState.PENDING ? (
+                          // <Loader stroke="white" />
+                          // ) : (approvalSubmitted && approvalState === ApprovalState.APPROVED) ||
+                          //   signatureState === UseERC20PermitState.SIGNED ? (
+                          //   <CheckCircle size="20" color={theme.green1} />
+                          <AutoRow gap="6px" justify="center">
+                            Approving{' '}
+                            <Loader
+                            // stroke="white"
+                            />
+                          </AutoRow>
+                        ) : (approvalSubmitted && approvalState === ApprovalState.APPROVED) ||
+                          signatureState === UseERC20PermitState.SIGNED ? (
+                          <CheckCircle size="20" color={theme.green1} />
+                        ) : (
+                          <MouseoverTooltip
+                            text={
+                              <Trans>
+                                You must give the GP smart contracts permission to use your{' '}
+                                {currencies[Field.INPUT]?.symbol}. You only have to do this once per token.
+                              </Trans>
+                            }
+                          >
+                            <HelpCircle size="20" color={'white'} />
+                          </MouseoverTooltip>
+                        )}
                       </span>
-                      {approvalState === ApprovalState.PENDING ? (
-                        // <Loader stroke="white" />
-                        // ) : (approvalSubmitted && approvalState === ApprovalState.APPROVED) ||
-                        //   signatureState === UseERC20PermitState.SIGNED ? (
-                        //   <CheckCircle size="20" color={theme.green1} />
-                        <AutoRow gap="6px" justify="center">
-                          Approving{' '}
-                          <Loader
-                          // stroke="white"
-                          />
-                        </AutoRow>
-                      ) : (approvalSubmitted && approvalState === ApprovalState.APPROVED) ||
-                        signatureState === UseERC20PermitState.SIGNED ? (
-                        // <CheckCircle size="20" color={theme.green1} />
-                        <Trans>Approved</Trans>
-                      ) : (
-                        // <MouseoverTooltip
-                        //   text={
-                        //     <Trans>
-                        //       You must give the Uniswap smart contracts permission to use your{' '}
-                        //       {currencies[Field.INPUT]?.symbol}. You only have to do this once per token.
-                        //     </Trans>
-                        //   }
-                        // >
-                        //   <HelpCircle size="20" color={'white'} style={{ marginLeft: '8px' }} />
-                        // </MouseoverTooltip>
-                        <>
-                          <Trans>Approve </Trans> {currencies[Field.INPUT]?.symbol}
-                        </>
-                      )}
                     </AutoRow>
                   </ButtonConfirmed>
                   <ButtonError
@@ -794,8 +794,6 @@ export default function Swap({
                         })
                       }
                     }}
-                    // TODO: check width with new v3 design
-                    // width="48%" // GP-WIDTH
                     width="100%"
                     id="swap-button"
                     disabled={
@@ -804,7 +802,9 @@ export default function Swap({
                     }
                     // error={isValid && priceImpactSeverity > 2}
                   >
-                    <SwapButton showLoading={swapBlankState || isGettingNewQuote}>Swap</SwapButton>
+                    <SwapButton showLoading={swapBlankState || isGettingNewQuote}>
+                      <Trans>Swap</Trans>
+                    </SwapButton>
                     {/* <Text fontSize={16} fontWeight={500}>
                         {priceImpactTooHigh ? (
                           <Trans>High Price Impact</Trans>
@@ -837,7 +837,9 @@ export default function Swap({
                 disabled={!isValid /*|| priceImpactTooHigh */ || !!swapCallbackError}
                 // error={isValid && priceImpactSeverity > 2 && !swapCallbackError}
               >
-                <SwapButton showLoading={swapBlankState || isGettingNewQuote}>{swapInputError || 'Swap'}</SwapButton>
+                <SwapButton showLoading={swapBlankState || isGettingNewQuote}>
+                  {swapInputError || <Trans>Swap</Trans>}
+                </SwapButton>
                 {/* <Text fontSize={20} fontWeight={500}>
                     {swapInputError ? (
                       swapInputError
