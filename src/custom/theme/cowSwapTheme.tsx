@@ -202,12 +202,12 @@ export default function ThemeProvider({ children }: { children: React.ReactNode 
 }
 
 export const FixedGlobalStyle = createGlobalStyle`
-  // Uni mixin
+  // Uni V2 theme mixin
   ${UniFixedGlobalStyle}
 `
 
 export const ThemedGlobalStyle = createGlobalStyle`
-  // Uni mixin
+  // Uni V2 theme mixin
   ${UniThemedGlobalStyle}
 
   html {

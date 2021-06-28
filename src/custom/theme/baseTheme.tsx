@@ -244,12 +244,12 @@ export const UniThemedGlobalStyle = css`
 `
 
 export const FixedGlobalStyle = createGlobalStyle`
-  // Uni mixin
+  // Uni V2 theme mixin
   ${UniFixedGlobalStyle}
 `
 
 export const ThemedGlobalStyle = createGlobalStyle`
-  // Uni mixin
+  // Uni V2 theme mixin
   ${UniThemedGlobalStyle}
 
   html {
