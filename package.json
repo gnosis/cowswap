@@ -119,7 +119,7 @@
   },
   "resolutions": {},
   "scripts": {
-    "start": "REACT_APP_DISABLE_TOKEN_WARNING=true craco start",
+    "start": "REACT_APP_DISABLE_TOKEN_WARNING=true yarn compile-contract-types && craco start",
     "start:service-worker": "yarn build && yarn serve -s build",
     "start:default": "craco start",
     "build": "craco build",
@@ -131,7 +131,12 @@
     "integration-test": "start-server-and-test 'serve build -l 3000' http://localhost:3000 'cypress run'",
     "serve": "serve build -l 3000",
     "serve:ci": "serve website -l 3000",
-    "cypress": "cypress open"
+    "cypress": "cypress open",
+    "compile-contract-types": "yarn compile-external-abi-types",
+    "compile-external-abi-types": "typechain --target ethers-v5 --out-dir src/abis/types './src/abis/**/*.json'",
+    "postinstall": "yarn compile-contract-types",
+    "i18n:extract": "lingui extract --locale en-US",
+    "i18n:compile": "lingui compile"
   },
   "jest": {
     "moduleNameMapper": {
