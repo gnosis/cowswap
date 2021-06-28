@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
 import { ButtonGray, ButtonOutlined, ButtonPrimary } from 'components/Button'
 import { AutoColumn } from 'components/Column'
-import { FlyoutAlignment, NewMenu } from 'components/Menu'
+import { FlyoutAlignment, NewMenu } from '@src/components/Menu'
 import { SwapPoolTabs } from 'components/NavigationTabs'
 import PositionList from 'components/PositionList'
 import { RowBetween, RowFixed } from 'components/Row'

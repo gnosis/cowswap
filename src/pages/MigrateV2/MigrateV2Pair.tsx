@@ -25,7 +25,7 @@ import { BodyWrapper } from '../AppBody'
 import { PoolState, usePool } from 'hooks/usePools'
 import { FeeAmount, Pool, Position, priceToClosestTick, TickMath } from '@uniswap/v3-sdk'
 import { BlueCard, DarkGreyCard, LightCard, YellowCard } from 'components/Card'
-import { ApprovalState, useApproveCallback } from 'hooks/useApproveCallback'
+import { ApprovalState, useApproveCallback } from '@src/hooks/useApproveCallback'
 import { Dots } from 'components/swap/styleds'
 import { ButtonConfirmed } from 'components/Button'
 import useTransactionDeadline from 'hooks/useTransactionDeadline'
@@ -49,7 +49,7 @@ import DoubleCurrencyLogo from 'components/DoubleLogo'
 import Badge, { BadgeVariant } from 'components/Badge'
 
 import { useAppDispatch } from 'state/hooks'
-import SettingsTab from 'components/Settings'
+import SettingsTab from '@src/components/Settings'
 
 const ZERO = JSBI.BigInt(0)
 

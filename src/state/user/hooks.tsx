@@ -26,7 +26,7 @@ import {
   updateUserLocale,
 } from './actions'
 import { SupportedLocale } from 'constants/locales'
-import { useAppDispatch, useAppSelector } from 'state/hooks'
+import { useAppDispatch, useAppSelector } from '@src/state/hooks'
 
 function serializeToken(token: Token): SerializedToken {
   return {
