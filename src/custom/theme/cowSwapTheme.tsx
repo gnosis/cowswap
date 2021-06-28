@@ -199,17 +199,11 @@ export default function ThemeProvider({ children }: { children: React.ReactNode 
 export const FixedGlobalStyle = createGlobalStyle``
 
 export const ThemedGlobalStyle = createGlobalStyle`
-  // Uniswap default
-  html {
-    color: ${({ theme }) => theme.text1};
-    background-color: ${({ theme }) => theme.bg1} !important;
-  }
-
-  a {
-    color: ${({ theme }) => theme.blue1}; 
-  }
-
   // Custom
+  html, body {
+    font-family: "inter", arial;
+  }
+
   html {
     color: ${({ theme }) => theme.text1};
     ${({ theme }) => theme.body.background}
