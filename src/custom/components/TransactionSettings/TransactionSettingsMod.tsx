@@ -66,10 +66,6 @@ export const OptionCustom = styled(FancyButton)<{ active?: boolean; warning?: bo
   position: relative;
   padding: 0 0.75rem;
   flex: 1;
-  /* 
-  border: ${({ theme, active, warning }) =>
-    active ? `1px solid ${warning ? theme.red1 : theme.primary1}` : warning && `1px solid ${theme.red1}`}; 
-  */
   border: ${({ theme, active, warning }) => active && `1px solid ${warning ? theme.red1 : theme.primary1}`};
   :hover {
     border: ${({ theme, active, warning }) =>
