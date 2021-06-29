@@ -460,14 +460,14 @@ export default function Faq() {
             <li>
               <p>
                 <strong>Wrap ETH</strong> <br />
-                Wrap: convert native ETH into its ERC20 compatible token form: WETH. Only required if you need to sell ETH.
+                Convert native ETH into its ERC20 compatible token form: WETH. Only required if you need to sell ETH.
               </p>
             </li>
 
             <li>
               <p>
                 <strong>Unwrap ETH</strong> <br />
-                Unwrap: convert ERC20 compatible token WETH back into native ETH. Only when you want to manually convert it to ETH.
+                Convert ERC20 compatible token WETH back into native ETH. Only when you want to manually convert it to ETH.
               </p>
             </li>
             <li>
