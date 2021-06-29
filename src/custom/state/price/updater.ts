@@ -183,7 +183,7 @@ export default function FeesUpdater(): null {
           quoteParams,
           fetchFee: refetchAll,
           previousFee: quoteInfo?.fee,
-          isJustPriceRefresh: shouldFetchNewQuote
+          isPriceRefresh: shouldFetchNewQuote
         }).catch(error => console.error('Error re-fetching the quote', error))
       }
     }
@@ -210,8 +210,8 @@ export default function FeesUpdater(): null {
     buyCurrency,
     quoteInfo,
     refetchQuote,
-    isUnsupportedTokenGp,
-    setQuoteError
+    setQuoteError,
+    isUnsupportedTokenGp
   ])
 
   return null
