@@ -313,12 +313,12 @@ export function validatedRecipient(recipient: any): string | null {
   return null
 }
 
-export function queryParametersToSwapState(parsedQs: ParsedQs): SwapState {
+export function queryParametersToSwapState(parsedQs: ParsedQs, defaultInputCurrency = ''): SwapState {
   let inputCurrency = parseCurrencyFromURLParameter(parsedQs.inputCurrency)
   let outputCurrency = parseCurrencyFromURLParameter(parsedQs.outputCurrency)
   if (inputCurrency === '' && outputCurrency === '') {
     // default to ETH input
-    inputCurrency = 'ETH'
+    inputCurrency = defaultInputCurrency
   } else if (inputCurrency === outputCurrency) {
     // clear output if identical
     outputCurrency = ''
@@ -357,7 +357,7 @@ type DefaultFromUrlSearch = { inputCurrencyId: string | undefined; outputCurrenc
 // updates the swap state to use the defaults for a given network
 export function useDefaultsFromURLSearch(): DefaultFromUrlSearch {
   const { chainId } = useActiveWeb3React()
-  // const dispatch = useAppDispatch()
+  const replaceSwapState = useReplaceSwapState()
   const parsedQs = useParsedQueryString()
   const [result, setResult] = useState<DefaultFromUrlSearch>()
 
@@ -367,13 +367,13 @@ export function useDefaultsFromURLSearch(): DefaultFromUrlSearch {
     // This is not a great fix for setting a default token
     // but it is better and easiest considering updating default files
     const defaultInputToken = WETH[chainId].address
-    const parsed = queryParametersToSwapState(parsedQs)
+    const parsed = queryParametersToSwapState(parsedQs, defaultInputToken)
 
     replaceSwapState({
       typedValue: parsed.typedValue,
       field: parsed.independentField,
       // Default to WETH
-      inputCurrencyId: parsed[Field.INPUT].currencyId || defaultInputToken,
+      inputCurrencyId: parsed[Field.INPUT].currencyId,
       // inputCurrencyId: parsed[Field.INPUT].currencyId,
       outputCurrencyId: parsed[Field.OUTPUT].currencyId,
       recipient: parsed.recipient,

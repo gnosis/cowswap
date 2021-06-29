@@ -119,10 +119,10 @@
   },
   "resolutions": {},
   "scripts": {
-    "start": "REACT_APP_DISABLE_TOKEN_WARNING=true yarn compile-contract-types && craco start",
+    "start": "REACT_APP_DISABLE_TOKEN_WARNING=true yarn compile-all-types && craco start",
     "start:service-worker": "yarn build && yarn serve -s build",
-    "start:default": "craco start",
-    "build": "craco build",
+    "start:default": "yarn compile-all-types && craco start",
+    "build": "yarn compile-all-types && craco build",
     "ipfs:build": "cross-env PUBLIC_URL=\".\" craco build",
     "ipfs:publish": "ipfs-deploy build -p infura -O",
     "test": "NODE_PATH=src/custom craco test --env=jsdom",
@@ -135,6 +135,7 @@
     "compile-contract-types": "yarn compile-external-abi-types",
     "compile-external-abi-types": "typechain --target ethers-v5 --out-dir src/abis/types './src/abis/**/*.json'",
     "compile-v3-contract-types": "typechain --target ethers-v5 --out-dir src/types/v3 './node_modules/@uniswap/?(v3-core|v3-periphery)/artifacts/contracts/**/*.json'",
+    "compile-all-types": "yarn compile-contract-types && yarn compile-v3-contract-types",
     "postinstall": "yarn compile-contract-types",
     "i18n:extract": "lingui extract --locale en-US",
     "i18n:compile": "lingui compile"
