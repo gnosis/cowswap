@@ -10,18 +10,19 @@ export interface ClearQuoteParams {
   chainId: ChainId
 }
 
-export type GetQuoteParams = FeeQuoteParams
-export type RefreshQuoteParams = Pick<GetQuoteParams, 'sellToken' | 'chainId'>
+export type GetQuoteStartParams = FeeQuoteParams
+export type RefreshQuoteParams = Pick<GetQuoteStartParams, 'sellToken' | 'chainId'>
 
 export type QuoteError =
   | 'fetch-quote-error'
   | 'insufficient-liquidity'
   | 'fee-exceeds-sell-amount'
   | 'unsupported-token'
+  | 'offline-browser'
 
-export type SetQuoteErrorParams = UpdateQuoteParams & { error: QuoteError }
+export type SetQuoteErrorParams = UpdateQuoteParams & { error?: QuoteError }
 
-export const getNewQuoteStart = createAction<GetQuoteParams>('price/getNewQuoteStart')
+export const getNewQuoteStart = createAction<GetQuoteStartParams>('price/getNewQuoteStart')
 export const refreshQuoteStart = createAction<RefreshQuoteParams>('price/refreshQuoteStart')
 export const updateQuote = createAction<UpdateQuoteParams>('price/updateQuote')
 export const setQuoteError = createAction<SetQuoteErrorParams>('price/setQuoteError')

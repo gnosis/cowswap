@@ -26,12 +26,13 @@ import { onlyResolvesLast } from 'utils/async'
 import BigNumberJs from 'bignumber.js'
 import { OrderKind } from '@gnosis.pm/gp-v2-contracts'
 import { PRICE_API_TIMEOUT_MS } from 'constants/index'
+import { isOnline } from 'hooks/useIsOnline'
 
 export interface RefetchQuoteCallbackParams {
   quoteParams: FeeQuoteParams
   fetchFee: boolean
   previousFee?: FeeInformation
-  isJustPriceRefresh: boolean
+  isPriceRefresh: boolean
 }
 
 type QuoteResult = [PromiseSettledResult<PriceInformation>, PromiseSettledResult<FeeInformation>]
@@ -214,7 +215,12 @@ function _handleQuoteError({ quoteData, error, addUnsupportedToken }: HandleQuot
       }
     }
   } else {
-    // non-operator error log it
+    // Detect if the error was because we are now offline
+    if (!isOnline()) {
+      return 'offline-browser'
+    }
+
+    // Some other error getting the quote ocurred
     console.error('Error quoting price/fee: ' + error)
     return 'fetch-quote-error'
   }
@@ -241,13 +247,13 @@ export function useRefetchQuoteCallback() {
 
   return useCallback(
     async (params: RefetchQuoteCallbackParams) => {
-      const { quoteParams, isJustPriceRefresh } = params
+      const { quoteParams, isPriceRefresh } = params
       let quoteData: FeeQuoteParams | QuoteInformationObject = quoteParams
 
       const { sellToken, buyToken, chainId } = quoteData
       try {
         // Start action: Either new quote or refreshing quote
-        if (isJustPriceRefresh) {
+        if (isPriceRefresh) {
           // Refresh the quote
           refreshQuoteStart({ sellToken, chainId })
         } else {

@@ -9,7 +9,7 @@ import {
   UpdateQuoteParams,
   ClearQuoteParams,
   getNewQuoteStart,
-  GetQuoteParams as GetQuoteStartParams,
+  GetQuoteStartParams,
   refreshQuoteStart,
   SetQuoteErrorParams,
   setQuoteError,
