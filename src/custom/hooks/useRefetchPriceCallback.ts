@@ -31,7 +31,7 @@ export interface RefetchQuoteCallbackParams {
   quoteParams: FeeQuoteParams
   fetchFee: boolean
   previousFee?: FeeInformation
-  isJustPriceRefresh: boolean
+  isPriceRefresh: boolean
 }
 
 type QuoteResult = [PromiseSettledResult<PriceInformation>, PromiseSettledResult<FeeInformation>]
@@ -241,13 +241,13 @@ export function useRefetchQuoteCallback() {
 
   return useCallback(
     async (params: RefetchQuoteCallbackParams) => {
-      const { quoteParams, isJustPriceRefresh } = params
+      const { quoteParams, isPriceRefresh } = params
       let quoteData: FeeQuoteParams | QuoteInformationObject = quoteParams
 
       const { sellToken, buyToken, chainId } = quoteData
       try {
         // Start action: Either new quote or refreshing quote
-        if (isJustPriceRefresh) {
+        if (isPriceRefresh) {
           // Refresh the quote
           refreshQuoteStart()
         } else {
