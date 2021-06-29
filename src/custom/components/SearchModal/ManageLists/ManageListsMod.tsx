@@ -109,7 +109,6 @@ ListRowProps & { listUrl: string }) {
   const { chainId: connectedChainId } = useActiveWeb3React()
   const chainId = supportedChainId(connectedChainId) ?? DEFAULT_NETWORK_FOR_LISTS
 
-  // const listsByUrl = useAppSelector<AppState, AppState['lists']['byUrl']>(state => state.lists.byUrl)
   const listsByUrl = useAppSelector((state) => state.lists[chainId].byUrl)
   const dispatch = useAppDispatch()
   const { current: list, pendingUpdate: pending } = listsByUrl[listUrl]
