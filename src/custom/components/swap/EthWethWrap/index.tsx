@@ -123,9 +123,7 @@ const ButtonWrapper = styled.div`
 
 const ErrorMessage = ({ error }: { error: Error }) => (
   <ErrorWrapper>
-    <strong>
-      <Trans>{error.message}</Trans>
-    </strong>
+    <strong>{error.message}</strong>
   </ErrorWrapper>
 )
 
