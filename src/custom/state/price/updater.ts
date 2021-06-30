@@ -11,7 +11,7 @@ import { QuoteInformationObject } from './reducer'
 import { useIsUnsupportedTokenGp } from 'state/lists/hooks/hooksMod'
 import useDebounceWithForceUpdate from 'hooks/useDebounceWithForceUpdate'
 import useIsOnline from 'hooks/useIsOnline'
-import { DEFAULT_DECIMALS } from '@src/custom/constants'
+import { DEFAULT_DECIMALS } from 'custom/constants'
 
 const DEBOUNCE_TIME = 350
 const REFETCH_CHECK_INTERVAL = 10000 // Every 10s

@@ -27,6 +27,7 @@ import BigNumberJs from 'bignumber.js'
 import { OrderKind } from '@gnosis.pm/gp-v2-contracts'
 import { PRICE_API_TIMEOUT_MS } from 'constants/index'
 import { isOnline } from 'hooks/useIsOnline'
+import { formatAtoms } from 'utils/format'
 
 export interface RefetchQuoteCallbackParams {
   quoteParams: FeeQuoteParams
@@ -132,6 +133,12 @@ async function _getQuote({ quoteParams, fetchFee, previousFee }: RefetchQuoteCal
       ? getFeeQuote({ chainId, sellToken, buyToken, fromDecimals, toDecimals, amount, kind })
       : Promise.resolve(previousFee)
 
+  // Log fee for debugging
+  feePromise.then(fee => {
+    console.log(`Fee: ${formatAtoms(fee.amount, fromDecimals)} (in atoms ${fee.amount})`)
+    return fee
+  })
+
   // Get a new price quote
   let exchangeAmount
   let feeExceedsPrice = false
@@ -140,6 +147,8 @@ async function _getQuote({ quoteParams, fetchFee, previousFee }: RefetchQuoteCal
     // we need to check for 0/negative exchangeAmount should fee >= amount
     const { amount: fee } = await feePromise
     const result = BigNumber.from(amount).sub(fee)
+    console.log(`Sell amount before fee: ${formatAtoms(amount, fromDecimals)}  (in atoms ${amount})`)
+    console.log(`Sell amount after fee: ${formatAtoms(result.toString(), fromDecimals)}  (in atoms ${result})`)
 
     feeExceedsPrice = result.lte('0')
 
