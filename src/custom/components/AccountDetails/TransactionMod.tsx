@@ -49,7 +49,12 @@ export default function Transaction({ hash }: { hash: string }) {
 
   return (
     <TransactionWrapper>
-      <TransactionState href={getEtherscanLink(chainId, hash, 'transaction')} pending={pending} success={success}>
+      <TransactionState
+        // href={getExplorerLink(chainId, hash, ExplorerDataType.TRANSACTION)}
+        href={getEtherscanLink(chainId, hash, 'transaction')}
+        pending={pending}
+        success={success}
+      >
         <RowFixed>
           <TransactionStatusText>{summary ?? hash} ↗</TransactionStatusText>
         </RowFixed>
