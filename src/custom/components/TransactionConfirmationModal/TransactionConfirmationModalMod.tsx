@@ -120,6 +120,7 @@ export function TransactionSubmittedContent({
               <Text fontWeight={500} fontSize={14} color={theme.primary1}>
                 {/* View on Etherscan */}
                 {/* <Trans>View on Explorer</Trans> */}
+                {/* TODO: add transaltions for this */}
                 <Trans>{getExplorerLabel(chainId, hash, 'transaction')}</Trans>
               </Text>
             </ExternalLink>
