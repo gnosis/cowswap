@@ -4,7 +4,7 @@ import React, { useState, useCallback, ReactNode } from 'react'
 import styled from 'styled-components/macro'
 import { darken } from 'polished'
 import { useCurrencyBalance } from 'state/wallet/hooks'
-import CurrencySearchModal from 'components/SearchModal/CurrencySearchModal'
+import CurrencySearchModalUni from '@src/components/SearchModal/CurrencySearchModal'
 import CurrencyLogo from 'components/CurrencyLogo'
 import DoubleCurrencyLogo from 'components/DoubleLogo'
 // import { ButtonGray } from '../Button'
@@ -21,6 +21,12 @@ import { FiatValue } from 'components/CurrencyInputPanel/FiatValue'
 import { formatCurrencyAmount } from 'utils/formatCurrencyAmount'
 
 import { WithClassName } from 'types'
+
+const CurrencySearchModal = styled(CurrencySearchModalUni)`
+  > [data-reach-dialog-content] {
+    background-color: ${({ theme }) => theme.bg1};
+  }
+`
 
 export const InputPanel = styled.div<{ hideInput?: boolean }>`
   ${({ theme }) => theme.flexColumnNoWrap}

@@ -9,13 +9,6 @@ import usePrevious from 'hooks/usePrevious'
 import Manage from './Manage'
 import { TokenList } from '@uniswap/token-lists'
 import { ImportList } from 'components/SearchModal/ImportList'
-import styled from 'styled-components/macro'
-
-export const GpModal = styled(Modal)`
-  > [data-reach-dialog-content] {
-    background-color: ${({ theme }) => theme.bg1};
-  }
-`
 
 interface CurrencySearchModalProps {
   isOpen: boolean
@@ -24,6 +17,7 @@ interface CurrencySearchModalProps {
   onCurrencySelect: (currency: Currency) => void
   otherSelectedCurrency?: Currency | null
   showCommonBases?: boolean
+  className?: string
 }
 
 export enum CurrencyModalView {
@@ -40,6 +34,7 @@ export default function CurrencySearchModal({
   selectedCurrency,
   otherSelectedCurrency,
   showCommonBases = false,
+  className,
 }: CurrencySearchModalProps) {
   const [modalView, setModalView] = useState<CurrencyModalView>(CurrencyModalView.manage)
   const lastOpen = useLast(isOpen)
@@ -72,7 +67,7 @@ export default function CurrencySearchModal({
   const minHeight = modalView === CurrencyModalView.importToken || modalView === CurrencyModalView.importList ? 40 : 80
 
   return (
-    <GpModal isOpen={isOpen} onDismiss={onDismiss} maxHeight={80} minHeight={minHeight}>
+    <Modal className={className} isOpen={isOpen} onDismiss={onDismiss} maxHeight={80} minHeight={minHeight}>
       {modalView === CurrencyModalView.search ? (
         <CurrencySearch
           isOpen={isOpen}
@@ -108,6 +103,6 @@ export default function CurrencySearchModal({
       ) : (
         ''
       )}
-    </GpModal>
+    </Modal>
   )
 }
