@@ -123,13 +123,13 @@ async function _getBestPriceQuote(params: PriceQuoteParams): Promise<PriceInform
 }
 
 async function _getQuote({ quoteParams, fetchFee, previousFee }: RefetchQuoteCallbackParams): Promise<QuoteResult> {
-  const { sellToken, buyToken, amount, kind, chainId } = quoteParams
+  const { sellToken, buyToken, fromDecimals, toDecimals, amount, kind, chainId } = quoteParams
   const { baseToken, quoteToken } = getCanonicalMarket({ sellToken, buyToken, kind })
 
   // Get a new fee quote (if required)
   const feePromise =
     fetchFee || !previousFee
-      ? getFeeQuote({ chainId, sellToken, buyToken, amount, kind })
+      ? getFeeQuote({ chainId, sellToken, buyToken, fromDecimals, toDecimals, amount, kind })
       : Promise.resolve(previousFee)
 
   // Get a new price quote
@@ -152,7 +152,7 @@ async function _getQuote({ quoteParams, fetchFee, previousFee }: RefetchQuoteCal
   // Get price for price estimation
   const pricePromise =
     !feeExceedsPrice && exchangeAmount
-      ? _getBestPriceQuote({ chainId, baseToken, quoteToken, amount: exchangeAmount, kind })
+      ? _getBestPriceQuote({ chainId, baseToken, quoteToken, fromDecimals, toDecimals, amount: exchangeAmount, kind })
       : // fee exceeds our price, is invalid
         Promise.reject(
           new OperatorError({
