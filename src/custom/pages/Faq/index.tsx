@@ -453,8 +453,8 @@ export default function Faq() {
             <li>
               <p>
                 <strong>Approve token</strong> <br />
-                One-time-only, required step for being able to sell a token. Afterwards, you will be able
-                to trade the token using gasless transactions.
+                One-time-only, required step for being able to sell a token. Afterwards, you will be able to trade the
+                token using gasless transactions.
               </p>
             </li>
             <li>
@@ -467,7 +467,8 @@ export default function Faq() {
             <li>
               <p>
                 <strong>Unwrap ETH</strong> <br />
-                Convert ERC20 compatible token WETH back into native ETH. Only when you want to manually convert it to ETH.
+                Convert ERC20 compatible token WETH back into native ETH. Only when you want to manually convert it to
+                ETH.
               </p>
             </li>
             <li>

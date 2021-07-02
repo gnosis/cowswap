@@ -76,17 +76,17 @@ export function getCanonicalMarket<T>({ sellToken, buyToken, kind }: CanonicalMa
 export function getTokensFromMarket<T>({
   quoteToken,
   baseToken,
-  kind
+  kind,
 }: TokensFromMarketParams<T>): Omit<CanonicalMarketParams<T>, 'kind'> {
   if (kind === 'sell') {
     return {
       sellToken: baseToken,
-      buyToken: quoteToken
+      buyToken: quoteToken,
     }
   } else {
     return {
       buyToken: baseToken,
-      sellToken: quoteToken
+      sellToken: quoteToken,
     }
   }
 }

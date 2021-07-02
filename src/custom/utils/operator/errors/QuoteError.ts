@@ -24,7 +24,7 @@ export function mapOperatorErrorToQuoteError(errorType?: ApiErrorCodes): GpQuote
     case ApiErrorCodes.NotFound:
       return {
         errorType: GpQuoteErrorCodes.InsufficientLiquidity,
-        description: GpQuoteErrorDetails.InsufficientLiquidity
+        description: GpQuoteErrorDetails.InsufficientLiquidity,
       }
     default:
       return { errorType: GpQuoteErrorCodes.UNHANDLED_ERROR, description: GpQuoteErrorDetails.UNHANDLED_ERROR }
