@@ -3,7 +3,7 @@ import { ParaSwap, SwapSide, NetworkID } from 'paraswap'
 import { toErc20Address } from 'utils/tokens'
 import { PriceQuoteParams } from 'utils/operator'
 import { OptimalRatesWithPartnerFees, APIError, RateOptions } from 'paraswap/build/types'
-import { ChainId } from '@uniswap/sdk'
+import { SupportedChainId as ChainId } from 'constants/chains'
 import { PriceInformation } from 'state/price/reducer'
 import { getTokensFromMarket } from './misc'
 
