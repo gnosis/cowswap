@@ -6,9 +6,9 @@ import React, { useContext, useMemo, useState } from 'react'
 import { Text } from 'rebass'
 import { ButtonError } from 'components/Button'
 import { AutoRow, RowBetween, RowFixed } from 'components/Row'
-import { SwapCallbackError, StyledBalanceMaxMini } from 'components/swap/styleds'
+import { SwapCallbackError, StyledBalanceMaxMini as StyledBalanceMaxMiniUni } from 'components/swap/styleds'
 import { Repeat } from 'react-feather'
-import { ThemeContext } from 'styled-components'
+import styled, { ThemeContext } from 'styled-components'
 import { Field } from 'state/swap/actions'
 import { TYPE } from 'theme'
 import { computeSlippageAdjustedAmounts, formatExecutionPrice } from 'utils/prices'
@@ -17,6 +17,11 @@ import QuestionHelper from 'components/QuestionHelper'
 import TradeGp from 'state/swap/TradeGp'
 import { DEFAULT_PRECISION, SHORT_PRECISION } from 'constants/index'
 import { getMinimumReceivedTooltip } from 'utils/tooltips'
+
+const StyledBalanceMaxMini = styled(StyledBalanceMaxMiniUni)`
+  margin-right: 0;
+  margin-left: 0.5rem;
+`
 
 export interface SwapModalFooterProps {
   trade: TradeGp
