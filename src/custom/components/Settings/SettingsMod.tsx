@@ -114,7 +114,7 @@ export const ModalContentWrapper = styled.div`
   border-radius: 20px;
 `
 
-export default function SettingsTab({ className, placeholderSlippage }: SettingsTabProp) {
+export default function SettingsTab({ className, placeholderSlippage, SettingsButton }: SettingsTabProp) {
   const node = useRef<HTMLDivElement>()
   const open = useModalOpen(ApplicationModal.SETTINGS)
   const toggle = useToggleSettingsMenu()
@@ -173,18 +173,17 @@ export default function SettingsTab({ className, placeholderSlippage }: Settings
           </AutoColumn>
         </ModalContentWrapper>
       </Modal>
-      {/* 
-      <StyledMenuButton onClick={toggle} id="open-settings-dialog-button">
+      <SettingsButton expertMode={expertMode} toggleSettings={toggle} />
+      {/* <StyledMenuButton onClick={toggle} id="open-settings-dialog-button">
         <StyledMenuIcon />
         {expertMode ? (
           <EmojiWrapper>
             <span role="img" aria-label="wizard-icon">
-              🐮
+              🧙
             </span>
           </EmojiWrapper>
         ) : null}
-      </StyledMenuButton> 
-      */}
+      </StyledMenuButton> */}
       {open && (
         <MenuFlyout>
           <AutoColumn gap="md" style={{ padding: '1rem' }}>

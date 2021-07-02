@@ -4,9 +4,9 @@ import styled from 'styled-components'
 import { RowFixed } from 'components/Row'
 import SettingsMod, { StyledMenuButton, MenuFlyout, StyledMenuIcon, EmojiWrapper } from './SettingsMod'
 import { Percent } from '@uniswap/sdk-core'
-import { INITIAL_ALLOWED_SLIPPAGE_PERCENT } from 'constants/index'
+// import { INITIAL_ALLOWED_SLIPPAGE_PERCENT } from 'constants/index'
 
-const Wrapper = styled(SettingsMod)`
+const Settings = styled(SettingsMod)`
   ${MenuFlyout} {
     box-shadow: 0px 0px 0px rgb(0 0 0 / 1%), 0px 4px 8px rgb(0 0 0 / 0%), 0px 16px 24px rgb(0 0 0 / 60%),
       0px 24px 32px rgb(0 0 0 / 20%);
@@ -136,6 +136,6 @@ function SettingsButton({ toggleSettings, expertMode }: SettingsButtonProps) {
   )
 }
 
-export default function SettingsTab() {
-  return <Wrapper SettingsButton={SettingsButton} placeholderSlippage={INITIAL_ALLOWED_SLIPPAGE_PERCENT} />
+export default function SettingsTab(props: Omit<SettingsTabProp, 'SettingsButton'>) {
+  return <Settings {...props} SettingsButton={SettingsButton} />
 }
