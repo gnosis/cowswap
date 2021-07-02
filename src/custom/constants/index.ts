@@ -14,6 +14,7 @@ export const INITIAL_ALLOWED_SLIPPAGE_PERCENT = new Percent(JSBI.BigInt(INITIAL_
 export const RADIX_DECIMAL = 10
 export const RADIX_HEX = 16
 
+export const DEFAULT_DECIMALS = 18
 export const DEFAULT_PRECISION = 6
 export const SHORT_PRECISION = 4
 export const SHORTEST_PRECISION = 3
@@ -68,6 +69,9 @@ export const BUY_ETHER_TOKEN: { [chainId in ChainId]: Token } = {
 export const ORDER_ID_SHORT_LENGTH = 8
 export const INPUT_OUTPUT_EXPLANATION = 'Only executed swaps incur fees.'
 export const DEFAULT_ORDER_DELAY = 20000 // 20s
+export const PENDING_ORDERS_BUFFER = 60 * 1000 // 60s
+export const CANCELLED_ORDERS_PENDING_TIME = 5 * 60 * 1000 // 5min
+export const PRICE_API_TIMEOUT_MS = 10000 // 10s
 export const EXPIRED_ORDERS_BUFFER = 45 * 1000 // 45s
 export const CHECK_EXPIRED_ORDERS_INTERVAL = 10000 // 10 sec
 

@@ -2,11 +2,12 @@ import DEFAULT_TOKEN_LIST from '@uniswap/default-token-list'
 import { TokenList } from '@uniswap/token-lists'
 import { useCallback, useMemo } from 'react'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
+import { TokenAddressMap, combineMaps } from '@src/state/lists/hooks'
 import sortByListPriority from 'utils/listSort'
 import UNSUPPORTED_TOKEN_LIST from 'constants/tokenLists/uniswap-v2-unsupported.tokenlist.json'
 import { DEFAULT_NETWORK_FOR_LISTS, UNSUPPORTED_LIST_URLS } from 'constants/lists'
+import { WrappedTokenInfo } from 'state/lists/wrappedTokenInfo'
 import { useActiveWeb3React } from 'hooks/web3'
-import { TokenAddressMap, listToTokenMap, combineMaps } from '@src/state/lists/hooks'
 import {
   addGpUnsupportedToken,
   AddGpUnsupportedTokenParams,
@@ -16,7 +17,7 @@ import {
 import { UnsupportedToken } from 'utils/operator'
 import { isAddress } from 'utils'
 import { SupportedChainId as ChainId } from 'constants/chains'
-import { supportedChainId } from '@src/custom/utils/supportedChainId'
+import { supportedChainId } from 'utils/supportedChainId'
 
 /* type TagDetails = Tags[keyof Tags]
 export interface TagInfo extends TagDetails {
@@ -36,33 +37,94 @@ export const EMPTY_LIST: TokenAddressMap = {
   [ChainId.XDAI]: {},
 }
 
-/* const listCache: WeakMap<TokenList, TokenAddressMap> | null =
+// type TagDetails = Tags[keyof Tags]
+// export interface TagInfo extends TagDetails {
+//   id: string
+// }
+
+// /**
+//  * Token instances created from token info.
+//  */
+// export class WrappedTokenInfo extends Token {
+//   public readonly tokenInfo: TokenInfo
+//   public readonly tags: TagInfo[]
+//   constructor(tokenInfo: TokenInfo, tags: TagInfo[]) {
+//     super(tokenInfo.chainId, tokenInfo.address, tokenInfo.decimals, tokenInfo.symbol, tokenInfo.name)
+//     this.tokenInfo = tokenInfo
+//     this.tags = tags
+//   }
+//   public get logoURI(): string | undefined {
+//     return this.tokenInfo.logoURI
+//   }
+// }
+
+// export type TokenAddressMap = Readonly<
+//   { [chainId in ChainId]: Readonly<{ [tokenAddress: string]: { token: WrappedTokenInfo; list: TokenList } }> }
+// >
+
+// /**
+//  * An empty result, useful as a default.
+//  */
+// export const EMPTY_LIST: TokenAddressMap = {
+//   [ChainId.KOVAN]: {},
+//   [ChainId.RINKEBY]: {},
+//   [ChainId.ROPSTEN]: {},
+//   [ChainId.GÖRLI]: {},
+//   [ChainId.MAINNET]: {},
+//   [ChainId.XDAI]: {}
+// }
+
+const listCache: WeakMap<TokenList, TokenAddressMap> | null =
   typeof WeakMap !== 'undefined' ? new WeakMap<TokenList, TokenAddressMap>() : null
 
 export function listToTokenMap(list: TokenList): TokenAddressMap {
   const result = listCache?.get(list)
   if (result) return result
 
+  /*
+    const map = list.tokens.reduce<TokenAddressMap>((tokenMap, tokenInfo) => {
+        const token = new WrappedTokenInfo(tokenInfo, list)
+        if (tokenMap[token.chainId]?.[token.address] !== undefined) {
+          console.error(new Error(`Duplicate token! ${token.address}`))
+          return tokenMap
+        }
+        return {
+          ...tokenMap,
+          [token.chainId]: {
+            ...tokenMap[token.chainId],
+            [token.address]: {
+              token,
+              list
+            }
+          }
+        }
+      }, {})
+      listCache?.set(list, map)
+      return map
+    } 
+*/
+
   const map = list.tokens.reduce<TokenAddressMap>((tokenMap, tokenInfo) => {
     const token = new WrappedTokenInfo(tokenInfo, list)
-    if (tokenMap[token.chainId]?.[token.address] !== undefined) {
+    const tokensByNetwork = tokenMap[token.chainId] || {}
+    if (tokensByNetwork[token.address] !== undefined) {
       console.error(new Error(`Duplicate token! ${token.address}`))
       return tokenMap
     }
     return {
       ...tokenMap,
       [token.chainId]: {
-        ...tokenMap[token.chainId],
+        ...tokensByNetwork,
         [token.address]: {
           token,
-          list
-        }
-      }
+          list: list,
+        },
+      },
     }
   }, {})
   listCache?.set(list, map)
   return map
-} */
+}
 
 export function useAllLists(): {
   readonly [url: string]: {

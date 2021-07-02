@@ -67,7 +67,6 @@ import FeeInformationTooltip from 'components/swap/FeeInformationTooltip'
 import { useWalletInfo } from 'hooks/useWalletInfo'
 import { HashLink } from 'react-router-hash-link'
 import { logTradeDetails } from 'state/swap/utils'
-import { isFeeGreaterThanPriceError, isInsufficientLiquidityError, isUnhandledQuoteError } from 'state/price/utils'
 import { useGetQuoteAndStatus } from 'state/price/hooks'
 import { SwapProps } from '.'
 import TradeGp from 'state/swap/TradeGp'
@@ -434,6 +433,14 @@ export default function Swap({
   )
 
   const swapBlankState = !swapInputError && !trade
+  let amountBeforeFees: string | undefined
+  if (trade) {
+    if (trade.tradeType === TradeType.EXACT_INPUT && trade.inputAmountWithFee.lessThan(trade.fee.amount)) {
+      amountBeforeFees = '0'
+    } else {
+      amountBeforeFees = trade.inputAmountWithFee.subtract(trade.fee.feeAsCurrency).toSignificant(DEFAULT_PRECISION)
+    }
+  }
 
   return (
     <>
@@ -471,9 +478,7 @@ export default function Swap({
                     label={exactInLabel}
                     trade={trade}
                     showHelper={independentField === Field.OUTPUT}
-                    amountBeforeFees={trade?.inputAmountWithFee
-                      .subtract(trade.fee.feeAsCurrency)
-                      .toSignificant(DEFAULT_PRECISION)}
+                    amountBeforeFees={amountBeforeFees}
                     amountAfterFees={trade?.inputAmountWithFee.toSignificant(DEFAULT_PRECISION)}
                     type="From"
                     feeAmount={trade?.fee?.feeAsCurrency?.toSignificant(DEFAULT_PRECISION)}
@@ -678,8 +683,8 @@ export default function Swap({
                 </TYPE.main>
               </ButtonPrimary>
             ) : !account ? (
-              <ButtonLight onClick={toggleWalletModal} buttonSize={ButtonSize.BIG}>
-                <Trans>Connect Wallet</Trans>
+              <ButtonLight buttonSize={ButtonSize.BIG} onClick={toggleWalletModal}>
+                <SwapButton showLoading={swapBlankState || isGettingNewQuote}>Connect Wallet</SwapButton>
               </ButtonLight>
             ) : !isSupportedWallet ? (
               <ButtonError buttonSize={ButtonSize.BIG} id="swap-button" disabled={!isSupportedWallet}>
@@ -698,9 +703,9 @@ export default function Swap({
               </ButtonPrimary>
             ) : !swapInputError && isNativeIn ? (
               <SwitchToWethBtn wrappedToken={wrappedToken} />
-            ) : isFeeGreaterThanPriceError(quote?.error) ? (
+            ) : quote?.error === 'fee-exceeds-sell-amount' ? (
               <FeesExceedFromAmountMessage />
-            ) : isInsufficientLiquidityError(quote?.error) ? (
+            ) : quote?.error === 'insufficient-liquidity' ? (
               // ) : noRoute && userHasSpecifiedInputOutput ? (
               <GreyCard style={{ textAlign: 'center' }}>
                 <TYPE.main mb="4px">
@@ -708,11 +713,15 @@ export default function Swap({
                 </TYPE.main>
                 {/* {singleHopOnly && <TYPE.main mb="4px">Try enabling multi-hop trades.</TYPE.main>} */}
               </GreyCard>
-            ) : isUnhandledQuoteError(quote?.error) ? (
+            ) : quote?.error === 'fetch-quote-error' ? (
               <GreyCard style={{ textAlign: 'center' }}>
                 <TYPE.main mb="4px">
                   <Trans>Error loading quote. Try again later.</Trans>
                 </TYPE.main>
+              </GreyCard>
+            ) : quote?.error === 'offline-browser' ? (
+              <GreyCard style={{ textAlign: 'center' }}>
+                <TYPE.main mb="4px">Error loading quote. You are currently offline.</TYPE.main>
               </GreyCard>
             ) : showApproveFlow ? (
               <AutoRow style={{ flexWrap: 'nowrap', width: '100%' }}>

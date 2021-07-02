@@ -1,9 +1,10 @@
 import { useMemo } from 'react'
 import { isTransactionRecent, useAllTransactions } from 'state/transactions/hooks'
-import { useAllOrders, useOrders } from 'state/orders/hooks'
+import { useOrder, useOrders } from 'state/orders/hooks'
 import { useActiveWeb3React } from 'hooks/web3'
 import { Order, OrderStatus } from 'state/orders/actions'
 import { TransactionDetails } from 'state/transactions/reducer'
+import { SupportedChainId as ChainId } from 'constants/chains'
 
 export type TransactionAndOrder =
   | (Order & { addedTime: number })
@@ -21,6 +22,7 @@ export enum ActivityStatus {
   PENDING,
   CONFIRMED,
   EXPIRED,
+  CANCELLING,
   CANCELLED,
 }
 
@@ -101,25 +103,25 @@ interface ActivityDescriptors {
   type: ActivityType
 }
 
-export function useActivityDescriptors({ chainId, id }: { chainId?: number; id: string }): ActivityDescriptors | null {
+export function useActivityDescriptors({ chainId, id }: { chainId?: ChainId; id: string }): ActivityDescriptors | null {
   const allTransactions = useAllTransactions()
-  const allOrders = useAllOrders({ chainId })
+  const order = useOrder({ id, chainId })
 
   const tx = allTransactions?.[id]
-  const order = allOrders?.[id]?.order
 
   return useMemo(() => {
     if ((!tx && !order) || !chainId) return null
 
     let activity: TransactionDetails | Order, type: ActivityType
 
-    let isPending: boolean, isConfirmed: boolean, isCancelled: boolean
+    let isPending: boolean, isConfirmed: boolean, isCancelling: boolean, isCancelled: boolean
 
     if (!tx && order) {
       // We're dealing with an ORDER
       // setup variables accordingly...
       isPending = order?.status === OrderStatus.PENDING
       isConfirmed = !isPending && order?.status === OrderStatus.FULFILLED
+      isCancelling = (order.isCancelling || false) && isPending
       isCancelled = !isConfirmed && order?.status === OrderStatus.CANCELLED
 
       activity = order
@@ -132,19 +134,26 @@ export function useActivityDescriptors({ chainId, id }: { chainId?: number; id: 
       isPending = !tx?.receipt
       isConfirmed = !isPending && isReceiptConfirmed
       // TODO: can't tell when it's cancelled from the network yet
+      isCancelling = false
       isCancelled = false
 
       activity = tx
       type = ActivityType.TX
     }
 
-    const status = isPending
-      ? ActivityStatus.PENDING
-      : isConfirmed
-      ? ActivityStatus.CONFIRMED
-      : isCancelled
-      ? ActivityStatus.CANCELLED
-      : ActivityStatus.EXPIRED
+    let status
+
+    if (isCancelling) {
+      status = ActivityStatus.CANCELLING
+    } else if (isPending) {
+      status = ActivityStatus.PENDING
+    } else if (isConfirmed) {
+      status = ActivityStatus.CONFIRMED
+    } else if (isCancelled) {
+      status = ActivityStatus.CANCELLED
+    } else {
+      status = ActivityStatus.EXPIRED
+    }
     const summary = activity.summary
 
     return {

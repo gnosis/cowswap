@@ -1,17 +1,17 @@
-import { ExtendedEther as ETHER, WETH9_EXTENDED as WETH } from 'constants/tokens'
 import { SupportedChainId as ChainId } from 'constants/chains'
-import { getSigningSchemeApiValue, OrderCancellation, OrderCreation } from 'utils/signatures'
+import { getSigningSchemeApiValue, OrderCreation, OrderCancellation } from 'utils/signatures'
 import { APP_ID } from 'constants/index'
 import { registerOnWindow } from '../misc'
 import { isDev } from '../environments'
 import { FeeInformation, PriceInformation } from 'state/price/reducer'
 import OperatorError, { ApiErrorCodeDetails, ApiErrorCodes, ApiErrorObject } from 'utils/operator/errors/OperatorError'
 import QuoteError, {
+  GpQuoteErrorCodes,
+  GpQuoteErrorObject,
   mapOperatorErrorToQuoteError,
-  QuoteErrorCodes,
-  QuoteErrorDetails,
-  QuoteErrorObject,
+  GpQuoteErrorDetails,
 } from 'utils/operator/errors/QuoteError'
+import { toErc20Address } from 'utils/tokens'
 
 function getOperatorUrl(): Partial<Record<ChainId, string>> {
   if (isDev) {
@@ -164,37 +164,23 @@ export async function sendSignedOrderCancellation(params: OrderCancellationParam
   console.log('[utils:operator] Cancelled order', cancellation.orderUid, chainId)
 }
 
-function checkIfEther(tokenAddress: string, chainId: ChainId) {
-  let checkedAddress = tokenAddress
-  if (tokenAddress === ETHER.onChain(chainId).symbol) {
-    checkedAddress = WETH[chainId].address
-  }
-
-  return checkedAddress
-}
-
 export type FeeQuoteParams = Pick<OrderMetaData, 'sellToken' | 'buyToken' | 'kind'> & {
   amount: string
   chainId: ChainId
+  fromDecimals: number
+  toDecimals: number
 }
 
 export type PriceQuoteParams = Omit<FeeQuoteParams, 'sellToken' | 'buyToken'> & {
   baseToken: string
   quoteToken: string
+  fromDecimals: number
+  toDecimals: number
 }
 
-function toApiAddress(address: string, chainId: ChainId): string {
-  if (address === 'ETH') {
-    // TODO: Return magical address
-    return WETH[chainId].address
-  }
-
-  return address
-}
-
-const UNHANDLED_QUOTE_ERROR: QuoteErrorObject = {
-  errorType: QuoteErrorCodes.UNHANDLED_ERROR,
-  description: QuoteErrorDetails.UNHANDLED_ERROR,
+const UNHANDLED_QUOTE_ERROR: GpQuoteErrorObject = {
+  errorType: GpQuoteErrorCodes.UNHANDLED_ERROR,
+  description: GpQuoteErrorDetails.UNHANDLED_ERROR,
 }
 
 const UNHANDLED_ORDER_ERROR: ApiErrorObject = {
@@ -217,12 +203,11 @@ async function _handleQuoteResponse(response: Response) {
 
 export async function getPriceQuote(params: PriceQuoteParams): Promise<PriceInformation> {
   const { baseToken, quoteToken, amount, kind, chainId } = params
-  const [checkedBaseToken, checkedQuoteToken] = [checkIfEther(baseToken, chainId), checkIfEther(quoteToken, chainId)]
   console.log('[util:operator] Get price from API', params)
 
   const response = await _get(
     chainId,
-    `/markets/${toApiAddress(checkedBaseToken, chainId)}-${toApiAddress(checkedQuoteToken, chainId)}/${kind}/${amount}`
+    `/markets/${toErc20Address(baseToken, chainId)}-${toErc20Address(quoteToken, chainId)}/${kind}/${amount}`
   ).catch((error) => {
     console.error('Error getting price quote:', error)
     throw new QuoteError(UNHANDLED_QUOTE_ERROR)
@@ -233,13 +218,12 @@ export async function getPriceQuote(params: PriceQuoteParams): Promise<PriceInfo
 
 export async function getFeeQuote(params: FeeQuoteParams): Promise<FeeInformation> {
   const { sellToken, buyToken, amount, kind, chainId } = params
-  const [checkedSellAddress, checkedBuyAddress] = [checkIfEther(sellToken, chainId), checkIfEther(buyToken, chainId)]
   console.log('[util:operator] Get fee from API', params)
 
   const response = await _get(
     chainId,
-    `/fee?sellToken=${toApiAddress(checkedSellAddress, chainId)}&buyToken=${toApiAddress(
-      checkedBuyAddress,
+    `/fee?sellToken=${toErc20Address(sellToken, chainId)}&buyToken=${toErc20Address(
+      buyToken,
       chainId
     )}&amount=${amount}&kind=${kind}`
   ).catch((error) => {

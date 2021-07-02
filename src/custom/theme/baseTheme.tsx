@@ -55,6 +55,10 @@ export function colors(darkMode: boolean): Colors {
     textLink: darkMode ? '#ffffff' : '#AE2C00',
     shimmer1: darkMode ? 'rgb(22 56 97 / 20%)' : 'rgb(175 203 218 / 20%)',
     shimmer2: darkMode ? 'rgb(22 56 97 / 50%)' : 'rgb(175 203 218 / 40%)',
+
+    // table styles
+    tableHeadBG: darkMode ? '#021E34' : 'rgb(2 30 52 / 15%)',
+    tableRowBG: darkMode ? 'rgb(0 30 52 / 60%)' : '#ffffff',
   }
 }
 
