@@ -22,7 +22,7 @@ import { formatCurrencyAmount } from 'utils/formatCurrencyAmount'
 
 import { WithClassName } from 'types'
 
-const CurrencySearchModal = styled(CurrencySearchModalUni)`
+export const CurrencySearchModal = styled(CurrencySearchModalUni)`
   > [data-reach-dialog-content] {
     background-color: ${({ theme }) => theme.bg1};
   }
