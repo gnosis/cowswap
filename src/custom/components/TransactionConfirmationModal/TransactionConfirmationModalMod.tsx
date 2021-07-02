@@ -18,6 +18,7 @@ import { Trans } from '@lingui/macro'
 // MOD
 import { getEtherscanLink, getExplorerLabel } from 'utils'
 import { GpModal } from 'components/WalletModal/WalletModalMod'
+import { lighten } from 'polished'
 
 const Wrapper = styled.div`
   width: 100%;
@@ -72,7 +73,7 @@ export function ConfirmationPendingContent({
               {pendingText}
             </Text>
           </AutoColumn>
-          <Text fontSize={12} color="#565A69" textAlign="center" marginBottom={12}>
+          <Text fontSize={12} color={lighten(0.2, '#565A69')} textAlign="center" marginBottom={12}>
             <Trans>Confirm this transaction in your wallet</Trans>
           </Text>
         </AutoColumn>
