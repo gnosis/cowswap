@@ -18,7 +18,7 @@ import { TruncatedText, SwapShowAcceptChanges } from 'components/swap/styleds'
 import { Trans } from '@lingui/macro'
 
 import { AdvancedSwapDetails } from 'components/swap/AdvancedSwapDetails'
-import { LightCard } from 'components/Card'
+import { LightCard as LightCardUni } from 'components/Card'
 
 import TradePrice from 'components/swap/TradePrice'
 
@@ -27,6 +27,13 @@ import TradeGp from 'state/swap/TradeGp'
 import { INPUT_OUTPUT_EXPLANATION } from 'constants/index'
 import { computeSlippageAdjustedAmounts } from 'utils/prices'
 import { Field } from 'state/swap/actions'
+import { darken } from 'polished'
+
+// MOD
+const LightCard = styled(LightCardUni)`
+  background-color: ${({ theme }) => darken(0.06, theme.bg1)};
+  border: 2px solid ${({ theme }) => theme.bg0};
+`
 
 export const ArrowWrapper = styled.div`
   padding: 4px;
@@ -41,7 +48,7 @@ export const ArrowWrapper = styled.div`
   justify-content: center;
   align-items: center;
   background-color: ${({ theme }) => theme.bg1};
-  border: 4px solid;
+  border: 2px solid;
   border-color: ${({ theme }) => theme.bg0};
   z-index: 2;
 `

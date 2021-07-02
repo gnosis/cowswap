@@ -23,7 +23,7 @@ import Option from 'components/WalletModal/Option'
 import PendingView from 'components/WalletModal/PendingView'
 import { LightCard } from 'components/Card'
 
-const GpModal = styled(Modal)`
+export const GpModal = styled(Modal)`
   > [data-reach-dialog-content] {
     background-color: ${({ theme }) => theme.bg1};
   }

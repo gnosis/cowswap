@@ -2,7 +2,7 @@ import { Currency } from '@uniswap/sdk-core'
 import React, { ReactNode, useContext } from 'react'
 import styled, { ThemeContext } from 'styled-components'
 // import { getExplorerLink, ExplorerDataType } from '../../utils/getExplorerLink'
-import Modal from 'components/Modal'
+// import Modal from 'components/Modal'
 import { ExternalLink } from 'theme'
 import { Text } from 'rebass'
 import { CloseIcon, CustomLightSpinner } from 'theme'
@@ -17,9 +17,11 @@ import useAddTokenToMetamask from 'hooks/useAddTokenToMetamask'
 import { Trans } from '@lingui/macro'
 // MOD
 import { getEtherscanLink, getExplorerLabel } from 'utils'
+import { GpModal } from 'components/WalletModal/WalletModalMod'
 
 const Wrapper = styled.div`
   width: 100%;
+  padding: 1rem;
 `
 const Section = styled(AutoColumn)<{ inline?: boolean }>`
   padding: ${({ inline }) => (inline ? '0' : '0')};
@@ -236,7 +238,7 @@ export default function TransactionConfirmationModal({
 
   // confirmation screen
   return (
-    <Modal isOpen={isOpen} onDismiss={onDismiss} maxHeight={90}>
+    <GpModal isOpen={isOpen} onDismiss={onDismiss} maxHeight={90}>
       {attemptingTxn ? (
         <ConfirmationPendingContent onDismiss={onDismiss} pendingText={pendingText} />
       ) : hash ? (
@@ -249,6 +251,6 @@ export default function TransactionConfirmationModal({
       ) : (
         content()
       )}
-    </Modal>
+    </GpModal>
   )
 }

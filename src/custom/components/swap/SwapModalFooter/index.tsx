@@ -13,7 +13,7 @@ const Wrapper = styled.div`
 
   ${RowBetween} > div,
   ${RowFixed} > div {
-    color: ${({ theme }) => theme.text2};
+    color: ${({ theme }) => theme.text1};
   }
 `
 
