@@ -9,7 +9,7 @@ import { darken, transparentize } from 'polished'
 // MOD
 const LightCard = styled(LightCardUni)`
   background-color: ${({ theme }) => darken(0.06, theme.bg1)};
-  border: 2px solid ${({ theme }) => transparentize(0.7, theme.bg0)};
+  border: 2px solid ${({ theme }) => transparentize(0.5, theme.bg0)};
 `
 
 const Wrapper = styled.div`
