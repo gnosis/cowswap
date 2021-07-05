@@ -24,7 +24,7 @@ import { /* Row, */ AutoRow, RowBetween /* RowFixed */ } from 'components/Row'
 import confirmPriceImpactWithoutFee from 'components/swap/confirmPriceImpactWithoutFee'
 import ConfirmSwapModal from 'components/swap/ConfirmSwapModal'
 
-import { ArrowWrapper /* BottomGrouping, Dots, */, SwapCallbackError, Wrapper } from 'components/swap/styleds'
+import { /* ArrowWrapper, BottomGrouping, Dots, */ SwapCallbackError, Wrapper } from 'components/swap/styleds'
 import SwapHeader from 'components/swap/SwapHeader'
 import TradePrice from 'components/swap/TradePrice'
 import { SwitchLocaleLink } from 'components/SwitchLocaleLink'
