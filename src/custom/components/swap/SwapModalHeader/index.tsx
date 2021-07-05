@@ -4,12 +4,12 @@ import SwapModalHeaderMod, { SwapModalHeaderProps } from './SwapModalHeaderMod'
 import { AutoColumn } from 'components/Column'
 import styled from 'styled-components'
 import { LightCard as LightCardUni } from 'components/Card'
-import { darken } from 'polished'
+import { darken, transparentize } from 'polished'
 
 // MOD
 const LightCard = styled(LightCardUni)`
   background-color: ${({ theme }) => darken(0.06, theme.bg1)};
-  border: 2px solid ${({ theme }) => theme.bg0};
+  border: 2px solid ${({ theme }) => transparentize(0.7, theme.bg0)};
 `
 
 const Wrapper = styled.div`
