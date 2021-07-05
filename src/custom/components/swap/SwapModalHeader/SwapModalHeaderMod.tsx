@@ -18,7 +18,6 @@ import { TruncatedText, SwapShowAcceptChanges } from 'components/swap/styleds'
 import { Trans } from '@lingui/macro'
 
 import { AdvancedSwapDetails } from 'components/swap/AdvancedSwapDetails'
-import { LightCard as LightCardUni } from 'components/Card'
 
 import TradePrice from 'components/swap/TradePrice'
 
@@ -27,13 +26,7 @@ import TradeGp from 'state/swap/TradeGp'
 import { INPUT_OUTPUT_EXPLANATION } from 'constants/index'
 import { computeSlippageAdjustedAmounts } from 'utils/prices'
 import { Field } from 'state/swap/actions'
-import { darken } from 'polished'
-
-// MOD
-const LightCard = styled(LightCardUni)`
-  background-color: ${({ theme }) => darken(0.06, theme.bg1)};
-  border: 2px solid ${({ theme }) => theme.bg0};
-`
+import { LightCard } from 'components/Card'
 
 export const ArrowWrapper = styled.div`
   padding: 4px;
@@ -61,6 +54,7 @@ export interface SwapModalHeaderProps {
   showAcceptChanges: boolean
   priceImpactWithoutFee?: Percent
   onAcceptChanges: () => void
+  LightCard: typeof LightCard
 }
 
 export default function SwapModalHeader({
@@ -69,6 +63,7 @@ export default function SwapModalHeader({
   recipient,
   showAcceptChanges,
   onAcceptChanges,
+  LightCard,
 }: /* 
 {
   trade: V2Trade<Currency, Currency, TradeType> | V3Trade<Currency, Currency, TradeType>
