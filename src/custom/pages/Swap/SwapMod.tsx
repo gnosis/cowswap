@@ -504,7 +504,7 @@ export default function Swap({
               </ArrowWrapper>
               */}
               {/* GP ARROW SWITCHER */}
-              <AutoColumn justify="space-between" style={{ margin: '3px 0' }}>
+              <AutoColumn justify="space-between" style={{ margin: `${isExpertMode ? 10 : 3}px 0` }}>
                 <AutoRow
                   justify={isExpertMode ? 'space-between' : 'center'}
                   // style={{ padding: '0 1rem' }}
@@ -549,9 +549,7 @@ export default function Swap({
             {recipient !== null && !showWrap ? (
               <>
                 <AutoRow justify="space-between" style={{ padding: '0 1rem' }}>
-                  <ArrowWrapper clickable={false}>
-                    <ArrowDown size="16" color={theme.text2} />
-                  </ArrowWrapper>
+                  <ArrowDown size="16" color={theme.text2} />
                   <LinkStyledButton id="remove-recipient-button" onClick={() => onChangeRecipient(null)}>
                     <Trans>- Remove send</Trans>
                   </LinkStyledButton>
