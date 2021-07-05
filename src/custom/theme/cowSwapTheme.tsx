@@ -227,7 +227,7 @@ export const ThemedGlobalStyle = createGlobalStyle`
 
   // START - Modal overrides
   ${HeaderText} {
-    color: ${({ theme }) => theme.text2};
+    color: ${({ theme }) => theme.text1};
   }
 
   ${ModalContentWrapper} {

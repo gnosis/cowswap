@@ -18,16 +18,9 @@ import { useModalOpen, useWalletModalToggle } from 'state/application/hooks'
 import AccountDetails from 'components/AccountDetails'
 import { Trans } from '@lingui/macro'
 
-import Modal from 'components/Modal'
+import ModalMod from 'components/Modal'
 import Option from 'components/WalletModal/Option'
 import PendingView from 'components/WalletModal/PendingView'
-import { LightCard } from 'components/Card'
-
-export const GpModal = styled(Modal)`
-  > [data-reach-dialog-content] {
-    background-color: ${({ theme }) => theme.bg1};
-  }
-`
 
 const CloseIcon = styled.div`
   position: absolute;
@@ -63,7 +56,8 @@ const HeaderRow = styled.div`
 `
 
 const ContentWrapper = styled.div`
-  background-color: ${({ theme }) => theme.bg0};
+  /* background-color: ${({ theme }) => theme.bg0}; */
+  background-color: ${({ theme }) => theme.bg1};
   padding: 0 1rem 1rem 1rem;
   border-bottom-left-radius: 20px;
   border-bottom-right-radius: 20px;
@@ -118,15 +112,20 @@ const WALLET_VIEWS = {
   PENDING: 'pending',
 }
 
-export default function WalletModal({
-  pendingTransactions,
-  confirmedTransactions,
-  ENSName,
-}: {
+// MOD
+export interface WalletModalProps {
   pendingTransactions: string[] // hashes of pending
   confirmedTransactions: string[] // hashes of confirmed
   ENSName?: string
-}) {
+  Modal: typeof ModalMod
+}
+
+export default function WalletModal({ pendingTransactions, confirmedTransactions, ENSName, Modal }: WalletModalProps) {
+  /* {
+    pendingTransactions: string[] // hashes of pending
+    confirmedTransactions: string[] // hashes of confirmed
+    ENSName?: string
+  } */
   // important that these are destructed from the account-specific web3-react context
   const { active, account, connector, activate, error } = useWeb3React()
 
@@ -348,8 +347,8 @@ export default function WalletModal({
         )}
 
         <ContentWrapper>
+          {/* MOD
           <LightCard style={{ marginBottom: '16px' }}>
-            {/* MOD
             <AutoRow style={{ flexWrap: 'nowrap' }}>
               <TYPE.main fontSize={14}>
                 <Trans>
@@ -360,8 +359,8 @@ export default function WalletModal({
                 </Trans>
               </TYPE.main>
             </AutoRow> 
-            */}
           </LightCard>
+          */}
           {walletView === WALLET_VIEWS.PENDING ? (
             <PendingView
               connector={pendingWallet}
@@ -378,10 +377,8 @@ export default function WalletModal({
   }
 
   return (
-    // <Modal isOpen={walletModalOpen} onDismiss={toggleWalletModal} minHeight={false} maxHeight={90}>
-    <GpModal isOpen={walletModalOpen} onDismiss={toggleWalletModal} minHeight={false} maxHeight={90}>
+    <Modal isOpen={walletModalOpen} onDismiss={toggleWalletModal} minHeight={false} maxHeight={90}>
       <Wrapper>{getModalContent()}</Wrapper>
-    </GpModal>
-    // </Modal>
+    </Modal>
   )
 }

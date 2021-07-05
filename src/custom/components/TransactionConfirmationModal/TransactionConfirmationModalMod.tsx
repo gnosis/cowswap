@@ -17,7 +17,7 @@ import useAddTokenToMetamask from 'hooks/useAddTokenToMetamask'
 import { Trans } from '@lingui/macro'
 // MOD
 import { getEtherscanLink, getExplorerLabel } from 'utils'
-import { GpModal } from 'components/WalletModal/WalletModalMod'
+import { GpModal } from 'components/WalletModal'
 import { lighten } from 'polished'
 
 const Wrapper = styled.div`
