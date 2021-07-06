@@ -185,7 +185,7 @@ SwapModalHeaderProps) {
                 {/* {trade.minimumAmountOut(allowedSlippage).toSignificant(6)} {trade.outputAmount.currency.symbol} */}
                 {slippageAdjustedAmounts[Field.OUTPUT]?.toSignificant(6)} {trade.outputAmount.currency.symbol}
               </b>{' '}
-              or the transaction will revert.
+              or the transaction will expire.
             </Trans>
           </TYPE.italic>
         ) : (

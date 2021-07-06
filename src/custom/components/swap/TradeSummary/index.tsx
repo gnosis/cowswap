@@ -8,15 +8,25 @@ import { Percent } from '@uniswap/sdk-core'
 const Wrapper = styled.div`
   ${RowFixed} {
     > div {
-      color: ${({ theme }) => theme.text1};
+      color: ${({ theme }) => theme.text4};
     }
   }
 `
 
-export default function TradeSummary({ trade, allowedSlippage }: { trade: TradeGp; allowedSlippage: Percent }) {
+export default function TradeSummary({
+  className,
+  trade,
+  allowedSlippage,
+  showHelpers,
+}: {
+  trade: TradeGp
+  allowedSlippage: Percent
+  className?: string
+  showHelpers?: boolean
+}) {
   return (
-    <Wrapper>
-      <TradeSummaryMod trade={trade} allowedSlippage={allowedSlippage} />
+    <Wrapper className={className}>
+      <TradeSummaryMod trade={trade} allowedSlippage={allowedSlippage} showHelpers={showHelpers} />
     </Wrapper>
   )
 }

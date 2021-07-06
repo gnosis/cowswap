@@ -17,7 +17,7 @@ import { Trans } from '@lingui/macro'
 import useTheme from '../../hooks/useTheme'
 import { Lock } from 'react-feather'
 import { AutoColumn } from 'components/Column'
-import { FiatValue } from './FiatValue'
+import { FiatValue } from 'components/CurrencyInputPanel/FiatValue'
 import { formatCurrencyAmount } from 'utils/formatCurrencyAmount'
 
 const InputPanel = styled.div<{ hideInput?: boolean }>`
