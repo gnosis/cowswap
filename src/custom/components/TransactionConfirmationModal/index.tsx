@@ -13,8 +13,6 @@ import useAddTokenToMetamask from 'hooks/useAddTokenToMetamask'
 import GameIcon from 'assets/cow-swap/game.gif'
 import { Link } from 'react-router-dom'
 
-// Modified only for adding a better label for the Etherscan link
-//  getExplorerLabel(chainId, hash, 'transaction')
 
 const Wrapper = styled.div`
   width: 100%;
