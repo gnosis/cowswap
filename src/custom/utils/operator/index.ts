@@ -1,7 +1,7 @@
 import { SupportedChainId as ChainId } from 'constants/chains'
 import { getSigningSchemeApiValue, OrderCreation, OrderCancellation } from 'utils/signatures'
-import { APP_ID } from 'constants/index'
-import { registerOnWindow } from '../misc'
+import { APP_ID, PRICE_API_TIMEOUT_MS } from 'constants/index'
+import { registerOnWindow, withTimeout } from '../misc'
 import { isDev } from '../environments'
 import { FeeInformation, PriceInformation } from 'state/price/reducer'
 import OperatorError, { ApiErrorCodeDetails, ApiErrorCodes, ApiErrorObject } from 'utils/operator/errors/OperatorError'
@@ -12,6 +12,7 @@ import QuoteError, {
   GpQuoteErrorDetails,
 } from 'utils/operator/errors/QuoteError'
 import { toErc20Address } from 'utils/tokens'
+import { getPriceQuote as getPriceQuoteParaswap } from 'utils/paraswap'
 
 function getOperatorUrl(): Partial<Record<ChainId, string>> {
   if (isDev) {
@@ -249,6 +250,19 @@ export async function getOrder(chainId: ChainId, orderId: string): Promise<Order
     console.error('Error getting order information:', error)
     throw new OperatorError(UNHANDLED_ORDER_ERROR)
   }
+}
+
+export async function getBestPriceQuote(params: PriceQuoteParams) {
+  // Get price from all API: Gpv2 and Paraswap
+  const pricePromise = withTimeout(getPriceQuote(params), PRICE_API_TIMEOUT_MS, 'GPv2: Get Price API')
+  const paraSwapPricePromise = withTimeout(
+    getPriceQuoteParaswap(params),
+    PRICE_API_TIMEOUT_MS,
+    'Paraswap: Get Price API'
+  )
+
+  // Get results from API queries
+  return Promise.allSettled([pricePromise, paraSwapPricePromise])
 }
 
 // Register some globals for convenience
