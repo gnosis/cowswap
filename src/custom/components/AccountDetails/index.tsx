@@ -40,7 +40,7 @@ import {
   renderTransactions,
 } from './AccountDetailsMod'
 import { ConnectedWalletInfo, useWalletInfo } from 'hooks/useWalletInfo'
-import { MouseoverTooltip } from 'components/Tooltip/TooltipMod'
+import { MouseoverTooltip } from 'components/Tooltip'
 
 const Wrapper = styled.div`
   color: ${({ theme }) => theme.text1};

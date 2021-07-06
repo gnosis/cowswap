@@ -9,10 +9,11 @@ import { computeSlippageAdjustedAmounts } from 'utils/prices'
 import { getMinimumReceivedTooltip } from 'utils/tooltips'
 
 import { AutoColumn } from 'components/Column'
-import QuestionHelper from 'components/QuestionHelper'
 import { RowBetween, RowFixed } from 'components/Row'
 import TradeGp from 'state/swap/TradeGp'
 import { DEFAULT_PRECISION } from 'constants/index'
+import { MouseoverTooltipContent } from 'components/Tooltip'
+import { StyledInfo } from 'pages/Swap/SwapMod'
 
 // computes price breakdown for the trade
 export function computeTradePriceBreakdown(trade?: TradeGp | null): {
@@ -34,7 +35,15 @@ export function computeTradePriceBreakdown(trade?: TradeGp | null): {
 export const FEE_TOOLTIP_MSG =
   'On CowSwap you sign your order (hence no gas costs!). The fees are covering your gas costs already.'
 
-export default function TradeSummary({ trade, allowedSlippage }: { trade: TradeGp; allowedSlippage: Percent }) {
+export default function TradeSummary({
+  trade,
+  allowedSlippage,
+  showHelpers = true,
+}: {
+  trade: TradeGp
+  allowedSlippage: Percent
+  showHelpers?: boolean
+}) {
   const theme = useContext(ThemeContext)
   // const { priceImpactWithoutFee, realizedLPFee } = computeTradePriceBreakdown(trade)
   const { /*priceImpactWithoutFee,*/ realizedFee } = React.useMemo(() => computeTradePriceBreakdown(trade), [trade])
@@ -42,21 +51,26 @@ export default function TradeSummary({ trade, allowedSlippage }: { trade: TradeG
   const slippageAdjustedAmounts = computeSlippageAdjustedAmounts(trade, allowedSlippage)
 
   return (
-    <AutoColumn gap="8px">
+    <AutoColumn gap="2px">
       <RowBetween>
         <RowFixed>
           <TYPE.black fontSize={12} fontWeight={400} color={theme.text2}>
             {/* Liquidity Provider Fee */}
             Fee
           </TYPE.black>
-          <QuestionHelper text={FEE_TOOLTIP_MSG} />
+          {showHelpers && (
+            <MouseoverTooltipContent content={FEE_TOOLTIP_MSG} bgColor={theme.bg1} color={theme.text1}>
+              <StyledInfo />
+            </MouseoverTooltipContent>
+          )}
         </RowFixed>
         <TYPE.black textAlign="right" fontSize={12} color={theme.text1}>
           {realizedFee ? `${realizedFee.toSignificant(DEFAULT_PRECISION)} ${realizedFee.currency.symbol}` : '-'}
         </TYPE.black>
       </RowBetween>
 
-      {/* <RowBetween>
+      {/* 
+      <RowBetween>
           <RowFixed>
             <TYPE.black fontSize={12} fontWeight={400} color={theme.text2}>
               <Trans>Route</Trans>
@@ -65,9 +79,11 @@ export default function TradeSummary({ trade, allowedSlippage }: { trade: TradeG
           <TYPE.black textAlign="right" fontSize={12} color={theme.text1}>
             <SwapRoute trade={trade} />
           </TYPE.black>
-        </RowBetween> */}
+        </RowBetween> 
+        */}
 
-      {/* <RowBetween>
+      {/* 
+      <RowBetween>
           <RowFixed>
             <TYPE.black fontSize={12} fontWeight={400} color={theme.text2}>
               <Trans>Price Impact</Trans>
@@ -76,14 +92,23 @@ export default function TradeSummary({ trade, allowedSlippage }: { trade: TradeG
           <TYPE.black textAlign="right" fontSize={12} color={theme.text1}>
             <FormattedPriceImpact priceImpact={priceImpact} />
           </TYPE.black>
-        </RowBetween> */}
+        </RowBetween> 
+        */}
 
       <RowBetween>
         <RowFixed>
           <TYPE.black fontSize={12} fontWeight={400} color={theme.text2}>
             {trade.tradeType === TradeType.EXACT_INPUT ? <Trans>Minimum received</Trans> : <Trans>Maximum sent</Trans>}
           </TYPE.black>
-          <QuestionHelper text={getMinimumReceivedTooltip(allowedSlippage, isExactIn)} />
+          {showHelpers && (
+            <MouseoverTooltipContent
+              content={getMinimumReceivedTooltip(allowedSlippage, isExactIn)}
+              bgColor={theme.bg1}
+              color={theme.text1}
+            >
+              <StyledInfo />
+            </MouseoverTooltipContent>
+          )}
         </RowFixed>
 
         <TYPE.black textAlign="right" fontSize={12} color={theme.text1}>

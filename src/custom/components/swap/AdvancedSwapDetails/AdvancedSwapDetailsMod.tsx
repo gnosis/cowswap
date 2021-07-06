@@ -18,9 +18,10 @@ export interface AdvancedSwapDetailsProps {
   // trade?: V2Trade<Currency, Currency, TradeType> | V3Trade<Currency, Currency, TradeType>
   trade?: TradeGp
   allowedSlippage: Percent
+  showHelpers?: boolean
 }
 
-export function AdvancedSwapDetails({ trade, allowedSlippage }: AdvancedSwapDetailsProps) {
+export function AdvancedSwapDetails({ trade, allowedSlippage, showHelpers = true }: AdvancedSwapDetailsProps) {
   // const theme = useContext(ThemeContext)
 
   /* 
@@ -34,8 +35,11 @@ export function AdvancedSwapDetails({ trade, allowedSlippage }: AdvancedSwapDeta
   }, [trade]) 
   */
 
-  return !trade ? null : <TradeSummary trade={trade} allowedSlippage={allowedSlippage} /> /* 
-      <AutoColumn gap="8px">
+  if (!trade) return null
+
+  return <TradeSummary trade={trade} allowedSlippage={allowedSlippage} showHelpers={showHelpers} />
+  /* 
+    <AutoColumn gap="8px">
       <RowBetween>
         <RowFixed>
           <TYPE.black fontSize={12} fontWeight={400} color={theme.text2}>
@@ -93,5 +97,5 @@ export function AdvancedSwapDetails({ trade, allowedSlippage }: AdvancedSwapDeta
         </TYPE.black>
       </RowBetween>
     </AutoColumn>
-      */
+  */
 }

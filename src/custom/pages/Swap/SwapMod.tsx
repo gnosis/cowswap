@@ -2,16 +2,16 @@ import { Trans } from '@lingui/macro'
 import { Currency, CurrencyAmount, Token, TradeType } from '@uniswap/sdk-core'
 // import { Trade as V2Trade } from '@uniswap/v2-sdk'
 // import { Trade as V3Trade } from '@uniswap/v3-sdk'
-// import { AdvancedSwapDetails } from 'components/swap/AdvancedSwapDetails'
+import { AdvancedSwapDetails } from 'components/swap/AdvancedSwapDetails'
 import UnsupportedCurrencyFooter from 'components/swap/UnsupportedCurrencyFooter'
-import { MouseoverTooltip /* , MouseoverTooltipContent */ } from 'components/Tooltip'
+import { MouseoverTooltip, MouseoverTooltipContent } from 'components/Tooltip'
 // import JSBI from 'jsbi'
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
-import { ArrowDown, /*, ArrowLeft */ CheckCircle, HelpCircle /*, Info */ } from 'react-feather'
+import { ArrowDown, /*, ArrowLeft */ CheckCircle, HelpCircle, Info } from 'react-feather'
 import ReactGA from 'react-ga'
 // import { Link, RouteComponentProps } from 'react-router-dom'
 import { Text } from 'rebass'
-import { /* styled, */ ThemeContext } from 'styled-components'
+import styled, { ThemeContext } from 'styled-components'
 import AddressInputPanel from 'components/AddressInputPanel'
 import { ButtonConfirmed, ButtonError, /* ButtonGray, */ ButtonLight, ButtonPrimary } from 'components/Button'
 import Card, { GreyCard } from 'components/Card'
@@ -73,8 +73,7 @@ import { SwapProps } from '.'
 import TradeGp from 'state/swap/TradeGp'
 import AdvancedSwapDetailsDropdown from 'components/swap/AdvancedSwapDetailsDropdown'
 
-/* 
-const StyledInfo = styled(Info)`
+export const StyledInfo = styled(Info)`
   opacity: 0.4;
   color: ${({ theme }) => theme.text1};
   height: 16px;
@@ -82,8 +81,7 @@ const StyledInfo = styled(Info)`
   :hover {
     opacity: 0.8;
   }
-` 
-*/
+`
 
 export default function Swap({
   history,
@@ -630,17 +628,28 @@ export default function Swap({
               </Row>
               */
               <Card padding={showWrap ? '.25rem 1rem 0 1rem' : '0px'} borderRadius={'20px'}>
-                <AutoColumn gap="8px" style={{ padding: '0 16px' }}>
+                <AutoColumn gap="8px" style={{ padding: '0 8px' }}>
                   {trade && (
                     <RowBetween align="center">
                       <Text fontWeight={500} fontSize={14} color={theme.text2}>
                         <Trans>Price</Trans>
                       </Text>
-                      <TradePrice
-                        price={trade.executionPrice}
-                        showInverted={showInverted}
-                        setShowInverted={setShowInverted}
-                      />
+                      <div style={{ display: 'flex', gap: 5 }}>
+                        <TradePrice
+                          price={trade.executionPrice}
+                          showInverted={showInverted}
+                          setShowInverted={setShowInverted}
+                        />
+                        <MouseoverTooltipContent
+                          content={
+                            <AdvancedSwapDetails trade={trade} allowedSlippage={allowedSlippage} showHelpers={false} />
+                          }
+                          bgColor={theme.bg1}
+                          color={theme.text4}
+                        >
+                          <StyledInfo />
+                        </MouseoverTooltipContent>
+                      </div>
                     </RowBetween>
                   )}
                   {!allowedSlippage.equalTo(INITIAL_ALLOWED_SLIPPAGE_PERCENT) && (
