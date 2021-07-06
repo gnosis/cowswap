@@ -4,7 +4,7 @@ import React, { useState, useCallback, ReactNode } from 'react'
 import styled from 'styled-components/macro'
 import { darken } from 'polished'
 import { useCurrencyBalance } from 'state/wallet/hooks'
-import CurrencySearchModal from 'components/SearchModal/CurrencySearchModal'
+import CurrencySearchModalUni from '@src/components/SearchModal/CurrencySearchModal'
 import CurrencyLogo from 'components/CurrencyLogo'
 import DoubleCurrencyLogo from 'components/DoubleLogo'
 // import { ButtonGray } from '../Button'
@@ -21,6 +21,12 @@ import { FiatValue } from 'components/CurrencyInputPanel/FiatValue'
 import { formatCurrencyAmount } from 'utils/formatCurrencyAmount'
 
 import { WithClassName } from 'types'
+
+export const CurrencySearchModal = styled(CurrencySearchModalUni)`
+  > [data-reach-dialog-content] {
+    background-color: ${({ theme }) => theme.bg1};
+  }
+`
 
 export const InputPanel = styled.div<{ hideInput?: boolean }>`
   ${({ theme }) => theme.flexColumnNoWrap}
@@ -124,24 +130,16 @@ export const StyledTokenName = styled.span<{ active?: boolean }>`
 `
 
 export const StyledBalanceMax = styled.button`
-  background-color: ${({ theme }) => theme.primary5};
-  border: 1px solid ${({ theme }) => theme.primary5};
+  background-color: transparent;
+  border: none;
   border-radius: 12px;
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
-  color: ${({ theme }) => theme.primaryText1};
+  color: ${({ theme }) => theme.primary5};
   opacity: ${({ disabled }) => (!disabled ? 1 : 0.4)};
   pointer-events: ${({ disabled }) => (!disabled ? 'initial' : 'none')};
   margin-left: 0.25rem;
-
-  :hover {
-    border: 1px solid ${({ theme }) => theme.primary1};
-  }
-  :focus {
-    border: 1px solid ${({ theme }) => theme.primary1};
-    outline: none;
-  }
 
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
     margin-right: 0.5rem;
@@ -267,7 +265,8 @@ export default function CurrencyInputPanel({
                 <RowFixed style={{ height: '17px' }}>
                   <TYPE.body
                     onClick={onMax}
-                    color={theme.text2}
+                    // color={theme.text2}
+                    color={theme.text1}
                     fontWeight={400}
                     fontSize={14}
                     style={{ display: 'inline', cursor: 'pointer' }}

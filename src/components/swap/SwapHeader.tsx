@@ -1,7 +1,7 @@
 import { Trans } from '@lingui/macro'
 import React from 'react'
 import styled from 'styled-components/macro'
-import SettingsTab from '@src/components/Settings'
+import SettingsTab from 'components/Settings'
 import { Percent } from '@uniswap/sdk-core'
 
 import { RowBetween, RowFixed } from '../Row'

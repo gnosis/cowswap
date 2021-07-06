@@ -6,7 +6,12 @@ import Cursor3 from 'assets/cow-swap/cursor3.gif'
 import Cursor4 from 'assets/cow-swap/cursor4.gif'
 
 import { Colors } from 'theme/styled'
-import { colors as colorsBaseTheme, themeVariables as baseThemeVariables } from 'theme/baseTheme'
+import {
+  colors as colorsBaseTheme,
+  themeVariables as baseThemeVariables,
+  UniFixedGlobalStyle,
+  UniThemedGlobalStyle,
+} from 'theme/baseTheme'
 
 import { theme as themeUniswap } from '@src/theme'
 import { useIsDarkMode } from 'state/user/hooks'
@@ -33,7 +38,7 @@ export function colors(darkMode: boolean): Colors {
     text1: darkMode ? '#c5daef' : '#000000',
     text2: darkMode ? '#021E34' : '#000000',
     text3: darkMode ? 'rgba(197, 218, 239, 0.4)' : '#000000',
-    text4: darkMode ? 'rgba(197, 218, 239, 0.4)' : '#000000b8',
+    text4: darkMode ? 'rgba(197, 218, 239, 0.7)' : '#000000b8',
 
     // ****** backgrounds / greys ******
     bg1: darkMode ? '#163861' : '#D5E9F0',
@@ -200,20 +205,15 @@ export default function ThemeProvider({ children }: { children: React.ReactNode 
   return <StyledComponentsThemeProvider theme={themeObject}>{children}</StyledComponentsThemeProvider>
 }
 
-export const FixedGlobalStyle = createGlobalStyle``
+export const FixedGlobalStyle = createGlobalStyle`
+  // Uni V2 theme mixin
+  ${UniFixedGlobalStyle}
+`
 
 export const ThemedGlobalStyle = createGlobalStyle`
-  // Uniswap default
-  html {
-    color: ${({ theme }) => theme.text1};
-    background-color: ${({ theme }) => theme.bg1} !important;
-  }
+  // Uni V2 theme mixin
+  ${UniThemedGlobalStyle}
 
-  a {
-    color: ${({ theme }) => theme.blue1}; 
-  }
-
-  // Custom
   html {
     color: ${({ theme }) => theme.text1};
     ${({ theme }) => theme.body.background}
@@ -231,7 +231,7 @@ export const ThemedGlobalStyle = createGlobalStyle`
 
   // START - Modal overrides
   ${HeaderText} {
-    color: ${({ theme }) => theme.text2};
+    color: ${({ theme }) => theme.text1};
   }
 
   ${ModalContentWrapper} {

@@ -9,11 +9,11 @@ const TooltipContainer = styled.div`
   word-break: break-word;
 `
 
-interface TooltipProps extends Omit<PopoverProps, 'content'> {
+interface TooltipProps extends Omit<PopoverProps, 'content' | 'PopoverContainer' | 'Arrow'> {
   text: ReactNode
 }
 
-interface TooltipContentProps extends Omit<PopoverProps, 'content'> {
+interface TooltipContentProps extends Omit<PopoverProps, 'content' | 'PopoverContainer' | 'Arrow'> {
   content: ReactNode
 }
 

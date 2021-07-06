@@ -3,6 +3,7 @@ import styled from 'styled-components/macro'
 import { BodyWrapper as BodyWrapperMod } from '@src/pages/AppBody'
 
 export const BodyWrapper = styled(BodyWrapperMod)`
+  background: ${({ theme }) => theme.bg1};
   box-shadow: ${({ theme }) => theme.appBody.boxShadow};
   border-radius: ${({ theme }) => theme.appBody.borderRadius};
   border: ${({ theme }) => theme.appBody.border};

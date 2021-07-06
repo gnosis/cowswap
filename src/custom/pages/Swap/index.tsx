@@ -27,6 +27,7 @@ interface FeeGreaterMessageProp {
 }
 
 const BottomGrouping = styled(BottomGroupingUni)`
+  margin-top: 10px;
   > div > button {
     align-self: stretch;
   }
@@ -46,7 +47,7 @@ const SwapModWrapper = styled(SwapMod)`
     }
 
     ${AutoColumn} {
-      grid-row-gap: 3px;
+      grid-row-gap: 10px;
     }
 
     .expertMode ${AutoColumn} {

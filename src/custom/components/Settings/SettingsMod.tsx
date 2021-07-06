@@ -14,7 +14,7 @@ import { AutoColumn } from 'components/Column'
 import Modal from 'components/Modal'
 import QuestionHelper from 'components/QuestionHelper'
 import { RowBetween, RowFixed } from 'components/Row'
-import Toggle from '@src/components/Toggle'
+import Toggle from 'components/Toggle'
 import TransactionSettings from 'components/TransactionSettings'
 // import { Percent } from '@uniswap/sdk-core'
 import { SettingsTabProp } from '.'
@@ -114,7 +114,7 @@ export const ModalContentWrapper = styled.div`
   border-radius: 20px;
 `
 
-export default function SettingsTab({ className, placeholderSlippage }: SettingsTabProp) {
+export default function SettingsTab({ className, placeholderSlippage, SettingsButton }: SettingsTabProp) {
   const node = useRef<HTMLDivElement>()
   const open = useModalOpen(ApplicationModal.SETTINGS)
   const toggle = useToggleSettingsMenu()
@@ -173,18 +173,17 @@ export default function SettingsTab({ className, placeholderSlippage }: Settings
           </AutoColumn>
         </ModalContentWrapper>
       </Modal>
-      {/* 
-      <StyledMenuButton onClick={toggle} id="open-settings-dialog-button">
+      <SettingsButton expertMode={expertMode} toggleSettings={toggle} />
+      {/* <StyledMenuButton onClick={toggle} id="open-settings-dialog-button">
         <StyledMenuIcon />
         {expertMode ? (
           <EmojiWrapper>
             <span role="img" aria-label="wizard-icon">
-              🐮
+              🧙
             </span>
           </EmojiWrapper>
         ) : null}
-      </StyledMenuButton> 
-      */}
+      </StyledMenuButton> */}
       {open && (
         <MenuFlyout>
           <AutoColumn gap="md" style={{ padding: '1rem' }}>

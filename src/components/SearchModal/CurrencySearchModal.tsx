@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import useLast from '../../hooks/useLast'
 import { WrappedTokenInfo } from '../../state/lists/wrappedTokenInfo'
 import Modal from '../Modal'
-import { CurrencySearch } from './CurrencySearch'
+import { CurrencySearch } from 'components/SearchModal/CurrencySearch'
 import { ImportToken } from './ImportToken'
 import usePrevious from 'hooks/usePrevious'
 import Manage from './Manage'
@@ -17,6 +17,7 @@ interface CurrencySearchModalProps {
   onCurrencySelect: (currency: Currency) => void
   otherSelectedCurrency?: Currency | null
   showCommonBases?: boolean
+  className?: string
 }
 
 export enum CurrencyModalView {
@@ -33,6 +34,7 @@ export default function CurrencySearchModal({
   selectedCurrency,
   otherSelectedCurrency,
   showCommonBases = false,
+  className,
 }: CurrencySearchModalProps) {
   const [modalView, setModalView] = useState<CurrencyModalView>(CurrencyModalView.manage)
   const lastOpen = useLast(isOpen)
@@ -65,7 +67,7 @@ export default function CurrencySearchModal({
   const minHeight = modalView === CurrencyModalView.importToken || modalView === CurrencyModalView.importList ? 40 : 80
 
   return (
-    <Modal isOpen={isOpen} onDismiss={onDismiss} maxHeight={80} minHeight={minHeight}>
+    <Modal className={className} isOpen={isOpen} onDismiss={onDismiss} maxHeight={80} minHeight={minHeight}>
       {modalView === CurrencyModalView.search ? (
         <CurrencySearch
           isOpen={isOpen}

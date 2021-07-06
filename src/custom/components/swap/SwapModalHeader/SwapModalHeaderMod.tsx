@@ -18,7 +18,6 @@ import { TruncatedText, SwapShowAcceptChanges } from 'components/swap/styleds'
 import { Trans } from '@lingui/macro'
 
 import { AdvancedSwapDetails } from 'components/swap/AdvancedSwapDetails'
-import { LightCard } from 'components/Card'
 
 import TradePrice from 'components/swap/TradePrice'
 
@@ -27,6 +26,7 @@ import TradeGp from 'state/swap/TradeGp'
 import { INPUT_OUTPUT_EXPLANATION } from 'constants/index'
 import { computeSlippageAdjustedAmounts } from 'utils/prices'
 import { Field } from 'state/swap/actions'
+import { LightCard } from 'components/Card'
 
 export const ArrowWrapper = styled.div`
   padding: 4px;
@@ -41,7 +41,7 @@ export const ArrowWrapper = styled.div`
   justify-content: center;
   align-items: center;
   background-color: ${({ theme }) => theme.bg1};
-  border: 4px solid;
+  border: 2px solid;
   border-color: ${({ theme }) => theme.bg0};
   z-index: 2;
 `
@@ -54,6 +54,7 @@ export interface SwapModalHeaderProps {
   showAcceptChanges: boolean
   priceImpactWithoutFee?: Percent
   onAcceptChanges: () => void
+  LightCard: typeof LightCard
 }
 
 export default function SwapModalHeader({
@@ -62,6 +63,7 @@ export default function SwapModalHeader({
   recipient,
   showAcceptChanges,
   onAcceptChanges,
+  LightCard,
 }: /* 
 {
   trade: V2Trade<Currency, Currency, TradeType> | V3Trade<Currency, Currency, TradeType>
@@ -183,7 +185,7 @@ SwapModalHeaderProps) {
                 {/* {trade.minimumAmountOut(allowedSlippage).toSignificant(6)} {trade.outputAmount.currency.symbol} */}
                 {slippageAdjustedAmounts[Field.OUTPUT]?.toSignificant(6)} {trade.outputAmount.currency.symbol}
               </b>{' '}
-              or the transaction will revert.
+              or the transaction will expire.
             </Trans>
           </TYPE.italic>
         ) : (

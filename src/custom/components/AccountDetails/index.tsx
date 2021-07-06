@@ -40,7 +40,7 @@ import {
   renderTransactions,
 } from './AccountDetailsMod'
 import { ConnectedWalletInfo, useWalletInfo } from 'hooks/useWalletInfo'
-import { MouseoverTooltip } from 'components/Tooltip/TooltipMod'
+import { MouseoverTooltip } from 'components/Tooltip'
 
 const Wrapper = styled.div`
   color: ${({ theme }) => theme.text1};
@@ -176,7 +176,7 @@ export default function AccountDetails({
               <AccountGroupingRow>
                 {formatConnectorName(connector, walletInfo)}
                 <div>
-                  {connector !== injected && connector !== walletlink && (
+                  {/* connector !== injected && connector !== walletlink && (
                     <WalletAction
                       style={{ fontSize: '.825rem', fontWeight: 400, marginRight: '8px' }}
                       onClick={() => {
@@ -185,7 +185,7 @@ export default function AccountDetails({
                     >
                       Disconnect
                     </WalletAction>
-                  )}
+                  ) */}
                   <WalletAction
                     style={{ fontSize: '.825rem', fontWeight: 400 }}
                     onClick={() => {
