@@ -22,7 +22,7 @@ export default function About() {
       <Title>About</Title>
 
       <Content>
-        <p>CowSwap is the first Gnosis Protocol interface.</p>
+        <p>CowSwap is the first Gnosis Protocol v2 interface.</p>
         <p>
           It allows you to buy and sell tokens using gas-less orders that are settled peer-to-peer among its users or
           into any on-chain liquidity source while providing MEV protection.
