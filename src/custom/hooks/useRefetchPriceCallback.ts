@@ -331,7 +331,7 @@ export function useRefetchQuoteCallback() {
       setQuoteError,
       addUnsupportedToken,
       getNewQuote,
-      refreshQuote
+      refreshQuote,
     ]
   )
 }
