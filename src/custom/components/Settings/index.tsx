@@ -4,7 +4,6 @@ import styled from 'styled-components'
 import { RowFixed } from 'components/Row'
 import SettingsMod, { StyledMenuButton, MenuFlyout, StyledMenuIcon, EmojiWrapper } from './SettingsMod'
 import { Percent } from '@uniswap/sdk-core'
-// import { INITIAL_ALLOWED_SLIPPAGE_PERCENT } from 'constants/index'
 
 const Settings = styled(SettingsMod)`
   ${MenuFlyout} {
