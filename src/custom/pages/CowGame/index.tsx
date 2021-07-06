@@ -6,6 +6,11 @@ import { CowGame } from '@gnosis.pm/cow-runner-game'
 const Wrapper = styled(Page)`
   min-height: initial;
 
+  // Override. Should be addressed in the CowGame package instead.
+  .icon-offline {
+    display: none;
+  }
+
   h1,
   p {
     text-align: center;
