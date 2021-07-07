@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 
-import { getQuoteResolveOnlyLastCall, FeeQuoteParams, QuoteParams, QuoteResult } from 'utils/price'
+import { FeeQuoteParams, getBestQuote, QuoteParams, QuoteResult } from 'utils/price'
 import { isValidOperatorError, ApiErrorCodes } from 'utils/operator/errors/OperatorError'
 import { GpQuoteErrorCodes, isValidQuoteError } from 'utils/operator/errors/QuoteError'
 import { registerOnWindow, getPromiseFulfilledValue, isPromiseFulfilled } from 'utils/misc'
@@ -15,12 +15,15 @@ import { QuoteInformationObject } from 'state/price/reducer'
 import { useQuoteDispatchers } from 'state/price/hooks'
 import { AddGpUnsupportedTokenParams } from 'state/lists/actions'
 import { QuoteError } from 'state/price/actions'
+import { onlyResolvesLast } from '../utils/async'
 
 interface HandleQuoteErrorParams {
   quoteData: QuoteInformationObject | FeeQuoteParams
   error: unknown
   addUnsupportedToken: (params: AddGpUnsupportedTokenParams) => void
 }
+
+export const getBestQuoteResolveOnlyLastCall = onlyResolvesLast<QuoteResult>(getBestQuote)
 
 export function handleQuoteError({ quoteData, error, addUnsupportedToken }: HandleQuoteErrorParams): QuoteError {
   if (isValidOperatorError(error)) {
@@ -116,7 +119,7 @@ export function useRefetchQuoteCallback() {
 
         // Get the quote
         // price can be null if fee > price
-        const { cancelled, data } = await getQuoteResolveOnlyLastCall(params)
+        const { cancelled, data } = await getBestQuoteResolveOnlyLastCall(params)
         if (cancelled) {
           // Cancellation can happen if a new request is made, then any ongoing query is canceled
           console.debug('[useRefetchPriceCallback] Canceled get quote price for', params)

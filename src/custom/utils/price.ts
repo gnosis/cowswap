@@ -7,7 +7,6 @@ import { getCanonicalMarket, isPromiseFulfilled, withTimeout } from 'utils/misc'
 import { formatAtoms } from 'utils/format'
 import { PRICE_API_TIMEOUT_MS } from 'constants/index'
 import { getPriceQuote as getPriceQuoteParaswap, toPriceInformation } from 'utils/paraswap'
-import { onlyResolvesLast } from 'utils/async'
 
 import { OptimalRatesWithPartnerFees as OptimalRatesWithPartnerFeesParaswap } from 'paraswap'
 import { OrderKind } from '@gnosis.pm/gp-v2-contracts'
@@ -70,7 +69,7 @@ type FilterWinningPriceParams = {
   priceQuotes: PriceInformationWithSource[]
 }
 
-export function filterWinningPrice(params: FilterWinningPriceParams) {
+function _filterWinningPrice(params: FilterWinningPriceParams) {
   // Take the best price: Aggregate all the amounts into a single one.
   //  - Use maximum of all the result for "Sell orders":
   //        You want to get the maximum number of buy tokens
@@ -92,7 +91,10 @@ export function filterWinningPrice(params: FilterWinningPriceParams) {
 
 export type QuoteResult = [PromiseSettledResult<PriceInformation>, PromiseSettledResult<FeeInformation>]
 
-export async function getBestPriceQuote(params: PriceQuoteParams) {
+/**
+ *  Return all price estimations from all price sources
+ */
+export async function getAllPrices(params: PriceQuoteParams) {
   // Get price from all API: Gpv2 and Paraswap
   const pricePromise = withTimeout(getPriceQuoteGp(params), PRICE_API_TIMEOUT_MS, 'GPv2: Get Price API')
   const paraSwapPricePromise = withTimeout(
@@ -109,7 +111,7 @@ export async function getBestPriceQuote(params: PriceQuoteParams) {
  * Auxiliary function that would take the settled results from all price feeds (resolved/rejected), and group them by
  * successful price quotes and errors price quotes. For each price, it also give the context (the name of the price feed)
  */
-export function extractPriceAndErrorPromiseValues(
+function _extractPriceAndErrorPromiseValues(
   gpPriceResult: PromiseSettledResult<PriceInformation>,
   paraSwapPriceResult: PromiseSettledResult<OptimalRatesWithPartnerFeesParaswap | null>
 ): [Array<PriceInformationWithSource>, Array<PromiseRejectedResultWithSource>] {
@@ -134,35 +136,38 @@ export function extractPriceAndErrorPromiseValues(
 }
 
 /**
- *
- * @returns The best price among all price feeds. Price feeds:
- *  - GPv2 API
- *  - Paraswap
+ *  Return the best price considering all price feeds
  */
-async function _getBestPriceQuote(params: PriceQuoteParams): Promise<PriceInformation> {
-  // Get price from all APIs: Gpv2 and Paraswap
-  const [priceResult, paraSwapPriceResult] = await getBestPriceQuote(params)
+export async function getBestPrice(params: PriceQuoteParams): Promise<PriceInformation> {
+  // Get all prices
+  const [priceResult, paraSwapPriceResult] = await getAllPrices(params)
 
-  // Prepare an array with all successful estimations
-  const [priceQuotes, errorsGetPrice] = extractPriceAndErrorPromiseValues(priceResult, paraSwapPriceResult)
+  // Aggregate successful and error prices
+  const [priceQuotes, errorsGetPrice] = _extractPriceAndErrorPromiseValues(priceResult, paraSwapPriceResult)
 
+  // Print prices who failed to be fetched
   if (errorsGetPrice.length > 0) {
     const sourceNames = errorsGetPrice.map((e) => e.source).join(', ')
     console.error('[utils::useRefetchPriceCallback] Some API failed or timed out: ' + sourceNames, errorsGetPrice)
   }
 
   if (priceQuotes.length > 0) {
+    // At least we have one successful price
     const sourceNames = priceQuotes.map((p) => p.source).join(', ')
     console.log('[utils::useRefetchPriceCallback] Get best price succeeded for ' + sourceNames, priceQuotes)
     const amounts = priceQuotes.map((quote) => quote.amount).filter(Boolean) as string[]
 
-    return filterWinningPrice({ kind: params.kind, amounts, priceQuotes })
+    return _filterWinningPrice({ kind: params.kind, amounts, priceQuotes })
   } else {
+    // It was not possible to get a price estimation
     throw new PriceQuoteError('Error querying price from APIs', params, [priceResult, paraSwapPriceResult])
   }
 }
 
-export async function getQuote({ quoteParams, fetchFee, previousFee }: QuoteParams): Promise<QuoteResult> {
+/**
+ *  Return the best quote considering all price feeds. The quote contains information about the price and fee
+ */
+export async function getBestQuote({ quoteParams, fetchFee, previousFee }: QuoteParams): Promise<QuoteResult> {
   const { sellToken, buyToken, fromDecimals, toDecimals, amount, kind, chainId } = quoteParams
   const { baseToken, quoteToken } = getCanonicalMarket({ sellToken, buyToken, kind })
 
@@ -200,11 +205,9 @@ export async function getQuote({ quoteParams, fetchFee, previousFee }: QuotePara
   // Get price for price estimation
   const pricePromise =
     !feeExceedsPrice && exchangeAmount
-      ? _getBestPriceQuote({ chainId, baseToken, quoteToken, fromDecimals, toDecimals, amount: exchangeAmount, kind })
+      ? getBestPrice({ chainId, baseToken, quoteToken, fromDecimals, toDecimals, amount: exchangeAmount, kind })
       : // fee exceeds our price, is invalid
         Promise.reject(FEE_EXCEEDS_FROM_ERROR)
 
   return Promise.allSettled([pricePromise, feePromise])
 }
-
-export const getQuoteResolveOnlyLastCall = onlyResolvesLast<QuoteResult>(getQuote)
