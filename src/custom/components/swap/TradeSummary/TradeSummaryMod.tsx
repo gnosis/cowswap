@@ -71,7 +71,7 @@ export default function TradeSummary({
           )}
         </RowFixed>
         <TYPE.black textAlign="right" fontSize={12} color={theme.text1}>
-          {realizedFee ? `${realizedFee.toSignificant(DEFAULT_PRECISION)} ${realizedFee.currency.symbol}` : '-'}
+          {`${formatSmart(realizedFee ?? undefined, DEFAULT_PRECISION) || '-'} ${realizedFee?.currency.symbol}`}
         </TYPE.black>
       </RowBetween>
 
