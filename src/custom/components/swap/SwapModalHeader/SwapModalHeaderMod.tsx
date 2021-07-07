@@ -23,10 +23,11 @@ import TradePrice from 'components/swap/TradePrice'
 
 // MOD
 import TradeGp from 'state/swap/TradeGp'
-import { INPUT_OUTPUT_EXPLANATION } from 'constants/index'
+import { INPUT_OUTPUT_EXPLANATION, SHORT_PRECISION } from 'constants/index'
 import { computeSlippageAdjustedAmounts } from 'utils/prices'
 import { Field } from 'state/swap/actions'
 import { LightCard } from 'components/Card'
+import { formatSmart } from 'utils/format'
 
 export const ArrowWrapper = styled.div`
   padding: 4px;
@@ -85,6 +86,11 @@ SwapModalHeaderProps) {
 
   const fiatValueInput = useUSDCValue(trade.inputAmount)
   const fiatValueOutput = useUSDCValue(trade.outputAmount)
+
+  const [slippageIn, slippageOut] = useMemo(
+    () => [slippageAdjustedAmounts[Field.INPUT], slippageAdjustedAmounts[Field.OUTPUT]],
+    [slippageAdjustedAmounts]
+  )
 
   return (
     <AutoColumn gap={'4px'} style={{ marginTop: '1rem' }}>
@@ -183,7 +189,7 @@ SwapModalHeaderProps) {
               Output is estimated. You will receive at least{' '}
               <b>
                 {/* {trade.minimumAmountOut(allowedSlippage).toSignificant(6)} {trade.outputAmount.currency.symbol} */}
-                {slippageAdjustedAmounts[Field.OUTPUT]?.toSignificant(6)} {trade.outputAmount.currency.symbol}
+                {formatSmart(slippageOut, SHORT_PRECISION) || '-'} {trade.outputAmount.currency.symbol}
               </b>{' '}
               or the transaction will expire.
             </Trans>
@@ -194,7 +200,7 @@ SwapModalHeaderProps) {
               Input is estimated. You will sell at most{' '}
               <b>
                 {/* {trade.maximumAmountIn(allowedSlippage).toSignificant(6)} {trade.inputAmount.currency.symbol} */}
-                {slippageAdjustedAmounts[Field.INPUT]?.toSignificant(6)} {trade.inputAmount.currency.symbol}
+                {formatSmart(slippageIn, SHORT_PRECISION) || '-'} {trade.inputAmount.currency.symbol}
               </b>{' '}
               {/* or the transaction will revert. */}
               or the swap will not execute. {INPUT_OUTPUT_EXPLANATION}

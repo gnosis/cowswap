@@ -31,16 +31,8 @@ function _getSummary(params: PostOrderParams): string {
   const [inputQuantifier, outputQuantifier] = [kind === 'buy' ? 'at most ' : '', kind === 'sell' ? 'at least ' : '']
   const inputSymbol = inputAmount.currency.symbol
   const outputSymbol = outputAmount.currency.symbol
-  const inputAmountValue = formatSmart({
-    amount: (feeAmount ? inputAmount.add(feeAmount) : inputAmount).quotient.toString(),
-    precision: inputAmount.currency.decimals,
-    decimals: SHORT_PRECISION,
-  })
-  const outputAmountValue = formatSmart({
-    amount: outputAmount.quotient.toString(),
-    precision: outputAmount.currency.decimals,
-    decimals: SHORT_PRECISION,
-  })
+  const inputAmountValue = formatSmart(feeAmount ? inputAmount.add(feeAmount) : inputAmount, SHORT_PRECISION)
+  const outputAmountValue = formatSmart(outputAmount, SHORT_PRECISION)
 
   const base = `Swap ${inputQuantifier}${inputAmountValue} ${inputSymbol} for ${outputQuantifier}${outputAmountValue} ${outputSymbol}`
 
