@@ -1,21 +1,82 @@
 import { useCallback } from 'react'
-import { useQuoteDispatchers } from 'state/price/hooks'
 
+import { getQuoteResolveOnlyLastCall, FeeQuoteParams, QuoteParams, QuoteResult } from 'utils/price'
+import { isValidOperatorError, ApiErrorCodes } from 'utils/operator/errors/OperatorError'
+import { GpQuoteErrorCodes, isValidQuoteError } from 'utils/operator/errors/QuoteError'
 import { registerOnWindow, getPromiseFulfilledValue, isPromiseFulfilled } from 'utils/misc'
-import { FeeQuoteParams } from 'utils/operator'
+
+import { isOnline } from 'hooks/useIsOnline'
 import {
   useAddGpUnsupportedToken,
   useIsUnsupportedTokenGp,
   useRemoveGpUnsupportedToken,
 } from 'state/lists/hooks/hooksMod'
-import { FeeInformation, QuoteInformationObject } from 'state/price/reducer'
-import { getQuote, handleQuoteError, QuoteResult } from './utils'
+import { QuoteInformationObject } from 'state/price/reducer'
+import { useQuoteDispatchers } from 'state/price/hooks'
+import { AddGpUnsupportedTokenParams } from 'state/lists/actions'
+import { QuoteError } from 'state/price/actions'
 
-export interface RefetchQuoteCallbackParams {
-  quoteParams: FeeQuoteParams
-  fetchFee: boolean
-  previousFee?: FeeInformation
-  isPriceRefresh: boolean
+interface HandleQuoteErrorParams {
+  quoteData: QuoteInformationObject | FeeQuoteParams
+  error: unknown
+  addUnsupportedToken: (params: AddGpUnsupportedTokenParams) => void
+}
+
+export function handleQuoteError({ quoteData, error, addUnsupportedToken }: HandleQuoteErrorParams): QuoteError {
+  if (isValidOperatorError(error)) {
+    switch (error.type) {
+      case ApiErrorCodes.UnsupportedToken: {
+        // TODO: will change with introduction of data prop in error responses
+        const unsupportedTokenAddress = error.description.split(' ')[2]
+        console.error(`${error.message}: ${error.description} - disabling.`)
+
+        // Add token to unsupported token list
+        addUnsupportedToken({
+          chainId: quoteData.chainId,
+          address: unsupportedTokenAddress,
+          dateAdded: Date.now(),
+        })
+
+        return 'unsupported-token'
+      }
+
+      default: {
+        // some other operator error occurred, log it
+        console.error('Error quoting price/fee. Unhandled operator error: ' + error.type, error)
+
+        return 'fetch-quote-error'
+      }
+    }
+  } else if (isValidQuoteError(error)) {
+    switch (error.type) {
+      // Fee/Price query returns error
+      // e.g Insufficient Liquidity or Fee exceeds Price
+      case GpQuoteErrorCodes.FeeExceedsFrom: {
+        return 'fee-exceeds-sell-amount'
+      }
+
+      case GpQuoteErrorCodes.InsufficientLiquidity: {
+        console.error(`Insufficient liquidity ${error.message}: ${error.description}`)
+        return 'insufficient-liquidity'
+      }
+
+      default: {
+        // Some other operator error occurred, log it
+        console.error('Error quoting price/fee. Unhandled operator error: ' + error.type, error)
+
+        return 'fetch-quote-error'
+      }
+    }
+  } else {
+    // Detect if the error was because we are now offline
+    if (!isOnline()) {
+      return 'offline-browser'
+    }
+
+    // Some other error getting the quote ocurred
+    console.error('Error quoting price/fee: ' + error)
+    return 'fetch-quote-error'
+  }
 }
 
 /**
@@ -38,7 +99,7 @@ export function useRefetchQuoteCallback() {
   })
 
   return useCallback(
-    async (params: RefetchQuoteCallbackParams) => {
+    async (params: QuoteParams) => {
       const { quoteParams, isPriceRefresh } = params
       let quoteData: FeeQuoteParams | QuoteInformationObject = quoteParams
 
@@ -55,7 +116,7 @@ export function useRefetchQuoteCallback() {
 
         // Get the quote
         // price can be null if fee > price
-        const { cancelled, data } = await getQuote(params)
+        const { cancelled, data } = await getQuoteResolveOnlyLastCall(params)
         if (cancelled) {
           // Cancellation can happen if a new request is made, then any ongoing query is canceled
           console.debug('[useRefetchPriceCallback] Canceled get quote price for', params)

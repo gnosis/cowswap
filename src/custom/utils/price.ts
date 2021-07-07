@@ -1,26 +1,39 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import BigNumberJs from 'bignumber.js'
-import { AddGpUnsupportedTokenParams } from 'state/lists/actions'
-import { QuoteError } from 'state/price/actions'
-import { PriceInformation, FeeInformation, QuoteInformationObject } from 'state/price/reducer'
-import { onlyResolvesLast } from 'utils/async'
-import { formatAtoms } from 'utils/format'
-import { isPromiseFulfilled, getCanonicalMarket } from 'utils/misc'
-import { PriceQuoteParams, getBestPriceQuote, getFeeQuote, FeeQuoteParams } from 'utils/operator'
-import { OptimalRatesWithPartnerFees } from 'paraswap'
-import { toPriceInformation } from 'utils/paraswap'
-import { isValidOperatorError, ApiErrorCodes } from 'utils/operator/errors/OperatorError'
-import GpQuoteError, { GpQuoteErrorCodes, isValidQuoteError } from 'utils/operator/errors/QuoteError'
-import { OrderKind } from 'utils/signatures'
-import { isOnline } from 'hooks/useIsOnline'
-import { RefetchQuoteCallbackParams } from '../useRefetchPriceCallback'
 
-export type QuoteResult = [PromiseSettledResult<PriceInformation>, PromiseSettledResult<FeeInformation>]
+import { getFeeQuote, getPriceQuote as getPriceQuoteGp, OrderMetaData } from 'utils/operator'
+import GpQuoteError, { GpQuoteErrorCodes } from 'utils/operator/errors/QuoteError'
+import { getCanonicalMarket, isPromiseFulfilled, withTimeout } from 'utils/misc'
+import { formatAtoms } from 'utils/format'
+import { PRICE_API_TIMEOUT_MS } from 'constants/index'
+import { getPriceQuote as getPriceQuoteParaswap, toPriceInformation } from 'utils/paraswap'
+import { onlyResolvesLast } from 'utils/async'
+
+import { OptimalRatesWithPartnerFees as OptimalRatesWithPartnerFeesParaswap } from 'paraswap'
+import { OrderKind } from '@gnosis.pm/gp-v2-contracts'
+import { ChainId } from 'state/lists/actions'
 
 const FEE_EXCEEDS_FROM_ERROR = new GpQuoteError({
   errorType: GpQuoteErrorCodes.FeeExceedsFrom,
   description: GpQuoteError.quoteErrorDetails.FeeExceedsFrom,
 })
+
+export interface QuoteParams {
+  quoteParams: FeeQuoteParams
+  fetchFee: boolean
+  previousFee?: FeeInformation
+  isPriceRefresh: boolean
+}
+
+export interface FeeInformation {
+  expirationDate: string
+  amount: string
+}
+
+export interface PriceInformation {
+  token: string
+  amount: string | null
+}
 
 export class PriceQuoteError extends Error {
   params: PriceQuoteParams
@@ -33,9 +46,23 @@ export class PriceQuoteError extends Error {
   }
 }
 
-type PriceSource = 'gnosis-protocol' | 'paraswap'
-type PriceInformationWithSource = PriceInformation & { source: PriceSource; data?: any }
-type PromiseRejectedResultWithSource = PromiseRejectedResult & { source: PriceSource }
+export type FeeQuoteParams = Pick<OrderMetaData, 'sellToken' | 'buyToken' | 'kind'> & {
+  amount: string
+  fromDecimals: number
+  toDecimals: number
+  chainId: ChainId
+}
+
+export type PriceQuoteParams = Omit<FeeQuoteParams, 'sellToken' | 'buyToken'> & {
+  baseToken: string
+  quoteToken: string
+  fromDecimals: number
+  toDecimals: number
+}
+
+export type PriceSource = 'gnosis-protocol' | 'paraswap'
+export type PriceInformationWithSource = PriceInformation & { source: PriceSource; data?: any }
+export type PromiseRejectedResultWithSource = PromiseRejectedResult & { source: PriceSource }
 
 type FilterWinningPriceParams = {
   kind: string
@@ -63,18 +90,37 @@ export function filterWinningPrice(params: FilterWinningPriceParams) {
   return { token, amount }
 }
 
+export type QuoteResult = [PromiseSettledResult<PriceInformation>, PromiseSettledResult<FeeInformation>]
+
+export async function getBestPriceQuote(params: PriceQuoteParams) {
+  // Get price from all API: Gpv2 and Paraswap
+  const pricePromise = withTimeout(getPriceQuoteGp(params), PRICE_API_TIMEOUT_MS, 'GPv2: Get Price API')
+  const paraSwapPricePromise = withTimeout(
+    getPriceQuoteParaswap(params),
+    PRICE_API_TIMEOUT_MS,
+    'Paraswap: Get Price API'
+  )
+
+  // Get results from API queries
+  return Promise.allSettled([pricePromise, paraSwapPricePromise])
+}
+
+/**
+ * Auxiliary function that would take the settled results from all price feeds (resolved/rejected), and group them by
+ * successful price quotes and errors price quotes. For each price, it also give the context (the name of the price feed)
+ */
 export function extractPriceAndErrorPromiseValues(
-  priceResult: PromiseSettledResult<PriceInformation>,
-  paraSwapPriceResult: PromiseSettledResult<OptimalRatesWithPartnerFees | null>
+  gpPriceResult: PromiseSettledResult<PriceInformation>,
+  paraSwapPriceResult: PromiseSettledResult<OptimalRatesWithPartnerFeesParaswap | null>
 ): [Array<PriceInformationWithSource>, Array<PromiseRejectedResultWithSource>] {
   // Prepare an array with all successful estimations
   const priceQuotes: Array<PriceInformationWithSource> = []
   const errorsGetPrice: Array<PromiseRejectedResultWithSource> = []
 
-  if (isPromiseFulfilled(priceResult)) {
-    priceQuotes.push({ ...priceResult.value, source: 'gnosis-protocol' })
+  if (isPromiseFulfilled(gpPriceResult)) {
+    priceQuotes.push({ ...gpPriceResult.value, source: 'gnosis-protocol' })
   } else {
-    errorsGetPrice.push({ ...priceResult, source: 'gnosis-protocol' })
+    errorsGetPrice.push({ ...gpPriceResult, source: 'gnosis-protocol' })
   }
 
   if (isPromiseFulfilled(paraSwapPriceResult)) {
@@ -89,10 +135,12 @@ export function extractPriceAndErrorPromiseValues(
 
 /**
  *
- * @returns The best price among GPv2 API or Paraswap one
+ * @returns The best price among all price feeds. Price feeds:
+ *  - GPv2 API
+ *  - Paraswap
  */
 async function _getBestPriceQuote(params: PriceQuoteParams): Promise<PriceInformation> {
-  // Get price from all API: Gpv2 and Paraswap
+  // Get price from all APIs: Gpv2 and Paraswap
   const [priceResult, paraSwapPriceResult] = await getBestPriceQuote(params)
 
   // Prepare an array with all successful estimations
@@ -114,7 +162,7 @@ async function _getBestPriceQuote(params: PriceQuoteParams): Promise<PriceInform
   }
 }
 
-async function _getQuote({ quoteParams, fetchFee, previousFee }: RefetchQuoteCallbackParams): Promise<QuoteResult> {
+export async function getQuote({ quoteParams, fetchFee, previousFee }: QuoteParams): Promise<QuoteResult> {
   const { sellToken, buyToken, fromDecimals, toDecimals, amount, kind, chainId } = quoteParams
   const { baseToken, quoteToken } = getCanonicalMarket({ sellToken, buyToken, kind })
 
@@ -159,68 +207,4 @@ async function _getQuote({ quoteParams, fetchFee, previousFee }: RefetchQuoteCal
   return Promise.allSettled([pricePromise, feePromise])
 }
 
-// wrap _getQuote and only resolve once on several calls
-export const getQuote = onlyResolvesLast<QuoteResult>(_getQuote)
-
-interface HandleQuoteErrorParams {
-  quoteData: QuoteInformationObject | FeeQuoteParams
-  error: unknown
-  addUnsupportedToken: (params: AddGpUnsupportedTokenParams) => void
-}
-
-export function handleQuoteError({ quoteData, error, addUnsupportedToken }: HandleQuoteErrorParams): QuoteError {
-  if (isValidOperatorError(error)) {
-    switch (error.type) {
-      case ApiErrorCodes.UnsupportedToken: {
-        // TODO: will change with introduction of data prop in error responses
-        const unsupportedTokenAddress = error.description.split(' ')[2]
-        console.error(`${error.message}: ${error.description} - disabling.`)
-
-        // Add token to unsupported token list
-        addUnsupportedToken({
-          chainId: quoteData.chainId,
-          address: unsupportedTokenAddress,
-          dateAdded: Date.now(),
-        })
-
-        return 'unsupported-token'
-      }
-
-      default: {
-        // some other operator error occurred, log it
-        console.error('Error quoting price/fee. Unhandled operator error: ' + error.type, error)
-
-        return 'fetch-quote-error'
-      }
-    }
-  } else if (isValidQuoteError(error)) {
-    switch (error.type) {
-      // Fee/Price query returns error
-      // e.g Insufficient Liquidity or Fee exceeds Price
-      case GpQuoteErrorCodes.FeeExceedsFrom: {
-        return 'fee-exceeds-sell-amount'
-      }
-
-      case GpQuoteErrorCodes.InsufficientLiquidity: {
-        console.error(`Insufficient liquidity ${error.message}: ${error.description}`)
-        return 'insufficient-liquidity'
-      }
-
-      default: {
-        // Some other operator error occurred, log it
-        console.error('Error quoting price/fee. Unhandled operator error: ' + error.type, error)
-
-        return 'fetch-quote-error'
-      }
-    }
-  } else {
-    // Detect if the error was because we are now offline
-    if (!isOnline()) {
-      return 'offline-browser'
-    }
-
-    // Some other error getting the quote ocurred
-    console.error('Error quoting price/fee: ' + error)
-    return 'fetch-quote-error'
-  }
-}
+export const getQuoteResolveOnlyLastCall = onlyResolvesLast<QuoteResult>(getQuote)
