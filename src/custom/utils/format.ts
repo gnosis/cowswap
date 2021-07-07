@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js'
 
 import { formatSmart as _formatSmart } from '@gnosis.pm/dex-js'
-import { Currency, CurrencyAmount } from '@uniswap/sdk-core'
+import { Currency, CurrencyAmount, Percent, Fraction } from '@uniswap/sdk-core'
 
 const TEN = new BigNumber(10)
 
@@ -9,12 +9,23 @@ export function formatAtoms(amount: string, decimals: number): string {
   return new BigNumber(amount).div(TEN.pow(decimals)).toString(10)
 }
 
-export function formatSmart(currency: CurrencyAmount<Currency> | undefined, precision: number) {
-  if (!currency) return
+/**
+ * formatSmart
+ * @param amount
+ * @param decimalsToShow
+ * @returns string or undefined
+ */
+export function formatSmart(value: CurrencyAmount<Currency> | Percent | Fraction | undefined, decimalsToShow: number) {
+  if (!value) return
+
+  const precision = value instanceof CurrencyAmount ? value.currency.decimals : 0
+  const amount = value instanceof CurrencyAmount ? value.quotient.toString() : value.toFixed(decimalsToShow)
 
   return _formatSmart({
-    amount: currency.quotient.toString(),
-    precision: currency.currency.decimals,
-    decimals: precision,
+    amount,
+    precision,
+    decimals: decimalsToShow,
+    thousandSeparator: false,
   })
 }
+;(window as any).formatSmart = formatSmart
