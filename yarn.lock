@@ -1830,19 +1830,19 @@
   resolved "https://registry.yarnpkg.com/@gnosis.pm/cow-runner-game/-/cow-runner-game-0.2.7.tgz#b4646e3dc6c890f2cf662b24533ec6e1ef111521"
   integrity sha512-tw84gdlRCzmdb/c9tEmqHZ7rvrMR9/+N4sMAz6BsArbA8Kve6adUN9UKkhdN2htlKnOqlTRqJZW9VPrCx9ZSNA==
 
-"@gnosis.pm/dex-contracts@^0.4.3":
-  version "0.4.3"
-  resolved "https://registry.yarnpkg.com/@gnosis.pm/dex-contracts/-/dex-contracts-0.4.3.tgz#b887eb543cae039d1e9607870232394cab5c3be7"
-  integrity sha512-ObyItfEzWRwfwWSSncPFP8aT54+Vi7VzTvqCbNYTwF+Einn9kdJvasTWkFaw5eiZE1ykD//kFB4T8xv80F2lBw==
+"@gnosis.pm/dex-contracts@^0.5.0":
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/@gnosis.pm/dex-contracts/-/dex-contracts-0.5.0.tgz#26ac8fbaae1c7da225c5b70af42bb92afa9fde13"
+  integrity sha512-b3MgplVbd+6D3u9O0dVNU65ZYrD/FxSBv+X52ILHq9fTAMh5zGNfkUIYEJtc7QTrULhnmEUZJ3DO7sGh+SPReA==
   dependencies:
     bn.js "^5.1.3"
 
-"@gnosis.pm/dex-js@^0.10.0":
-  version "0.10.0"
-  resolved "https://registry.yarnpkg.com/@gnosis.pm/dex-js/-/dex-js-0.10.0.tgz#ee2db4d46f8200db53010392f5a09b8e17216410"
-  integrity sha512-08ug4GzZqodTnDdQojcF6yKnRzA6U4LG6HOMPeWvK59AgDbD/4MBzRZuXUYJpHjFaC+vAlP2eGJHHkUfNGS/lg==
+"@gnosis.pm/dex-js@^0.11.0":
+  version "0.11.0"
+  resolved "https://registry.yarnpkg.com/@gnosis.pm/dex-js/-/dex-js-0.11.0.tgz#463adaa0297192e3fd39d612896c661e3c05ca58"
+  integrity sha512-k5VPnIV6e5LtOf/wCdxro3kwaM29t9ZByLYAsOAkwpqt7Vpg0H8kWss/68UlQdfncaUcKDLyMVZs5F5mBIuOQA==
   dependencies:
-    "@gnosis.pm/dex-contracts" "^0.4.3"
+    "@gnosis.pm/dex-contracts" "^0.5.0"
     bignumber.js "^9.0.0"
 
 "@gnosis.pm/gp-v2-contracts@^0.0.1-alpha.20":
