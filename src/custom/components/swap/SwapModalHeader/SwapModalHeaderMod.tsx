@@ -23,7 +23,7 @@ import TradePrice from 'components/swap/TradePrice'
 
 // MOD
 import TradeGp from 'state/swap/TradeGp'
-import { DEFAULT_PRECISION, INPUT_OUTPUT_EXPLANATION } from 'constants/index'
+import { INPUT_OUTPUT_EXPLANATION } from 'constants/index'
 import { computeSlippageAdjustedAmounts } from 'utils/prices'
 import { Field } from 'state/swap/actions'
 import { LightCard } from 'components/Card'
@@ -115,7 +115,7 @@ SwapModalHeaderProps) {
                 fontWeight={500}
                 color={showAcceptChanges && trade.tradeType === TradeType.EXACT_OUTPUT ? theme.primary1 : ''}
               >
-                {formatSmart(trade.inputAmount, DEFAULT_PRECISION)}
+                {formatSmart(trade.inputAmount)}
               </TruncatedText>
             </RowFixed>
           </RowBetween>
@@ -146,7 +146,7 @@ SwapModalHeaderProps) {
             </RowFixed>
             <RowFixed gap={'0px'}>
               <TruncatedText fontSize={24} fontWeight={500}>
-                {formatSmart(trade.outputAmount, DEFAULT_PRECISION)}
+                {formatSmart(trade.outputAmount)}
               </TruncatedText>
             </RowFixed>
           </RowBetween>
@@ -189,7 +189,7 @@ SwapModalHeaderProps) {
               Output is estimated. You will receive at least{' '}
               <b>
                 {/* {trade.minimumAmountOut(allowedSlippage).toSignificant(6)} {trade.outputAmount.currency.symbol} */}
-                {formatSmart(slippageOut, DEFAULT_PRECISION) || '-'} {trade.outputAmount.currency.symbol}
+                {formatSmart(slippageOut) || '-'} {trade.outputAmount.currency.symbol}
               </b>{' '}
               or the transaction will expire.
             </Trans>
@@ -200,7 +200,7 @@ SwapModalHeaderProps) {
               Input is estimated. You will sell at most{' '}
               <b>
                 {/* {trade.maximumAmountIn(allowedSlippage).toSignificant(6)} {trade.inputAmount.currency.symbol} */}
-                {formatSmart(slippageIn, DEFAULT_PRECISION) || '-'} {trade.inputAmount.currency.symbol}
+                {formatSmart(slippageIn) || '-'} {trade.inputAmount.currency.symbol}
               </b>{' '}
               {/* or the transaction will revert. */}
               or the swap will not execute. {INPUT_OUTPUT_EXPLANATION}

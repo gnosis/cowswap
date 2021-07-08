@@ -11,7 +11,6 @@ import { getMinimumReceivedTooltip } from 'utils/tooltips'
 import { AutoColumn } from 'components/Column'
 import { RowBetween, RowFixed } from 'components/Row'
 import TradeGp from 'state/swap/TradeGp'
-import { DEFAULT_PRECISION } from 'constants/index'
 import { MouseoverTooltipContent } from 'components/Tooltip'
 import { StyledInfo } from 'pages/Swap/SwapMod'
 import { formatSmart } from 'utils/format'
@@ -71,7 +70,7 @@ export default function TradeSummary({
           )}
         </RowFixed>
         <TYPE.black textAlign="right" fontSize={12} color={theme.text1}>
-          {`${formatSmart(realizedFee ?? undefined, DEFAULT_PRECISION) || '-'} ${realizedFee?.currency.symbol}`}
+          {`${formatSmart(realizedFee) || '-'} ${realizedFee?.currency.symbol}`}
         </TYPE.black>
       </RowBetween>
 
@@ -122,8 +121,8 @@ export default function TradeSummary({
                 ? `${trade.minimumAmountOut(allowedSlippage).toSignificant(6)} ${trade.outputAmount.currency.symbol}`
                 : `${trade.maximumAmountIn(allowedSlippage).toSignificant(6)} ${trade.inputAmount.currency.symbol}`} */}
           {isExactIn
-            ? `${formatSmart(slippageOut, DEFAULT_PRECISION) || '-'} ${trade.outputAmount.currency.symbol}`
-            : `${formatSmart(slippageIn, DEFAULT_PRECISION) || '-'} ${trade.inputAmount.currency.symbol}`}
+            ? `${formatSmart(slippageOut) || '-'} ${trade.outputAmount.currency.symbol}`
+            : `${formatSmart(slippageIn) || '-'} ${trade.inputAmount.currency.symbol}`}
         </TYPE.black>
       </RowBetween>
 

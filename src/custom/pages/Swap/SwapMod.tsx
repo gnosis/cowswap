@@ -60,7 +60,7 @@ import { maxAmountSpend } from 'utils/maxAmountSpend'
 // import { warningSeverity } from 'utils/prices'
 import AppBody from 'pages/AppBody'
 
-import { DEFAULT_PRECISION, INITIAL_ALLOWED_SLIPPAGE_PERCENT } from 'constants/index'
+import { PERCENTAGE_PRECISION, INITIAL_ALLOWED_SLIPPAGE_PERCENT } from 'constants/index'
 import { computeSlippageAdjustedAmounts } from 'utils/prices'
 import { ClickableText } from 'pages/Pool/styleds'
 import FeeInformationTooltip from 'components/swap/FeeInformationTooltip'
@@ -267,7 +267,7 @@ export default function Swap({
     [independentField]: typedValue,
     [dependentField]: showWrap
       ? parsedAmounts[independentField]?.toExact() ?? ''
-      : formatSmart(parsedAmounts[dependentField], DEFAULT_PRECISION) ?? '',
+      : formatSmart(parsedAmounts[dependentField]) ?? '',
   }
 
   /* const userHasSpecifiedInputOutput = Boolean(
@@ -437,7 +437,7 @@ export default function Swap({
     if (trade.tradeType === TradeType.EXACT_INPUT && trade.inputAmountWithFee.lessThan(trade.fee.amount)) {
       amountBeforeFees = '0'
     } else {
-      amountBeforeFees = formatSmart(trade.inputAmountWithFee.subtract(trade.fee.feeAsCurrency), DEFAULT_PRECISION)
+      amountBeforeFees = formatSmart(trade.inputAmountWithFee.subtract(trade.fee.feeAsCurrency))
     }
   }
 
@@ -478,9 +478,9 @@ export default function Swap({
                     trade={trade}
                     showHelper={independentField === Field.OUTPUT}
                     amountBeforeFees={amountBeforeFees}
-                    amountAfterFees={formatSmart(trade?.inputAmountWithFee, DEFAULT_PRECISION)}
+                    amountAfterFees={formatSmart(trade?.inputAmountWithFee)}
                     type="From"
-                    feeAmount={formatSmart(trade?.fee?.feeAsCurrency, DEFAULT_PRECISION)}
+                    feeAmount={formatSmart(trade?.fee?.feeAsCurrency)}
                   />
                 }
                 value={formattedAmounts[Field.INPUT]}
@@ -530,13 +530,10 @@ export default function Swap({
                     label={exactOutLabel}
                     trade={trade}
                     showHelper={independentField === Field.INPUT}
-                    amountBeforeFees={formatSmart(trade?.outputAmountWithoutFee, DEFAULT_PRECISION)}
-                    amountAfterFees={formatSmart(trade?.outputAmount, DEFAULT_PRECISION)}
+                    amountBeforeFees={formatSmart(trade?.outputAmountWithoutFee)}
+                    amountAfterFees={formatSmart(trade?.outputAmount)}
                     type="To"
-                    feeAmount={formatSmart(
-                      trade?.outputAmountWithoutFee?.subtract(trade?.outputAmount),
-                      DEFAULT_PRECISION
-                    )}
+                    feeAmount={formatSmart(trade?.outputAmountWithoutFee?.subtract(trade?.outputAmount))}
                   />
                 }
                 showMaxButton={false}
@@ -665,7 +662,7 @@ export default function Swap({
                         <Trans>Slippage Tolerance</Trans>
                       </ClickableText>
                       <ClickableText fontWeight={500} fontSize={14} color={theme.text2} onClick={toggleSettings}>
-                        {formatSmart(allowedSlippage, 2)}%
+                        {formatSmart(allowedSlippage, PERCENTAGE_PRECISION)}%
                       </ClickableText>
                     </RowBetween>
                   )}

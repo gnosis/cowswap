@@ -11,7 +11,6 @@ import SwapModalFooter from 'components/swap/SwapModalFooter'
 import SwapModalHeader from 'components/swap/SwapModalHeader'
 // MOD
 import TradeGp from 'state/swap/TradeGp'
-import { DEFAULT_PRECISION } from 'constants/index'
 import { formatSmart } from 'utils/format'
 
 /**
@@ -101,9 +100,9 @@ export default function ConfirmSwapModal({
   // text to show while loading
   const pendingText = (
     <Trans>
-      Swapping {formatSmart(trade?.inputAmount, DEFAULT_PRECISION) /* trade?.inputAmount?.toSignificant(6) */}{' '}
+      Swapping {formatSmart(trade?.inputAmount) /* trade?.inputAmount?.toSignificant(6) */}{' '}
       {trade?.inputAmount?.currency?.symbol} for{' '}
-      {formatSmart(trade?.outputAmount, DEFAULT_PRECISION) /* trade?.outputAmount?.toSignificant(6) */}{' '}
+      {formatSmart(trade?.outputAmount) /* trade?.outputAmount?.toSignificant(6) */}{' '}
       {trade?.outputAmount?.currency?.symbol}
     </Trans>
   )
