@@ -35,7 +35,7 @@ export function useBestUSDCPrice(currency?: Currency) {
       toDecimals: stablecoin.decimals,
     }
 
-    getBestPrice(params)
+    getBestPrice(params, { aggrOverride: 'max' })
       .then((winningPrice) => {
         // Response can include a null price amount, throw if so
         if (!winningPrice.amount) throw new Error('Winning price cannot be null')
@@ -50,7 +50,11 @@ export function useBestUSDCPrice(currency?: Currency) {
         } else {
           price = new Price({ baseAmount: amountOut, quoteAmount: stringToCurrency(winningPrice.amount, currency) })
         }
-
+        console.debug(
+          '[useBestUSDCPrice] Best USDC price amount',
+          price.toSignificant(12),
+          price.invert().toSignificant(12)
+        )
         setBestUsdPrice(price)
       })
       .catch((err) => {
