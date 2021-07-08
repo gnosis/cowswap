@@ -28,4 +28,3 @@ export function formatSmart(value: CurrencyAmount<Currency> | Percent | Fraction
     thousandSeparator: false,
   })
 }
-;(window as any).formatSmart = formatSmart
