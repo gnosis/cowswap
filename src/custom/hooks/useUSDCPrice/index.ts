@@ -4,10 +4,17 @@ import { unstable_batchedUpdates as batchedUpdate } from 'react-dom'
 import { supportedChainId } from 'utils/supportedChainId'
 import { useActiveWeb3React } from 'hooks/web3'
 import { getBestPrice } from 'utils/price'
-import { STABLECOIN_AMOUNT_OUT } from 'hooks/useUSDCPrice'
+import { STABLECOIN_AMOUNT_OUT as STABLECOIN_AMOUNT_OUT_UNI } from 'hooks/useUSDCPrice'
 import { stringToCurrency } from 'state/swap/extension'
+import { SupportedChainId } from 'constants/chains'
+import { USDC_XDAI } from 'utils/xdai/constants'
 
 export * from '@src/hooks/useUSDCPrice'
+
+const STABLECOIN_AMOUNT_OUT: { [chainId: number]: CurrencyAmount<Token> } = {
+  ...STABLECOIN_AMOUNT_OUT_UNI,
+  [SupportedChainId.XDAI]: CurrencyAmount.fromRawAmount(USDC_XDAI, 100_000e6),
+}
 
 export default function useUSDCPrice(currency?: Currency) {
   const [bestUsdPrice, setBestUsdPrice] = useState<Price<Token, Currency> | null>(null)
