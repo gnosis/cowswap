@@ -63,12 +63,15 @@ export type PriceSource = 'gnosis-protocol' | 'paraswap'
 export type PriceInformationWithSource = PriceInformation & { source: PriceSource; data?: any }
 export type PromiseRejectedResultWithSource = PromiseRejectedResult & { source: PriceSource }
 
+interface GetBestPriceOptions {
+  aggrOverride?: 'max' | 'min'
+}
+
 type FilterWinningPriceParams = {
   kind: string
   amounts: string[]
   priceQuotes: PriceInformationWithSource[]
-  aggrOverride?: 'max' | 'min'
-}
+} & GetBestPriceOptions
 
 function _filterWinningPrice(params: FilterWinningPriceParams) {
   // Take the best price: Aggregate all the amounts into a single one.
@@ -133,10 +136,6 @@ function _extractPriceAndErrorPromiseValues(
   }
 
   return [priceQuotes, errorsGetPrice]
-}
-
-interface GetBestPriceOptions {
-  aggrOverride?: 'max' | 'min'
 }
 
 /**
