@@ -13,7 +13,7 @@ export * from '@src/hooks/useUSDCPrice'
 
 const STABLECOIN_AMOUNT_OUT: { [chainId: number]: CurrencyAmount<Token> } = {
   ...STABLECOIN_AMOUNT_OUT_UNI,
-  [SupportedChainId.XDAI]: CurrencyAmount.fromRawAmount(USDC_XDAI, 100_000e6),
+  [SupportedChainId.XDAI]: CurrencyAmount.fromRawAmount(USDC_XDAI, 10_000e6),
 }
 
 export default function useUSDCPrice(currency?: Currency) {
@@ -45,24 +45,28 @@ export default function useUSDCPrice(currency?: Currency) {
       const price = new Price(stablecoin, stablecoin, '1', '1')
       return setBestUsdPrice(price)
     } else {
-      getBestPrice(params, { aggrOverride: 'max' })
+      getBestPrice(params)
         .then((winningPrice) => {
-          // Response can include a null price amount, throw if so
-          if (!winningPrice.amount) throw new Error('Winning price cannot be null')
-
           // reset the error
           setError(null)
 
-          const price = new Price({
-            baseAmount: amountOut,
-            quoteAmount: stringToCurrency(winningPrice.amount, currency),
-          })
+          let price: Price<Token, Currency> | null
+          // Response can include a null price amount
+          // e.g fee > input error
+          if (!winningPrice.amount) {
+            price = null
+          } else {
+            price = new Price({
+              baseAmount: amountOut,
+              quoteAmount: stringToCurrency(winningPrice.amount, currency),
+            })
+            console.debug(
+              '[useBestUSDCPrice] Best USDC price amount',
+              price.toSignificant(12),
+              price.invert().toSignificant(12)
+            )
+          }
 
-          console.debug(
-            '[useBestUSDCPrice] Best USDC price amount',
-            price.toSignificant(12),
-            price.invert().toSignificant(12)
-          )
           return setBestUsdPrice(price)
         })
         .catch((err) => {
