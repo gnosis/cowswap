@@ -8,9 +8,8 @@ import { STABLECOIN_AMOUNT_OUT } from 'hooks/useUSDCPrice'
 import { stringToCurrency } from 'state/swap/extension'
 
 export * from '@src/hooks/useUSDCPrice'
-export { default } from '@src/hooks/useUSDCPrice'
 
-export function useBestUSDCPrice(currency?: Currency) {
+export default function useUSDCPrice(currency?: Currency) {
   const [bestUsdPrice, setBestUsdPrice] = useState<Price<Token, Currency> | null>(null)
   const [error, setError] = useState<Error | null>(null)
 
@@ -35,35 +34,38 @@ export function useBestUSDCPrice(currency?: Currency) {
       toDecimals: stablecoin.decimals,
     }
 
-    getBestPrice(params, { aggrOverride: 'max' })
-      .then((winningPrice) => {
-        // Response can include a null price amount, throw if so
-        if (!winningPrice.amount) throw new Error('Winning price cannot be null')
+    if (currency.wrapped.equals(stablecoin)) {
+      const price = new Price(stablecoin, stablecoin, '1', '1')
+      return setBestUsdPrice(price)
+    } else {
+      getBestPrice(params, { aggrOverride: 'max' })
+        .then((winningPrice) => {
+          // Response can include a null price amount, throw if so
+          if (!winningPrice.amount) throw new Error('Winning price cannot be null')
 
-        // reset the error
-        setError(null)
+          // reset the error
+          setError(null)
 
-        let price: Price<Token, Token> | Price<Token, Currency>
-        // handle tokens being the same
-        if (currency.wrapped.equals(stablecoin)) {
-          price = new Price(stablecoin, stablecoin, '1', '1')
-        } else {
-          price = new Price({ baseAmount: amountOut, quoteAmount: stringToCurrency(winningPrice.amount, currency) })
-        }
-        console.debug(
-          '[useBestUSDCPrice] Best USDC price amount',
-          price.toSignificant(12),
-          price.invert().toSignificant(12)
-        )
-        setBestUsdPrice(price)
-      })
-      .catch((err) => {
-        console.error('[useBestUSDCPrice] Error getting best price', err)
-        return batchedUpdate(() => {
-          setError(new Error(err))
-          setBestUsdPrice(null)
+          const price = new Price({
+            baseAmount: amountOut,
+            quoteAmount: stringToCurrency(winningPrice.amount, currency),
+          })
+
+          console.debug(
+            '[useBestUSDCPrice] Best USDC price amount',
+            price.toSignificant(12),
+            price.invert().toSignificant(12)
+          )
+          return setBestUsdPrice(price)
         })
-      })
+        .catch((err) => {
+          console.error('[useBestUSDCPrice] Error getting best price', err)
+          return batchedUpdate(() => {
+            setError(new Error(err))
+            setBestUsdPrice(null)
+          })
+        })
+    }
   }, [amountOut, chainId, currency, stablecoin])
 
   return { price: bestUsdPrice, error }
@@ -73,8 +75,8 @@ export function useBestUSDCPrice(currency?: Currency) {
  * Returns the price in USDC of the input currency from price APIs
  * @param currency currency to compute the USDC price of
  */
-export function useBestUSDCValue(currencyAmount?: CurrencyAmount<Currency>) {
-  const { price, error } = useBestUSDCPrice(currencyAmount?.currency)
+export function useUSDCValue(currencyAmount?: CurrencyAmount<Currency>) {
+  const { price, error } = useUSDCPrice(currencyAmount?.currency)
 
   return useMemo(() => {
     if (!price || error || !currencyAmount) return null
