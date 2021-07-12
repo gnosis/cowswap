@@ -1,6 +1,7 @@
 import React from 'react'
 import { SupportedChainId as ChainId } from 'constants/chains'
 import Web3Status from 'components/Web3Status'
+import OrdersPanel from 'components/Orders'
 
 import HeaderMod, {
   NetworkCard as NetworkCardUni,
@@ -170,6 +171,7 @@ export default function Header() {
             <Web3Status />
           </AccountElement>
         </HeaderElement>
+        <OrdersPanel />
         <HeaderElementWrap>
           <TwitterLink>
             <a href="https://twitter.com/mevprotection" target="_blank" rel="noopener noreferrer">
