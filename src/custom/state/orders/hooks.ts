@@ -96,8 +96,6 @@ export const useOrder = ({ id, chainId }: Partial<GetRemoveOrderParams>): Order 
     const orders = state.orders[chainId]
     const serialisedOrder = orders?.fulfilled[id] || orders?.pending[id] || orders?.expired[id] || orders?.cancelled[id]
 
-    if (!serialisedOrder) return undefined
-
     return _deserializeOrder(serialisedOrder)
   })
 }
