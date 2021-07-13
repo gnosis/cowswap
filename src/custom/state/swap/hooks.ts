@@ -400,7 +400,6 @@ export function useDetectNativeToken(input?: CurrencyWithAddress, output?: Curre
     )
 
     const native = ETHER.onChain(chainId || DEFAULT_NETWORK_FOR_LISTS)
-    console.debug('native', native)
 
     const [isNativeIn, isNativeOut] = [
       input?.currency && native.equals(input.currency),
