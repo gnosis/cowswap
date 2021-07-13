@@ -70,7 +70,7 @@ export function useTokenBalancesWithLoadingIndicator(
     'balanceOf',
     [address],
     undefined,
-    100_000_000
+    100_000
   )
 
   const anyLoading: boolean = useMemo(() => balances.some((callState) => callState.loading), [balances])
