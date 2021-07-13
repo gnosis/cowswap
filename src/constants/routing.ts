@@ -19,7 +19,7 @@ import {
   WBTC,
   ETH2X_FLI,
   WETH9_EXTENDED,
-} from './tokens'
+} from 'constants/tokens'
 
 type ChainTokenList = {
   readonly [chainId: number]: Token[]
