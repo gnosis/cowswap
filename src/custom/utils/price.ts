@@ -89,10 +89,7 @@ function _filterWinningPrice(params: FilterWinningPriceParams) {
   return { token, amount }
 }
 
-export type QuoteResult = [
-  PromiseSettledResult<PriceInformation | undefined>,
-  PromiseSettledResult<FeeInformation | undefined>
-]
+export type QuoteResult = [PromiseSettledResult<PriceInformation>, PromiseSettledResult<FeeInformation>]
 
 /**
  *  Return all price estimations from all price sources
@@ -178,33 +175,28 @@ export async function getBestQuote({ quoteParams, fetchFee, previousFee }: Quote
   const feePromise =
     fetchFee || !previousFee
       ? getFeeQuote({ chainId, sellToken, buyToken, fromDecimals, toDecimals, amount, kind })
-          .then((fee) => {
-            console.log(`Fee: ${formatAtoms(fee.amount, fromDecimals)} (in atoms ${fee.amount})`)
-            return fee
-          })
-          .catch((e) => {
-            console.log(`Failed to fetch fee`, e)
-            return undefined
-          })
       : Promise.resolve(previousFee)
+
+  // Log fee for debugging
+  feePromise.then((fee) => {
+    console.log(`Fee: ${formatAtoms(fee.amount, fromDecimals)} (in atoms ${fee.amount})`)
+    return fee
+  })
 
   // Get a new price quote
   let exchangeAmount
   let feeExceedsPrice = false
   if (kind === 'sell') {
-    const feeObj = await feePromise
-    if (feeObj) {
-      // Sell orders need to deduct the fee from the swapped amount
-      // we need to check for 0/negative exchangeAmount should fee >= amount
-      const { amount: fee } = feeObj
-      const result = BigNumber.from(amount).sub(fee)
-      console.log(`Sell amount before fee: ${formatAtoms(amount, fromDecimals)}  (in atoms ${amount})`)
-      console.log(`Sell amount after fee: ${formatAtoms(result.toString(), fromDecimals)}  (in atoms ${result})`)
+    // Sell orders need to deduct the fee from the swapped amount
+    // we need to check for 0/negative exchangeAmount should fee >= amount
+    const { amount: fee } = await feePromise
+    const result = BigNumber.from(amount).sub(fee)
+    console.log(`Sell amount before fee: ${formatAtoms(amount, fromDecimals)}  (in atoms ${amount})`)
+    console.log(`Sell amount after fee: ${formatAtoms(result.toString(), fromDecimals)}  (in atoms ${result})`)
 
-      feeExceedsPrice = result.lte('0')
+    feeExceedsPrice = result.lte('0')
 
-      exchangeAmount = !feeExceedsPrice ? result.toString() : null
-    }
+    exchangeAmount = !feeExceedsPrice ? result.toString() : null
   } else {
     // For buy orders, we swap the whole amount, then we add the fee on top
     exchangeAmount = amount
@@ -213,12 +205,7 @@ export async function getBestQuote({ quoteParams, fetchFee, previousFee }: Quote
   // Get price for price estimation
   const pricePromise =
     !feeExceedsPrice && exchangeAmount
-      ? getBestPrice({ chainId, baseToken, quoteToken, fromDecimals, toDecimals, amount: exchangeAmount, kind }).catch(
-          (e) => {
-            console.log(`Failed to get price`, e)
-            return undefined
-          }
-        )
+      ? getBestPrice({ chainId, baseToken, quoteToken, fromDecimals, toDecimals, amount: exchangeAmount, kind })
       : // fee exceeds our price, is invalid
         Promise.reject(FEE_EXCEEDS_FROM_ERROR)
 
