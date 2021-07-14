@@ -49,7 +49,7 @@ const HeaderWrapper = styled.div`
   justify-content: space-between;
 `
 
-const BodyWrapper = styled.div`
+export const BodyWrapper = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -60,9 +60,9 @@ const BodyWrapper = styled.div`
   overflow-x: hidden;
   z-index: 10;
 
-  ${({ theme }) => theme.mediaWidth.upToSmall`
+  /* ${({ theme }) => theme.mediaWidth.upToSmall`
     padding: 6rem 16px 0;
-  `};
+  `}; */
 
   z-index: 1;
 `
