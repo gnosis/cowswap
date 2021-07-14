@@ -1,6 +1,7 @@
 import { CurrencyAmount, Currency, Token } from '@uniswap/sdk-core'
 import { isAddress, shortenAddress } from 'utils'
-import { AddPendingOrderParams, OrderStatus, OrderKind, ChangeOrderStatusParams } from 'state/orders/actions'
+import { OrderStatus, OrderKind, ChangeOrderStatusParams } from 'state/orders/actions'
+import { AddUnserialisedPendingOrderParams } from 'state/orders/hooks'
 
 import { signOrder, signOrderCancellation, UnsignedOrder } from 'utils/signatures'
 import { sendSignedOrderCancellation, sendSignedOrder, OrderID } from 'utils/operator'
@@ -22,13 +23,16 @@ export interface PostOrderParams {
   validTo: number
   recipient: string
   recipientAddressOrName: string | null
-  addPendingOrder: (order: AddPendingOrderParams) => void
+  addPendingOrder: (order: AddUnserialisedPendingOrderParams) => void
 }
 
 function _getSummary(params: PostOrderParams): string {
   const { kind, account, inputAmount, outputAmount, recipient, recipientAddressOrName, feeAmount } = params
 
-  const [inputQuantifier, outputQuantifier] = [kind === 'buy' ? 'at most ' : '', kind === 'sell' ? 'at least ' : '']
+  const [inputQuantifier, outputQuantifier] = [
+    kind === OrderKind.BUY ? 'at most ' : '',
+    kind === OrderKind.SELL ? 'at least ' : '',
+  ]
   const inputSymbol = inputAmount.currency.symbol
   const outputSymbol = outputAmount.currency.symbol
   const inputAmountValue = formatSmart(feeAmount ? inputAmount.add(feeAmount) : inputAmount, SHORT_PRECISION)
