@@ -24,15 +24,17 @@ import Option from 'components/WalletModal/Option'
 import PendingView from 'components/WalletModal/PendingView'
 
 const SideBar = styled.div<{ isOpen: boolean }>`
+  display: ${({ isOpen }) => (isOpen ? 'flex' : 'none')};
   position: fixed;
   top: 0;
   right: 0;
   width: 500px;
   height: 100%;
-  background: lightgrey;
-  z-index: 9999;
-  padding: 16px;
-  display: ${({ isOpen }) => (isOpen ? 'flex' : 'none')};
+  z-index: 99999;
+  padding: 0;
+  background: ${({ theme }) => theme.bg1};
+  box-shadow: 0 0 100vh 100vw rgb(0 0 0 / 25%);
+  cursor: default;
 `
 
 const CloseIcon = styled.div`
@@ -52,7 +54,8 @@ const CloseColor = styled(Close)`
 `
 
 const Wrapper = styled.div`
-  ${({ theme }) => theme.flexColumnNoWrap}
+  display: flex;
+  flex-flow: column wrap;
   margin: 0;
   padding: 0;
   width: 100%;

@@ -7,7 +7,7 @@ import { getStatusIcon } from 'components/AccountDetails'
 import useRecentActivity, { TransactionAndOrder } from 'hooks/useRecentActivity'
 import { useWalletInfo } from 'hooks/useWalletInfo'
 import { OrderStatus } from 'state/orders/actions'
-import OrdersPanel from '@src/custom/components/OrdersPanel'
+import OrdersPanel from 'components/OrdersPanel'
 
 const Wrapper = styled.div`
   color: ${({ theme }) => theme.wallet?.color};
