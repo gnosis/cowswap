@@ -13,22 +13,26 @@ import { SUPPORTED_WALLETS } from 'constants/wallet'
 import usePrevious from 'hooks/usePrevious'
 import AccountDetails from 'components/AccountDetails'
 import { Trans } from '@lingui/macro'
+// import { ApplicationModal } from 'state/application/actions'
+import {
+  // useModalOpen,
+  useWalletModalToggle,
+} from 'state/application/hooks'
 
 // import ModalMod from 'components/Modal'
 import Option from 'components/WalletModal/Option'
 import PendingView from 'components/WalletModal/PendingView'
 
-const SideBar = styled.div`
+const SideBar = styled.div<{ isOpen: boolean }>`
   position: fixed;
   top: 0;
   right: 0;
-  display: flex;
   width: 500px;
   height: 100%;
   background: lightgrey;
   z-index: 9999;
   padding: 16px;
-  display: none;
+  display: ${({ isOpen }) => (isOpen ? 'flex' : 'none')};
 `
 
 const CloseIcon = styled.div`
@@ -143,34 +147,36 @@ export default function OrdersPanel({ pendingTransactions, confirmedTransactions
 
   const [pendingError, setPendingError] = useState<boolean>()
 
-  const OrdersPanelOpen = useOrdersPanelOpen()
-  const toggleOrdersPanel = useOrdersPanelToggle()
+  const [ordersPanelOpen, setOrdersPanelOpen] = useState<boolean>(false)
+
+  // const walletModalOpen = useModalOpen(ApplicationModal.WALLET)
+  const toggleWalletModal = useWalletModalToggle()
 
   const previousAccount = usePrevious(account)
 
   // close on connection, when logged out before
   useEffect(() => {
-    if (account && !previousAccount && OrdersPanelOpen) {
-      toggleOrdersPanel()
+    if (account && !previousAccount && ordersPanelOpen) {
+      setOrdersPanelOpen(false)
     }
-  }, [account, previousAccount, toggleOrdersPanel, OrdersPanelOpen])
+  }, [account, previousAccount, ordersPanelOpen])
 
   // always reset to account view
   useEffect(() => {
-    if (OrdersPanelOpen) {
+    if (ordersPanelOpen) {
       setPendingError(false)
       setWalletView(WALLET_VIEWS.ACCOUNT)
     }
-  }, [OrdersPanelOpen])
+  }, [ordersPanelOpen])
 
   // close modal when a connection is successful
   const activePrevious = usePrevious(active)
   const connectorPrevious = usePrevious(connector)
   useEffect(() => {
-    if (OrdersPanelOpen && ((active && !activePrevious) || (connector && connector !== connectorPrevious && !error))) {
+    if (ordersPanelOpen && ((active && !activePrevious) || (connector && connector !== connectorPrevious && !error))) {
       setWalletView(WALLET_VIEWS.ACCOUNT)
     }
-  }, [setWalletView, active, error, connector, OrdersPanelOpen, activePrevious, connectorPrevious])
+  }, [setWalletView, active, error, connector, ordersPanelOpen, activePrevious, connectorPrevious])
 
   const tryActivation = async (connector: AbstractConnector | undefined) => {
     let name = ''
@@ -207,9 +213,9 @@ export default function OrdersPanel({ pendingTransactions, confirmedTransactions
   // close wallet modal if fortmatic modal is active
   useEffect(() => {
     fortmatic.on(OVERLAY_READY, () => {
-      toggleOrdersPanel()
+      setOrdersPanelOpen(false)
     })
-  }, [toggleOrdersPanel])
+  }, [ordersPanelOpen])
 
   // get wallets user can switch too, depending on device/browser
   function getOptions() {
@@ -229,7 +235,7 @@ export default function OrdersPanel({ pendingTransactions, confirmedTransactions
               onClick={() => {
                 option.connector !== connector && !option.href && tryActivation(option.connector)
               }}
-              id={`connect-${key}`}
+              id={`connect - ${key} `}
               key={key}
               active={option.connector && option.connector === connector}
               color={option.color}
@@ -250,7 +256,7 @@ export default function OrdersPanel({ pendingTransactions, confirmedTransactions
           if (option.name === 'MetaMask') {
             return (
               <Option
-                id={`connect-${key}`}
+                id={`connect - ${key} `}
                 key={key}
                 color={'#E8831D'}
                 header={<Trans>Install Metamask</Trans>}
@@ -278,7 +284,7 @@ export default function OrdersPanel({ pendingTransactions, confirmedTransactions
         !isMobile &&
         !option.mobileOnly && (
           <Option
-            id={`connect-${key}`}
+            id={`connect - ${key} `}
             onClick={() => {
               option.connector === connector
                 ? setWalletView(WALLET_VIEWS.ACCOUNT)
@@ -301,7 +307,7 @@ export default function OrdersPanel({ pendingTransactions, confirmedTransactions
     if (error) {
       return (
         <UpperSection>
-          <CloseIcon onClick={toggleOrdersPanel}>
+          <CloseIcon onClick={() => setOrdersPanelOpen(false)}>
             <CloseColor />
           </CloseIcon>
           <HeaderRow>
@@ -322,7 +328,7 @@ export default function OrdersPanel({ pendingTransactions, confirmedTransactions
     if (account && walletView === WALLET_VIEWS.ACCOUNT) {
       return (
         <AccountDetails
-          toggleOrdersPanel={toggleOrdersPanel}
+          toggleWalletModal={toggleWalletModal}
           pendingTransactions={pendingTransactions}
           confirmedTransactions={confirmedTransactions}
           ENSName={ENSName}
@@ -332,7 +338,8 @@ export default function OrdersPanel({ pendingTransactions, confirmedTransactions
     }
     return (
       <UpperSection>
-        <CloseIcon onClick={toggleOrdersPanel}>
+        {/* <CloseIcon onClick={setOrdersPanelOpen(false)}> */}
+        <CloseIcon>
           <CloseColor />
         </CloseIcon>
         {walletView !== WALLET_VIEWS.ACCOUNT ? (
@@ -385,8 +392,10 @@ export default function OrdersPanel({ pendingTransactions, confirmedTransactions
   }
 
   return (
-    <SideBar isOpen={OrdersPanelOpen} onDismiss={toggleOrdersPanel} minHeight={false} maxHeight={90}>
+    <SideBar isOpen={ordersPanelOpen}>
       <Wrapper>{getModalContent()}</Wrapper>
     </SideBar>
   )
 }
+
+// onDismiss={() => setOrdersPanelOpen(false)}

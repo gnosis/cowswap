@@ -1,7 +1,6 @@
 import React from 'react'
 import { SupportedChainId as ChainId } from 'constants/chains'
 import Web3Status from 'components/Web3Status'
-import OrdersPanel from 'components/Orders'
 
 import HeaderMod, {
   NetworkCard as NetworkCardUni,
@@ -163,6 +162,7 @@ export default function Header() {
               <NetworkCard title={NETWORK_LABELS[chainId]}>{NETWORK_LABELS[chainId]}</NetworkCard>
             )}
           </HideSmall>
+
           <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
             {account && userEthBalance ? (
               <BalanceText style={{ flexShrink: 0 }} pl="0.75rem" pr="0.5rem" fontWeight={500}>
@@ -172,7 +172,6 @@ export default function Header() {
             <Web3Status />
           </AccountElement>
         </HeaderElement>
-        <OrdersPanel />
         <HeaderElementWrap>
           <TwitterLink>
             <a href="https://twitter.com/mevprotection" target="_blank" rel="noopener noreferrer">
