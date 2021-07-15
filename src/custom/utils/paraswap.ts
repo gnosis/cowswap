@@ -1,4 +1,5 @@
 import { OrderKind } from '@gnosis.pm/gp-v2-contracts'
+
 import { ParaSwap, SwapSide, NetworkID } from 'paraswap'
 import { toErc20Address } from 'utils/tokens'
 import { OptimalRatesWithPartnerFees, APIError, RateOptions } from 'paraswap/build/types'
@@ -86,6 +87,7 @@ export async function getPriceQuote(params: PriceQuoteParams): Promise<ParaSwapP
   // https://developers.paraswap.network/api/get-rate-for-a-token-pair
   const options: RateOptions | undefined = {
     maxImpact: 100,
+    excludeDEXS: 'ParaSwapPool4',
   }
 
   // Get price

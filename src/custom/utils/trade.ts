@@ -1,12 +1,14 @@
 import { CurrencyAmount, Currency, Token } from '@uniswap/sdk-core'
 import { isAddress, shortenAddress } from 'utils'
-import { AddPendingOrderParams, OrderStatus, OrderKind, ChangeOrderStatusParams } from 'state/orders/actions'
+import { OrderStatus, OrderKind, ChangeOrderStatusParams } from 'state/orders/actions'
+import { AddUnserialisedPendingOrderParams } from 'state/orders/hooks'
 
 import { signOrder, signOrderCancellation, UnsignedOrder } from 'utils/signatures'
 import { sendSignedOrderCancellation, sendSignedOrder, OrderID } from 'utils/operator'
 import { Signer } from 'ethers'
-import { APP_ID, RADIX_DECIMAL, SHORTEST_PRECISION } from 'constants/index'
+import { APP_ID, RADIX_DECIMAL, SHORT_PRECISION } from 'constants/index'
 import { SupportedChainId as ChainId } from 'constants/chains'
+import { formatSmart } from 'utils/format'
 
 export interface PostOrderParams {
   account: string
@@ -21,17 +23,20 @@ export interface PostOrderParams {
   validTo: number
   recipient: string
   recipientAddressOrName: string | null
-  addPendingOrder: (order: AddPendingOrderParams) => void
+  addPendingOrder: (order: AddUnserialisedPendingOrderParams) => void
 }
 
 function _getSummary(params: PostOrderParams): string {
   const { kind, account, inputAmount, outputAmount, recipient, recipientAddressOrName, feeAmount } = params
 
-  const [inputQuantifier, outputQuantifier] = [kind === 'buy' ? 'at most ' : '', kind === 'sell' ? 'at least ' : '']
+  const [inputQuantifier, outputQuantifier] = [
+    kind === OrderKind.BUY ? 'at most ' : '',
+    kind === OrderKind.SELL ? 'at least ' : '',
+  ]
   const inputSymbol = inputAmount.currency.symbol
   const outputSymbol = outputAmount.currency.symbol
-  const inputAmountValue = (feeAmount ? inputAmount.add(feeAmount) : inputAmount).toSignificant(SHORTEST_PRECISION)
-  const outputAmountValue = outputAmount.toSignificant(SHORTEST_PRECISION)
+  const inputAmountValue = formatSmart(feeAmount ? inputAmount.add(feeAmount) : inputAmount, SHORT_PRECISION)
+  const outputAmountValue = formatSmart(outputAmount, SHORT_PRECISION)
 
   const base = `Swap ${inputQuantifier}${inputAmountValue} ${inputSymbol} for ${outputQuantifier}${outputAmountValue} ${outputSymbol}`
 

@@ -4,7 +4,7 @@ import JSBI from 'jsbi'
 import flatMap from 'lodash.flatmap'
 import { useCallback, useMemo } from 'react'
 import { shallowEqual } from 'react-redux'
-import { V2_FACTORY_ADDRESSES } from '../../constants/addresses'
+import { V2_FACTORY_ADDRESSES } from 'constants/addresses'
 import { BASES_TO_TRACK_LIQUIDITY_FOR, PINNED_PAIRS } from '../../constants/routing'
 
 import { useActiveWeb3React } from '../../hooks/web3'
@@ -28,7 +28,7 @@ import {
 import { SupportedLocale } from 'constants/locales'
 import { useAppDispatch, useAppSelector } from '@src/state/hooks'
 
-function serializeToken(token: Token): SerializedToken {
+export function serializeToken(token: Token): SerializedToken {
   return {
     chainId: token.chainId,
     address: token.address,
@@ -38,7 +38,7 @@ function serializeToken(token: Token): SerializedToken {
   }
 }
 
-function deserializeToken(serializedToken: SerializedToken): Token {
+export function deserializeToken(serializedToken: SerializedToken): Token {
   return new Token(
     serializedToken.chainId,
     serializedToken.address,

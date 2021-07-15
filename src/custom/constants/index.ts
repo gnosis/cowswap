@@ -19,6 +19,8 @@ export const DEFAULT_PRECISION = 6
 export const SHORT_PRECISION = 4
 export const SHORTEST_PRECISION = 3
 export const LONG_PRECISION = 10
+export const FIAT_PRECISION = 2
+export const PERCENTAGE_PRECISION = 2
 
 export const LONG_LOAD_THRESHOLD = 2000
 
@@ -72,8 +74,6 @@ export const DEFAULT_ORDER_DELAY = 20000 // 20s
 export const PENDING_ORDERS_BUFFER = 60 * 1000 // 60s
 export const CANCELLED_ORDERS_PENDING_TIME = 5 * 60 * 1000 // 5min
 export const PRICE_API_TIMEOUT_MS = 10000 // 10s
-export const EXPIRED_ORDERS_BUFFER = 45 * 1000 // 45s
-export const CHECK_EXPIRED_ORDERS_INTERVAL = 10000 // 10 sec
 
 export const WETH_LOGO_URI =
   'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2/logo.png'
