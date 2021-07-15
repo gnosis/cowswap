@@ -5,7 +5,7 @@ import { useActiveWeb3React } from 'hooks/web3'
 import { AppDispatch } from 'state'
 import { clearAllTransactions } from 'state/transactions/actions'
 import { getExplorerLabel, shortenAddress } from 'utils'
-import { AutoRow } from 'components/Row'
+// import { AutoRow } from 'components/Row'
 import Copy, { CopyIcon } from 'components/AccountDetails/Copy'
 import styled from 'styled-components'
 
@@ -23,7 +23,7 @@ import { clearOrders } from 'state/orders/actions'
 import {
   WalletName,
   MainWalletAction,
-  AccountDetailsProps,
+  // AccountDetailsProps,
   UpperSection,
   CloseIcon,
   CloseColor,
@@ -35,33 +35,63 @@ import {
   WalletAction,
   AccountControl,
   AddressLink,
-  LowerSection,
+  // LowerSection,
   IconWrapper,
   renderTransactions,
+  TransactionListWrapper,
 } from './AccountDetailsMod'
 import { ConnectedWalletInfo, useWalletInfo } from 'hooks/useWalletInfo'
 import { MouseoverTooltip } from 'components/Tooltip'
+import { OrdersPanelProps } from 'components/OrdersPanel'
 
 const Wrapper = styled.div`
   height: 100%;
   color: ${({ theme }) => theme.text1};
+  padding: 0;
+
   ${WalletName},
   ${AddressLink},
   ${CopyIcon} {
     color: ${({ theme }) => theme.text1};
   }
-  ${LowerSection} {
-    padding: 16px;
-    flex-grow: 1;
-    overflow: auto;
-    background-color: ${({ theme }) => theme.bg2};
-    border-radius: 0;
-    height: 100%;
-    h5 {
-      margin: 0;
-      font-weight: 400;
-      color: ${({ theme }) => theme.text3};
-    }
+
+  ${TransactionListWrapper} {
+    padding: 0;
+  }
+`
+
+const LowerSection = styled.div`
+  padding: 0;
+  flex-grow: 1;
+  overflow: auto;
+  background-color: ${({ theme }) => theme.bg2};
+  border-radius: 0;
+  height: 100%;
+
+  > span {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 16px;
+    border-bottom: 1px solid #d9e8ef;
+  }
+
+  > div {
+    display: flex;
+    flex-flow: column wrap;
+    padding: 0;
+  }
+
+  h5 {
+    margin: 0;
+    font-weight: 500;
+    color: ${({ theme }) => theme.text3};
+    line-height: 1;
+    display: flex;
+    align-items: center;
+  }
+
+  ${LinkStyledButton} {
+    text-decoration: underline;
   }
 `
 
@@ -154,13 +184,20 @@ export function getStatusIcon(connector?: AbstractConnector, walletInfo?: Connec
   return null
 }
 
+interface AccountDetailsProps {
+  pendingTransactions: string[]
+  confirmedTransactions: string[]
+  ENSName?: string
+  openOptions: () => void
+}
+
 export default function AccountDetails({
-  toggleWalletModal,
   pendingTransactions,
   confirmedTransactions,
   ENSName,
   openOptions,
-}: AccountDetailsProps) {
+  setOrdersPanelOpen,
+}: AccountDetailsProps & Pick<OrdersPanelProps, 'setOrdersPanelOpen'>) {
   const { chainId, account, connector } = useActiveWeb3React()
   const walletInfo = useWalletInfo()
   const theme = useContext(ThemeContext)
@@ -179,7 +216,7 @@ export default function AccountDetails({
   return (
     <Wrapper>
       <UpperSection>
-        <CloseIcon onClick={toggleWalletModal}>
+        <CloseIcon onClick={() => setOrdersPanelOpen(false)}>
           <CloseColor />
         </CloseIcon>
         <HeaderRow>Account</HeaderRow>
@@ -281,16 +318,20 @@ export default function AccountDetails({
       </UpperSection>
       {!!pendingTransactions.length || !!confirmedTransactions.length ? (
         <LowerSection>
-          <AutoRow mb={'1rem'} style={{ justifyContent: 'space-between' }}>
-            <TYPE.body>Recent Activity</TYPE.body>
-            <LinkStyledButton onClick={clearAllActivityCallback}>(clear all)</LinkStyledButton>
-          </AutoRow>
-          {renderTransactions(pendingTransactions)}
-          {renderTransactions(confirmedTransactions)}
+          <span>
+            {' '}
+            <h5>Recent Activity</h5>
+            <LinkStyledButton onClick={clearAllActivityCallback}>Clear activity</LinkStyledButton>
+          </span>
+
+          <div>
+            {renderTransactions(pendingTransactions)}
+            {renderTransactions(confirmedTransactions)}
+          </div>
         </LowerSection>
       ) : (
         <LowerSection>
-          <TYPE.body color={theme.text2}>Your activity will appear here...</TYPE.body>
+          <TYPE.body color={theme.text2}>Your orders activity will appear here...</TYPE.body>
         </LowerSection>
       )}
     </Wrapper>

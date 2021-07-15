@@ -94,21 +94,21 @@ export const YourAccount = styled.div`
   }
 `
 
-export const LowerSection = styled.div`
-  ${({ theme }) => theme.flexColumnNoWrap}
-  padding: 1.5rem;
-  flex-grow: 1;
-  overflow: auto;
-  background-color: ${({ theme }) => theme.bg2};
-  border-bottom-left-radius: 20px;
-  border-bottom-right-radius: 20px;
+// const LowerSection = styled.div`
+//   ${({ theme }) => theme.flexColumnNoWrap}
+//   padding: 1.5rem;
+//   flex-grow: 1;
+//   overflow: auto;
+//   background-color: ${({ theme }) => theme.bg2};
+//   border-bottom-left-radius: 20px;
+//   border-bottom-right-radius: 20px;
 
-  h5 {
-    margin: 0;
-    font-weight: 400;
-    color: ${({ theme }) => theme.text3};
-  }
-`
+//   h5 {
+//     margin: 0;
+//     font-weight: 400;
+//     color: ${({ theme }) => theme.text3};
+//   }
+// `
 
 export const AccountControl = styled.div`
   display: flex;
@@ -212,7 +212,7 @@ export function renderTransactions(transactions: string[]) {
 }
 
 export interface AccountDetailsProps {
-  toggleWalletModal: () => void
+  // toggleWalletModal: () => void
   pendingTransactions: string[]
   confirmedTransactions: string[]
   ENSName?: string

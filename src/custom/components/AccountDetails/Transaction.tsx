@@ -1,17 +1,17 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { AlertCircle, CheckCircle, XCircle, Triangle } from 'react-feather'
+// import { AlertCircle, CheckCircle, XCircle, Triangle } from 'react-feather'
 
 import { useActiveWeb3React } from 'hooks/web3'
 import { getEtherscanLink, shortenOrderId } from 'utils'
 import { RowFixed } from 'components/Row'
 import Loader from 'components/Loader'
 import {
-  TransactionWrapper,
+  // TransactionWrapper,
   TransactionState as OldTransactionState,
-  TransactionStatusText,
+  // TransactionStatusText,
   IconWrapper,
 } from './TransactionMod'
-import Pill from '../Pill'
+// import Pill from '../Pill'
 import styled from 'styled-components'
 import {
   ConfirmationModalContent,
@@ -26,13 +26,17 @@ import { ButtonPrimary } from 'components/Button'
 import { MouseoverTooltip } from 'components/Tooltip'
 import { GpModal as Modal } from 'components/WalletModal'
 
+import SVG from 'react-inlinesvg'
+import TxArrowsImage from 'assets/images/transaction-arrows.svg'
+import TxCheckImage from 'assets/images/transaction-confirmed.svg'
+
 const PILL_COLOUR_MAP = {
-  CONFIRMED: '#1b7b43',
-  PENDING_ORDER: '#8958FF',
-  PENDING_TX: '#2b68fa',
-  EXPIRED_ORDER: '#b94d54',
-  CANCELLED_ORDER: '#808080',
-  CANCELLING_ORDER: '#8998FF',
+  CONFIRMED: '#3B7848',
+  PENDING_ORDER: '#43758C',
+  PENDING_TX: '#43758C',
+  EXPIRED_ORDER: '#ED673A',
+  CANCELLED_ORDER: '#ED673A',
+  CANCELLING_ORDER: '#43758C',
 }
 
 function determinePillColour(status: ActivityStatus, type: ActivityType) {
@@ -51,12 +55,86 @@ function determinePillColour(status: ActivityStatus, type: ActivityType) {
   }
 }
 
+const IconType = styled.div`
+  height: 36px;
+  width: 36px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &::before {
+    content: '';
+    display: block;
+    background: ${({ color }) => color};
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: inherit;
+    width: inherit;
+    border-radius: 36px;
+    opacity: 0.1;
+  }
+  svg {
+    display: flex;
+    margin: auto;
+  }
+
+  svg > path {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    margin: auto;
+    display: block;
+    fill: ${({ color }) => color};
+  }
+`
+
+const Summary = styled.div`
+  display: flex;
+  flex-flow: column wrap;
+  color: ${({ theme }) => theme.text1};
+
+  > b {
+    color: inherit;
+    font-weight: 500;
+    line-height: 1;
+    font-size: 15px;
+    margin: 0 0 5px;
+  }
+
+  > p {
+    font-size: 13px;
+    font-weight: 400;
+    padding: 0;
+    margin: 0;
+    color: inherit;
+  }
+`
+
+const TransactionStatusText = styled.div`
+  margin: 0 auto 0 16px;
+  display: flex;
+  align-items: center;
+
+  &:hover {
+    text-decoration: none;
+  }
+`
+
+const StatusLabel = styled.div`
+  height: 28px;
+  width: 90px;
+  background: ${({ color }) => color};
+`
+
 function getActivitySummary(params: {
   id: string
   activityData: ReturnType<typeof useActivityDescriptors>
   suffix?: string
-}): string | null {
-  const { id, activityData, suffix } = params
+  type?: ActivityType
+}) {
+  const { id, activityData, suffix, type } = params
 
   if (!activityData) return null
 
@@ -73,16 +151,12 @@ function getActivitySummary(params: {
 
   baseSummary = baseSummary ?? id
 
-  return baseSummary + ' ↗'
+  return (
+    <Summary>
+      <b>{type} ↗</b> <p>{baseSummary}</p>
+    </Summary>
+  )
 }
-
-const RowWrapper = styled(TransactionWrapper)`
-  display: flex;
-
-  & > a {
-    width: 100%;
-  }
-`
 
 // override the href, pending and success props
 // override mouse actions via CSS when we dont want a clickable row
@@ -90,6 +164,22 @@ const TransactionState = styled(OldTransactionState).attrs(
   (props): { href?: string; disableMouseActions?: boolean; pending?: boolean; success?: boolean } => props
 )`
   ${(props): string | false => !!props.disableMouseActions && `pointer-events: none; cursor: none;`}
+  width: 100%;
+  border-radius: 0;
+  font-size: initial;
+  display: flex;
+  margin: 0;
+  padding: 16px;
+  border-bottom: 1px solid #d9e8ef;
+  transition: background 0.2s ease-in-out;
+
+  &:hover {
+    background: rgba(217, 232, 239, 0.35);
+  }
+
+  ${RowFixed} {
+    width: 100%;
+  }
 `
 
 export const CancellationSummary = styled.span`
@@ -217,37 +307,47 @@ export default function Transaction({ hash: id }: { hash: string }) {
   const onDismiss = () => setShowCancelModal(false)
 
   return (
-    <RowWrapper>
+    <>
       <TransactionState href={getEtherscanLink(chainId, id, 'transaction')}>
         <RowFixed>
           {activity && (
-            <Pill color="#fff" bgColor={determinePillColour(status, type)} minWidth="3.5rem">
-              {type}
-            </Pill>
+            <IconType color={determinePillColour(status, type)}>
+              <IconWrapper pending={isPending || isCancelling} success={isConfirmed || isCancelled}>
+                {isPending || isCancelling ? (
+                  <Loader />
+                ) : isConfirmed ? (
+                  <SVG src={TxCheckImage} description="Order Confirmed" />
+                ) : isExpired ? (
+                  <SVG src={TxArrowsImage} description="Order Expired" />
+                ) : isCancelled ? (
+                  <SVG src={TxArrowsImage} description="Order Cancelled" />
+                ) : (
+                  <SVG src={TxArrowsImage} description="No state" />
+                )}
+              </IconWrapper>
+            </IconType>
           )}
           <TransactionStatusText>
             {isCancelling ? (
               <MouseoverTooltip text={activity.summary || id}>
-                {getActivitySummary({ activityData, id, suffix: '(Cancellation requested)' })}
+                {getActivitySummary({ activityData, id, suffix: '(Cancellation requested)', type })}
               </MouseoverTooltip>
             ) : (
-              getActivitySummary({ activityData, id })
+              getActivitySummary({ activityData, id, type })
             )}
           </TransactionStatusText>
+          <StatusLabel color={determinePillColour(status, type)}>
+            {isPending
+              ? 'Open'
+              : isConfirmed
+              ? 'Confirmed'
+              : isExpired
+              ? 'Expired'
+              : isCancelled
+              ? 'Cancelled'
+              : 'No state'}
+          </StatusLabel>
         </RowFixed>
-        <IconWrapper pending={isPending || isCancelling} success={isConfirmed || isCancelled}>
-          {isPending || isCancelling ? (
-            <Loader />
-          ) : isConfirmed ? (
-            <CheckCircle size="16" />
-          ) : isExpired ? (
-            <AlertCircle size="16" />
-          ) : isCancelled ? (
-            <XCircle size="16" />
-          ) : (
-            <Triangle size="16" />
-          )}
-        </IconWrapper>
       </TransactionState>
       {isCancellable && (
         <>
@@ -262,6 +362,6 @@ export default function Transaction({ hash: id }: { hash: string }) {
           )}
         </>
       )}
-    </RowWrapper>
+    </>
   )
 }

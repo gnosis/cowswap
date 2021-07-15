@@ -15,7 +15,7 @@ import usePrevious from 'hooks/usePrevious'
 import { ApplicationModal } from 'state/application/actions'
 import { useModalOpen, useWalletModalToggle } from 'state/application/hooks'
 // import { ExternalLink, TYPE } from 'theme'
-import AccountDetails from 'components/AccountDetails'
+// import AccountDetails from 'components/AccountDetails'
 import { Trans } from '@lingui/macro'
 
 import ModalMod from 'components/Modal'
@@ -120,7 +120,12 @@ export interface WalletModalProps {
   Modal: typeof ModalMod
 }
 
-export default function WalletModal({ pendingTransactions, confirmedTransactions, ENSName, Modal }: WalletModalProps) {
+export default function WalletModal({
+  // pendingTransactions,
+  // confirmedTransactions,
+  //  ENSName,
+  Modal,
+}: WalletModalProps) {
   /* {
     pendingTransactions: string[] // hashes of pending
     confirmedTransactions: string[] // hashes of confirmed
@@ -311,17 +316,17 @@ export default function WalletModal({ pendingTransactions, confirmedTransactions
         </UpperSection>
       )
     }
-    if (account && walletView === WALLET_VIEWS.ACCOUNT) {
-      return (
-        <AccountDetails
-          toggleWalletModal={toggleWalletModal}
-          pendingTransactions={pendingTransactions}
-          confirmedTransactions={confirmedTransactions}
-          ENSName={ENSName}
-          openOptions={() => setWalletView(WALLET_VIEWS.OPTIONS)}
-        />
-      )
-    }
+    // if (account && walletView === WALLET_VIEWS.ACCOUNT) {
+    //   return (
+    //     <AccountDetails
+    //       // toggleWalletModal={toggleWalletModal}
+    //       pendingTransactions={pendingTransactions}
+    //       confirmedTransactions={confirmedTransactions}
+    //       ENSName={ENSName}
+    //       openOptions={() => setWalletView(WALLET_VIEWS.OPTIONS)}
+    //     />
+    //   )
+    // }
     return (
       <UpperSection>
         <CloseIcon onClick={toggleWalletModal}>

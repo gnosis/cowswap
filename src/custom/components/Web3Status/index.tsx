@@ -1,6 +1,5 @@
-import React, { useMemo } from 'react'
+import React, { useMemo, useState } from 'react'
 import styled from 'styled-components'
-// import WalletModal from 'components/WalletModal'
 import { Web3StatusInner, Web3StatusConnected } from './Web3StatusMod'
 import { AbstractConnector } from '@web3-react/abstract-connector'
 import { getStatusIcon } from 'components/AccountDetails'
@@ -37,6 +36,8 @@ export default function Web3Status() {
   // Returns all RECENT (last day) transaction and orders in 2 arrays: pending and confirmed
   const allRecentActivity = useRecentActivity()
 
+  const [ordersPanelOpen, setOrdersPanelOpen] = useState<boolean>(false)
+
   const { pendingActivity, confirmedActivity } = useMemo(() => {
     // Separate the array into 2: PENDING and FULFILLED(or CONFIRMED)+EXPIRED
     const pendingActivity = allRecentActivity.filter(isPending).map((data) => data.id)
@@ -54,9 +55,15 @@ export default function Web3Status() {
   }
 
   return (
-    <Wrapper>
+    <Wrapper onClick={() => setOrdersPanelOpen(true)}>
       <Web3StatusInner pendingCount={pendingActivity.length} StatusIconComponent={StatusIcon} />
-      <OrdersPanel ENSName={ensName} pendingTransactions={pendingActivity} confirmedTransactions={confirmedActivity} />
+      <OrdersPanel
+        ENSName={ensName}
+        pendingTransactions={pendingActivity}
+        confirmedTransactions={confirmedActivity}
+        ordersPanelOpen={ordersPanelOpen}
+        setOrdersPanelOpen={setOrdersPanelOpen}
+      />
     </Wrapper>
   )
 }

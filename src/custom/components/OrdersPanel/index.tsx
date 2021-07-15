@@ -1,7 +1,7 @@
 import { AbstractConnector } from '@web3-react/abstract-connector'
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
 import { WalletConnectConnector } from '@web3-react/walletconnect-connector'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { isMobile } from 'react-device-detect'
 import ReactGA from 'react-ga'
 import styled from 'styled-components/macro'
@@ -11,13 +11,15 @@ import { fortmatic, injected, portis } from 'connectors'
 import { OVERLAY_READY } from 'connectors/Fortmatic'
 import { SUPPORTED_WALLETS } from 'constants/wallet'
 import usePrevious from 'hooks/usePrevious'
+import { useOnClickOutside } from 'hooks/useOnClickOutside'
 import AccountDetails from 'components/AccountDetails'
 import { Trans } from '@lingui/macro'
+import { MEDIA_WIDTHS } from '@src/theme'
 // import { ApplicationModal } from 'state/application/actions'
-import {
-  // useModalOpen,
-  useWalletModalToggle,
-} from 'state/application/hooks'
+// import {
+//     useModalOpen,
+//   useWalletModalToggle,
+// } from 'state/application/hooks'
 
 // import ModalMod from 'components/Modal'
 import Option from 'components/WalletModal/Option'
@@ -35,6 +37,10 @@ const SideBar = styled.div<{ isOpen: boolean }>`
   background: ${({ theme }) => theme.bg1};
   box-shadow: 0 0 100vh 100vw rgb(0 0 0 / 25%);
   cursor: default;
+
+  @media screen and (max-width: ${MEDIA_WIDTHS.upToSmall}px) {
+    width: 100%;
+  }
 `
 
 const CloseIcon = styled.div`
@@ -133,9 +139,17 @@ export interface OrdersPanelProps {
   pendingTransactions: string[] // hashes of pending
   confirmedTransactions: string[] // hashes of confirmed
   ENSName?: string
+  ordersPanelOpen: boolean
+  setOrdersPanelOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export default function OrdersPanel({ pendingTransactions, confirmedTransactions, ENSName }: OrdersPanelProps) {
+export default function OrdersPanel({
+  pendingTransactions,
+  confirmedTransactions,
+  ENSName,
+  ordersPanelOpen,
+  setOrdersPanelOpen,
+}: OrdersPanelProps) {
   /* {
     pendingTransactions: string[] // hashes of pending
     confirmedTransactions: string[] // hashes of confirmed
@@ -150,10 +164,8 @@ export default function OrdersPanel({ pendingTransactions, confirmedTransactions
 
   const [pendingError, setPendingError] = useState<boolean>()
 
-  const [ordersPanelOpen, setOrdersPanelOpen] = useState<boolean>(false)
-
   // const walletModalOpen = useModalOpen(ApplicationModal.WALLET)
-  const toggleWalletModal = useWalletModalToggle()
+  // const toggleWalletModal = useWalletModalToggle()
 
   const previousAccount = usePrevious(account)
 
@@ -162,7 +174,7 @@ export default function OrdersPanel({ pendingTransactions, confirmedTransactions
     if (account && !previousAccount && ordersPanelOpen) {
       setOrdersPanelOpen(false)
     }
-  }, [account, previousAccount, ordersPanelOpen])
+  }, [account, previousAccount, ordersPanelOpen, setOrdersPanelOpen])
 
   // always reset to account view
   useEffect(() => {
@@ -218,7 +230,11 @@ export default function OrdersPanel({ pendingTransactions, confirmedTransactions
     fortmatic.on(OVERLAY_READY, () => {
       setOrdersPanelOpen(false)
     })
-  }, [ordersPanelOpen])
+  }, [ordersPanelOpen, setOrdersPanelOpen])
+
+  // Close sidebar if clicked/tapped outside
+  const ref = useRef<HTMLDivElement | null>(null)
+  useOnClickOutside(ref, ordersPanelOpen ? () => setOrdersPanelOpen(false) : undefined)
 
   // get wallets user can switch too, depending on device/browser
   function getOptions() {
@@ -331,18 +347,17 @@ export default function OrdersPanel({ pendingTransactions, confirmedTransactions
     if (account && walletView === WALLET_VIEWS.ACCOUNT) {
       return (
         <AccountDetails
-          toggleWalletModal={toggleWalletModal}
           pendingTransactions={pendingTransactions}
           confirmedTransactions={confirmedTransactions}
           ENSName={ENSName}
           openOptions={() => setWalletView(WALLET_VIEWS.OPTIONS)}
+          setOrdersPanelOpen={setOrdersPanelOpen}
         />
       )
     }
     return (
       <UpperSection>
-        {/* <CloseIcon onClick={setOrdersPanelOpen(false)}> */}
-        <CloseIcon>
+        <CloseIcon onClick={() => setOrdersPanelOpen(false)}>
           <CloseColor />
         </CloseIcon>
         {walletView !== WALLET_VIEWS.ACCOUNT ? (
@@ -395,7 +410,7 @@ export default function OrdersPanel({ pendingTransactions, confirmedTransactions
   }
 
   return (
-    <SideBar isOpen={ordersPanelOpen}>
+    <SideBar ref={ref} isOpen={ordersPanelOpen}>
       <Wrapper>{getModalContent()}</Wrapper>
     </SideBar>
   )

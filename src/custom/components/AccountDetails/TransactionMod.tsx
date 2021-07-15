@@ -11,7 +11,7 @@ import Loader from 'components/Loader'
 
 export const TransactionWrapper = styled.div``
 
-export const TransactionStatusText = styled.div`
+const TransactionStatusText = styled.div`
   margin-right: 0.5rem;
   display: flex;
   align-items: center;
