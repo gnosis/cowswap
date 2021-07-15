@@ -80,7 +80,7 @@ export default function About() {
 
         <ButtonGroup>
           <PrimaryButton>
-            <Trans>Connect to a wallet</Trans>
+            <Trans>Create affiliate link</Trans>
           </PrimaryButton>
           <SecondaryButton>
             <Trans>Learn about the Affiliate Program</Trans>
