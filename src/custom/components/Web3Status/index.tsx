@@ -1,12 +1,13 @@
 import React, { useMemo } from 'react'
 import styled from 'styled-components'
-import WalletModal from 'components/WalletModal'
+// import WalletModal from 'components/WalletModal'
 import { Web3StatusInner, Web3StatusConnected } from './Web3StatusMod'
 import { AbstractConnector } from '@web3-react/abstract-connector'
 import { getStatusIcon } from 'components/AccountDetails'
 import useRecentActivity, { TransactionAndOrder } from 'hooks/useRecentActivity'
 import { useWalletInfo } from 'hooks/useWalletInfo'
 import { OrderStatus } from 'state/orders/actions'
+import OrdersPanel from 'components/OrdersPanel'
 
 const Wrapper = styled.div`
   color: ${({ theme }) => theme.wallet?.color};
@@ -55,7 +56,7 @@ export default function Web3Status() {
   return (
     <Wrapper>
       <Web3StatusInner pendingCount={pendingActivity.length} StatusIconComponent={StatusIcon} />
-      <WalletModal ENSName={ensName} pendingTransactions={pendingActivity} confirmedTransactions={confirmedActivity} />
+      <OrdersPanel ENSName={ensName} pendingTransactions={pendingActivity} confirmedTransactions={confirmedActivity} />
     </Wrapper>
   )
 }

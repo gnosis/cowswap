@@ -43,12 +43,25 @@ import { ConnectedWalletInfo, useWalletInfo } from 'hooks/useWalletInfo'
 import { MouseoverTooltip } from 'components/Tooltip'
 
 const Wrapper = styled.div`
+  height: 100%;
   color: ${({ theme }) => theme.text1};
-
   ${WalletName},
   ${AddressLink},
   ${CopyIcon} {
     color: ${({ theme }) => theme.text1};
+  }
+  ${LowerSection} {
+    padding: 16px;
+    flex-grow: 1;
+    overflow: auto;
+    background-color: ${({ theme }) => theme.bg2};
+    border-radius: 0;
+    height: 100%;
+    h5 {
+      margin: 0;
+      font-weight: 400;
+      color: ${({ theme }) => theme.text3};
+    }
   }
 `
 
