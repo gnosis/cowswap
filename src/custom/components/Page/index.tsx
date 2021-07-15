@@ -46,7 +46,6 @@ export const Content = styled.div`
   > h4 {
     text-decoration: underline;
     font-weight: normal;
-    // margin: 0;
   }
 
   > p {

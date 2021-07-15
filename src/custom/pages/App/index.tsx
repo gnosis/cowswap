@@ -1,5 +1,5 @@
 import React from 'react'
-import AppMod, { BodyWrapper } from './AppMod'
+import AppMod from './AppMod'
 import styled from 'styled-components'
 import { RedirectPathToSwapOnly, RedirectToSwap } from 'pages/Swap/redirects'
 import { Route, Switch } from 'react-router-dom'
@@ -11,14 +11,7 @@ import About from 'pages/About'
 import Faq from 'pages/Faq'
 import CowGame from 'pages/CowGame'
 
-export const Wrapper = styled(AppMod)`
-  background: red;
-  ${BodyWrapper} {
-    ${({ theme }) => theme.mediaWidth.upToSmall`
-    padding: 0 16px;
-  `};
-  }
-`
+export const Wrapper = styled(AppMod)``
 
 export default function App() {
   return (
