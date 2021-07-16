@@ -2,7 +2,10 @@ import React from 'react'
 import Page, { Title, Content, GdocsListStyle } from 'components/Page'
 import styled from 'styled-components'
 import { Trans } from '@lingui/macro'
-import CowsImg from 'assets/images/cows.png'
+import CowsImg from 'custom/assets/cow-swap/cows-side-by-side.png'
+import Column from 'components/Column'
+import Row from 'components/Row'
+import { ButtonPrimary, ButtonSecondary } from 'custom/components/Button'
 
 const ButtonGroup = styled.div`
   display: flex;
@@ -10,28 +13,18 @@ const ButtonGroup = styled.div`
   margin-top: 1rem;
 `
 
+const ButtonContainer = styled.div`
+  margin: 0 0.5rem;
+`
+
 const FlexContainer = styled.div`
   display: flex;
   align-items: flex-start;
-`
 
-const SecondaryButton = styled.div`
-  width: 350px;
-  height: 65px;
-  border: 1px solid #3d3d3d;
-  box-sizing: border-box;
-  border-radius: 9px;
-  font-size: 18px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 0.5rem;
-  cursor: pointer;
-`
-
-const PrimaryButton = styled(SecondaryButton)`
-  background: rgba(242, 103, 57, 0.78);
-  color: white;
+  @media screen and (max-width: 768px) {
+    flex-direction: column;
+    align-items: center;
+  }
 `
 
 const TextGroup = styled.div`
@@ -49,7 +42,7 @@ const Wrapper = styled(Page)`
   }
 `
 
-export default function About() {
+export default function Rewards() {
   return (
     <Wrapper>
       <Content>
@@ -68,23 +61,27 @@ export default function About() {
                 rewards for doing so.
               </p>
               <br />
-              <p>Join CowSwap affiliate program, and start now accring rewards every time they trade.</p>
+              <p>Join CowSwap affiliate program, and start now accruing rewards every time they trade.</p>
               <p>
                 The best part, is your referrals will also get rewards for trading if they join CowSwap using your link.
               </p>
-              <b>Create your referral link now:</b>
             </TextGroup>
           </div>
-          <img src={CowsImg} alt="Cows" />
+          <img src={CowsImg} alt="Cows" style={{ marginBottom: '1rem' }} />
         </FlexContainer>
 
+        <b style={{ marginLeft: '1.5rem' }}>Create your referral link now:</b>
         <ButtonGroup>
-          <PrimaryButton>
-            <Trans>Create affiliate link</Trans>
-          </PrimaryButton>
-          <SecondaryButton>
-            <Trans>Learn about the Affiliate Program</Trans>
-          </SecondaryButton>
+          <ButtonContainer>
+            <ButtonPrimary>
+              <Trans>Create affiliate link</Trans>
+            </ButtonPrimary>
+          </ButtonContainer>
+          <ButtonContainer>
+            <ButtonSecondary>
+              <Trans>Learn about the Affiliate Program</Trans>
+            </ButtonSecondary>
+          </ButtonContainer>
         </ButtonGroup>
       </Content>
     </Wrapper>
