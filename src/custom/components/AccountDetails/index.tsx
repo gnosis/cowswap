@@ -1,6 +1,9 @@
-import React, { useCallback, useContext } from 'react'
+import React, {
+  useCallback,
+  // useContext
+} from 'react'
 import { batch, useDispatch } from 'react-redux'
-import { ThemeContext } from 'styled-components'
+// import { ThemeContext } from 'styled-components'
 import { useActiveWeb3React } from 'hooks/web3'
 import { AppDispatch } from 'state'
 import { clearAllTransactions } from 'state/transactions/actions'
@@ -18,7 +21,10 @@ import FortmaticIcon from 'assets/images/fortmaticIcon.png'
 import PortisIcon from 'assets/images/portisIcon.png'
 import Identicon from 'components/Identicon'
 import { ExternalLink as LinkIcon } from 'react-feather'
-import { LinkStyledButton, TYPE } from 'theme'
+import {
+  LinkStyledButton,
+  // TYPE
+} from 'theme'
 import { clearOrders } from 'state/orders/actions'
 import {
   WalletName,
@@ -59,13 +65,22 @@ const Wrapper = styled.div`
     padding: 0;
   }
 `
+const NoActivityMessage = styled.p`
+  font-size: 14px;
+  color: ${({ theme }) => theme.text1};
+  width: 100%;
+  padding: 24px 0 0;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+`
 
 const LowerSection = styled.div`
-  padding: 0;
   flex-grow: 1;
   background-color: ${({ theme }) => theme.bg2};
   border-radius: 0;
-  height: auto;
+  height: max-content;
+  min-height: 100%;
   padding: 0 0 100px;
 
   > span {
@@ -210,7 +225,7 @@ export default function AccountDetails({
 }: AccountDetailsProps & Pick<OrdersPanelProps, 'setOrdersPanelOpen'>) {
   const { chainId, account, connector } = useActiveWeb3React()
   const walletInfo = useWalletInfo()
-  const theme = useContext(ThemeContext)
+  // const theme = useContext(ThemeContext)
   const dispatch = useDispatch<AppDispatch>()
 
   const clearAllActivityCallback = useCallback(() => {
@@ -345,7 +360,7 @@ export default function AccountDetails({
         </LowerSection>
       ) : (
         <LowerSection>
-          <TYPE.body color={theme.text2}>Your orders activity will appear here...</TYPE.body>
+          <NoActivityMessage>Your orders activity will appear here...</NoActivityMessage>
         </LowerSection>
       )}
     </Wrapper>

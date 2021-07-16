@@ -120,7 +120,6 @@ export const AccountElement = styled.div<{ active: boolean }>`
   border-radius: 12px;
   white-space: nowrap;
   width: 100%;
-  cursor: pointer;
 
   :focus {
     border: 1px solid blue;

@@ -121,6 +121,7 @@ const Summary = styled.div`
     flex-flow: column wrap;
     width: 100%;
     opacity: 0.75;
+    font-size: 13px;
   }
 
   > div > span {
@@ -132,7 +133,7 @@ const Summary = styled.div`
   > div > span > b,
   > div > span > i {
     position: relative;
-    font-size: 13px;
+    font-size: inherit;
     font-weight: 500;
     margin: 0;
     color: inherit;
@@ -208,7 +209,11 @@ const StatusLabelBelow = styled.div`
   align-items: center;
   font-size: 11px;
   line-height: 1.1;
-  margin: 7px auto 0;
+  margin: 0;
+
+  ${LinkStyledButton} {
+    margin: 10px 0;
+  }
 `
 
 function getActivitySummary(params: {
@@ -218,6 +223,8 @@ function getActivitySummary(params: {
   type?: ActivityType
 }) {
   const { id, activityData, suffix, type } = params
+  const isOrder = type === ActivityType.ORDER
+  const isTransaction = type === ActivityType.TX
 
   if (!activityData) return null
 
@@ -228,9 +235,9 @@ function getActivitySummary(params: {
   let baseSummary = summary
   const newSummary = { from: '🤔', to: '🤔', validTo: '🤔' }
 
-  if (!suffix && baseSummary) {
+  if (!suffix && baseSummary && isOrder) {
     // Regex 'From' amount in the summary
-    // (Probably better to use the specific object keys from baseSummary...)
+    // (Probably better to use the specific object keys from baseSummary instead...)
     const matchFrom = baseSummary
       .match('(?<=Swap ).*?(?= for at least)')
       ?.toString()
@@ -263,14 +270,21 @@ function getActivitySummary(params: {
     <Summary>
       <b>{type} ↗</b>
       <div>
-        <span>
-          <b>From</b>
-          <i>{newSummary.from}</i>
-        </span>
-        <span>
-          <b>To at least</b>
-          <i>{newSummary.to}</i>
-        </span>
+        {isOrder && (
+          <>
+            <span>
+              <b>From</b>
+              <i>{newSummary.from}</i>
+            </span>
+            <span>
+              <b>To at least</b>
+              <i>{newSummary.to}</i>
+            </span>
+          </>
+        )}
+
+        {isTransaction && summary}
+
         {/* <span>
           <b>Valid to: {newSummary.validTo}</b>
         </span> */}
@@ -417,12 +431,16 @@ export default function Transaction({ hash: id }: { hash: string }) {
 
   const { activity, status, type } = activityData
 
+  // Type of Statusses
   const isPending = status === ActivityStatus.PENDING
   const isConfirmed = status === ActivityStatus.CONFIRMED
   const isExpired = status === ActivityStatus.EXPIRED
   const isCancelling = status === ActivityStatus.CANCELLING
   const isCancelled = status === ActivityStatus.CANCELLED
   const isCancellable = isPending && type === ActivityType.ORDER
+
+  // Type of Transaction
+  const isTransaction = type === ActivityType.TX
 
   const onCancelClick = () => setShowCancelModal(true)
   const onDismiss = () => setShowCancelModal(false)
@@ -470,7 +488,17 @@ export default function Transaction({ hash: id }: { hash: string }) {
               ) : (
                 <SVG src={OrderOpenImage} description="Order Open" />
               )}
-              {isPending ? 'Open' : isConfirmed ? 'Filled' : isExpired ? 'Expired' : isCancelled ? 'Cancelled' : 'Open'}
+              {isPending
+                ? 'Open'
+                : isConfirmed && isTransaction
+                ? 'Approved'
+                : isConfirmed
+                ? 'Filled'
+                : isExpired
+                ? 'Expired'
+                : isCancelled
+                ? 'Cancelled'
+                : 'Open'}
             </StatusLabel>
 
             {isCancelling ? (
