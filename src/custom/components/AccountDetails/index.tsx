@@ -63,16 +63,21 @@ const Wrapper = styled.div`
 const LowerSection = styled.div`
   padding: 0;
   flex-grow: 1;
-  overflow: auto;
   background-color: ${({ theme }) => theme.bg2};
   border-radius: 0;
-  height: 100%;
+  height: auto;
+  padding: 0 0 100px;
 
   > span {
     display: flex;
     justify-content: space-between;
     padding: 8px 16px;
     border-bottom: 1px solid #d9e8ef;
+    position: sticky;
+    top: 0;
+    background: rgb(255 255 255 / 60%);
+    backdrop-filter: blur(5px);
+    z-index: 10;
   }
 
   > div {
@@ -88,6 +93,11 @@ const LowerSection = styled.div`
     line-height: 1;
     display: flex;
     align-items: center;
+
+    > span {
+      opacity: 0.6;
+      margin: 0 0 0 4px;
+    }
   }
 
   ${LinkStyledButton} {
@@ -213,6 +223,8 @@ export default function AccountDetails({
   }, [dispatch, chainId])
   const explorerLabel = chainId && account ? getExplorerLabel(chainId, account, 'address') : undefined
 
+  const activityTotalCount = pendingTransactions?.length + confirmedTransactions?.length || null
+
   return (
     <Wrapper>
       <UpperSection>
@@ -320,7 +332,9 @@ export default function AccountDetails({
         <LowerSection>
           <span>
             {' '}
-            <h5>Recent Activity</h5>
+            <h5>
+              Recent Activity <span>{`(${activityTotalCount})`}</span>
+            </h5>
             <LinkStyledButton onClick={clearAllActivityCallback}>Clear activity</LinkStyledButton>
           </span>
 

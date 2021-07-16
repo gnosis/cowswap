@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { useActiveWeb3React } from 'hooks/web3'
 import { getEtherscanLink, shortenOrderId } from 'utils'
 import { RowFixed } from 'components/Row'
-import Loader from 'components/Loader'
+import Loader, { StyledSVG } from 'components/Loader'
 import {
   // TransactionWrapper,
   TransactionState as OldTransactionState,
@@ -29,6 +29,11 @@ import { GpModal as Modal } from 'components/WalletModal'
 import SVG from 'react-inlinesvg'
 import TxArrowsImage from 'assets/images/transaction-arrows.svg'
 import TxCheckImage from 'assets/images/transaction-confirmed.svg'
+
+import OrderCheckImage from 'assets/images/order-check.svg'
+import OrderCrossImage from 'assets/images/order-cross.svg'
+import OrderCancelledImage from 'assets/images/order-cancelled.svg'
+import OrderOpenImage from 'assets/images/order-open.svg'
 
 const PILL_COLOUR_MAP = {
   CONFIRMED: '#3B7848',
@@ -88,6 +93,14 @@ const IconType = styled.div`
     display: block;
     fill: ${({ color }) => color};
   }
+
+  // Loader
+  ${StyledSVG} {
+    > path {
+      fill: transparent;
+      stroke: ${({ color }) => color};
+    }
+  }
 `
 
 const Summary = styled.div`
@@ -103,12 +116,42 @@ const Summary = styled.div`
     margin: 0 0 5px;
   }
 
-  > p {
+  > div {
+    display: flex;
+    flex-flow: column wrap;
+    width: 100%;
+    opacity: 0.75;
+  }
+
+  > div > span {
+    display: grid;
+    grid-template-rows: 1fr;
+    grid-template-columns: 100px 1fr;
+  }
+
+  > div > span > b,
+  > div > span > i {
+    position: relative;
     font-size: 13px;
-    font-weight: 400;
-    padding: 0;
+    font-weight: 500;
     margin: 0;
     color: inherit;
+    display: flex;
+    align-items: center;
+    font-style: normal;
+  }
+
+  > div > span > b {
+    padding: 0;
+    font-weight: 500;
+  }
+
+  > div > span:nth-of-type(1) > b:before,
+  > div > span:nth-of-type(2) > b:before {
+    content: '▶';
+    margin: 0 5px 0 0;
+    color: ${({ theme }) => theme.border2};
+    font-size: 8px;
   }
 `
 
@@ -122,10 +165,50 @@ const TransactionStatusText = styled.div`
   }
 `
 
-const StatusLabel = styled.div`
+const StatusLabelWrapper = styled.div`
+  display: flex;
+  flex-flow: column wrap;
+  flex: 0 1 auto;
+`
+
+const StatusLabel = styled.div<{ isPending: boolean }>`
   height: 28px;
-  width: 90px;
-  background: ${({ color }) => color};
+  width: 100px;
+  border: ${({ isPending, theme }) => isPending && `1px solid ${theme.disabled}`};
+  color: ${({ color }) => color};
+  position: relative;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+
+  &::before {
+    content: '';
+    background: ${({ color, isPending }) => (isPending ? 'transparent' : color)};
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    border-radius: 4px;
+    opacity: 0.1;
+  }
+
+  > svg {
+    margin: 0 5px 0 0;
+  }
+`
+
+const StatusLabelBelow = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 11px;
+  line-height: 1.1;
+  margin: 7px auto 0;
 `
 
 function getActivitySummary(params: {
@@ -140,7 +223,32 @@ function getActivitySummary(params: {
 
   const { summary } = activityData
 
+  console.log(activityData)
+
   let baseSummary = summary
+  const newSummary = { from: '🤔', to: '🤔', validTo: '🤔' }
+
+  if (!suffix && baseSummary) {
+    // Regex 'From' amount in the summary
+    // (Probably better to use the specific object keys from baseSummary...)
+    const matchFrom = baseSummary
+      .match('(?<=Swap ).*?(?= for at least)')
+      ?.toString()
+      .replace(/[\s,]+/g, ' ') // Probably we should make it part of the initial regex pattern instead...
+      .trim()
+    newSummary.from = matchFrom ? matchFrom : ''
+
+    // Regex 'To' amount in the summary
+    const matchTo = baseSummary
+      .match('(?<=for at least ).*?($)')
+      ?.toString()
+      .replace(/[\s,]+/g, ' ') // Probably we should make it part of the initial regex pattern instead...
+      .trim()
+    newSummary.to = matchTo ? matchTo : ''
+
+    // Get the 'Valid to' date
+    // newSummary.validTo = new Date(activity.validTo * 1000).toLocaleString()
+  }
 
   if (suffix && baseSummary) {
     // Shorten summary when `suffix` is set and it matches the regex.
@@ -153,7 +261,20 @@ function getActivitySummary(params: {
 
   return (
     <Summary>
-      <b>{type} ↗</b> <p>{baseSummary}</p>
+      <b>{type} ↗</b>
+      <div>
+        <span>
+          <b>From</b>
+          <i>{newSummary.from}</i>
+        </span>
+        <span>
+          <b>To at least</b>
+          <i>{newSummary.to}</i>
+        </span>
+        {/* <span>
+          <b>Valid to: {newSummary.validTo}</b>
+        </span> */}
+      </div>
     </Summary>
   )
 }
@@ -306,6 +427,8 @@ export default function Transaction({ hash: id }: { hash: string }) {
   const onCancelClick = () => setShowCancelModal(true)
   const onDismiss = () => setShowCancelModal(false)
 
+  // const isLoading = isPending || isCancelling ? true : false
+
   return (
     <>
       <TransactionState href={getEtherscanLink(chainId, id, 'transaction')}>
@@ -316,7 +439,7 @@ export default function Transaction({ hash: id }: { hash: string }) {
                 {isPending || isCancelling ? (
                   <Loader />
                 ) : isConfirmed ? (
-                  <SVG src={TxCheckImage} description="Order Confirmed" />
+                  <SVG src={TxCheckImage} description="Order Filled" />
                 ) : isExpired ? (
                   <SVG src={TxArrowsImage} description="Order Expired" />
                 ) : isCancelled ? (
@@ -336,32 +459,42 @@ export default function Transaction({ hash: id }: { hash: string }) {
               getActivitySummary({ activityData, id, type })
             )}
           </TransactionStatusText>
-          <StatusLabel color={determinePillColour(status, type)}>
-            {isPending
-              ? 'Open'
-              : isConfirmed
-              ? 'Confirmed'
-              : isExpired
-              ? 'Expired'
-              : isCancelled
-              ? 'Cancelled'
-              : 'No state'}
-          </StatusLabel>
+          <StatusLabelWrapper>
+            <StatusLabel color={determinePillColour(status, type)} isPending={isPending || isCancelling}>
+              {isConfirmed ? (
+                <SVG src={OrderCheckImage} description="Order Filled" />
+              ) : isExpired ? (
+                <SVG src={OrderCrossImage} description="Order Expired" />
+              ) : isCancelled ? (
+                <SVG src={OrderCancelledImage} description="Order Cancelled" />
+              ) : (
+                <SVG src={OrderOpenImage} description="Order Open" />
+              )}
+              {isPending ? 'Open' : isConfirmed ? 'Filled' : isExpired ? 'Expired' : isCancelled ? 'Cancelled' : 'Open'}
+            </StatusLabel>
+
+            {isCancelling ? (
+              <StatusLabelBelow>
+                Cancellation <br /> requested...
+              </StatusLabelBelow>
+            ) : null}
+
+            {isCancellable && (
+              <StatusLabelBelow>
+                <LinkStyledButton onClick={onCancelClick}>Cancel order</LinkStyledButton>
+                {showCancelModal && (
+                  <CancellationModal
+                    orderId={id}
+                    summary={activityData.summary}
+                    isOpen={showCancelModal}
+                    onDismiss={onDismiss}
+                  />
+                )}
+              </StatusLabelBelow>
+            )}
+          </StatusLabelWrapper>
         </RowFixed>
       </TransactionState>
-      {isCancellable && (
-        <>
-          <LinkStyledButton onClick={onCancelClick}>(cancel)</LinkStyledButton>
-          {showCancelModal && (
-            <CancellationModal
-              orderId={id}
-              summary={activityData.summary}
-              isOpen={showCancelModal}
-              onDismiss={onDismiss}
-            />
-          )}
-        </>
-      )}
     </>
   )
 }
