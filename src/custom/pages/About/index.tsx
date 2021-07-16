@@ -1,5 +1,6 @@
 import React from 'react'
 import Page, { Title, Content, GdocsListStyle } from 'components/Page'
+import Copy, { CopyIcon } from 'components/AccountDetails/Copy'
 import styled from 'styled-components'
 import { Link } from 'react-router-dom'
 
@@ -16,12 +17,22 @@ const Wrapper = styled(Page)`
   }
 `
 
+const AddressContainer = styled.div`
+  display: flex;
+  ${CopyIcon} {
+    color: ${({ theme }) => theme.text1};
+  }
+`
+
 export default function About() {
   return (
     <Wrapper>
       <Title>About</Title>
 
       <Content>
+        <AddressContainer>
+          <Copy clickableLink toCopy={'https://cowswap.exchange/#/?referral=0x123...0'} />
+        </AddressContainer>
         <p>CowSwap is the first trading interface built on top of Gnosis Protocol v2.</p>
         <p>
           It allows you to buy and sell tokens using gas-less orders that are settled peer-to-peer among its users or
@@ -30,7 +41,6 @@ export default function About() {
         <h2>
           <b>C</b>oincidence <b>o</b>f <b>W</b>ants
         </h2>
-
         <p>
           <img src={diagramIMG} alt="CowSwap vs. AMM's" />
         </p>
@@ -42,7 +52,6 @@ export default function About() {
           <br />
           This economic phenomenon is known as <b>Coincidence Of Wants (CoW)</b>.
         </p>
-
         <h3 id="gas-free">Gas Free Transactions</h3>
         <p>
           <img src={gaslessIMG} alt="CowSwap - Gas Free Transactions" />
@@ -78,7 +87,6 @@ export default function About() {
             🐮
           </span>
         </p>
-
         <h3 id="mev">Maximum Extractable Value (MEV)</h3>
         <p>
           <img src={mevIMG} alt="CowSwap - Maximum Extractable Value" />
@@ -95,7 +103,6 @@ export default function About() {
           CowSwap is the first DEX Aggregator offering some protection against it: COWs enable tight slippages and can
           even avoid settlement on AMMs altogether.
         </p>
-
         <h3>Do you want to know more?</h3>
         <p>
           Head over to the <Link to="/faq">FAQ</Link>
