@@ -1,8 +1,11 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import Page, { Title, Content, GdocsListStyle } from 'components/Page'
 import styled from 'styled-components'
 import { Trans } from '@lingui/macro'
 import CowsImg from 'assets/images/cows.png'
+import useReferralLink from 'hooks/useReferralLink'
+import { useWalletModalToggle } from '@src/state/application/hooks'
+import { useWalletInfo } from '@src/custom/hooks/useWalletInfo'
 
 const ButtonGroup = styled.div`
   display: flex;
@@ -50,6 +53,12 @@ const Wrapper = styled(Page)`
 `
 
 export default function About() {
+  const referralLink = useReferralLink()
+  const toggleWalletModal = useWalletModalToggle()
+  const { account } = useWalletInfo()
+
+  const handleCreateLink = useCallback(() => console.log('Referral link', referralLink), [referralLink])
+
   return (
     <Wrapper>
       <Content>
@@ -79,9 +88,16 @@ export default function About() {
         </FlexContainer>
 
         <ButtonGroup>
-          <PrimaryButton>
-            <Trans>Create affiliate link</Trans>
-          </PrimaryButton>
+          {account ? (
+            <PrimaryButton onClick={handleCreateLink}>
+              <Trans>Create affiliate link</Trans>
+            </PrimaryButton>
+          ) : (
+            <PrimaryButton onClick={toggleWalletModal}>
+              <Trans>Connect wallet</Trans>
+            </PrimaryButton>
+          )}
+
           <SecondaryButton>
             <Trans>Learn about the Affiliate Program</Trans>
           </SecondaryButton>
