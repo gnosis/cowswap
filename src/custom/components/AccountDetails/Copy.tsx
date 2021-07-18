@@ -32,7 +32,6 @@ export default function CopyHelper(props: { toCopy: string; children?: React.Rea
 
   return (
     <>
-      {console.log('pucha', clickableLink)}
       {clickableLink && <LinkStyledButton onClick={() => setCopied(toCopy)}>{toCopy}</LinkStyledButton>}
       <CopyIcon onClick={() => setCopied(toCopy)}>
         {isCopied ? (
