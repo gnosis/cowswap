@@ -1,6 +1,5 @@
 import React from 'react'
 import Page, { Title, Content, GdocsListStyle } from 'components/Page'
-import Copy, { CopyIcon } from 'components/AccountDetails/Copy'
 import styled from 'styled-components'
 import { Link } from 'react-router-dom'
 
@@ -17,22 +16,12 @@ const Wrapper = styled(Page)`
   }
 `
 
-const AddressContainer = styled.div`
-  display: flex;
-  ${CopyIcon} {
-    color: ${({ theme }) => theme.text1};
-  }
-`
-
 export default function About() {
   return (
     <Wrapper>
       <Title>About</Title>
 
       <Content>
-        <AddressContainer>
-          <Copy clickableLink toCopy={'https://cowswap.exchange/#/?referral=0x123...0'} />
-        </AddressContainer>
         <p>CowSwap is the first trading interface built on top of Gnosis Protocol v2.</p>
         <p>
           It allows you to buy and sell tokens using gas-less orders that are settled peer-to-peer among its users or
