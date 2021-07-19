@@ -30,6 +30,7 @@ export default function About() {
         <h2>
           <b>C</b>oincidence <b>o</b>f <b>W</b>ants
         </h2>
+
         <p>
           <img src={diagramIMG} alt="CowSwap vs. AMM's" />
         </p>
