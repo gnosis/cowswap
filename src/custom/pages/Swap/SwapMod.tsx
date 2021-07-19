@@ -425,8 +425,8 @@ export default function Swap({
 
   const [exactInLabel, exactOutLabel] = useMemo(
     () => [
-      independentField === Field.OUTPUT && !showWrap && trade ? <Trans>From (incl. fee)</Trans> : <Trans>From</Trans>,
-      independentField === Field.INPUT && !showWrap && trade ? <Trans>To (incl. fee)</Trans> : <Trans>To</Trans>,
+      independentField === Field.OUTPUT && !showWrap && trade ? <Trans>From (incl. fee)</Trans> : null,
+      independentField === Field.INPUT && !showWrap && trade ? <Trans>Receive (incl. fee)</Trans> : null,
     ],
     [independentField, showWrap, trade]
   )
@@ -473,15 +473,17 @@ export default function Swap({
                 //   independentField === Field.OUTPUT && !showWrap ? <Trans>From (at most)</Trans> : <Trans>From</Trans>
                 // }
                 label={
-                  <FeeInformationTooltip
-                    label={exactInLabel}
-                    trade={trade}
-                    showHelper={independentField === Field.OUTPUT}
-                    amountBeforeFees={amountBeforeFees}
-                    amountAfterFees={formatSmart(trade?.inputAmountWithFee)}
-                    type="From"
-                    feeAmount={formatSmart(trade?.fee?.feeAsCurrency)}
-                  />
+                  exactInLabel && (
+                    <FeeInformationTooltip
+                      label={exactInLabel}
+                      trade={trade}
+                      showHelper={independentField === Field.OUTPUT}
+                      amountBeforeFees={amountBeforeFees}
+                      amountAfterFees={formatSmart(trade?.inputAmountWithFee)}
+                      type="From"
+                      feeAmount={formatSmart(trade?.fee?.feeAsCurrency)}
+                    />
+                  )
                 }
                 value={formattedAmounts[Field.INPUT]}
                 showMaxButton={showMaxButton}
@@ -526,15 +528,17 @@ export default function Swap({
                 onUserInput={handleTypeOutput}
                 // label={independentField === Field.INPUT && !showWrap ? <Trans>To (at least)</Trans> : <Trans>To</Trans>}
                 label={
-                  <FeeInformationTooltip
-                    label={exactOutLabel}
-                    trade={trade}
-                    showHelper={independentField === Field.INPUT}
-                    amountBeforeFees={formatSmart(trade?.outputAmountWithoutFee)}
-                    amountAfterFees={formatSmart(trade?.outputAmount)}
-                    type="To"
-                    feeAmount={formatSmart(trade?.outputAmountWithoutFee?.subtract(trade?.outputAmount))}
-                  />
+                  exactOutLabel && (
+                    <FeeInformationTooltip
+                      label={exactOutLabel}
+                      trade={trade}
+                      showHelper={independentField === Field.INPUT}
+                      amountBeforeFees={formatSmart(trade?.outputAmountWithoutFee)}
+                      amountAfterFees={formatSmart(trade?.outputAmount)}
+                      type="To"
+                      feeAmount={formatSmart(trade?.outputAmountWithoutFee?.subtract(trade?.outputAmount))}
+                    />
+                  )
                 }
                 showMaxButton={false}
                 hideBalance={false}
