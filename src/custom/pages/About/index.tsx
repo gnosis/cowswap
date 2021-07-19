@@ -41,6 +41,7 @@ export default function About() {
           <br />
           This economic phenomenon is known as <b>Coincidence Of Wants (CoW)</b>.
         </p>
+
         <h3 id="gas-free">Gas Free Transactions</h3>
         <p>
           <img src={gaslessIMG} alt="CowSwap - Gas Free Transactions" />
@@ -76,6 +77,7 @@ export default function About() {
             🐮
           </span>
         </p>
+
         <h3 id="mev">Maximum Extractable Value (MEV)</h3>
         <p>
           <img src={mevIMG} alt="CowSwap - Maximum Extractable Value" />
@@ -92,6 +94,7 @@ export default function About() {
           CowSwap is the first DEX Aggregator offering some protection against it: COWs enable tight slippages and can
           even avoid settlement on AMMs altogether.
         </p>
+        
         <h3>Do you want to know more?</h3>
         <p>
           Head over to the <Link to="/faq">FAQ</Link>
