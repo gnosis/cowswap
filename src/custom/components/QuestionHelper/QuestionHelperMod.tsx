@@ -28,19 +28,25 @@ const QuestionMark = styled.span`
   font-size: 14px;
 `
 
-export default function QuestionHelper({ text }: { text: ReactNode; size?: number }) {
+const QuestionHelperContainer = styled.span`
+  margin-left: 4px;
+  display: flex;
+  align-items: center;
+`
+
+export default function QuestionHelper({ text, className }: { text: ReactNode; size?: number; className?: string }) {
   const [show, setShow] = useState<boolean>(false)
 
   const open = useCallback(() => setShow(true), [setShow])
   const close = useCallback(() => setShow(false), [setShow])
 
   return (
-    <span style={{ marginLeft: 4, display: 'flex', alignItems: 'center' }}>
+    <QuestionHelperContainer className={className}>
       <Tooltip text={text} show={show}>
         <QuestionWrapper onClick={open} onMouseEnter={open} onMouseLeave={close}>
           <QuestionMark>?</QuestionMark>
         </QuestionWrapper>
       </Tooltip>
-    </span>
+    </QuestionHelperContainer>
   )
 }
