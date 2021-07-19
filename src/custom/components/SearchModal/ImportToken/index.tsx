@@ -65,6 +65,6 @@ function CardComponent({ theme, token, chainId, list }: CardComponentProps) {
   )
 }
 
-export function ImportToken(props: ImportProps) {
+export function ImportToken(props: Omit<ImportProps, 'CardComponent'>) {
   return <ImportTokenMod {...props} CardComponent={CardComponent} />
 }
