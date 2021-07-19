@@ -7,7 +7,7 @@ import JSBI from 'jsbi'
 import { SupportedChainId as ChainId } from 'constants/chains'
 
 // default allowed slippage, in bips
-const INITIAL_ALLOWED_SLIPPAGE = 50
+export const INITIAL_ALLOWED_SLIPPAGE = 50
 export const INITIAL_ALLOWED_SLIPPAGE_PERCENT = new Percent(JSBI.BigInt(INITIAL_ALLOWED_SLIPPAGE), JSBI.BigInt(10000))
 export const RADIX_DECIMAL = 10
 export const RADIX_HEX = 16
