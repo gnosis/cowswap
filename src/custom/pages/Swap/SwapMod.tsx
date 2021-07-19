@@ -214,8 +214,8 @@ export default function Swap({
           }
         : {
             // [Field.INPUT]: independentField === Field.INPUT ? parsedAmount : trade?.inputAmount,
-            [Field.INPUT]: independentField === Field.INPUT ? parsedAmount : trade?.inputAmountWithFee,
-            [Field.OUTPUT]: independentField === Field.OUTPUT ? parsedAmount : trade?.outputAmount,
+            [Field.INPUT]: independentField === Field.INPUT ? parsedAmount : trade?.inputAmountWithoutFee,
+            [Field.OUTPUT]: independentField === Field.OUTPUT ? parsedAmount : trade?.outputAmountWithoutFee,
           },
     [independentField, parsedAmount, showWrap, trade]
   )
@@ -437,7 +437,7 @@ export default function Swap({
     if (trade.tradeType === TradeType.EXACT_INPUT && trade.inputAmountWithFee.lessThan(trade.fee.amount)) {
       amountBeforeFees = '0'
     } else {
-      amountBeforeFees = formatSmart(trade.inputAmountWithFee.subtract(trade.fee.feeAsCurrency))
+      amountBeforeFees = formatSmart(trade.inputAmountWithoutFee)
     }
   }
 
