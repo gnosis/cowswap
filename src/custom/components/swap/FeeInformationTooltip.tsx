@@ -13,7 +13,11 @@ interface FeeInformationTooltipProps {
   type: 'From' | 'To'
 }
 
-const Wrapper = styled.div`
+const WrappedQuestionHelper = styled(QuestionHelper)`
+  display: inline-flex;
+`
+
+export const FeeInformationTooltipWrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -44,11 +48,13 @@ const Breakline = styled.p`
 export default function FeeInformationTooltip(props: FeeInformationTooltipProps) {
   const { trade, label, amountBeforeFees, amountAfterFees, feeAmount, type, showHelper } = props
 
+  if (!trade || !showHelper) return null
+
   return (
-    <Wrapper>
-      <span>{label}</span>{' '}
-      {trade && showHelper && (
-        <QuestionHelper
+    <FeeInformationTooltipWrapper>
+      <span>
+        {label}{' '}
+        <WrappedQuestionHelper
           text={
             <div>
               <FeeTooltipLine>
@@ -74,7 +80,8 @@ export default function FeeInformationTooltip(props: FeeInformationTooltipProps)
             </div>
           }
         />
-      )}
-    </Wrapper>
+      </span>
+      <span>{amountAfterFees}</span>
+    </FeeInformationTooltipWrapper>
   )
 }
