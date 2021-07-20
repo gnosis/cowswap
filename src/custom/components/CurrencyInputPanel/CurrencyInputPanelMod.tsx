@@ -2,7 +2,7 @@ import { Pair } from '@uniswap/v2-sdk'
 import { Currency, CurrencyAmount, Percent, Token } from '@uniswap/sdk-core'
 import React, { useState, useCallback, ReactNode } from 'react'
 import styled from 'styled-components/macro'
-import { darken, lighten } from 'polished'
+import { darken } from 'polished'
 import { useCurrencyBalance } from 'state/wallet/hooks'
 import CurrencySearchModalUni from '@src/components/SearchModal/CurrencySearchModal'
 import CurrencyLogo from 'components/CurrencyLogo'
@@ -53,8 +53,8 @@ const FixedContainer = styled.div`
   z-index: 2;
 `
 
-export const Container = styled.div<{ hideInput: boolean }>`
-  border-radius: ${({ hideInput }) => (hideInput ? '16px' : '20px')};
+export const Container = styled.div<{ hideInput: boolean; showAux?: boolean }>`
+  border-radius: ${({ hideInput, showAux = false }) => (showAux ? '20px 20px 0 0' : hideInput ? '16px' : '20px')};
   border: 1px solid ${({ theme, hideInput }) => (hideInput ? ' transparent' : theme.bg2)};
   background-color: ${({ theme }) => theme.bg1};
   width: ${({ hideInput }) => (hideInput ? '100%' : 'initial')};
@@ -150,19 +150,19 @@ export const StyledBalanceMax = styled.button`
 `
 const AuxInformationContainer = styled(Container)`
   &&&&& {
-    background-color: ${({ theme }) => lighten(0.005, theme.bg1)};
-    height: 70px;
-    margin: -20px 0 0;
+    background-color: ${({ theme }) => darken(0.0, theme.bg1 || theme.bg3)};
+    margin: 0 auto;
     border-radius: 0 0 15px 15px;
+    border-top: none;
   }
 
   > ${FeeInformationTooltipWrapper} {
     align-items: center;
     justify-content: space-between;
-    margin: 28px 20px 0 20px;
+    margin: 0 16px;
+    padding: 16px 0;
 
     > span {
-      font-weight: 500;
       font-size: smaller;
     }
   }
@@ -232,7 +232,7 @@ export default function CurrencyInputPanel({
             </AutoColumn>
           </FixedContainer>
         )}
-        <Container hideInput={hideInput}>
+        <Container hideInput={hideInput} showAux={!!label}>
           <InputRow style={hideInput ? { padding: '0', borderRadius: '8px' } : {}} selected={!onCurrencySelect}>
             <CurrencySelect
               selected={!!currency}

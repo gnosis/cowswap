@@ -2,6 +2,8 @@ import React from 'react'
 import TradeGp from 'state/swap/TradeGp'
 import QuestionHelper from 'components/QuestionHelper'
 import styled from 'styled-components'
+import { useUSDCValue } from 'hooks/useUSDCPrice'
+import { formatSmart } from 'utils/format'
 
 interface FeeInformationTooltipProps {
   trade?: TradeGp
@@ -45,8 +47,24 @@ const Breakline = styled.p`
   width: 100%;
 `
 
+const FeeAmountAndFiat = styled.span`
+  ${({ theme }) => theme.flexRowNoWrap};
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+
+  font-weight: 600;
+
+  > small {
+    font-size: 75%;
+    font-weight: normal;
+  }
+`
+
 export default function FeeInformationTooltip(props: FeeInformationTooltipProps) {
   const { trade, label, amountBeforeFees, amountAfterFees, feeAmount, type, showHelper } = props
+
+  const fiatValue = useUSDCValue(type === 'From' ? trade?.inputAmount : trade?.outputAmount)
 
   if (!trade || !showHelper) return null
 
@@ -81,7 +99,9 @@ export default function FeeInformationTooltip(props: FeeInformationTooltipProps)
           }
         />
       </span>
-      <span>{amountAfterFees}</span>
+      <FeeAmountAndFiat>
+        {amountAfterFees} {fiatValue && <small>~${formatSmart(fiatValue)}</small>}
+      </FeeAmountAndFiat>
     </FeeInformationTooltipWrapper>
   )
 }
