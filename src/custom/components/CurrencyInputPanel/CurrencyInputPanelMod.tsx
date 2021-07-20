@@ -160,7 +160,7 @@ const AuxInformationContainer = styled(Container)`
     align-items: center;
     justify-content: space-between;
     margin: 0 16px;
-    padding: 16px 0;
+    padding: 9px 0;
 
     > span {
       font-size: smaller;

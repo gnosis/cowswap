@@ -24,7 +24,7 @@ export const FeeInformationTooltipWrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 22.39px;
+  height: 51px;
 `
 
 const FeeTooltipLine = styled.p`
@@ -52,8 +52,8 @@ const Breakline = styled.p`
 `
 
 const FeeAmountAndFiat = styled.span`
-  ${({ theme }) => theme.flexRowNoWrap};
-  align-items: center;
+  ${({ theme }) => theme.flexColumnNoWrap};
+  align-items: flex-end;
   justify-content: center;
   gap: 5px;
 
