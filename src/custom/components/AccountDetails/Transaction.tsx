@@ -243,17 +243,18 @@ const TransactionWrapper = styled.div`
   }
 `
 
-const StatusLabelBelow = styled.div`
+const StatusLabelBelow = styled.div<{ isCancelling?: boolean }>`
   width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.1;
   margin: 7px auto 0;
+  color: ${({ isCancelling, theme }) => (isCancelling ? theme.primary1 : 'inherit')};
 
   ${LinkStyledButton} {
-    margin: 10px 0;
+    margin: 2px 0;
   }
 `
 
@@ -362,7 +363,7 @@ export const CancellationSummary = styled.span`
 const TransactionAlertMessage = styled.div`
   width: 100%;
   padding: 0;
-  background: #fff6dc;
+  background: ${({ theme }) => theme.yellow};
   color: black;
   font-size: 13px;
   display: flex;
@@ -559,7 +560,7 @@ export default function Transaction({ hash: id }: { hash: string }) {
           </StatusLabel>
 
           {isCancelling ? (
-            <StatusLabelBelow>
+            <StatusLabelBelow isCancelling={isCancelling}>
               Cancellation <br /> requested...
             </StatusLabelBelow>
           ) : null}

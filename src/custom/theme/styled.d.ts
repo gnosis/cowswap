@@ -8,6 +8,7 @@ export interface Colors extends ColorsUniswap {
   redShade: Color
   textLink: Color
   greenShade: Color
+  yellow: Color
   blueShade: Color
   blueShade2: Color
   border: Color

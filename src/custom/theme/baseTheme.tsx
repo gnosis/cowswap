@@ -50,6 +50,7 @@ export function colors(darkMode: boolean): Colors {
     greenShade: '#376c57',
     blueShade: '#0f2644',
     blueShade2: '#011e34',
+    yellow: '#fff6dc',
     border: darkMode ? '#3a3b5a' : 'rgb(58 59 90 / 10%)',
     border2: darkMode ? '#254F83' : '#afcbda',
     disabled: darkMode ? '#31323e' : 'rgb(237, 238, 242)',
