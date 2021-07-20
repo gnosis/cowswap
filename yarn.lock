@@ -1825,10 +1825,10 @@
     "@ethersproject/properties" "^5.4.0"
     "@ethersproject/strings" "^5.4.0"
 
-"@gnosis.pm/cow-runner-game@^0.2.2":
-  version "0.2.7"
-  resolved "https://registry.yarnpkg.com/@gnosis.pm/cow-runner-game/-/cow-runner-game-0.2.7.tgz#b4646e3dc6c890f2cf662b24533ec6e1ef111521"
-  integrity sha512-tw84gdlRCzmdb/c9tEmqHZ7rvrMR9/+N4sMAz6BsArbA8Kve6adUN9UKkhdN2htlKnOqlTRqJZW9VPrCx9ZSNA==
+"@gnosis.pm/cow-runner-game@^0.2.9":
+  version "0.2.9"
+  resolved "https://registry.yarnpkg.com/@gnosis.pm/cow-runner-game/-/cow-runner-game-0.2.9.tgz#c974064e80a1d1ba68107f606ee530c1c471da15"
+  integrity sha512-K3Jczna5i7CIKF2rjuwsZkLwmHrusBvmjh3LtCyHWxohrtYVXMf2lnOjL3+KZu22swuskWt/nM/icbM3wkFfEg==
 
 "@gnosis.pm/dex-contracts@^0.5.0":
   version "0.5.0"
