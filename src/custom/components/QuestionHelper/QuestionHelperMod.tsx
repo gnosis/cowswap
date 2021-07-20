@@ -40,14 +40,14 @@ interface QuestionHelperProps extends Omit<TooltipProps, 'children' | 'show'> {
 }
 
 export default function QuestionHelper({ text, className, ...tooltipProps }: QuestionHelperProps) {
-  const [, setShow] = useState<boolean>(false)
+  const [show, setShow] = useState<boolean>(false)
 
   const open = useCallback(() => setShow(true), [setShow])
   const close = useCallback(() => setShow(false), [setShow])
 
   return (
     <QuestionHelperContainer className={className}>
-      <Tooltip {...tooltipProps} show={true} text={text}>
+      <Tooltip {...tooltipProps} show={show} text={text}>
         <QuestionWrapper onClick={open} onMouseEnter={open} onMouseLeave={close}>
           <QuestionMark>?</QuestionMark>
         </QuestionWrapper>
