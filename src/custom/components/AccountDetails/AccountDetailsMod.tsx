@@ -23,15 +23,15 @@ import { ExternalLink /* , LinkStyledButton, TYPE */ } from 'theme'
 // import { Trans } from '@lingui/macro'
 // import { useAppDispatch } from 'state/hooks'
 
-export const HeaderRow = styled.div`
-  ${({ theme }) => theme.flexRowNoWrap};
-  padding: 1rem 1rem;
-  font-weight: 500;
-  color: ${(props) => (props.color === 'blue' ? ({ theme }) => theme.primary1 : 'inherit')};
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    padding: 1rem;
-  `};
-`
+// const HeaderRow = styled.div`
+//   ${({ theme }) => theme.flexRowNoWrap};
+//   padding: 1rem 1rem;
+//   font-weight: 500;
+//   color: ${(props) => (props.color === 'blue' ? ({ theme }) => theme.primary1 : 'inherit')};
+//   ${({ theme }) => theme.mediaWidth.upToMedium`
+//     padding: 1rem;
+//   `};
+// `
 
 export const UpperSection = styled.div`
   position: relative;

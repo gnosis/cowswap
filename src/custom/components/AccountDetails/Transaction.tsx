@@ -60,6 +60,13 @@ function determinePillColour(status: ActivityStatus, type: ActivityType) {
   }
 }
 
+const Wrapper = styled.div`
+  display: flex;
+  flex-flow: column wrap;
+  width: 100%;
+  border-bottom: 1px solid #d9e8ef;
+`
+
 const IconType = styled.div`
   height: 36px;
   width: 36px;
@@ -67,6 +74,10 @@ const IconType = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+      display: none;
+  `};
 
   &::before {
     content: '';
@@ -106,7 +117,7 @@ const IconType = styled.div`
 const Summary = styled.div`
   display: flex;
   flex-flow: column wrap;
-  color: ${({ theme }) => theme.text1};
+  color: ${({ theme }) => theme.text2};
 
   > b {
     color: inherit;
@@ -126,8 +137,14 @@ const Summary = styled.div`
 
   > div > span {
     display: grid;
+    color: inherit;
     grid-template-rows: 1fr;
     grid-template-columns: 100px 1fr;
+
+    ${({ theme }) => theme.mediaWidth.upToMedium`
+      grid-template-columns: 1fr;
+      margin: 0 16px 8px 0;
+    `};
   }
 
   > div > span > b,
@@ -140,6 +157,11 @@ const Summary = styled.div`
     display: flex;
     align-items: center;
     font-style: normal;
+  }
+
+  > div > span > i {
+    word-break: break-all;
+    white-space: break-spaces;
   }
 
   > div > span > b {
@@ -161,6 +183,10 @@ const TransactionStatusText = styled.div`
   display: flex;
   align-items: center;
 
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+    margin: 0 auto 0 0;
+  `};
+
   &:hover {
     text-decoration: none;
   }
@@ -170,12 +196,13 @@ const StatusLabelWrapper = styled.div`
   display: flex;
   flex-flow: column wrap;
   flex: 0 1 auto;
+  justify-content: center;
 `
 
 const StatusLabel = styled.div<{ isPending: boolean }>`
   height: 28px;
   width: 100px;
-  border: ${({ isPending, theme }) => isPending && `1px solid ${theme.disabled}`};
+  border: ${({ isPending, theme }) => isPending && `1px solid ${theme.border2}`};
   color: ${({ color }) => color};
   position: relative;
   border-radius: 4px;
@@ -202,6 +229,20 @@ const StatusLabel = styled.div<{ isPending: boolean }>`
   }
 `
 
+const TransactionWrapper = styled.div`
+  width: 100%;
+  border-radius: 0;
+  font-size: initial;
+  display: flex;
+  margin: 0;
+  padding: 16px;
+  transition: background 0.2s ease-in-out;
+
+  &:hover {
+    background: rgba(217, 232, 239, 0.35);
+  }
+`
+
 const StatusLabelBelow = styled.div`
   width: 100%;
   display: flex;
@@ -209,7 +250,7 @@ const StatusLabelBelow = styled.div`
   align-items: center;
   font-size: 11px;
   line-height: 1.1;
-  margin: 0;
+  margin: 7px auto 0;
 
   ${LinkStyledButton} {
     margin: 10px 0;
@@ -304,13 +345,7 @@ const TransactionState = styled(OldTransactionState).attrs(
   font-size: initial;
   display: flex;
   margin: 0;
-  padding: 16px;
-  border-bottom: 1px solid #d9e8ef;
-  transition: background 0.2s ease-in-out;
-
-  &:hover {
-    background: rgba(217, 232, 239, 0.35);
-  }
+  padding: 0;
 
   ${RowFixed} {
     width: 100%;
@@ -322,6 +357,22 @@ export const CancellationSummary = styled.span`
   margin: 0;
   border-radius: 6px;
   background: ${({ theme }) => theme.bg4};
+`
+
+const TransactionAlertMessage = styled.div`
+  width: 100%;
+  padding: 0;
+  background: #fff6dc;
+  color: black;
+  font-size: 13px;
+  display: flex;
+  justify-content: center;
+
+  > p {
+    padding: 10px;
+    margin: 0;
+    margin: 0 auto;
+  }
 `
 
 type RequestCancellationModalProps = {
@@ -442,87 +493,93 @@ export default function Transaction({ hash: id }: { hash: string }) {
   // Type of Transaction
   const isTransaction = type === ActivityType.TX
 
+  // Flags
+  const isPriceOutOfRange = false
+
   const onCancelClick = () => setShowCancelModal(true)
   const onDismiss = () => setShowCancelModal(false)
 
   // const isLoading = isPending || isCancelling ? true : false
 
   return (
-    <>
-      <TransactionState href={getEtherscanLink(chainId, id, 'transaction')}>
-        <RowFixed>
-          {activity && (
-            <IconType color={determinePillColour(status, type)}>
-              <IconWrapper pending={isPending || isCancelling} success={isConfirmed || isCancelled}>
-                {isPending || isCancelling ? (
-                  <Loader />
-                ) : isConfirmed ? (
-                  <SVG src={TxCheckImage} description="Order Filled" />
-                ) : isExpired ? (
-                  <SVG src={TxArrowsImage} description="Order Expired" />
-                ) : isCancelled ? (
-                  <SVG src={TxArrowsImage} description="Order Cancelled" />
-                ) : (
-                  <SVG src={TxArrowsImage} description="No state" />
-                )}
-              </IconWrapper>
-            </IconType>
-          )}
-          <TransactionStatusText>
-            {isCancelling ? (
-              <MouseoverTooltip text={activity.summary || id}>
-                {getActivitySummary({ activityData, id, suffix: '(Cancellation requested)', type })}
-              </MouseoverTooltip>
-            ) : (
-              getActivitySummary({ activityData, id, type })
+    <Wrapper>
+      <TransactionWrapper>
+        <TransactionState href={getEtherscanLink(chainId, id, 'transaction')}>
+          <RowFixed>
+            {activity && (
+              <IconType color={determinePillColour(status, type)}>
+                <IconWrapper pending={isPending || isCancelling} success={isConfirmed || isCancelled}>
+                  {isPending || isCancelling ? (
+                    <Loader />
+                  ) : isConfirmed ? (
+                    <SVG src={TxCheckImage} description="Order Filled" />
+                  ) : isExpired ? (
+                    <SVG src={TxArrowsImage} description="Order Expired" />
+                  ) : isCancelled ? (
+                    <SVG src={TxArrowsImage} description="Order Cancelled" />
+                  ) : (
+                    <SVG src={TxArrowsImage} description="No state" />
+                  )}
+                </IconWrapper>
+              </IconType>
             )}
-          </TransactionStatusText>
-          <StatusLabelWrapper>
-            <StatusLabel color={determinePillColour(status, type)} isPending={isPending || isCancelling}>
-              {isConfirmed ? (
-                <SVG src={OrderCheckImage} description="Order Filled" />
-              ) : isExpired ? (
-                <SVG src={OrderCrossImage} description="Order Expired" />
-              ) : isCancelled ? (
-                <SVG src={OrderCancelledImage} description="Order Cancelled" />
+            <TransactionStatusText>
+              {isCancelling ? (
+                <MouseoverTooltip text={activity.summary || id}>
+                  {getActivitySummary({ activityData, id, suffix: '(Cancellation requested)', type })}
+                </MouseoverTooltip>
               ) : (
-                <SVG src={OrderOpenImage} description="Order Open" />
+                getActivitySummary({ activityData, id, type })
               )}
-              {isPending
-                ? 'Open'
-                : isConfirmed && isTransaction
-                ? 'Approved'
-                : isConfirmed
-                ? 'Filled'
-                : isExpired
-                ? 'Expired'
-                : isCancelled
-                ? 'Cancelled'
-                : 'Open'}
-            </StatusLabel>
-
-            {isCancelling ? (
-              <StatusLabelBelow>
-                Cancellation <br /> requested...
-              </StatusLabelBelow>
-            ) : null}
-
-            {isCancellable && (
-              <StatusLabelBelow>
-                <LinkStyledButton onClick={onCancelClick}>Cancel order</LinkStyledButton>
-                {showCancelModal && (
-                  <CancellationModal
-                    orderId={id}
-                    summary={activityData.summary}
-                    isOpen={showCancelModal}
-                    onDismiss={onDismiss}
-                  />
-                )}
-              </StatusLabelBelow>
+            </TransactionStatusText>
+          </RowFixed>
+        </TransactionState>
+        <StatusLabelWrapper>
+          <StatusLabel color={determinePillColour(status, type)} isPending={isPending || isCancelling}>
+            {isConfirmed ? (
+              <SVG src={OrderCheckImage} description="Order Filled" />
+            ) : isExpired ? (
+              <SVG src={OrderCrossImage} description="Order Expired" />
+            ) : isCancelled ? (
+              <SVG src={OrderCancelledImage} description="Order Cancelled" />
+            ) : (
+              <SVG src={OrderOpenImage} description="Order Open" />
             )}
-          </StatusLabelWrapper>
-        </RowFixed>
-      </TransactionState>
-    </>
+            {isPending
+              ? 'Open'
+              : isConfirmed && isTransaction
+              ? 'Approved'
+              : isConfirmed
+              ? 'Filled'
+              : isExpired
+              ? 'Expired'
+              : isCancelled
+              ? 'Cancelled'
+              : 'Open'}
+          </StatusLabel>
+
+          {isCancelling ? (
+            <StatusLabelBelow>
+              Cancellation <br /> requested...
+            </StatusLabelBelow>
+          ) : null}
+
+          {isCancellable && (
+            <StatusLabelBelow>
+              <LinkStyledButton onClick={onCancelClick}>Cancel order</LinkStyledButton>
+              {showCancelModal && (
+                <CancellationModal
+                  orderId={id}
+                  summary={activityData.summary}
+                  isOpen={showCancelModal}
+                  onDismiss={onDismiss}
+                />
+              )}
+            </StatusLabelBelow>
+          )}
+        </StatusLabelWrapper>
+      </TransactionWrapper>
+      <TransactionAlertMessage>{isPriceOutOfRange ? <p>Price out of range</p> : null}</TransactionAlertMessage>
+    </Wrapper>
   )
 }

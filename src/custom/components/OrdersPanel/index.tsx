@@ -14,7 +14,6 @@ import usePrevious from 'hooks/usePrevious'
 import { useOnClickOutside } from 'hooks/useOnClickOutside'
 import AccountDetails from 'components/AccountDetails'
 import { Trans } from '@lingui/macro'
-import { MEDIA_WIDTHS } from '@src/theme'
 // import { ApplicationModal } from 'state/application/actions'
 // import {
 //     useModalOpen,
@@ -38,15 +37,17 @@ const SideBar = styled.div<{ isOpen: boolean }>`
   box-shadow: 0 0 100vh 100vw rgb(0 0 0 / 25%);
   cursor: default;
 
-  @media screen and (max-width: ${MEDIA_WIDTHS.upToSmall}px) {
+  ${({ theme }) => theme.mediaWidth.upToMedium`    
     width: 100%;
-  }
+    height: 100%;
+  `};
 `
 
 const CloseIcon = styled.div`
   position: absolute;
   right: 1rem;
   top: 14px;
+
   &:hover {
     cursor: pointer;
     opacity: 0.6;
@@ -79,12 +80,10 @@ const HeaderRow = styled.div`
 `
 
 const ContentWrapper = styled.div`
-  /* background-color: ${({ theme }) => theme.bg0}; */
   background-color: ${({ theme }) => theme.bg1};
   padding: 0 1rem 1rem 1rem;
   border-bottom-left-radius: 20px;
   border-bottom-right-radius: 20px;
-
   ${({ theme }) => theme.mediaWidth.upToMedium`padding: 0 1rem 1rem 1rem`};
 `
 
@@ -331,6 +330,7 @@ export default function OrdersPanel({
             <CloseColor />
           </CloseIcon>
           <HeaderRow>
+            test
             {error instanceof UnsupportedChainIdError ? <Trans>Wrong Network</Trans> : <Trans>Error connecting</Trans>}
           </HeaderRow>
           <ContentWrapper>

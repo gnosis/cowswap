@@ -31,12 +31,12 @@ import {
   MainWalletAction,
   // AccountDetailsProps,
   UpperSection,
-  CloseIcon,
+  CloseIcon as CloseIconMod,
   CloseColor,
-  HeaderRow,
-  AccountSection,
+  // HeaderRow,
+  AccountSection as AccountSectionMod,
   YourAccount,
-  InfoCard,
+  InfoCard as InfoCardMod,
   AccountGroupingRow,
   WalletAction,
   AccountControl,
@@ -52,8 +52,10 @@ import { OrdersPanelProps } from 'components/OrdersPanel'
 
 const Wrapper = styled.div`
   height: 100%;
+  width: 100%;
   color: ${({ theme }) => theme.text1};
   padding: 0;
+  ${({ theme }) => theme.mediaWidth.upToMedium`padding: 42px 0 0;`};
 
   ${WalletName},
   ${AddressLink},
@@ -65,6 +67,26 @@ const Wrapper = styled.div`
     padding: 0;
   }
 `
+
+const InfoCard = styled(InfoCardMod)`
+  margin-bottom: 10px;
+`
+
+const HeaderRow = styled.div`
+  ${({ theme }) => theme.flexRowNoWrap};
+  padding: 1rem 1rem;
+  font-weight: 500;
+  color: ${(props) => (props.color === 'blue' ? ({ theme }) => theme.primary1 : 'inherit')};
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+    display: none;
+  `};
+`
+
+const AccountSection = styled(AccountSectionMod)`
+  padding: 0;
+  ${({ theme }) => theme.mediaWidth.upToMedium`padding: 0;`};
+`
+
 const NoActivityMessage = styled.p`
   font-size: 14px;
   color: ${({ theme }) => theme.text1};
@@ -93,6 +115,10 @@ const LowerSection = styled.div`
     background: rgb(255 255 255 / 60%);
     backdrop-filter: blur(5px);
     z-index: 10;
+
+    ${({ theme }) => theme.mediaWidth.upToMedium`
+      top: 42px;
+    `};
   }
 
   > div {
@@ -104,7 +130,7 @@ const LowerSection = styled.div`
   h5 {
     margin: 0;
     font-weight: 500;
-    color: ${({ theme }) => theme.text3};
+    color: ${({ theme }) => theme.text2};
     line-height: 1;
     display: flex;
     align-items: center;
@@ -118,6 +144,23 @@ const LowerSection = styled.div`
   ${LinkStyledButton} {
     text-decoration: underline;
   }
+`
+
+const CloseIcon = styled(CloseIconMod)`
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+    top: 0;
+    z-index: 99999;
+    position: fixed;
+    left: 0;
+    right: initial;
+    background: ${({ theme }) => theme.bg1};
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 42px;
+    backdrop-filter: blur(5px);
+  `};
 `
 
 type AbstractConnector = Pick<ReturnType<typeof useActiveWeb3React>, 'connector'>['connector']
@@ -208,7 +251,6 @@ export function getStatusIcon(connector?: AbstractConnector, walletInfo?: Connec
   }
   return null
 }
-
 interface AccountDetailsProps {
   pendingTransactions: string[]
   confirmedTransactions: string[]
