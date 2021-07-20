@@ -638,7 +638,7 @@ export default function Swap({
               <Card padding={showWrap ? '.25rem 1rem 0 1rem' : '0px'} borderRadius={'20px'}>
                 <AutoColumn gap="8px" style={{ padding: '0 8px' }}>
                   {trade && (
-                    <RowBetween align="center">
+                    <RowBetween height={24} align="center">
                       <Text fontWeight={500} fontSize={14} color={theme.text2}>
                         <Trans>Price</Trans>
                       </Text>
@@ -661,7 +661,7 @@ export default function Swap({
                     </RowBetween>
                   )}
                   {!allowedSlippage.equalTo(INITIAL_ALLOWED_SLIPPAGE_PERCENT) && (
-                    <RowBetween align="center">
+                    <RowBetween height={24} align="center">
                       <ClickableText fontWeight={500} fontSize={14} color={theme.text2} onClick={toggleSettings}>
                         <Trans>Slippage Tolerance</Trans>
                       </ClickableText>

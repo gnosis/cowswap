@@ -28,7 +28,6 @@ interface FeeGreaterMessageProp {
 }
 
 const BottomGrouping = styled(BottomGroupingUni)`
-  margin-top: 10px;
   > div > button {
     align-self: stretch;
   }
@@ -48,7 +47,7 @@ const SwapModWrapper = styled(SwapMod)`
     }
 
     ${AutoColumn} {
-      grid-row-gap: 10px;
+      grid-row-gap: 0px;
     }
 
     .expertMode ${AutoColumn} {
@@ -60,7 +59,7 @@ const SwapModWrapper = styled(SwapMod)`
     }
 
     ${Card} > ${AutoColumn} {
-      margin: 6px auto 0;
+      margin: 10px auto;
 
       > div > div {
         color: ${({ theme }) => theme.text1};
@@ -115,9 +114,9 @@ function FeeGreaterMessage({ fee }: FeeGreaterMessageProp) {
   const theme = useContext(ThemeContext)
 
   return (
-    <RowBetween>
+    <RowBetween height={24}>
       <RowFixed>
-        <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
+        <TYPE.black fontSize={14} fontWeight={500} color={theme.text2}>
           Fee
         </TYPE.black>
         <QuestionHelper text="GP Swap has 0 gas fees. A portion of the sell amount in each trade goes to the GP Protocol." />
