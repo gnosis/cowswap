@@ -4,6 +4,7 @@ import QuestionHelper from 'components/QuestionHelper'
 import styled from 'styled-components'
 import { useUSDCValue } from 'hooks/useUSDCPrice'
 import { formatSmart } from 'utils/format'
+import useTheme from 'hooks/useTheme'
 
 interface FeeInformationTooltipProps {
   trade?: TradeGp
@@ -42,9 +43,12 @@ const FeeTooltipLine = styled.p`
 
 const Breakline = styled.p`
   height: 0;
-  border: 0.1px solid #00000052;
-  margin: 0.3rem 0;
   width: 100%;
+  margin: 6px 0;
+
+  border-bottom-color: #9191912e;
+  border-bottom: 1px;
+  border-bottom-style: inset;
 `
 
 const FeeAmountAndFiat = styled.span`
@@ -61,9 +65,15 @@ const FeeAmountAndFiat = styled.span`
   }
 `
 
+const FeeInnerWrapper = styled.div`
+  ${({ theme }) => theme.flexColumnNoWrap};
+  gap: 2px;
+`
+
 export default function FeeInformationTooltip(props: FeeInformationTooltipProps) {
   const { trade, label, amountBeforeFees, amountAfterFees, feeAmount, type, showHelper } = props
 
+  const theme = useTheme()
   const fiatValue = useUSDCValue(type === 'From' ? trade?.inputAmount : trade?.outputAmount)
 
   if (!trade || !showHelper) return null
@@ -73,8 +83,10 @@ export default function FeeInformationTooltip(props: FeeInformationTooltipProps)
       <span>
         {label}{' '}
         <WrappedQuestionHelper
+          bgColor={theme.bg4}
+          color={theme.text1}
           text={
-            <div>
+            <FeeInnerWrapper>
               <FeeTooltipLine>
                 <span>Before fee</span>
                 <span>{amountBeforeFees}</span>{' '}
@@ -95,7 +107,7 @@ export default function FeeInformationTooltip(props: FeeInformationTooltipProps)
                 <strong>{type}</strong>
                 <strong>{amountAfterFees}</strong>{' '}
               </FeeTooltipLine>
-            </div>
+            </FeeInnerWrapper>
           }
         />
       </span>
