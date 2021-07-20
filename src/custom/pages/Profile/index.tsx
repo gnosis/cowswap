@@ -3,8 +3,6 @@ import Page, { Title, Content, GdocsListStyle } from 'components/Page'
 import styled from 'styled-components'
 import { Trans } from '@lingui/macro'
 import CowsImg from 'custom/assets/cow-swap/cows-side-by-side.png'
-import Column from 'components/Column'
-import Row from 'components/Row'
 import { ButtonPrimary, ButtonSecondary } from 'custom/components/Button'
 
 const ButtonGroup = styled.div`
@@ -42,20 +40,20 @@ const Wrapper = styled(Page)`
   }
 `
 
-export default function Rewards() {
+export default function Profile() {
   return (
     <Wrapper>
       <Content>
         <FlexContainer>
           <div>
-            <Title>Cowswap Affiliate Program</Title>
+            <Title>Profile</Title>
             <TextGroup>
-              <b>
+              <strong>
                 <span role="img" aria-label="Milk">
                   🥛
                 </span>
                 Milk taste better, when shared with friends!
-              </b>
+              </strong>
               <p>
                 You love CowSwap, we know that, but what if we told you you can let others love it too and get some
                 rewards for doing so.
