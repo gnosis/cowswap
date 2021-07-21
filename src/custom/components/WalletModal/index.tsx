@@ -17,7 +17,7 @@ const TermsWrapper = styled.div`
   color: ${({ theme }) => theme.text1};
 `
 
-export function CustomTerms() {
+function CustomTerms() {
   return (
     <TermsWrapper>
       <Trans>
@@ -44,6 +44,6 @@ const NewToEthereum = () => (
   </Blurb>
 )
 
-export default function WalletModal(props: Omit<WalletModalProps, 'Modal' | 'NewToEthereum'>) {
-  return <WalletModalMod {...props} Modal={GpModal} NewToEthereum={NewToEthereum} />
+export default function WalletModal(props: Omit<WalletModalProps, 'Modal' | 'NewToEthereum' | 'CustomTerms'>) {
+  return <WalletModalMod {...props} Modal={GpModal} NewToEthereum={NewToEthereum} CustomTerms={CustomTerms} />
 }

@@ -25,7 +25,6 @@ import ModalMod from 'components/Modal'
 import Option from 'components/WalletModal/Option'
 import PendingView from 'components/WalletModal/PendingView'
 import { LightCard } from 'components/Card'
-import { CustomTerms } from './index'
 
 const CloseIcon = styled.div`
   position: absolute;
@@ -124,6 +123,7 @@ export interface WalletModalProps {
   ENSName?: string
   Modal: typeof ModalMod
   NewToEthereum: () => JSX.Element
+  CustomTerms: () => JSX.Element
 }
 
 export default function WalletModal({
@@ -132,6 +132,7 @@ export default function WalletModal({
   ENSName,
   Modal,
   NewToEthereum,
+  CustomTerms,
 }: WalletModalProps) {
   /* {
     pendingTransactions: string[] // hashes of pending
