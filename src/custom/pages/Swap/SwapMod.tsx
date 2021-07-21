@@ -744,9 +744,8 @@ export default function Swap({
                       approvalSubmitted ||
                       signatureState === UseERC20PermitState.SIGNED
                     }
-                    // TODO: check width with new v3 design
-                    // width="48%" // GP-WIDTH
                     width="100%"
+                    marginBottom={10}
                     altDisabledStyle={approvalState === ApprovalState.PENDING} // show solid button while waiting
                     confirmed={
                       approvalState === ApprovalState.APPROVED || signatureState === UseERC20PermitState.SIGNED
