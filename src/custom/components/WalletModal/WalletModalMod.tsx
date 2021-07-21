@@ -123,9 +123,16 @@ export interface WalletModalProps {
   confirmedTransactions: string[] // hashes of confirmed
   ENSName?: string
   Modal: typeof ModalMod
+  NewToEthereum: () => JSX.Element
 }
 
-export default function WalletModal({ pendingTransactions, confirmedTransactions, ENSName, Modal }: WalletModalProps) {
+export default function WalletModal({
+  pendingTransactions,
+  confirmedTransactions,
+  ENSName,
+  Modal,
+  NewToEthereum,
+}: WalletModalProps) {
   /* {
     pendingTransactions: string[] // hashes of pending
     confirmedTransactions: string[] // hashes of confirmed
@@ -376,6 +383,7 @@ export default function WalletModal({ pendingTransactions, confirmedTransactions
           ) : (
             <OptionGrid>{getOptions()}</OptionGrid>
           )}
+          {walletView !== WALLET_VIEWS.PENDING && <NewToEthereum />}
         </ContentWrapper>
       </UpperSection>
     )
