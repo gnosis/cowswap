@@ -1,17 +1,17 @@
 import { Pair } from '@uniswap/v2-sdk'
 import { Currency, CurrencyAmount, Percent, Token } from '@uniswap/sdk-core'
 import React, { useState, useCallback, ReactNode } from 'react'
-import styled from 'styled-components/macro'
-import { darken } from 'polished'
+// import styled from 'styled-components/macro'
+// import { darken } from 'polished'
 import { useCurrencyBalance } from 'state/wallet/hooks'
-import CurrencySearchModalUni from '@src/components/SearchModal/CurrencySearchModal'
+// import CurrencySearchModal from '../SearchModal/CurrencySearchModal'
 import CurrencyLogo from 'components/CurrencyLogo'
 import DoubleCurrencyLogo from 'components/DoubleLogo'
 // import { ButtonGray } from '../Button'
 import { RowBetween, RowFixed } from 'components/Row'
 import { TYPE } from 'theme'
 import { Input as NumericalInput } from 'components/NumericalInput'
-import { ReactComponent as DropDown } from 'assets/images/dropdown.svg'
+// import { ReactComponent as DropDown } from 'assets/images/dropdown.svg'
 import { useActiveWeb3React } from 'hooks/web3'
 import { Trans } from '@lingui/macro'
 import useTheme from 'hooks/useTheme'
@@ -23,150 +23,144 @@ import { FiatValue } from 'components/CurrencyInputPanel/FiatValue'
 import { WithClassName } from 'types'
 import { formatSmart } from 'utils/format'
 import { SHORT_PRECISION } from 'constants/index'
-import { FeeInformationTooltipWrapper } from 'components/swap/FeeInformationTooltip'
+import {
+  Aligner,
+  StyledTokenName,
+  StyledDropDown,
+  Container,
+  CurrencySelect,
+  InputRow,
+  CurrencySearchModal,
+  InputPanel,
+  AuxInformationContainer,
+  FixedContainer,
+  FiatRow,
+  StyledBalanceMax,
+} from './index'
 
-export const CurrencySearchModal = styled(CurrencySearchModalUni)`
-  > [data-reach-dialog-content] {
-    background-color: ${({ theme }) => theme.bg1};
-  }
-`
+// const InputPanel = styled.div<{ hideInput?: boolean }>`
+//   ${({ theme }) => theme.flexColumnNoWrap}
+//   position: relative;
+//   border-radius: ${({ hideInput }) => (hideInput ? '16px' : '20px')};
+//   background-color: ${({ theme, hideInput }) => (hideInput ? 'transparent' : theme.bg2)};
+//   z-index: 1;
+//   width: ${({ hideInput }) => (hideInput ? '100%' : 'initial')};
+// `
 
-export const InputPanel = styled.div<{ hideInput?: boolean }>`
-  ${({ theme }) => theme.flexColumnNoWrap}
-  position: relative;
-  border-radius: ${({ hideInput }) => (hideInput ? '16px' : '20px')};
-  background-color: ${({ theme, hideInput }) => (hideInput ? 'transparent' : theme.bg2)};
-  z-index: 1;
-  width: ${({ hideInput }) => (hideInput ? '100%' : 'initial')};
-`
+// const FixedContainer = styled.div`
+//   width: 100%;
+//   height: 100%;
+//   position: absolute;
+//   border-radius: 20px;
+//   background-color: ${({ theme }) => theme.bg1};
+//   opacity: 0.95;
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+//   z-index: 2;
+// `
 
-const FixedContainer = styled.div`
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  border-radius: 20px;
-  background-color: ${({ theme }) => theme.bg1};
-  opacity: 0.95;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 2;
-`
+// const Container = styled.div<{ hideInput: boolean }>`
+//   border-radius: ${({ hideInput }) => (hideInput ? '16px' : '20px')};
+//   border: 1px solid ${({ theme, hideInput }) => (hideInput ? ' transparent' : theme.bg2)};
+//   background-color: ${({ theme }) => theme.bg1};
+//   width: ${({ hideInput }) => (hideInput ? '100%' : 'initial')};
+//   :focus,
+//   :hover {
+//     border: 1px solid ${({ theme, hideInput }) => (hideInput ? ' transparent' : theme.bg3)};
+//   }
+// `
 
-export const Container = styled.div<{ hideInput: boolean; showAux?: boolean }>`
-  border-radius: ${({ hideInput, showAux = false }) => (showAux ? '20px 20px 0 0' : hideInput ? '16px' : '20px')};
-  border: 1px solid ${({ theme, hideInput }) => (hideInput ? ' transparent' : theme.bg2)};
-  background-color: ${({ theme }) => theme.bg1};
-  width: ${({ hideInput }) => (hideInput ? '100%' : 'initial')};
-  :focus,
-  :hover {
-    border: 1px solid ${({ theme, hideInput }) => (hideInput ? ' transparent' : theme.bg3)};
-  }
-`
+// const CurrencySelect = styled(ButtonGray)<{ selected: boolean; hideInput?: boolean }>`
+//   align-items: center;
+//   font-size: 24px;
+//   font-weight: 500;
+//   background-color: ${({ selected, theme }) => (selected ? theme.bg0 : theme.primary1)};
+//   color: ${({ selected, theme }) => (selected ? theme.text1 : theme.white)};
+//   border-radius: 16px;
+//   box-shadow: ${({ selected }) => (selected ? 'none' : '0px 6px 10px rgba(0, 0, 0, 0.075)')};
+//   box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.075);
+//   outline: none;
+//   cursor: pointer;
+//   user-select: none;
+//   border: none;
+//   height: ${({ hideInput }) => (hideInput ? '2.8rem' : '2.4rem')};
+//   width: ${({ hideInput }) => (hideInput ? '100%' : 'initial')};
+//   padding: 0 8px;
+//   justify-content: space-between;
+//   margin-right: ${({ hideInput }) => (hideInput ? '0' : '12px')};
+//   :focus,
+//   :hover {
+//     background-color: ${({ selected, theme }) => (selected ? theme.bg2 : darken(0.05, theme.primary1))};
+//   }
+// `
 
-export const CurrencySelect = styled.button<{ selected: boolean; hideInput?: boolean }>`
-  align-items: center;
-  font-size: 24px;
-  font-weight: 500;
-  background-color: ${({ selected, theme }) => (selected ? theme.bg1 : theme.primary1)};
-  color: ${({ selected, theme }) => (selected ? theme.text1 : theme.white)};
-  border-radius: 16px;
-  box-shadow: ${({ selected }) => (selected ? 'none' : '0px 6px 10px rgba(0, 0, 0, 0.075)')};
-  outline: none;
-  cursor: pointer;
-  user-select: none;
-  border: none;
-  height: ${({ hideInput }) => (hideInput ? '2.8rem' : '2.4rem')};
-  width: ${({ hideInput }) => (hideInput ? '100%' : 'initial')};
-  padding: 0 8px;
-  justify-content: space-between;
-  margin-right: ${({ hideInput }) => (hideInput ? '0' : '12px')};
-  :focus,
-  :hover {
-    background-color: ${({ selected, theme }) => (selected ? theme.bg2 : darken(0.05, theme.primary1))};
-  }
-`
+// const InputRow = styled.div<{ selected: boolean }>`
+//   ${({ theme }) => theme.flexRowNoWrap}
+//   align-items: center;
+//   padding: ${({ selected }) => (selected ? ' 1rem 1rem 0.75rem 1rem' : '1rem 1rem 0.75rem 1rem')};
+// `
 
-export const InputRow = styled.div<{ selected: boolean }>`
-  ${({ theme }) => theme.flexRowNoWrap}
-  align-items: center;
-  padding: ${({ selected }) => (selected ? ' 1rem 1rem 0.75rem 1rem' : '1rem 1rem 0.75rem 1rem')};
-`
+// const LabelRow = styled.div`
+//   ${({ theme }) => theme.flexRowNoWrap}
+//   align-items: center;
+//   color: ${({ theme }) => theme.text1};
+//   font-size: 0.75rem;
+//   line-height: 1rem;
+//   padding: 0 1rem 1rem;
+//   span:hover {
+//     cursor: pointer;
+//     color: ${({ theme }) => darken(0.2, theme.text2)};
+//   }
+// `
 
-export const LabelRow = styled.div`
-  ${({ theme }) => theme.flexRowNoWrap}
-  align-items: center;
-  color: ${({ theme }) => theme.text1};
-  font-size: 0.75rem;
-  line-height: 1rem;
-  padding: 0 1rem 1rem;
-  span:hover {
-    cursor: pointer;
-    color: ${({ theme }) => darken(0.2, theme.text2)};
-  }
-`
+// const FiatRow = styled(LabelRow)`
+//   justify-content: flex-end;
+// `
 
-const FiatRow = styled(LabelRow)`
-  justify-content: flex-end;
-`
+// const Aligner = styled.span`
+//   display: flex;
+//   align-items: center;
+//   justify-content: space-between;
+//   width: 100%;
+// `
 
-export const Aligner = styled.span`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-`
+// const StyledDropDown = styled(DropDown)<{ selected: boolean }>`
+//   margin: 0 0.25rem 0 0.35rem;
+//   height: 35%;
 
-export const StyledDropDown = styled(DropDown)<{ selected: boolean }>`
-  margin: 0 0.25rem 0 0.35rem;
-  height: 35%;
+//   path {
+//     stroke: ${({ selected, theme }) => (selected ? theme.text1 : theme.white)};
+//     stroke-width: 1.5px;
+//   }
+// `
 
-  path {
-    stroke: ${({ selected, theme }) => (selected ? theme.text1 : theme.white)};
-    stroke-width: 1.5px;
-  }
-`
+// const StyledTokenName = styled.span<{ active?: boolean }>`
+//   ${({ active }) => (active ? '  margin: 0 0.25rem 0 0.25rem;' : '  margin: 0 0.25rem 0 0.25rem;')}
+//   font-size:  ${({ active }) => (active ? '18px' : '18px')};
+// `
 
-export const StyledTokenName = styled.span<{ active?: boolean }>`
-  ${({ active }) => (active ? '  margin: 0 0.25rem 0 0.25rem;' : '  margin: 0 0.25rem 0 0.25rem;')}
-  font-size:  ${({ active }) => (active ? '18px' : '18px')};
-`
+// const StyledBalanceMax = styled.button<{ disabled?: boolean }>`
+//   background-color: transparent;
+//   border: none;
+//   border-radius: 12px;
+//   font-size: 14px;
+//   font-weight: 500;
+//   cursor: pointer;
+//   padding: 0;
+//   color: ${({ theme }) => theme.primaryText1};
+//   opacity: ${({ disabled }) => (!disabled ? 1 : 0.4)};
+//   pointer-events: ${({ disabled }) => (!disabled ? 'initial' : 'none')};
+//   margin-left: 0.25rem;
 
-export const StyledBalanceMax = styled.button`
-  background-color: transparent;
-  border: none;
-  border-radius: 12px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  color: ${({ theme }) => theme.primary5};
-  opacity: ${({ disabled }) => (!disabled ? 1 : 0.4)};
-  pointer-events: ${({ disabled }) => (!disabled ? 'initial' : 'none')};
-  margin-left: 0.25rem;
+//   :focus {
+//     outline: none;
+//   }
 
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-    margin-right: 0.5rem;
-  `};
-`
-const AuxInformationContainer = styled(Container)`
-  &&&&& {
-    background-color: ${({ theme }) => darken(0.0, theme.bg1 || theme.bg3)};
-    margin: 0 auto;
-    border-radius: 0 0 15px 15px;
-    border-top: none;
-  }
-
-  > ${FeeInformationTooltipWrapper} {
-    align-items: center;
-    justify-content: space-between;
-    margin: 0 16px;
-    padding: 9px 0;
-
-    > span {
-      font-size: smaller;
-    }
-  }
-`
+//   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+//     margin-right: 0.5rem;
+//   `};
+// `
 
 export interface CurrencyInputPanelProps extends WithClassName {
   value: string
@@ -291,7 +285,7 @@ export default function CurrencyInputPanel({
                       onClick={onMax}
                       // color={theme.text2}
                       color={theme.text1}
-                      fontWeight={400}
+                      // fontWeight={400}
                       fontSize={14}
                       style={{ display: 'inline', cursor: 'pointer' }}
                     >

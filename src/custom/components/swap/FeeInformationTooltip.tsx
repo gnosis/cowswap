@@ -24,7 +24,7 @@ export const FeeInformationTooltipWrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 51px;
+  height: 60px;
 `
 
 const FeeTooltipLine = styled.p`
@@ -112,7 +112,7 @@ export default function FeeInformationTooltip(props: FeeInformationTooltipProps)
         />
       </span>
       <FeeAmountAndFiat>
-        {amountAfterFees} {fiatValue && <small>~${formatSmart(fiatValue)}</small>}
+        {amountAfterFees} {fiatValue && <small>≈ ${formatSmart(fiatValue)}</small>}
       </FeeAmountAndFiat>
     </FeeInformationTooltipWrapper>
   )

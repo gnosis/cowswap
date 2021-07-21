@@ -2,32 +2,33 @@ import React, { /* ReactNode, */ useCallback, useState } from 'react'
 import styled from 'styled-components/macro'
 import Tooltip from 'components/Tooltip'
 import { TooltipProps } from '../Tooltip/TooltipMod'
+import { QuestionWrapper, QuestionMark } from './index'
 
-const QuestionWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0px;
-  width: 18px;
-  height: 18px;
-  border: none;
-  background: none;
-  outline: none;
-  cursor: default;
-  border-radius: 36px;
-  font-size: 12px;
-  background-color: ${({ theme }) => theme.bg2};
-  color: ${({ theme }) => theme.text2};
+// const QuestionWrapper = styled.div`
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+//   padding: 0px;
+//   width: 18px;
+//   height: 18px;
+//   border: none;
+//   background: none;
+//   outline: none;
+//   cursor: default;
+//   border-radius: 36px;
+//   font-size: 12px;
+//   background-color: ${({ theme }) => theme.bg2};
+//   color: ${({ theme }) => theme.text2};
 
-  :hover,
-  :focus {
-    opacity: 0.7;
-  }
-`
+//   :hover,
+//   :focus {
+//     opacity: 0.7;
+//   }
+// `
 
-const QuestionMark = styled.span`
-  font-size: 14px;
-`
+// const QuestionMark = styled.span`
+//   font-size: 14px;
+// `
 
 const QuestionHelperContainer = styled.span`
   margin-left: 4px;
@@ -49,7 +50,8 @@ export default function QuestionHelper({ text, className, ...tooltipProps }: Que
     <QuestionHelperContainer className={className}>
       <Tooltip {...tooltipProps} show={show} text={text}>
         <QuestionWrapper onClick={open} onMouseEnter={open} onMouseLeave={close}>
-          <QuestionMark>?</QuestionMark>
+          {/* <QuestionMark>?</QuestionMark> */}
+          <QuestionMark />
         </QuestionWrapper>
       </Tooltip>
     </QuestionHelperContainer>
