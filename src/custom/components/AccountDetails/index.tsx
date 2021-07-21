@@ -279,8 +279,7 @@ export default function AccountDetails({
     }
   }, [dispatch, chainId])
   const explorerLabel = chainId && account ? getExplorerLabel(chainId, account, 'address') : undefined
-
-  const activityTotalCount = pendingTransactions?.length + confirmedTransactions?.length || null
+  const activityTotalCount = (pendingTransactions?.length || 0) + (confirmedTransactions?.length || 0)
 
   return (
     <Wrapper>
