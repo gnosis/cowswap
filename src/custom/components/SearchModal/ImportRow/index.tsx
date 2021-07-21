@@ -14,7 +14,7 @@ interface ImportRowProps {
 
 const Wrapper = styled.div`
   ${AutoRow} > div {
-    color: ${({ theme }) => theme.text2};
+    color: ${({ theme }) => theme.text1};
   }
 `
 
