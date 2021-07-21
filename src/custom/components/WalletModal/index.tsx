@@ -22,7 +22,7 @@ const Blurb = styled.div`
 
 const NewToEthereum = () => (
   <Blurb>
-    <div>New to decentralised applications? &nbsp;</div>{' '}
+    <div>New to decentralised applications?</div>{' '}
     <ExternalLink href="https://ethereum.org/wallets/">Learn more about wallets</ExternalLink>
   </Blurb>
 )
