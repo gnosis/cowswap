@@ -1,38 +1,44 @@
-interface IMetadata {
-  kind: MetadataKind
-  version: string
-}
-
 export enum MetadataKind {
   REFERRAL = 'referrer',
 }
 
-export type Metadata = {
-  [MetadataKind.REFERRAL]: IReferralMetadata
+interface Metadata {
+  kind: MetadataKind
+  version: string
+}
+
+export interface ReferralMetadata extends Metadata {
+  referrer: string
 }
 
 export type MetadataDoc = {
-  version: string
-  appCode?: string
-  metadata: Metadata
+  [MetadataKind.REFERRAL]?: ReferralMetadata
 }
 
-export interface IReferralMetadata extends IMetadata {
-  referrer: string
+export type AppDataDoc = {
+  version: string
+  appCode?: string
+  metadata: MetadataDoc
 }
 
 export const DEFAULT_APP_CODE = 'CowSwap'
 
-export const generateReferralMetadataDoc = (referralAddress: string): MetadataDoc => {
+export function generateReferralMetadataDoc(referralAddress: string): AppDataDoc {
+  return generateMetadataDoc({
+    referrer: {
+      kind: MetadataKind.REFERRAL,
+      referrer: referralAddress,
+      version: '1.0.0',
+    },
+  })
+}
+
+export function generateMetadataDoc(metadata: MetadataDoc = {}): AppDataDoc {
   return {
     version: '1.0.0',
     appCode: DEFAULT_APP_CODE,
     metadata: {
-      referrer: {
-        kind: MetadataKind.REFERRAL,
-        referrer: referralAddress,
-        version: '1.0.0',
-      },
+      ...metadata,
     },
   }
 }
