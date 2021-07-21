@@ -91,7 +91,7 @@ export default function ImportRow({
             showImportView()
           }}
         >
-          <Trans>Import Test</Trans>
+          <Trans>Import</Trans>
         </ButtonPrimary>
       ) : (
         <RowFixed style={{ minWidth: 'fit-content' }}>
