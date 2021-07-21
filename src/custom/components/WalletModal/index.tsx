@@ -17,11 +17,12 @@ const Blurb = styled.div`
   margin: 16px 0 0;
   text-align: center;
   font-size: smaller;
+  line-height: 1.5;
 `
 
 const NewToEthereum = () => (
   <Blurb>
-    <span>New to Ethereum? &nbsp;</span>{' '}
+    <div>New to decentralised applications? &nbsp;</div>{' '}
     <ExternalLink href="https://ethereum.org/wallets/">Learn more about wallets</ExternalLink>
   </Blurb>
 )
