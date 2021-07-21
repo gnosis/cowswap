@@ -148,11 +148,21 @@ export const Wrapper = styled.div<{ selected: boolean; showLoader: boolean }>`
     color: ${({ theme }) => theme.currencyInput?.color};
     opacity: 0.75;
 
+    ${({ theme }) => theme.mediaWidth.upToSmall`
+      display: flex;
+      flex-flow: column wrap;
+
+        > div {
+          margin: 0 0 10px;
+        }
+    `};
+
     > div > div > span,
     > div > div,
     > div {
       color: ${({ theme }) => theme.currencyInput?.color};
       font-weight: 500;
+      word-break: break-all;
     }
   }
 
