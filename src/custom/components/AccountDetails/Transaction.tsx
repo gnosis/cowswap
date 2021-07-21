@@ -27,13 +27,13 @@ import { MouseoverTooltip } from 'components/Tooltip'
 import { GpModal as Modal } from 'components/WalletModal'
 
 import SVG from 'react-inlinesvg'
-import TxArrowsImage from 'assets/images/transaction-arrows.svg'
-import TxCheckImage from 'assets/images/transaction-confirmed.svg'
+import TxArrowsImage from 'assets/svg/transaction-arrows.svg'
+import TxCheckImage from 'assets/svg/transaction-confirmed.svg'
 
-import OrderCheckImage from 'assets/images/order-check.svg'
-import OrderCrossImage from 'assets/images/order-cross.svg'
-import OrderCancelledImage from 'assets/images/order-cancelled.svg'
-import OrderOpenImage from 'assets/images/order-open.svg'
+import OrderCheckImage from 'assets/svg/order-check.svg'
+import OrderCrossImage from 'assets/svg/order-cross.svg'
+import OrderCancelledImage from 'assets/svg/order-cancelled.svg'
+import OrderOpenImage from 'assets/svg/order-open.svg'
 
 const PILL_COLOUR_MAP = {
   CONFIRMED: '#3B7848',
