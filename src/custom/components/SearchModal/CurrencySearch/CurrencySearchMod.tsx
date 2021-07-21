@@ -21,7 +21,7 @@ import styled, { DefaultTheme } from 'styled-components/macro'
 import useToggle from 'hooks/useToggle'
 import { useOnClickOutside } from 'hooks/useOnClickOutside'
 import useTheme from 'hooks/useTheme'
-import ImportRow from 'components/SearchModal/CurrencyList/ImportRow'
+import ImportRow from 'components/SearchModal/ImportRow'
 // import { Edit } from 'react-feather'
 import useDebounce from 'hooks/useDebounce'
 
