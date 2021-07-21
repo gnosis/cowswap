@@ -22,7 +22,7 @@ export function CustomTerms() {
       <Trans>
         By connecting a wallet, you agree to GnosisDAO&apos;s{' '}
         <ExternalLink href="#/terms-and-conditions">Terms &amp; Conditions</ExternalLink>, and acknowledge that you have
-        read, understood and agree to them.{' '}
+        read, understood, and agree to them.{' '}
       </Trans>
     </TermsWrapper>
   )
