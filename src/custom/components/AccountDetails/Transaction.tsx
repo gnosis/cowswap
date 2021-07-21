@@ -31,7 +31,7 @@ import TxArrowsImage from 'assets/svg/transaction-arrows.svg'
 import TxCheckImage from 'assets/svg/transaction-confirmed.svg'
 
 import OrderCheckImage from 'assets/svg/order-check.svg'
-import OrderCrossImage from 'assets/svg/order-cross.svg'
+import OrderExpiredImage from 'assets/svg/order-expired.svg'
 import OrderCancelledImage from 'assets/svg/order-cancelled.svg'
 import OrderOpenImage from 'assets/svg/order-open.svg'
 
@@ -540,7 +540,7 @@ export default function Transaction({ hash: id }: { hash: string }) {
             {isConfirmed ? (
               <SVG src={OrderCheckImage} description="Order Filled" />
             ) : isExpired ? (
-              <SVG src={OrderCrossImage} description="Order Expired" />
+              <SVG src={OrderExpiredImage} description="Order Expired" />
             ) : isCancelled ? (
               <SVG src={OrderCancelledImage} description="Order Cancelled" />
             ) : (
