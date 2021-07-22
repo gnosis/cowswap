@@ -15,13 +15,14 @@ import { InputContainer } from 'components/AddressInputPanel'
 import { GreyCard } from 'components/Card'
 import { StyledBalanceMaxMini } from 'components/swap/styleds'
 import Card from 'components/Card'
-import QuestionHelper from 'components/QuestionHelper'
 import { ButtonError, ButtonPrimary } from 'components/Button'
 import EthWethWrap, { Props as EthWethWrapProps } from 'components/swap/EthWethWrap'
 import { useReplaceSwapState, useSwapState } from 'state/swap/hooks'
 import { ArrowWrapperLoader, ArrowWrapperLoaderProps, Wrapper as ArrowWrapper } from 'components/ArrowWrapperLoader'
 import { LONG_LOAD_THRESHOLD, SHORT_PRECISION } from 'constants/index'
 import { formatSmart } from 'utils/format'
+import { MouseoverTooltipContent } from 'components/Tooltip'
+import { StyledInfo } from 'pages/Swap/SwapMod'
 
 interface FeeGreaterMessageProp {
   fee: CurrencyAmount<Currency>
@@ -119,7 +120,13 @@ function FeeGreaterMessage({ fee }: FeeGreaterMessageProp) {
         <TYPE.black fontSize={14} fontWeight={500} color={theme.text2}>
           Fee
         </TYPE.black>
-        <QuestionHelper text="GP Swap has 0 gas fees. A portion of the sell amount in each trade goes to the GP Protocol." />
+        <MouseoverTooltipContent
+          bgColor={theme.bg1}
+          color={theme.text1}
+          content="GP Swap has 0 gas fees. A portion of the sell amount in each trade goes to the GP Protocol."
+        >
+          <StyledInfo />
+        </MouseoverTooltipContent>
       </RowFixed>
       <TYPE.black fontSize={14} color={theme.text1}>
         {formatSmart(fee, SHORT_PRECISION)} {fee.currency.symbol}
