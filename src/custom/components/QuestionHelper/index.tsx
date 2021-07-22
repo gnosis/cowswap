@@ -2,10 +2,10 @@ import React from 'react'
 import styled from 'styled-components/macro'
 import SVG from 'react-inlinesvg'
 import QuestionImage from 'assets/svg/question.svg'
+import { TooltipProps } from 'components/Tooltip/TooltipMod'
+import QuestionHelperMod from './QuestionHelperMod'
 
-export function QuestionMark() {
-  return <SVG src={QuestionImage} title="Tooltip" />
-}
+const QuestionMark = () => <SVG src={QuestionImage} />
 
 export const QuestionWrapper = styled.div`
   display: flex;
@@ -25,6 +25,11 @@ export const QuestionWrapper = styled.div`
     stroke: ${({ theme }) => theme.text1};
   }
 `
+export interface QuestionHelperProps extends Omit<TooltipProps, 'children' | 'show'> {
+  className?: string
+  QuestionMark?: () => JSX.Element
+}
 
-export * from '@src/components/QuestionHelper'
-export { default } from './QuestionHelperMod'
+export default function QuestionHelper(props: QuestionHelperProps) {
+  return <QuestionHelperMod {...props} QuestionMark={QuestionMark} />
+}
