@@ -87,8 +87,9 @@ SwapModalHeaderProps) {
 
   const [showInverted, setShowInverted] = useState<boolean>(false)
 
-  const fiatValueInput = useUSDCValue(trade.inputAmount)
-  const fiatValueOutput = useUSDCValue(trade.outputAmount)
+  // show fiatValue for unadjusted trade amounts!
+  const fiatValueInput = useUSDCValue(trade.inputAmountWithoutFee)
+  const fiatValueOutput = useUSDCValue(trade.outputAmountWithoutFee)
 
   const [slippageIn, slippageOut] = useMemo(
     () => [slippageAdjustedAmounts[Field.INPUT], slippageAdjustedAmounts[Field.OUTPUT]],
