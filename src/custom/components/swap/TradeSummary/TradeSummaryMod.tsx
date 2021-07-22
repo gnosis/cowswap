@@ -46,6 +46,7 @@ export default function TradeSummary({
 }) {
   const theme = useContext(ThemeContext)
   // const { priceImpactWithoutFee, realizedLPFee } = computeTradePriceBreakdown(trade)
+  const { /* priceImpactWithoutFee, */ realizedFee } = React.useMemo(() => computeTradePriceBreakdown(trade), [trade])
   const isExactIn = trade.tradeType === TradeType.EXACT_INPUT
   const slippageAdjustedAmounts = computeSlippageAdjustedAmounts(trade, allowedSlippage)
 
@@ -56,10 +57,10 @@ export default function TradeSummary({
 
   return (
     <AutoColumn gap="2px">
-      {/* <RowBetween>
+      <RowBetween height={24}>
         <RowFixed>
           <TYPE.black fontSize={12} fontWeight={400} color={theme.text2}>
-            // Liquidity Provider Fee
+            {/* Liquidity Provider Fee */}
             Fee
           </TYPE.black>
           {showHelpers && (
@@ -71,7 +72,7 @@ export default function TradeSummary({
         <TYPE.black textAlign="right" fontSize={12} color={theme.text1}>
           {`${formatSmart(realizedFee) || '-'} ${realizedFee?.currency.symbol}`}
         </TYPE.black>
-      </RowBetween> */}
+      </RowBetween>
 
       <RowBetween height={24}>
         <RowFixed>
@@ -80,7 +81,8 @@ export default function TradeSummary({
           </TYPE.black>
         </RowFixed>
         <TYPE.black textAlign="right" fontSize={12} color={theme.text1}>
-          {formatSmart(isExactIn ? trade.outputAmount : trade.inputAmountWithFee)}
+          {formatSmart(isExactIn ? trade.outputAmount : trade.inputAmountWithFee)}{' '}
+          {(isExactIn ? trade.outputAmount : trade.inputAmount).currency.symbol}
         </TYPE.black>
       </RowBetween>
 
