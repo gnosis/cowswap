@@ -185,7 +185,7 @@ SwapModalHeaderProps) {
           <FeeInformationTooltip
             amountAfterFees={formatSmart(trade.outputAmount)}
             amountBeforeFees={formatSmart(trade.outputAmountWithoutFee)}
-            feeAmount={formatSmart(trade.fee.feeAsCurrency)}
+            feeAmount={formatSmart(trade.outputAmountWithoutFee?.subtract(trade.outputAmount))}
             label={exactOutLabel}
             showHelper
             trade={trade}
