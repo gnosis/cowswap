@@ -650,7 +650,12 @@ export default function Swap({
                         />
                         <MouseoverTooltipContent
                           content={
-                            <AdvancedSwapDetails trade={trade} allowedSlippage={allowedSlippage} showHelpers={false} />
+                            <AdvancedSwapDetails
+                              trade={trade}
+                              allowedSlippage={allowedSlippage}
+                              showHelpers={false}
+                              showFee={false}
+                            />
                           }
                           bgColor={theme.bg1}
                           color={theme.text4}
