@@ -7,6 +7,10 @@ import { network } from 'connectors'
 import { useEagerConnect, useInactiveListener } from '../../hooks/web3'
 import { NetworkContextName } from '../../constants/misc'
 import Loader from '../Loader'
+import detectEthereumProvider from '@metamask/detect-provider'
+import { updateAffiliateLink } from '@src/state/affiliate/actions'
+import { generateAffiliateLink } from '@src/utils/affiliateLinkUtil'
+import { useAppDispatch } from '@src/state/hooks'
 
 const MessageWrapper = styled.div`
   display: flex;
@@ -20,6 +24,7 @@ const Message = styled.h2`
 `
 
 export default function Web3ReactManager({ children }: { children: JSX.Element }) {
+  const dispatch = useAppDispatch()
   const { active } = useWeb3React()
   const { active: networkActive, error: networkError, activate: activateNetwork } = useWeb3React(NetworkContextName)
 
@@ -47,6 +52,20 @@ export default function Web3ReactManager({ children }: { children: JSX.Element }
       clearTimeout(timeout)
     }
   }, [])
+
+  useEffect(() => {
+    // start listeners for affiliate link generation on account change
+    startWalletListeners()
+  }, [active])
+
+  const startWalletListeners = async () => {
+    const provider: any = await detectEthereumProvider()
+    if (!provider && active) return
+    provider.on('accountsChanged', function (accounts: Array<string>) {
+      console.log('ACCOUNT CHANGED', accounts)
+      generateAffiliateLink((link: string) => dispatch(updateAffiliateLink({ affiliateLink: link })))
+    })
+  }
 
   // on page load, do nothing until we've tried to connect to the injected connector
   if (!triedEager) {

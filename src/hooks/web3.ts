@@ -5,6 +5,10 @@ import { useEffect, useState } from 'react'
 import { isMobile } from 'react-device-detect'
 import { injected } from 'connectors'
 import { NetworkContextName } from 'constants/misc'
+import { useAppDispatch } from '@src/state/hooks'
+import detectEthereumProvider from '@metamask/detect-provider'
+import { updateAffiliateLink } from '@src/state/affiliate/actions'
+import { generateAffiliateLink } from '@src/utils/affiliateLinkUtil'
 
 export function useActiveWeb3React(): Web3ReactContextInterface<Web3Provider> {
   const context = useWeb3ReactCore<Web3Provider>()
@@ -13,15 +17,22 @@ export function useActiveWeb3React(): Web3ReactContextInterface<Web3Provider> {
 }
 
 export function useEagerConnect() {
+  const dispatch = useAppDispatch()
+
   const { activate, active } = useWeb3ReactCore() // specifically using useWeb3ReactCore because of what this hook does
   const [tried, setTried] = useState(false)
 
   useEffect(() => {
+    console.log('USING EAGER CONNECT...')
     injected.isAuthorized().then((isAuthorized) => {
       if (isAuthorized) {
-        activate(injected, undefined, true).catch(() => {
-          setTried(true)
-        })
+        activate(injected, undefined, true)
+          .catch(() => {
+            setTried(true)
+          })
+          .finally(() =>
+            generateAffiliateLink((link: string) => dispatch(updateAffiliateLink({ affiliateLink: link })))
+          )
       } else {
         if (isMobile && window.ethereum) {
           activate(injected, undefined, true).catch(() => {
@@ -49,6 +60,7 @@ export function useEagerConnect() {
  * and out after checking what network theyre on
  */
 export function useInactiveListener(suppress = false) {
+  const dispatch = useAppDispatch()
   const { active, error, activate } = useWeb3ReactCore() // specifically using useWeb3React because of what this hook does
 
   useEffect(() => {
@@ -57,17 +69,25 @@ export function useInactiveListener(suppress = false) {
     if (ethereum && ethereum.on && !active && !error && !suppress) {
       const handleChainChanged = () => {
         // eat errors
-        activate(injected, undefined, true).catch((error) => {
-          console.error('Failed to activate after chain changed', error)
-        })
+        activate(injected, undefined, true)
+          .catch((error) => {
+            console.error('Failed to activate after chain changed', error)
+          })
+          .finally(() =>
+            generateAffiliateLink((link: string) => dispatch(updateAffiliateLink({ affiliateLink: link })))
+          )
       }
 
       const handleAccountsChanged = (accounts: string[]) => {
         if (accounts.length > 0) {
           // eat errors
-          activate(injected, undefined, true).catch((error) => {
-            console.error('Failed to activate after accounts changed', error)
-          })
+          activate(injected, undefined, true)
+            .catch((error) => {
+              console.error('Failed to activate after accounts changed', error)
+            })
+            .finally(() =>
+              generateAffiliateLink((link: string) => dispatch(updateAffiliateLink({ affiliateLink: link })))
+            )
         }
       }
 
