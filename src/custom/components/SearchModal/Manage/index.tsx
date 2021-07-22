@@ -1,19 +1,18 @@
 import React from 'react'
-import ManageMod, { ToggleWrapper } from './ManageMod'
+import ManageMod from './ManageMod'
 import styled from 'styled-components/macro'
 import { Token } from '@uniswap/sdk-core'
+import { RowBetween } from 'components/Row'
 import { TokenList } from '@uniswap/token-lists'
 import { CurrencyModalView } from '@src/components/SearchModal/CurrencySearchModal'
 
-const Wrapper = styled.div<{ active?: boolean }>`
-  width: 100%;
-
-  ${ToggleWrapper} {
-    background-color: ${({ theme }) => theme.bg4};
-  }
+const ToggleWrapper = styled(RowBetween)`
+  background-color: ${({ theme }) => theme.bg4};
+  border-radius: 12px;
+  padding: 6px;
 `
 
-export const ToggleOption = styled.div<{ active?: boolean }>`
+const ToggleOption = styled.div<{ active?: boolean }>`
   width: 48%;
   padding: 10px;
   display: flex;
@@ -38,12 +37,13 @@ export interface ManageProps {
   setImportList: (list: TokenList) => void
   setListUrl: (url: string) => void
   ToggleOption?: typeof ToggleOption
+  ToggleWrapper?: typeof ToggleWrapper
 }
 
 export default function Manage(props: ManageProps) {
   return (
-    <Wrapper>
-      <ManageMod {...props} ToggleOption={ToggleOption} />
-    </Wrapper>
+    <>
+      <ManageMod {...props} ToggleOption={ToggleOption} ToggleWrapper={ToggleWrapper} />
+    </>
   )
 }

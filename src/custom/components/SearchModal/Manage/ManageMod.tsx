@@ -11,7 +11,7 @@ import { ManageLists } from 'components/SearchModal/ManageLists'
 import ManageTokens from 'components/SearchModal/ManageTokens'
 // import { TokenList } from '@uniswap/token-lists'
 import { CurrencyModalView } from '@src/components/SearchModal/CurrencySearchModal'
-import { ManageProps } from './index'
+import { ManageProps } from './index' // mod
 
 const Wrapper = styled.div`
   width: 100%;
@@ -19,11 +19,11 @@ const Wrapper = styled.div`
   padding-bottom: 80px;
 `
 
-export const ToggleWrapper = styled(RowBetween)`
-  background-color: ${({ theme }) => theme.bg3};
-  border-radius: 12px;
-  padding: 6px;
-`
+// const ToggleWrapper = styled(RowBetween)`
+//   background-color: ${({ theme }) => theme.bg3};
+//   border-radius: 12px;
+//   padding: 6px;
+// `
 
 // const ToggleOption = styled.div<{ active?: boolean }>`
 //   width: 48%;
@@ -49,8 +49,10 @@ export default function Manage({
   setImportList,
   setImportToken,
   setListUrl,
-  ToggleOption,
+  ToggleOption, // mod
+  ToggleWrapper, // mod
 }: ManageProps) {
+  // mod
   // {
   //   onDismiss: () => void
   //   setModalView: (view: CurrencyModalView) => void
@@ -74,16 +76,17 @@ export default function Manage({
       </PaddedColumn>
       <Separator />
       <PaddedColumn style={{ paddingBottom: 0 }}>
-        {ToggleOption && (
-          <ToggleWrapper>
-            <ToggleOption onClick={() => setShowLists(!showLists)} active={showLists}>
-              <Trans>Lists</Trans>
-            </ToggleOption>
-            <ToggleOption onClick={() => setShowLists(!showLists)} active={!showLists}>
-              <Trans>Tokens</Trans>
-            </ToggleOption>
-          </ToggleWrapper>
-        )}
+        {ToggleWrapper && // mod
+          ToggleOption && ( // mod
+            <ToggleWrapper>
+              <ToggleOption onClick={() => setShowLists(!showLists)} active={showLists}>
+                <Trans>Lists</Trans>
+              </ToggleOption>
+              <ToggleOption onClick={() => setShowLists(!showLists)} active={!showLists}>
+                <Trans>Tokens</Trans>
+              </ToggleOption>
+            </ToggleWrapper>
+          )}
       </PaddedColumn>
       {showLists ? (
         <ManageLists setModalView={setModalView} setImportList={setImportList} setListUrl={setListUrl} />
