@@ -650,7 +650,12 @@ export default function Swap({
                         />
                         <MouseoverTooltipContent
                           content={
-                            <AdvancedSwapDetails trade={trade} allowedSlippage={allowedSlippage} showHelpers={false} />
+                            <AdvancedSwapDetails
+                              trade={trade}
+                              allowedSlippage={allowedSlippage}
+                              showHelpers={false}
+                              showFee={false}
+                            />
                           }
                           bgColor={theme.bg1}
                           color={theme.text4}
@@ -744,9 +749,8 @@ export default function Swap({
                       approvalSubmitted ||
                       signatureState === UseERC20PermitState.SIGNED
                     }
-                    // TODO: check width with new v3 design
-                    // width="48%" // GP-WIDTH
                     width="100%"
+                    marginBottom={10}
                     altDisabledStyle={approvalState === ApprovalState.PENDING} // show solid button while waiting
                     confirmed={
                       approvalState === ApprovalState.APPROVED || signatureState === UseERC20PermitState.SIGNED

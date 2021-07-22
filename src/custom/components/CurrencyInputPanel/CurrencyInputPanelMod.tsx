@@ -148,12 +148,18 @@ export const StyledBalanceMax = styled.button`
     margin-right: 0.5rem;
   `};
 `
-const AuxInformationContainer = styled(Container)`
+export const AuxInformationContainer = styled(Container)<{
+  margin?: string
+  borderColor?: string
+  borderWidth?: string
+}>`
   &&&&& {
     background-color: ${({ theme }) => darken(0.0, theme.bg1 || theme.bg3)};
-    margin: 0 auto;
+    margin: ${({ margin = '0 auto' }) => margin};
     border-radius: 0 0 15px 15px;
     border-top: none;
+    ${({ borderColor }) => `border-color: ${borderColor};`}
+    border-width: ${({ borderWidth = '2px' }) => borderWidth};
   }
 
   > ${FeeInformationTooltipWrapper} {
