@@ -19,29 +19,29 @@ const Wrapper = styled.div`
   padding-bottom: 80px;
 `
 
-// const ToggleWrapper = styled(RowBetween)`
-//   background-color: ${({ theme }) => theme.bg3};
-//   border-radius: 12px;
-//   padding: 6px;
-// `
+/* const ToggleWrapper = styled(RowBetween)`
+  background-color: ${({ theme }) => theme.bg3};
+  border-radius: 12px;
+  padding: 6px;
+` */
 
-// const ToggleOption = styled.div<{ active?: boolean }>`
-//   width: 48%;
-//   padding: 10px;
-//   display: flex;
-//   align-items: center;
-//   justify-content: center;
-//   border-radius: 12px;
-//   font-weight: 600;
-//   background-color: ${({ theme, active }) => (active ? theme.bg1 : theme.bg3)};
-//   color: ${({ theme, active }) => (active ? theme.text1 : theme.text2)};
-//   user-select: none;
+/* const ToggleOption = styled.div<{ active?: boolean }>`
+  width: 48%;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  font-weight: 600;
+  background-color: ${({ theme, active }) => (active ? theme.bg1 : theme.bg3)};
+  color: ${({ theme, active }) => (active ? theme.text1 : theme.text2)};
+  user-select: none;
 
-//   :hover {
-//     cursor: pointer;
-//     opacity: 0.7;
-//   }
-// `
+  :hover {
+    cursor: pointer;
+    opacity: 0.7;
+  }
+` */
 
 export default function Manage({
   onDismiss,
@@ -52,14 +52,13 @@ export default function Manage({
   ToggleOption, // mod
   ToggleWrapper, // mod
 }: ManageProps) {
-  // mod
-  // {
-  //   onDismiss: () => void
-  //   setModalView: (view: CurrencyModalView) => void
-  //   setImportToken: (token: Token) => void
-  //   setImportList: (list: TokenList) => void
-  //   setListUrl: (url: string) => void
-  // }
+  /*   {
+    onDismiss: () => void
+    setModalView: (view: CurrencyModalView) => void
+    setImportToken: (token: Token) => void
+    setImportList: (list: TokenList) => void
+    setListUrl: (url: string) => void
+  } */
   // toggle between tokens and lists
   const [showLists, setShowLists] = useState(true)
 

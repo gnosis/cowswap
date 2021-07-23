@@ -29,11 +29,10 @@ import Card from 'components/Card'
 import { CurrencyModalView } from 'components/SearchModal/CurrencySearchModal'
 // import { UNSUPPORTED_LIST_URLS } from '@src/constants/lists'
 // Mod:
-import { ListRowProps } from '.'
+import { ListRowProps, RowWrapper } from '.' // mod
 import { useActiveWeb3React } from 'hooks/web3'
 import { DEFAULT_NETWORK_FOR_LISTS } from 'constants/lists'
 import { supportedChainId } from 'utils/supportedChainId'
-import { RowWrapper } from './index' // mod
 
 const Wrapper = styled(Column)`
   width: 100%;
@@ -86,13 +85,13 @@ const StyledListUrlText = styled(TYPE.main)<{ active: boolean }>`
   color: ${({ theme, active }) => (active ? theme.white : theme.text2)};
 `
 
-// const RowWrapper = styled(Row)<{ bgColor: string; active: boolean }>`
-//   background-color: ${({ bgColor, active, theme }) => (active ? bgColor ?? 'transparent' : theme.bg2)};
-//   transition: 200ms;
-//   align-items: center;
-//   padding: 1rem;
-//   border-radius: 20px;
-// `
+/* const RowWrapper = styled(Row)<{ bgColor: string; active: boolean }>`
+  background-color: ${({ bgColor, active, theme }) => (active ? bgColor ?? 'transparent' : theme.bg2)};
+  transition: 200ms;
+  align-items: center;
+  padding: 1rem;
+  border-radius: 20px;
+` */
 
 function listUrlRowHTMLId(listUrl: string) {
   return `list-row-${listUrl.replace(/\./g, '-')}`
