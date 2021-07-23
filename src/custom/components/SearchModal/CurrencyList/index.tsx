@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import { Currency, CurrencyAmount } from '@uniswap/sdk-core'
 import { LONG_PRECISION, UNSUPPORTED_TOKENS_FAQ_URL } from 'constants/index'
-import CurrencyListMod, { FixedContentRow, StyledBalanceText, Tag as TagMod, TagContainer } from './CurrencyListMod'
+import CurrencyListMod, { StyledBalanceText, Tag as TagMod, TagContainer } from './CurrencyListMod'
 import { StyledLogo } from 'components/CurrencyLogo'
 import { MouseoverTooltip } from 'components/Tooltip'
 import { RowFixed } from 'components/Row'
@@ -39,17 +39,17 @@ const TagLink = styled(Tag)`
 
 const Wrapper = styled.div`
   ${Column} {
-    display: flex;
-    flex-flow: column wrap;
-    word-break: break-word;
-    text-overflow: ellipsis;
     > div {
-      flex: 0;
-    }
-  }
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      max-width: 220px;
+      width: 100%;
 
-  ${FixedContentRow} {
-    background: red;
+      ${({ theme }) => theme.mediaWidth.upToSmall`
+        max-width: 140px;
+      `};
+    }
   }
 
   ${StyledLogo} {
