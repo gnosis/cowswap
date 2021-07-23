@@ -64,8 +64,12 @@ const Wrapper = styled.div`
     color: ${({ theme }) => theme.text1};
   }
 
+  ${LightGreyCard} {
+    background: ${({ theme }) => theme.bg4};
+  }
+
   ${LightGreyCard} ${RowFixed} > div {
-    color: ${({ theme }) => theme.text2};
+    color: ${({ theme }) => theme.text1};
   }
 `
 
