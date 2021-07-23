@@ -7,7 +7,7 @@ import { injected } from 'connectors'
 import { NetworkContextName } from 'constants/misc'
 import { useAppDispatch } from '@src/state/hooks'
 import { updateAffiliateLink } from '@src/state/affiliate/actions'
-import { generateAffiliateLink } from '@src/utils/affiliateLinkUtil'
+import useReferralLink from '@src/custom/hooks/useReferralLink'
 
 export function useActiveWeb3React(): Web3ReactContextInterface<Web3Provider> {
   const context = useWeb3ReactCore<Web3Provider>()
@@ -20,6 +20,7 @@ export function useEagerConnect() {
 
   const { activate, active } = useWeb3ReactCore() // specifically using useWeb3ReactCore because of what this hook does
   const [tried, setTried] = useState(false)
+  const referralLink = useReferralLink()
 
   useEffect(() => {
     console.log('USING EAGER CONNECT...')
@@ -29,9 +30,11 @@ export function useEagerConnect() {
           .catch(() => {
             setTried(true)
           })
-          .finally(() =>
-            generateAffiliateLink((link: string) => dispatch(updateAffiliateLink({ affiliateLink: link })))
-          )
+          .finally(() => {
+            if (referralLink) {
+              dispatch(updateAffiliateLink({ affiliateLink: referralLink }))
+            }
+          })
       } else {
         if (isMobile && window.ethereum) {
           activate(injected, undefined, true).catch(() => {
@@ -42,7 +45,7 @@ export function useEagerConnect() {
         }
       }
     })
-  }, [activate, dispatch]) // intentionally only running on mount (make sure it's only mounted once :))
+  }, [activate, dispatch, referralLink]) // intentionally only running on mount (make sure it's only mounted once :))
 
   // if the connection worked, wait until we get confirmation of that to flip the flag
   useEffect(() => {
@@ -61,6 +64,7 @@ export function useEagerConnect() {
 export function useInactiveListener(suppress = false) {
   const dispatch = useAppDispatch()
   const { active, error, activate } = useWeb3ReactCore() // specifically using useWeb3React because of what this hook does
+  const referralLink = useReferralLink()
 
   useEffect(() => {
     const { ethereum } = window
@@ -72,9 +76,11 @@ export function useInactiveListener(suppress = false) {
           .catch((error) => {
             console.error('Failed to activate after chain changed', error)
           })
-          .finally(() =>
-            generateAffiliateLink((link: string) => dispatch(updateAffiliateLink({ affiliateLink: link })))
-          )
+          .finally(() => {
+            if (referralLink) {
+              dispatch(updateAffiliateLink({ affiliateLink: referralLink }))
+            }
+          })
       }
 
       const handleAccountsChanged = (accounts: string[]) => {
@@ -84,9 +90,11 @@ export function useInactiveListener(suppress = false) {
             .catch((error) => {
               console.error('Failed to activate after accounts changed', error)
             })
-            .finally(() =>
-              generateAffiliateLink((link: string) => dispatch(updateAffiliateLink({ affiliateLink: link })))
-            )
+            .finally(() => {
+              if (referralLink) {
+                dispatch(updateAffiliateLink({ affiliateLink: referralLink }))
+              }
+            })
         }
       }
 
@@ -101,5 +109,5 @@ export function useInactiveListener(suppress = false) {
       }
     }
     return undefined
-  }, [active, error, suppress, activate, dispatch])
+  }, [active, error, suppress, activate, dispatch, referralLink])
 }
