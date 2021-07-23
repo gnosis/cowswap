@@ -36,14 +36,10 @@ export interface ManageProps {
   setImportToken: (token: Token) => void
   setImportList: (list: TokenList) => void
   setListUrl: (url: string) => void
-  ToggleOption?: typeof ToggleOption
-  ToggleWrapper?: typeof ToggleWrapper
+  ToggleOption: typeof ToggleOption
+  ToggleWrapper: typeof ToggleWrapper
 }
 
-export default function Manage(props: ManageProps) {
-  return (
-    <>
-      <ManageMod {...props} ToggleOption={ToggleOption} ToggleWrapper={ToggleWrapper} />
-    </>
-  )
+export default function Manage(props: Omit<ManageProps, 'ToggleOption' | 'ToggleWrapper'>) {
+  return <ManageMod {...props} ToggleOption={ToggleOption} ToggleWrapper={ToggleWrapper} />
 }

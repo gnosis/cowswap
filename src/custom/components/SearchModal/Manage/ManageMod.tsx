@@ -75,17 +75,14 @@ export default function Manage({
       </PaddedColumn>
       <Separator />
       <PaddedColumn style={{ paddingBottom: 0 }}>
-        {ToggleWrapper && // mod
-          ToggleOption && ( // mod
-            <ToggleWrapper>
-              <ToggleOption onClick={() => setShowLists(!showLists)} active={showLists}>
-                <Trans>Lists</Trans>
-              </ToggleOption>
-              <ToggleOption onClick={() => setShowLists(!showLists)} active={!showLists}>
-                <Trans>Tokens</Trans>
-              </ToggleOption>
-            </ToggleWrapper>
-          )}
+        <ToggleWrapper>
+          <ToggleOption onClick={() => setShowLists((state) => !state)} active={showLists}>
+            <Trans>Lists</Trans>
+          </ToggleOption>
+          <ToggleOption onClick={() => setShowLists((state) => !state)} active={!showLists}>
+            <Trans>Tokens</Trans>
+          </ToggleOption>
+        </ToggleWrapper>
       </PaddedColumn>
       {showLists ? (
         <ManageLists setModalView={setModalView} setImportList={setImportList} setListUrl={setListUrl} />
