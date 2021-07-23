@@ -6,7 +6,6 @@ import { isMobile } from 'react-device-detect'
 import { injected } from 'connectors'
 import { NetworkContextName } from 'constants/misc'
 import { useAppDispatch } from '@src/state/hooks'
-import detectEthereumProvider from '@metamask/detect-provider'
 import { updateAffiliateLink } from '@src/state/affiliate/actions'
 import { generateAffiliateLink } from '@src/utils/affiliateLinkUtil'
 
@@ -43,7 +42,7 @@ export function useEagerConnect() {
         }
       }
     })
-  }, [activate]) // intentionally only running on mount (make sure it's only mounted once :))
+  }, [activate, dispatch]) // intentionally only running on mount (make sure it's only mounted once :))
 
   // if the connection worked, wait until we get confirmation of that to flip the flag
   useEffect(() => {
@@ -102,5 +101,5 @@ export function useInactiveListener(suppress = false) {
       }
     }
     return undefined
-  }, [active, error, suppress, activate])
+  }, [active, error, suppress, activate, dispatch])
 }

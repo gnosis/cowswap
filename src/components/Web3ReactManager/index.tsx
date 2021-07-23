@@ -31,6 +31,15 @@ export default function Web3ReactManager({ children }: { children: JSX.Element }
   // try to eagerly connect to an injected provider, if it exists and has granted access already
   const triedEager = useEagerConnect()
 
+  const startWalletListeners = async () => {
+    const provider: any = await detectEthereumProvider()
+    if (!provider && active) return
+    provider.on('accountsChanged', function (accounts: Array<string>) {
+      console.log('ACCOUNT CHANGED', accounts)
+      generateAffiliateLink((link: string) => dispatch(updateAffiliateLink({ affiliateLink: link })))
+    })
+  }
+
   // after eagerly trying injected, if the network connect ever isn't active or in an error state, activate itd
   useEffect(() => {
     if (triedEager && !networkActive && !networkError && !active) {
@@ -56,16 +65,7 @@ export default function Web3ReactManager({ children }: { children: JSX.Element }
   useEffect(() => {
     // start listeners for affiliate link generation on account change
     startWalletListeners()
-  }, [active])
-
-  const startWalletListeners = async () => {
-    const provider: any = await detectEthereumProvider()
-    if (!provider && active) return
-    provider.on('accountsChanged', function (accounts: Array<string>) {
-      console.log('ACCOUNT CHANGED', accounts)
-      generateAffiliateLink((link: string) => dispatch(updateAffiliateLink({ affiliateLink: link })))
-    })
-  }
+  }, [active, startWalletListeners])
 
   // on page load, do nothing until we've tried to connect to the injected connector
   if (!triedEager) {
