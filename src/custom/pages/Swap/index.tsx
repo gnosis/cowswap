@@ -54,6 +54,7 @@ export const ButtonPrimary = styled(ButtonPrimaryMod)`
     width: 100%;
     word-break: break-all;
     text-align: center;
+    align-items: center;
   }
 `
 
@@ -63,6 +64,7 @@ export const ButtonLight = styled(ButtonLightMod)`
     width: 100%;
     word-break: break-all;
     text-align: center;
+    align-items: center;
   }
 `
 
