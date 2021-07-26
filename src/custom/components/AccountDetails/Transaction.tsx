@@ -290,7 +290,7 @@ function getActivitySummary(params: { id: string; activityData: ReturnType<typeo
 
   return (
     <Summary>
-      <b>{type} ↗</b>
+      <b>{isOrder ? 'Swap order' : 'Transaction'} ↗</b>
       <div>
         {isOrder ? (
           <>

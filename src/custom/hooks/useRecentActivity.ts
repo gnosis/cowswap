@@ -14,8 +14,8 @@ export type TransactionAndOrder =
     })
 
 export enum ActivityType {
-  ORDER = 'Swap order',
-  TX = 'Transaction',
+  ORDER = 'order',
+  TX = 'tx',
 }
 
 export enum ActivityStatus {
