@@ -126,6 +126,7 @@ export interface WalletModalProps {
   CustomTerms: () => JSX.Element
 }
 
+/* eslint-disable @typescript-eslint/no-unused-vars */
 export default function WalletModal({
   pendingTransactions,
   confirmedTransactions,
@@ -139,6 +140,8 @@ export default function WalletModal({
     confirmedTransactions: string[] // hashes of confirmed
     ENSName?: string
   } */
+  /* eslint-enable @typescript-eslint/no-unused-vars */
+
   // important that these are destructed from the account-specific web3-react context
   const { active, account, connector, activate, error } = useWeb3React()
 
