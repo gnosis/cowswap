@@ -4,8 +4,8 @@ import { Trade as V2Trade } from '@uniswap/v2-sdk'
 import { Trade as V3Trade } from '@uniswap/v3-sdk'
 import { splitSignature } from 'ethers/lib/utils'
 import { useMemo, useState } from 'react'
-import { SWAP_ROUTER_ADDRESSES } from '../constants/addresses'
-import { DAI, UNI, USDC } from '../constants/tokens'
+import { DAI, UNI, USDC } from 'constants/tokens'
+import { SWAP_ROUTER_ADDRESSES } from 'constants/addresses'
 import { useSingleCallResult } from '../state/multicall/hooks'
 import { useActiveWeb3React } from './web3'
 import { useEIP2612Contract } from './useContract'
@@ -20,7 +20,7 @@ enum PermitType {
 // 20 minutes to submit after signing
 const PERMIT_VALIDITY_BUFFER = 20 * 60
 
-interface PermitInfo {
+export interface PermitInfo {
   type: PermitType
   name: string
   // version is optional, and if omitted, will not be included in the domain
