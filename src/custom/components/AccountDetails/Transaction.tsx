@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
+import { CurrencyAmount } from '@uniswap/sdk-core'
 // import { AlertCircle, CheckCircle, XCircle, Triangle } from 'react-feather'
 
 import { useActiveWeb3React } from 'hooks/web3'
@@ -34,6 +35,8 @@ import OrderCheckImage from 'assets/svg/order-check.svg'
 import OrderExpiredImage from 'assets/svg/order-expired.svg'
 import OrderCancelledImage from 'assets/svg/order-cancelled.svg'
 import OrderOpenImage from 'assets/svg/order-open.svg'
+import { Order } from 'state/orders/actions'
+import { formatSmart } from 'utils/format'
 
 const PILL_COLOUR_MAP = {
   CONFIRMED: '#3B7848',
@@ -258,78 +261,54 @@ const StatusLabelBelow = styled.div<{ isCancelling?: boolean }>`
   }
 `
 
-function getActivitySummary(params: {
-  id: string
-  activityData: ReturnType<typeof useActivityDescriptors>
-  suffix?: string
-  type?: ActivityType
-}) {
-  const { id, activityData, suffix, type } = params
-  const isOrder = type === ActivityType.ORDER
-  const isTransaction = type === ActivityType.TX
+function getActivitySummary(params: { id: string; activityData: ReturnType<typeof useActivityDescriptors> }) {
+  const { id, activityData } = params
 
   if (!activityData) return null
 
-  const { summary } = activityData
+  const { activity, type, summary } = activityData
 
-  console.log(activityData)
-
-  let baseSummary = summary
-  const newSummary = { from: '🤔', to: '🤔', validTo: '🤔' }
-
-  if (!suffix && baseSummary && isOrder) {
-    // Regex 'From' amount in the summary
-    // (Probably better to use the specific object keys from baseSummary instead...)
-    const matchFrom = baseSummary
-      .match('(?<=Swap ).*?(?= for at least)')
-      ?.toString()
-      .replace(/[\s,]+/g, ' ') // Probably we should make it part of the initial regex pattern instead...
-      .trim()
-    newSummary.from = matchFrom ? matchFrom : ''
-
-    // Regex 'To' amount in the summary
-    const matchTo = baseSummary
-      .match('(?<=for at least ).*?($)')
-      ?.toString()
-      .replace(/[\s,]+/g, ' ') // Probably we should make it part of the initial regex pattern instead...
-      .trim()
-    newSummary.to = matchTo ? matchTo : ''
-
-    // Get the 'Valid to' date
-    // newSummary.validTo = new Date(activity.validTo * 1000).toLocaleString()
+  // TODO: probably get rid of this?
+  const orderSummary: { from: string | undefined; to: string | undefined; validTo: string } = {
+    from: '🤔',
+    to: '🤔',
+    validTo: '🤔',
   }
+  const isOrder = type === ActivityType.ORDER
 
-  if (suffix && baseSummary) {
-    // Shorten summary when `suffix` is set and it matches the regex.
-    // It should always match the regex
-    const match = baseSummary.match(/(Swap\s+[\d.]+)/)
-    baseSummary = (match && match.length > 1 ? match[1] + ' … ' : baseSummary + ' ') + suffix
+  if (isOrder) {
+    const { inputToken, sellAmount, feeAmount, outputToken, buyAmount, validTo } = activity as Order
+
+    const sellAmt = CurrencyAmount.fromRawAmount(inputToken, sellAmount.toString())
+    const feeAmt = CurrencyAmount.fromRawAmount(inputToken, feeAmount.toString())
+    const outputAmount = CurrencyAmount.fromRawAmount(outputToken, buyAmount.toString())
+
+    orderSummary.from = formatSmart(sellAmt.add(feeAmt))
+    orderSummary.to = formatSmart(outputAmount)
+    orderSummary.validTo = new Date((validTo as number) * 1000).toLocaleString()
   }
-
-  baseSummary = baseSummary ?? id
 
   return (
     <Summary>
       <b>{type} ↗</b>
       <div>
-        {isOrder && (
+        {isOrder ? (
           <>
             <span>
               <b>From</b>
-              <i>{newSummary.from}</i>
+              <i>{orderSummary.from}</i>
             </span>
             <span>
               <b>To at least</b>
-              <i>{newSummary.to}</i>
+              <i>{orderSummary.to}</i>
+            </span>
+            <span>
+              <b>Valid to: {orderSummary.validTo}</b>
             </span>
           </>
+        ) : (
+          summary ?? id
         )}
-
-        {isTransaction && summary}
-
-        {/* <span>
-          <b>Valid to: {newSummary.validTo}</b>
-        </span> */}
       </div>
     </Summary>
   )
@@ -483,7 +462,7 @@ export default function Transaction({ hash: id }: { hash: string }) {
 
   const { activity, status, type } = activityData
 
-  // Type of Statusses
+  // Type of Statuses
   const isPending = status === ActivityStatus.PENDING
   const isConfirmed = status === ActivityStatus.CONFIRMED
   const isExpired = status === ActivityStatus.EXPIRED
@@ -527,10 +506,10 @@ export default function Transaction({ hash: id }: { hash: string }) {
             <TransactionStatusText>
               {isCancelling ? (
                 <MouseoverTooltip text={activity.summary || id}>
-                  {getActivitySummary({ activityData, id, suffix: '(Cancellation requested)', type })}
+                  {getActivitySummary({ activityData, id })}
                 </MouseoverTooltip>
               ) : (
-                getActivitySummary({ activityData, id, type })
+                getActivitySummary({ activityData, id })
               )}
             </TransactionStatusText>
           </RowFixed>
