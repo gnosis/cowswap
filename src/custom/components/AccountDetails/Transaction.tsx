@@ -283,8 +283,8 @@ function getActivitySummary(params: { id: string; activityData: ReturnType<typeo
     const feeAmt = CurrencyAmount.fromRawAmount(inputToken, feeAmount.toString())
     const outputAmount = CurrencyAmount.fromRawAmount(outputToken, buyAmount.toString())
 
-    orderSummary.from = formatSmart(sellAmt.add(feeAmt))
-    orderSummary.to = formatSmart(outputAmount)
+    orderSummary.from = `${formatSmart(sellAmt.add(feeAmt))} ${sellAmt.currency.symbol}`
+    orderSummary.to = `${formatSmart(outputAmount)} ${outputAmount.currency.symbol}`
     orderSummary.validTo = new Date((validTo as number) * 1000).toLocaleString()
   }
 
