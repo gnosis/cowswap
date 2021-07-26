@@ -13,7 +13,7 @@ export function formatAtoms(amount: string, decimals: number): string {
 
 /**
  * formatSmart
- * @param amount
+ * @param value
  * @param decimalsToShow
  * @returns string or undefined
  */
