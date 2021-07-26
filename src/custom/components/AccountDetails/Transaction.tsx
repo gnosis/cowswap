@@ -269,7 +269,7 @@ function getActivitySummary(params: { id: string; activityData: ReturnType<typeo
   const { activity, type, summary } = activityData
 
   // TODO: probably get rid of this?
-  const orderSummary: { from: string | undefined; to: string | undefined; validTo: string } = {
+  const orderSummary: { from: string | undefined; to: string | undefined; validTo: string; kind?: string } = {
     from: '🤔',
     to: '🤔',
     validTo: '🤔',
@@ -277,7 +277,7 @@ function getActivitySummary(params: { id: string; activityData: ReturnType<typeo
   const isOrder = type === ActivityType.ORDER
 
   if (isOrder) {
-    const { inputToken, sellAmount, feeAmount, outputToken, buyAmount, validTo } = activity as Order
+    const { inputToken, sellAmount, feeAmount, outputToken, buyAmount, validTo, kind } = activity as Order
 
     const sellAmt = CurrencyAmount.fromRawAmount(inputToken, sellAmount.toString())
     const feeAmt = CurrencyAmount.fromRawAmount(inputToken, feeAmount.toString())
@@ -286,6 +286,7 @@ function getActivitySummary(params: { id: string; activityData: ReturnType<typeo
     orderSummary.from = `${formatSmart(sellAmt.add(feeAmt))} ${sellAmt.currency.symbol}`
     orderSummary.to = `${formatSmart(outputAmount)} ${outputAmount.currency.symbol}`
     orderSummary.validTo = new Date((validTo as number) * 1000).toLocaleString()
+    orderSummary.kind = kind.toString()
   }
 
   return (
@@ -295,11 +296,11 @@ function getActivitySummary(params: { id: string; activityData: ReturnType<typeo
         {isOrder ? (
           <>
             <span>
-              <b>From</b>
+              <b>From{orderSummary.kind === 'buy' && ' at most'}</b>
               <i>{orderSummary.from}</i>
             </span>
             <span>
-              <b>To at least</b>
+              <b>To{orderSummary.kind === 'sell' && ' at least'}</b>
               <i>{orderSummary.to}</i>
             </span>
             <span>
