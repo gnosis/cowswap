@@ -27,13 +27,15 @@ import { useActiveWeb3React } from 'hooks/web3'
 import { Trans } from '@lingui/macro'
 // MOD
 // import { getEtherscanLink, getExplorerLabel } from 'utils'
-import { GpModal } from 'components/WalletModal'
+import { GpModal } from 'components/Modal'
 import { lighten } from 'polished'
-import { TransactionSubmittedContent } from './index'
+import { ConfirmationModalContentProps, TransactionSubmittedContent } from './index' // mod
 
 const Wrapper = styled.div`
   width: 100%;
   padding: 1rem;
+  display: flex; /* MOD */
+  flex-flow: column nowrap; /* MOD */
 `
 const Section = styled(AutoColumn)<{ inline?: boolean }>`
   padding: ${({ inline }) => (inline ? '0' : '0')};
@@ -179,13 +181,15 @@ export function ConfirmationModalContent({
   bottomContent,
   onDismiss,
   topContent,
-}: {
+  CloseModalLink,
+}: ConfirmationModalContentProps) {
+  /* {
   title: ReactNode
   onDismiss: () => void
   topContent: () => ReactNode
   bottomContent?: () => ReactNode | undefined
-}) {
-  return (
+  CloseModalLink: () => ReactNode // mod
+} */ return (
     <Wrapper>
       <Section>
         <RowBetween>
@@ -197,6 +201,7 @@ export function ConfirmationModalContent({
         {topContent()}
       </Section>
       {bottomContent && <BottomSection gap="12px">{bottomContent()}</BottomSection>}
+      <CloseModalLink closeModalCb={onDismiss} />
     </Wrapper>
   )
 }

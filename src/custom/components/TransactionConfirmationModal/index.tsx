@@ -1,7 +1,7 @@
 import { Currency } from '@uniswap/sdk-core'
 import { useActiveWeb3React } from 'hooks/web3'
 import { SupportedChainId as ChainId } from 'constants/chains'
-import React, { useContext } from 'react'
+import React, { ReactNode, useContext } from 'react'
 import styled, { ThemeContext } from 'styled-components'
 import { CloseIcon } from 'theme'
 import { ExternalLink } from 'theme'
@@ -9,10 +9,11 @@ import { RowFixed } from 'components/Row'
 import MetaMaskLogo from 'assets/images/metamask.png'
 import { getEtherscanLink, getExplorerLabel } from 'utils'
 import { Text } from 'rebass'
-import { ArrowUpCircle, CheckCircle } from 'react-feather'
+import { ArrowLeft, ArrowUpCircle, CheckCircle } from 'react-feather'
 import useAddTokenToMetamask from 'hooks/useAddTokenToMetamask'
 import GameIcon from 'assets/cow-swap/game.gif'
 import { Link } from 'react-router-dom'
+import { ConfirmationModalContent as ConfirmationModalContentMod } from './TransactionConfirmationModalMod'
 
 const Wrapper = styled.div`
   width: 100%;
@@ -103,6 +104,9 @@ const CheckCircleCustom = styled(CheckCircle)`
   margin: 0 10px 0 0;
 `
 
+export * from './TransactionConfirmationModalMod'
+export { default } from './TransactionConfirmationModalMod'
+
 export function TransactionSubmittedContent({
   onDismiss,
   chainId,
@@ -169,5 +173,41 @@ export function TransactionSubmittedContent({
   )
 }
 
-export * from './TransactionConfirmationModalMod'
-export { default } from './TransactionConfirmationModalMod'
+export interface ConfirmationModalContentProps {
+  title: ReactNode
+  onDismiss: () => void
+  topContent: () => ReactNode
+  bottomContent?: () => ReactNode | undefined
+  CloseModalLink: (props: CloseModalProps) => JSX.Element // mod
+}
+
+interface CloseModalProps {
+  closeModalCb: () => void
+}
+
+const CloseModalWrapper = styled.div`
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  color: ${({ theme }) => theme.text3};
+  font-size: smaller;
+  cursor: pointer;
+
+  > span:nth-of-type(2) {
+    text-decoration: underline;
+    margin-left: 3px;
+  }
+`
+
+const CloseModalLink = ({ closeModalCb }: CloseModalProps) => (
+  <CloseModalWrapper className="bottom-close-button" onClick={closeModalCb}>
+    <ArrowLeft size={16} />
+    <span>Close modal and go back</span>
+  </CloseModalWrapper>
+)
+
+export function ConfirmationModalContent(props: Omit<ConfirmationModalContentProps, 'CloseModalLink'>) {
+  return <ConfirmationModalContentMod {...props} CloseModalLink={CloseModalLink} />
+}
