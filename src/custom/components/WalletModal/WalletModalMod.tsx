@@ -25,9 +25,8 @@ import ModalMod from '@src/components/Modal'
 import Option from 'components/WalletModal/Option'
 import PendingView from 'components/WalletModal/PendingView'
 import { LightCard } from 'components/Card'
-import { CloseModalLink } from 'components/TransactionConfirmationModal' // mod
 
-const CloseIcon = styled.div`
+export const CloseIcon = styled.div`
   position: absolute;
   right: 1rem;
   top: 14px;
@@ -49,15 +48,9 @@ const Wrapper = styled.div`
   padding: 0;
   width: 100%;
   overflow-y: auto; /* MOD */
-
-  > .bottom-close-button {
-    &&&&& {
-      margin-bottom: 16px;
-    }
-  }
 `
 
-const HeaderRow = styled.div`
+export const HeaderRow = styled.div`
   ${({ theme }) => theme.flexRowNoWrap};
   padding: 1rem 1rem;
   font-weight: 500;
@@ -67,7 +60,7 @@ const HeaderRow = styled.div`
   `};
 `
 
-const ContentWrapper = styled.div`
+export const ContentWrapper = styled.div`
   /* background-color: ${({ theme }) => theme.bg0}; */
   background-color: ${({ theme }) => theme.bg1};
   padding: 0 1rem 1rem 1rem;
@@ -106,7 +99,7 @@ const OptionGrid = styled.div`
   `};
 `
 
-const HoverText = styled.div`
+export const HoverText = styled.div`
   text-decoration: none;
   color: ${({ theme }) => theme.text1};
   display: flex;
@@ -400,10 +393,7 @@ export default function WalletModal({
 
   return (
     <Modal isOpen={walletModalOpen} onDismiss={toggleWalletModal} minHeight={false} maxHeight={90}>
-      <Wrapper>
-        {getModalContent()}
-        <CloseModalLink closeModalCb={toggleWalletModal} /> {/* MOD */}
-      </Wrapper>
+      <Wrapper>{getModalContent()}</Wrapper>
     </Modal>
   )
 }

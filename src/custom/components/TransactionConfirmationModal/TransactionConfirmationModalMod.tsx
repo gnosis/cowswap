@@ -29,7 +29,7 @@ import { Trans } from '@lingui/macro'
 // import { getEtherscanLink, getExplorerLabel } from 'utils'
 import { GpModal } from 'components/Modal'
 import { lighten } from 'polished'
-import { ConfirmationModalContentProps, TransactionSubmittedContent } from './index' // mod
+import { ConfirmationModalContentProps, TransactionSubmittedContent, GPModalHeader } from '.' // mod
 
 const Wrapper = styled.div`
   width: 100%;
@@ -185,7 +185,6 @@ export function ConfirmationModalContent({
   bottomContent,
   onDismiss,
   topContent,
-  CloseModalLink,
 }: ConfirmationModalContentProps) {
   /* {
   title: ReactNode
@@ -196,16 +195,17 @@ export function ConfirmationModalContent({
 } */ return (
     <Wrapper>
       <Section>
-        <RowBetween>
+        {/* <RowBetween> */}
+        <GPModalHeader>
           <Text fontWeight={500} fontSize={16}>
             {title}
           </Text>
           <CloseIcon onClick={onDismiss} />
-        </RowBetween>
+        </GPModalHeader>
+        {/* </RowBetween> */}
         {topContent()}
       </Section>
       {bottomContent && <BottomSection gap="12px">{bottomContent()}</BottomSection>}
-      <CloseModalLink closeModalCb={onDismiss} />
     </Wrapper>
   )
 }

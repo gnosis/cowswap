@@ -5,7 +5,7 @@ import React, { ReactNode, useContext } from 'react'
 import styled, { ThemeContext } from 'styled-components'
 import { CloseIcon } from 'theme'
 import { ExternalLink } from 'theme'
-import { RowFixed } from 'components/Row'
+import { RowBetween, RowFixed } from 'components/Row'
 import MetaMaskLogo from 'assets/images/metamask.png'
 import { getEtherscanLink, getExplorerLabel } from 'utils'
 import { Text } from 'rebass'
@@ -37,6 +37,18 @@ const CloseLink = styled.span`
   color: ${({ theme }) => theme.primary1};
   cursor: pointer;
   margin: 8px auto;
+`
+
+export const GPModalHeader = styled(RowBetween)`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 16px;
+    background: ${({ theme }) => theme.bg1};
+    z-index: 20;
+  `}
 `
 
 const InternalLink = styled(Link)``
@@ -178,7 +190,6 @@ export interface ConfirmationModalContentProps {
   onDismiss: () => void
   topContent: () => ReactNode
   bottomContent?: () => ReactNode | undefined
-  CloseModalLink: (props: CloseModalProps) => JSX.Element // mod
 }
 
 interface CloseModalProps {
@@ -190,24 +201,30 @@ const CloseModalWrapper = styled.div`
   flex-flow: row nowrap;
   align-items: center;
   justify-content: center;
-  gap: 4px;
   color: ${({ theme }) => theme.text3};
-  font-size: smaller;
+  font-size: 13px;
   cursor: pointer;
+  position: fixed;
+  bottom: 0;
+  height: 56px;
+  width: 100%;
+  background: ${({ theme }) => theme.bg3};
+  margin: 0 auto;
+  left: 0;
+  right: 0;
 
-  > span:nth-of-type(2) {
-    text-decoration: underline;
-    margin-left: 3px;
+  > span {
+    margin: 0 0 0 3px;
   }
 `
 
 export const CloseModalLink = ({ closeModalCb }: CloseModalProps) => (
   <CloseModalWrapper className="bottom-close-button" onClick={closeModalCb}>
-    <ArrowLeft size={16} />
+    <ArrowLeft size={18} />
     <span>Close modal and go back</span>
   </CloseModalWrapper>
 )
 
 export function ConfirmationModalContent(props: Omit<ConfirmationModalContentProps, 'CloseModalLink'>) {
-  return <ConfirmationModalContentMod {...props} CloseModalLink={CloseModalLink} />
+  return <ConfirmationModalContentMod {...props} />
 }
