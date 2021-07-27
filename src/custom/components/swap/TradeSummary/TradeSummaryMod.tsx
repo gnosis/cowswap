@@ -15,6 +15,7 @@ import { MouseoverTooltipContent } from 'components/Tooltip'
 import { StyledInfo } from 'pages/Swap/SwapMod'
 import { formatSmart } from 'utils/format'
 import { TradeSummaryProps } from '.'
+import { INPUT_OUTPUT_EXPLANATION } from 'constants/index'
 
 // computes price breakdown for the trade
 export function computeTradePriceBreakdown(trade?: TradeGp | null): {
@@ -117,6 +118,22 @@ export default function TradeSummary({
           <TYPE.black fontSize={12} fontWeight={400} color={theme.text2}>
             <Trans>Slippage tolerance</Trans>
           </TYPE.black>
+          <MouseoverTooltipContent
+            bgColor={theme.bg3}
+            color={theme.text1}
+            content={
+              <Trans>
+                <p>Your slippage is MEV protected: all orders are submitted with tight spread (0.1%) on-chain.</p>
+                <p>
+                  The slippage you pick here enables a resubmission of your order in case of unfavourable price
+                  movements.
+                </p>
+                <p>{INPUT_OUTPUT_EXPLANATION}</p>
+              </Trans>
+            }
+          >
+            <StyledInfo />
+          </MouseoverTooltipContent>
         </RowFixed>
         <TYPE.black textAlign="right" fontSize={12} color={theme.text1}>
           {allowedSlippage.toFixed(2)}%

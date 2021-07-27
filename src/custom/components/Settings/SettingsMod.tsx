@@ -200,6 +200,8 @@ export default function SettingsTab({ className, placeholderSlippage, SettingsBu
                   <Trans>Toggle Expert Mode</Trans>
                 </TYPE.black>
                 <QuestionHelper
+                  bgColor={theme.bg3}
+                  color={theme.text1}
                   text={
                     <Trans>Allow high price impact trades and skip the confirm screen. Use at your own risk.</Trans>
                   }
