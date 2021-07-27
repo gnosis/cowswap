@@ -100,7 +100,7 @@ export const COMMON_BASES: ChainCurrencyList = {
   [4]: [/* ExtendedEther.onChain(4),  */ DAI, USDC, USDT, WETH9_EXTENDED[4]],
   [5]: [/* ExtendedEther.onChain(5),  */ WETH9_EXTENDED[5]],
   [42]: [/* ExtendedEther.onChain(42), */ WETH9_EXTENDED[42]],
-  [100]: [/* ExtendedEther.onChain(42), */ USDC_XDAI, USDT_XDAI, WBTC_XDAI, WETH9_EXTENDED[100]],
+  [100]: [/* ExtendedEther.onChain(42), */ USDC_XDAI, USDT_XDAI, WBTC_XDAI, WETH9_EXTENDED[100]], // mod
   // [SupportedChainId.ARBITRUM_KOVAN]: [
   //   ExtendedEther.onChain(SupportedChainId.ARBITRUM_KOVAN),
   //   WETH9_EXTENDED[SupportedChainId.ARBITRUM_KOVAN],
