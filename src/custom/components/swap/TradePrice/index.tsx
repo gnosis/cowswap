@@ -3,7 +3,7 @@ import TradePriceMod, { TradePriceProps } from './TradePriceMod'
 import { useUSDCValue } from 'hooks/useUSDCPrice'
 import { formatSmart } from 'utils/format'
 import { tryParseAmount } from 'state/swap/hooks'
-import { SHORT_PRECISION } from '@src/custom/constants'
+import { SHORT_PRECISION } from 'constants/index'
 
 export * from './TradePriceMod'
 
