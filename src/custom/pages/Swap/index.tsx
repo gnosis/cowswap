@@ -158,7 +158,9 @@ const PriceContainer = styled(RowBetween)`
 `
 
 const PriceSwitcher = styled(AutoRow)`
+  flex-flow: row nowrap;
   gap: 4px;
+  min-width: 55px;
   > svg {
     cursor: pointer;
     border-radius: 20px;
