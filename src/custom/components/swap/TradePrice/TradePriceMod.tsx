@@ -48,9 +48,10 @@ export default function TradePrice({ price, showInverted, fiatValue, setShowInve
   const baseText = '1 ' + labelInverted + ' = '
   const quoteText = (formattedPrice ?? '-') + ' ' + label
   const fiatText = ` (≈$${fiatValue})`
+  const title = baseText && quoteText && fiatText ? baseText + quoteText + fiatText : 'N/A'
 
   return (
-    <StyledPriceContainer onClick={flipPrice} title={baseText + quoteText + fiatText}>
+    <StyledPriceContainer onClick={flipPrice} title={title}>
       <div style={{ alignItems: 'center', display: 'flex', width: 'fit-content' }}>
         <Text fontWeight={500} fontSize={14} color={theme.text1}>
           {/* {text} */}
