@@ -21,10 +21,11 @@ import {
 import AccountDetails from 'components/AccountDetails'
 import { Trans } from '@lingui/macro'
 
-import ModalMod from 'components/Modal'
+import ModalMod from '@src/components/Modal'
 import Option from 'components/WalletModal/Option'
 import PendingView from 'components/WalletModal/PendingView'
 import { LightCard } from 'components/Card'
+import { CloseModalLink } from 'components/TransactionConfirmationModal' // mod
 
 const CloseIcon = styled.div`
   position: absolute;
@@ -47,6 +48,7 @@ const Wrapper = styled.div`
   margin: 0;
   padding: 0;
   width: 100%;
+  overflow-y: auto; /* MOD */
 `
 
 const HeaderRow = styled.div`
@@ -392,7 +394,10 @@ export default function WalletModal({
 
   return (
     <Modal isOpen={walletModalOpen} onDismiss={toggleWalletModal} minHeight={false} maxHeight={90}>
-      <Wrapper>{getModalContent()}</Wrapper>
+      <Wrapper>
+        {getModalContent()}
+        <CloseModalLink closeModalCb={toggleWalletModal} /> {/* MOD */}
+      </Wrapper>
     </Modal>
   )
 }

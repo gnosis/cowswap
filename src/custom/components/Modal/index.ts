@@ -10,7 +10,7 @@ export const GpModal = styled(Modal)`
 
     .bottom-close-button {
       display: none;
-      margin: auto auto 0;
+      margin: auto auto 8px;
 
       ${({ theme }) => theme.mediaWidth.upToExtraSmall`
       display: flex;

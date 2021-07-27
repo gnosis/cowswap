@@ -201,7 +201,7 @@ const CloseModalWrapper = styled.div`
   }
 `
 
-const CloseModalLink = ({ closeModalCb }: CloseModalProps) => (
+export const CloseModalLink = ({ closeModalCb }: CloseModalProps) => (
   <CloseModalWrapper className="bottom-close-button" onClick={closeModalCb}>
     <ArrowLeft size={16} />
     <span>Close modal and go back</span>

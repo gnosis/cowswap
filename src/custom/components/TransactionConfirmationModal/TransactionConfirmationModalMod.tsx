@@ -36,6 +36,7 @@ const Wrapper = styled.div`
   padding: 1rem;
   display: flex; /* MOD */
   flex-flow: column nowrap; /* MOD */
+  overflow-y: auto; /* MOD */
 `
 const Section = styled(AutoColumn)<{ inline?: boolean }>`
   padding: ${({ inline }) => (inline ? '0' : '0')};
@@ -44,6 +45,9 @@ const Section = styled(AutoColumn)<{ inline?: boolean }>`
 const BottomSection = styled(Section)`
   border-bottom-left-radius: 20px;
   border-bottom-right-radius: 20px;
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    margin-bottom: 16px;
+  `}
 `
 
 const ConfirmedIcon = styled(ColumnCenter)<{ inline?: boolean }>`
