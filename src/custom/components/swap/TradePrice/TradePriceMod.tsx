@@ -5,11 +5,12 @@ import { Text } from 'rebass'
 import styled, { ThemeContext } from 'styled-components'
 import { formatSmart } from 'utils/format' // mod
 import { SHORT_PRECISION } from 'constants/index' // mod
+import { LightGreyText } from 'pages/Swap'
 
 export interface TradePriceProps {
   price: Price<Currency, Currency>
   showInverted: boolean
-  fiatValue: string // mod
+  fiatValue?: string // mod
   setShowInverted: (showInverted: boolean) => void
 }
 
@@ -24,11 +25,6 @@ export const StyledPriceContainer = styled.button`
   border: none;
   height: 24px;
   cursor: pointer;
-
-  span {
-    font-weight: 400;
-    color: ${({ theme }) => theme.text4};
-  }
 `
 
 export default function TradePrice({ price, showInverted, fiatValue, setShowInverted }: TradePriceProps) {
@@ -58,9 +54,9 @@ export default function TradePrice({ price, showInverted, fiatValue, setShowInve
       <div style={{ alignItems: 'center', display: 'flex', width: 'fit-content' }}>
         <Text fontWeight={500} fontSize={14} color={theme.text1}>
           {/* {text} */}
-          <span>{baseText}</span>
+          <LightGreyText>{baseText}</LightGreyText>
           <strong>{quoteText}</strong>
-          <span>{fiatText}</span>
+          {fiatValue && <LightGreyText>{fiatText}</LightGreyText>}
         </Text>
       </div>
     </StyledPriceContainer>
