@@ -4,13 +4,9 @@ import styled from 'styled-components/macro'
 import { Trans } from '@lingui/macro'
 
 import { network } from 'connectors'
-import { useEagerConnect, useInactiveListener } from '../../../hooks/web3'
-import { NetworkContextName } from '../../../constants/misc'
-import Loader from '../../../components/Loader'
-import { updateAffiliateLink } from '@src/state/affiliate/actions'
-import useReferralLink from '../../hooks/useReferralLink'
-import { useWalletInfo } from '../../hooks/useWalletInfo'
-import { useAppDispatch } from '@src/state/hooks'
+import { useEagerConnect, useInactiveListener } from '../../hooks/web3'
+import { NetworkContextName } from '../../constants/misc'
+import Loader from '../Loader'
 
 const MessageWrapper = styled.div`
   display: flex;
@@ -24,14 +20,11 @@ const Message = styled.h2`
 `
 
 export default function Web3ReactManager({ children }: { children: JSX.Element }) {
-  const dispatch = useAppDispatch()
   const { active } = useWeb3React()
   const { active: networkActive, error: networkError, activate: activateNetwork } = useWeb3React(NetworkContextName)
 
   // try to eagerly connect to an injected provider, if it exists and has granted access already
   const triedEager = useEagerConnect()
-  const referralLink = useReferralLink()
-  const { account } = useWalletInfo()
 
   // after eagerly trying injected, if the network connect ever isn't active or in an error state, activate itd
   useEffect(() => {
@@ -54,12 +47,6 @@ export default function Web3ReactManager({ children }: { children: JSX.Element }
       clearTimeout(timeout)
     }
   }, [])
-
-  useEffect(() => {
-    if (referralLink) {
-      dispatch(updateAffiliateLink({ affiliateLink: referralLink }))
-    }
-  }, [account, referralLink, dispatch])
 
   // on page load, do nothing until we've tried to connect to the injected connector
   if (!triedEager) {

@@ -21,6 +21,7 @@ import UserUpdater from './state/user/updater'
 import FeesUpdater from 'state/price/updater'
 import XdaiUpdater from 'state/network/updater'
 import GasUpdater from 'state/gas/updater'
+import ReferralLinkUpdater from 'state/affiliate/updater'
 import { CancelledOrdersUpdater, EventUpdater } from 'state/orders/updater'
 // import { EventUpdater } from 'state/orders/mocks'
 import ThemeProvider, { FixedGlobalStyle, ThemedGlobalStyle } from 'theme'
@@ -66,6 +67,7 @@ function Updaters() {
       <CancelledOrdersUpdater />
       <FeesUpdater />
       <GasUpdater />
+      <ReferralLinkUpdater />
     </>
   )
 }
