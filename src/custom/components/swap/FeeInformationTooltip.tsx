@@ -5,6 +5,7 @@ import styled from 'styled-components'
 import { useUSDCValue } from 'hooks/useUSDCPrice'
 import { formatSmart } from 'utils/format'
 import useTheme from 'hooks/useTheme'
+import { FIAT_PRECISION } from 'constants/index'
 
 interface FeeInformationTooltipProps {
   trade?: TradeGp
@@ -112,7 +113,7 @@ export default function FeeInformationTooltip(props: FeeInformationTooltipProps)
         />
       </span>
       <FeeAmountAndFiat>
-        {amountAfterFees} {fiatValue && <small>≈ ${formatSmart(fiatValue)}</small>}
+        {amountAfterFees} {fiatValue && <small>≈ ${formatSmart(fiatValue, FIAT_PRECISION)}</small>}
       </FeeAmountAndFiat>
     </FeeInformationTooltipWrapper>
   )

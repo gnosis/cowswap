@@ -23,7 +23,7 @@ import {
 import EthWethWrap, { Props as EthWethWrapProps } from 'components/swap/EthWethWrap'
 import { useReplaceSwapState, useSwapState } from 'state/swap/hooks'
 import { ArrowWrapperLoader, ArrowWrapperLoaderProps, Wrapper as ArrowWrapper } from 'components/ArrowWrapperLoader'
-import { LONG_LOAD_THRESHOLD, SHORT_PRECISION } from 'constants/index'
+import { FIAT_PRECISION, LONG_LOAD_THRESHOLD, SHORT_PRECISION } from 'constants/index'
 import { formatSmart } from 'utils/format'
 import { MouseoverTooltipContent } from 'components/Tooltip'
 import { StyledInfo } from 'pages/Swap/SwapMod'
@@ -208,7 +208,7 @@ function FeeGreaterMessage({ trade, fee }: FeeGreaterMessageProp) {
   const feeFiatValue = useUSDCValue(feeAmount)
 
   const { realizedFee } = computeTradePriceBreakdown(trade)
-  const feeFiatDisplay = `(≈$${formatSmart(feeFiatValue, SHORT_PRECISION)})`
+  const feeFiatDisplay = `(≈$${formatSmart(feeFiatValue, FIAT_PRECISION)})`
 
   return (
     <RowBetween height={24}>
