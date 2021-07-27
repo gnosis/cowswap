@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 
-import { updateAffiliateLink } from '@src/state/affiliate/actions'
-import useReferralLink from '../../custom/hooks/useReferralLink'
-import { useWalletInfo } from '../../custom/hooks/useWalletInfo'
+import { updateAffiliateLink } from '@src/custom/state/affiliate/actions'
+import useReferralLink from '../../hooks/useReferralLink'
+import { useWalletInfo } from '../../hooks/useWalletInfo'
 import { useAppDispatch } from '@src/state/hooks'
 
 export default function ReferralLinkUpdater() {

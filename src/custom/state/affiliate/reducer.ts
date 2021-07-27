@@ -11,7 +11,6 @@ export const initialState: AffiliateLinkState = {
 
 export default createReducer(initialState, (builder) =>
   builder.addCase(updateAffiliateLink, (state, action) => {
-    console.log('Triggered Updated Link')
     state.affiliateLink = action.payload.affiliateLink
   })
 )

@@ -19,7 +19,7 @@ import orders from './orders/reducer'
 import price from './price/reducer'
 import gas from 'state/gas/reducer'
 import { updateVersion } from 'state/global/actions'
-import affiliate from '@src/state/affiliate/reducer'
+import affiliate from '@src/custom/state/affiliate/reducer'
 
 import { popupMiddleware, soundMiddleware } from './orders/middleware'
 import { DEFAULT_NETWORK_FOR_LISTS } from 'constants/lists'
