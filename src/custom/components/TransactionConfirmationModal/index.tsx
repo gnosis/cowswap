@@ -5,11 +5,11 @@ import React, { ReactNode, useContext } from 'react'
 import styled, { ThemeContext } from 'styled-components'
 import { CloseIcon } from 'theme'
 import { ExternalLink } from 'theme'
-import { RowFixed } from 'components/Row'
+import { RowBetween, RowFixed } from 'components/Row'
 import MetaMaskLogo from 'assets/images/metamask.png'
 import { getEtherscanLink, getExplorerLabel } from 'utils'
 import { Text } from 'rebass'
-import { ArrowLeft, ArrowUpCircle, CheckCircle } from 'react-feather'
+import { ArrowUpCircle, CheckCircle } from 'react-feather'
 import useAddTokenToMetamask from 'hooks/useAddTokenToMetamask'
 import GameIcon from 'assets/cow-swap/game.gif'
 import { Link } from 'react-router-dom'
@@ -37,6 +37,18 @@ const CloseLink = styled.span`
   color: ${({ theme }) => theme.primary1};
   cursor: pointer;
   margin: 8px auto;
+`
+
+export const GPModalHeader = styled(RowBetween)`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 16px;
+    background: ${({ theme }) => theme.bg1};
+    z-index: 20;
+  `}
 `
 
 const InternalLink = styled(Link)``
@@ -178,36 +190,8 @@ export interface ConfirmationModalContentProps {
   onDismiss: () => void
   topContent: () => ReactNode
   bottomContent?: () => ReactNode | undefined
-  CloseModalLink: (props: CloseModalProps) => JSX.Element // mod
 }
 
-interface CloseModalProps {
-  closeModalCb: () => void
-}
-
-const CloseModalWrapper = styled.div`
-  display: flex;
-  flex-flow: row nowrap;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  color: ${({ theme }) => theme.text3};
-  font-size: smaller;
-  cursor: pointer;
-
-  > span:nth-of-type(2) {
-    text-decoration: underline;
-    margin-left: 3px;
-  }
-`
-
-export const CloseModalLink = ({ closeModalCb }: CloseModalProps) => (
-  <CloseModalWrapper className="bottom-close-button" onClick={closeModalCb}>
-    <ArrowLeft size={16} />
-    <span>Close modal and go back</span>
-  </CloseModalWrapper>
-)
-
-export function ConfirmationModalContent(props: Omit<ConfirmationModalContentProps, 'CloseModalLink'>) {
-  return <ConfirmationModalContentMod {...props} CloseModalLink={CloseModalLink} />
+export function ConfirmationModalContent(props: ConfirmationModalContentProps) {
+  return <ConfirmationModalContentMod {...props} />
 }
