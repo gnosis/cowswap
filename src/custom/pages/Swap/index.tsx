@@ -30,7 +30,7 @@ import { StyledInfo } from 'pages/Swap/SwapMod'
 import { Repeat } from 'react-feather'
 import { Trans } from '@lingui/macro'
 import TradePrice from 'components/swap/TradePrice'
-import TradeGp from 'custom/state/swap/TradeGp'
+import TradeGp from 'state/swap/TradeGp'
 import { useUSDCValue } from 'hooks/useUSDCPrice'
 
 interface FeeGreaterMessageProp {
