@@ -74,7 +74,7 @@ export default function TradeSummary({
         </RowBetween>
       )}
 
-      <RowBetween height={24}>
+      {/* <RowBetween height={24}>
         <RowFixed>
           <TYPE.black fontSize={12} fontWeight={400} color={theme.text2}>
             <Trans>{trade.tradeType === TradeType.EXACT_INPUT ? 'Receive' : 'From'} (incl. fee)</Trans>
@@ -84,7 +84,7 @@ export default function TradeSummary({
           {formatSmart(isExactIn ? trade.outputAmount : trade.inputAmountWithFee)}{' '}
           {(isExactIn ? trade.outputAmount : trade.inputAmount).currency.symbol}
         </TYPE.black>
-      </RowBetween>
+      </RowBetween> */}
 
       {/* 
       <RowBetween>
@@ -126,7 +126,11 @@ export default function TradeSummary({
       <RowBetween height={24}>
         <RowFixed>
           <TYPE.black fontSize={12} fontWeight={400} color={theme.text2}>
-            {trade.tradeType === TradeType.EXACT_INPUT ? <Trans>Minimum received</Trans> : <Trans>Maximum sent</Trans>}
+            {trade.tradeType === TradeType.EXACT_INPUT ? (
+              <Trans>Minimum received (incl. fee)</Trans>
+            ) : (
+              <Trans>Maximum sent (incl. fee)</Trans>
+            )}
           </TYPE.black>
           {showHelpers && (
             <MouseoverTooltipContent
