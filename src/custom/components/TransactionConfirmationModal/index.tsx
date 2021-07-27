@@ -9,7 +9,7 @@ import { RowBetween, RowFixed } from 'components/Row'
 import MetaMaskLogo from 'assets/images/metamask.png'
 import { getEtherscanLink, getExplorerLabel } from 'utils'
 import { Text } from 'rebass'
-import { ArrowLeft, ArrowUpCircle, CheckCircle } from 'react-feather'
+import { ArrowUpCircle, CheckCircle } from 'react-feather'
 import useAddTokenToMetamask from 'hooks/useAddTokenToMetamask'
 import GameIcon from 'assets/cow-swap/game.gif'
 import { Link } from 'react-router-dom'
@@ -192,39 +192,6 @@ export interface ConfirmationModalContentProps {
   bottomContent?: () => ReactNode | undefined
 }
 
-interface CloseModalProps {
-  closeModalCb: () => void
-}
-
-const CloseModalWrapper = styled.div`
-  display: flex;
-  flex-flow: row nowrap;
-  align-items: center;
-  justify-content: center;
-  color: ${({ theme }) => theme.text3};
-  font-size: 13px;
-  cursor: pointer;
-  position: fixed;
-  bottom: 0;
-  height: 56px;
-  width: 100%;
-  background: ${({ theme }) => theme.bg3};
-  margin: 0 auto;
-  left: 0;
-  right: 0;
-
-  > span {
-    margin: 0 0 0 3px;
-  }
-`
-
-export const CloseModalLink = ({ closeModalCb }: CloseModalProps) => (
-  <CloseModalWrapper className="bottom-close-button" onClick={closeModalCb}>
-    <ArrowLeft size={18} />
-    <span>Close modal and go back</span>
-  </CloseModalWrapper>
-)
-
-export function ConfirmationModalContent(props: Omit<ConfirmationModalContentProps, 'CloseModalLink'>) {
+export function ConfirmationModalContent(props: ConfirmationModalContentProps) {
   return <ConfirmationModalContentMod {...props} />
 }

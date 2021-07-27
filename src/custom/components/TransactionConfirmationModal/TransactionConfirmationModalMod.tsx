@@ -191,7 +191,6 @@ export function ConfirmationModalContent({
   onDismiss: () => void
   topContent: () => ReactNode
   bottomContent?: () => ReactNode | undefined
-  CloseModalLink: () => ReactNode // mod
 } */ return (
     <Wrapper>
       <Section>
