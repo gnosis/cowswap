@@ -49,6 +49,12 @@ const Wrapper = styled.div`
   padding: 0;
   width: 100%;
   overflow-y: auto; /* MOD */
+
+  > .bottom-close-button {
+    &&&&& {
+      margin-bottom: 16px;
+    }
+  }
 `
 
 const HeaderRow = styled.div`
