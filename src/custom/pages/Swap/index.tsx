@@ -31,6 +31,7 @@ import { Repeat } from 'react-feather'
 import { Trans } from '@lingui/macro'
 import TradePrice from 'components/swap/TradePrice'
 import TradeGp from 'custom/state/swap/TradeGp'
+import { useUSDCValue } from 'hooks/useUSDCPrice'
 
 interface FeeGreaterMessageProp {
   fee: CurrencyAmount<Currency>
@@ -192,14 +193,22 @@ function Price({ trade, theme, showInverted, setShowInverted }: PriceProps) {
   )
 }
 
+export const LightGreyText = styled.span`
+  font-weight: 400;
+  color: ${({ theme }) => theme.text4};
+`
+
 function FeeGreaterMessage({ fee }: FeeGreaterMessageProp) {
   const theme = useContext(ThemeContext)
+  const feeFiatValue = useUSDCValue(fee)
+
+  const feeFiatDisplay = `(≈$${formatSmart(feeFiatValue, SHORT_PRECISION)})`
 
   return (
     <RowBetween height={24}>
       <RowFixed>
-        <TYPE.black fontSize={14} fontWeight={500} color={theme.text2}>
-          Fee
+        <TYPE.black fontSize={14} fontWeight={500} color={theme.text1}>
+          Fees (incl. gas costs)
         </TYPE.black>
         <MouseoverTooltipContent
           bgColor={theme.bg1}
@@ -210,7 +219,8 @@ function FeeGreaterMessage({ fee }: FeeGreaterMessageProp) {
         </MouseoverTooltipContent>
       </RowFixed>
       <TYPE.black fontSize={14} color={theme.text1}>
-        {formatSmart(fee, SHORT_PRECISION)} {fee.currency.symbol}
+        {formatSmart(fee, SHORT_PRECISION)} {fee.currency.symbol}{' '}
+        {feeFiatValue && <LightGreyText>{feeFiatDisplay}</LightGreyText>}
       </TYPE.black>
     </RowBetween>
   )
