@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { RouteComponentProps } from 'react-router-dom'
-import styled, { ThemeContext } from 'styled-components'
+import styled, { DefaultTheme, ThemeContext } from 'styled-components'
 import { CurrencyAmount, Currency, Token } from '@uniswap/sdk-core'
 import { Text } from 'rebass'
 
@@ -27,6 +27,10 @@ import { LONG_LOAD_THRESHOLD, SHORT_PRECISION } from 'constants/index'
 import { formatSmart } from 'utils/format'
 import { MouseoverTooltipContent } from 'components/Tooltip'
 import { StyledInfo } from 'pages/Swap/SwapMod'
+import { Repeat } from 'react-feather'
+import { Trans } from '@lingui/macro'
+import TradePrice from 'components/swap/TradePrice'
+import TradeGp from 'custom/state/swap/TradeGp'
 
 interface FeeGreaterMessageProp {
   fee: CurrencyAmount<Currency>
@@ -142,7 +146,48 @@ export interface SwapProps extends RouteComponentProps {
   TradeLoading: React.FC<TradeLoadingProps>
   SwapButton: React.FC<SwapButtonProps>
   ArrowWrapperLoader: React.FC<ArrowWrapperLoaderProps>
+  Price: React.FC<PriceProps>
   className?: string
+}
+
+const PriceContainer = styled(RowBetween)`
+  > .price-container {
+    display: flex;
+    gap: 5px;
+  }
+`
+
+const PriceSwitcher = styled(AutoRow)`
+  gap: 4px;
+  > svg {
+    cursor: pointer;
+    border-radius: 20px;
+    background: ${({ theme }) => theme.bg4};
+    padding: 4px;
+  }
+`
+
+interface PriceProps {
+  trade: TradeGp
+  theme: DefaultTheme
+  showInverted: boolean
+  setShowInverted: React.Dispatch<React.SetStateAction<boolean>>
+}
+
+function Price({ trade, theme, showInverted, setShowInverted }: PriceProps) {
+  return (
+    <PriceContainer height={24} align="center">
+      <Text fontWeight={500} fontSize={14} color={theme.text2}>
+        <PriceSwitcher>
+          <Trans>Price</Trans>
+          <Repeat size={20} onClick={() => setShowInverted((prev) => !prev)} />
+        </PriceSwitcher>
+      </Text>
+      <div className="price-container">
+        <TradePrice price={trade.executionPrice} showInverted={showInverted} setShowInverted={setShowInverted} />
+      </div>
+    </PriceContainer>
+  )
 }
 
 function FeeGreaterMessage({ fee }: FeeGreaterMessageProp) {
@@ -297,6 +342,7 @@ export default function Swap(props: RouteComponentProps) {
       SwapButton={SwapButton}
       TradeLoading={TradeLoading}
       ArrowWrapperLoader={ArrowWrapperLoader}
+      Price={Price}
       {...props}
     />
   )
