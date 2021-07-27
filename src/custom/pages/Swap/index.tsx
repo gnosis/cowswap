@@ -1,7 +1,7 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { RouteComponentProps } from 'react-router-dom'
 import styled, { DefaultTheme, ThemeContext } from 'styled-components'
-import { CurrencyAmount, Currency, Token } from '@uniswap/sdk-core'
+import { Currency, CurrencyAmount, Token } from '@uniswap/sdk-core'
 import { Text } from 'rebass'
 
 import { ButtonSize, TYPE } from 'theme/index'
@@ -32,8 +32,10 @@ import { Trans } from '@lingui/macro'
 import TradePrice from 'components/swap/TradePrice'
 import TradeGp from 'state/swap/TradeGp'
 import { useUSDCValue } from 'hooks/useUSDCPrice'
+import { computeTradePriceBreakdown } from 'components/swap/TradeSummary/TradeSummaryMod'
 
 interface FeeGreaterMessageProp {
+  trade?: TradeGp
   fee: CurrencyAmount<Currency>
 }
 
@@ -198,10 +200,14 @@ export const LightGreyText = styled.span`
   color: ${({ theme }) => theme.text4};
 `
 
-function FeeGreaterMessage({ fee }: FeeGreaterMessageProp) {
+function FeeGreaterMessage({ trade, fee }: FeeGreaterMessageProp) {
   const theme = useContext(ThemeContext)
-  const feeFiatValue = useUSDCValue(fee)
+  // trades are null when there is a fee quote error e.g
+  // so we can take both
+  const feeAmount = trade?.fee.feeAsCurrency || fee
+  const feeFiatValue = useUSDCValue(feeAmount)
 
+  const { realizedFee } = computeTradePriceBreakdown(trade)
   const feeFiatDisplay = `(≈$${formatSmart(feeFiatValue, SHORT_PRECISION)})`
 
   return (
@@ -219,7 +225,7 @@ function FeeGreaterMessage({ fee }: FeeGreaterMessageProp) {
         </MouseoverTooltipContent>
       </RowFixed>
       <TYPE.black fontSize={14} color={theme.text1}>
-        {formatSmart(fee, SHORT_PRECISION)} {fee.currency.symbol}{' '}
+        {formatSmart(realizedFee || fee, SHORT_PRECISION)} {(realizedFee || fee)?.currency.symbol}{' '}
         {feeFiatValue && <LightGreyText>{feeFiatDisplay}</LightGreyText>}
       </TYPE.black>
     </RowBetween>

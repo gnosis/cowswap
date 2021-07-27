@@ -657,7 +657,7 @@ export default function Swap({
                       </ClickableText>
                     </RowBetween>
                   )}
-                  {(isFeeGreater || trade) && fee && <FeeGreaterMessage fee={fee} />}
+                  {(isFeeGreater || trade) && fee && <FeeGreaterMessage fee={fee} trade={trade} />}
                 </AutoColumn>
                 {/* ETH exactIn && wrapCallback returned us cb */}
                 {isNativeIn && onWrap && (
