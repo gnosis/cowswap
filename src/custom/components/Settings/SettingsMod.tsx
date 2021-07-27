@@ -186,7 +186,7 @@ export default function SettingsTab({ className, placeholderSlippage, SettingsBu
       </StyledMenuButton> */}
       {open && (
         <MenuFlyout>
-          <AutoColumn gap="md" style={{ padding: '1rem' }}>
+          <AutoColumn style={{ padding: '1rem' }}>
             <Text fontWeight={600} fontSize={14}>
               <Trans>Transaction Settings</Trans>
             </Text>
