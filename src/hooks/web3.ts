@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react'
 import { isMobile } from 'react-device-detect'
 import { injected } from 'connectors'
 import { NetworkContextName } from 'constants/misc'
-import { useAppDispatch } from '@src/state/hooks'
 
 export function useActiveWeb3React(): Web3ReactContextInterface<Web3Provider> {
   const context = useWeb3ReactCore<Web3Provider>()
@@ -14,8 +13,6 @@ export function useActiveWeb3React(): Web3ReactContextInterface<Web3Provider> {
 }
 
 export function useEagerConnect() {
-  const dispatch = useAppDispatch()
-
   const { activate, active } = useWeb3ReactCore() // specifically using useWeb3ReactCore because of what this hook does
   const [tried, setTried] = useState(false)
 
@@ -35,7 +32,7 @@ export function useEagerConnect() {
         }
       }
     })
-  }, [activate, dispatch]) // intentionally only running on mount (make sure it's only mounted once :))
+  }, [activate]) // intentionally only running on mount (make sure it's only mounted once :))
 
   // if the connection worked, wait until we get confirmation of that to flip the flag
   useEffect(() => {
@@ -52,7 +49,6 @@ export function useEagerConnect() {
  * and out after checking what network theyre on
  */
 export function useInactiveListener(suppress = false) {
-  const dispatch = useAppDispatch()
   const { active, error, activate } = useWeb3ReactCore() // specifically using useWeb3React because of what this hook does
 
   useEffect(() => {
