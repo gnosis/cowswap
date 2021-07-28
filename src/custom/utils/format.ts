@@ -3,7 +3,6 @@ import BigNumber from 'bignumber.js'
 import { formatSmart as _formatSmart } from '@gnosis.pm/dex-js'
 import { Currency, CurrencyAmount, Percent, Fraction } from '@uniswap/sdk-core'
 import { DEFAULT_PRECISION } from 'constants/index'
-import { registerOnWindow } from './misc'
 
 const TEN = new BigNumber(10)
 const SMALL_LIMIT = '0.000000000000000001'
@@ -12,7 +11,7 @@ export function formatAtoms(amount: string, decimals: number): string {
   return new BigNumber(amount).div(TEN.pow(decimals)).toString(10)
 }
 
-interface FormatSmartOptions {
+export interface FormatSmartOptions {
   thousandSeparator?: boolean
   smallLimit?: string
   isLocaleAware?: boolean
