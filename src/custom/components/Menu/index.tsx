@@ -1,5 +1,5 @@
 import React from 'react'
-import { Code, MessageCircle /*PieChart*/ } from 'react-feather'
+import { Code, MessageCircle, FileText /*PieChart*/ } from 'react-feather'
 
 import MenuMod, { MenuItem, InternalMenuItem, MenuFlyout as MenuFlyoutUni } from './MenuMod'
 import { useCloseModals } from 'state/application/hooks'
@@ -146,6 +146,12 @@ export function Menu() {
     <StyledMenu>
       <MenuFlyout>
         <CloseMenu onClick={close} />
+        <InternalMenuItem to="/about" onClick={close}>
+          <span aria-hidden="true" onClick={close} onKeyDown={close}>
+            <FileText size={14} />
+            About
+          </span>
+        </InternalMenuItem>
         <InternalMenuItem to="/faq" onClick={close}>
           <Code size={14} />
           FAQ
