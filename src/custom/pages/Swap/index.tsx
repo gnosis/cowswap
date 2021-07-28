@@ -153,7 +153,13 @@ export interface SwapProps extends RouteComponentProps {
   className?: string
 }
 
-const PriceContainer = styled(RowBetween)`
+const LowerSectionWrapper = styled(RowBetween).attrs((props) => ({
+  ...props,
+  align: 'center',
+  flexDirection: 'row',
+  flexWrap: 'wrap',
+  minHeight: 24,
+}))`
   > .price-container {
     display: flex;
     gap: 5px;
@@ -181,7 +187,7 @@ interface PriceProps {
 
 function Price({ trade, theme, showInverted, setShowInverted }: PriceProps) {
   return (
-    <PriceContainer height={24} align="center">
+    <LowerSectionWrapper>
       <Text fontWeight={500} fontSize={14} color={theme.text2}>
         <PriceSwitcher>
           <Trans>Price</Trans>
@@ -191,7 +197,7 @@ function Price({ trade, theme, showInverted, setShowInverted }: PriceProps) {
       <div className="price-container">
         <TradePrice price={trade.executionPrice} showInverted={showInverted} setShowInverted={setShowInverted} />
       </div>
-    </PriceContainer>
+    </LowerSectionWrapper>
   )
 }
 
@@ -211,7 +217,7 @@ function FeeGreaterMessage({ trade, fee }: FeeGreaterMessageProp) {
   const feeFiatDisplay = `(≈$${formatSmart(feeFiatValue, FIAT_PRECISION)})`
 
   return (
-    <RowBetween height={24}>
+    <LowerSectionWrapper>
       <RowFixed>
         <TYPE.black fontSize={14} fontWeight={500} color={theme.text1}>
           Fees (incl. gas costs)
@@ -228,7 +234,7 @@ function FeeGreaterMessage({ trade, fee }: FeeGreaterMessageProp) {
         {formatSmart(realizedFee || fee, SHORT_PRECISION)} {(realizedFee || fee)?.currency.symbol}{' '}
         {feeFiatValue && <LightGreyText>{feeFiatDisplay}</LightGreyText>}
       </TYPE.black>
-    </RowBetween>
+    </LowerSectionWrapper>
   )
 }
 

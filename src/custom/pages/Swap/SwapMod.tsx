@@ -643,7 +643,7 @@ export default function Swap({
               </Row>
               */
               <Card padding={showWrap ? '.25rem 1rem 0 1rem' : '0px'} borderRadius={'20px'}>
-                <AutoColumn gap="8px" style={{ padding: '0 8px' }}>
+                <AutoColumn style={{ padding: '0 8px', gap: 8 }}>
                   {trade && (
                     <Price trade={trade} theme={theme} showInverted={showInverted} setShowInverted={setShowInverted} />
                   )}
