@@ -34,8 +34,6 @@ export const CommonBasesRow = styled(AutoRow)`
   `}
 `
 
-export { default } from './CommonBasesMod'
-
 export interface CommonBasesProps {
   chainId?: number
   selectedCurrency?: Currency | null
