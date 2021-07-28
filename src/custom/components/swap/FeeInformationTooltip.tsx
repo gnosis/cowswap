@@ -15,6 +15,7 @@ interface FeeInformationTooltipProps {
   amountAfterFees?: string
   feeAmount?: string
   type: 'From' | 'To'
+  showFiat?: boolean
 }
 
 const WrappedQuestionHelper = styled(QuestionHelper)`
@@ -72,7 +73,7 @@ const FeeInnerWrapper = styled.div`
 `
 
 export default function FeeInformationTooltip(props: FeeInformationTooltipProps) {
-  const { trade, label, amountBeforeFees, amountAfterFees, feeAmount, type, showHelper } = props
+  const { trade, label, amountBeforeFees, amountAfterFees, feeAmount, type, showHelper, showFiat = false } = props
 
   const theme = useTheme()
   const fiatValue = useUSDCValue(type === 'From' ? trade?.inputAmount : trade?.outputAmount)
@@ -113,7 +114,7 @@ export default function FeeInformationTooltip(props: FeeInformationTooltipProps)
         />
       </span>
       <FeeAmountAndFiat>
-        {amountAfterFees} {fiatValue && <small>≈ ${formatSmart(fiatValue, FIAT_PRECISION)}</small>}
+        {amountAfterFees} {showFiat && fiatValue && <small>≈ ${formatSmart(fiatValue, FIAT_PRECISION)}</small>}
       </FeeAmountAndFiat>
     </FeeInformationTooltipWrapper>
   )
