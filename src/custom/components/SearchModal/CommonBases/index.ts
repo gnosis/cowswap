@@ -29,7 +29,7 @@ export const CommonBasesRow = styled(AutoRow)`
   ${({ theme }) => theme.mediaWidth.upToSmall`
     flex-flow: row nowrap;
     overflow-x: scroll;
-    padding: 0 65px 0 0;
+    padding: 0 100px 0 0;
     position: relative;
   `}
 `
