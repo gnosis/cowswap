@@ -10,7 +10,7 @@ import { AutoColumn } from 'components/Column'
 import QuestionHelper from 'components/QuestionHelper'
 import { AutoRow } from 'components/Row'
 import CurrencyLogo from 'components/CurrencyLogo'
-import { CommonBasesProps } from '.' // mod
+import { CommonBasesRow, CommonBasesProps } from '.' // mod
 import { transparentize } from 'polished'
 
 export const BaseWrapper = styled.div<{ disable?: boolean }>`
@@ -30,13 +30,6 @@ export const BaseWrapper = styled.div<{ disable?: boolean }>`
   background-color: ${({ theme, disable }) => disable && theme.bg3};
   /* filter: ${({ disable }) => disable && 'grayscale(1)'}; */
   filter: ${({ disable }) => disable && 'grayscale(0.5)'};
-`
-
-const CommonBasesRow = styled(AutoRow)`
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-    flex-flow: row nowrap;
-    overflow-x: scroll;
-  `}
 `
 
 export default function CommonBases({ chainId, onSelect, selectedCurrency }: CommonBasesProps) {
