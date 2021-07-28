@@ -3,8 +3,8 @@ import { Price, Currency } from '@uniswap/sdk-core'
 import { useContext } from 'react'
 import { Text } from 'rebass'
 import styled, { ThemeContext } from 'styled-components'
-import { formatSmart } from 'utils/format' // mod
-import { SHORT_PRECISION } from 'constants/index' // mod
+import { formatSmart, FormatSmartOptions } from 'utils/format' // mod
+import { DEFAULT_PRECISION } from 'constants/index' // mod
 import { LightGreyText } from 'pages/Swap'
 
 export interface TradePriceProps {
@@ -25,7 +25,15 @@ export const StyledPriceContainer = styled.button`
   border: none;
   height: 24px;
   cursor: pointer;
+
+  > div {
+    display: flex;
+    align-items: center;
+    width: fit-content;
+  }
 `
+
+const PRICE_FORMAT_OPTIONS: [number, FormatSmartOptions] = [DEFAULT_PRECISION, { smallLimit: '0.00001' }]
 
 export default function TradePrice({ price, showInverted, fiatValue, setShowInverted }: TradePriceProps) {
   const theme = useContext(ThemeContext)
@@ -34,10 +42,10 @@ export default function TradePrice({ price, showInverted, fiatValue, setShowInve
   try {
     // formattedPrice = showInverted ? price.toSignificant(4) : price.invert()?.toSignificant(4)
     formattedPrice = showInverted
-      ? formatSmart(price, SHORT_PRECISION) ?? '0'
-      : formatSmart(price.invert(), SHORT_PRECISION) ?? '0'
+      ? formatSmart(price, ...PRICE_FORMAT_OPTIONS) ?? 'N/A'
+      : formatSmart(price.invert(), ...PRICE_FORMAT_OPTIONS) ?? 'N/A'
   } catch (error) {
-    formattedPrice = '0'
+    formattedPrice = 'N/A'
   }
 
   const label = showInverted ? `${price.quoteCurrency?.symbol}` : `${price.baseCurrency?.symbol} `
@@ -48,11 +56,11 @@ export default function TradePrice({ price, showInverted, fiatValue, setShowInve
   const baseText = '1 ' + labelInverted + ' = '
   const quoteText = (formattedPrice ?? '-') + ' ' + label
   const fiatText = ` (≈$${fiatValue})`
-  const title = baseText && quoteText && fiatText ? baseText + quoteText + fiatText : 'N/A'
 
   return (
-    <StyledPriceContainer onClick={flipPrice} title={title}>
-      <div style={{ alignItems: 'center', display: 'flex', width: 'fit-content' }}>
+    <StyledPriceContainer onClick={flipPrice}>
+      {/* <div style={{ alignItems: 'center', display: 'flex', width: 'fit-content' }}> */}
+      <div>
         <Text fontWeight={500} fontSize={14} color={theme.text1}>
           {/* {text} */}
           <LightGreyText>{baseText}</LightGreyText>
