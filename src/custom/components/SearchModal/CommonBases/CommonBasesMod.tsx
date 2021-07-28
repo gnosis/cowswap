@@ -6,11 +6,11 @@ import styled from 'styled-components/macro'
 
 import { COMMON_BASES } from 'constants/routing'
 import { currencyId } from 'utils/currencyId'
-import { AutoColumn } from 'components/Column'
+// import { AutoColumn } from 'components/Column'
 import QuestionHelper from 'components/QuestionHelper'
 import { AutoRow } from 'components/Row'
 import CurrencyLogo from 'components/CurrencyLogo'
-import { CommonBasesRow, CommonBasesProps } from '.' // mod
+import { CommonBasesRow, CommonBasesProps, AutoColumn } from '.' // mod
 import { transparentize } from 'polished'
 
 export const BaseWrapper = styled.div<{ disable?: boolean }>`

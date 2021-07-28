@@ -1,14 +1,12 @@
 import { Currency } from '@uniswap/sdk-core'
 import styled from 'styled-components/macro'
 import { AutoRow } from 'components/Row'
+import { AutoColumn as AutoColumnUni } from 'components/Column'
 
 export { default } from './CommonBasesMod'
 
-export const CommonBasesRow = styled(AutoRow)`
+export const AutoColumn = styled(AutoColumnUni)`
   ${({ theme }) => theme.mediaWidth.upToSmall`
-    flex-flow: row nowrap;
-    overflow-x: scroll;
-    padding: 0 65px 0 0;
     position: relative;
 
     &::after {
@@ -23,6 +21,15 @@ export const CommonBasesRow = styled(AutoRow)`
       bottom: 0;
       margin: auto;
     }
+  `}
+`
+
+export const CommonBasesRow = styled(AutoRow)`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    flex-flow: row nowrap;
+    overflow-x: scroll;
+    padding: 0 65px 0 0;
+    position: relative;
   `}
 `
 
