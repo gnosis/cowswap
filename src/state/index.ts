@@ -12,7 +12,6 @@ import lists from './lists/reducer'
 import burn from './burn/reducer'
 import burnV3 from './burn/v3/reducer'
 import multicall from './multicall/reducer'
-import affiliate from '../custom/state/affiliate/reducer'
 
 const PERSISTED_KEYS: string[] = ['user', 'transactions', 'lists']
 
@@ -28,7 +27,6 @@ const store = configureStore({
     burnV3,
     multicall,
     lists,
-    affiliate,
   },
   middleware: [...getDefaultMiddleware({ thunk: false }), save({ states: PERSISTED_KEYS, debounce: 1000 })],
   preloadedState: load({ states: PERSISTED_KEYS }),
