@@ -1,7 +1,7 @@
 import JSBI from 'jsbi'
 import { parseUnits } from '@ethersproject/units'
 import { DEFAULT_PRECISION, INITIAL_ALLOWED_SLIPPAGE, LONG_PRECISION } from 'constants/index'
-import { CurrencyAmount, Fraction, Percent, Token, TradeType } from '@uniswap/sdk-core'
+import { CurrencyAmount, Fraction, Price, Currency, Percent, Token, TradeType } from '@uniswap/sdk-core'
 import { OrderKind } from '@gnosis.pm/gp-v2-contracts'
 import { stringToCurrency } from './extension'
 import { SupportedChainId as ChainId } from 'constants/chains'
@@ -45,13 +45,14 @@ describe('Swap PRICE Quote test', () => {
           sellToken: currencyIn.subtract(feeAsCurrency),
           buyToken: currencyOut,
           kind: OrderKind.SELL,
-          price: { amount: MOCKED_PRICE_OUT.long, token: DAI_MAINNET.name || 'token' }
-        })
+          price: { amount: MOCKED_PRICE_OUT.long, token: DAI_MAINNET.name || 'token' },
+        }) as Price<Currency, Currency>
 
         trade = new Trade({
           executionPrice,
           // sell orders: we show user on UI inputAmount with no fee calculation
           inputAmount: currencyIn,
+          inputAmountWithoutFee: currencyIn,
           inputAmountWithFee: currencyIn.subtract(feeAsCurrency),
           outputAmountWithoutFee: currencyIn,
           outputAmount: currencyOut,
@@ -107,14 +108,15 @@ describe('Swap PRICE Quote test', () => {
           sellToken: currencyIn,
           buyToken: currencyOut,
           kind: OrderKind.BUY,
-          price: { amount: MOCKED_PRICE_IN.long, token: WETH_MAINNET.name || 'token' }
-        })
+          price: { amount: MOCKED_PRICE_IN.long, token: WETH_MAINNET.name || 'token' },
+        }) as Price<Currency, Currency>
 
         trade = new Trade({
           executionPrice,
           // fee is in selltoken so for buy orders we set inputAmount as inputAmountWithFee
           inputAmount: apiBuyPriceAsCurrencyWithFee,
           inputAmountWithFee: apiBuyPriceAsCurrencyWithFee,
+          inputAmountWithoutFee: apiBuyPriceAsCurrency,
           outputAmount: currencyOut,
           outputAmountWithoutFee: currencyOut,
           fee: {

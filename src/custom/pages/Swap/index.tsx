@@ -15,22 +15,56 @@ import { InputContainer } from 'components/AddressInputPanel'
 import { GreyCard } from 'components/Card'
 import { StyledBalanceMaxMini } from 'components/swap/styleds'
 import Card from 'components/Card'
-import QuestionHelper from 'components/QuestionHelper'
-import { ButtonError, ButtonPrimary } from 'components/Button'
+import {
+  ButtonError as ButtonErrorMod,
+  ButtonPrimary as ButtonPrimaryMod,
+  ButtonLight as ButtonLightMod,
+} from 'components/Button'
 import EthWethWrap, { Props as EthWethWrapProps } from 'components/swap/EthWethWrap'
 import { useReplaceSwapState, useSwapState } from 'state/swap/hooks'
 import { ArrowWrapperLoader, ArrowWrapperLoaderProps, Wrapper as ArrowWrapper } from 'components/ArrowWrapperLoader'
 import { LONG_LOAD_THRESHOLD, SHORT_PRECISION } from 'constants/index'
 import { formatSmart } from 'utils/format'
+import { MouseoverTooltipContent } from 'components/Tooltip'
+import { StyledInfo } from 'pages/Swap/SwapMod'
 
 interface FeeGreaterMessageProp {
   fee: CurrencyAmount<Currency>
 }
 
 const BottomGrouping = styled(BottomGroupingUni)`
-  margin-top: 10px;
   > div > button {
     align-self: stretch;
+  }
+`
+
+export const ButtonError = styled(ButtonErrorMod)`
+  > div,
+  > div > div {
+    width: 100%;
+    word-break: break-all;
+    text-align: center;
+    align-items: center;
+  }
+`
+
+export const ButtonPrimary = styled(ButtonPrimaryMod)`
+  > div,
+  > div > div {
+    width: 100%;
+    word-break: break-all;
+    text-align: center;
+    align-items: center;
+  }
+`
+
+export const ButtonLight = styled(ButtonLightMod)`
+  > div,
+  > div > div {
+    width: 100%;
+    word-break: break-all;
+    text-align: center;
+    align-items: center;
   }
 `
 
@@ -48,7 +82,7 @@ const SwapModWrapper = styled(SwapMod)`
     }
 
     ${AutoColumn} {
-      grid-row-gap: 10px;
+      grid-row-gap: 0px;
     }
 
     .expertMode ${AutoColumn} {
@@ -60,7 +94,7 @@ const SwapModWrapper = styled(SwapMod)`
     }
 
     ${Card} > ${AutoColumn} {
-      margin: 6px auto 0;
+      margin: 10px auto;
 
       > div > div {
         color: ${({ theme }) => theme.text1};
@@ -115,12 +149,18 @@ function FeeGreaterMessage({ fee }: FeeGreaterMessageProp) {
   const theme = useContext(ThemeContext)
 
   return (
-    <RowBetween>
+    <RowBetween height={24}>
       <RowFixed>
-        <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
+        <TYPE.black fontSize={14} fontWeight={500} color={theme.text2}>
           Fee
         </TYPE.black>
-        <QuestionHelper text="GP Swap has 0 gas fees. A portion of the sell amount in each trade goes to the GP Protocol." />
+        <MouseoverTooltipContent
+          bgColor={theme.bg1}
+          color={theme.text1}
+          content="GP Swap has 0 gas fees. A portion of the sell amount in each trade goes to the GP Protocol."
+        >
+          <StyledInfo />
+        </MouseoverTooltipContent>
       </RowFixed>
       <TYPE.black fontSize={14} color={theme.text1}>
         {formatSmart(fee, SHORT_PRECISION)} {fee.currency.symbol}
