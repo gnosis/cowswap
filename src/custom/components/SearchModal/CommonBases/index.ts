@@ -12,7 +12,8 @@ export const AutoColumn = styled(AutoColumnUni)`
     &::after {
       content: "";
       display: block;
-      background: linear-gradient(90deg, rgb(213 232 240 / 0%) 0%, ${({ theme }) => theme.bg3} 80%);
+      background: linear-gradient(to left, ${({ theme }) => theme.bg3} 0%, ${({ theme }) => theme.bg3Transparent} 100%);
+      pointer-events: none;
       height: 100%;
       width: 70px;
       position: absolute;
