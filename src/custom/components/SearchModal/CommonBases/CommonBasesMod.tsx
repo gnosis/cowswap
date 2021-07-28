@@ -32,6 +32,13 @@ export const BaseWrapper = styled.div<{ disable?: boolean }>`
   filter: ${({ disable }) => disable && 'grayscale(0.5)'};
 `
 
+const CommonBasesRow = styled(AutoRow)`
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    flex-flow: row nowrap;
+    overflow-x: scroll;
+  `}
+`
+
 export default function CommonBases({ chainId, onSelect, selectedCurrency }: CommonBasesProps) {
   /* {
   chainId?: number
@@ -49,7 +56,7 @@ export default function CommonBases({ chainId, onSelect, selectedCurrency }: Com
         </Text>
         <QuestionHelper text={<Trans>These tokens are commonly paired with other tokens.</Trans>} />
       </AutoRow>
-      <AutoRow gap="4px">
+      <CommonBasesRow gap="4px">
         {bases.map((currency: Currency) => {
           const isSelected = selectedCurrency?.equals(currency)
           return (
@@ -65,7 +72,7 @@ export default function CommonBases({ chainId, onSelect, selectedCurrency }: Com
             </BaseWrapper>
           )
         })}
-      </AutoRow>
+      </CommonBasesRow>
     </AutoColumn>
   ) : null
 }
