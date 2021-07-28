@@ -2,7 +2,7 @@ import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { RouteComponentProps } from 'react-router-dom'
 import styled, { DefaultTheme, ThemeContext } from 'styled-components'
 import { Currency, CurrencyAmount, Token } from '@uniswap/sdk-core'
-import { Text } from 'rebass'
+import { BoxProps, Text } from 'rebass'
 
 import { ButtonSize, TYPE } from 'theme/index'
 
@@ -34,7 +34,7 @@ import TradeGp from 'state/swap/TradeGp'
 import { useUSDCValue } from 'hooks/useUSDCPrice'
 import { computeTradePriceBreakdown } from 'components/swap/TradeSummary/TradeSummaryMod'
 
-interface FeeGreaterMessageProp {
+interface FeeGreaterMessageProp extends BoxProps {
   trade?: TradeGp
   fee: CurrencyAmount<Currency>
 }
@@ -178,16 +178,22 @@ const PriceSwitcher = styled(AutoRow)`
   }
 `
 
-interface PriceProps {
+interface PriceProps extends BoxProps {
   trade: TradeGp
   theme: DefaultTheme
   showInverted: boolean
   setShowInverted: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-function Price({ trade, theme, showInverted, setShowInverted }: PriceProps) {
+export const Price: React.FC<PriceProps> = ({
+  trade,
+  theme,
+  showInverted,
+  setShowInverted,
+  ...boxProps
+}: PriceProps) => {
   return (
-    <LowerSectionWrapper>
+    <LowerSectionWrapper {...boxProps}>
       <Text fontWeight={500} fontSize={14} color={theme.text2}>
         <PriceSwitcher>
           <Trans>Price</Trans>
@@ -206,7 +212,7 @@ export const LightGreyText = styled.span`
   color: ${({ theme }) => theme.text4};
 `
 
-function FeeGreaterMessage({ trade, fee }: FeeGreaterMessageProp) {
+function FeeGreaterMessage({ trade, fee, ...boxProps }: FeeGreaterMessageProp) {
   const theme = useContext(ThemeContext)
   // trades are null when there is a fee quote error e.g
   // so we can take both
@@ -217,7 +223,7 @@ function FeeGreaterMessage({ trade, fee }: FeeGreaterMessageProp) {
   const feeFiatDisplay = `(≈$${formatSmart(feeFiatValue, FIAT_PRECISION)})`
 
   return (
-    <LowerSectionWrapper>
+    <LowerSectionWrapper {...boxProps}>
       <RowFixed>
         <TYPE.black fontSize={14} fontWeight={500} color={theme.text1}>
           Fees (incl. gas costs)
