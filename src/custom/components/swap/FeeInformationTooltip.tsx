@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import TradeGp from 'state/swap/TradeGp'
 import QuestionHelper from 'components/QuestionHelper'
 import styled from 'styled-components'
@@ -78,6 +78,8 @@ export default function FeeInformationTooltip(props: FeeInformationTooltipProps)
   const theme = useTheme()
   const fiatValue = useUSDCValue(type === 'From' ? trade?.inputAmount : trade?.outputAmount)
 
+  const symbol = useMemo(() => trade?.[type === 'From' ? 'inputAmount' : 'outputAmount'].currency.symbol, [trade, type])
+
   if (!trade || !showHelper) return null
 
   return (
@@ -91,13 +93,15 @@ export default function FeeInformationTooltip(props: FeeInformationTooltipProps)
             <FeeInnerWrapper>
               <FeeTooltipLine>
                 <span>Before fee</span>
-                <span>{amountBeforeFees}</span>{' '}
+                <span>
+                  {amountBeforeFees} {symbol}
+                </span>{' '}
               </FeeTooltipLine>
               <FeeTooltipLine>
                 <span>Fee</span>
                 <span>
                   {type === 'From' ? '+' : '-'}
-                  {feeAmount}
+                  {feeAmount} {symbol}
                 </span>{' '}
               </FeeTooltipLine>
               <FeeTooltipLine>
@@ -107,7 +111,9 @@ export default function FeeInformationTooltip(props: FeeInformationTooltipProps)
               <Breakline />
               <FeeTooltipLine>
                 <strong>{type}</strong>
-                <strong>{amountAfterFees}</strong>{' '}
+                <strong>
+                  {amountAfterFees} {symbol}
+                </strong>{' '}
               </FeeTooltipLine>
             </FeeInnerWrapper>
           }
