@@ -13,8 +13,8 @@ export default function TradePrice(props: Omit<TradePriceProps, 'fiatValue'>) {
   const priceSide = useMemo(
     () =>
       !showInverted
-        ? tryParseAmount(price.invert().toFixed(), price.baseCurrency)
-        : tryParseAmount(price.toFixed(), price.quoteCurrency),
+        ? tryParseAmount(price.invert().toFixed(18), price.baseCurrency)
+        : tryParseAmount(price.toFixed(18), price.quoteCurrency),
     [price, showInverted]
   )
   const amount = useUSDCValue(priceSide)
