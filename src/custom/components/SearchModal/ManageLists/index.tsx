@@ -35,7 +35,8 @@ export const Card = styled(CardUni)`
   background: ${({ theme }) => theme.bg4};
 
   ${Row},
-  ${Row} > div > div {
+  ${Row} > div > div,
+  ${Row} > div > div > div {
     color: ${({ theme }) => theme.text1};
   }
 
