@@ -238,8 +238,8 @@ function TradeBasicDetails({ trade, fee, ...boxProps }: TradeBasicDetailsProp) {
         </MouseoverTooltipContent>
       </RowFixed>
       <TYPE.black fontSize={14} color={theme.text1}>
-        {formatSmart(realizedFee || fee, SHORT_PRECISION)} {(realizedFee || fee)?.currency.symbol}{' '}
-        {feeFiatValue && <LightGreyText>{feeFiatDisplay}</LightGreyText>}
+        {formatSmart(realizedFee || fee, SHORT_PRECISION, { smallLimit: '0.00001' })}{' '}
+        {(realizedFee || fee)?.currency.symbol} {feeFiatValue && <LightGreyText>{feeFiatDisplay}</LightGreyText>}
       </TYPE.black>
 
       {isExpertMode && trade && (
