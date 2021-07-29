@@ -11,7 +11,7 @@ import About from 'pages/About'
 import Profile from 'pages/Profile'
 import Faq from 'pages/Faq'
 import CowGame from 'pages/CowGame'
-import useParseReferralQueryParam from 'hooks/useParseReferralQueryParam'
+import ReferralLinkUpdater from 'state/affiliate/updater'
 
 export const Wrapper = styled(AppMod)``
 
@@ -32,16 +32,9 @@ export const BodyWrapper = styled.div`
 `
 
 export default function App() {
-  const referralAddress = useParseReferralQueryParam()
-
-  useEffect(() => {
-    if (referralAddress) {
-      console.log('Referral address', referralAddress)
-    }
-  }, [referralAddress])
-
   return (
     <Wrapper>
+      <ReferralLinkUpdater />
       <Switch>
         <Route exact strict path="/swap" component={Swap} />
         <Route exact strict path="/swap/:outputCurrency" component={RedirectToSwap} />
