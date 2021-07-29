@@ -1,16 +1,13 @@
-import { USDC, USDT, WBTC } from '@src/constants/tokens'
-import { USDC_XDAI, USDT_XDAI, WBTC_XDAI, WXDAI } from '@src/custom/utils/xdai/constants'
+import { getTokenLogoURL } from 'components/CurrencyLogo'
+import { USDC, USDT, WBTC } from 'constants/tokens'
+import { USDC_XDAI, USDT_XDAI, WBTC_XDAI, WXDAI } from 'utils/xdai/constants'
 
 export * from './tokensMod'
 
-function getTrustImage(mainnetAddress: string): string {
-  return `https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/${mainnetAddress}/logo.png`
-}
-
 export const ADDRESS_IMAGE_OVERRIDE = {
-  [USDC_XDAI.address]: getTrustImage(USDC.address),
-  [USDT_XDAI.address]: getTrustImage(USDT.address),
-  [WBTC_XDAI.address]: getTrustImage(WBTC.address),
+  [USDC_XDAI.address]: getTokenLogoURL(USDC.address),
+  [USDT_XDAI.address]: getTokenLogoURL(USDT.address),
+  [WBTC_XDAI.address]: getTokenLogoURL(WBTC.address),
   [WXDAI.address]:
     'https://raw.githubusercontent.com/1Hive/default-token-list/master/src/assets/xdai/0xe91d153e0b41518a2ce8dd3d7944fa863463a97d/logo.png',
 }
