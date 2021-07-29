@@ -39,6 +39,10 @@ export const Card = styled(CardUni)`
     color: ${({ theme }) => theme.text1};
   }
 
+  svg > * {
+    stroke: ${({ theme }) => theme.text1};
+  }
+
   ${Row} > img {
     background: ${({ theme }) => theme.bg2};
     border-radius: 40px;
