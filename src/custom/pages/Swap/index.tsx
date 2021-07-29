@@ -220,7 +220,7 @@ function FeeGreaterMessage({ trade, fee, ...boxProps }: FeeGreaterMessageProp) {
   const feeFiatValue = useUSDCValue(feeAmount)
 
   const { realizedFee } = computeTradePriceBreakdown(trade)
-  const feeFiatDisplay = `(≈$${formatSmart(feeFiatValue, FIAT_PRECISION)})`
+  const feeFiatDisplay = `(≈$${formatSmart(feeFiatValue, FIAT_PRECISION, { smallLimit: '0.01' })})`
 
   return (
     <LowerSectionWrapper {...boxProps}>
