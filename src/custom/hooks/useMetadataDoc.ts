@@ -7,16 +7,8 @@ export function useMetadataDoc() {
   const [document, setDocument] = useState<AppDataDoc>(generateReferralMetadataDoc(account || ''))
 
   useEffect(() => {
-    const fetchDocument = async (): Promise<AppDataDoc | undefined> => {
-      if (!account) return
-      /* 
-        Call API with account address. If no document, return default otherwise return metadata
-        setDocument(response)
-      */
-      return
-    }
-
-    fetchDocument()
+    if (!account) return
+    setDocument(generateReferralMetadataDoc(account))
   }, [account])
 
   return document
