@@ -23,6 +23,8 @@ export const PERCENTAGE_PRECISION = 2
 
 export const FIAT_FORMAT_SMART_OPTIONS: [number, FormatSmartOptions] = [FIAT_PRECISION, { smallLimit: '0.01' }]
 
+export const PRICE_FORMAT_OPTIONS: [number, FormatSmartOptions] = [DEFAULT_PRECISION, { smallLimit: '0.00001' }]
+
 export const LONG_LOAD_THRESHOLD = 2000
 
 export const APP_ID = Number(process.env.REACT_APP_ID)
