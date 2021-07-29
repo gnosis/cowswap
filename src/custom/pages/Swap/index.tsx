@@ -221,7 +221,7 @@ function TradeBasicDetails({ trade, fee, ...boxProps }: TradeBasicDetailsProp) {
   const feeFiatValue = useUSDCValue(feeAmount)
 
   const { realizedFee } = computeTradePriceBreakdown(trade)
-  const feeFiatDisplay = `(≈$${formatSmart(feeFiatValue, FIAT_PRECISION)})`
+  const feeFiatDisplay = `(≈$${formatSmart(feeFiatValue, FIAT_PRECISION, { smallLimit: '0.01' })})`
 
   const allowedSlippage = useUserSlippageToleranceWithDefault(V2_SWAP_DEFAULT_SLIPPAGE)
   const [isExpertMode] = useExpertModeManager()
