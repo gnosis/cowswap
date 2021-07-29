@@ -34,7 +34,6 @@ export const BodyWrapper = styled.div`
 export default function App() {
   return (
     <Wrapper>
-      <ReferralLinkUpdater />
       <Switch>
         <Route exact strict path="/swap" component={Swap} />
         <Route exact strict path="/swap/:outputCurrency" component={RedirectToSwap} />
@@ -48,6 +47,7 @@ export default function App() {
         <Route exact strict path="/terms-and-conditions" component={TermsAndConditions} />
         <Route component={RedirectPathToSwapOnly} />
       </Switch>
+      <ReferralLinkUpdater />
     </Wrapper>
   )
 }
