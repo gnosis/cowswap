@@ -52,7 +52,8 @@ const Wrapper = styled.div`
   }
 
   ${Content} {
-    > div a {
+    > div a,
+    > p a {
       color: ${({ theme }) => theme.text1};
       transition: color 0.2s ease-in-out;
 
@@ -75,10 +76,6 @@ const Wrapper = styled.div`
 
     > div > ul > li {
       margin: 0 0 12px;
-    }
-
-    > p a {
-      color: ${({ theme }) => theme.textLink};
     }
 
     > h3 {
