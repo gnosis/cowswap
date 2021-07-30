@@ -11,7 +11,6 @@ import About from 'pages/About'
 import Profile from 'pages/Profile'
 import Faq from 'pages/Faq'
 import CowGame from 'pages/CowGame'
-import ReferralLinkUpdater from 'state/affiliate/updater'
 
 export const Wrapper = styled(AppMod)``
 
@@ -47,7 +46,6 @@ export default function App() {
         <Route exact strict path="/terms-and-conditions" component={TermsAndConditions} />
         <Route component={RedirectPathToSwapOnly} />
       </Switch>
-      <ReferralLinkUpdater />
     </Wrapper>
   )
 }

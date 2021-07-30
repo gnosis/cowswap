@@ -1,16 +1,16 @@
 import { createReducer } from '@reduxjs/toolkit'
-import { updateAffiliateLink } from './actions'
+import { updateReferrerAddress } from './actions'
 
 export interface AffiliateLinkState {
-  affiliateLink: string
+  referrerAddress: string
 }
 
 export const initialState: AffiliateLinkState = {
-  affiliateLink: '',
+  referrerAddress: '',
 }
 
 export default createReducer(initialState, (builder) =>
-  builder.addCase(updateAffiliateLink, (state, action) => {
-    state.affiliateLink = action.payload.affiliateLink
+  builder.addCase(updateReferrerAddress, (state, action) => {
+    state.referrerAddress = action.payload.referrer
   })
 )

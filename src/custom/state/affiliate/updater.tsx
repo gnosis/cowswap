@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 
-import { updateAffiliateLink } from 'state/affiliate/actions'
+import { updateReferrerAddress } from 'state/affiliate/actions'
 import useParseReferralQueryParam from 'hooks/useParseReferralQueryParam'
 import { useWalletInfo } from 'hooks/useWalletInfo'
 import { useAppDispatch } from 'state/hooks'
@@ -12,7 +12,7 @@ export default function ReferralLinkUpdater() {
 
   useEffect(() => {
     if (referralLink && account) {
-      dispatch(updateAffiliateLink({ affiliateLink: referralLink }))
+      dispatch(updateReferrerAddress({ referrer: referralLink }))
     }
   }, [account, referralLink, dispatch])
 
