@@ -5,7 +5,7 @@ export const DAI_RINKEBY = new Token(ChainId.RINKEBY, '0x5592ec0cfb4dbc12d3ab100
 
 export const USDT_RINKEBY = new Token(
   ChainId.RINKEBY,
-  '0x5592EC0cfb4dbc12D3aB100b257153436a1f0FEa',
+  '0xa9881E6459CA05d7D7C95374463928369cD7a90C',
   6,
   'USDT',
   'Tether USD'
