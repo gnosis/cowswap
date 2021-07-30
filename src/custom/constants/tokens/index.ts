@@ -1,6 +1,6 @@
 import { ChainId } from '@uniswap/sdk'
 import { WETH9 } from '@uniswap/sdk-core'
-import { DAI_RINKEBY, USDC_RINKEBY, USDT_RINKEBY, WBTC_RINKEBY } from '@src/custom/utils/rinkeby/constants'
+import { DAI_RINKEBY, USDC_RINKEBY, USDT_RINKEBY, WBTC_RINKEBY } from 'utils/rinkeby/constants'
 import { getTokenLogoURL } from 'components/CurrencyLogo'
 import { DAI, USDC, USDT, WBTC } from 'constants/tokens'
 import { USDC_XDAI, USDT_XDAI, WBTC_XDAI, WXDAI } from 'utils/xdai/constants'
