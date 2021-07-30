@@ -15,22 +15,27 @@ import { toErc20Address } from 'utils/tokens'
 import { FeeInformation, FeeQuoteParams, PriceInformation, PriceQuoteParams } from '../price'
 
 function getOperatorUrl(): Partial<Record<ChainId, string>> {
-  if (isDev) {
-    return {
-      [ChainId.MAINNET]:
-        process.env.REACT_APP_API_URL_STAGING_MAINNET || 'https://protocol-mainnet.dev.gnosisdev.com/api',
-      [ChainId.RINKEBY]:
-        process.env.REACT_APP_API_URL_STAGING_RINKEBY || 'https://protocol-rinkeby.dev.gnosisdev.com/api',
-      [ChainId.XDAI]: process.env.REACT_APP_API_URL_STAGING_XDAI || 'https://protocol-xdai.dev.gnosisdev.com/api',
-    }
-  }
-
-  // Production, staging, ens, ...
   return {
-    [ChainId.MAINNET]: process.env.REACT_APP_API_URL_PROD_MAINNET || 'https://protocol-mainnet.gnosis.io/api',
-    [ChainId.RINKEBY]: process.env.REACT_APP_API_URL_PROD_RINKEBY || 'https://protocol-rinkeby.gnosis.io/api',
-    [ChainId.XDAI]: process.env.REACT_APP_API_URL_PROD_XDAI || 'https://protocol-xdai.gnosis.io/api',
+    [ChainId.MAINNET]: 'https://protocol-mainnet.dev.gnosisdev.com/api',
+    [ChainId.RINKEBY]: 'https://protocol-rinkeby.dev.gnosisdev.com/api',
+    [ChainId.XDAI]: 'https://protocol-xdai.dev.gnosisdev.com/api',
   }
+  // if (isDev) {
+  //   return {
+  //     [ChainId.MAINNET]:
+  //       process.env.REACT_APP_API_URL_STAGING_MAINNET || 'https://protocol-mainnet.dev.gnosisdev.com/api',
+  //     [ChainId.RINKEBY]:
+  //       process.env.REACT_APP_API_URL_STAGING_RINKEBY || 'https://protocol-rinkeby.dev.gnosisdev.com/api',
+  //     [ChainId.XDAI]: process.env.REACT_APP_API_URL_STAGING_XDAI || 'https://protocol-xdai.dev.gnosisdev.com/api',
+  //   }
+  // }
+
+  // // Production, staging, ens, ...
+  // return {
+  //   [ChainId.MAINNET]: process.env.REACT_APP_API_URL_PROD_MAINNET || 'https://protocol-mainnet.gnosis.io/api',
+  //   [ChainId.RINKEBY]: process.env.REACT_APP_API_URL_PROD_RINKEBY || 'https://protocol-rinkeby.gnosis.io/api',
+  //   [ChainId.XDAI]: process.env.REACT_APP_API_URL_PROD_XDAI || 'https://protocol-xdai.gnosis.io/api',
+  // }
 }
 
 const API_BASE_URL = getOperatorUrl()
