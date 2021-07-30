@@ -1,6 +1,5 @@
 import React from 'react'
-import { Code, MessageCircle, FileText /*PieChart*/ } from 'react-feather'
-
+import { Code, MessageCircle, FileText, HelpCircle /*PieChart*/ } from 'react-feather'
 import MenuMod, { MenuItem, InternalMenuItem, MenuFlyout as MenuFlyoutUni } from './MenuMod'
 import { useCloseModals } from 'state/application/hooks'
 import styled from 'styled-components'
@@ -65,6 +64,7 @@ const MenuFlyout = styled(MenuFlyoutUni)`
     transition: background 0.2s ease-in-out;
     display: flex;
     align-items: center;
+    text-decoration: none;
 
     ${({ theme }) => theme.mediaWidth.upToSmall`
       flex: 0 1 auto;
@@ -153,7 +153,7 @@ export function Menu() {
           </span>
         </InternalMenuItem>
         <InternalMenuItem to="/faq" onClick={close}>
-          <Code size={14} />
+          <HelpCircle size={14} />
           FAQ
         </InternalMenuItem>
 
