@@ -128,10 +128,6 @@ const SwapModWrapper = styled(SwapMod)`
       position: relative;
     }
 
-    .expertMode ${AutoRow} {
-      padding: 0 1rem;
-    }
-
     ${AutoRow} {
       z-index: 2;
     }
