@@ -3,7 +3,6 @@ import * as realApi from './operatorApi'
 import * as mockApi from './operatorMock'
 
 const useMock = process.env.REACT_APP_MOCK === 'true'
-console.log({ useMock })
 
 // Re-exporting the result, mocked or not.
 // Unfortunately, did not find a way to export
