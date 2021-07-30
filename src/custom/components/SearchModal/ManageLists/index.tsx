@@ -9,6 +9,7 @@ import { supportedChainId } from 'utils/supportedChainId'
 import Row, { RowFixed, RowBetween } from 'components/Row'
 import CardUni from 'components/Card'
 import styled from 'styled-components/macro'
+import { TextDot } from '@src/components/SearchModal/styleds'
 
 export interface ListRowProps {
   acceptListUpdate: (url: string) => ReturnType<typeof acceptListUpdate>
@@ -48,6 +49,11 @@ export const Card = styled(CardUni)`
     background: ${({ theme }) => theme.bg2};
     border-radius: 40px;
     padding: 3px;
+    object-fit: contain;
+  }
+
+  ${TextDot} {
+    background: ${({ theme }) => theme.text1};
   }
 `
 
