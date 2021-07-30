@@ -1,5 +1,5 @@
 import { USDC, USDT, WBTC } from '@src/constants/tokens'
-import { USDC_XDAI, USDT_XDAI, WBTC_XDAI, WXDAI } from '@src/custom/utils/xdai/constants'
+import { USDC_XDAI, USDT_XDAI, WBTC_XDAI, WXDAI } from 'utils/xdai/constants'
 
 export * from './tokensMod'
 
