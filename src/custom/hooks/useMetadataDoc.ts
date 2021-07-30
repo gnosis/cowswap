@@ -9,9 +9,9 @@ export function useMetadataDoc() {
   const [document, setDocument] = useState<AppDataDoc>(generateReferralMetadataDoc(referralAddress || ''))
 
   useEffect(() => {
-    if (!account) return
-    setDocument(generateReferralMetadataDoc(account))
-  }, [account])
+    if (!account || !referralAddress) return //Cannot generate doc if there is no referral address or the user is not connected
+    setDocument(generateReferralMetadataDoc(referralAddress))
+  }, [referralAddress, account])
 
   return document
 }
