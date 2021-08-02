@@ -1,5 +1,5 @@
 // a list of tokens by chain
-import { USDC_XDAI, USDT_XDAI, WBTC_XDAI, WETH_XDAI } from 'utils/xdai/constants'
+import { USDC_XDAI, /*USDT_XDAI,*/ WBTC_XDAI, WETH_XDAI } from 'utils/xdai/constants'
 import { DAI_RINKEBY, USDC_RINKEBY, USDT_RINKEBY } from 'utils/rinkeby/constants'
 import { Currency /* , Token */ } from '@uniswap/sdk-core'
 // import { SupportedChainId } from 'constants/chains'
