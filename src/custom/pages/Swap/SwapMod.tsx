@@ -66,9 +66,9 @@ import { maxAmountSpend } from 'utils/maxAmountSpend'
 // import { warningSeverity } from 'utils/prices'
 import AppBody from 'pages/AppBody'
 
-import { PERCENTAGE_PRECISION, INITIAL_ALLOWED_SLIPPAGE_PERCENT } from 'constants/index'
+import { /*PERCENTAGE_PRECISION,*/ INITIAL_ALLOWED_SLIPPAGE_PERCENT } from 'constants/index'
 import { computeSlippageAdjustedAmounts } from 'utils/prices'
-import { ClickableText } from 'pages/Pool/styleds'
+// import { ClickableText } from 'pages/Pool/styleds'
 import FeeInformationTooltip from 'components/swap/FeeInformationTooltip'
 import { useWalletInfo } from 'hooks/useWalletInfo'
 import { HashLink } from 'react-router-hash-link'
@@ -78,6 +78,7 @@ import { SwapProps, ButtonError, ButtonPrimary, ButtonLight } from '.' // mod
 import TradeGp from 'state/swap/TradeGp'
 import AdvancedSwapDetailsDropdown from 'components/swap/AdvancedSwapDetailsDropdown'
 import { formatSmart } from 'utils/format'
+import { RowSlippage } from '@src/custom/components/swap/TradeSummary'
 
 export const StyledInfo = styled(Info)`
   opacity: 0.4;
@@ -653,15 +654,16 @@ export default function Swap({
                     <Price trade={trade} theme={theme} showInverted={showInverted} setShowInverted={setShowInverted} />
                   )}
 
-                  {!allowedSlippage.equalTo(INITIAL_ALLOWED_SLIPPAGE_PERCENT) && (
-                    <RowBetween height={24} align="center">
-                      <ClickableText fontWeight={500} fontSize={14} color={theme.text2} onClick={toggleSettings}>
-                        <Trans>Slippage Tolerance</Trans>
-                      </ClickableText>
-                      <ClickableText fontWeight={500} fontSize={14} color={theme.text2} onClick={toggleSettings}>
-                        {formatSmart(allowedSlippage, PERCENTAGE_PRECISION)}%
-                      </ClickableText>
-                    </RowBetween>
+                  {!isExpertMode && !allowedSlippage.equalTo(INITIAL_ALLOWED_SLIPPAGE_PERCENT) && (
+                    // <RowBetween height={24} align="center">
+                    //   <ClickableText fontWeight={500} fontSize={14} color={theme.text2} onClick={toggleSettings}>
+                    //     <Trans>Slippage Tolerance</Trans>
+                    //   </ClickableText>
+                    //   <ClickableText fontWeight={500} fontSize={14} color={theme.text2} onClick={toggleSettings}>
+                    //     {formatSmart(allowedSlippage, PERCENTAGE_PRECISION)}%
+                    //   </ClickableText>
+                    // </RowBetween>
+                    <RowSlippage allowedSlippage={allowedSlippage} fontSize={12} fontWeight={400} rowHeight={24} />
                   )}
                   {(isFeeGreater || trade) && fee && <TradeBasicDetails fee={fee} trade={trade} />}
                 </AutoColumn>
