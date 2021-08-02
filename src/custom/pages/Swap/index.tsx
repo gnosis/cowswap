@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { RouteComponentProps } from 'react-router-dom'
 import styled, { DefaultTheme, ThemeContext } from 'styled-components'
 import { Currency, CurrencyAmount, Token } from '@uniswap/sdk-core'
@@ -33,8 +33,15 @@ import TradePrice from 'components/swap/TradePrice'
 import TradeGp from 'state/swap/TradeGp'
 import { useUSDCValue } from 'hooks/useUSDCPrice'
 import { computeTradePriceBreakdown } from 'components/swap/TradeSummary/TradeSummaryMod'
+import { TradeType } from '@uniswap/sdk'
+import { getMinimumReceivedTooltip } from 'utils/tooltips'
+import { useUserSlippageToleranceWithDefault } from 'state/user/hooks'
+import { computeSlippageAdjustedAmounts } from 'utils/prices'
+import { V2_SWAP_DEFAULT_SLIPPAGE } from 'hooks/useSwapSlippageTolerance'
+import { Field } from 'state/swap/actions'
+import { INPUT_OUTPUT_EXPLANATION } from 'constants/index'
 
-interface FeeGreaterMessageProp extends BoxProps {
+interface TradeBasicDetailsProp extends BoxProps {
   trade?: TradeGp
   fee: CurrencyAmount<Currency>
 }
@@ -138,7 +145,7 @@ const SwapModWrapper = styled(SwapMod)`
   }
 `
 export interface SwapProps extends RouteComponentProps {
-  FeeGreaterMessage: React.FC<FeeGreaterMessageProp>
+  TradeBasicDetails: React.FC<TradeBasicDetailsProp>
   EthWethWrapMessage: React.FC<EthWethWrapProps>
   SwitchToWethBtn: React.FC<SwitchToWethBtnProps>
   FeesExceedFromAmountMessage: React.FC
@@ -210,7 +217,7 @@ export const LightGreyText = styled.span`
   color: ${({ theme }) => theme.text4};
 `
 
-function FeeGreaterMessage({ trade, fee, ...boxProps }: FeeGreaterMessageProp) {
+function TradeBasicDetails({ trade, fee, ...boxProps }: TradeBasicDetailsProp) {
   const theme = useContext(ThemeContext)
   // trades are null when there is a fee quote error e.g
   // so we can take both
@@ -220,8 +227,17 @@ function FeeGreaterMessage({ trade, fee, ...boxProps }: FeeGreaterMessageProp) {
   const { realizedFee } = computeTradePriceBreakdown(trade)
   const feeFiatDisplay = `(≈$${formatSmart(feeFiatValue, FIAT_PRECISION)})`
 
+  const allowedSlippage = useUserSlippageToleranceWithDefault(V2_SWAP_DEFAULT_SLIPPAGE)
+  const slippageAdjustedAmounts = computeSlippageAdjustedAmounts(trade, allowedSlippage)
+  const [slippageOut, slippageIn] = useMemo(
+    () => [slippageAdjustedAmounts[Field.OUTPUT], slippageAdjustedAmounts[Field.INPUT]],
+    [slippageAdjustedAmounts]
+  )
+  const isExactIn = trade?.tradeType === TradeType.EXACT_INPUT
+
   return (
     <LowerSectionWrapper {...boxProps}>
+      {/* Fees */}
       <RowFixed>
         <TYPE.black fontSize={14} fontWeight={500} color={theme.text1}>
           Fees (incl. gas costs)
@@ -238,6 +254,66 @@ function FeeGreaterMessage({ trade, fee, ...boxProps }: FeeGreaterMessageProp) {
         {formatSmart(realizedFee || fee, SHORT_PRECISION)} {(realizedFee || fee)?.currency.symbol}{' '}
         {feeFiatValue && <LightGreyText>{feeFiatDisplay}</LightGreyText>}
       </TYPE.black>
+
+      {trade && (
+        <>
+          {/* Slippage */}
+          <RowBetween>
+            <RowFixed>
+              <TYPE.black fontSize={14} fontWeight={500} color={theme.text2}>
+                <Trans>Slippage tolerance</Trans>
+              </TYPE.black>
+              <MouseoverTooltipContent
+                bgColor={theme.bg3}
+                color={theme.text1}
+                content={
+                  <Trans>
+                    <p>Your slippage is MEV protected: all orders are submitted with tight spread (0.1%) on-chain.</p>
+                    <p>
+                      The slippage you pick here enables a resubmission of your order in case of unfavourable price
+                      movements.
+                    </p>
+                    <p>{INPUT_OUTPUT_EXPLANATION}</p>
+                  </Trans>
+                }
+              >
+                <StyledInfo />
+              </MouseoverTooltipContent>
+            </RowFixed>
+            <TYPE.black textAlign="right" fontSize={14} color={theme.text1}>
+              {allowedSlippage.toFixed(2)}%
+            </TYPE.black>
+          </RowBetween>
+
+          {/* Min/Max received */}
+          <RowFixed>
+            <TYPE.black fontSize={14} fontWeight={500} color={theme.text2}>
+              {trade.tradeType === TradeType.EXACT_INPUT ? (
+                <Trans>Minimum received (incl. fee)</Trans>
+              ) : (
+                <Trans>Maximum sent (incl. fee)</Trans>
+              )}
+            </TYPE.black>
+            {
+              /*showHelpers &&*/ <MouseoverTooltipContent
+                content={getMinimumReceivedTooltip(allowedSlippage, isExactIn)}
+                bgColor={theme.bg1}
+                color={theme.text1}
+              >
+                <StyledInfo />
+              </MouseoverTooltipContent>
+            }
+          </RowFixed>
+          <TYPE.black textAlign="right" fontSize={14} color={theme.text1}>
+            {/* {trade.tradeType === TradeType.EXACT_INPUT
+              ? `${trade.minimumAmountOut(allowedSlippage).toSignificant(6)} ${trade.outputAmount.currency.symbol}`
+              : `${trade.maximumAmountIn(allowedSlippage).toSignificant(6)} ${trade.inputAmount.currency.symbol}`} */}
+            {isExactIn
+              ? `${formatSmart(slippageOut) || '-'} ${trade.outputAmount.currency.symbol}`
+              : `${formatSmart(slippageIn) || '-'} ${trade.inputAmount.currency.symbol}`}
+          </TYPE.black>
+        </>
+      )}
     </LowerSectionWrapper>
   )
 }
@@ -362,7 +438,7 @@ const SwapButton = ({ children, showLoading, showButton = false }: SwapButtonPro
 export default function Swap(props: RouteComponentProps) {
   return (
     <SwapModWrapper
-      FeeGreaterMessage={FeeGreaterMessage}
+      TradeBasicDetails={TradeBasicDetails}
       EthWethWrapMessage={EthWethWrapMessage}
       SwitchToWethBtn={SwitchToWethBtn}
       FeesExceedFromAmountMessage={FeesExceedFromAmountMessage}

@@ -91,7 +91,7 @@ export const StyledInfo = styled(Info)`
 
 export default function Swap({
   history,
-  FeeGreaterMessage,
+  TradeBasicDetails,
   EthWethWrapMessage,
   SwitchToWethBtn,
   FeesExceedFromAmountMessage,
@@ -663,7 +663,7 @@ export default function Swap({
                       </ClickableText>
                     </RowBetween>
                   )}
-                  {(isFeeGreater || trade) && fee && <FeeGreaterMessage fee={fee} trade={trade} />}
+                  {(isFeeGreater || trade) && fee && <TradeBasicDetails fee={fee} trade={trade} />}
                 </AutoColumn>
                 {/* ETH exactIn && wrapCallback returned us cb */}
                 {isNativeIn && onWrap && (
