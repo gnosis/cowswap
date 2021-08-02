@@ -32,7 +32,7 @@ import { Trans } from '@lingui/macro'
 import TradePrice from 'components/swap/TradePrice'
 import TradeGp from 'state/swap/TradeGp'
 import { useUSDCValue } from 'hooks/useUSDCPrice'
-import { computeTradePriceBreakdown } from 'components/swap/TradeSummary/TradeSummaryMod'
+import { computeTradePriceBreakdown, RowSlippage } from 'components/swap/TradeSummary/TradeSummaryMod'
 import { TradeType } from '@uniswap/sdk'
 import { getMinimumReceivedTooltip } from 'utils/tooltips'
 import { useExpertModeManager, useUserSlippageToleranceWithDefault } from 'state/user/hooks'
@@ -259,32 +259,7 @@ function TradeBasicDetails({ trade, fee, ...boxProps }: TradeBasicDetailsProp) {
       {isExpertMode && trade && (
         <>
           {/* Slippage */}
-          <RowBetween>
-            <RowFixed>
-              <TYPE.black fontSize={14} fontWeight={500} color={theme.text2}>
-                <Trans>Slippage tolerance</Trans>
-              </TYPE.black>
-              <MouseoverTooltipContent
-                bgColor={theme.bg3}
-                color={theme.text1}
-                content={
-                  <Trans>
-                    <p>Your slippage is MEV protected: all orders are submitted with tight spread (0.1%) on-chain.</p>
-                    <p>
-                      The slippage you pick here enables a resubmission of your order in case of unfavourable price
-                      movements.
-                    </p>
-                    <p>{INPUT_OUTPUT_EXPLANATION}</p>
-                  </Trans>
-                }
-              >
-                <StyledInfo />
-              </MouseoverTooltipContent>
-            </RowFixed>
-            <TYPE.black textAlign="right" fontSize={14} color={theme.text1}>
-              {allowedSlippage.toFixed(2)}%
-            </TYPE.black>
-          </RowBetween>
+          <RowSlippage allowedSlippage={allowedSlippage} />
 
           {/* Min/Max received */}
           <RowFixed>
@@ -306,9 +281,6 @@ function TradeBasicDetails({ trade, fee, ...boxProps }: TradeBasicDetailsProp) {
             }
           </RowFixed>
           <TYPE.black textAlign="right" fontSize={14} color={theme.text1}>
-            {/* {trade.tradeType === TradeType.EXACT_INPUT
-              ? `${trade.minimumAmountOut(allowedSlippage).toSignificant(6)} ${trade.outputAmount.currency.symbol}`
-              : `${trade.maximumAmountIn(allowedSlippage).toSignificant(6)} ${trade.inputAmount.currency.symbol}`} */}
             {isExactIn
               ? `${formatSmart(slippageOut) || '-'} ${trade.outputAmount.currency.symbol}`
               : `${formatSmart(slippageIn) || '-'} ${trade.inputAmount.currency.symbol}`}
