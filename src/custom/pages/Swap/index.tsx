@@ -35,7 +35,7 @@ import { useUSDCValue } from 'hooks/useUSDCPrice'
 import { computeTradePriceBreakdown } from 'components/swap/TradeSummary/TradeSummaryMod'
 import { TradeType } from '@uniswap/sdk'
 import { getMinimumReceivedTooltip } from 'utils/tooltips'
-import { useUserSlippageToleranceWithDefault } from 'state/user/hooks'
+import { useExpertModeManager, useUserSlippageToleranceWithDefault } from 'state/user/hooks'
 import { computeSlippageAdjustedAmounts } from 'utils/prices'
 import { V2_SWAP_DEFAULT_SLIPPAGE } from 'hooks/useSwapSlippageTolerance'
 import { Field } from 'state/swap/actions'
@@ -234,6 +234,7 @@ function TradeBasicDetails({ trade, fee, ...boxProps }: TradeBasicDetailsProp) {
     [slippageAdjustedAmounts]
   )
   const isExactIn = trade?.tradeType === TradeType.EXACT_INPUT
+  const [isExpertMode] = useExpertModeManager()
 
   return (
     <LowerSectionWrapper {...boxProps}>
@@ -255,7 +256,7 @@ function TradeBasicDetails({ trade, fee, ...boxProps }: TradeBasicDetailsProp) {
         {feeFiatValue && <LightGreyText>{feeFiatDisplay}</LightGreyText>}
       </TYPE.black>
 
-      {trade && (
+      {isExpertMode && trade && (
         <>
           {/* Slippage */}
           <RowBetween>
