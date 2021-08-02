@@ -67,8 +67,8 @@ export interface RowReceivedAfterSlippageProps {
 export function RowReceivedAfterSlippage({
   trade,
   allowedSlippage,
-  fontSize,
-  fontWeight,
+  fontSize = 14,
+  fontWeight = 500,
   rowHeight,
   showHelpers = true,
 }: RowReceivedAfterSlippageProps) {
