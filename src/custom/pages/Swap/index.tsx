@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { RouteComponentProps } from 'react-router-dom'
 import styled, { DefaultTheme, ThemeContext } from 'styled-components'
 import { Currency, CurrencyAmount, Token } from '@uniswap/sdk-core'
@@ -32,14 +32,10 @@ import { Trans } from '@lingui/macro'
 import TradePrice from 'components/swap/TradePrice'
 import TradeGp from 'state/swap/TradeGp'
 import { useUSDCValue } from 'hooks/useUSDCPrice'
-import { computeTradePriceBreakdown, RowSlippage } from 'components/swap/TradeSummary/TradeSummaryMod'
-import { TradeType } from '@uniswap/sdk'
-import { getMinimumReceivedTooltip } from 'utils/tooltips'
+import { computeTradePriceBreakdown } from 'components/swap/TradeSummary/TradeSummaryMod'
 import { useExpertModeManager, useUserSlippageToleranceWithDefault } from 'state/user/hooks'
-import { computeSlippageAdjustedAmounts } from 'utils/prices'
 import { V2_SWAP_DEFAULT_SLIPPAGE } from 'hooks/useSwapSlippageTolerance'
-import { Field } from 'state/swap/actions'
-import { INPUT_OUTPUT_EXPLANATION } from 'constants/index'
+import { RowReceivedAfterSlippage, RowSlippage } from '@src/custom/components/swap/TradeSummary'
 
 interface TradeBasicDetailsProp extends BoxProps {
   trade?: TradeGp
@@ -228,12 +224,6 @@ function TradeBasicDetails({ trade, fee, ...boxProps }: TradeBasicDetailsProp) {
   const feeFiatDisplay = `(≈$${formatSmart(feeFiatValue, FIAT_PRECISION)})`
 
   const allowedSlippage = useUserSlippageToleranceWithDefault(V2_SWAP_DEFAULT_SLIPPAGE)
-  const slippageAdjustedAmounts = computeSlippageAdjustedAmounts(trade, allowedSlippage)
-  const [slippageOut, slippageIn] = useMemo(
-    () => [slippageAdjustedAmounts[Field.OUTPUT], slippageAdjustedAmounts[Field.INPUT]],
-    [slippageAdjustedAmounts]
-  )
-  const isExactIn = trade?.tradeType === TradeType.EXACT_INPUT
   const [isExpertMode] = useExpertModeManager()
 
   return (
@@ -262,29 +252,7 @@ function TradeBasicDetails({ trade, fee, ...boxProps }: TradeBasicDetailsProp) {
           <RowSlippage allowedSlippage={allowedSlippage} />
 
           {/* Min/Max received */}
-          <RowFixed>
-            <TYPE.black fontSize={14} fontWeight={500} color={theme.text2}>
-              {trade.tradeType === TradeType.EXACT_INPUT ? (
-                <Trans>Minimum received (incl. fee)</Trans>
-              ) : (
-                <Trans>Maximum sent (incl. fee)</Trans>
-              )}
-            </TYPE.black>
-            {
-              /*showHelpers &&*/ <MouseoverTooltipContent
-                content={getMinimumReceivedTooltip(allowedSlippage, isExactIn)}
-                bgColor={theme.bg1}
-                color={theme.text1}
-              >
-                <StyledInfo />
-              </MouseoverTooltipContent>
-            }
-          </RowFixed>
-          <TYPE.black textAlign="right" fontSize={14} color={theme.text1}>
-            {isExactIn
-              ? `${formatSmart(slippageOut) || '-'} ${trade.outputAmount.currency.symbol}`
-              : `${formatSmart(slippageIn) || '-'} ${trade.inputAmount.currency.symbol}`}
-          </TYPE.black>
+          <RowReceivedAfterSlippage trade={trade} allowedSlippage={allowedSlippage} showHelpers={true} />
         </>
       )}
     </LowerSectionWrapper>
