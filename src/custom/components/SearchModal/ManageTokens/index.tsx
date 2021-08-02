@@ -5,10 +5,8 @@ import Card from 'components/Card'
 import ImportRow from 'components/SearchModal/ImportRow'
 import ManageTokensMod, { ManageTokensProps } from './ManageTokensMod'
 import { CurrencyModalView } from 'components/SearchModal/CurrencySearchModal'
-import { RowFixed, RowBetween } from 'components/Row'
+import Row, { RowFixed, RowBetween } from 'components/Row'
 import { ButtonText, LinkIcon } from 'theme'
-import { SearchInput, Separator } from '@src/components/SearchModal/styleds'
-import { transparentize } from 'polished'
 
 export type ImportTokensRowProps = Omit<ManageTokensProps, 'ImportTokensRow'> & {
   theme: DefaultTheme
@@ -21,16 +19,8 @@ export const Wrapper = styled.div`
   position: relative;
   padding-bottom: 80px;
 
-  ${SearchInput} {
-    border: 1px solid ${({ theme }) => transparentize(0.7, theme.text1)}};
-  }
-
-  ${SearchInput}:focus {
-      border-color: ${({ theme }) => theme.primary1}};
-  }
-
-  ${Separator} {
-    background: ${({ theme }) => transparentize(0.7, theme.text1)};
+  ${Row} > div {
+    margin: 0;
   }
 
   ${RowBetween} > div {
