@@ -25,7 +25,7 @@ import { /* Column, */ AutoColumn } from 'components/Column'
 import CurrencyInputPanel from 'components/CurrencyInputPanel'
 import CurrencyLogo from 'components/CurrencyLogo'
 import Loader from 'components/Loader'
-import { /* Row, */ AutoRow, RowBetween /* RowFixed */ } from 'components/Row'
+import { /* Row, */ AutoRow /*RowBetween, RowFixed */ } from 'components/Row'
 // import BetterTradeLink from 'components/swap/BetterTradeLink'
 import confirmPriceImpactWithoutFee from 'components/swap/confirmPriceImpactWithoutFee'
 import ConfirmSwapModal from 'components/swap/ConfirmSwapModal'
@@ -47,7 +47,7 @@ import { /* useToggledVersion, */ Version } from 'hooks/useToggledVersion'
 import { useUSDCValue } from 'hooks/useUSDCPrice'
 import useWrapCallback, { WrapType } from 'hooks/useWrapCallback'
 import { useActiveWeb3React } from 'hooks/web3'
-import { useWalletModalToggle, useToggleSettingsMenu } from 'state/application/hooks'
+import { useWalletModalToggle /*, useToggleSettingsMenu */ } from 'state/application/hooks'
 import { Field } from 'state/swap/actions'
 import {
   useDefaultsFromURLSearch,
@@ -136,7 +136,7 @@ export default function Swap({
   const toggleWalletModal = useWalletModalToggle()
 
   // for expert mode
-  const toggleSettings = useToggleSettingsMenu()
+  // const toggleSettings = useToggleSettingsMenu()
   const [isExpertMode] = useExpertModeManager()
 
   // get version from the url
