@@ -1845,10 +1845,10 @@
     "@gnosis.pm/dex-contracts" "^0.5.0"
     bignumber.js "^9.0.0"
 
-"@gnosis.pm/gp-v2-contracts@^0.0.1-alpha.20":
-  version "0.0.1-alpha.20"
-  resolved "https://registry.yarnpkg.com/@gnosis.pm/gp-v2-contracts/-/gp-v2-contracts-0.0.1-alpha.20.tgz#8a53a1495c9dc356080b3ec3ec4f29808726952b"
-  integrity sha512-+R+JKMbzC4SDEdbg86yRbWEBom5ZW0eRGfvNCJ3qUg5KSNKJvA/2bCYHpfWBiQ7fETKHyYH2mlO3XziWplwa2A==
+"@gnosis.pm/gp-v2-contracts@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@gnosis.pm/gp-v2-contracts/-/gp-v2-contracts-1.0.1.tgz#42a71f0d136981734da9d4b7eac3f2bd7771141c"
+  integrity sha512-YR6FGMGn+pkoSXLwMAtBD7PoXbOU4Lgf/tgiTgxdF08uLCL8z30RkA6Q1EBFy3zw5fuBK5HiEl9JnORIbyE+ag==
 
 "@hapi/address@2.x.x":
   version "2.1.4"
