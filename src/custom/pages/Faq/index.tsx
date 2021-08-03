@@ -319,7 +319,7 @@ export default function Faq() {
             form.
           </p>
           <p>
-            Follow <a href="https://twitter.com/mevprotection">@MEVProtection</a> in Twitter to be up to date!
+            Follow <a href="https://twitter.com/mevprotection">@MEVProtection</a> on Twitter to be up to date!
           </p>
           <h3 id="what-is-cowswap-s-fee-model">What is CowSwap’s fee model?</h3>
           <p>
