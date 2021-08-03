@@ -23,6 +23,7 @@ export interface CardComponentProps extends Pick<ImportProps, 'list'> {
 }
 
 const Wrapper = styled.div`
+<<<<<<< HEAD
   > div {
     height: 100%;
   }
@@ -31,6 +32,8 @@ const Wrapper = styled.div`
     overflow-y: scroll;
   `}
 
+=======
+>>>>>>> f03bfccbd5d65ca865ce7586adcd0cc7b599bccb
   ${AutoColumn} > ${AutoColumn} > svg {
     stroke: ${({ theme }) => theme.red1};
   }
@@ -38,6 +41,7 @@ const Wrapper = styled.div`
   ${RowFixed} > svg {
     stroke: ${({ theme }) => theme.red1};
   }
+<<<<<<< HEAD
 
   ${PaddedColumn} {
     ${({ theme }) => theme.mediaWidth.upToSmall`
@@ -46,6 +50,8 @@ const Wrapper = styled.div`
       background: ${({ theme }) => theme.bg1};
     `}
   }
+=======
+>>>>>>> f03bfccbd5d65ca865ce7586adcd0cc7b599bccb
 `
 
 function CardComponent({ theme, key, token, chainId, list }: CardComponentProps) {
