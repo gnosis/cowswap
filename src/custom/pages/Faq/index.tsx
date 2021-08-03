@@ -309,7 +309,7 @@ export default function Faq() {
           <h3 id="does-cowswap-have-a-token">Does CowSwap have a token?</h3>
           <p>
             There is currently no CowSwap specific token, however, the community has expressed their desire to
-            participate in this exciting project. This is why there is an ongoing discussion in the{' '}
+            participate in this exciting project. That is why there is an ongoing discussion in the{' '}
             <a href="https://forum.gnosis.io/c/gnosis-protocol">Forum</a> and{' '}
             <a href="https://chat.cowswap.exchange">Discord</a> about possibility of creating one, so make sure your
             voice is heard!
