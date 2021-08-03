@@ -8,8 +8,9 @@ import { CurrencySearch as CurrencySearchMod, CurrencySearchProps } from './Curr
 import { DefaultTheme } from 'styled-components'
 import { SearchInput, Separator } from '@src/components/SearchModal/styleds'
 import { transparentize } from 'polished'
+import Column from '@src/components/Column'
 
-export const ContentWrapper = styled.div`
+export const ContentWrapper = styled(Column)`
   width: 100%;
   flex: 1 1;
   position: relative;

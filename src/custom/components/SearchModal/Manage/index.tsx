@@ -16,6 +16,7 @@ export const Wrapper = styled.div`
   ${SearchInput} {
     border: 1px solid ${({ theme }) => transparentize(0.7, theme.text1)}};
   }
+  
   ${SearchInput}:focus {
     border-color: ${({ theme }) => theme.primary1}};
   }

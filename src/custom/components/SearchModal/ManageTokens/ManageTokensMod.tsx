@@ -17,14 +17,14 @@ import useTheme from 'hooks/useTheme'
 import { Trans } from '@lingui/macro'
 
 import { CurrencyModalView } from 'components/SearchModal/CurrencySearchModal'
-import { Wrapper, ImportTokensRowProps } from '.' // mod
+import { ImportTokensRowProps } from '.' // mod
 
-// const Wrapper = styled.div`
-//   width: 100%;
-//   height: calc(100% - 60px);
-//   position: relative;
-//   padding-bottom: 80px;
-// `
+const Wrapper = styled.div`
+  width: 100%;
+  height: calc(100% - 60px);
+  position: relative;
+  padding-bottom: 80px;
+`
 
 const Footer = styled.div`
   position: absolute;

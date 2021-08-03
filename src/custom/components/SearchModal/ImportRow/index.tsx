@@ -13,6 +13,8 @@ interface ImportRowProps {
 }
 
 const Wrapper = styled.div`
+  width: 100%;
+
   ${TokenSection} > div > div {
     flex-flow: column wrap;
     align-items: flex-start;
