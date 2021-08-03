@@ -29,6 +29,11 @@ const Wrapper = styled.div`
     stroke: ${({ theme }) => theme.text2};
   }
 
+  ${TokenSection} ${AutoRow} {
+    flex-flow: column wrap;
+    align-items: flex-start;
+  }
+
   ${AutoRow} > div {
     color: ${({ theme }) => theme.text1};
     margin: 0;
