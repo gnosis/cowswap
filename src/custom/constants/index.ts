@@ -22,7 +22,7 @@ export const PERCENTAGE_PRECISION = 2
 
 export const LONG_LOAD_THRESHOLD = 2000
 
-export const APP_ID = Number(process.env.REACT_APP_ID)
+export const METADATA_DIGEST_HEX = Number(process.env.REACT_METADATA_DIGEST_HEX)
 
 export const PRODUCTION_URL = 'cowswap.exchange'
 
