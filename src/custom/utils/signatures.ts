@@ -7,7 +7,7 @@ import {
   OrderCancellation as OrderCancellationGp,
   Signature,
   TypedDataV3Signer,
-  // IntChainIdTypedDataV4Signer,
+  IntChainIdTypedDataV4Signer,
 } from '@gnosis.pm/gp-v2-contracts'
 import { SupportedChainId as ChainId } from 'constants/chains'
 import { GP_SETTLEMENT_CONTRACT_ADDRESS } from 'constants/index'
@@ -164,10 +164,9 @@ async function _signPayload(
       case 'v3':
         _signer = new TypedDataV3Signer(signer)
         break
-      // TODO: This signer was remove from the SC npm package. Is it because this was a temporal fix because MM was broken in the past?
-      // case 'int_v4':
-      //   _signer = new IntChainIdTypedDataV4Signer(signer)
-      //   break
+      case 'int_v4':
+        _signer = new IntChainIdTypedDataV4Signer(signer)
+        break
       default:
         _signer = signer
     }
