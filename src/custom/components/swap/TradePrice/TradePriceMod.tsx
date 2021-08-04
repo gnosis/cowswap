@@ -4,6 +4,7 @@ import { useContext } from 'react'
 import { Text } from 'rebass'
 import styled, { ThemeContext } from 'styled-components'
 import { formatSmart } from 'utils/format' // mod
+import { LONG_PRECISION } from 'constants/index' // mod
 import { LightGreyText } from 'pages/Swap'
 
 export interface TradePriceProps {
@@ -43,6 +44,8 @@ export default function TradePrice({ price, showInverted, fiatValue, setShowInve
     formattedPrice = 'N/A'
   }
 
+  const fullFormattedPrice = showInverted ? price?.toFixed(LONG_PRECISION) : price?.invert().toFixed(LONG_PRECISION)
+
   const label = showInverted ? `${price.quoteCurrency?.symbol}` : `${price.baseCurrency?.symbol} `
   const labelInverted = showInverted ? `${price.baseCurrency?.symbol} ` : `${price.quoteCurrency?.symbol}`
   const flipPrice = useCallback(() => setShowInverted(!showInverted), [setShowInverted, showInverted])
@@ -59,7 +62,7 @@ export default function TradePrice({ price, showInverted, fiatValue, setShowInve
         <Text fontWeight={500} fontSize={14} color={theme.text1}>
           {/* {text} */}
           <LightGreyText>{baseText}</LightGreyText>
-          <span>{quoteText}</span>
+          <span title={`${fullFormattedPrice || '-'} ${label}`}>{quoteText}</span>
           {fiatValue && <LightGreyText>{fiatText}</LightGreyText>}
         </Text>
       </div>
