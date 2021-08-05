@@ -4,7 +4,9 @@ import styled from 'styled-components'
 import { ContentLink } from 'components/ContentLink'
 import { DISCORD_LINK } from 'constants/index'
 import { Link } from 'react-router-dom'
-import { ExternalLink } from 'theme'
+import { ExternalLink as ExternalLinkTheme } from 'theme'
+
+const ExternalLink = styled(ExternalLink)``
 
 const Wrapper = styled.div`
   #table-container {
@@ -53,9 +55,9 @@ const Wrapper = styled.div`
   }
 
   ${Content} {
-    > div a,
-    > p a {
+    > div ${ExternalLink}, > p ${ExternalLink} {
       color: ${({ theme }) => theme.text1};
+      text-decoration: underline;
       transition: color 0.2s ease-in-out;
 
       &:hover {
@@ -63,7 +65,7 @@ const Wrapper = styled.div`
       }
     }
 
-    > div > a {
+    > div > ${ExternalLink} {
       font-size: 16px;
       font-weight: bold;
     }
