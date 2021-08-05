@@ -6,7 +6,7 @@ import { DISCORD_LINK } from 'constants/index'
 import { Link } from 'react-router-dom'
 import { ExternalLink as ExternalLinkTheme } from 'theme'
 
-const ExternalLink = styled(ExternalLink)``
+const ExternalLink = styled(ExternalLinkTheme)``
 
 const Wrapper = styled.div`
   #table-container {
@@ -58,6 +58,7 @@ const Wrapper = styled.div`
     > div ${ExternalLink}, > p ${ExternalLink} {
       color: ${({ theme }) => theme.text1};
       text-decoration: underline;
+      font-weight: 400;
       transition: color 0.2s ease-in-out;
 
       &:hover {
