@@ -5,7 +5,6 @@ import { WalletInfo, SUPPORTED_WALLETS as SUPPORTED_WALLETS_UNISWAP } from 'cons
 
 import JSBI from 'jsbi'
 import { SupportedChainId as ChainId } from 'constants/chains'
-import { FormatSmartOptions } from 'utils/format'
 
 // default allowed slippage, in bips
 export const INITIAL_ALLOWED_SLIPPAGE = 50
