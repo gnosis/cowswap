@@ -4,7 +4,6 @@ import { useContext } from 'react'
 import { Text } from 'rebass'
 import styled, { ThemeContext } from 'styled-components'
 import { formatSmart } from 'utils/format' // mod
-import { PRICE_FORMAT_OPTIONS } from 'constants/index' // mod
 import { LightGreyText } from 'pages/Swap'
 
 export interface TradePriceProps {
@@ -39,9 +38,7 @@ export default function TradePrice({ price, showInverted, fiatValue, setShowInve
   let formattedPrice: string
   try {
     // formattedPrice = showInverted ? price.toSignificant(4) : price.invert()?.toSignificant(4)
-    formattedPrice = showInverted
-      ? formatSmart(price, ...PRICE_FORMAT_OPTIONS) ?? 'N/A'
-      : formatSmart(price.invert(), ...PRICE_FORMAT_OPTIONS) ?? 'N/A'
+    formattedPrice = showInverted ? formatSmart(price) ?? 'N/A' : formatSmart(price.invert()) ?? 'N/A'
   } catch (error) {
     formattedPrice = 'N/A'
   }
