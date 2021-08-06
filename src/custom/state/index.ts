@@ -42,7 +42,7 @@ const reducers = {
   orders,
   price,
   gas,
-  userMod, // So we dont modify the already existing "user" state inherited from uniswap
+  userMod, // contains user state. Created to not modify the already existing "user" state inherited from uniswap
 }
 
 const PERSISTED_KEYS: string[] = ['user', 'transactions', 'orders', 'lists', 'gas', 'userMod']

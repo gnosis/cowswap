@@ -7,7 +7,6 @@ import ReactMarkdown from 'react-markdown'
 import { useAnnouncementVisible, useCloseAnnouncement } from '@src/custom/state/userMod/hooks'
 import { hashCode } from 'utils/misc'
 import useFetchFile from 'hooks/useFetchFile'
-// import useFetchFile from 'hooks/useFetchFile'
 
 export * from './URLWarningMod'
 
