@@ -1,6 +1,6 @@
 import { createReducer } from '@reduxjs/toolkit'
 import { updateAppDataHash, updateReferralAddress } from './actions'
-import { METADATA_DIGEST_HEX } from '/constants'
+import { METADATA_DIGEST_HEX } from 'constants/index'
 
 export interface AffiliateState {
   referralAddress?: string
