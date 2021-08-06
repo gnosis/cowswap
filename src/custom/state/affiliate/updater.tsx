@@ -12,7 +12,7 @@ export default function ReferralLinkUpdater() {
 
   useEffect(() => {
     if (referralAddress && account) {
-      dispatch(updateReferralAddress({ referralAddress: referralAddress }))
+      dispatch(updateReferralAddress(referralAddress))
     }
   }, [account, referralAddress, dispatch])
 

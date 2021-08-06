@@ -1,16 +1,23 @@
 import { createReducer } from '@reduxjs/toolkit'
-import { updateReferralAddress } from './actions'
+import { updateAppDataHash, updateReferralAddress } from './actions'
+import { METADATA_DIGEST_HEX } from '/constants'
 
-export interface AffiliateLinkState {
-  referralAddress: string
+export interface AffiliateState {
+  referralAddress?: string
+  appDataHash?: string
 }
 
-export const initialState: AffiliateLinkState = {
+export const initialState: AffiliateState = {
   referralAddress: '',
+  appDataHash: METADATA_DIGEST_HEX,
 }
 
 export default createReducer(initialState, (builder) =>
-  builder.addCase(updateReferralAddress, (state, action) => {
-    state.referralAddress = action.payload.referralAddress
-  })
+  builder
+    .addCase(updateReferralAddress, (state, action) => {
+      state.referralAddress = action.payload
+    })
+    .addCase(updateAppDataHash, (state, action) => {
+      state.appDataHash = action.payload
+    })
 )
