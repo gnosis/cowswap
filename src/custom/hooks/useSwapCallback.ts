@@ -190,5 +190,6 @@ export function useSwapCallback(
     deadline,
     wrapEther,
     addPendingOrder,
+    appDataHash,
   ])
 }
