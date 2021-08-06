@@ -309,7 +309,7 @@ function isOrderUnfillable(order: Order, price: Required<PriceInformation>): boo
     `[UnfillableOrdersUpdater::isOrderUnfillable] ${order.kind} [${order.id.slice(0, 8)}]:`,
     orderPrice.toSignificant(10),
     currentPrice.toSignificant(10),
-    percentageDifference.toFixed(4),
+    `${percentageDifference.toFixed(4)}%`,
     percentageDifference.greaterThan(OUT_OF_MARKET_PRICE_DELTA_PERCENTAGE)
   )
 
