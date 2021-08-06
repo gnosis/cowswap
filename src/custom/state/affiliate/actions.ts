@@ -1,3 +1,3 @@
 import { createAction } from '@reduxjs/toolkit'
 
-export const updateReferrerAddress = createAction<{ referrer: string }>('affiliate/updateReferrerAddress')
+export const updateReferralAddress = createAction<{ referralAddress: string }>('affiliate/updateReferralAddress')
