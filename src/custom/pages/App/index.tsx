@@ -10,27 +10,8 @@ import TermsAndConditions from 'pages/TermsAndConditions'
 import About from 'pages/About'
 import Faq from 'pages/Faq'
 import CowGame from 'pages/CowGame'
-import useMarkdown from '@src/custom/hooks/useMarkdown'
 
-// function hashCode(text: string) {
-//   let hash = 0,
-//     i,
-//     chr
-//   if (text.length === 0) return hash
-//   for (i = 0; i < text.length; i++) {
-//     chr = text.charCodeAt(i)
-//     hash = (hash << 5) - hash + chr
-//     hash |= 0 // Convert to 32bit integer
-//   }
-
-//   return hash
-// }
-
-// https://github.com/gnosis/cowswap/blob/announcements/docs/announcements.md
-const ANNOUNCEMENTS_MARKDOWN_URL =
-  'https://raw.githubusercontent.com/gnosis/cowswap/announcements/docs/announcements.md'
-
-export const Wrapper = styled(AppMod)<{ announcementText: string; children?: React.ReactNode }>``
+export const Wrapper = styled(AppMod)``
 
 export const BodyWrapper = styled.div`
   display: flex;
@@ -49,11 +30,8 @@ export const BodyWrapper = styled.div`
 `
 
 export default function App() {
-  // Ger announcement if there's one
-  const announcementText = useMarkdown(ANNOUNCEMENTS_MARKDOWN_URL).trim()
-
   return (
-    <Wrapper announcementText={announcementText}>
+    <Wrapper>
       <Switch>
         <Route exact strict path="/swap" component={Swap} />
         <Route exact strict path="/swap/:outputCurrency" component={RedirectToSwap} />
