@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { PRODUCTION_URL } from 'constants/index'
-import { AlertTriangle, X } from 'react-feather'
+import { AlertTriangle } from 'react-feather'
 import URLWarningUni, { StyledClose } from './URLWarningMod'
 import ReactMarkdown from 'react-markdown'
 import { useAnnouncementVisible, useCloseAnnouncement } from '@src/custom/state/userMod/hooks'
