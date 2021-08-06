@@ -1,3 +1,3 @@
 import { createAction } from '@reduxjs/toolkit'
 
-export const closeAnnouncementWarning = createAction<{ contentHash: number }>('app/toggleURLWarning')
+export const closeAnnouncement = createAction<{ contentHash: number }>('userMod/closeAnnouncement')

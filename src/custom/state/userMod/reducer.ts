@@ -1,19 +1,19 @@
 import { createReducer } from '@reduxjs/toolkit'
-import { closeAnnouncementWarning } from './actions'
+import { closeAnnouncement } from './actions'
 
 export interface UserModState {
-  announcementMessageVisible: {
+  announcementVisible: {
     [contentHash: number]: boolean
   }
 }
 
 export const initialState: UserModState = {
-  announcementMessageVisible: {},
+  announcementVisible: {},
 }
 
 export default createReducer(initialState, (builder) =>
-  builder.addCase(closeAnnouncementWarning, (state, action) => {
+  builder.addCase(closeAnnouncement, (state, action) => {
     const { contentHash } = action.payload
-    state.announcementMessageVisible[contentHash] = false
+    state.announcementVisible[contentHash] = false
   })
 )

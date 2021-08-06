@@ -2,8 +2,9 @@ import React from 'react'
 import styled from 'styled-components'
 
 import { AlertTriangle, X } from 'react-feather'
-import { useURLWarningToggle /*useURLWarningVisible*/ } from 'state/user/hooks'
+import { useURLWarningToggle, useURLWarningVisible } from 'state/user/hooks'
 import { isMobile } from 'react-device-detect'
+import { useAnnouncementVisible } from '@src/custom/state/userMod/hooks'
 
 const PhishAlert = styled.div<{ isActive: any }>`
   width: 100%;
@@ -31,19 +32,13 @@ export const StyledClose = styled(X)`
   }
 `
 
-export default function URLWarning({ url, children }: { url: string; children?: React.ReactNode }) {
+export default function URLWarning({ url, announcement }: { url: string; announcement?: React.ReactNode }) {
   const toggleURLWarning = useURLWarningToggle()
-  const showURLWarning = true // || useURLWarningVisible()
+  const showURLWarning = useURLWarningVisible()
+  const showAnnouncement = !!announcement
 
-  if (children) {
-    return (
-      <PhishAlert isActive={showURLWarning}>
-        <div style={{ display: 'flex' }}>
-          <AlertTriangle style={{ marginRight: 6 }} size={12} /> {children}
-        </div>
-        <StyledClose size={12} onClick={toggleURLWarning} />
-      </PhishAlert>
-    )
+  if (showAnnouncement) {
+    return <PhishAlert isActive={showAnnouncement}>{announcement}</PhishAlert>
   }
 
   return isMobile ? (

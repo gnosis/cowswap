@@ -1,13 +1,29 @@
 import { useCallback } from 'react'
 import { AppState } from 'state/index'
-import { closeAnnouncementWarning } from './actions'
+import { closeAnnouncement } from './actions'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 
-export function useAnnouncementWarningVisible(contentHash: number): boolean {
-  return useAppSelector((state: AppState) => state.userMod.announcementMessageVisible[contentHash] || true)
+export function useAnnouncementVisible(contentHash?: number): boolean {
+  return useAppSelector((state: AppState) => {
+    // No hash, no visible
+    if (!contentHash) {
+      return false
+    }
+
+    // If the hash has been closed, will return false,
+    // if its a new hash returns true (visible)
+    return state.userMod.announcementVisible[contentHash] || true
+  })
 }
 
-export function useCloseAnnouncementWarning(contentHash: number): () => void {
+export function useCloseAnnouncement(): (contentHash?: number) => void {
   const dispatch = useAppDispatch()
-  return useCallback(() => dispatch(closeAnnouncementWarning({ contentHash })), [dispatch, contentHash])
+  return useCallback(
+    (contentHash?: number) => {
+      if (contentHash) {
+        dispatch(closeAnnouncement({ contentHash })), [dispatch, contentHash]
+      }
+    },
+    [dispatch]
+  )
 }
