@@ -45,7 +45,7 @@ const reducers = {
   userMod, // So we dont modify the already existing "user" state inherited from uniswap
 }
 
-const PERSISTED_KEYS: string[] = ['user', 'transactions', 'orders', 'lists', 'gas']
+const PERSISTED_KEYS: string[] = ['user', 'transactions', 'orders', 'lists', 'gas', 'userMod']
 
 const store = configureStore({
   reducer: reducers,
