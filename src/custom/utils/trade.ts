@@ -23,6 +23,7 @@ export interface PostOrderParams {
   validTo: number
   recipient: string
   recipientAddressOrName: string | null
+  appDataHash: string
   addPendingOrder: (order: AddUnserialisedPendingOrderParams) => void
 }
 
@@ -66,6 +67,7 @@ export async function sendOrder(params: PostOrderParams): Promise<string> {
     account,
     signer,
     recipient,
+    appDataHash,
   } = params
 
   // fee adjusted input amount
@@ -83,7 +85,7 @@ export async function sendOrder(params: PostOrderParams): Promise<string> {
     sellAmount,
     buyAmount,
     validTo,
-    appData: METADATA_DIGEST_HEX,
+    appData: appDataHash,
     feeAmount: feeAmount?.quotient.toString() || '0',
     kind,
     receiver,

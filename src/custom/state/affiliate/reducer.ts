@@ -4,11 +4,10 @@ import { METADATA_DIGEST_HEX } from 'constants/index'
 
 export interface AffiliateState {
   referralAddress?: string
-  appDataHash?: string
+  appDataHash: string
 }
 
 export const initialState: AffiliateState = {
-  referralAddress: '',
   appDataHash: METADATA_DIGEST_HEX,
 }
 
