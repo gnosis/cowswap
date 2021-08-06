@@ -18,7 +18,6 @@ export default function useFetchFile(filePath: string) {
           } else {
             setError(getErrorMessage(filePath, res))
           }
-          return res.text()
         })
         .catch((res) => {
           setError(`Error fetching file ${filePath} - status: ${res.statusText}`)
