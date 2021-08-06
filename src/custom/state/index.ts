@@ -18,6 +18,7 @@ import lists from './lists/reducer'
 import orders from './orders/reducer'
 import price from './price/reducer'
 import gas from 'state/gas/reducer'
+import userMod from 'state/userMod/reducer'
 import { updateVersion } from 'state/global/actions'
 
 import { popupMiddleware, soundMiddleware } from './orders/middleware'
@@ -41,6 +42,7 @@ const reducers = {
   orders,
   price,
   gas,
+  userMod, // So we dont modify the already existing "user" state inherited from uniswap
 }
 
 const PERSISTED_KEYS: string[] = ['user', 'transactions', 'orders', 'lists', 'gas']
