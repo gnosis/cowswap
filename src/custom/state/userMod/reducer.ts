@@ -3,7 +3,7 @@ import { closeAnnouncement } from './actions'
 
 export interface UserModState {
   announcementVisible: {
-    [contentHash: number]: boolean
+    [contentHash: string]: boolean
   }
 }
 
@@ -12,8 +12,12 @@ export const initialState: UserModState = {
 }
 
 export default createReducer(initialState, (builder) =>
-  builder.addCase(closeAnnouncement, (state, action) => {
-    const { contentHash } = action.payload
-    state.announcementVisible[contentHash] = false
-  })
+  builder
+    /**
+     * Close announcement
+     */
+    .addCase(closeAnnouncement, (state, action) => {
+      const { contentHash } = action.payload
+      state.announcementVisible[contentHash] = false
+    })
 )
