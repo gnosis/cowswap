@@ -1,13 +1,13 @@
 import { createReducer } from '@reduxjs/toolkit'
 import { closeAnnouncement } from './actions'
 
-export interface UserModState {
+export interface ProfileState {
   announcementVisible: {
     [contentHash: string]: boolean
   }
 }
 
-export const initialState: UserModState = {
+export const initialState: ProfileState = {
   announcementVisible: {},
 }
 

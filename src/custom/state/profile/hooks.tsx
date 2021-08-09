@@ -3,7 +3,7 @@ import { closeAnnouncement } from './actions'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 
 export function useAnnouncementVisible(contentHash?: string): boolean {
-  const announcementVisible = useAppSelector((state) => state.userMod.announcementVisible)
+  const announcementVisible = useAppSelector((state) => state.profile.announcementVisible)
 
   // No hash, no visible
   if (!contentHash) {
