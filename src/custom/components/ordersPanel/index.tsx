@@ -1,7 +1,11 @@
-import React, { useRef } from 'react'
+import React, { useState, useRef, useMemo } from 'react'
 import styled from 'styled-components/macro'
 import { ReactComponent as Close } from 'assets/images/x.svg'
 import { useOnClickOutside } from 'hooks/useOnClickOutside'
+import AccountDetails from 'components/AccountDetails'
+import useRecentActivity, { TransactionAndOrder } from 'hooks/useRecentActivity'
+import { useWalletInfo } from 'hooks/useWalletInfo'
+import { OrderStatus } from 'state/orders/actions'
 
 const SideBar = styled.div<{ isOpen: boolean }>`
   display: ${({ isOpen }) => (isOpen ? 'flex' : 'none')};
@@ -46,6 +50,17 @@ const Wrapper = styled.div`
   overflow-y: auto;
 `
 
+const WALLET_VIEWS = {
+  OPTIONS: 'options',
+  OPTIONS_SECONDARY: 'options_secondary',
+  ACCOUNT: 'account',
+  PENDING: 'pending',
+}
+
+const isPending = (data: TransactionAndOrder) => data.status === OrderStatus.PENDING
+const isConfirmed = (data: TransactionAndOrder) =>
+  data.status === OrderStatus.FULFILLED || data.status === OrderStatus.EXPIRED || data.status === OrderStatus.CANCELLED
+
 export interface OrdersPanelProps {
   ordersPanelOpen: boolean
   closeOrdersPanel: () => void
@@ -56,10 +71,44 @@ export default function OrdersPanel({ ordersPanelOpen, closeOrdersPanel }: Order
   const ref = useRef<HTMLDivElement | null>(null)
   useOnClickOutside(ref, ordersPanelOpen ? closeOrdersPanel : undefined)
 
+  const walletInfo = useWalletInfo()
+  const [walletView, setWalletView] = useState(WALLET_VIEWS.ACCOUNT)
+
+  // Returns all RECENT (last day) transaction and orders in 2 arrays: pending and confirmed
+  const allRecentActivity = useRecentActivity()
+
+  const { pendingActivity, confirmedActivity } = useMemo(() => {
+    // Separate the array into 2: PENDING and FULFILLED(or CONFIRMED)+EXPIRED
+    const pendingActivity = allRecentActivity.filter(isPending).map((data) => data.id)
+    const confirmedActivity = allRecentActivity.filter(isConfirmed).map((data) => data.id)
+
+    return {
+      pendingActivity,
+      confirmedActivity,
+    }
+  }, [allRecentActivity])
+
+  const { active, activeNetwork, ensName } = walletInfo
+  const ENSName = ensName
+
+  if (!activeNetwork && !active) {
+    return null
+  }
+
+  console.log(walletView)
+
   return (
     <SideBar ref={ref} isOpen={ordersPanelOpen}>
       <CloseIcon onClick={closeOrdersPanel} />
-      <Wrapper>- getModalContent() -</Wrapper>
+      <Wrapper>
+        <AccountDetails
+          ENSName={ENSName}
+          pendingTransactions={pendingActivity}
+          confirmedTransactions={confirmedActivity}
+          openOptions={() => setWalletView(WALLET_VIEWS.OPTIONS)}
+          closeOrdersPanel={closeOrdersPanel}
+        />
+      </Wrapper>
     </SideBar>
   )
 }
