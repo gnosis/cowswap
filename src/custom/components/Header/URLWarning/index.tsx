@@ -10,7 +10,8 @@ import useFetchFile from 'hooks/useFetchFile'
 
 export * from './URLWarningMod'
 
-// https://github.com/gnosis/cowswap/blob/announcements/docs/announcements.md
+// Announcement content: Modify this file to edit the announcement
+//  https://github.com/gnosis/cowswap/blob/announcements/docs/announcements.md
 const ANNOUNCEMENTS_MARKDOWN_URL =
   'https://raw.githubusercontent.com/gnosis/cowswap/announcements/docs/announcements.md'
 
