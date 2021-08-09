@@ -106,7 +106,7 @@ export default function OrdersPanel({ ordersPanelOpen, closeOrdersPanel }: Order
           pendingTransactions={pendingActivity}
           confirmedTransactions={confirmedActivity}
           openOptions={() => setWalletView(WALLET_VIEWS.OPTIONS)}
-          closeOrdersPanel={closeOrdersPanel}
+          toggleWalletModal={closeOrdersPanel}
         />
       </Wrapper>
     </SideBar>
