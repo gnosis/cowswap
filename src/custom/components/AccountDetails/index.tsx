@@ -147,7 +147,7 @@ interface AccountDetailsProps {
   confirmedTransactions: string[]
   ENSName?: string
   openOptions: () => void
-  toggleWalletModal: () => void
+  closeOrdersPanel: () => void
 }
 
 export default function AccountDetails({
@@ -155,7 +155,7 @@ export default function AccountDetails({
   confirmedTransactions,
   ENSName,
   openOptions,
-  toggleWalletModal,
+  closeOrdersPanel,
 }: AccountDetailsProps) {
   const { chainId, account, connector } = useActiveWeb3React()
   const walletInfo = useWalletInfo()
@@ -175,7 +175,7 @@ export default function AccountDetails({
   return (
     <Wrapper>
       <UpperSection>
-        <CloseIcon onClick={toggleWalletModal}>
+        <CloseIcon onClick={() => closeOrdersPanel}>
           <CloseColor />
         </CloseIcon>
         <HeaderRow>Account</HeaderRow>
