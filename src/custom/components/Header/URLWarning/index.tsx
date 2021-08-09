@@ -4,7 +4,7 @@ import { PRODUCTION_URL } from 'constants/index'
 import { AlertTriangle } from 'react-feather'
 import URLWarningUni, { StyledClose } from './URLWarningMod'
 import ReactMarkdown from 'react-markdown'
-import { useAnnouncementVisible, useCloseAnnouncement } from '@src/custom/state/userMod/hooks'
+import { useAnnouncementVisible, useCloseAnnouncement } from 'state/userMod/hooks'
 import { hashCode } from 'utils/misc'
 import useFetchFile from 'hooks/useFetchFile'
 
