@@ -144,6 +144,7 @@ export default function Header() {
   const nativeToken = chainId && (CHAIN_CURRENCY_LABELS[chainId] || 'ETH')
   const [darkMode, toggleDarkMode] = useDarkModeManager()
   const [ordersPanelOpen, setOrdersPanelOpen] = useState<boolean>(false)
+  const closeOrdersPanel = () => setOrdersPanelOpen(false)
 
   return (
     <HeaderModWrapper>
@@ -189,7 +190,7 @@ export default function Header() {
           <Menu />
         </HeaderElementWrap>
       </HeaderControls>
-      <OrdersPanel ordersPanelOpen={ordersPanelOpen} setOrdersPanelOpen={setOrdersPanelOpen} />
+      <OrdersPanel ordersPanelOpen={ordersPanelOpen} closeOrdersPanel={closeOrdersPanel} />
     </HeaderModWrapper>
   )
 }

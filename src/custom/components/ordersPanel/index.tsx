@@ -48,17 +48,17 @@ const Wrapper = styled.div`
 
 export interface OrdersPanelProps {
   ordersPanelOpen: boolean
-  setOrdersPanelOpen: React.Dispatch<React.SetStateAction<boolean>>
+  closeOrdersPanel: () => void
 }
 
-export default function OrdersPanel({ ordersPanelOpen, setOrdersPanelOpen }: OrdersPanelProps) {
+export default function OrdersPanel({ ordersPanelOpen, closeOrdersPanel }: OrdersPanelProps) {
   // Close sidebar if clicked/tapped outside
   const ref = useRef<HTMLDivElement | null>(null)
-  useOnClickOutside(ref, ordersPanelOpen ? () => setOrdersPanelOpen(false) : undefined)
+  useOnClickOutside(ref, ordersPanelOpen ? closeOrdersPanel : undefined)
 
   return (
     <SideBar ref={ref} isOpen={ordersPanelOpen}>
-      <CloseIcon onClick={() => setOrdersPanelOpen(false)} />
+      <CloseIcon onClick={closeOrdersPanel} />
       <Wrapper>- getModalContent() -</Wrapper>
     </SideBar>
   )
