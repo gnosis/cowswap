@@ -312,7 +312,7 @@ export default function Faq() {
           </p>
 
           <p>
-            With this upgrade, CowSwap reaches a much more stable version, with the code having been carefully tested,
+            With this upgrade, CowSwap evolves into its most stable, performant form: the code has been thoroughly and carefully tested,
             peer-reviewed and fully{' '}
             <ExternalLink
               href="https://github.com/gnosis/gp-v2-contracts/blob/main/audits/GnosisProtocolV2May2021.pdf"
