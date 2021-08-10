@@ -428,7 +428,7 @@ export default function Faq() {
               amounts are pending to be defined by the GnosisDAO or GnosisProtocolDAO.
             </li>
             <li>
-              Once the tokens have been staked (locked up), GnosisDAO/GnosisProtocolDAO has to vote to approve or reject
+              Once the tokens have been staked (locked up), GnosisDAO/GnosisProtocolDAO must vote to approve or reject
               the Ethereum address that will identify the solver. If the vote is successful, the solver Ethereum address
               will be included in the allowlist (verification) solvers contract.
             </li>
