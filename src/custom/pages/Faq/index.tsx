@@ -181,7 +181,7 @@ export default function Faq() {
           <p>CowSwap is the first trading interface built on top of Gnosis Protocol v2.</p>
           <p>
             It is a Meta DEX aggregator that allows you to buy and sell tokens using gas-less orders that are settled
-            peer-to-peer among its users or into any on-chain liquidity source while providing MEV protection.
+            peer-to-peer among its users, or into any on-chain liquidity source while providing MEV protection.
           </p>
 
           <h3 id="why-is-cowswap-a-meta-dex-aggregator">What makes CowSwap a &quot;Meta&quot; DEX aggregator?</h3>
