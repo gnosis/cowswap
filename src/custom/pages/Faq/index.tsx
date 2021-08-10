@@ -642,7 +642,7 @@ export default function Faq() {
             >
               Smart Contract Architecture
             </ExternalLink>
-            ). In order to allow that to happen, the trader has to first approve the GPv2 Vault Relayer contract to
+            ). In order to allow that to happen, the trader must first approve the GPv2 Vault Relayer contract to
             spend tokens on their behalf. The smart contract logic ensures that no token can be spent without
             deliberately signing an order for it.
           </p>
