@@ -26,8 +26,6 @@ import {
   MainWalletAction,
   // AccountDetailsProps,
   UpperSection,
-  CloseIcon,
-  CloseColor,
   HeaderRow,
   AccountSection,
   YourAccount,
@@ -146,16 +144,14 @@ interface AccountDetailsProps {
   pendingTransactions: string[]
   confirmedTransactions: string[]
   ENSName?: string
-  openOptions: () => void
-  closeOrdersPanel: () => void
+  toggleWalletModal: () => void
 }
 
 export default function AccountDetails({
   pendingTransactions,
   confirmedTransactions,
   ENSName,
-  openOptions,
-  closeOrdersPanel,
+  toggleWalletModal,
 }: AccountDetailsProps) {
   const { chainId, account, connector } = useActiveWeb3React()
   const walletInfo = useWalletInfo()
@@ -175,9 +171,6 @@ export default function AccountDetails({
   return (
     <Wrapper>
       <UpperSection>
-        <CloseIcon onClick={() => closeOrdersPanel}>
-          <CloseColor />
-        </CloseIcon>
         <HeaderRow>Account</HeaderRow>
         <AccountSection>
           <YourAccount>
@@ -195,12 +188,7 @@ export default function AccountDetails({
                       <Trans>Disconnect</Trans>
                     </WalletAction>
                   )}
-                  <WalletAction
-                    style={{ fontSize: '.825rem', fontWeight: 400 }}
-                    onClick={() => {
-                      openOptions()
-                    }}
-                  >
+                  <WalletAction style={{ fontSize: '.825rem', fontWeight: 400 }} onClick={toggleWalletModal}>
                     <Trans>Change</Trans>
                   </WalletAction>
                 </div>

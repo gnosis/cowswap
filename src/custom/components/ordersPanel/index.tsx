@@ -1,4 +1,4 @@
-import React, { useState, useRef, useMemo } from 'react'
+import React, { useRef, useMemo } from 'react'
 import styled from 'styled-components/macro'
 import { ReactComponent as Close } from 'assets/images/x.svg'
 import { useOnClickOutside } from 'hooks/useOnClickOutside'
@@ -6,6 +6,7 @@ import AccountDetails from 'components/AccountDetails'
 import useRecentActivity, { TransactionAndOrder } from 'hooks/useRecentActivity'
 import { useWalletInfo } from 'hooks/useWalletInfo'
 import { OrderStatus } from 'state/orders/actions'
+import { useWalletModalToggle } from 'state/application/hooks'
 
 const SideBar = styled.div<{ isOpen: boolean }>`
   display: ${({ isOpen }) => (isOpen ? 'flex' : 'none')};
@@ -22,14 +23,16 @@ const SideBar = styled.div<{ isOpen: boolean }>`
 
   ${({ theme }) => theme.mediaWidth.upToMedium`    
     width: 100%;
-    height: 100%;
   `};
 `
 
 const CloseIcon = styled(Close)`
   position: absolute;
-  right: 1rem;
+  right: 14px;
   top: 14px;
+  width: 24px;
+  height: 24px;
+  z-index: 10;
 
   &:hover {
     cursor: pointer;
@@ -50,13 +53,6 @@ const Wrapper = styled.div`
   overflow-y: auto;
 `
 
-const WALLET_VIEWS = {
-  OPTIONS: 'options',
-  OPTIONS_SECONDARY: 'options_secondary',
-  ACCOUNT: 'account',
-  PENDING: 'pending',
-}
-
 const isPending = (data: TransactionAndOrder) => data.status === OrderStatus.PENDING
 const isConfirmed = (data: TransactionAndOrder) =>
   data.status === OrderStatus.FULFILLED || data.status === OrderStatus.EXPIRED || data.status === OrderStatus.CANCELLED
@@ -72,7 +68,7 @@ export default function OrdersPanel({ ordersPanelOpen, closeOrdersPanel }: Order
   useOnClickOutside(ref, ordersPanelOpen ? closeOrdersPanel : undefined)
 
   const walletInfo = useWalletInfo()
-  const [walletView, setWalletView] = useState(WALLET_VIEWS.ACCOUNT)
+  const toggleWalletModal = useWalletModalToggle()
 
   // Returns all RECENT (last day) transaction and orders in 2 arrays: pending and confirmed
   const allRecentActivity = useRecentActivity()
@@ -95,18 +91,16 @@ export default function OrdersPanel({ ordersPanelOpen, closeOrdersPanel }: Order
     return null
   }
 
-  console.log(walletView)
-
   return (
     <SideBar ref={ref} isOpen={ordersPanelOpen}>
       <CloseIcon onClick={closeOrdersPanel} />
+
       <Wrapper>
         <AccountDetails
           ENSName={ENSName}
           pendingTransactions={pendingActivity}
           confirmedTransactions={confirmedActivity}
-          openOptions={() => setWalletView(WALLET_VIEWS.OPTIONS)}
-          closeOrdersPanel={closeOrdersPanel}
+          toggleWalletModal={toggleWalletModal}
         />
       </Wrapper>
     </SideBar>
