@@ -307,7 +307,7 @@ export default function Faq() {
           <h3 id="is-cowswap-secure-to-use">Is CowSwap secure to use?</h3>
 
           <p>
-            On August 11th, 2021 CowSwap is no longer in alpha, as it moves to a final stable version. The underlying
+            As of August 11th, 2021, CowSwap is no longer in alpha and moves to a final, stable version. The underlying
             Gnosis Protocol Smart contracts have been upgraded to integrate tightly with Balancer v2.
           </p>
 
