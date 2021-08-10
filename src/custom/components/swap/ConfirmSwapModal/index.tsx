@@ -7,7 +7,8 @@ import { formatSmart } from 'utils/format'
 
 export * from './ConfirmSwapModalMod'
 
-function buildPendingText(trade: TradeGp | undefined): JSX.Element {
+function PendingText(props: { trade: TradeGp | undefined }): JSX.Element {
+  const { trade } = props
   const inputAmount = trade?.inputAmount
   const inputSymbol = inputAmount?.currency?.symbol
   const outputAmount = trade?.outputAmount
@@ -27,6 +28,8 @@ function buildPendingText(trade: TradeGp | undefined): JSX.Element {
   )
 }
 
-export default function ConfirmSwapModal(props: Omit<Parameters<typeof ConfirmSwapModalMod>[0], 'buildPendingText'>) {
-  return <ConfirmSwapModalMod {...props} buildPendingText={buildPendingText} />
+export default function ConfirmSwapModal(
+  props: Omit<Parameters<typeof ConfirmSwapModalMod>[0], 'PendingTextComponent'>
+) {
+  return <ConfirmSwapModalMod {...props} PendingTextComponent={PendingText} />
 }

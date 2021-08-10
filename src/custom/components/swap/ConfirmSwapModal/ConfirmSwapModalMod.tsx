@@ -47,7 +47,7 @@ export default function ConfirmSwapModal({
   isOpen,
   attemptingTxn,
   txHash,
-  buildPendingText, // mod
+  PendingTextComponent, // mod
 }: {
   isOpen: boolean
   //   trade: V2Trade<Currency, Currency, TradeType> | V3Trade<Currency, Currency, TradeType> | undefined
@@ -62,7 +62,7 @@ export default function ConfirmSwapModal({
   onConfirm: () => void
   swapErrorMessage: ReactNode | undefined
   onDismiss: () => void
-  buildPendingText: (trade: TradeGp | undefined) => JSX.Element // mod
+  PendingTextComponent: (props: { trade: TradeGp | undefined }) => JSX.Element // mod
 }) {
   const showAcceptChanges = useMemo(
     /* 
@@ -130,7 +130,7 @@ export default function ConfirmSwapModal({
       attemptingTxn={attemptingTxn}
       hash={txHash}
       content={confirmationContent}
-      pendingText={buildPendingText(trade) /*pendingText*/}
+      pendingText={<PendingTextComponent trade={trade} /> /*pendingText*/}
       currencyToAdd={trade?.outputAmount.currency}
     />
   )
