@@ -9,6 +9,7 @@ import { Signer } from 'ethers'
 import { RADIX_DECIMAL, SHORT_PRECISION } from 'constants/index'
 import { SupportedChainId as ChainId } from 'constants/chains'
 import { formatSmart } from 'utils/format'
+import { getTrades } from 'utils/operator/operatorApi'
 
 export interface PostOrderParams {
   account: string
@@ -147,4 +148,10 @@ export async function sendOrderCancellation(params: OrderCancellationParams): Pr
   })
 
   cancelPendingOrder({ chainId, id: orderId })
+}
+
+export async function hasTrades(chainId: ChainId, address: string): Promise<boolean> {
+  const trades = await getTrades(chainId, address)
+
+  return trades.length > 0
 }
