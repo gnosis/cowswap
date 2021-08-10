@@ -417,7 +417,7 @@ export default function Faq() {
             In GPv2, instead of using a central operator or a constant function market maker to determine trade
             settlements, the protocol uses a party called "solver", whom is the party in charge of providing the settlement
             solution to the batch auctions. Solvers compete against each other to submit the most optimal batch
-            settlement solution and each time a solver submits a successful batch settlement solution, the protocol
+            settlement solution. Each time a solver submits a successful batch settlement solution, the protocol
             rewards them with tokens, meaning that the protocol rewards solvers for solving the batch auction
             optimization problem. Anyone can become a solver, although, in order to become one, there are certain
             requirements:
