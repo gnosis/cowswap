@@ -51,7 +51,7 @@ export function formatSmart(
   const precision = value instanceof CurrencyAmount ? value.currency.decimals : 0
   const amount = value instanceof CurrencyAmount ? value.quotient.toString() : value.toFixed(decimalsToShow)
   // Take the min(decimalsToShow, token decimals) because a token can have less decimals than the what we want to show
-  const smallLimitPrecision = Math.min(decimalsToShow, precision || DEFAULT_DECIMALS)
+  const smallLimitPrecision = Math.min(decimalsToShow, precision ?? DEFAULT_DECIMALS)
 
   return _formatSmart({
     amount,
