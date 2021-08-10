@@ -3,6 +3,7 @@ import { ExternalLink } from 'theme/index'
 import HashLink from 'components/HashLink'
 
 export { ExternalLink } from 'theme/index'
+const SCROLL_OFFSET = 24
 
 export interface LinkRendererProps {
   href: string
@@ -28,8 +29,7 @@ export function LinkScrollable(props: LinkRendererProps): JSX.Element {
 
   const scrollWithOffset = (el: HTMLElement) => {
     const yCoordinate = el.getBoundingClientRect().top + window.pageYOffset
-    const yOffset = -24
-    window.scrollTo({ top: yCoordinate + yOffset, behavior: 'smooth' })
+    window.scrollTo({ top: yCoordinate - SCROLL_OFFSET, behavior: 'smooth' })
   }
 
   return (
