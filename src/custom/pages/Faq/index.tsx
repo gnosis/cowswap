@@ -321,7 +321,7 @@ export default function Faq() {
             >
               audited
             </ExternalLink>
-            . Although this can be seen as a step forward in terms of security, as with other crypto protocols or dapps,
+            . Whilst CowSwap has taken a major step forward in terms of security and stability, as with other crypto protocols or dapps,
             it&#39;s recommended to use it at <strong>your own risk</strong>.
           </p>
         </Content>
