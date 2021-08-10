@@ -2,11 +2,11 @@ import React, { ReactNode } from 'react'
 import ReactMarkdownHtml from 'react-markdown/with-html'
 import ReactMarkdown, { ReactMarkdownPropsBase } from 'react-markdown'
 import useFetchFile from 'hooks/useFetchFile'
-import { HeadingRenderer } from './renderers'
+import { HeadingRenderer, LinkScrollable, Link } from './renderers'
 import Page, { Title, Content } from 'components/Page'
 import styled from 'styled-components'
 import { WithClassName } from 'types'
-import { LinkScrollable, Link } from 'components/Link'
+import {} from 'comp'
 
 interface MarkdownParams extends WithClassName {
   contentFile: string
@@ -20,7 +20,7 @@ export function Markdown(props: { children?: string }) {
   return <ReactMarkdown renderers={{ link: Link }}>{children}</ReactMarkdown>
 }
 
-const MarkdownContent = (props: ReactMarkdownPropsBase & { children: string }) => (
+const CustomMarkdownContent = (props: ReactMarkdownPropsBase & { children: string }) => (
   <ReactMarkdownHtml {...props} renderers={{ heading: HeadingRenderer, link: LinkScrollable }} allowDangerousHtml />
 )
 
@@ -30,16 +30,9 @@ export function MarkdownPage({ contentFile, title, className }: MarkdownParams) 
     <Wrapper className={className}>
       {title && <Title>{title}</Title>}
       <Content>
-        {file && <MarkdownContent>{file}</MarkdownContent>}
-        {error && <MarkdownContent>{error}</MarkdownContent>}
+        {file && <CustomMarkdownContent>{file}</CustomMarkdownContent>}
+        {error && <CustomMarkdownContent>{error}</CustomMarkdownContent>}
       </Content>
-      {/* <ScrollToTop
-        styleProps={{
-          bottom: '8.8%',
-          right: 'calc(50% - 4.6rem)',
-          background: '#9bd7c2'
-        }}
-      /> */}
     </Wrapper>
   )
 }
