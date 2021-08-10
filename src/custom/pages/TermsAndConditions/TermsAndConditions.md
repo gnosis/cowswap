@@ -293,7 +293,7 @@ By using our Platform you hereby agree, represent and warrant that: 
 1.  We do not exclude or limit our liability to you where it would be
     unlawful to do so. This includes liability for death or personal
     injury caused by our negligence or fraud.
-2.  <span style="color: #ff0000;">**YOU USE THIS PLATFORM AT YOUR OWN
+2.  <em>**YOU USE THIS PLATFORM AT YOUR OWN
     RISK AND YOU ASSUME FULL RESPONSIBILITY FOR SUCH USE. TO THE MAXIMUM
     EXTENT PERMITTED BY APPLICABLE LAW, WE EXCLUDE ALL IMPLIED
     CONDITIONS, WARRANTIES, REPRESENTATIONS OR OTHER TERMS THAT MAY
@@ -305,7 +305,7 @@ By using our Platform you hereby agree, represent and warrant that: 
     CONTENT DISPLAYED ON OUR PLATFORM. WE WILL NOT BE LIABLE FOR LOSS OF
     PROFITS, SALES, BUSINESS, OR REVENUE, BUSINESS INTERRUPTION,
     ANTICIPATED SAVINGS, BUSINESS OPPORTUNITY, GOODWILL OR REPUTATION OR
-    ANY INDIRECT OR CONSEQUENTIAL LOSS OR DAMAGE.**</span>
+    ANY INDIRECT OR CONSEQUENTIAL LOSS OR DAMAGE.**</em>
 
 **HOW TO RESOLVE COMPLAINTS AND DISPUTES**
 
