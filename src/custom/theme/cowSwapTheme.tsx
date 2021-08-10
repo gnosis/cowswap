@@ -120,6 +120,12 @@ function themeVariables(darkMode: boolean, colorsTheme: Colors) {
         content: '680px',
       },
     },
+    neumorphism: {
+      boxShadow: css`
+        box-shadow: inset 2px -2px 4px ${darkMode ? '#1d4373' : '#ffffff'},
+          inset -2px 2px 4px ${darkMode ? '#021E34' : 'rgb(162 200 216)'};
+      `,
+    },
     header: {
       border: 'none',
       menuFlyout: {
