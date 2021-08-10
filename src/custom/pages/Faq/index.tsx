@@ -419,7 +419,7 @@ export default function Faq() {
             solution to the batch auctions. Solvers compete against each other to submit the most optimal batch
             settlement solution. Each time a solver submits a successful batch settlement solution, the protocol
             rewards them with tokens, meaning that the protocol rewards solvers for solving the batch auction
-            optimization problem. Anyone can become a solver, although, in order to become one, there are certain
+            optimization problem. By meeting certain requirements, anyone can become a solver:
             requirements:
           </p>
           <ol>
