@@ -180,8 +180,8 @@ export default function Faq() {
           <h3 id="what-is-cowswap">What is CowSwap?</h3>
           <p>CowSwap is the first trading interface built on top of Gnosis Protocol v2.</p>
           <p>
-            It is a Meta DEX aggregator that allows you to buy and sell tokens using gas-less orders that are settled peer-to-peer among its users or
-            into any on-chain liquidity source while providing MEV protection.
+            It is a Meta DEX aggregator that allows you to buy and sell tokens using gas-less orders that are settled
+            peer-to-peer among its users or into any on-chain liquidity source while providing MEV protection.
           </p>
 
           <h3 id="why-is-cowswap-a-meta-dex-aggregator">What makes CowSwap a &quot;Meta&quot; DEX aggregator?</h3>
@@ -307,12 +307,13 @@ export default function Faq() {
           <h3 id="is-cowswap-secure-to-use">Is CowSwap secure to use?</h3>
 
           <p>
-            On August 11th, 2021 CowSwap is no longer in alpha, as it moves to a final stable version. 
-            The underlying Gnosis Protocol Smart contracts have been upgraded to integrate tightly with Balancer v2.
+            On August 11th, 2021 CowSwap is no longer in alpha, as it moves to a final stable version. The underlying
+            Gnosis Protocol Smart contracts have been upgraded to integrate tightly with Balancer v2.
           </p>
 
           <p>
-            With this upgrade, CowSwap reaches a much more stable version, with the code having been carefully tested, peer-reviewed and fully{' '}
+            With this upgrade, CowSwap reaches a much more stable version, with the code having been carefully tested,
+            peer-reviewed and fully{' '}
             <ExternalLink
               href="https://github.com/gnosis/gp-v2-contracts/blob/main/audits/GnosisProtocolV2May2021.pdf"
               target="_blank"
@@ -320,8 +321,8 @@ export default function Faq() {
             >
               audited
             </ExternalLink>
-            . Although this can be seen as a step forward in terms of security, as with other crypto protocols or dapps, it&#39;s recommended to use it
-            at <strong>your own risk</strong>.
+            . Although this can be seen as a step forward in terms of security, as with other crypto protocols or dapps,
+            it&#39;s recommended to use it at <strong>your own risk</strong>.
           </p>
         </Content>
       </Page>
@@ -413,20 +414,23 @@ export default function Faq() {
           </p>
           <h3 id="what-are-gnosis-protocol-v2-solvers">What are Gnosis Protocol v2 Solvers?</h3>
           <p>
-            In GPv2, instead of using a central operator or a constant function market maker to determine trade settlements, 
-            the protocol uses a party called solver, who is the party in charge of providing the settlement solution to the batch auctions. 
-            Solvers compete against each other to submit the most optimal batch settlement solution and each time a solver submits 
-            a successful batch settlement solution, the protocol rewards them with tokens, meaning that the protocol rewards solvers 
-            for solving the batch auction optimization problem. Anyone can become a solver, although, in order to become one, 
-            there are certain requirements:
+            In GPv2, instead of using a central operator or a constant function market maker to determine trade
+            settlements, the protocol uses a party called solver, who is the party in charge of providing the settlement
+            solution to the batch auctions. Solvers compete against each other to submit the most optimal batch
+            settlement solution and each time a solver submits a successful batch settlement solution, the protocol
+            rewards them with tokens, meaning that the protocol rewards solvers for solving the batch auction
+            optimization problem. Anyone can become a solver, although, in order to become one, there are certain
+            requirements:
           </p>
           <ol>
-            <li>To become a solver, an Ethereum address needs to deposit a bond in the form of tokens. Asset type and amounts are pending 
-              to be defined by the GnosisDAO or GnosisProtocolDAO.</li>
             <li>
-              Once the tokens have been staked (locked up), GnosisDAO/GnosisProtocolDAO has to vote to approve or reject the Ethereum address 
-              that will identify the solver. If the vote is successful, the solver Ethereum address will be included in the allowlist (verification) 
-              solvers contract.
+              To become a solver, an Ethereum address needs to deposit a bond in the form of tokens. Asset type and
+              amounts are pending to be defined by the GnosisDAO or GnosisProtocolDAO.
+            </li>
+            <li>
+              Once the tokens have been staked (locked up), GnosisDAO/GnosisProtocolDAO has to vote to approve or reject
+              the Ethereum address that will identify the solver. If the vote is successful, the solver Ethereum address
+              will be included in the allowlist (verification) solvers contract.
             </li>
             <li>
               Additionally, a solver must have the technical knowledge to create the appropriate batch settlement
@@ -631,12 +635,16 @@ export default function Faq() {
           <p>
             When an order is executed, the settlement contract withdraws the sell amount from the trader’s token balance
             via the GPv2 Vault Relayer (for more information read{' '}
-            <ExternalLink href="https://github.com/gnosis/gp-v2-contracts/blob/main/src/contracts/GPv2VaultRelayer.sol" target="_blank" rel="noopener noreferrer">
+            <ExternalLink
+              href="https://github.com/gnosis/gp-v2-contracts/blob/main/src/contracts/GPv2VaultRelayer.sol"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               Smart Contract Architecture
             </ExternalLink>
-            ). In order to allow that to happen, the trader has to first approve the GPv2 Vault Relayer contract to spend
-            tokens on their behalf. The smart contract logic ensures that no token can be spent without deliberately
-            signing an order for it.
+            ). In order to allow that to happen, the trader has to first approve the GPv2 Vault Relayer contract to
+            spend tokens on their behalf. The smart contract logic ensures that no token can be spent without
+            deliberately signing an order for it.
           </p>
 
           <h3 id="why-do-i-sign-a-message-instead-of-sending-a-transaction-to-place-an-order">
