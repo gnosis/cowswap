@@ -33,13 +33,6 @@ export function MarkdownPage({ contentFile, title, className }: MarkdownParams) 
         {file && <MarkdownContent>{file}</MarkdownContent>}
         {error && <MarkdownContent>{error}</MarkdownContent>}
       </Content>
-      {/* <ScrollToTop
-        styleProps={{
-          bottom: '8.8%',
-          right: 'calc(50% - 4.6rem)',
-          background: '#9bd7c2'
-        }}
-      /> */}
     </Wrapper>
   )
 }
