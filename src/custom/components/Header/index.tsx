@@ -27,7 +27,7 @@ import { SHORT_PRECISION } from 'constants/index'
 import { useDarkModeManager } from 'state/user/hooks'
 import { darken } from 'polished'
 import TwitterImage from 'assets/cow-swap/twitter.svg'
-import OrdersPanel from '@src/custom/components/OrdersPanel'
+import OrdersPanel from 'components/OrdersPanel'
 
 import { supportedChainId } from 'utils/supportedChainId'
 import { formatSmart } from 'utils/format'
