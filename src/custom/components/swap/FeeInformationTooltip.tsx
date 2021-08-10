@@ -80,7 +80,7 @@ export default function FeeInformationTooltip(props: FeeInformationTooltipProps)
 
   const [symbol, fullFeeAmount] = useMemo(() => {
     const amount = trade?.[type === 'From' ? 'inputAmount' : 'outputAmount']
-    return amount ? [amount.currency.symbol, amount.toFixed(amount.currency.decimals)] : []
+    return amount ? [amount.currency.symbol || '', amount.toFixed(amount.currency.decimals) || '-'] : []
   }, [trade, type])
 
   if (!trade || !showHelper) return null
@@ -122,7 +122,7 @@ export default function FeeInformationTooltip(props: FeeInformationTooltipProps)
           }
         />
       </span>
-      <FeeAmountAndFiat title={`${fullFeeAmount || '-'} ${symbol || ''}`}>
+      <FeeAmountAndFiat title={`${fullFeeAmount} ${symbol}`}>
         {amountAfterFees} {showFiat && fiatValue && <small>≈ ${formatSmart(fiatValue, FIAT_PRECISION)}</small>}
       </FeeAmountAndFiat>
     </FeeInformationTooltipWrapper>
