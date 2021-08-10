@@ -13,7 +13,7 @@ import { OrderID } from 'utils/operator'
 
 import { fetchOrderPopupData, OrderLogPopupMixData } from 'state/orders/updaters/utils'
 
-export function EventUpdater(): null {
+export function PendingOrdersUpdater(): null {
   const { chainId } = useActiveWeb3React()
 
   const pending = usePendingOrders({ chainId })
