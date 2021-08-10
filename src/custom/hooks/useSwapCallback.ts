@@ -18,7 +18,7 @@ import TradeGp from 'state/swap/TradeGp'
 import { useUserTransactionTTL } from '@src/state/user/hooks'
 import { BigNumber } from 'ethers'
 import { GpEther as ETHER } from 'constants/tokens'
-import { useAppDataHash } from '../state/affiliate/hooks'
+import { useAppDataHash } from 'state/affiliate/hooks'
 
 const MAX_VALID_TO_EPOCH = BigNumber.from('0xFFFFFFFF').toNumber() // Max uint32 (Feb 07 2106 07:28:15 GMT+0100)
 
