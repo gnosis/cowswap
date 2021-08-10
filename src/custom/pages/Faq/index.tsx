@@ -652,7 +652,7 @@ export default function Faq() {
           </h3>
 
           <p>
-            Signing a message incurs no gas cost and is, therefore free to the user. When placing an order, the protocol
+            Signing a message incurs no gas cost and is therefore free. When placing an order, the protocol
             cannot guarantee that the order will be executed (e.g. the price could change to no longer satisfy the
             specified limit). By only signing the intent to trade, we can ensure that users only incur a cost when their
             trade is successfully executed.
