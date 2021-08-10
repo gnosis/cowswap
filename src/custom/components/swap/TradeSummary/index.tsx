@@ -101,11 +101,11 @@ export function RowReceivedAfterSlippage({
   )
   const isExactIn = trade.tradeType === TradeType.EXACT_INPUT
 
-  const [outAmount, outSymbol] = isExactIn
+  const [swapAmount, symbol] = isExactIn
     ? [slippageOut, trade.outputAmount.currency.symbol]
     : [slippageIn, trade.inputAmount.currency.symbol]
 
-  const fullOutAmount = outAmount?.toFixed(outAmount?.currency.decimals) || '-'
+  const fullOutAmount = swapAmount?.toFixed(swapAmount?.currency.decimals) || '-'
 
   return (
     <RowBetween height={rowHeight}>
@@ -128,11 +128,11 @@ export function RowReceivedAfterSlippage({
         )}
       </RowFixed>
 
-      <TYPE.black textAlign="right" fontSize={fontSize} color={theme.text1} title={`${fullOutAmount} ${outSymbol}`}>
+      <TYPE.black textAlign="right" fontSize={fontSize} color={theme.text1} title={`${fullOutAmount} ${symbol}`}>
         {/* {trade.tradeType === TradeType.EXACT_INPUT
             ? `${trade.minimumAmountOut(allowedSlippage).toSignificant(6)} ${trade.outputAmount.currency.symbol}`
             : `${trade.maximumAmountIn(allowedSlippage).toSignificant(6)} ${trade.inputAmount.currency.symbol}`} */}
-        {`${formatSmart(outAmount) || '-'} ${outSymbol}`}
+        {`${formatSmart(swapAmount) || '-'} ${symbol}`}
       </TYPE.black>
     </RowBetween>
   )
