@@ -117,13 +117,16 @@ const Summary = styled.div`
   display: flex;
   flex-flow: column wrap;
   color: ${({ theme }) => theme.text2};
+
   > b {
     color: inherit;
-    font-weight: 500;
+    font-weight: normal;
     line-height: 1;
     font-size: 15px;
     margin: 0 0 5px;
+    text-transform: capitalize;
   }
+
   > div {
     display: flex;
     flex-flow: column wrap;
@@ -131,16 +134,18 @@ const Summary = styled.div`
     opacity: 0.75;
     font-size: 13px;
   }
+
   > div > span {
     display: grid;
     color: inherit;
     grid-template-rows: 1fr;
-    grid-template-columns: 100px 1fr;
+    grid-template-columns: 90px 1fr;
     ${({ theme }) => theme.mediaWidth.upToMedium`
       grid-template-columns: 1fr;
       margin: 0 16px 8px 0;
     `};
   }
+
   > div > span > b,
   > div > span > i {
     position: relative;
@@ -152,19 +157,22 @@ const Summary = styled.div`
     align-items: center;
     font-style: normal;
   }
+
+  > div > span > b {
+    padding: 0;
+    font-weight: 500;
+    opacity: 0.8;
+  }
+
   > div > span > i {
     word-break: break-all;
     white-space: break-spaces;
   }
-  > div > span > b {
-    padding: 0;
-    font-weight: 500;
-  }
-  > div > span:nth-of-type(1) > b:before,
-  > div > span:nth-of-type(2) > b:before {
+
+  > div > span > b:before {
     content: '▶';
     margin: 0 5px 0 0;
-    color: ${({ theme }) => theme.border2};
+    color: ${({ theme }) => theme.text2};
     font-size: 8px;
   }
 `
@@ -273,7 +281,7 @@ function ActivitySummary(params: { id: string; activityData: ReturnType<typeof u
 
   return (
     <Summary>
-      <b>{isOrder ? 'Swap order' : 'Transaction'} ↗</b>
+      <b>{isOrder ? `${orderSummary.kind} order` : 'Transaction'} ↗</b>
       <div>
         {isOrder ? (
           <>
@@ -286,7 +294,8 @@ function ActivitySummary(params: { id: string; activityData: ReturnType<typeof u
               <i>{orderSummary.to}</i>
             </span>
             <span>
-              <b>Valid to: {orderSummary.validTo}</b>
+              <b>Valid to</b>
+              <i>{orderSummary.validTo}</i>
             </span>
           </>
         ) : (

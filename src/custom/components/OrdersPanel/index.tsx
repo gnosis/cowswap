@@ -64,6 +64,12 @@ const CloseIcon = styled(Close)`
   }
 `
 
+const Wrapper = styled.div`
+  display: block;
+  height: 100%;
+  width: 100%;
+`
+
 const isPending = (data: TransactionAndOrder) => data.status === OrderStatus.PENDING
 const isConfirmed = (data: TransactionAndOrder) =>
   data.status === OrderStatus.FULFILLED || data.status === OrderStatus.EXPIRED || data.status === OrderStatus.CANCELLED
@@ -104,13 +110,15 @@ export default function OrdersPanel({ ordersPanelOpen, closeOrdersPanel }: Order
 
   return (
     <SideBar ref={ref} isOpen={ordersPanelOpen}>
-      <CloseIcon onClick={closeOrdersPanel} />
-      <AccountDetails
-        ENSName={ENSName}
-        pendingTransactions={pendingActivity}
-        confirmedTransactions={confirmedActivity}
-        toggleWalletModal={toggleWalletModal}
-      />
+      <Wrapper>
+        <CloseIcon onClick={closeOrdersPanel} />
+        <AccountDetails
+          ENSName={ENSName}
+          pendingTransactions={pendingActivity}
+          confirmedTransactions={confirmedActivity}
+          toggleWalletModal={toggleWalletModal}
+        />
+      </Wrapper>
     </SideBar>
   )
 }

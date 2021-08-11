@@ -1,6 +1,7 @@
 import styled from 'styled-components'
 import { CopyIcon } from 'components/AccountDetails/Copy'
 import { LinkStyledButton } from 'theme'
+import { NetworkCard as NetworkCardUni } from 'components/Header/HeaderMod'
 import {
   WalletName,
   AccountSection as AccountSectionMod,
@@ -38,6 +39,15 @@ export const Wrapper = styled.div`
     width: 100%;
     flex-flow: column wrap;
   }
+`
+
+export const NetworkCard = styled(NetworkCardUni)`
+  background-color: ${({ theme }) => theme.networkCard.background};
+  color: ${({ theme }) => theme.networkCard.text};
+  padding: 6px 8px;
+  font-size: 13px;
+  margin: 0 8px 0 0;
+  letter-spacing: 0.7px;
 `
 
 export const UpperSection = styled(UpperSectionMod)`
@@ -80,7 +90,7 @@ export const NoActivityMessage = styled.p`
 export const LowerSection = styled.div`
   background-color: ${({ theme }) => theme.bg2};
   border-radius: 0;
-  height: calc(100vh - 200px);
+  height: calc(100% - 200px);
   width: 100%;
   align-items: flex-start;
   justify-content: flex-start;

@@ -20,6 +20,7 @@ import Identicon from 'components/Identicon'
 import { ExternalLink as LinkIcon } from 'react-feather'
 import { LinkStyledButton } from 'theme'
 import { clearOrders } from 'state/orders/actions'
+import { NETWORK_LABELS } from 'components/Header'
 import {
   WalletName,
   MainWalletAction,
@@ -30,6 +31,7 @@ import {
   renderTransactions,
 } from './AccountDetailsMod'
 import {
+  NetworkCard,
   Wrapper,
   InfoCard,
   AccountGroupingRow,
@@ -41,6 +43,7 @@ import {
 } from './styled'
 import { ConnectedWalletInfo, useWalletInfo } from 'hooks/useWalletInfo'
 import { MouseoverTooltip } from 'components/Tooltip'
+import { supportedChainId } from 'utils/supportedChainId'
 
 type AbstractConnector = Pick<ReturnType<typeof useActiveWeb3React>, 'connector'>['connector']
 
@@ -144,7 +147,8 @@ export default function AccountDetails({
   ENSName,
   toggleWalletModal,
 }: AccountDetailsProps) {
-  const { chainId, account, connector } = useActiveWeb3React()
+  const { account, connector, chainId: connectedChainId } = useActiveWeb3React()
+  const chainId = supportedChainId(connectedChainId)
   const walletInfo = useWalletInfo()
   // const theme = useContext(ThemeContext)
   const dispatch = useDispatch<AppDispatch>()
@@ -165,21 +169,14 @@ export default function AccountDetails({
       <InfoCard>
         <AccountGroupingRow id="web3-account-identifier-row">
           <AccountControl>
-            {ENSName ? (
-              <>
-                <div>
-                  {getStatusIcon(connector, walletInfo)}
-                  <WalletNameAddress> {ENSName}</WalletNameAddress>
-                </div>
-              </>
-            ) : (
-              <>
-                <div>
-                  {getStatusIcon(connector, walletInfo)}
-                  <WalletNameAddress> {account && shortenAddress(account)}</WalletNameAddress>
-                </div>
-              </>
-            )}
+            <div>
+              {chainId && NETWORK_LABELS[chainId] && (
+                <NetworkCard title={NETWORK_LABELS[chainId]}>{NETWORK_LABELS[chainId]}</NetworkCard>
+              )}
+              {getStatusIcon(connector, walletInfo)}
+              <WalletNameAddress>{ENSName ? ENSName : account && shortenAddress(account)}</WalletNameAddress>
+            </div>
+
             <WalletActions>
               {formatConnectorName(connector, walletInfo)}
               <div>
