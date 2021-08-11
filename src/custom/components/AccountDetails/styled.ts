@@ -12,11 +12,12 @@ import {
 
 export const Wrapper = styled.div`
   display: flex;
-  flex-flow: row wrap;
+  flex-flow: column wrap;
   width: 100%;
   color: ${({ theme }) => theme.text1};
   padding: 0;
-  height: 100%;
+  height: auto;
+
   ${({ theme }) => theme.mediaWidth.upToMedium`padding: 42px 0 0;`};
 
   ${WalletName},
@@ -79,11 +80,10 @@ export const NoActivityMessage = styled.p`
 export const LowerSection = styled.div`
   background-color: ${({ theme }) => theme.bg2};
   border-radius: 0;
-  height: 100%;
+  height: calc(100vh - 200px);
   width: 100%;
   align-items: flex-start;
   justify-content: flex-start;
-  overflow-y: auto;
   padding: 0 0 100px;
 
   > span {
@@ -92,7 +92,7 @@ export const LowerSection = styled.div`
     padding: 8px 16px;
     border-bottom: 1px solid #d9e8ef;
     position: sticky;
-    top: 0;
+    top: 38px;
     background: rgb(255 255 255 / 60%);
     backdrop-filter: blur(5px);
     z-index: 10;

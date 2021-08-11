@@ -23,6 +23,7 @@ const SideBar = styled.div<{ isOpen: boolean }>`
   background: ${({ theme }) => theme.bg1};
   box-shadow: 0 0 100vh 100vw rgb(0 0 0 / 25%);
   cursor: default;
+  overflow-y: auto;
 
   ${({ theme }) => theme.mediaWidth.upToMedium`    
     width: 100%;
@@ -31,10 +32,13 @@ const SideBar = styled.div<{ isOpen: boolean }>`
 
 const CloseIcon = styled(Close)`
   z-index: 20;
+  position: sticky;
+  top: 0;
   width: 100%;
   height: 38px;
   padding: 10px 0;
   background: ${({ theme }) => theme.bg1};
+  transition: filter 0.2s ease-in-out;
 
   ${({ theme }) => theme.mediaWidth.upToMedium`
     top: 0;
@@ -52,7 +56,7 @@ const CloseIcon = styled(Close)`
 
   &:hover {
     cursor: pointer;
-    opacity: 0.6;
+    filter: saturate(0.5);
   }
 
   path {
