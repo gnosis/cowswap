@@ -13,11 +13,11 @@ import {
 
 export const Wrapper = styled.div`
   display: flex;
-  flex-flow: column wrap;
+  flex-flow: row wrap;
   width: 100%;
   color: ${({ theme }) => theme.text1};
   padding: 0;
-  height: auto;
+  height: 100%;
 
   ${({ theme }) => theme.mediaWidth.upToMedium`padding: 42px 0 0;`};
 
@@ -90,11 +90,10 @@ export const NoActivityMessage = styled.p`
 export const LowerSection = styled.div`
   background-color: ${({ theme }) => theme.bg2};
   border-radius: 0;
-  height: calc(100% - 200px);
+  height: 100%;
   width: 100%;
   align-items: flex-start;
   justify-content: flex-start;
-  padding: 0 0 100px;
 
   > span {
     display: flex;
@@ -116,6 +115,8 @@ export const LowerSection = styled.div`
     flex-flow: column wrap;
     padding: 0;
     width: 100%;
+    background-color: ${({ theme }) => theme.bg2};
+    padding: 0 0 100px;
   }
 
   h5 {

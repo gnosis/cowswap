@@ -65,7 +65,9 @@ const CloseIcon = styled(Close)`
 `
 
 const Wrapper = styled.div`
-  display: block;
+  display: flex;
+  flex-flow: row wrap;
+  align-items: stretch;
   height: 100%;
   width: 100%;
 `
