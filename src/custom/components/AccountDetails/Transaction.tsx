@@ -243,7 +243,7 @@ const StatusLabelBelow = styled.div<{ isCancelling?: boolean }>`
   }
 `
 
-function getActivitySummary(params: { id: string; activityData: ReturnType<typeof useActivityDescriptors> }) {
+function ActivitySummary(params: { id: string; activityData: ReturnType<typeof useActivityDescriptors> }) {
   const { id, activityData } = params
 
   if (!activityData) return null
@@ -488,10 +488,10 @@ export default function Transaction({ hash: id }: { hash: string }) {
             <TransactionStatusText>
               {isCancelling ? (
                 <MouseoverTooltip text={activity.summary || id}>
-                  {getActivitySummary({ activityData, id })}
+                  {ActivitySummary({ activityData, id })}
                 </MouseoverTooltip>
               ) : (
-                getActivitySummary({ activityData, id })
+                ActivitySummary({ activityData, id })
               )}
             </TransactionStatusText>
           </RowFixed>
@@ -520,11 +520,11 @@ export default function Transaction({ hash: id }: { hash: string }) {
               : 'Open'}
           </StatusLabel>
 
-          {isCancelling ? (
+          {isCancelling && (
             <StatusLabelBelow isCancelling={isCancelling}>
               Cancellation <br /> requested...
             </StatusLabelBelow>
-          ) : null}
+          )}
 
           {isCancellable && (
             <StatusLabelBelow>

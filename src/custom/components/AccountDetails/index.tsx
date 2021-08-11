@@ -6,8 +6,7 @@ import { AppDispatch } from 'state'
 import { clearAllTransactions } from 'state/transactions/actions'
 import { getExplorerLabel, shortenAddress } from 'utils'
 
-import Copy, { CopyIcon } from 'components/AccountDetails/Copy'
-import styled from 'styled-components'
+import Copy from 'components/AccountDetails/Copy'
 import { Trans } from '@lingui/macro'
 
 import { SUPPORTED_WALLETS } from 'constants/index'
@@ -24,122 +23,24 @@ import { clearOrders } from 'state/orders/actions'
 import {
   WalletName,
   MainWalletAction,
-  UpperSection,
-  AccountSection as AccountSectionMod,
-  YourAccount,
-  InfoCard as InfoCardMod,
-  AccountGroupingRow as AccountGroupingRowMod,
   WalletAction,
   AccountControl,
   AddressLink,
   IconWrapper,
   renderTransactions,
-  TransactionListWrapper,
 } from './AccountDetailsMod'
+import {
+  Wrapper,
+  InfoCard,
+  AccountGroupingRow,
+  NoActivityMessage,
+  LowerSection,
+  WalletActions,
+  WalletLowerActions,
+  WalletNameAddress,
+} from './styled'
 import { ConnectedWalletInfo, useWalletInfo } from 'hooks/useWalletInfo'
 import { MouseoverTooltip } from 'components/Tooltip'
-
-const Wrapper = styled.div`
-  height: 100%;
-  width: 100%;
-  color: ${({ theme }) => theme.text1};
-  padding: 0;
-  ${({ theme }) => theme.mediaWidth.upToMedium`padding: 42px 0 0;`};
-
-  ${WalletName},
-  ${AddressLink},
-  ${CopyIcon} {
-    color: ${({ theme }) => theme.text1};
-  }
-
-  ${TransactionListWrapper} {
-    padding: 0;
-  }
-`
-
-const InfoCard = styled(InfoCardMod)`
-  margin: 0;
-  border-radius: 0;
-  padding: 50px 16px 16px;
-`
-
-const AccountSection = styled(AccountSectionMod)`
-  padding: 0;
-  ${({ theme }) => theme.mediaWidth.upToMedium`padding: 0;`};
-`
-
-const AccountGroupingRow = styled(AccountGroupingRowMod)`
-  > div {
-    flex-flow: column wrap;
-    justify-content: flex-start;
-    align-items: flex-start;
-  }
-`
-
-const NoActivityMessage = styled.p`
-  font-size: 14px;
-  color: ${({ theme }) => theme.text1};
-  width: 100%;
-  padding: 24px 0 0;
-  text-align: center;
-  display: flex;
-  justify-content: center;
-`
-
-const LowerSection = styled.div`
-  flex-grow: 1;
-  background-color: ${({ theme }) => theme.bg2};
-  border-radius: 0;
-  height: max-content;
-  min-height: 100%;
-  padding: 0 0 100px;
-  > span {
-    display: flex;
-    justify-content: space-between;
-    padding: 8px 16px;
-    border-bottom: 1px solid #d9e8ef;
-    position: sticky;
-    top: 0;
-    background: rgb(255 255 255 / 60%);
-    backdrop-filter: blur(5px);
-    z-index: 10;
-    ${({ theme }) => theme.mediaWidth.upToMedium`
-      top: 42px;
-    `};
-  }
-  > div {
-    display: flex;
-    flex-flow: column wrap;
-    padding: 0;
-  }
-  h5 {
-    margin: 0;
-    font-weight: 500;
-    color: ${({ theme }) => theme.text2};
-    line-height: 1;
-    display: flex;
-    align-items: center;
-    > span {
-      opacity: 0.6;
-      margin: 0 0 0 4px;
-    }
-  }
-  ${LinkStyledButton} {
-    text-decoration: underline;
-  }
-`
-
-const WalletActions = styled.div`
-  display: flex;
-  margin: 10px 0 0;
-`
-
-const WalletLowerActions = styled.div`
-  width: 100%;
-  padding: 12px;
-  border-radius: 21px;
-  ${({ theme }) => theme.neumorphism.boxShadow}
-`
 
 type AbstractConnector = Pick<ReturnType<typeof useActiveWeb3React>, 'connector'>['connector']
 
@@ -261,98 +162,85 @@ export default function AccountDetails({
 
   return (
     <Wrapper>
-      <UpperSection>
-        <AccountSection>
-          <YourAccount>
-            <InfoCard>
-              <AccountGroupingRow id="web3-account-identifier-row">
-                <AccountControl>
-                  {ENSName ? (
-                    <>
-                      <div>
-                        {getStatusIcon(connector, walletInfo)}
-                        <p> {ENSName}</p>
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <div>
-                        {getStatusIcon(connector, walletInfo)}
-                        <p> {account && shortenAddress(account)}</p>
-                      </div>
-                    </>
-                  )}
-                  <WalletActions>
-                    {formatConnectorName(connector, walletInfo)}
-                    <div>
-                      {connector !== injected && connector !== walletlink && (
-                        <WalletAction
-                          style={{ fontSize: '.825rem', fontWeight: 400, marginRight: '8px' }}
-                          onClick={() => {
-                            ;(connector as any).close()
-                          }}
-                        >
-                          <Trans>Disconnect</Trans>
-                        </WalletAction>
-                      )}
-                      <WalletAction style={{ fontSize: '.825rem', fontWeight: 400 }} onClick={toggleWalletModal}>
-                        <Trans>Change</Trans>
-                      </WalletAction>
-                    </div>
-                  </WalletActions>
-                </AccountControl>
-              </AccountGroupingRow>
-              <AccountGroupingRow>
-                {ENSName ? (
-                  <>
-                    <AccountControl>
-                      <WalletLowerActions>
-                        {account && (
-                          <Copy toCopy={account}>
-                            <span style={{ marginLeft: '4px' }}>Copy Address</span>
-                          </Copy>
-                        )}
-                        {chainId && account && (
-                          <AddressLink
-                            hasENS={!!ENSName}
-                            isENS={true}
-                            href={getEtherscanLink(chainId, ENSName, 'address')}
-                          >
-                            <LinkIcon size={16} />
-                            <span style={{ marginLeft: '4px' }}>{explorerLabel}</span>
-                          </AddressLink>
-                        )}
-                      </WalletLowerActions>
-                    </AccountControl>
-                  </>
-                ) : (
-                  <>
-                    <AccountControl>
-                      <WalletLowerActions>
-                        {account && (
-                          <Copy toCopy={account}>
-                            <span style={{ marginLeft: '4px' }}>Copy Address</span>
-                          </Copy>
-                        )}
-                        {chainId && account && (
-                          <AddressLink
-                            hasENS={!!ENSName}
-                            isENS={false}
-                            href={getEtherscanLink(chainId, account, 'address')}
-                          >
-                            <LinkIcon size={16} />
-                            <span style={{ marginLeft: '4px' }}>{explorerLabel}</span>
-                          </AddressLink>
-                        )}
-                      </WalletLowerActions>
-                    </AccountControl>
-                  </>
+      <InfoCard>
+        <AccountGroupingRow id="web3-account-identifier-row">
+          <AccountControl>
+            {ENSName ? (
+              <>
+                <div>
+                  {getStatusIcon(connector, walletInfo)}
+                  <WalletNameAddress> {ENSName}</WalletNameAddress>
+                </div>
+              </>
+            ) : (
+              <>
+                <div>
+                  {getStatusIcon(connector, walletInfo)}
+                  <WalletNameAddress> {account && shortenAddress(account)}</WalletNameAddress>
+                </div>
+              </>
+            )}
+            <WalletActions>
+              {formatConnectorName(connector, walletInfo)}
+              <div>
+                {connector !== injected && connector !== walletlink && (
+                  <WalletAction
+                    style={{ fontSize: '.825rem', fontWeight: 400, marginRight: '8px' }}
+                    onClick={() => {
+                      ;(connector as any).close()
+                    }}
+                  >
+                    <Trans>Disconnect</Trans>
+                  </WalletAction>
                 )}
-              </AccountGroupingRow>
-            </InfoCard>
-          </YourAccount>
-        </AccountSection>
-      </UpperSection>
+                <WalletAction style={{ fontSize: '.825rem', fontWeight: 400 }} onClick={toggleWalletModal}>
+                  <Trans>Change</Trans>
+                </WalletAction>
+              </div>
+            </WalletActions>
+          </AccountControl>
+        </AccountGroupingRow>
+        <AccountGroupingRow>
+          {ENSName ? (
+            <>
+              <AccountControl>
+                <WalletLowerActions>
+                  {account && (
+                    <Copy toCopy={account}>
+                      <span style={{ marginLeft: '4px' }}>Copy Address</span>
+                    </Copy>
+                  )}
+                  {chainId && account && (
+                    <AddressLink hasENS={!!ENSName} isENS={true} href={getEtherscanLink(chainId, ENSName, 'address')}>
+                      <LinkIcon size={16} />
+                      <span style={{ marginLeft: '4px' }}>{explorerLabel}</span>
+                    </AddressLink>
+                  )}
+                </WalletLowerActions>
+              </AccountControl>
+            </>
+          ) : (
+            <>
+              <AccountControl>
+                <WalletLowerActions>
+                  {account && (
+                    <Copy toCopy={account}>
+                      <span style={{ marginLeft: '4px' }}>Copy Address</span>
+                    </Copy>
+                  )}
+                  {chainId && account && (
+                    <AddressLink hasENS={!!ENSName} isENS={false} href={getEtherscanLink(chainId, account, 'address')}>
+                      <LinkIcon size={16} />
+                      <span style={{ marginLeft: '4px' }}>{explorerLabel}</span>
+                    </AddressLink>
+                  )}
+                </WalletLowerActions>
+              </AccountControl>
+            </>
+          )}
+        </AccountGroupingRow>
+      </InfoCard>
+
       {!!pendingTransactions.length || !!confirmedTransactions.length ? (
         <LowerSection>
           <span>
@@ -370,7 +258,7 @@ export default function AccountDetails({
         </LowerSection>
       ) : (
         <LowerSection>
-          <NoActivityMessage>Your orders activity will appear here...</NoActivityMessage>
+          <NoActivityMessage>Your activity will appear here...</NoActivityMessage>
         </LowerSection>
       )}
     </Wrapper>
