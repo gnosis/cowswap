@@ -71,7 +71,7 @@ Protocol. 
 
 A detailed step-by-step guide on how to use the Platform may be found
 [in the “FAQ” section on the
-Platform](https://cowswap.exchange/#/faq#what-is-cowswap). 
+Platform](faq#what-is-cowswap). 
 
 To use the Platform you require: 
 
