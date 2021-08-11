@@ -1,6 +1,6 @@
 **CowSwap Terms & Conditions**
 
-<i><b>Last updated: July 2021</b></i>
+<i><b>Last updated: August 2021</b></i>
 
 Please read these Terms carefully before
 using our Platform. By using our Platform, you confirm that you
