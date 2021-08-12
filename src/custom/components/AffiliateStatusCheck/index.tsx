@@ -9,12 +9,7 @@ import { hasTrades } from 'utils/trade'
 import { uploadAppDataDoc } from 'utils/operator'
 import { generateReferralMetadataDoc } from 'utils/metadata'
 
-enum AffiliateStatus {
-  NOT_CONNECTED = 'NOT_CONNECTED',
-  OWN_LINK = 'OWN_LINK',
-  ALREADY_TRADED = 'ALREADY_TRADED',
-  ACTIVE = 'ACTIVE',
-}
+type AffiliateStatus = 'NOT_CONNECTED' | 'OWN_LINK' | 'ALREADY_TRADED' | 'ACTIVE'
 
 const STATUS_TO_MESSAGE_MAPPING: Record<AffiliateStatus, string> = {
   NOT_CONNECTED: 'Please connect your wallet to participate',
@@ -37,7 +32,7 @@ export default function AffiliateStatusCheck() {
     }
 
     if (referralAddress && !account) {
-      setAffiliateState(AffiliateStatus.NOT_CONNECTED)
+      setAffiliateState('NOT_CONNECTED')
       return
     }
 
@@ -45,7 +40,7 @@ export default function AffiliateStatusCheck() {
       // clean-up saved referral address if the user follows its own referral link
       resetReferralAddress()
       history.push('/profile')
-      setAffiliateState(AffiliateStatus.OWN_LINK)
+      setAffiliateState('OWN_LINK')
       return
     }
 
@@ -58,7 +53,7 @@ export default function AffiliateStatusCheck() {
 
       if (userHasTrades) {
         resetReferralAddress()
-        setAffiliateState(AffiliateStatus.ALREADY_TRADED)
+        setAffiliateState('ALREADY_TRADED')
         return
       }
 
@@ -66,7 +61,7 @@ export default function AffiliateStatusCheck() {
 
       appDispatch(updateAppDataHash(appDataHash))
 
-      setAffiliateState(AffiliateStatus.ACTIVE)
+      setAffiliateState('ACTIVE')
     }
 
     validateUserHasTraded()
