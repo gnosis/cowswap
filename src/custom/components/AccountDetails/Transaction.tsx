@@ -24,7 +24,6 @@ import { ActivityStatus, ActivityType, useActivityDescriptors } from 'hooks/useR
 import { useCancelOrder } from 'hooks/useCancelOrder'
 import { LinkStyledButton } from 'theme'
 import { ButtonPrimary } from 'components/Button'
-import { MouseoverTooltip } from 'components/Tooltip'
 import { GpModal as Modal } from 'components/Modal'
 
 import SVG from 'react-inlinesvg'
@@ -77,9 +76,11 @@ const IconType = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+
   ${({ theme }) => theme.mediaWidth.upToMedium`
       display: none;
   `};
+
   &::before {
     content: '';
     display: block;
@@ -126,28 +127,28 @@ const Summary = styled.div`
     margin: 0 0 5px;
     text-transform: capitalize;
   }
+`
 
-  > div {
-    display: flex;
-    flex-flow: column wrap;
-    width: 100%;
-    opacity: 0.75;
-    font-size: 13px;
-  }
+const SummaryInner = styled.div`
+  display: flex;
+  flex-flow: column wrap;
+  width: 100%;
+  opacity: 0.75;
+  font-size: 13px;
+`
 
-  > div > span {
-    display: grid;
-    color: inherit;
-    grid-template-rows: 1fr;
-    grid-template-columns: 90px 1fr;
-    ${({ theme }) => theme.mediaWidth.upToMedium`
+const SummaryInnerRow = styled.div`
+  display: grid;
+  color: inherit;
+  grid-template-rows: 1fr;
+  grid-template-columns: 90px 1fr;
+  ${({ theme }) => theme.mediaWidth.upToMedium`
       grid-template-columns: 1fr;
       margin: 0 16px 8px 0;
     `};
-  }
 
-  > div > span > b,
-  > div > span > i {
+  > b,
+  > i {
     position: relative;
     font-size: inherit;
     font-weight: 500;
@@ -158,22 +159,26 @@ const Summary = styled.div`
     font-style: normal;
   }
 
-  > div > span > b {
+  > b {
     padding: 0;
     font-weight: 500;
     opacity: 0.8;
+
+    &:before {
+      content: '▶';
+      margin: 0 5px 0 0;
+      color: ${({ theme }) => theme.text2};
+      font-size: 8px;
+    }
   }
 
-  > div > span > i {
+  > i {
     word-break: break-all;
     white-space: break-spaces;
-  }
 
-  > div > span > b:before {
-    content: '▶';
-    margin: 0 5px 0 0;
-    color: ${({ theme }) => theme.text2};
-    font-size: 8px;
+    &.cancelled {
+      text-decoration: line-through;
+    }
   }
 `
 
@@ -181,9 +186,11 @@ const TransactionStatusText = styled.div`
   margin: 0 auto 0 16px;
   display: flex;
   align-items: center;
+
   ${({ theme }) => theme.mediaWidth.upToMedium`
     margin: 0 auto 0 0;
   `};
+
   &:hover {
     text-decoration: none;
   }
@@ -208,6 +215,7 @@ const StatusLabel = styled.div<{ isPending: boolean }>`
   justify-content: center;
   font-size: 12px;
   font-weight: 600;
+
   &::before {
     content: '';
     background: ${({ color, isPending }) => (isPending ? 'transparent' : color)};
@@ -219,6 +227,7 @@ const StatusLabel = styled.div<{ isPending: boolean }>`
     border-radius: 4px;
     opacity: 0.1;
   }
+
   > svg {
     margin: 0 5px 0 0;
   }
@@ -232,6 +241,7 @@ const TransactionWrapper = styled.div`
   margin: 0;
   padding: 16px;
   transition: background 0.2s ease-in-out;
+
   &:hover {
     background: rgba(217, 232, 239, 0.35);
   }
@@ -246,13 +256,18 @@ const StatusLabelBelow = styled.div<{ isCancelling?: boolean }>`
   line-height: 1.1;
   margin: 7px auto 0;
   color: ${({ isCancelling, theme }) => (isCancelling ? theme.primary1 : 'inherit')};
+
   ${LinkStyledButton} {
     margin: 2px 0;
   }
 `
 
-function ActivitySummary(params: { id: string; activityData: ReturnType<typeof useActivityDescriptors> }) {
-  const { id, activityData } = params
+function ActivitySummary(params: {
+  id: string
+  activityData: ReturnType<typeof useActivityDescriptors>
+  isCancelled: boolean
+}) {
+  const { id, activityData, isCancelled } = params
 
   if (!activityData) return null
 
@@ -282,26 +297,26 @@ function ActivitySummary(params: { id: string; activityData: ReturnType<typeof u
   return (
     <Summary>
       <b>{isOrder ? `${orderSummary.kind} order` : 'Transaction'} ↗</b>
-      <div>
+      <SummaryInner>
         {isOrder ? (
           <>
-            <span>
+            <SummaryInnerRow>
               <b>From{orderSummary.kind === 'buy' && ' at most'}</b>
               <i>{orderSummary.from}</i>
-            </span>
-            <span>
+            </SummaryInnerRow>
+            <SummaryInnerRow>
               <b>To{orderSummary.kind === 'sell' && ' at least'}</b>
               <i>{orderSummary.to}</i>
-            </span>
-            <span>
+            </SummaryInnerRow>
+            <SummaryInnerRow>
               <b>Valid to</b>
-              <i>{orderSummary.validTo}</i>
-            </span>
+              <i className={isCancelled ? 'cancelled' : ''}>{orderSummary.validTo}</i>
+            </SummaryInnerRow>
           </>
         ) : (
           summary ?? id
         )}
-      </div>
+      </SummaryInner>
     </Summary>
   )
 }
@@ -495,13 +510,7 @@ export default function Transaction({ hash: id }: { hash: string }) {
               </IconType>
             )}
             <TransactionStatusText>
-              {isCancelling ? (
-                <MouseoverTooltip text={activity.summary || id}>
-                  {ActivitySummary({ activityData, id })}
-                </MouseoverTooltip>
-              ) : (
-                ActivitySummary({ activityData, id })
-              )}
+              <ActivitySummary activityData={activityData} id={id} isCancelled={isCancelled} />
             </TransactionStatusText>
           </RowFixed>
         </TransactionState>
