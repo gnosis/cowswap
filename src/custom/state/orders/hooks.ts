@@ -19,6 +19,7 @@ import {
   cancelOrdersBatch,
   Order,
   setIsOrderUnfillable,
+  SetIsOrderUnfillableParams,
 } from './actions'
 import { OrderObject, OrdersState, PartialOrdersMap, V2OrderObject } from './reducer'
 import { isTruthy } from 'utils/misc'
@@ -59,7 +60,6 @@ type CancelOrdersBatchParams = UpdateOrdersBatchParams
 interface UpdateLastCheckedBlockParams extends ClearOrdersParams {
   lastCheckedBlock: number
 }
-type SetIsOrderUnfillableParams = { id: OrderID; chainId: ChainId; isUnfillable: boolean }
 
 type AddOrderCallback = (addOrderParams: AddUnserialisedPendingOrderParams) => void
 type RemoveOrderCallback = (removeOrderParams: GetRemoveOrderParams) => void
