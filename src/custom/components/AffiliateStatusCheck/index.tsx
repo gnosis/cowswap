@@ -44,11 +44,12 @@ export default function AffiliateStatusCheck() {
       return
     }
 
-    async function validateUserHasTraded() {
+    async function uploadDataDoc() {
       if (!chainId || !account || !referralAddress) {
         return
       }
 
+      // we first validate that the user hasn't already traded
       const userHasTrades = await hasTrades(chainId, account)
 
       if (userHasTrades) {
@@ -64,7 +65,7 @@ export default function AffiliateStatusCheck() {
       setAffiliateState('ACTIVE')
     }
 
-    validateUserHasTraded()
+    uploadDataDoc()
   }, [referralAddress, account, resetReferralAddress, history, chainId, appDispatch])
 
   if (affiliateState) {
