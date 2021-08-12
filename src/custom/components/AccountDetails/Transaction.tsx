@@ -273,12 +273,22 @@ function ActivitySummary(params: {
 
   const { activity, type, summary } = activityData
 
-  // TODO: probably get rid of this?
-  const orderSummary: { from: string | undefined; to: string | undefined; validTo: string; kind?: string } = {
+  interface OrderSummaryType {
+    from: string | undefined
+    to: string | undefined
+    limitPrice: string | undefined
+    validTo: string | undefined
+    kind?: string
+  }
+
+  // Order Summary default object
+  const orderSummary: OrderSummaryType = {
     from: '🤔',
     to: '🤔',
+    limitPrice: '🤔',
     validTo: '🤔',
   }
+
   const isOrder = type === ActivityType.ORDER
 
   if (isOrder) {
@@ -309,6 +319,10 @@ function ActivitySummary(params: {
               <i>{orderSummary.to}</i>
             </SummaryInnerRow>
             <SummaryInnerRow>
+              <b>Limit price</b>
+              <i>{orderSummary.limitPrice}</i>
+            </SummaryInnerRow>
+            <SummaryInnerRow>
               <b>Valid to</b>
               <i className={isCancelled ? 'cancelled' : ''}>{orderSummary.validTo}</i>
             </SummaryInnerRow>
@@ -333,6 +347,7 @@ const TransactionState = styled(OldTransactionState).attrs(
   display: flex;
   margin: 0;
   padding: 0;
+
   ${RowFixed} {
     width: 100%;
   }
@@ -358,6 +373,10 @@ const TransactionAlertMessage = styled.div`
     padding: 10px;
     margin: 0;
     margin: 0 auto;
+  }
+
+  > p > a {
+    color: ${({ theme }) => theme.primary1};
   }
 `
 
@@ -504,7 +523,7 @@ export default function Transaction({ hash: id }: { hash: string }) {
                   ) : isCancelled ? (
                     <SVG src={TxArrowsImage} description="Order Cancelled" />
                   ) : (
-                    <SVG src={TxArrowsImage} description="No state" />
+                    <SVG src={TxArrowsImage} description="Order Open" />
                   )}
                 </IconWrapper>
               </IconType>
@@ -514,6 +533,7 @@ export default function Transaction({ hash: id }: { hash: string }) {
             </TransactionStatusText>
           </RowFixed>
         </TransactionState>
+
         <StatusLabelWrapper>
           <StatusLabel color={determinePillColour(status, type)} isPending={isPending || isCancelling}>
             {isConfirmed ? (
@@ -559,7 +579,17 @@ export default function Transaction({ hash: id }: { hash: string }) {
           )}
         </StatusLabelWrapper>
       </TransactionWrapper>
-      <TransactionAlertMessage>{isPriceOutOfRange ? <p>Price out of range</p> : null}</TransactionAlertMessage>
+
+      {isPriceOutOfRange && (
+        <TransactionAlertMessage>
+          <p>
+            <span role="img" aria-label="alert">
+              🚨
+            </span>{' '}
+            Price out of range. <a href="#/faq">Read more</a>.
+          </p>
+        </TransactionAlertMessage>
+      )}
     </Wrapper>
   )
 }
