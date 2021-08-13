@@ -145,6 +145,7 @@ export default function Header() {
   const [darkMode, toggleDarkMode] = useDarkModeManager()
   const [ordersPanelOpen, setOrdersPanelOpen] = useState<boolean>(false)
   const closeOrdersPanel = () => setOrdersPanelOpen(false)
+  const openOrdersPanel = () => setOrdersPanelOpen(true)
 
   return (
     <HeaderModWrapper>
@@ -175,7 +176,7 @@ export default function Header() {
                 {formatSmart(userEthBalance, SHORT_PRECISION)} {nativeToken}
               </BalanceText>
             ) : null}
-            <Web3Status />
+            <Web3Status openOrdersPanel={openOrdersPanel} />
           </AccountElement>
         </HeaderElement>
         <HeaderElementWrap>
