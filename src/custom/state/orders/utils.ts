@@ -1,3 +1,4 @@
+import { OrderKind } from '@gnosis.pm/gp-v2-contracts'
 import { Price } from '@uniswap/sdk-core'
 
 import { ONE_HUNDRED_PERCENT, PENDING_ORDERS_BUFFER } from 'constants/index'
@@ -88,7 +89,7 @@ export function isOrderUnfillable(order: Order, price: Required<PriceInformation
   // Build current price object from quoted price
   // Note that depending on the order type, the amount will be used either as nominator or denominator
   const currentPrice =
-    order.kind === 'sell'
+    order.kind === OrderKind.SELL
       ? new Price(order.inputToken, order.outputToken, order.sellAmount.toString(), price.amount as string)
       : new Price(order.inputToken, order.outputToken, price.amount as string, order.buyAmount.toString())
 
