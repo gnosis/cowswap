@@ -7,6 +7,7 @@ import styled from 'styled-components/macro'
 import ReactGA from 'react-ga'
 import { getUserAgent } from 'utils/getUserAgent'
 import { AutoRow } from 'components/Row'
+import Header from 'components/Header'
 
 const FallbackWrapper = styled.div`
   display: flex;
@@ -15,11 +16,27 @@ const FallbackWrapper = styled.div`
   align-items: center;
   z-index: 1;
 `
-
 const BodyWrapper = styled.div<{ margin?: string }>`
-  padding: 1rem;
+  display: flex;
+  flex-direction: column;
   width: 100%;
+  padding-top: 120px;
+  align-items: center;
+  flex: 1;
+  z-index: 1;
   white-space: pre;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    padding: 16px;
+    padding-top: 6rem;
+  `};
+`
+const HeaderWrapper = styled.div`
+  ${({ theme }) => theme.flexRowNoWrap}
+  width: 100%;
+  justify-content: space-between;
+  position: fixed;
+  top: 0;
+  z-index: 2;
 `
 
 const CodeBlockWrapper = styled.div`
@@ -70,6 +87,9 @@ export default class ErrorBoundary extends React.Component<unknown, ErrorBoundar
       const encodedBody = encodeURIComponent(issueBody(error))
       return (
         <FallbackWrapper>
+          <HeaderWrapper>
+            <Header />
+          </HeaderWrapper>
           <BodyWrapper>
             <AutoColumn gap={'md'}>
               <SomethingWentWrongWrapper>
