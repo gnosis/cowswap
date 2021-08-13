@@ -19,17 +19,17 @@ const FallbackWrapper = styled.div`
 const BodyWrapper = styled.div<{ margin?: string }>`
   padding: 1rem;
   width: 100%;
-  white-space: ;
+  white-space: pre;
 `
 
 const CodeBlockWrapper = styled.div`
-  background: ${({ theme }) => theme.bg0};
+  background: ${({ theme }) => theme.bg1};
   overflow: auto;
   white-space: pre;
   box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.01), 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04),
     0px 24px 32px rgba(0, 0, 0, 0.01);
   border-radius: 24px;
-  padding: 18px 24px;
+  padding: 50px;
   color: ${({ theme }) => theme.text2};
 `
 
@@ -79,7 +79,9 @@ export default class ErrorBoundary extends React.Component<unknown, ErrorBoundar
               </SomethingWentWrongWrapper>
               <CodeBlockWrapper>
                 <code>
-                  <TYPE.main fontSize={10}>{error.stack}</TYPE.main>
+                  <TYPE.main fontSize={10} color={'text1'}>
+                    {error.stack}
+                  </TYPE.main>
                 </code>
               </CodeBlockWrapper>
               <AutoRow>
