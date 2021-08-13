@@ -34,6 +34,10 @@ export const Wrapper = styled.div`
     }
   }
 
+  ${WalletName} {
+    text-align: right;
+  }
+
   ${TransactionListWrapper} {
     padding: 0;
     width: 100%;
@@ -48,6 +52,10 @@ export const NetworkCard = styled(NetworkCardUni)`
   font-size: 13px;
   margin: 0 8px 0 0;
   letter-spacing: 0.7px;
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    flex-shrink: 0;
+  `};
 `
 
 export const UpperSection = styled(UpperSectionMod)`
@@ -62,6 +70,10 @@ export const InfoCard = styled.div`
   margin: 0;
   border-radius: 0;
   padding: 16px 16px 24px;
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  padding: 16px 10px 24px;
+  `};
 `
 
 export const AccountSection = styled(AccountSectionMod)`
@@ -149,6 +161,10 @@ export const WalletLowerActions = styled.div`
   justify-content: space-evenly;
   ${({ theme }) => theme.neumorphism.boxShadow}
   margin: 16px 0 0;
+
+  > a {
+    align-items: center;
+  }
 `
 
 export const WalletNameAddress = styled.div`
