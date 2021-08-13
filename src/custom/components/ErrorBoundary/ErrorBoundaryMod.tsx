@@ -74,7 +74,12 @@ export default class ErrorBoundary extends React.Component<unknown, ErrorBoundar
             <AutoColumn gap={'md'}>
               <SomethingWentWrongWrapper>
                 <TYPE.label fontSize={24} fontWeight={600}>
-                  <Trans>Something went wrong</Trans>
+                  <Trans>
+                    <span role="img" aria-label="cow-exclamation">
+                      🐮❕
+                    </span>{' '}
+                    Something went wrong
+                  </Trans>
                 </TYPE.label>
               </SomethingWentWrongWrapper>
               <CodeBlockWrapper>
