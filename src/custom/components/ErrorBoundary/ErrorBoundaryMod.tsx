@@ -30,7 +30,7 @@ const CodeBlockWrapper = styled.div`
     0px 24px 32px rgba(0, 0, 0, 0.01);
   border-radius: 24px;
   padding: 18px 24px;
-  color: ${({ theme }) => theme.text1};
+  color: ${({ theme }) => theme.text2};
 `
 
 const LinkWrapper = styled.div`
@@ -99,7 +99,8 @@ export default class ErrorBoundary extends React.Component<unknown, ErrorBoundar
                   </ExternalLink>
                 </LinkWrapper>
                 <LinkWrapper>
-                  <ExternalLink id="get-support-on-discord" href="https://discord.gg/FCfyBSbCU5" target="_blank">
+                  {/* <ExternalLink id="get-support-on-discord" href="https://discord.gg/FCfyBSbCU5" target="_blank"> */}
+                  <ExternalLink id="get-support-on-discord" href="https://chat.cowswap.exchange/" target="_blank">
                     <TYPE.link fontSize={16}>
                       <Trans>Get support on Discord</Trans>
                       <span>↗</span>
