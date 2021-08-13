@@ -30,10 +30,6 @@ const Wrapper = styled(Page)`
 `
 
 export default function CowGamePage() {
-  if (0 === 0) {
-    throw new Error('This cow is dropping some serious milk 🥛!!')
-  }
-
   return (
     <Wrapper>
       <p>
