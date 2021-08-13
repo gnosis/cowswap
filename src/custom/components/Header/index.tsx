@@ -27,7 +27,7 @@ import { SHORT_PRECISION } from 'constants/index'
 import { useDarkModeManager } from 'state/user/hooks'
 import { darken } from 'polished'
 import TwitterImage from 'assets/cow-swap/twitter.svg'
-import OrdersPanel from 'components/ordersPanel'
+import OrdersPanel from 'components/OrdersPanel'
 
 import { supportedChainId } from 'utils/supportedChainId'
 import { formatSmart } from 'utils/format'
@@ -159,8 +159,6 @@ export default function Header() {
           <StyledNavLink to="/swap">Swap</StyledNavLink>
           <StyledNavLink to="/about">About</StyledNavLink>
           <StyledNavLink to="/profile">Profile</StyledNavLink>
-
-          <button onClick={() => setOrdersPanelOpen(true)}>Orders panel (test)</button>
         </HeaderLinks>
       </HeaderRow>
       <HeaderControls>

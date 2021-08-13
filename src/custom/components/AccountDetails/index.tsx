@@ -24,10 +24,8 @@ import { clearOrders } from 'state/orders/actions'
 import {
   WalletName,
   MainWalletAction,
-  AccountDetailsProps,
+  // AccountDetailsProps,
   UpperSection,
-  CloseIcon,
-  CloseColor,
   HeaderRow,
   AccountSection,
   YourAccount,
@@ -142,12 +140,18 @@ export function getStatusIcon(connector?: AbstractConnector, walletInfo?: Connec
   return null
 }
 
+interface AccountDetailsProps {
+  pendingTransactions: string[]
+  confirmedTransactions: string[]
+  ENSName?: string
+  toggleWalletModal: () => void
+}
+
 export default function AccountDetails({
-  toggleWalletModal,
   pendingTransactions,
   confirmedTransactions,
   ENSName,
-  openOptions,
+  toggleWalletModal,
 }: AccountDetailsProps) {
   const { chainId, account, connector } = useActiveWeb3React()
   const walletInfo = useWalletInfo()
@@ -167,9 +171,6 @@ export default function AccountDetails({
   return (
     <Wrapper>
       <UpperSection>
-        <CloseIcon onClick={toggleWalletModal}>
-          <CloseColor />
-        </CloseIcon>
         <HeaderRow>Account</HeaderRow>
         <AccountSection>
           <YourAccount>
@@ -187,12 +188,7 @@ export default function AccountDetails({
                       <Trans>Disconnect</Trans>
                     </WalletAction>
                   )}
-                  <WalletAction
-                    style={{ fontSize: '.825rem', fontWeight: 400 }}
-                    onClick={() => {
-                      openOptions()
-                    }}
-                  >
+                  <WalletAction style={{ fontSize: '.825rem', fontWeight: 400 }} onClick={toggleWalletModal}>
                     <Trans>Change</Trans>
                   </WalletAction>
                 </div>
