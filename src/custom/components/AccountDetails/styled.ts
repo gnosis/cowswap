@@ -9,7 +9,31 @@ import {
   UpperSection as UpperSectionMod,
   AddressLink,
   TransactionListWrapper,
+  AccountControl,
 } from './AccountDetailsMod'
+
+export const WalletActions = styled.div`
+  display: flex;
+  margin: 10px 0 0;
+`
+
+export const WalletLowerActions = styled.div`
+  width: 100%;
+  padding: 12px;
+  border-radius: 21px;
+  justify-content: space-evenly;
+  ${({ theme }) => theme.neumorphism.boxShadow}
+  margin: 16px 0 0;
+
+  > a {
+    align-items: center;
+  }
+`
+
+export const WalletNameAddress = styled.div`
+  width: 100%;
+  font-size: 21px;
+`
 
 export const Wrapper = styled.div`
   display: flex;
@@ -36,12 +60,26 @@ export const Wrapper = styled.div`
 
   ${WalletName} {
     text-align: right;
+
+    ${({ theme }) => theme.mediaWidth.upToSmall`
+      width: 100%;
+      text-align: center;
+      justify-content: center;
+      margin: 0 auto 12px;
+    `};
   }
 
   ${TransactionListWrapper} {
     padding: 0;
     width: 100%;
     flex-flow: column wrap;
+  }
+
+  ${AccountControl} ${WalletActions} {
+    ${({ theme }) => theme.mediaWidth.upToSmall`
+        flex-flow: column wrap;
+        width: 100%;
+    `};
   }
 `
 
@@ -147,27 +185,4 @@ export const LowerSection = styled.div`
   ${LinkStyledButton} {
     text-decoration: underline;
   }
-`
-
-export const WalletActions = styled.div`
-  display: flex;
-  margin: 10px 0 0;
-`
-
-export const WalletLowerActions = styled.div`
-  width: 100%;
-  padding: 12px;
-  border-radius: 21px;
-  justify-content: space-evenly;
-  ${({ theme }) => theme.neumorphism.boxShadow}
-  margin: 16px 0 0;
-
-  > a {
-    align-items: center;
-  }
-`
-
-export const WalletNameAddress = styled.div`
-  width: 100%;
-  font-size: 21px;
 `
