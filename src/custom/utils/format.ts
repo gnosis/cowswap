@@ -16,6 +16,17 @@ export interface FormatSmartOptions {
   isLocaleAware?: boolean
 }
 
+/**
+ * Gets/adjusts small limits based on the amount of decimals to show
+ *
+ * - When `smallLimit` is set, use that
+ * - When `decimalsToShow` < 1, return `1`
+ * - When `decimalsToShow` < `DEFAULT_PRECISION`, reduce `smallLimit` to match precision
+ * - Otherwise, use `DEFAULT_SMALL_LIMIT`, which matches `DEFAULT_PRECISION`
+ *
+ * @param smallLimit
+ * @param decimalsToShow
+ */
 function _buildSmallLimit(smallLimit: string | undefined, decimalsToShow: number): string {
   if (smallLimit) {
     // explicitly set, use that
