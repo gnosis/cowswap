@@ -18,6 +18,8 @@ import {
   expireOrdersBatch,
   cancelOrdersBatch,
   Order,
+  setIsOrderUnfillable,
+  SetIsOrderUnfillableParams,
 } from './actions'
 import { OrderObject, OrdersState, PartialOrdersMap, V2OrderObject } from './reducer'
 import { isTruthy } from 'utils/misc'
@@ -69,8 +71,22 @@ type CancelOrderCallback = (cancelOrderParams: CancelOrderParams) => void
 type CancelOrdersBatchCallback = (cancelOrdersBatchParams: CancelOrdersBatchParams) => void
 type ClearOrdersCallback = (clearOrdersParams: ClearOrdersParams) => void
 type UpdateLastCheckedBlockCallback = (updateLastCheckedBlockParams: UpdateLastCheckedBlockParams) => void
+type SetIsOrderUnfillable = (params: SetIsOrderUnfillableParams) => void
 
 type GetOrderByIdCallback = (id: OrderID) => SerializedOrder | undefined
+
+type OrderTypeKeys = 'pending' | 'expired' | 'fulfilled' | 'cancelled'
+function _concatOrdersState(state: OrdersState[ChainId], keys: OrderTypeKeys[]) {
+  if (!state) return []
+
+  const firstState = state[keys[0]] || {}
+  const restKeys = keys.slice(1)
+
+  return restKeys.reduce((acc, nextKey) => {
+    const nextState = Object.values(state[nextKey] || {})
+    return acc.concat(nextState)
+  }, Object.values(firstState))
+}
 
 function _isV3Order(orderObject: any): orderObject is OrderObject {
   return orderObject?.order?.inputToken !== undefined || orderObject?.order?.outputToken !== undefined
@@ -142,12 +158,10 @@ export const useOrders = ({ chainId }: GetOrdersParams): Order[] => {
   return useMemo(() => {
     if (!state) return []
 
-    const allOrders = Object.values(state.fulfilled)
-      .concat(Object.values(state.pending))
-      .concat(Object.values(state.expired))
-      .concat(Object.values(state.cancelled || {}))
+    const allOrders = _concatOrdersState(state, ['pending', 'expired', 'fulfilled', 'cancelled'])
       .map(_deserializeOrder)
       .filter(isTruthy)
+
     return allOrders
   }, [state])
 }
@@ -309,4 +323,9 @@ export const useUpdateLastCheckedBlock = (): UpdateLastCheckedBlockCallback => {
       dispatch(updateLastCheckedBlock(updateLastCheckedBlockParams)),
     [dispatch]
   )
+}
+
+export const useSetIsOrderUnfillable = (): SetIsOrderUnfillable => {
+  const dispatch = useDispatch<AppDispatch>()
+  return useCallback((params: SetIsOrderUnfillableParams) => dispatch(setIsOrderUnfillable(params)), [dispatch])
 }
