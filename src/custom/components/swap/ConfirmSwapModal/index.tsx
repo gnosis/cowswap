@@ -18,11 +18,11 @@ function PendingText(props: { trade: TradeGp | undefined }): JSX.Element {
     <Trans>
       Swapping{' '}
       <span title={`${inputAmount?.toFixed(inputAmount?.currency.decimals)} ${inputSymbol}`}>
-        {formatSmart(inputAmount) /* trade?.inputAmount?.toSignificant(6) */} {inputSymbol}
+        {formatSmart(inputAmount)} {inputSymbol}
       </span>{' '}
       for{' '}
       <span title={`${outputAmount?.toFixed(outputAmount?.currency.decimals)} ${outputSymbol}`}>
-        {formatSmart(outputAmount) /* trade?.outputAmount?.toSignificant(6) */} {outputSymbol}
+        {formatSmart(outputAmount)} {outputSymbol}
       </span>
     </Trans>
   )
