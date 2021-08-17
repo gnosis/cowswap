@@ -228,6 +228,10 @@ export const ThemedGlobalStyle = createGlobalStyle`
     background-position: initial;
     background-repeat: no-repeat;
     background-image: initial;
+
+    &.noScroll {
+      overflow: hidden;
+    }
   }
 
   ::selection { 
