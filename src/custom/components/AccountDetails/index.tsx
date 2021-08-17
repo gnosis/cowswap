@@ -68,7 +68,7 @@ export function formatConnectorName(connector?: AbstractConnector, walletInfo?: 
 
   return (
     <WalletName>
-      Connected with {name}
+      Connected with {name} <br />
       {walletConnectSuffix}
     </WalletName>
   )
@@ -139,6 +139,7 @@ interface AccountDetailsProps {
   confirmedTransactions: string[]
   ENSName?: string
   toggleWalletModal: () => void
+  closeOrdersPanel: () => void
 }
 
 export default function AccountDetails({
@@ -146,6 +147,7 @@ export default function AccountDetails({
   confirmedTransactions,
   ENSName,
   toggleWalletModal,
+  closeOrdersPanel,
 }: AccountDetailsProps) {
   const { account, connector, chainId: connectedChainId } = useActiveWeb3React()
   const chainId = supportedChainId(connectedChainId)
@@ -163,6 +165,12 @@ export default function AccountDetails({
   }, [dispatch, chainId])
   const explorerLabel = chainId && account ? getExplorerLabel(chainId, account, 'address') : undefined
   const activityTotalCount = (pendingTransactions?.length || 0) + (confirmedTransactions?.length || 0)
+
+  const handleDisconnectClick = () => {
+    ;(connector as any).close()
+    closeOrdersPanel()
+    toggleWalletModal()
+  }
 
   return (
     <Wrapper>
@@ -183,9 +191,7 @@ export default function AccountDetails({
                 {connector !== injected && connector !== walletlink && (
                   <WalletAction
                     style={{ fontSize: '.825rem', fontWeight: 400, marginRight: '8px' }}
-                    onClick={() => {
-                      ;(connector as any).close()
-                    }}
+                    onClick={handleDisconnectClick}
                   >
                     <Trans>Disconnect</Trans>
                   </WalletAction>

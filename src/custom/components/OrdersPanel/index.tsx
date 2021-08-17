@@ -119,6 +119,7 @@ export default function OrdersPanel({ ordersPanelOpen, closeOrdersPanel }: Order
           pendingTransactions={pendingActivity}
           confirmedTransactions={confirmedActivity}
           toggleWalletModal={toggleWalletModal}
+          closeOrdersPanel={closeOrdersPanel}
         />
       </Wrapper>
     </SideBar>
