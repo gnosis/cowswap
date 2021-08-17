@@ -129,7 +129,7 @@ export const AccountGroupingRow = styled(AccountGroupingRowMod)`
 
 export const NoActivityMessage = styled.p`
   font-size: 14px;
-  color: ${({ theme }) => theme.text1};
+  color: ${({ theme }) => theme.text2};
   width: 100%;
   padding: 24px 0 0;
   text-align: center;
