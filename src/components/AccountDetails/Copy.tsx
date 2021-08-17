@@ -19,7 +19,7 @@ export const CopyIcon = styled(LinkStyledButton)`
     color: ${({ theme }) => theme.text2};
   }
 `
-const TransactionStatusText = styled.span`
+export const TransactionStatusText = styled.span`
   margin-left: 0.25rem;
   font-size: 0.825rem;
   ${({ theme }) => theme.flexRowNoWrap};

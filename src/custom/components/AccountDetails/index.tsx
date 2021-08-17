@@ -182,7 +182,12 @@ export default function AccountDetails({
                 <NetworkCard title={NETWORK_LABELS[chainId]}>{NETWORK_LABELS[chainId]}</NetworkCard>
               )}
               {getStatusIcon(connector, walletInfo)}
-              <WalletNameAddress>{ENSName ? ENSName : account && shortenAddress(account)}</WalletNameAddress>
+
+              {(ENSName || account) && (
+                <Copy toCopy={ENSName ? ENSName : account ? account : ''}>
+                  <WalletNameAddress>{ENSName ? ENSName : account && shortenAddress(account)}</WalletNameAddress>
+                </Copy>
+              )}
             </div>
 
             <WalletActions>
@@ -204,43 +209,20 @@ export default function AccountDetails({
           </AccountControl>
         </AccountGroupingRow>
         <AccountGroupingRow>
-          {ENSName ? (
-            <>
-              <AccountControl>
-                <WalletLowerActions>
-                  {account && (
-                    <Copy toCopy={account}>
-                      <span style={{ marginLeft: '4px' }}>Copy Address</span>
-                    </Copy>
-                  )}
-                  {chainId && account && (
-                    <AddressLink hasENS={!!ENSName} isENS={true} href={getEtherscanLink(chainId, ENSName, 'address')}>
-                      <LinkIcon size={16} />
-                      <span style={{ marginLeft: '4px' }}>{explorerLabel}</span>
-                    </AddressLink>
-                  )}
-                </WalletLowerActions>
-              </AccountControl>
-            </>
-          ) : (
-            <>
-              <AccountControl>
-                <WalletLowerActions>
-                  {account && (
-                    <Copy toCopy={account}>
-                      <span style={{ marginLeft: '4px' }}>Copy Address</span>
-                    </Copy>
-                  )}
-                  {chainId && account && (
-                    <AddressLink hasENS={!!ENSName} isENS={false} href={getEtherscanLink(chainId, account, 'address')}>
-                      <LinkIcon size={16} />
-                      <span style={{ marginLeft: '4px' }}>{explorerLabel}</span>
-                    </AddressLink>
-                  )}
-                </WalletLowerActions>
-              </AccountControl>
-            </>
-          )}
+          <AccountControl>
+            <WalletLowerActions>
+              {chainId && account && (
+                <AddressLink
+                  hasENS={!!ENSName}
+                  isENS={ENSName ? true : false}
+                  href={getEtherscanLink(chainId, ENSName ? ENSName : account, 'address')}
+                >
+                  <LinkIcon size={16} />
+                  <span style={{ marginLeft: '4px' }}>{explorerLabel}</span>
+                </AddressLink>
+              )}
+            </WalletLowerActions>
+          </AccountControl>
         </AccountGroupingRow>
       </InfoCard>
 

@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { CopyIcon } from 'components/AccountDetails/Copy'
+import { CopyIcon, TransactionStatusText } from 'components/AccountDetails/Copy'
 import { LinkStyledButton } from 'theme'
 import { NetworkCard as NetworkCardUni } from 'components/Header/HeaderMod'
 import {
@@ -51,11 +51,18 @@ export const Wrapper = styled.div`
     color: ${({ theme }) => theme.text1};
     opacity: 0.7;
     transition: color 0.2s ease-in-out, opacity 0.2s ease-in-out;
+    margin: 0;
 
     &:not(${WalletName}):hover {
       opacity: 1;
       text-decoration: underline;
     }
+  }
+
+  ${TransactionStatusText} {
+    order: 2;
+    margin: 0 0 0 8px;
+    align-self: center;
   }
 
   ${WalletName} {
