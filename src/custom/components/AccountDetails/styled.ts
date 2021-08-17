@@ -9,7 +9,31 @@ import {
   UpperSection as UpperSectionMod,
   AddressLink,
   TransactionListWrapper,
+  AccountControl,
 } from './AccountDetailsMod'
+
+export const WalletActions = styled.div`
+  display: flex;
+  margin: 10px 0 0;
+`
+
+export const WalletLowerActions = styled.div`
+  width: 100%;
+  padding: 12px;
+  border-radius: 21px;
+  justify-content: space-evenly;
+  ${({ theme }) => theme.neumorphism.boxShadow}
+  margin: 16px 0 0;
+
+  > a {
+    align-items: center;
+  }
+`
+
+export const WalletNameAddress = styled.div`
+  width: 100%;
+  font-size: 21px;
+`
 
 export const Wrapper = styled.div`
   display: flex;
@@ -34,10 +58,28 @@ export const Wrapper = styled.div`
     }
   }
 
+  ${WalletName} {
+    text-align: right;
+
+    ${({ theme }) => theme.mediaWidth.upToSmall`
+      width: 100%;
+      text-align: center;
+      justify-content: center;
+      margin: 0 auto 12px;
+    `};
+  }
+
   ${TransactionListWrapper} {
     padding: 0;
     width: 100%;
     flex-flow: column wrap;
+  }
+
+  ${AccountControl} ${WalletActions} {
+    ${({ theme }) => theme.mediaWidth.upToSmall`
+        flex-flow: column wrap;
+        width: 100%;
+    `};
   }
 `
 
@@ -48,6 +90,10 @@ export const NetworkCard = styled(NetworkCardUni)`
   font-size: 13px;
   margin: 0 8px 0 0;
   letter-spacing: 0.7px;
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    flex-shrink: 0;
+  `};
 `
 
 export const UpperSection = styled(UpperSectionMod)`
@@ -62,6 +108,10 @@ export const InfoCard = styled.div`
   margin: 0;
   border-radius: 0;
   padding: 16px 16px 24px;
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  padding: 16px 10px 24px;
+  `};
 `
 
 export const AccountSection = styled(AccountSectionMod)`
@@ -79,7 +129,7 @@ export const AccountGroupingRow = styled(AccountGroupingRowMod)`
 
 export const NoActivityMessage = styled.p`
   font-size: 14px;
-  color: ${({ theme }) => theme.text1};
+  color: ${({ theme }) => theme.text2};
   width: 100%;
   padding: 24px 0 0;
   text-align: center;
@@ -135,23 +185,4 @@ export const LowerSection = styled.div`
   ${LinkStyledButton} {
     text-decoration: underline;
   }
-`
-
-export const WalletActions = styled.div`
-  display: flex;
-  margin: 10px 0 0;
-`
-
-export const WalletLowerActions = styled.div`
-  width: 100%;
-  padding: 12px;
-  border-radius: 21px;
-  justify-content: space-evenly;
-  ${({ theme }) => theme.neumorphism.boxShadow}
-  margin: 16px 0 0;
-`
-
-export const WalletNameAddress = styled.div`
-  width: 100%;
-  font-size: 21px;
 `

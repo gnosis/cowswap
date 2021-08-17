@@ -67,6 +67,10 @@ const Wrapper = styled.div`
   flex-flow: column wrap;
   width: 100%;
   border-bottom: 1px solid #d9e8ef;
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    border-bottom: 2px solid #d9e8ef;
+  `}
 `
 
 const IconType = styled.div`
@@ -126,6 +130,11 @@ const Summary = styled.div`
     font-size: 15px;
     margin: 0 0 5px;
     text-transform: capitalize;
+
+    ${({ theme }) => theme.mediaWidth.upToSmall`
+      margin: 0 0 12px;
+      font-weight: bold;
+    `}
   }
 `
 
@@ -142,10 +151,11 @@ const SummaryInnerRow = styled.div`
   color: inherit;
   grid-template-rows: 1fr;
   grid-template-columns: 90px 1fr;
-  ${({ theme }) => theme.mediaWidth.upToMedium`
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
       grid-template-columns: 1fr;
       margin: 0 16px 8px 0;
-    `};
+  `};
 
   > b,
   > i {
@@ -175,6 +185,11 @@ const SummaryInnerRow = styled.div`
   > i {
     word-break: break-all;
     white-space: break-spaces;
+
+    ${({ theme }) => theme.mediaWidth.upToSmall`
+      font-weight: 600;
+      margin: 4px 0 0 12px;
+    `}
 
     &.cancelled {
       text-decoration: line-through;
