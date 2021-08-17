@@ -262,6 +262,14 @@ const StatusLabelBelow = styled.div<{ isCancelling?: boolean }>`
   }
 `
 
+interface OrderSummaryType {
+  from: string | undefined
+  to: string | undefined
+  limitPrice: string | undefined
+  validTo: string | undefined
+  kind?: string
+}
+
 function ActivitySummary(params: {
   id: string
   activityData: ReturnType<typeof useActivityDescriptors>
@@ -272,14 +280,6 @@ function ActivitySummary(params: {
   if (!activityData) return null
 
   const { activity, type, summary } = activityData
-
-  interface OrderSummaryType {
-    from: string | undefined
-    to: string | undefined
-    limitPrice: string | undefined
-    validTo: string | undefined
-    kind?: string
-  }
 
   // Order Summary default object
   const orderSummary: OrderSummaryType = {
