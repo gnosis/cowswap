@@ -92,11 +92,7 @@ export function getStatusIcon(connector?: AbstractConnector, walletInfo?: Connec
       </IconWrapper>
     )
   } else if (connector === injected) {
-    return (
-      <IconWrapper size={16}>
-        <Identicon />
-      </IconWrapper>
-    )
+    return <Identicon />
   } else if (connector === walletconnect) {
     return (
       <IconWrapper size={16}>
