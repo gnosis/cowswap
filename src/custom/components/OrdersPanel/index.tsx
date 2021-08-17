@@ -28,11 +28,27 @@ const SideBar = styled.div<{ isOpen: boolean }>`
 
 const CloseIcon = styled(Close)`
   position: absolute;
-  right: 14px;
-  top: 14px;
-  width: 24px;
-  height: 24px;
-  z-index: 10;
+  left: 0;
+  top: 0;
+  z-index: 20;
+  width: 100%;
+  height: 38px;
+  padding: 8px 0;
+  background: ${({ theme }) => theme.bg1};
+
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+    top: 0;
+    z-index: 99999;
+    position: fixed;
+    left: 0;
+    right: initial;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 42px;
+    backdrop-filter: blur(5px);
+  `};
 
   &:hover {
     cursor: pointer;
