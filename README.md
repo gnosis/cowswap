@@ -97,7 +97,7 @@ The format of the JSON follows this typescript format: <src/custom/utils/metadat
 id is included in all signed transaction, although the Gnosis Protocol is not using this information for now, it
 could be used for implementing incentive programs.
 
-To set your own, change `REACT_METADATA_DIGEST_HEX` environment variable. Ask for yours at [chat.cowswap.exchange/](https://chat.cowswap.exchange/)
+To set your own, change `REACT_APP_DATA_HASH` environment variable. Ask for yours at [chat.cowswap.exchange/](https://chat.cowswap.exchange/)
 
 
 ### Supported networks
