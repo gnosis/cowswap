@@ -188,7 +188,7 @@ const SummaryInnerRow = styled.div`
 
     ${({ theme }) => theme.mediaWidth.upToSmall`
       font-weight: 600;
-      margin: 4px 0 0;
+      margin: 4px 0 0 12px;
     `}
 
     &.cancelled {
