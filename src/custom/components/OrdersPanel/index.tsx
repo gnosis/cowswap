@@ -77,14 +77,14 @@ const isConfirmed = (data: TransactionAndOrder) =>
   data.status === OrderStatus.FULFILLED || data.status === OrderStatus.EXPIRED || data.status === OrderStatus.CANCELLED
 
 export interface OrdersPanelProps {
-  ordersPanelOpen: boolean
+  isOrdersPanelOpen: boolean
   closeOrdersPanel: () => void
 }
 
-export default function OrdersPanel({ ordersPanelOpen, closeOrdersPanel }: OrdersPanelProps) {
+export default function OrdersPanel({ isOrdersPanelOpen, closeOrdersPanel }: OrdersPanelProps) {
   // Close sidebar if clicked/tapped outside
   const ref = useRef<HTMLDivElement | null>(null)
-  useOnClickOutside(ref, ordersPanelOpen ? closeOrdersPanel : undefined)
+  useOnClickOutside(ref, isOrdersPanelOpen ? closeOrdersPanel : undefined)
 
   const walletInfo = useWalletInfo()
   const toggleWalletModal = useWalletModalToggle()
@@ -111,7 +111,7 @@ export default function OrdersPanel({ ordersPanelOpen, closeOrdersPanel }: Order
   }
 
   return (
-    <SideBar ref={ref} isOpen={ordersPanelOpen}>
+    <SideBar ref={ref} isOpen={isOrdersPanelOpen}>
       <Wrapper>
         <CloseIcon onClick={closeOrdersPanel} />
         <AccountDetails

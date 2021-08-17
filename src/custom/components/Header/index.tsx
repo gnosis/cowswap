@@ -143,9 +143,9 @@ export default function Header() {
   const userEthBalance = useETHBalances(account ? [account] : [])?.[account ?? '']
   const nativeToken = chainId && (CHAIN_CURRENCY_LABELS[chainId] || 'ETH')
   const [darkMode, toggleDarkMode] = useDarkModeManager()
-  const [ordersPanelOpen, setOrdersPanelOpen] = useState<boolean>(false)
-  const closeOrdersPanel = () => setOrdersPanelOpen(false)
-  const openOrdersPanel = () => setOrdersPanelOpen(true)
+  const [isOrdersPanelOpen, setIsOrdersPanelOpen] = useState<boolean>(false)
+  const closeOrdersPanel = () => setIsOrdersPanelOpen(false)
+  const openOrdersPanel = () => setIsOrdersPanelOpen(true)
 
   return (
     <HeaderModWrapper>
@@ -189,7 +189,7 @@ export default function Header() {
           <Menu />
         </HeaderElementWrap>
       </HeaderControls>
-      <OrdersPanel ordersPanelOpen={ordersPanelOpen} closeOrdersPanel={closeOrdersPanel} />
+      <OrdersPanel isOrdersPanelOpen={isOrdersPanelOpen} closeOrdersPanel={closeOrdersPanel} />
     </HeaderModWrapper>
   )
 }
