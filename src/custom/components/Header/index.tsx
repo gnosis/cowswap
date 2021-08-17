@@ -189,7 +189,7 @@ export default function Header() {
           <Menu />
         </HeaderElementWrap>
       </HeaderControls>
-      <OrdersPanel isOrdersPanelOpen={isOrdersPanelOpen} closeOrdersPanel={closeOrdersPanel} />
+      {isOrdersPanelOpen && <OrdersPanel closeOrdersPanel={closeOrdersPanel} />}
     </HeaderModWrapper>
   )
 }
