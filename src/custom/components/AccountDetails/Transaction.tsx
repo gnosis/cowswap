@@ -25,6 +25,7 @@ import { useCancelOrder } from 'hooks/useCancelOrder'
 import { LinkStyledButton } from 'theme'
 import { ButtonPrimary } from 'components/Button'
 import { GpModal as Modal } from 'components/Modal'
+import { Order } from 'state/orders/actions'
 
 import SVG from 'react-inlinesvg'
 import TxArrowsImage from 'assets/cow-swap/transaction-arrows.svg'
@@ -34,7 +35,6 @@ import OrderCheckImage from 'assets/cow-swap/order-check.svg'
 import OrderExpiredImage from 'assets/cow-swap/order-expired.svg'
 import OrderCancelledImage from 'assets/cow-swap/order-cancelled.svg'
 import OrderOpenImage from 'assets/cow-swap/order-open.svg'
-import { Order } from 'state/orders/actions'
 import { formatSmart } from 'utils/format'
 
 const PILL_COLOUR_MAP = {
@@ -509,17 +509,13 @@ export default function Transaction({ hash: id }: { hash: string }) {
   const isCancelling = status === ActivityStatus.CANCELLING
   const isCancelled = status === ActivityStatus.CANCELLED
   const isCancellable = isPending && type === ActivityType.ORDER
+  const isUnfillable = isCancellable && (activity as Order).isUnfillable
 
   // Type of Transaction
   const isTransaction = type === ActivityType.TX
 
-  // Flags
-  const isPriceOutOfRange = false
-
   const onCancelClick = () => setShowCancelModal(true)
   const onDismiss = () => setShowCancelModal(false)
-
-  // const isLoading = isPending || isCancelling ? true : false
 
   return (
     <Wrapper>
@@ -595,7 +591,7 @@ export default function Transaction({ hash: id }: { hash: string }) {
         </StatusLabelWrapper>
       </TransactionWrapper>
 
-      {isPriceOutOfRange && (
+      {isUnfillable && (
         <TransactionAlertMessage>
           <p>
             <span role="img" aria-label="alert">
