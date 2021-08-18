@@ -63,6 +63,7 @@ export const Wrapper = styled.div`
     order: 2;
     margin: 0 0 0 8px;
     align-self: center;
+    font-size: 21px;
   }
 
   ${WalletName} {
