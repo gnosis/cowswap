@@ -309,7 +309,6 @@ function ActivitySummary(params: {
   const isOrder = type === ActivityType.ORDER
 
   if (isOrder) {
-    console.log('activity ========', activity)
     const { inputToken, sellAmount, feeAmount, outputToken, buyAmount, validTo, kind, fulfillmentTime } =
       activity as Order
 
@@ -325,8 +324,6 @@ function ActivitySummary(params: {
     orderSummary.fulfillmentTime = fulfillmentTime ? new Date(fulfillmentTime).toLocaleString() : undefined
     orderSummary.kind = kind.toString()
   }
-
-  console.log(getLimitPrice(activity as Order))
 
   return (
     <Summary>
