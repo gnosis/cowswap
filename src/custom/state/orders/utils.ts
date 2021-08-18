@@ -1,5 +1,5 @@
 import { OrderKind } from '@gnosis.pm/gp-v2-contracts'
-import { Price } from '@uniswap/sdk-core'
+import { Currency, Price } from '@uniswap/sdk-core'
 
 import { ONE_HUNDRED_PERCENT, PENDING_ORDERS_BUFFER } from 'constants/index'
 import { OrderMetaData } from 'utils/operator'
@@ -66,8 +66,13 @@ export function classifyOrder(order: OrderMetaData | null): ApiOrderStatus {
   return 'pending'
 }
 
-export function getLimitPrice(order: Order): any {
-  return new Price(order.inputToken, order.outputToken, order.sellAmount.toString(), order.buyAmount.toString())
+export function getLimitPrice<TQuote extends Currency, TBase extends Currency>(order: Order): Price<TQuote, TBase> {
+  return new Price<TQuote, TBase>(
+    order.inputToken as TQuote,
+    order.outputToken as TBase,
+    order.sellAmount.toString(),
+    order.buyAmount.toString()
+  )
 }
 
 /**
