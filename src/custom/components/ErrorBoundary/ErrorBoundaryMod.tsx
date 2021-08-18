@@ -28,7 +28,7 @@ const Wrapper = styled(Page)`
 
   @media screen and (max-width: ${MEDIA_WIDTHS.upToSmall}px) {
     max-width: 90vw;
-    margin: 80px 0;
+    margin: 50px 0 80px 0;
   }
 `
 
@@ -54,6 +54,9 @@ const HeaderWrapper = styled.div`
   position: fixed;
   top: 0;
   z-index: 2;
+  @media screen and (max-width: ${MEDIA_WIDTHS.upToSmall}px) {
+    position: relative;
+  }
 `
 
 const CodeBlockWrapper = styled.div`
