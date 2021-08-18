@@ -2,6 +2,7 @@ import { Trans } from '@lingui/macro'
 import React, { ErrorInfo } from 'react'
 import store, { AppState } from 'state/index'
 import { ExternalLink, TYPE } from 'theme/index'
+import Page, { Title } from 'components/Page'
 import { AutoColumn } from 'components/Column'
 import styled from 'styled-components/macro'
 import ReactGA from 'react-ga'
@@ -9,26 +10,29 @@ import { getUserAgent } from 'utils/getUserAgent'
 import { AutoRow } from 'components/Row'
 import Header from 'components/Header'
 
-const FallbackWrapper = styled.div`
+const AppWrapper = styled.div`
   display: flex;
-  flex-direction: column;
-  width: 100%;
+  flex-flow: column;
   align-items: center;
-  z-index: 1;
+  min-height: 100vh;
+  overflow-x: hidden;
 `
-const BodyWrapper = styled.div<{ margin?: string }>`
+
+const Wrapper = styled(Page)`
   display: flex;
   flex-direction: column;
-  width: 100%;
-  padding-top: 120px;
-  align-items: center;
-  flex: 1;
-  z-index: 1;
-  white-space: pre;
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    padding: 16px;
-    padding-top: 6rem;
-  `};
+  max-width: 80vw;
+  margin-top: 120px;
+`
+
+const FlexContainer = styled.div`
+  display: flex;
+  align-items: flex-start;
+
+  @media screen and (max-width: 768px) {
+    flex-direction: column;
+    align-items: center;
+  }
 `
 const HeaderWrapper = styled.div`
   ${({ theme }) => theme.flexRowNoWrap}
@@ -40,7 +44,7 @@ const HeaderWrapper = styled.div`
 `
 
 const CodeBlockWrapper = styled.div`
-  background: ${({ theme }) => theme.bg1};
+  background: ${({ theme }) => theme.bg4};
   overflow: auto;
   white-space: pre;
   box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.01), 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04),
@@ -52,10 +56,6 @@ const CodeBlockWrapper = styled.div`
 
 const LinkWrapper = styled.div`
   color: ${({ theme }) => theme.blue1};
-  padding: 6px 24px;
-`
-
-const SomethingWentWrongWrapper = styled.div`
   padding: 6px 24px;
 `
 
@@ -86,22 +86,22 @@ export default class ErrorBoundary extends React.Component<unknown, ErrorBoundar
     if (error !== null) {
       const encodedBody = encodeURIComponent(issueBody(error))
       return (
-        <FallbackWrapper>
+        <AppWrapper>
           <HeaderWrapper>
             <Header />
           </HeaderWrapper>
-          <BodyWrapper>
+          <Wrapper>
+            <FlexContainer>
+              <Title>
+                <Trans>
+                  <span role="img" aria-label="cow-exclamation">
+                    🐮❕
+                  </span>{' '}
+                  Something went wrong
+                </Trans>
+              </Title>
+            </FlexContainer>
             <AutoColumn gap={'md'}>
-              <SomethingWentWrongWrapper>
-                <TYPE.label fontSize={24} fontWeight={600}>
-                  <Trans>
-                    <span role="img" aria-label="cow-exclamation">
-                      🐮❕
-                    </span>{' '}
-                    Something went wrong
-                  </Trans>
-                </TYPE.label>
-              </SomethingWentWrongWrapper>
               <CodeBlockWrapper>
                 <code>
                   <TYPE.main fontSize={10} color={'text1'}>
@@ -113,7 +113,6 @@ export default class ErrorBoundary extends React.Component<unknown, ErrorBoundar
                 <LinkWrapper>
                   <ExternalLink
                     id="create-github-issue-link"
-                    // href={`https://github.com/Uniswap/uniswap-interface/issues/new?assignees=&labels=bug&body=${encodedBody}&title=${encodeURIComponent(
                     href={`https://github.com/gnosis/cowswap/issues/new?assignees=&labels=bug&body=${encodedBody}&title=${encodeURIComponent(
                       `Crash report: \`${error.name}${error.message && `: ${error.message}`}\``
                     )}`}
@@ -126,7 +125,6 @@ export default class ErrorBoundary extends React.Component<unknown, ErrorBoundar
                   </ExternalLink>
                 </LinkWrapper>
                 <LinkWrapper>
-                  {/* <ExternalLink id="get-support-on-discord" href="https://discord.gg/FCfyBSbCU5" target="_blank"> */}
                   <ExternalLink id="get-support-on-discord" href="https://chat.cowswap.exchange/" target="_blank">
                     <TYPE.link fontSize={16}>
                       <Trans>Get support on Discord</Trans>
@@ -136,8 +134,8 @@ export default class ErrorBoundary extends React.Component<unknown, ErrorBoundar
                 </LinkWrapper>
               </AutoRow>
             </AutoColumn>
-          </BodyWrapper>
-        </FallbackWrapper>
+          </Wrapper>
+        </AppWrapper>
       )
     }
     return this.props.children
