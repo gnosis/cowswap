@@ -36,6 +36,7 @@ import OrderExpiredImage from 'assets/cow-swap/order-expired.svg'
 import OrderCancelledImage from 'assets/cow-swap/order-cancelled.svg'
 import OrderOpenImage from 'assets/cow-swap/order-open.svg'
 import { formatSmart } from 'utils/format'
+import { getLimitPrice } from 'state/orders/utils'
 
 const PILL_COLOUR_MAP = {
   CONFIRMED: '#3B7848',
@@ -282,6 +283,7 @@ interface OrderSummaryType {
   to: string | undefined
   limitPrice: string | undefined
   validTo: string | undefined
+  fulfillmentTime?: string | undefined
   kind?: string
 }
 
@@ -307,17 +309,24 @@ function ActivitySummary(params: {
   const isOrder = type === ActivityType.ORDER
 
   if (isOrder) {
-    const { inputToken, sellAmount, feeAmount, outputToken, buyAmount, validTo, kind } = activity as Order
+    console.log('activity ========', activity)
+    const { inputToken, sellAmount, feeAmount, outputToken, buyAmount, validTo, kind, fulfillmentTime } =
+      activity as Order
 
     const sellAmt = CurrencyAmount.fromRawAmount(inputToken, sellAmount.toString())
     const feeAmt = CurrencyAmount.fromRawAmount(inputToken, feeAmount.toString())
     const outputAmount = CurrencyAmount.fromRawAmount(outputToken, buyAmount.toString())
+    const limitPrice = formatSmart(getLimitPrice(activity as Order))
 
     orderSummary.from = `${formatSmart(sellAmt.add(feeAmt))} ${sellAmt.currency.symbol}`
     orderSummary.to = `${formatSmart(outputAmount)} ${outputAmount.currency.symbol}`
+    orderSummary.limitPrice = `${limitPrice} ${outputAmount.currency.symbol} per ${sellAmt.currency.symbol} `
     orderSummary.validTo = new Date((validTo as number) * 1000).toLocaleString()
+    orderSummary.fulfillmentTime = fulfillmentTime ? new Date(fulfillmentTime).toLocaleString() : undefined
     orderSummary.kind = kind.toString()
   }
+
+  console.log(getLimitPrice(activity as Order))
 
   return (
     <Summary>
@@ -337,10 +346,20 @@ function ActivitySummary(params: {
               <b>Limit price</b>
               <i>{orderSummary.limitPrice}</i>
             </SummaryInnerRow>
-            <SummaryInnerRow>
-              <b>Valid to</b>
-              <i className={isCancelled ? 'cancelled' : ''}>{orderSummary.validTo}</i>
-            </SummaryInnerRow>
+
+            {!orderSummary.fulfillmentTime && (
+              <SummaryInnerRow>
+                <b>Valid to</b>
+                <i className={isCancelled ? 'cancelled' : ''}>{orderSummary.validTo}</i>
+              </SummaryInnerRow>
+            )}
+
+            {orderSummary.fulfillmentTime && (
+              <SummaryInnerRow>
+                <b>Filled on</b>
+                <i>{orderSummary.fulfillmentTime}</i>
+              </SummaryInnerRow>
+            )}
           </>
         ) : (
           summary ?? id

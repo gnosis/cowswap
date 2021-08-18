@@ -66,6 +66,10 @@ export function classifyOrder(order: OrderMetaData | null): ApiOrderStatus {
   return 'pending'
 }
 
+export function getLimitPrice(order: Order): any {
+  return new Price(order.inputToken, order.outputToken, order.sellAmount.toString(), order.buyAmount.toString())
+}
+
 /**
  * Based on the order and current price, returns `true` if order is out of the market.
  * Out of the market means the price difference between original and current to be positive
@@ -79,12 +83,7 @@ export function classifyOrder(order: OrderMetaData | null): ApiOrderStatus {
  */
 export function isOrderUnfillable(order: Order, price: Required<PriceInformation>): boolean {
   // Build price object from stored order
-  const orderPrice = new Price(
-    order.inputToken,
-    order.outputToken,
-    order.sellAmount.toString(),
-    order.buyAmount.toString()
-  )
+  const orderPrice = getLimitPrice(order)
 
   // Build current price object from quoted price
   // Note that depending on the order type, the amount will be used either as nominator or denominator
