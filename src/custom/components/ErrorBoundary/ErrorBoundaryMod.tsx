@@ -9,6 +9,7 @@ import ReactGA from 'react-ga'
 import { getUserAgent } from 'utils/getUserAgent'
 import { AutoRow } from 'components/Row'
 import Header from 'components/Header'
+import { MEDIA_WIDTHS } from '@src/theme'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -21,15 +22,27 @@ const AppWrapper = styled.div`
 const Wrapper = styled(Page)`
   display: flex;
   flex-direction: column;
-  max-width: 80vw;
-  margin-top: 120px;
+  width: 100vw;
+  max-width: 75vw;
+  margin: 120px 0;
+
+  @media screen and (max-width: ${MEDIA_WIDTHS.upToSmall}px) {
+    max-width: 90vw;
+    margin: 80px 0;
+  }
+`
+
+const StyledTitle = styled(Title)`
+  @media screen and (max-width: ${MEDIA_WIDTHS.upToSmall}px) {
+    font-size: 1.2rem;
+  }
 `
 
 const FlexContainer = styled.div`
   display: flex;
   align-items: flex-start;
 
-  @media screen and (max-width: 768px) {
+  @media screen and (max-width: ${MEDIA_WIDTHS.upToSmall}px) {
     flex-direction: column;
     align-items: center;
   }
@@ -92,14 +105,14 @@ export default class ErrorBoundary extends React.Component<unknown, ErrorBoundar
           </HeaderWrapper>
           <Wrapper>
             <FlexContainer>
-              <Title>
+              <StyledTitle>
                 <Trans>
                   <span role="img" aria-label="cow-exclamation">
                     🐮❕
                   </span>{' '}
                   Something went wrong
                 </Trans>
-              </Title>
+              </StyledTitle>
             </FlexContainer>
             <AutoColumn gap={'md'}>
               <CodeBlockWrapper>
