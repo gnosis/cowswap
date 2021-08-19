@@ -66,6 +66,17 @@ export function classifyOrder(order: OrderMetaData | null): ApiOrderStatus {
   return 'pending'
 }
 
+export function getExecutedPrice<TQuote extends Currency, TBase extends Currency>(
+  order: OrderMetaData
+): Price<TQuote, TBase> {
+  return new Price<TQuote, TBase>(
+    order.sellToken as unknown as TQuote,
+    order.buyToken as unknown as TBase,
+    order.executedSellAmount.toString(),
+    order.executedBuyAmount.toString()
+  )
+}
+
 export function getLimitPrice<TQuote extends Currency, TBase extends Currency>(order: Order): Price<TQuote, TBase> {
   return new Price<TQuote, TBase>(
     order.inputToken as TQuote,
