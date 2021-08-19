@@ -1,3 +1,5 @@
+import { registerOnWindow } from './misc'
+
 const getRegex = (regex: string | undefined) => (regex ? new RegExp(regex) : undefined)
 
 export function checkEnvironment(host: string) {
@@ -45,5 +47,7 @@ export const environmentName = (function () {
     return undefined
   }
 })()
+
+registerOnWindow({ environment: environmentName })
 
 export { isLocal, isDev, isPr, isBarn, isStaging, isProd, isEns }
