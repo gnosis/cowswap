@@ -43,14 +43,14 @@ import {
   SummaryInner,
   SummaryInnerRow,
   TransactionWrapper,
-  IconType,
+  TransactionAlertMessage,
   TransactionStatusText,
-  StatusLabelWrapper,
   StatusLabel,
+  StatusLabelWrapper,
   StatusLabelBelow,
   TransactionState,
   CancellationSummary,
-  TransactionAlertMessage,
+  IconType,
 } from './styled'
 
 const PILL_COLOUR_MAP = {
