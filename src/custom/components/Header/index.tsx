@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { SupportedChainId as ChainId } from 'constants/chains'
 import Web3Status from 'components/Web3Status'
 import { ExternalLink } from 'theme'
@@ -135,6 +135,12 @@ export default function Header() {
   const closeOrdersPanel = () => setIsOrdersPanelOpen(false)
   const openOrdersPanel = () => setIsOrdersPanelOpen(true)
 
+  // Toggle the 'noScroll' class on body, whenever the orders panel is open.
+  // This removes the inner scrollbar on the page body, to prevent showing double scrollbars.
+  useEffect(() => {
+    isOrdersPanelOpen ? document.body.classList.add('noScroll') : document.body.classList.remove('noScroll')
+  }, [isOrdersPanelOpen])
+
   return (
     <HeaderModWrapper>
       <HeaderRow>
@@ -177,7 +183,7 @@ export default function Header() {
           <Menu />
         </HeaderElementWrap>
       </HeaderControls>
-      <OrdersPanel isOrdersPanelOpen={isOrdersPanelOpen} closeOrdersPanel={closeOrdersPanel} />
+      {isOrdersPanelOpen && <OrdersPanel closeOrdersPanel={closeOrdersPanel} />}
     </HeaderModWrapper>
   )
 }
