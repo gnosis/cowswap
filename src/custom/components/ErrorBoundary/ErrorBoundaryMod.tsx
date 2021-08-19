@@ -9,6 +9,7 @@ import ReactGA from 'react-ga'
 import { getUserAgent } from 'utils/getUserAgent'
 import { AutoRow } from 'components/Row'
 import { MEDIA_WIDTHS } from '@src/theme'
+import CowError from 'assets/cow-swap/CowError.png'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -22,7 +23,7 @@ const Wrapper = styled(Page)`
   display: flex;
   flex-direction: column;
   width: 100vw;
-  max-width: 75vw;
+  max-width: 65vw;
   margin: 120px 0;
 
   @media screen and (max-width: ${MEDIA_WIDTHS.upToSmall}px) {
@@ -39,7 +40,9 @@ const StyledTitle = styled(Title)`
 
 const FlexContainer = styled.div`
   display: flex;
-  align-items: flex-start;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 0 0.5rem 0;
 
   @media screen and (max-width: ${MEDIA_WIDTHS.upToSmall}px) {
     flex-direction: column;
@@ -141,6 +144,7 @@ export default class ErrorBoundary extends React.Component<unknown, ErrorBoundar
                   Something went wrong
                 </Trans>
               </StyledTitle>
+              <img src={CowError} alt="CowSwap Error" height="125" />
             </FlexContainer>
             <AutoColumn gap={'md'}>
               <CodeBlockWrapper>
