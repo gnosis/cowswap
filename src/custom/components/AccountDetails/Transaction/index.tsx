@@ -134,11 +134,11 @@ function ActivitySummary(params: {
       order.status === OrderStatus.FULFILLED
         ? formatSmart(
             getExecutionPrice({
-              executedBuyAmount: '1234567890', // TODO: Do we have the OrderMetaData from the API??. add execution values
+              executedBuyAmount: '1234567890', // TODO: when we mutate to FULLFILLED (after getting the order from the API), we need to save the actual executed amounts
               executedSellAmount: '1000000000',
               buyTokenDecimals,
               sellTokenDecimals,
-              inverted: false, // TODO: handle invert price
+              inverted: false, // TODO: Handle invert price
             })
           )
         : undefined
