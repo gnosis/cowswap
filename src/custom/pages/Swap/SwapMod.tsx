@@ -275,7 +275,7 @@ export default function Swap({
     [independentField]: typedValue,
     [dependentField]: showWrap
       ? parsedAmounts[independentField]?.toExact() ?? ''
-      : formatSmart(parsedAmounts[dependentField]) ?? '',
+      : formatSmart(parsedAmounts[dependentField], AMOUNT_PRECISION) ?? '',
   }
 
   /* const userHasSpecifiedInputOutput = Boolean(
