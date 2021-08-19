@@ -1,5 +1,7 @@
 {
   "version": "0.1.0",
-  "appCode": "CowSwap: Barn",
-  "metadata": {}
+  "appCode": "CowSwap",
+  "metadata": {
+    "environment": "barn"
+  }
 }
