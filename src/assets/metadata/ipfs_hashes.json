@@ -1,4 +1,10 @@
 {
+  "Balancer": {
+    "cid": "Qme5tGHELjRiFonuoFi3xuPqwcUMQe3uwvgrKsKVeJ9Ejc",
+    "digestHex": "0xE9F29AE547955463ED535162AEFEE525D8D309571A2B18BC26086C8C35D781EB",
+    "cidInspector": "https://cid.ipfs.io/#Qme5tGHELjRiFonuoFi3xuPqwcUMQe3uwvgrKsKVeJ9Ejc",
+    "file": "https://cloudflare-ipfs.com/ipfs/Qme5tGHELjRiFonuoFi3xuPqwcUMQe3uwvgrKsKVeJ9Ejc"
+  },
   "CowSwap": {
     "cid": "QmX3raf5oWVB3VK8RE6VTMrUGWzCY8Fykpf9AVLXvxT954",
     "digestHex": "0x816BBB5787AA2B72E2DE870A4E935A49A97305DE32E637B8126D07BEE10D03AB",
