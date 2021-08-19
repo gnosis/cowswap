@@ -1,11 +1,13 @@
 import { OrderKind } from '@gnosis.pm/gp-v2-contracts'
-import { Currency, Price } from '@uniswap/sdk-core'
+import { Price } from '@uniswap/sdk-core'
 
 import { ONE_HUNDRED_PERCENT, PENDING_ORDERS_BUFFER } from 'constants/index'
 import { OrderMetaData } from 'utils/operator'
 import { Order } from 'state/orders/actions'
 import { PriceInformation } from 'utils/price'
 import { OUT_OF_MARKET_PRICE_DELTA_PERCENTAGE } from 'state/orders/consts'
+import { calculatePrice, invertPrice, ZERO_BIG_NUMBER } from '@gnosis.pm/dex-js'
+import { BigNumber } from 'bignumber.js'
 
 export type ApiOrderStatus = 'unknown' | 'fulfilled' | 'expired' | 'cancelled' | 'pending'
 
@@ -66,24 +68,89 @@ export function classifyOrder(order: OrderMetaData | null): ApiOrderStatus {
   return 'pending'
 }
 
-export function getExecutedPrice<TQuote extends Currency, TBase extends Currency>(
-  order: OrderMetaData
-): Price<TQuote, TBase> {
-  return new Price<TQuote, TBase>(
-    order.sellToken as unknown as TQuote,
-    order.buyToken as unknown as TBase,
-    order.executedSellAmount.toString(),
-    order.executedBuyAmount.toString()
-  )
+export type GetLimitPriceParams = {
+  buyAmount: string
+  sellAmount: string
+  buyTokenDecimals: number
+  sellTokenDecimals: number
+  inverted?: boolean
 }
 
-export function getLimitPrice<TQuote extends Currency, TBase extends Currency>(order: Order): Price<TQuote, TBase> {
-  return new Price<TQuote, TBase>(
-    order.inputToken as TQuote,
-    order.outputToken as TBase,
-    order.sellAmount.toString(),
-    order.buyAmount.toString()
-  )
+// TODO: Use the SDK when ready
+/**
+ * Calculates order limit price base on order and buy/sell token decimals
+ * Result is given in sell token units
+ *
+ * @param order The order
+ * @param buyTokenDecimals The buy token decimals
+ * @param sellTokenDecimals The sell token decimals
+ * @param inverted Optional. Whether to invert the price (1/price).
+ */
+export function getLimitPrice({
+  buyAmount,
+  sellAmount,
+  buyTokenDecimals,
+  sellTokenDecimals,
+  inverted,
+}: GetLimitPriceParams): BigNumber {
+  const price = calculatePrice({
+    numerator: { amount: buyAmount, decimals: buyTokenDecimals },
+    denominator: { amount: sellAmount, decimals: sellTokenDecimals },
+  })
+
+  return inverted ? invertPrice(price) : price
+}
+
+type GetExecutionPriceParams = Omit<GetLimitPriceParams, 'buyAmount' | 'sellAmount'> & {
+  executedBuyAmount?: string
+  executedSellAmount?: string
+}
+
+// TODO: Use the SDK when ready
+/**
+ * Calculates order executed price base on order and buy/sell token decimals
+ * Result is given in sell token units
+ *
+ * @param order The order
+ * @param buyTokenDecimals The buy token decimals
+ * @param sellTokenDecimals The sell token decimals
+ * @param inverted Optional. Whether to invert the price (1/price).
+ */
+export function getExecutionPrice({
+  executedBuyAmount,
+  executedSellAmount,
+  buyTokenDecimals,
+  sellTokenDecimals,
+  inverted,
+}: GetExecutionPriceParams): BigNumber {
+  // Only calculate the price when both values are set
+  // Having only one value > 0 is anyway an invalid state
+  if (!executedBuyAmount || !executedSellAmount || executedBuyAmount === '0' || executedSellAmount === '0') {
+    return ZERO_BIG_NUMBER
+  }
+
+  const price = calculatePrice({
+    numerator: { amount: executedBuyAmount, decimals: buyTokenDecimals },
+    denominator: { amount: executedSellAmount, decimals: sellTokenDecimals },
+  })
+
+  return inverted ? invertPrice(price) : price
+}
+
+/**
+ * Syntactic sugar to get the order's executed amounts as a BigNumber (in atoms)
+ * Mostly because `executedSellAmount` is derived from 2 fields (at time or writing)
+ *
+ * @param order The order
+ */
+export function getOrderExecutedAmounts(order: OrderMetaData): {
+  executedBuyAmount: BigNumber
+  executedSellAmount: BigNumber
+} {
+  return {
+    executedBuyAmount: new BigNumber(order.executedBuyAmount),
+    executedSellAmount: new BigNumber(order.executedSellAmount).minus(order.executedFeeAmount),
+  }
 }
 
 /**
@@ -99,7 +166,12 @@ export function getLimitPrice<TQuote extends Currency, TBase extends Currency>(o
  */
 export function isOrderUnfillable(order: Order, price: Required<PriceInformation>): boolean {
   // Build price object from stored order
-  const orderPrice = getLimitPrice(order)
+  const orderPrice = new Price(
+    order.inputToken,
+    order.outputToken,
+    order.sellAmount.toString(),
+    order.buyAmount.toString()
+  )
 
   // Build current price object from quoted price
   // Note that depending on the order type, the amount will be used either as nominator or denominator
