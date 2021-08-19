@@ -131,18 +131,19 @@ function ActivitySummary(params: {
       })
     )
 
-    const executionPrice =
-      order.status === OrderStatus.FULFILLED
-        ? formatSmart(
-            getExecutionPrice({
-              executedBuyAmount: '1234567890', // TODO: when we mutate to FULLFILLED (after getting the order from the API), we need to save the actual executed amounts
-              executedSellAmount: '1000000000',
-              buyTokenDecimals,
-              sellTokenDecimals,
-              inverted: false, // TODO: Handle invert price
-            })
-          )
-        : undefined
+    let executionPrice: string | undefined
+    if (order.apiAdditionalInfo && order.status === OrderStatus.FULFILLED) {
+      const { executedSellAmount, executedBuyAmount } = order.apiAdditionalInfo
+      executionPrice = formatSmart(
+        getExecutionPrice({
+          executedSellAmount,
+          executedBuyAmount,
+          buyTokenDecimals,
+          sellTokenDecimals,
+          inverted: false, // TODO: Handle invert price
+        })
+      )
+    }
 
     orderSummary = {
       ...DEFAULT_ORDER_SUMMARY,
