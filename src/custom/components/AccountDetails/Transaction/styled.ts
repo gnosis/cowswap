@@ -95,7 +95,8 @@ export const SummaryInnerRow = styled.div`
   grid-template-columns: 90px 1fr;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr; 
+    grid-template-rows: max-content max-content; 
     margin: 0 16px 8px 0;
 `};
 
