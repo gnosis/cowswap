@@ -8,7 +8,6 @@ import styled from 'styled-components/macro'
 import ReactGA from 'react-ga'
 import { getUserAgent } from 'utils/getUserAgent'
 import { AutoRow } from 'components/Row'
-import Header from 'components/Header'
 import { MEDIA_WIDTHS } from '@src/theme'
 
 const AppWrapper = styled.div`
@@ -59,6 +58,28 @@ const HeaderWrapper = styled.div`
   }
 `
 
+export const LogoImage = styled.img.attrs((props) => ({
+  src: props.theme.logo.src,
+  alt: props.theme.logo.alt,
+  width: props.theme.logo.width,
+  height: props.theme.logo.height,
+}))`
+  object-fit: contain;
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    width: 150px;
+  `};
+`
+
+const CowLogo = styled.div`
+  display: flex;
+  margin: 1rem;
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: rotate(-5deg);
+  }
+`
 const CodeBlockWrapper = styled.div`
   background: ${({ theme }) => theme.bg4};
   overflow: auto;
@@ -104,7 +125,11 @@ export default class ErrorBoundary extends React.Component<unknown, ErrorBoundar
       return (
         <AppWrapper>
           <HeaderWrapper>
-            <Header />
+            <a href=".">
+              <CowLogo>
+                <LogoImage />
+              </CowLogo>
+            </a>
           </HeaderWrapper>
           <Wrapper>
             <FlexContainer>
