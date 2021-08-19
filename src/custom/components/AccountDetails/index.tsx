@@ -6,7 +6,7 @@ import { AppDispatch } from 'state'
 import { clearAllTransactions } from 'state/transactions/actions'
 import { getExplorerLabel, shortenAddress } from 'utils'
 
-import Copy from 'components/AccountDetails/Copy'
+import Copy from 'components/Copy'
 import { Trans } from '@lingui/macro'
 
 import { SUPPORTED_WALLETS } from 'constants/index'

@@ -206,8 +206,13 @@ const TransactionStatusText = styled.div`
     margin: 0 auto 0 0;
   `};
 
+  &.copied,
   &:hover {
     text-decoration: none;
+  }
+
+  &.copied {
+    background: red;
   }
 `
 
