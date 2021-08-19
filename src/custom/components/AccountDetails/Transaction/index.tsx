@@ -25,7 +25,7 @@ import { useCancelOrder } from 'hooks/useCancelOrder'
 import { LinkStyledButton } from 'theme'
 import { ButtonPrimary } from 'components/Button'
 import { GpModal as Modal } from 'components/Modal'
-import { Order } from 'state/orders/actions'
+import { Order, OrderStatus } from 'state/orders/actions'
 
 import SVG from 'react-inlinesvg'
 import TxArrowsImage from 'assets/cow-swap/transaction-arrows.svg'
@@ -36,7 +36,6 @@ import OrderCancelledImage from 'assets/cow-swap/order-cancelled.svg'
 import OrderOpenImage from 'assets/cow-swap/order-open.svg'
 
 import { formatSmart } from 'utils/format'
-import { getLimitPrice, getExecutedPrice } from 'state/orders/utils'
 import {
   Wrapper,
   Summary,
@@ -52,6 +51,15 @@ import {
   CancellationSummary,
   IconType,
 } from './styled'
+import { getLimitPrice, getExecutionPrice } from 'state/orders/utils'
+import { DEFAULT_PRECISION } from 'custom/constants'
+
+const DEFAULT_ORDER_SUMMARY = {
+  from: '',
+  to: '',
+  limitPrice: '',
+  validTo: '',
+}
 
 const PILL_COLOUR_MAP = {
   CONFIRMED: '#3B7848',
@@ -98,78 +106,99 @@ function ActivitySummary(params: {
   if (!activityData) return null
 
   const { activity, type, summary } = activityData
+  const isOrder = activity && type === ActivityType.ORDER
 
   // Order Summary default object
-  const orderSummary: OrderSummaryType = {
-    from: '🤔',
-    to: '🤔',
-    limitPrice: '🤔',
-    validTo: '🤔',
-  }
-
-  const isOrder = type === ActivityType.ORDER
-
+  let orderSummary: OrderSummaryType
   if (isOrder) {
-    const { inputToken, sellAmount, feeAmount, outputToken, buyAmount, validTo, kind, fulfillmentTime } =
-      activity as Order
+    const order = activity as Order
+    const { inputToken, sellAmount, feeAmount, outputToken, buyAmount, validTo, kind, fulfillmentTime } = order
 
     const sellAmt = CurrencyAmount.fromRawAmount(inputToken, sellAmount.toString())
     const feeAmt = CurrencyAmount.fromRawAmount(inputToken, feeAmount.toString())
     const outputAmount = CurrencyAmount.fromRawAmount(outputToken, buyAmount.toString())
-    const limitPrice = formatSmart(getLimitPrice(activity as Order))
-    // const executedPrice = formatSmart(getExecutedPrice(activity as Order))
-    const executedPrice = null
+    const buyTokenDecimals = order?.inputToken?.decimals ?? DEFAULT_PRECISION
+    const sellTokenDecimals = order?.inputToken?.decimals ?? DEFAULT_PRECISION
 
-    orderSummary.from = `${formatSmart(sellAmt.add(feeAmt))} ${sellAmt.currency.symbol}`
-    orderSummary.to = `${formatSmart(outputAmount)} ${outputAmount.currency.symbol}`
-    orderSummary.limitPrice = `${limitPrice} ${outputAmount.currency.symbol} per ${sellAmt.currency.symbol}`
-    orderSummary.executedPrice = executedPrice
-      ? `${executedPrice} ${outputAmount.currency.symbol} per ${sellAmt.currency.symbol}`
-      : undefined
-    orderSummary.validTo = new Date((validTo as number) * 1000).toLocaleString()
-    orderSummary.fulfillmentTime = fulfillmentTime ? new Date(fulfillmentTime).toLocaleString() : undefined
-    orderSummary.kind = kind.toString()
+    const limitPrice = formatSmart(
+      getLimitPrice({
+        buyAmount: order.buyAmount.toString(),
+        sellAmount: order.sellAmount.toString(),
+        buyTokenDecimals,
+        sellTokenDecimals,
+        inverted: false, // TODO: handle invert price
+      })
+    )
+
+    const executedPrice =
+      order.status === OrderStatus.FULFILLED
+        ? formatSmart(
+            getExecutionPrice({
+              executedBuyAmount: '1234567890', // TODO: Do we have the OrderMetaData from the API??. add execution values
+              executedSellAmount: '1000000000',
+              buyTokenDecimals,
+              sellTokenDecimals,
+              inverted: false, // TODO: handle invert price
+            })
+          )
+        : undefined
+
+    orderSummary = {
+      ...DEFAULT_ORDER_SUMMARY,
+      from: `${formatSmart(sellAmt.add(feeAmt))} ${sellAmt.currency.symbol}`,
+      to: `${formatSmart(outputAmount)} ${outputAmount.currency.symbol}`,
+      limitPrice: `${limitPrice} ${outputAmount.currency.symbol} per ${sellAmt.currency.symbol}`,
+      validTo: new Date((validTo as number) * 1000).toLocaleString(),
+      executedPrice: executedPrice
+        ? `${executedPrice} ${outputAmount.currency.symbol} per ${sellAmt.currency.symbol}`
+        : undefined,
+      fulfillmentTime: fulfillmentTime ? new Date(fulfillmentTime).toLocaleString() : undefined,
+      kind: kind.toString(),
+    }
+  } else {
+    orderSummary = { ...DEFAULT_ORDER_SUMMARY }
   }
 
+  const { kind, from, to, executedPrice, limitPrice, fulfillmentTime, validTo } = orderSummary
   return (
     <Summary>
-      <b>{isOrder ? `${orderSummary.kind} order` : 'Transaction'} ↗</b>
+      <b>{isOrder ? `${kind} order` : 'Transaction'} ↗</b>
       <SummaryInner>
         {isOrder ? (
           <>
             <SummaryInnerRow>
-              <b>From{orderSummary.kind === 'buy' && ' at most'}</b>
-              <i>{orderSummary.from}</i>
+              <b>From{kind === 'buy' && ' at most'}</b>
+              <i>{from}</i>
             </SummaryInnerRow>
             <SummaryInnerRow>
-              <b>To{orderSummary.kind === 'sell' && ' at least'}</b>
-              <i>{orderSummary.to}</i>
+              <b>To{kind === 'sell' && ' at least'}</b>
+              <i>{to}</i>
             </SummaryInnerRow>
             <SummaryInnerRow>
-              {orderSummary.executedPrice ? (
+              {executedPrice ? (
                 <>
                   {' '}
                   <b>Execution price</b>
-                  <i>{orderSummary.executedPrice}</i>
+                  <i>{executedPrice}</i>
                 </>
               ) : (
                 <>
                   {' '}
                   <b>Limit price</b>
-                  <i>{orderSummary.limitPrice}</i>
+                  <i>{limitPrice}</i>
                 </>
               )}
             </SummaryInnerRow>
             <SummaryInnerRow>
-              {orderSummary.fulfillmentTime ? (
+              {fulfillmentTime ? (
                 <>
                   <b>Filled on</b>
-                  <i>{orderSummary.fulfillmentTime}</i>
+                  <i>{fulfillmentTime}</i>
                 </>
               ) : (
                 <>
                   <b>Valid to</b>
-                  <i className={isCancelled ? 'cancelled' : ''}>{orderSummary.validTo}</i>
+                  <i className={isCancelled ? 'cancelled' : ''}>{validTo}</i>
                 </>
               )}
             </SummaryInnerRow>
