@@ -1,8 +1,38 @@
 {
-  "CowSwap": {
-    "cid": "QmX3raf5oWVB3VK8RE6VTMrUGWzCY8Fykpf9AVLXvxT954",
-    "digestHex": "0x816BBB5787AA2B72E2DE870A4E935A49A97305DE32E637B8126D07BEE10D03AB",
-    "cidInspector": "https://cid.ipfs.io/#QmX3raf5oWVB3VK8RE6VTMrUGWzCY8Fykpf9AVLXvxT954",
-    "file": "https://cloudflare-ipfs.com/ipfs/QmX3raf5oWVB3VK8RE6VTMrUGWzCY8Fykpf9AVLXvxT954"
-  }
+  "CowSwap: Production": {
+    "cid": "QmfG5i58s3PZtq4Xi8sYDkkYPcFy1KX32sqFQHvek2FCAs",
+    "digestHex": "0xFB6B0A660E4FF6BBA27A4D095F24C9B84EB182D365CD95CDC00F2B4CB3C781A8",
+    "cidInspector": "https://cid.ipfs.io/#QmfG5i58s3PZtq4Xi8sYDkkYPcFy1KX32sqFQHvek2FCAs",
+    "file": "https://cloudflare-ipfs.com/ipfs/QmfG5i58s3PZtq4Xi8sYDkkYPcFy1KX32sqFQHvek2FCAs"
+  },
+  "CowSwap: ENS": {
+    "cid": "QmfQBUXADTbgKptxSxsvwMX8rEkRswyAGv6FqzJ4W441jv",
+    "digestHex": "0xFD7E3506A1C84C000978A8EBF1F0F96DB091AC77199391FD09E417F770F640C1",
+    "cidInspector": "https://cid.ipfs.io/#QmfQBUXADTbgKptxSxsvwMX8rEkRswyAGv6FqzJ4W441jv",
+    "file": "https://cloudflare-ipfs.com/ipfs/QmfQBUXADTbgKptxSxsvwMX8rEkRswyAGv6FqzJ4W441jv"
+  },
+  "CowSwap: Barn": {
+    "cid": "QmWvgEPMWz5XGx8KKGPMncnCET9EJka9cZaPknz6DBD9xV",
+    "digestHex": "0x7F94F6C378A24B1A21E10C0468C01049282A5A0CF6096E0E1C43717CC1DD9672",
+    "cidInspector": "https://cid.ipfs.io/#QmWvgEPMWz5XGx8KKGPMncnCET9EJka9cZaPknz6DBD9xV",
+    "file": "https://cloudflare-ipfs.com/ipfs/QmWvgEPMWz5XGx8KKGPMncnCET9EJka9cZaPknz6DBD9xV"
+  },
+  "CowSwap: Staging": {
+    "cid": "QmeojKZPsTS7zEUWto4Y7efa4Hs1JMtcVJ4LgFCUDWGJmu",
+    "digestHex": "0xF4AAE2FA05A85821AC2A75B569114D496E13EDD2605CEF7D6B6642ECD0CCE478",
+    "cidInspector": "https://cid.ipfs.io/#QmeojKZPsTS7zEUWto4Y7efa4Hs1JMtcVJ4LgFCUDWGJmu",
+    "file": "https://cloudflare-ipfs.com/ipfs/QmeojKZPsTS7zEUWto4Y7efa4Hs1JMtcVJ4LgFCUDWGJmu"
+  },
+  "CowSwap: Development": {
+    "cid": "QmanR5LpMFaVMVt4YLLT5CiEbN8vzx8pZsQBJdNNaEQL69",
+    "digestHex": "0xB8E5EDA48BD005F57938AA87B86ACA211183D1DF97CDF8F447DBEF461E74659E",
+    "cidInspector": "https://cid.ipfs.io/#QmanR5LpMFaVMVt4YLLT5CiEbN8vzx8pZsQBJdNNaEQL69",
+    "file": "https://cloudflare-ipfs.com/ipfs/QmanR5LpMFaVMVt4YLLT5CiEbN8vzx8pZsQBJdNNaEQL69"
+  },
+  "CowSwap: Local": {
+    "cid": "QmUwi5LK4LSe3ozNwWP53ecnTvNDftUfQwWph4Jjocu4W8",
+    "digestHex": "0x6221417C9341B13EAF1D63D5EDCC7DA6EE1153341C32931596D7734202FC3A15",
+    "cidInspector": "https://cid.ipfs.io/#QmUwi5LK4LSe3ozNwWP53ecnTvNDftUfQwWph4Jjocu4W8",
+    "file": "https://cloudflare-ipfs.com/ipfs/QmUwi5LK4LSe3ozNwWP53ecnTvNDftUfQwWph4Jjocu4W8"
+  },
 }
