@@ -13,6 +13,7 @@ import { MouseoverTooltipContent } from 'components/Tooltip'
 import { StyledInfo } from 'pages/Swap/SwapMod'
 import { formatSmart } from 'utils/format'
 import { RowReceivedAfterSlippage, RowSlippage, TradeSummaryProps } from '.'
+import { HighFeeWarning } from 'pages/Swap'
 
 // computes price breakdown for the trade
 export function computeTradePriceBreakdown(trade?: TradeGp | null): {
@@ -62,6 +63,9 @@ export default function TradeSummary({
           </TYPE.black>
         </RowBetween>
       )}
+
+      {/* High Fee Warning */}
+      <HighFeeWarning trade={trade} margin="0" />
 
       {/* Slippage */}
       <RowSlippage
