@@ -36,7 +36,10 @@ import OrderCancelledImage from 'assets/cow-swap/order-cancelled.svg'
 import OrderOpenImage from 'assets/cow-swap/order-open.svg'
 
 import { formatSmart } from 'utils/format'
-import { getLimitPrice, getExecutedPrice } from 'state/orders/utils'
+import {
+  getLimitPrice,
+  // getExecutedPrice
+} from 'state/orders/utils'
 import {
   Wrapper,
   Summary,
