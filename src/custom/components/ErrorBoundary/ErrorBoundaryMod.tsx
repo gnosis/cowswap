@@ -23,7 +23,7 @@ const Wrapper = styled(Page)`
   display: flex;
   flex-direction: column;
   width: 100vw;
-  max-width: 65vw;
+  max-width: 60vw;
   margin: 120px 0;
 
   @media screen and (max-width: ${MEDIA_WIDTHS.upToSmall}px) {
@@ -44,7 +44,7 @@ const FlexContainer = styled.div`
   justify-content: space-between;
   padding: 1rem 0 0.5rem 0;
 
-  @media screen and (max-width: ${MEDIA_WIDTHS.upToSmall}px) {
+  @media screen and (max-width: ${MEDIA_WIDTHS.upToMedium}px) {
     flex-direction: column;
     align-items: center;
   }
@@ -89,9 +89,17 @@ const CodeBlockWrapper = styled.div`
   white-space: pre;
   box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.01), 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04),
     0px 24px 32px rgba(0, 0, 0, 0.01);
-  border-radius: 24px;
-  padding: 50px;
+  border-radius: 16px;
+  padding: 8px;
   color: ${({ theme }) => theme.text2};
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    padding: 4px;
+  `};
+`
+
+const StyledParagraph = styled.p`
+  overflow-x: auto;
 `
 
 const LinkWrapper = styled.div`
@@ -145,7 +153,7 @@ export default class ErrorBoundary extends React.Component<unknown, ErrorBoundar
               <CodeBlockWrapper>
                 <code>
                   <TYPE.main fontSize={10} color={'text1'}>
-                    {error.stack}
+                    <StyledParagraph>{error.stack}</StyledParagraph>
                   </TYPE.main>
                 </code>
               </CodeBlockWrapper>
@@ -153,7 +161,7 @@ export default class ErrorBoundary extends React.Component<unknown, ErrorBoundar
                 <LinkWrapper>
                   <ExternalLink
                     id="create-github-issue-link"
-                    href={`https://github.com/gnosis/cowswap/issues/new?assignees=&labels=bug,critical&body=${encodedBody}&title=${encodeURIComponent(
+                    href={`https://github.com/gnosis/cowswap/issues/new?assignees=&labels=🐞 Bug,🔥 Critical&body=${encodedBody}&title=${encodeURIComponent(
                       `Crash report: \`${error.name}${error.message && `: ${error.message}`}\``
                     )}`}
                     target="_blank"
