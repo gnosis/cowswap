@@ -104,7 +104,7 @@ export interface OrdersPanelProps {
 export default function OrdersPanel({ closeOrdersPanel }: OrdersPanelProps) {
   // Close sidebar if clicked/tapped outside
   const ref = useRef<HTMLDivElement | null>(null)
-  useOnClickOutside(ref, closeOrdersPanel)
+  // useOnClickOutside(ref, closeOrdersPanel)
 
   const walletInfo = useWalletInfo()
   const toggleWalletModal = useWalletModalToggle()
