@@ -1,4 +1,5 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { RouteComponentProps } from 'react-router-dom'
 import styled, { DefaultTheme, ThemeContext } from 'styled-components'
 import { Currency, CurrencyAmount, Token } from '@uniswap/sdk-core'
@@ -23,11 +24,11 @@ import {
 import EthWethWrap, { Props as EthWethWrapProps } from 'components/swap/EthWethWrap'
 import { useReplaceSwapState, useSwapState } from 'state/swap/hooks'
 import { ArrowWrapperLoader, ArrowWrapperLoaderProps, Wrapper as ArrowWrapper } from 'components/ArrowWrapperLoader'
-import { FIAT_PRECISION, LONG_LOAD_THRESHOLD, SHORT_PRECISION } from 'constants/index'
+import { FEE_SIZE_THRESHOLD, FIAT_PRECISION, LONG_LOAD_THRESHOLD, SHORT_PRECISION } from 'constants/index'
 import { formatSmart } from 'utils/format'
 import { MouseoverTooltipContent } from 'components/Tooltip'
 import { StyledInfo } from 'pages/Swap/SwapMod'
-import { Repeat } from 'react-feather'
+import { AlertTriangle, Repeat } from 'react-feather'
 import { Trans } from '@lingui/macro'
 import TradePrice from 'components/swap/TradePrice'
 import TradeGp from 'state/swap/TradeGp'
@@ -35,7 +36,8 @@ import { useUSDCValue } from 'hooks/useUSDCPrice'
 import { computeTradePriceBreakdown, FEE_TOOLTIP_MSG } from 'components/swap/TradeSummary/TradeSummaryMod'
 import { useExpertModeManager, useUserSlippageToleranceWithDefault } from 'state/user/hooks'
 import { V2_SWAP_DEFAULT_SLIPPAGE } from 'hooks/useSwapSlippageTolerance'
-import { RowReceivedAfterSlippage, RowSlippage } from '@src/custom/components/swap/TradeSummary'
+import { RowReceivedAfterSlippage, RowSlippage } from 'components/swap/TradeSummary'
+import { AuxInformationContainer } from 'components/CurrencyInputPanel'
 
 interface TradeBasicDetailsProp extends BoxProps {
   trade?: TradeGp
@@ -150,6 +152,7 @@ export interface SwapProps extends RouteComponentProps {
   SwapButton: React.FC<SwapButtonProps>
   ArrowWrapperLoader: React.FC<ArrowWrapperLoaderProps>
   Price: React.FC<PriceProps>
+  HighFeeWarning: React.FC<HighFeeWarningProps>
   className?: string
 }
 
@@ -372,6 +375,85 @@ const SwapButton = ({ children, showLoading, showButton = false }: SwapButtonPro
     </Text>
   )
 
+interface HighFeeContainerProps {
+  padding?: string
+  margin?: string
+  width?: string
+}
+
+const HighFeeWarningContainer = styled(AuxInformationContainer).attrs((props) => ({
+  ...props,
+  hideInput: true,
+}))<HighFeeContainerProps>`
+  padding: ${({ padding = '5px 10px' }) => padding};
+  font-size: small;
+  font-weight: 400;
+  &&&&& {
+    background: #ff00008a;
+  }
+  width: ${({ width = '100%' }) => width};
+  border-radius: 5px;
+  margin: ${({ margin = '0 auto 12px auto' }) => margin};
+  > small {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    gap: 8px;
+    > div {
+      margin-top: 1px;
+    }
+
+    > span {
+      text-decoration: underline;
+      cursor: pointer;
+      margin-left: auto;
+    }
+  }
+  > div {
+    display: flex;
+    padding: 8px 0;
+  }
+`
+
+type HighFeeWarningProps = { trade?: TradeGp } & HighFeeContainerProps
+
+export const HighFeeWarning = (props: HighFeeWarningProps) => {
+  const [isOpen, setIsOpen] = useState(false)
+  const infoLabel = useMemo(() => (isOpen ? '- info' : '+ info'), [isOpen])
+
+  // only considers inputAmount vs fee (fee is in input token)
+  const [isHighFee, feePercentage] = useMemo(() => {
+    if (!props.trade) return []
+
+    const feePercentage = props.trade.fee.feeAsCurrency.divide(props.trade.inputAmount).asFraction
+    return [feePercentage.greaterThan(FEE_SIZE_THRESHOLD), feePercentage.multiply('100')]
+  }, [props.trade])
+
+  if (!isHighFee) return null
+
+  return (
+    <HighFeeWarningContainer onClick={() => setIsOpen((state) => !state)} {...props}>
+      <small>
+        <AlertTriangle size={20} /> <div>High fee relative to swap amount!</div> <span>{infoLabel}</span>
+      </small>
+      {isOpen && (
+        <div>
+          <small>
+            Current fees on this network make up{' '}
+            <u>
+              <strong>{feePercentage?.toFixed(2)}%</strong>
+            </u>{' '}
+            of your input swap amount.
+            <br />
+            You may still move forward with this swap but it is highly recommended that you wait for lower fees, or
+            switch to xDai.
+          </small>
+        </div>
+      )}
+    </HighFeeWarningContainer>
+  )
+}
+
 export default function Swap(props: RouteComponentProps) {
   return (
     <SwapModWrapper
@@ -384,6 +466,7 @@ export default function Swap(props: RouteComponentProps) {
       TradeLoading={TradeLoading}
       ArrowWrapperLoader={ArrowWrapperLoader}
       Price={Price}
+      HighFeeWarning={HighFeeWarning}
       {...props}
     />
   )
