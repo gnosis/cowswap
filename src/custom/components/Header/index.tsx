@@ -8,10 +8,10 @@ import HeaderMod, {
   Title,
   HeaderLinks,
   HeaderRow,
-  HeaderControls,
+  HeaderControls as HeaderControlsUni,
+  BalanceText as BalanceTextUni,
   HeaderElement,
   HideSmall,
-  BalanceText,
   AccountElement,
   HeaderElementWrap,
   StyledNavLink as StyledNavLinkUni,
@@ -59,6 +59,18 @@ const StyledNavLink = styled(StyledNavLinkUni)`
   }
 `
 
+const BalanceText = styled(BalanceTextUni)`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    display: none;
+  `};
+`
+
+const HeaderControls = styled(HeaderControlsUni)`
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+    max-width: 100%;
+  `};
+`
+
 export const HeaderModWrapper = styled(HeaderMod)`
   ${Title} {
     margin: 0;
@@ -74,6 +86,14 @@ export const HeaderModWrapper = styled(HeaderMod)`
 const NetworkCard = styled(NetworkCardUni)`
   background-color: ${({ theme }) => theme.networkCard.background};
   color: ${({ theme }) => theme.networkCard.text};
+
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+    margin: 0 0 0 8px;
+  `};
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    display: none;
+  `};
 `
 
 const TwitterLink = styled(StyledMenuButton)`
