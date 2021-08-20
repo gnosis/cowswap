@@ -34,7 +34,7 @@ import TradeGp from 'state/swap/TradeGp'
 import { useUSDCValue } from 'hooks/useUSDCPrice'
 import { computeTradePriceBreakdown, FEE_TOOLTIP_MSG } from 'components/swap/TradeSummary/TradeSummaryMod'
 import { useExpertModeManager, useUserSlippageToleranceWithDefault } from 'state/user/hooks'
-import { RowReceivedAfterSlippage, RowSlippage } from '@src/custom/components/swap/TradeSummary'
+import { RowReceivedAfterSlippage, RowSlippage } from 'components/swap/TradeSummary'
 
 interface TradeBasicDetailsProp extends BoxProps {
   trade?: TradeGp
