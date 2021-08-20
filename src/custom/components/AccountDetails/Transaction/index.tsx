@@ -388,7 +388,11 @@ export default function Transaction({ hash: id }: { hash: string }) {
             <span role="img" aria-label="alert">
               🚨
             </span>{' '}
-            Price out of range. <a href="#/faq">Read more</a>.
+            Price out of range.{' '}
+            <a href="#/faq" target="_blank" rel="noopener nofollow">
+              Read more
+            </a>
+            .
           </p>
         </TransactionAlertMessage>
       )}
