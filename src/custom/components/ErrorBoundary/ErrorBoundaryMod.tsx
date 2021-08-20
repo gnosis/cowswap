@@ -27,14 +27,14 @@ const Wrapper = styled(Page)`
   margin: 120px 0;
 
   @media screen and (max-width: ${MEDIA_WIDTHS.upToSmall}px) {
-    max-width: 90vw;
-    margin: 50px 0 80px 0;
+    max-width: 95vw;
+    margin: 0 0 80px;
   }
 `
 
 const StyledTitle = styled(Title)`
   @media screen and (max-width: ${MEDIA_WIDTHS.upToSmall}px) {
-    font-size: 1.2rem;
+    text-align: center;
   }
 `
 
@@ -137,12 +137,7 @@ export default class ErrorBoundary extends React.Component<unknown, ErrorBoundar
           <Wrapper>
             <FlexContainer>
               <StyledTitle>
-                <Trans>
-                  <span role="img" aria-label="cow-exclamation">
-                    🐮❕
-                  </span>{' '}
-                  Something went wrong
-                </Trans>
+                <Trans> Something went wrong</Trans>
               </StyledTitle>
               <img src={CowError} alt="CowSwap Error" height="125" />
             </FlexContainer>
