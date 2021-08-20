@@ -88,7 +88,7 @@ export const SummaryInner = styled.div`
   font-size: 13px;
 `
 
-export const SummaryInnerRow = styled.div`
+export const SummaryInnerRow = styled.div<{ isExpired?: boolean; isCancelled?: boolean }>`
   display: grid;
   color: inherit;
   grid-template-rows: 1fr;
@@ -128,15 +128,12 @@ export const SummaryInnerRow = styled.div`
   > i {
     word-break: break-all;
     white-space: break-spaces;
+    text-decoration: ${({ isExpired, isCancelled }) => (isExpired || isCancelled) && 'line-through'};
 
     ${({ theme }) => theme.mediaWidth.upToSmall`
-    font-weight: 600;
-    margin: 4px 0 0 12px;
-  `}
-
-    &.cancelled {
-      text-decoration: line-through;
-    }
+      font-weight: 600;
+      margin: 4px 0 0 12px;
+    `};
   }
 `
 

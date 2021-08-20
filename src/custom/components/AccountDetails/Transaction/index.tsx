@@ -94,9 +94,10 @@ interface OrderSummaryType {
 function ActivitySummary(params: {
   id: string
   activityData: ReturnType<typeof useActivityDescriptors>
-  isCancelled: boolean
+  isCancelled?: boolean
+  isExpired?: boolean
 }) {
-  const { id, activityData, isCancelled } = params
+  const { id, activityData, isCancelled, isExpired } = params
 
   if (!activityData) return null
 
@@ -163,7 +164,7 @@ function ActivitySummary(params: {
                 </>
               )}
             </SummaryInnerRow>
-            <SummaryInnerRow>
+            <SummaryInnerRow isCancelled={isCancelled} isExpired={isExpired}>
               {orderSummary.fulfillmentTime ? (
                 <>
                   <b>Filled on</b>
@@ -172,7 +173,7 @@ function ActivitySummary(params: {
               ) : (
                 <>
                   <b>Valid to</b>
-                  <i className={isCancelled ? 'cancelled' : ''}>{orderSummary.validTo}</i>
+                  <i>{orderSummary.validTo}</i>
                 </>
               )}
             </SummaryInnerRow>
@@ -330,7 +331,7 @@ export default function Transaction({ hash: id }: { hash: string }) {
               </IconType>
             )}
             <TransactionStatusText>
-              <ActivitySummary activityData={activityData} id={id} isCancelled={isCancelled} />
+              <ActivitySummary activityData={activityData} id={id} isCancelled={isCancelled} isExpired={isExpired} />
             </TransactionStatusText>
           </RowFixed>
         </TransactionState>
