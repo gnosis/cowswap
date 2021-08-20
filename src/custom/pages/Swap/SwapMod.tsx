@@ -100,6 +100,7 @@ export default function Swap({
   SwapButton,
   ArrowWrapperLoader,
   Price,
+  HighFeeWarning,
   className,
 }: SwapProps) {
   const loadedUrlParams = useDefaultsFromURLSearch()
@@ -680,6 +681,8 @@ export default function Swap({
               </Card>
             )}
           </AutoColumn>
+          {/* High Fee Warning */}
+          <HighFeeWarning trade={trade} />
           <BottomGrouping>
             {swapIsUnsupported ? (
               <ButtonPrimary disabled={true} buttonSize={ButtonSize.BIG}>
