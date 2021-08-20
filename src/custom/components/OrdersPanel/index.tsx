@@ -1,7 +1,6 @@
-import React, { useRef, useMemo } from 'react'
+import React, { useMemo } from 'react'
 import styled from 'styled-components/macro'
 import { ReactComponent as Close } from 'assets/images/x.svg'
-import { useOnClickOutside } from 'hooks/useOnClickOutside'
 import AccountDetails from 'components/AccountDetails'
 import useRecentActivity, { TransactionAndOrder } from 'hooks/useRecentActivity'
 import { useWalletInfo } from 'hooks/useWalletInfo'
@@ -21,7 +20,6 @@ const SideBar = styled.div`
   z-index: 99;
   padding: 0;
   background: ${({ theme }) => theme.bg1};
-  box-shadow: 0 0 100vh 100vw rgb(0 0 0 / 25%);
   cursor: default;
   overflow-y: auto;
   animation: slideIn 0.3s cubic-bezier(0.87, 0, 0.13, 1);
@@ -48,6 +46,20 @@ const SideBar = styled.div`
       transform: translateY(0);
     }
   }
+  `};
+`
+
+const SidebarBackground = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  background: rgb(0 0 0 / 25%);
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`    
+    display: none;
   `};
 `
 
@@ -102,10 +114,6 @@ export interface OrdersPanelProps {
 }
 
 export default function OrdersPanel({ closeOrdersPanel }: OrdersPanelProps) {
-  // Close sidebar if clicked/tapped outside
-  const ref = useRef<HTMLDivElement | null>(null)
-  // useOnClickOutside(ref, closeOrdersPanel)
-
   const walletInfo = useWalletInfo()
   const toggleWalletModal = useWalletModalToggle()
 
@@ -131,17 +139,20 @@ export default function OrdersPanel({ closeOrdersPanel }: OrdersPanelProps) {
   }
 
   return (
-    <SideBar ref={ref}>
-      <Wrapper>
-        <CloseIcon onClick={closeOrdersPanel} />
-        <AccountDetails
-          ENSName={ENSName}
-          pendingTransactions={pendingActivity}
-          confirmedTransactions={confirmedActivity}
-          toggleWalletModal={toggleWalletModal}
-          closeOrdersPanel={closeOrdersPanel}
-        />
-      </Wrapper>
-    </SideBar>
+    <>
+      <SidebarBackground onClick={closeOrdersPanel} />
+      <SideBar>
+        <Wrapper>
+          <CloseIcon onClick={closeOrdersPanel} />
+          <AccountDetails
+            ENSName={ENSName}
+            pendingTransactions={pendingActivity}
+            confirmedTransactions={confirmedActivity}
+            toggleWalletModal={toggleWalletModal}
+            closeOrdersPanel={closeOrdersPanel}
+          />
+        </Wrapper>
+      </SideBar>
+    </>
   )
 }
