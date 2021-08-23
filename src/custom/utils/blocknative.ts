@@ -1,6 +1,6 @@
 import BlocknativeSdk from 'bnc-sdk'
 import { SDKError /*, TransactionEvent*/ } from 'bnc-sdk/dist/types/src/interfaces'
-import { getSupportedChainIds } from 'utils'
+import { getSupportedChainIds } from 'connectors'
 
 export const sdk = getSupportedChainIds().reduce<Record<number, BlocknativeSdk>>((acc, networkId) => {
   acc[networkId] = new BlocknativeSdk({

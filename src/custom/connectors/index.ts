@@ -7,11 +7,22 @@ import { PortisConnector } from '@web3-react/portis-connector'
 import { FortmaticConnector } from 'connectors/Fortmatic'
 import { NetworkConnector } from 'connectors/NetworkConnector'
 import { AbstractConnector } from '@web3-react/abstract-connector'
-import { getSupportedChainIds } from 'utils'
 
 export const WALLET_CONNECT_BRIDGE = process.env.WALLET_CONNECT_BRIDGE || 'wss://safe-walletconnect.gnosis.io'
 
 type RpcNetworks = { [chainId: number]: string }
+
+export function getSupportedChainIds(): number[] {
+  const supportedChainIdsEnv = process.env.REACT_APP_SUPPORTED_CHAIN_IDS
+
+  if (!supportedChainIdsEnv) {
+    throw new Error(`REACT_APP_NETWORK_URL must be a defined environment variable`)
+  }
+
+  const chainIds = supportedChainIdsEnv.split(',').map((chainId) => Number(chainId.trim()))
+
+  return chainIds
+}
 
 function getRpcNetworks(): [RpcNetworks, number[]] {
   const defaultChainId = parseInt(process.env.REACT_APP_CHAIN_ID ?? '1')

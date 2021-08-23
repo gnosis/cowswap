@@ -120,15 +120,3 @@ export function formatOrderId(orderId: string): string {
 export function basisPointsToPercent(num: number): Percent {
   return new Percent(JSBI.BigInt(num), JSBI.BigInt(10000))
 }
-
-export function getSupportedChainIds(): number[] {
-  const supportedChainIdsEnv = process.env.REACT_APP_SUPPORTED_CHAIN_IDS
-
-  if (!supportedChainIdsEnv) {
-    throw new Error(`REACT_APP_NETWORK_URL must be a defined environment variable`)
-  }
-
-  const chainIds = supportedChainIdsEnv.split(',').map((chainId) => Number(chainId.trim()))
-
-  return chainIds
-}
