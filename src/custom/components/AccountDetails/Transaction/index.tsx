@@ -90,7 +90,7 @@ interface OrderSummaryType {
   from: string | undefined
   to: string | undefined
   limitPrice: string | undefined
-  executedPrice?: string | undefined
+  executionPrice?: string | undefined
   validTo: string | undefined
   fulfillmentTime?: string | undefined
   kind?: string
@@ -131,7 +131,7 @@ function ActivitySummary(params: {
       })
     )
 
-    const executedPrice =
+    const executionPrice =
       order.status === OrderStatus.FULFILLED
         ? formatSmart(
             getExecutionPrice({
@@ -150,8 +150,8 @@ function ActivitySummary(params: {
       to: `${formatSmart(outputAmount)} ${outputAmount.currency.symbol}`,
       limitPrice: `${limitPrice} ${outputAmount.currency.symbol} per ${sellAmt.currency.symbol}`,
       validTo: new Date((validTo as number) * 1000).toLocaleString(),
-      executedPrice: executedPrice
-        ? `${executedPrice} ${outputAmount.currency.symbol} per ${sellAmt.currency.symbol}`
+      executionPrice: executionPrice
+        ? `${executionPrice} ${outputAmount.currency.symbol} per ${sellAmt.currency.symbol}`
         : undefined,
       fulfillmentTime: fulfillmentTime ? new Date(fulfillmentTime).toLocaleString() : undefined,
       kind: kind.toString(),
@@ -160,7 +160,7 @@ function ActivitySummary(params: {
     orderSummary = { ...DEFAULT_ORDER_SUMMARY }
   }
 
-  const { kind, from, to, executedPrice, limitPrice, fulfillmentTime, validTo } = orderSummary
+  const { kind, from, to, executionPrice, limitPrice, fulfillmentTime, validTo } = orderSummary
   return (
     <Summary>
       <b>{isOrder ? `${kind} order` : 'Transaction'} ↗</b>
@@ -176,11 +176,11 @@ function ActivitySummary(params: {
               <i>{to}</i>
             </SummaryInnerRow>
             <SummaryInnerRow>
-              {executedPrice ? (
+              {executionPrice ? (
                 <>
                   {' '}
                   <b>Execution price</b>
-                  <i>{executedPrice}</i>
+                  <i>{executionPrice}</i>
                 </>
               ) : (
                 <>
