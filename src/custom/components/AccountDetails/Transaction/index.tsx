@@ -1,19 +1,11 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { CurrencyAmount } from '@uniswap/sdk-core'
-// import { AlertCircle, CheckCircle, XCircle, Triangle } from 'react-feather'
 
 import { useActiveWeb3React } from 'hooks/web3'
 import { getEtherscanLink, shortenOrderId } from 'utils'
 import { RowFixed } from 'components/Row'
 import Loader from 'components/Loader'
-import {
-  // TransactionWrapper,
-  // TransactionState as OldTransactionState,
-  // TransactionStatusText,
-  IconWrapper,
-} from '../TransactionMod'
-// import Pill from '../Pill'
-
+import { IconWrapper } from '../TransactionMod'
 import {
   ConfirmationModalContent,
   ConfirmationPendingContent,
@@ -62,7 +54,7 @@ const PILL_COLOUR_MAP = {
   PENDING_TX: '#43758C',
   EXPIRED_ORDER: '#ED673A',
   CANCELLED_ORDER: '#ED673A',
-  CANCELLING_ORDER: '#43758C',
+  CANCELLING_ORDER: '#ED673A',
 }
 
 function determinePillColour(status: ActivityStatus, type: ActivityType) {
@@ -337,14 +329,14 @@ export default function Transaction({ hash: id }: { hash: string }) {
         </TransactionState>
 
         <StatusLabelWrapper>
-          <StatusLabel color={determinePillColour(status, type)} isPending={isPending || isCancelling}>
+          <StatusLabel color={determinePillColour(status, type)} isPending={isPending} isCancelling={isCancelling}>
             {isConfirmed ? (
               <SVG src={OrderCheckImage} description="Order Filled" />
             ) : isExpired ? (
               <SVG src={OrderExpiredImage} description="Order Expired" />
             ) : isCancelled ? (
               <SVG src={OrderCancelledImage} description="Order Cancelled" />
-            ) : (
+            ) : isCancelling ? null : (
               <SVG src={OrderOpenImage} description="Order Open" />
             )}
             {isPending
@@ -355,16 +347,12 @@ export default function Transaction({ hash: id }: { hash: string }) {
               ? 'Filled'
               : isExpired
               ? 'Expired'
+              : isCancelling
+              ? 'Cancelling...'
               : isCancelled
               ? 'Cancelled'
               : 'Open'}
           </StatusLabel>
-
-          {isCancelling && (
-            <StatusLabelBelow isCancelling={isCancelling}>
-              Cancellation <br /> requested...
-            </StatusLabelBelow>
-          )}
 
           {isCancellable && (
             <StatusLabelBelow>

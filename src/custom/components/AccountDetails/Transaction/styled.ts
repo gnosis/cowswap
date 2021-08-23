@@ -1,8 +1,9 @@
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { StyledSVG } from 'components/Loader'
 import { LinkStyledButton } from 'theme'
 import { TransactionState as OldTransactionState } from '../TransactionMod'
 import { RowFixed } from 'components/Row'
+import { transparentize } from 'polished'
 
 export const Wrapper = styled.div`
   display: flex;
@@ -134,6 +135,10 @@ export const SummaryInnerRow = styled.div<{ isExpired?: boolean; isCancelled?: b
       font-weight: 600;
       margin: 4px 0 0 12px;
     `};
+
+    &.cancelled {
+      text-decoration: line-through;
+    }
   }
 `
 
@@ -145,7 +150,7 @@ export const TransactionStatusText = styled.div`
   ${({ theme }) => theme.mediaWidth.upToMedium`
   margin: 0 auto 0 0;
 `};
-
+  &.copied,
   &:hover {
     text-decoration: none;
   }
@@ -158,10 +163,10 @@ export const StatusLabelWrapper = styled.div`
   justify-content: center;
 `
 
-export const StatusLabel = styled.div<{ isPending: boolean }>`
+export const StatusLabel = styled.div<{ isPending: boolean; isCancelling: boolean }>`
   height: 28px;
   width: 100px;
-  border: ${({ isPending, theme }) => isPending && `1px solid ${theme.border2}`};
+  ${({ isPending, isCancelling, theme }) => !isCancelling && isPending && `border:  1px solid ${theme.border2};`}
   color: ${({ color }) => color};
   position: relative;
   border-radius: 4px;
@@ -170,10 +175,11 @@ export const StatusLabel = styled.div<{ isPending: boolean }>`
   justify-content: center;
   font-size: 12px;
   font-weight: 600;
+  overflow: hidden;
 
   &::before {
     content: '';
-    background: ${({ color, isPending }) => (isPending ? 'transparent' : color)};
+    background: ${({ color, isPending, isCancelling }) => (!isCancelling && isPending ? 'transparent' : color)};
     position: absolute;
     left: 0;
     top: 0;
@@ -181,6 +187,35 @@ export const StatusLabel = styled.div<{ isPending: boolean }>`
     width: 100%;
     border-radius: 4px;
     opacity: 0.1;
+  }
+
+  ${({ theme, color, isCancelling, isPending }) =>
+    (isCancelling || isPending) &&
+    color &&
+    css`
+      &::after {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        transform: translateX(-100%);
+        background-image: linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0) 0,
+          ${transparentize(0.9, color)} 20%,
+          ${theme.bg2} 60%,
+          rgba(255, 255, 255, 0)
+        );
+        animation: shimmer 2s infinite;
+        content: '';
+      }
+    `}
+
+  @keyframes shimmer {
+    100% {
+      transform: translateX(100%);
+    }
   }
 
   > svg {
