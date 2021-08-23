@@ -80,7 +80,8 @@ export type GetLimitPriceParams = {
 /**
  * Calculates order limit price base on order and buy/sell token decimals
  *
- * @param order The order
+ * @param buyAmount The buy amount
+ * @param sellAmount The sell amount
  * @param buyTokenDecimals The buy token decimals
  * @param sellTokenDecimals The sell token decimals
  * @param inverted Optional. Whether to invert the price (1/price).
@@ -110,7 +111,8 @@ type GetExecutionPriceParams = Omit<GetLimitPriceParams, 'buyAmount' | 'sellAmou
  * Calculates order executed price base on order and buy/sell token decimals
  * Result is given in sell token units
  *
- * @param order The order
+ * @param executedSellAmount The sell amount
+ * @param executedBuyAmount The buy amount
  * @param buyTokenDecimals The buy token decimals
  * @param sellTokenDecimals The sell token decimals
  * @param inverted Optional. Whether to invert the price (1/price).
