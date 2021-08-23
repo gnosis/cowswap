@@ -522,7 +522,7 @@ function CancellationModal(props: CancellationModalProps): JSX.Element | null {
   )
 }
 
-export default function Transaction({ hash: id, closeOrdersPanel }: { hash: string; closeOrdersPanel?: () => void }) {
+export default function Transaction({ hash: id }: { hash: string }) {
   const { chainId } = useActiveWeb3React()
   // Return info necessary for rendering order/transaction info from the incoming id
   // returns info related to activity: TransactionDetails | Order
@@ -626,7 +626,7 @@ export default function Transaction({ hash: id, closeOrdersPanel }: { hash: stri
               🚨
             </span>{' '}
             Price out of range.{' '}
-            <a onClick={closeOrdersPanel} href="#/faq">
+            <a href="#/faq" target="_blank" rel="noopener nofollow">
               Read more
             </a>
             .

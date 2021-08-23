@@ -233,8 +233,8 @@ export default function AccountDetails({
           </span>
 
           <div>
-            {renderTransactions(pendingTransactions, closeOrdersPanel)}
-            {renderTransactions(confirmedTransactions, closeOrdersPanel)}
+            {renderTransactions(pendingTransactions)}
+            {renderTransactions(confirmedTransactions)}
           </div>
         </LowerSection>
       ) : (
