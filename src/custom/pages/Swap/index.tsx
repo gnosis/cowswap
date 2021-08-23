@@ -434,7 +434,7 @@ export const HighFeeWarning = (props: HighFeeWarningProps) => {
   return (
     <HighFeeWarningContainer onClick={() => setIsOpen((state) => !state)} {...props}>
       <small>
-        <AlertTriangle size={20} /> <div>Low yield swap detected!</div> <span>{infoLabel}</span>
+        <AlertTriangle size={20} /> <div>Unfavourable swap detected!</div> <span>{infoLabel}</span>
       </small>
       {isOpen && (
         <div>
