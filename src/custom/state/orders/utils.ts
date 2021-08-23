@@ -79,7 +79,6 @@ export type GetLimitPriceParams = {
 // TODO: Use the SDK when ready
 /**
  * Calculates order limit price base on order and buy/sell token decimals
- * Result is given in sell token units
  *
  * @param order The order
  * @param buyTokenDecimals The buy token decimals
