@@ -1,8 +1,8 @@
-import { sdk } from '@src/custom/utils/blocknative'
 import { useEffect, useMemo } from 'react'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { useActiveWeb3React } from 'hooks/web3'
-import { cancelTransaction, replaceTransaction } from '@src/custom/state/enhancedTransactions/actions'
+import { sdk } from 'utils/blocknative'
+import { cancelTransaction, replaceTransaction } from 'state/enhancedTransactions/actions'
 
 export default function Updater(): null {
   const { chainId, library } = useActiveWeb3React()
