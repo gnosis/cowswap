@@ -206,11 +206,20 @@ export const MainWalletAction = styled(WalletAction)`
   color: ${({ theme }) => theme.primary1};
 `
 
-export function renderTransactions(transactions: string[]) {
+export function renderTransactions(
+  transactions: string[],
+  closeOrdersPanel: () => void // mod
+) {
   return (
     <TransactionListWrapper>
       {transactions.map((hash, i) => {
-        return <Transaction key={i} hash={hash} />
+        return (
+          <Transaction
+            key={i}
+            hash={hash}
+            closeOrdersPanel={closeOrdersPanel} // mod
+          />
+        )
       })}
     </TransactionListWrapper>
   )
