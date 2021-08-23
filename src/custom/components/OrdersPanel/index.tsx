@@ -8,8 +8,8 @@ import { useWalletInfo } from 'hooks/useWalletInfo'
 import { OrderStatus } from 'state/orders/actions'
 import { useWalletModalToggle } from 'state/application/hooks'
 
-const SideBar = styled.div<{ isOpen: boolean }>`
-  display: ${({ isOpen }) => (isOpen ? 'flex' : 'none')};
+const SideBar = styled.div`
+  display: flex;
   align-items: flex-start;
   justify-content: flex-start;
   flex-flow: row wrap;
@@ -24,9 +24,30 @@ const SideBar = styled.div<{ isOpen: boolean }>`
   box-shadow: 0 0 100vh 100vw rgb(0 0 0 / 25%);
   cursor: default;
   overflow-y: auto;
+  animation: slideIn 0.3s cubic-bezier(0.87, 0, 0.13, 1);
 
   ${({ theme }) => theme.mediaWidth.upToMedium`    
     width: 100%;
+  `};
+
+  @keyframes slideIn {
+    from {
+      transform: translateX(500px);
+    }
+    to {
+      transform: translateX(0);
+    }
+  }
+
+  ${({ theme }) => theme.mediaWidth.upToMedium`    
+  @keyframes slideIn {
+    from {
+      transform: translateY(100%);
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
   `};
 `
 
@@ -77,14 +98,13 @@ const isConfirmed = (data: TransactionAndOrder) =>
   data.status === OrderStatus.FULFILLED || data.status === OrderStatus.EXPIRED || data.status === OrderStatus.CANCELLED
 
 export interface OrdersPanelProps {
-  isOrdersPanelOpen: boolean
   closeOrdersPanel: () => void
 }
 
-export default function OrdersPanel({ isOrdersPanelOpen, closeOrdersPanel }: OrdersPanelProps) {
+export default function OrdersPanel({ closeOrdersPanel }: OrdersPanelProps) {
   // Close sidebar if clicked/tapped outside
   const ref = useRef<HTMLDivElement | null>(null)
-  useOnClickOutside(ref, isOrdersPanelOpen ? closeOrdersPanel : undefined)
+  useOnClickOutside(ref, closeOrdersPanel)
 
   const walletInfo = useWalletInfo()
   const toggleWalletModal = useWalletModalToggle()
@@ -111,7 +131,7 @@ export default function OrdersPanel({ isOrdersPanelOpen, closeOrdersPanel }: Ord
   }
 
   return (
-    <SideBar ref={ref} isOpen={isOrdersPanelOpen}>
+    <SideBar ref={ref}>
       <Wrapper>
         <CloseIcon onClick={closeOrdersPanel} />
         <AccountDetails

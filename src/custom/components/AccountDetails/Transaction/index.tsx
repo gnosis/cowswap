@@ -99,9 +99,10 @@ interface OrderSummaryType {
 function ActivitySummary(params: {
   id: string
   activityData: ReturnType<typeof useActivityDescriptors>
-  isCancelled: boolean
+  isCancelled?: boolean
+  isExpired?: boolean
 }) {
-  const { id, activityData, isCancelled } = params
+  const { id, activityData, isCancelled, isExpired } = params
 
   if (!activityData) return null
 
@@ -189,7 +190,7 @@ function ActivitySummary(params: {
                 </>
               )}
             </SummaryInnerRow>
-            <SummaryInnerRow>
+            <SummaryInnerRow isCancelled={isCancelled} isExpired={isExpired}>
               {fulfillmentTime ? (
                 <>
                   <b>Filled on</b>
@@ -198,7 +199,7 @@ function ActivitySummary(params: {
               ) : (
                 <>
                   <b>Valid to</b>
-                  <i className={isCancelled ? 'cancelled' : ''}>{validTo}</i>
+                  <i>{validTo}</i>
                 </>
               )}
             </SummaryInnerRow>
@@ -356,7 +357,7 @@ export default function Transaction({ hash: id }: { hash: string }) {
               </IconType>
             )}
             <TransactionStatusText>
-              <ActivitySummary activityData={activityData} id={id} isCancelled={isCancelled} />
+              <ActivitySummary activityData={activityData} id={id} isCancelled={isCancelled} isExpired={isExpired} />
             </TransactionStatusText>
           </RowFixed>
         </TransactionState>
@@ -413,7 +414,11 @@ export default function Transaction({ hash: id }: { hash: string }) {
             <span role="img" aria-label="alert">
               🚨
             </span>{' '}
-            Price out of range. <a href="#/faq">Read more</a>.
+            Price out of range.{' '}
+            <a href="#/faq" target="_blank" rel="noopener nofollow">
+              Read more
+            </a>
+            .
           </p>
         </TransactionAlertMessage>
       )}
