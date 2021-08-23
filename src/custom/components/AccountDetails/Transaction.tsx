@@ -223,7 +223,7 @@ const StatusLabelWrapper = styled.div`
 const StatusLabel = styled.div<{ isPending: boolean; isCancelling: boolean }>`
   height: 28px;
   width: 100px;
-  border: ${({ isPending, isCancelling, theme }) => !isCancelling && isPending && `1px solid ${theme.border2}`};
+  ${({ isPending, isCancelling, theme }) => !isCancelling && isPending && `border:  1px solid ${theme.border2};`}
   color: ${({ color }) => color};
   position: relative;
   border-radius: 4px;
