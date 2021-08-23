@@ -13,7 +13,7 @@ import {
   IconWrapper,
 } from './TransactionMod'
 // import Pill from '../Pill'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import {
   ConfirmationModalContent,
   ConfirmationPendingContent,
@@ -36,6 +36,7 @@ import OrderExpiredImage from 'assets/cow-swap/order-expired.svg'
 import OrderCancelledImage from 'assets/cow-swap/order-cancelled.svg'
 import OrderOpenImage from 'assets/cow-swap/order-open.svg'
 import { formatSmart } from 'utils/format'
+import { transparentize } from 'polished'
 
 const PILL_COLOUR_MAP = {
   CONFIRMED: '#3B7848',
@@ -43,7 +44,7 @@ const PILL_COLOUR_MAP = {
   PENDING_TX: '#43758C',
   EXPIRED_ORDER: '#ED673A',
   CANCELLED_ORDER: '#ED673A',
-  CANCELLING_ORDER: '#43758C',
+  CANCELLING_ORDER: '#ED673A',
 }
 
 function determinePillColour(status: ActivityStatus, type: ActivityType) {
@@ -210,10 +211,6 @@ const TransactionStatusText = styled.div`
   &:hover {
     text-decoration: none;
   }
-
-  &.copied {
-    background: red;
-  }
 `
 
 const StatusLabelWrapper = styled.div`
@@ -223,10 +220,10 @@ const StatusLabelWrapper = styled.div`
   justify-content: center;
 `
 
-const StatusLabel = styled.div<{ isPending: boolean }>`
+const StatusLabel = styled.div<{ isPending: boolean; isCancelling: boolean }>`
   height: 28px;
   width: 100px;
-  border: ${({ isPending, theme }) => isPending && `1px solid ${theme.border2}`};
+  ${({ isPending, isCancelling, theme }) => !isCancelling && isPending && `border:  1px solid ${theme.border2};`}
   color: ${({ color }) => color};
   position: relative;
   border-radius: 4px;
@@ -235,10 +232,11 @@ const StatusLabel = styled.div<{ isPending: boolean }>`
   justify-content: center;
   font-size: 12px;
   font-weight: 600;
+  overflow: hidden;
 
   &::before {
     content: '';
-    background: ${({ color, isPending }) => (isPending ? 'transparent' : color)};
+    background: ${({ color, isPending, isCancelling }) => (!isCancelling && isPending ? 'transparent' : color)};
     position: absolute;
     left: 0;
     top: 0;
@@ -246,6 +244,35 @@ const StatusLabel = styled.div<{ isPending: boolean }>`
     width: 100%;
     border-radius: 4px;
     opacity: 0.1;
+  }
+
+  ${({ theme, color, isCancelling, isPending }) =>
+    (isCancelling || isPending) &&
+    color &&
+    css`
+      &::after {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        transform: translateX(-100%);
+        background-image: linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0) 0,
+          ${transparentize(0.9, color)} 20%,
+          ${theme.bg2} 60%,
+          rgba(255, 255, 255, 0)
+        );
+        animation: shimmer 2s infinite;
+        content: '';
+      }
+    `}
+
+  @keyframes shimmer {
+    100% {
+      transform: translateX(100%);
+    }
   }
 
   > svg {
@@ -551,14 +578,14 @@ export default function Transaction({ hash: id }: { hash: string }) {
         </TransactionState>
 
         <StatusLabelWrapper>
-          <StatusLabel color={determinePillColour(status, type)} isPending={isPending || isCancelling}>
+          <StatusLabel color={determinePillColour(status, type)} isPending={isPending} isCancelling={isCancelling}>
             {isConfirmed ? (
               <SVG src={OrderCheckImage} description="Order Filled" />
             ) : isExpired ? (
               <SVG src={OrderExpiredImage} description="Order Expired" />
             ) : isCancelled ? (
               <SVG src={OrderCancelledImage} description="Order Cancelled" />
-            ) : (
+            ) : isCancelling ? null : (
               <SVG src={OrderOpenImage} description="Order Open" />
             )}
             {isPending
@@ -569,16 +596,12 @@ export default function Transaction({ hash: id }: { hash: string }) {
               ? 'Filled'
               : isExpired
               ? 'Expired'
+              : isCancelling
+              ? 'Cancelling...'
               : isCancelled
               ? 'Cancelled'
               : 'Open'}
           </StatusLabel>
-
-          {isCancelling && (
-            <StatusLabelBelow isCancelling={isCancelling}>
-              Cancellation <br /> requested...
-            </StatusLabelBelow>
-          )}
 
           {isCancellable && (
             <StatusLabelBelow>
@@ -602,7 +625,11 @@ export default function Transaction({ hash: id }: { hash: string }) {
             <span role="img" aria-label="alert">
               🚨
             </span>{' '}
-            Price out of range. <a href="#/faq">Read more</a>.
+            Price out of range.{' '}
+            <a href="#/faq" target="_blank" rel="noopener nofollow">
+              Read more
+            </a>
+            .
           </p>
         </TransactionAlertMessage>
       )}
