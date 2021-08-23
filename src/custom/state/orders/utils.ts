@@ -102,8 +102,8 @@ export function getLimitPrice({
 }
 
 type GetExecutionPriceParams = Omit<GetLimitPriceParams, 'buyAmount' | 'sellAmount'> & {
+  executedSellAmountBeforeFees?: string
   executedBuyAmount?: string
-  executedSellAmount?: string
 }
 
 // TODO: Use the SDK when ready
@@ -119,20 +119,25 @@ type GetExecutionPriceParams = Omit<GetLimitPriceParams, 'buyAmount' | 'sellAmou
  */
 export function getExecutionPrice({
   executedBuyAmount,
-  executedSellAmount,
+  executedSellAmountBeforeFees,
   buyTokenDecimals,
   sellTokenDecimals,
   inverted,
 }: GetExecutionPriceParams): BigNumber {
   // Only calculate the price when both values are set
   // Having only one value > 0 is anyway an invalid state
-  if (!executedBuyAmount || !executedSellAmount || executedBuyAmount === '0' || executedSellAmount === '0') {
+  if (
+    !executedBuyAmount ||
+    !executedSellAmountBeforeFees ||
+    executedBuyAmount === '0' ||
+    executedSellAmountBeforeFees === '0'
+  ) {
     return ZERO_BIG_NUMBER
   }
 
   const price = calculatePrice({
     numerator: { amount: executedBuyAmount, decimals: buyTokenDecimals },
-    denominator: { amount: executedSellAmount, decimals: sellTokenDecimals },
+    denominator: { amount: executedSellAmountBeforeFees, decimals: sellTokenDecimals },
   })
 
   return inverted ? invertPrice(price) : price

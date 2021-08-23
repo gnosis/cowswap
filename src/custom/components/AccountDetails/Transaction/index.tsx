@@ -133,10 +133,10 @@ function ActivitySummary(params: {
 
     let executionPrice: string | undefined
     if (order.apiAdditionalInfo && order.status === OrderStatus.FULFILLED) {
-      const { executedSellAmount, executedBuyAmount } = order.apiAdditionalInfo
+      const { executedSellAmountBeforeFees, executedBuyAmount } = order.apiAdditionalInfo
       executionPrice = formatSmart(
         getExecutionPrice({
-          executedSellAmount,
+          executedSellAmountBeforeFees,
           executedBuyAmount,
           buyTokenDecimals,
           sellTokenDecimals,
