@@ -79,6 +79,7 @@ import TradeGp from 'state/swap/TradeGp'
 import AdvancedSwapDetailsDropdown from 'components/swap/AdvancedSwapDetailsDropdown'
 import { formatSmart } from 'utils/format'
 import { RowSlippage } from '@src/custom/components/swap/TradeSummary'
+import usePrevious from 'hooks/usePrevious'
 
 export const StyledInfo = styled(Info)`
   opacity: 0.4;
@@ -286,6 +287,7 @@ export default function Swap({
 
   // check whether the user has approved the router on the input token
   const [approvalState, approveCallback] = useApproveCallbackFromTrade(trade, allowedSlippage)
+  const prevApprovalState = usePrevious(approvalState)
   const { state: signatureState, gatherPermitSignature } = useERC20PermitFromTrade(trade, allowedSlippage)
 
   const handleApprove = useCallback(async () => {
@@ -310,8 +312,11 @@ export default function Swap({
   useEffect(() => {
     if (approvalState === ApprovalState.PENDING) {
       setApprovalSubmitted(true)
+    } else if (prevApprovalState === ApprovalState.PENDING && approvalState === ApprovalState.NOT_APPROVED) {
+      // user canceled the approval tx, reset the UI
+      setApprovalSubmitted(false)
     }
-  }, [approvalState, approvalSubmitted])
+  }, [approvalState, approvalSubmitted, prevApprovalState])
 
   const maxInputAmount: CurrencyAmount<Currency> | undefined = maxAmountSpend(currencyBalances[Field.INPUT])
   const showMaxButton = Boolean(maxInputAmount?.greaterThan(0) && !parsedAmounts[Field.INPUT]?.equalTo(maxInputAmount))
