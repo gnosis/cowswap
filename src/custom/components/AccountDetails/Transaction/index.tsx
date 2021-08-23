@@ -52,7 +52,7 @@ import {
   IconType,
 } from './styled'
 import { getLimitPrice, getExecutionPrice } from 'state/orders/utils'
-import { DEFAULT_PRECISION } from 'custom/constants'
+import { DEFAULT_PRECISION } from 'constants/index'
 
 const DEFAULT_ORDER_SUMMARY = {
   from: '',
@@ -157,7 +157,7 @@ function ActivitySummary(params: {
       kind: kind.toString(),
     }
   } else {
-    orderSummary = { ...DEFAULT_ORDER_SUMMARY }
+    orderSummary = DEFAULT_ORDER_SUMMARY
   }
 
   const { kind, from, to, executionPrice, limitPrice, fulfillmentTime, validTo } = orderSummary
