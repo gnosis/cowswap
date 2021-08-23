@@ -246,8 +246,8 @@ const StatusLabel = styled.div<{ isPending: boolean; isCancelling: boolean }>`
     opacity: 0.1;
   }
 
-  ${({ theme, color, isCancelling }) =>
-    isCancelling &&
+  ${({ theme, color, isCancelling, isPending }) =>
+    (isCancelling || isPending) &&
     color &&
     css`
       &::after {
