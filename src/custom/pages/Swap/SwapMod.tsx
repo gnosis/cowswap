@@ -105,6 +105,8 @@ export default function Swap({
 }: SwapProps) {
   const loadedUrlParams = useDefaultsFromURLSearch()
 
+  const [feeWarningAccepted, setFeeWarningAccepted] = useState(false) // mod - high fee warning disable state
+
   // token warning stuff
   const [loadedInputCurrency, loadedOutputCurrency] = [
     useCurrency(loadedUrlParams?.inputCurrencyId),
@@ -234,7 +236,8 @@ export default function Swap({
   const priceImpact = computeFiatValuePriceImpact(fiatValueInput, fiatValueOutput)
 
   const { onSwitchTokens, onCurrencySelection, onUserInput, onChangeRecipient } = useSwapActionHandlers()
-  const isValid = !swapInputError
+  // const isValid = !swapInputError
+  const isValid = !swapInputError && feeWarningAccepted // mod
   const dependentField: Field = independentField === Field.INPUT ? Field.OUTPUT : Field.INPUT
 
   const handleTypeInput = useCallback(
@@ -682,7 +685,7 @@ export default function Swap({
             )}
           </AutoColumn>
           {/* High Fee Warning */}
-          <HighFeeWarning trade={trade} />
+          <HighFeeWarning trade={trade} acceptWarningCb={() => setFeeWarningAccepted((state) => !state)} />
           <BottomGrouping>
             {swapIsUnsupported ? (
               <ButtonPrimary disabled={true} buttonSize={ButtonSize.BIG}>
