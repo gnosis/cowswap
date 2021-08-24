@@ -2,7 +2,7 @@
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { RouteComponentProps } from 'react-router-dom'
 import styled, { DefaultTheme, ThemeContext } from 'styled-components'
-import { Currency, CurrencyAmount, Token } from '@uniswap/sdk-core'
+import { Currency, CurrencyAmount, Fraction, Token } from '@uniswap/sdk-core'
 import { BoxProps, Text } from 'rebass'
 
 import { ButtonSize, TYPE } from 'theme/index'
@@ -38,6 +38,8 @@ import { useExpertModeManager, useUserSlippageToleranceWithDefault } from 'state
 import { V2_SWAP_DEFAULT_SLIPPAGE } from 'hooks/useSwapSlippageTolerance'
 import { RowReceivedAfterSlippage, RowSlippage } from 'components/swap/TradeSummary'
 import { AuxInformationContainer } from 'components/CurrencyInputPanel'
+import { transparentize } from 'polished'
+import useDebounce from 'hooks/useDebounce'
 
 interface TradeBasicDetailsProp extends BoxProps {
   trade?: TradeGp
@@ -381,32 +383,56 @@ interface HighFeeContainerProps {
   width?: string
 }
 
+// const ShowMoreButton = styled.span`
+//   text-decoration: underline;
+//   cursor: pointer;
+//   margin-left: auto;
+// `
+
+const WarningCheckboxContainer = styled.small`
+  &&&& {
+    display: flex;
+    font-weight: bold;
+    gap: 2px;
+    justify-content: center;
+    align-items: center;
+  }
+`
+
 const HighFeeWarningContainer = styled(AuxInformationContainer).attrs((props) => ({
   ...props,
   hideInput: true,
 }))<HighFeeContainerProps>`
-  padding: ${({ padding = '5px 10px' }) => padding};
+  padding: ${({ padding = '5px 16px' }) => padding};
   font-size: small;
-  font-weight: 400;
+  font-weight: 700;
   &&&&& {
-    background: #ff00008a;
+    background: ${({ theme }) => transparentize(0.8, theme.red1)};
+    color: ${({ theme }) => theme.red1};
   }
   width: ${({ width = '100%' }) => width};
-  border-radius: 5px;
+  border-radius: ${({ theme }) => theme.buttonPrimary.borderRadius};
   margin: ${({ margin = '0 auto 12px auto' }) => margin};
   > small {
     display: flex;
-    justify-content: space-evenly;
+    justify-content: space-between;
     align-items: center;
-    gap: 8px;
-    > div {
-      margin-top: 1px;
+    gap: 2px;
+    svg {
+      &:first-child {
+        margin-right: 4px;
+      }
+      stroke: ${({ theme }) => theme.red1};
     }
 
-    > span {
-      text-decoration: underline;
-      cursor: pointer;
+    > div:first-of-type {
+      margin-top: 2px;
+    }
+    > ${WarningCheckboxContainer} {
       margin-left: auto;
+      > input {
+        cursor: pointer;
+      }
     }
   }
   > div {
@@ -415,41 +441,64 @@ const HighFeeWarningContainer = styled(AuxInformationContainer).attrs((props) =>
   }
 `
 
-type HighFeeWarningProps = { trade?: TradeGp } & HighFeeContainerProps
+const ErrorStyledInfo = styled(StyledInfo)`
+  color: ${({ theme }) => theme.red1};
+`
+
+const HighFeeWarningMessage = ({ feePercentage }: { feePercentage?: Fraction }) => (
+  <div>
+    <small>
+      Current fees on this network make up{' '}
+      <u>
+        <strong>{feePercentage?.toFixed(2)}%</strong>
+      </u>{' '}
+      of your input swap amount.
+      <br />
+      You may still move forward with this swap but it is highly recommended that you wait for lower fees, or switch to
+      xDai.
+    </small>
+  </div>
+)
+
+export type HighFeeWarningProps = { trade?: TradeGp; acceptWarningCb?: () => void } & HighFeeContainerProps
+
+const HIGH_FEE_DEBOUNCE_TIME = 400
 
 export const HighFeeWarning = (props: HighFeeWarningProps) => {
-  const [isOpen, setIsOpen] = useState(false)
-  const infoLabel = useMemo(() => (isOpen ? '- info' : '+ info'), [isOpen])
+  const { trade, acceptWarningCb } = props
+
+  const theme = useContext(ThemeContext)
 
   // only considers inputAmount vs fee (fee is in input token)
-  const [isHighFee, feePercentage] = useMemo(() => {
-    if (!props.trade) return []
+  const [isHighFeeRaw, feePercentage] = useMemo(() => {
+    if (!trade) return []
 
-    const feePercentage = props.trade.fee.feeAsCurrency.divide(props.trade.inputAmount).asFraction
+    const feePercentage = trade.fee.feeAsCurrency.divide(trade.inputAmount).asFraction
     return [feePercentage.greaterThan(FEE_SIZE_THRESHOLD), feePercentage.multiply('100')]
-  }, [props.trade])
+  }, [trade])
+
+  // debounce the calcublation of high fee boolean
+  const isHighFee = useDebounce(!!isHighFeeRaw, HIGH_FEE_DEBOUNCE_TIME)
 
   if (!isHighFee) return null
 
   return (
-    <HighFeeWarningContainer onClick={() => setIsOpen((state) => !state)} {...props}>
+    <HighFeeWarningContainer {...props}>
       <small>
-        <AlertTriangle size={20} /> <div>Unfavourable swap detected!</div> <span>{infoLabel}</span>
+        <AlertTriangle size={20} /> <div>Unfavourable swap detected!</div>{' '}
+        <MouseoverTooltipContent
+          bgColor={theme.bg1}
+          color={theme.text1}
+          content={<HighFeeWarningMessage feePercentage={feePercentage} />}
+        >
+          <ErrorStyledInfo />
+        </MouseoverTooltipContent>
+        {acceptWarningCb && (
+          <WarningCheckboxContainer>
+            <input type="checkbox" onChange={acceptWarningCb} /> I understand the risk
+          </WarningCheckboxContainer>
+        )}
       </small>
-      {isOpen && (
-        <div>
-          <small>
-            Current fees on this network make up{' '}
-            <u>
-              <strong>{feePercentage?.toFixed(2)}%</strong>
-            </u>{' '}
-            of your input swap amount.
-            <br />
-            You may still move forward with this swap but it is highly recommended that you wait for lower fees, or
-            switch to xDai.
-          </small>
-        </div>
-      )}
     </HighFeeWarningContainer>
   )
 }
