@@ -31,7 +31,7 @@ import { AuxInformationContainer } from 'components/CurrencyInputPanel'
 import FeeInformationTooltip from '../FeeInformationTooltip'
 import { LightCardType } from '.'
 import { transparentize } from 'polished'
-import { Price } from 'pages/Swap'
+import { HighFeeWarningProps, Price } from 'pages/Swap'
 
 export const ArrowWrapper = styled.div`
   padding: 4px;
@@ -60,6 +60,7 @@ export interface SwapModalHeaderProps {
   priceImpactWithoutFee?: Percent
   onAcceptChanges: () => void
   LightCard: LightCardType
+  HighFeeWarning: React.FC<HighFeeWarningProps>
 }
 
 export default function SwapModalHeader({
@@ -69,6 +70,7 @@ export default function SwapModalHeader({
   showAcceptChanges,
   onAcceptChanges,
   LightCard,
+  HighFeeWarning,
 }: /* 
 {
   trade: V2Trade<Currency, Currency, TradeType> | V3Trade<Currency, Currency, TradeType>
@@ -269,6 +271,8 @@ SwapModalHeaderProps) {
           </TYPE.main>
         </AutoColumn>
       ) : null}
+      {/* High Fee Warning */}
+      <HighFeeWarning trade={trade} margin="0" />
     </AutoColumn>
   )
 }
