@@ -80,6 +80,7 @@ export interface OrderFulfillmentData {
   fulfillmentTime: string
   transactionHash: string
   summary?: string
+  apiAdditionalInfo?: OrderInfoApi
 }
 
 export interface FulfillOrdersBatchParams {
