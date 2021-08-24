@@ -158,7 +158,7 @@ function ActivitySummary(params: {
   }
 
   const { kind, from, to, executionPrice, limitPrice, fulfillmentTime, validTo } = orderSummary
-  console.log(orderSummary)
+
   return (
     <Summary>
       <b>{isOrder ? `${kind} order` : 'Transaction'} ↗</b>
