@@ -24,6 +24,7 @@ export interface BaseOrder extends Omit<OrderCreation, 'signingScheme'> {
   summary: string // for dapp use only, readable by user
   isCancelling?: boolean // intermediate state while the order has been cancelled but order is still pending
   isUnfillable?: boolean // whether the order is out of the market, due to price movements since placement
+  apiAdditionalInfo?: OrderInfoApi
 }
 
 /**
@@ -43,7 +44,6 @@ type OrderInfoApi = Pick<
 export interface Order extends BaseOrder {
   inputToken: Token // for dapp use only, readable by user
   outputToken: Token // for dapp use only, readable by user
-  apiAdditionalInfo?: OrderInfoApi
 }
 
 export interface SerializedOrder extends BaseOrder {
