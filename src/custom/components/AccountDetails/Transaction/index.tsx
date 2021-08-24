@@ -144,7 +144,9 @@ function ActivitySummary(params: {
       limitPrice: `${limitPrice} ${outputAmount.currency.symbol} per ${sellAmt.currency.symbol}`,
       validTo: new Date((validTo as number) * 1000).toLocaleString(),
       executionPrice: executionPrice
-        ? `${executionPrice} ${outputAmount.currency.symbol} per ${sellAmt.currency.symbol}`
+        ? `${executionPrice} ${kind === 'buy' ? outputAmount.currency.symbol : sellAmt.currency.symbol} per ${
+            kind === 'buy' ? sellAmt.currency.symbol : outputAmount.currency.symbol
+          }`
         : undefined,
       fulfillmentTime: fulfillmentTime ? new Date(fulfillmentTime).toLocaleString() : undefined,
       kind: kind.toString(),
