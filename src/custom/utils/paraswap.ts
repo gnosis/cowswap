@@ -1,11 +1,10 @@
 import { OrderKind } from '@gnosis.pm/gp-v2-contracts'
 
 import { ParaSwap, SwapSide, NetworkID } from 'paraswap'
-import { toErc20Address } from 'utils/tokens'
 import { OptimalRatesWithPartnerFees, APIError, RateOptions } from 'paraswap/build/types'
 import { SupportedChainId as ChainId } from 'constants/chains'
 import { getTokensFromMarket } from 'utils/misc'
-import { PriceInformation, PriceQuoteParams } from 'utils/price'
+import { getValidParams, PriceInformation, PriceQuoteParams } from 'utils/price'
 
 type ParaSwapPriceQuote = OptimalRatesWithPartnerFees
 
@@ -63,9 +62,7 @@ function getPriceQuoteFromError(error: APIError): ParaSwapPriceQuote | null {
 }
 
 export async function getPriceQuote(params: PriceQuoteParams): Promise<ParaSwapPriceQuote | null> {
-  const { baseToken: baseTokenAux, quoteToken: quoteTokenAux, fromDecimals, toDecimals, amount, kind, chainId } = params
-  const baseToken = toErc20Address(baseTokenAux, chainId)
-  const quoteToken = toErc20Address(quoteTokenAux, chainId)
+  const { baseToken, quoteToken, fromDecimals, toDecimals, amount, kind, chainId } = getValidParams(params)
 
   let paraSwap = paraSwapLibs.get(chainId)
   if (!paraSwap) {

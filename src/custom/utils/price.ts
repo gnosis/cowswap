@@ -11,6 +11,7 @@ import { getPriceQuote as getPriceQuoteParaswap, toPriceInformation } from 'util
 import { OptimalRatesWithPartnerFees as OptimalRatesWithPartnerFeesParaswap } from 'paraswap'
 import { OrderKind } from '@gnosis.pm/gp-v2-contracts'
 import { ChainId } from 'state/lists/actions'
+import { toErc20Address } from './tokens'
 
 const FEE_EXCEEDS_FROM_ERROR = new GpQuoteError({
   errorType: GpQuoteErrorCodes.FeeExceedsFrom,
@@ -207,4 +208,12 @@ export async function getBestQuote({ quoteParams, fetchFee, previousFee }: Quote
         Promise.reject(FEE_EXCEEDS_FROM_ERROR)
 
   return Promise.allSettled([pricePromise, feePromise])
+}
+
+export function getValidParams(params: PriceQuoteParams) {
+  const { baseToken: baseTokenAux, quoteToken: quoteTokenAux, chainId } = params
+  const baseToken = toErc20Address(baseTokenAux, chainId)
+  const quoteToken = toErc20Address(quoteTokenAux, chainId)
+
+  return { ...params, baseToken, quoteToken }
 }
