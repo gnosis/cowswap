@@ -24,7 +24,13 @@ import {
 import EthWethWrap, { Props as EthWethWrapProps } from 'components/swap/EthWethWrap'
 import { useReplaceSwapState, useSwapState } from 'state/swap/hooks'
 import { ArrowWrapperLoader, ArrowWrapperLoaderProps, Wrapper as ArrowWrapper } from 'components/ArrowWrapperLoader'
-import { FEE_SIZE_THRESHOLD, FIAT_PRECISION, LONG_LOAD_THRESHOLD, SHORT_PRECISION } from 'constants/index'
+import {
+  FEE_SIZE_THRESHOLD,
+  FIAT_PRECISION,
+  INITIAL_ALLOWED_SLIPPAGE_PERCENT,
+  LONG_LOAD_THRESHOLD,
+  SHORT_PRECISION,
+} from 'constants/index'
 import { formatSmart } from 'utils/format'
 import { MouseoverTooltipContent } from 'components/Tooltip'
 import { StyledInfo } from 'pages/Swap/SwapMod'
@@ -35,7 +41,6 @@ import TradeGp from 'state/swap/TradeGp'
 import { useUSDCValue } from 'hooks/useUSDCPrice'
 import { computeTradePriceBreakdown, FEE_TOOLTIP_MSG } from 'components/swap/TradeSummary/TradeSummaryMod'
 import { useExpertModeManager, useUserSlippageToleranceWithDefault } from 'state/user/hooks'
-import { V2_SWAP_DEFAULT_SLIPPAGE } from 'hooks/useSwapSlippageTolerance'
 import { RowReceivedAfterSlippage, RowSlippage } from 'components/swap/TradeSummary'
 import { AuxInformationContainer } from 'components/CurrencyInputPanel'
 import { transparentize } from 'polished'
@@ -228,8 +233,12 @@ function TradeBasicDetails({ trade, fee, ...boxProps }: TradeBasicDetailsProp) {
   const { realizedFee } = computeTradePriceBreakdown(trade)
   const feeFiatDisplay = `(≈$${formatSmart(feeFiatValue, FIAT_PRECISION)})`
 
-  const allowedSlippage = useUserSlippageToleranceWithDefault(V2_SWAP_DEFAULT_SLIPPAGE)
+  const allowedSlippage = useUserSlippageToleranceWithDefault(INITIAL_ALLOWED_SLIPPAGE_PERCENT)
   const [isExpertMode] = useExpertModeManager()
+
+  const displayFee = realizedFee || fee
+  const feeCurrencySymbol = displayFee?.currency.symbol || '-'
+  const fullDisplayFee = displayFee?.toFixed(displayFee?.currency.decimals) || '-'
 
   return (
     <LowerSectionWrapper {...boxProps}>
@@ -242,8 +251,8 @@ function TradeBasicDetails({ trade, fee, ...boxProps }: TradeBasicDetailsProp) {
           <StyledInfo />
         </MouseoverTooltipContent>
       </RowFixed>
-      <TYPE.black fontSize={14} color={theme.text1}>
-        {formatSmart(realizedFee || fee, SHORT_PRECISION)} {(realizedFee || fee)?.currency.symbol}{' '}
+      <TYPE.black fontSize={14} color={theme.text1} title={`${fullDisplayFee} ${feeCurrencySymbol}`}>
+        {formatSmart(displayFee, SHORT_PRECISION)} {feeCurrencySymbol}{' '}
         {feeFiatValue && <LightGreyText>{feeFiatDisplay}</LightGreyText>}
       </TYPE.black>
 
