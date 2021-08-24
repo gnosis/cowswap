@@ -137,17 +137,19 @@ function ActivitySummary(params: {
       )
     }
 
+    const getPriceFormat = ({ price, kind }: { price: string; kind: string }): string => {
+      return `${price} ${kind === 'buy' ? outputAmount.currency.symbol : sellAmt.currency.symbol} per ${
+        kind === 'buy' ? sellAmt.currency.symbol : outputAmount.currency.symbol
+      }`
+    }
+
     orderSummary = {
       ...DEFAULT_ORDER_SUMMARY,
       from: `${formatSmart(sellAmt.add(feeAmt))} ${sellAmt.currency.symbol}`,
       to: `${formatSmart(outputAmount)} ${outputAmount.currency.symbol}`,
-      limitPrice: `${limitPrice} ${outputAmount.currency.symbol} per ${sellAmt.currency.symbol}`,
+      limitPrice: limitPrice ? getPriceFormat({ price: limitPrice, kind: kind }) : undefined,
       validTo: new Date((validTo as number) * 1000).toLocaleString(),
-      executionPrice: executionPrice
-        ? `${executionPrice} ${kind === 'buy' ? outputAmount.currency.symbol : sellAmt.currency.symbol} per ${
-            kind === 'buy' ? sellAmt.currency.symbol : outputAmount.currency.symbol
-          }`
-        : undefined,
+      executionPrice: executionPrice ? getPriceFormat({ price: executionPrice, kind: kind }) : undefined,
       fulfillmentTime: fulfillmentTime ? new Date(fulfillmentTime).toLocaleString() : undefined,
       kind: kind.toString(),
     }
@@ -156,6 +158,7 @@ function ActivitySummary(params: {
   }
 
   const { kind, from, to, executionPrice, limitPrice, fulfillmentTime, validTo } = orderSummary
+  console.log(orderSummary)
   return (
     <Summary>
       <b>{isOrder ? `${kind} order` : 'Transaction'} ↗</b>
