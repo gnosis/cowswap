@@ -3,7 +3,7 @@ import { useEffect } from 'react'
 import { DEFAULT_DECIMALS } from 'custom/constants'
 
 import { UnsupportedToken } from 'utils/operator'
-import { FeeQuoteParams } from 'utils/price'
+import { FeeQuoteParams } from 'priceApi/price'
 import { OrderKind } from '@gnosis.pm/gp-v2-contracts'
 
 import { useSwapState, tryParseAmount } from 'state/swap/hooks'

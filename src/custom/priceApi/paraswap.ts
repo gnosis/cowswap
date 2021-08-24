@@ -4,7 +4,7 @@ import { ParaSwap, SwapSide, NetworkID } from 'paraswap'
 import { OptimalRatesWithPartnerFees, APIError, RateOptions } from 'paraswap/build/types'
 import { SupportedChainId as ChainId } from 'constants/chains'
 import { getTokensFromMarket } from 'utils/misc'
-import { getValidParams, PriceInformation, PriceQuoteParams } from 'utils/price'
+import { getValidParams, PriceInformation, PriceQuoteParams } from 'priceApi/price'
 
 type ParaSwapPriceQuote = OptimalRatesWithPartnerFees
 

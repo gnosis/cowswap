@@ -4,7 +4,7 @@ import { OrderKind } from '@gnosis.pm/gp-v2-contracts'
 import { updateQuote, setQuoteError, getNewQuote, refreshQuote, QuoteError } from './actions'
 import { Writable } from 'custom/types'
 import { PrefillStateRequired } from '../orders/reducer'
-import { FeeInformation, FeeQuoteParams, PriceInformation } from 'utils/price'
+import { FeeInformation, FeeQuoteParams, PriceInformation } from 'priceApi/price'
 
 // API Doc: https://protocol-rinkeby.dev.gnosisdev.com/api
 

@@ -4,7 +4,7 @@ import { Price } from '@uniswap/sdk-core'
 import { ONE_HUNDRED_PERCENT, PENDING_ORDERS_BUFFER } from 'constants/index'
 import { OrderMetaData } from 'utils/operator'
 import { Order } from 'state/orders/actions'
-import { PriceInformation } from 'utils/price'
+import { PriceInformation } from 'priceApi/price'
 import { OUT_OF_MARKET_PRICE_DELTA_PERCENTAGE } from 'state/orders/consts'
 
 export type ApiOrderStatus = 'unknown' | 'fulfilled' | 'expired' | 'cancelled' | 'pending'

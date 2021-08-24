@@ -1,4 +1,4 @@
-import { PriceInformation } from 'utils/price'
+import { PriceInformation } from 'priceApi/price'
 import { OrderKind } from 'state/orders/actions'
 
 import { USDC, USDT } from 'constants/tokens'

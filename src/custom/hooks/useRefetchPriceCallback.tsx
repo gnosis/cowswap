@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 
-import { FeeQuoteParams, getBestQuote, QuoteParams, QuoteResult } from 'utils/price'
+import { FeeQuoteParams, getBestQuote, QuoteParams, QuoteResult } from 'priceApi/price'
 import { isValidOperatorError, ApiErrorCodes } from 'utils/operator/errors/OperatorError'
 import { GpQuoteErrorCodes, isValidQuoteError } from 'utils/operator/errors/QuoteError'
 import { registerOnWindow, getPromiseFulfilledValue, isPromiseFulfilled } from 'utils/misc'

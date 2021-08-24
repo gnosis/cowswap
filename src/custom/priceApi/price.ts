@@ -6,12 +6,12 @@ import GpQuoteError, { GpQuoteErrorCodes } from 'utils/operator/errors/QuoteErro
 import { getCanonicalMarket, isPromiseFulfilled, withTimeout } from 'utils/misc'
 import { formatAtoms } from 'utils/format'
 import { PRICE_API_TIMEOUT_MS } from 'constants/index'
-import { getPriceQuote as getPriceQuoteParaswap, toPriceInformation } from 'utils/paraswap'
+import { getPriceQuote as getPriceQuoteParaswap, toPriceInformation } from '@src/custom/priceApi/paraswap'
 
 import { OptimalRatesWithPartnerFees as OptimalRatesWithPartnerFeesParaswap } from 'paraswap'
 import { OrderKind } from '@gnosis.pm/gp-v2-contracts'
 import { ChainId } from 'state/lists/actions'
-import { toErc20Address } from './tokens'
+import { toErc20Address } from 'utils/tokens'
 
 const FEE_EXCEEDS_FROM_ERROR = new GpQuoteError({
   errorType: GpQuoteErrorCodes.FeeExceedsFrom,
