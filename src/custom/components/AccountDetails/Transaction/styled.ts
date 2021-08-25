@@ -93,7 +93,7 @@ export const SummaryInnerRow = styled.div<{ isExpired?: boolean; isCancelled?: b
   display: grid;
   color: inherit;
   grid-template-rows: 1fr;
-  grid-template-columns: 105px 1fr;
+  grid-template-columns: 100px 1fr;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
     grid-template-columns: 1fr; 
@@ -117,6 +117,7 @@ export const SummaryInnerRow = styled.div<{ isExpired?: boolean; isCancelled?: b
     padding: 0;
     font-weight: 500;
     opacity: 0.8;
+    letter-spacing: -0.1px;
 
     &:before {
       content: '▶';

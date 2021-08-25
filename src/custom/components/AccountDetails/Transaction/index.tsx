@@ -124,6 +124,8 @@ function ActivitySummary(params: {
     )
 
     let executionPrice: string | undefined
+    console.log(order)
+    console.log(order.apiAdditionalInfo)
     if (order.apiAdditionalInfo && order.status === OrderStatus.FULFILLED) {
       const { executedSellAmountBeforeFees, executedBuyAmount } = order.apiAdditionalInfo
       executionPrice = formatSmart(
@@ -174,7 +176,7 @@ function ActivitySummary(params: {
               {executionPrice ? (
                 <>
                   {' '}
-                  <b>Execution price</b>
+                  <b>Exec. price</b>
                   <i>{executionPrice}</i>
                 </>
               ) : (
