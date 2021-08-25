@@ -175,8 +175,18 @@ export default function WalletModal({
   useEffect(() => {
     if (walletModalOpen && ((active && !activePrevious) || (connector && connector !== connectorPrevious && !error))) {
       setWalletView(WALLET_VIEWS.ACCOUNT)
+      toggleWalletModal() // mod
     }
-  }, [setWalletView, active, error, connector, walletModalOpen, activePrevious, connectorPrevious])
+  }, [
+    setWalletView,
+    active,
+    error,
+    connector,
+    walletModalOpen,
+    activePrevious,
+    connectorPrevious,
+    toggleWalletModal, // mod
+  ])
 
   const tryActivation = async (connector: AbstractConnector | undefined) => {
     let name = ''
