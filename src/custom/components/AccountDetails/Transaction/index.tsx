@@ -119,7 +119,7 @@ function ActivitySummary(params: {
         sellAmount: order.sellAmount.toString(),
         buyTokenDecimals,
         sellTokenDecimals,
-        inverted: false, // TODO: handle invert price
+        inverted: true, // TODO: handle invert price
       })
     )
 
@@ -132,24 +132,22 @@ function ActivitySummary(params: {
           executedBuyAmount,
           buyTokenDecimals,
           sellTokenDecimals,
-          inverted: false, // TODO: Handle invert price
+          inverted: true, // TODO: Handle invert price
         })
       )
     }
 
-    const getPriceFormat = ({ price, kind }: { price: string; kind: string }): string => {
-      return `${price} ${kind === 'buy' ? outputAmount.currency.symbol : sellAmt.currency.symbol} per ${
-        kind === 'buy' ? sellAmt.currency.symbol : outputAmount.currency.symbol
-      }`
+    const getPriceFormat = (price: string): string => {
+      return `${price} ${sellAmt.currency.symbol} per ${outputAmount.currency.symbol}`
     }
 
     orderSummary = {
       ...DEFAULT_ORDER_SUMMARY,
       from: `${formatSmart(sellAmt.add(feeAmt))} ${sellAmt.currency.symbol}`,
       to: `${formatSmart(outputAmount)} ${outputAmount.currency.symbol}`,
-      limitPrice: limitPrice ? getPriceFormat({ price: limitPrice, kind: kind }) : undefined,
+      limitPrice: limitPrice && getPriceFormat(limitPrice),
+      executionPrice: executionPrice && getPriceFormat(executionPrice),
       validTo: new Date((validTo as number) * 1000).toLocaleString(),
-      executionPrice: executionPrice ? getPriceFormat({ price: executionPrice, kind: kind }) : undefined,
       fulfillmentTime: fulfillmentTime ? new Date(fulfillmentTime).toLocaleString() : undefined,
       kind: kind.toString(),
     }
