@@ -17,6 +17,7 @@ export const Wrapper = styled.div`
 `
 
 export const IconType = styled.div`
+  flex: 0 0 36px;
   height: 36px;
   width: 36px;
   position: relative;
