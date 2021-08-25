@@ -171,7 +171,7 @@ export async function sendSignedOrderCancellation(params: OrderCancellationParam
   console.log('[utils:operator] Cancelled order', cancellation.orderUid, chainId)
 }
 
-export const UNHANDLED_QUOTE_ERROR: GpQuoteErrorObject = {
+const UNHANDLED_QUOTE_ERROR: GpQuoteErrorObject = {
   errorType: GpQuoteErrorCodes.UNHANDLED_ERROR,
   description: GpQuoteErrorDetails.UNHANDLED_ERROR,
 }
