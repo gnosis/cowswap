@@ -110,8 +110,8 @@ function ActivitySummary(params: {
     const sellAmt = CurrencyAmount.fromRawAmount(inputToken, sellAmount.toString())
     const feeAmt = CurrencyAmount.fromRawAmount(inputToken, feeAmount.toString())
     const outputAmount = CurrencyAmount.fromRawAmount(outputToken, buyAmount.toString())
-    const buyTokenDecimals = order?.inputToken?.decimals ?? DEFAULT_PRECISION
     const sellTokenDecimals = order?.inputToken?.decimals ?? DEFAULT_PRECISION
+    const buyTokenDecimals = order?.outputToken?.decimals ?? DEFAULT_PRECISION
 
     const limitPrice = formatSmart(
       getLimitPrice({
