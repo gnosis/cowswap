@@ -1,5 +1,5 @@
 import { Order, OrderFulfillmentData } from 'state/orders/actions'
-import { getOrder, OrderID, OrderMetaData } from 'utils/operator'
+import { getOrder, OrderID, OrderMetaData } from 'priceApi/gnosis'
 import { stringToCurrency } from 'state/swap/extension'
 import { formatSmart } from 'utils/format'
 import { SHORT_PRECISION } from 'constants/index'

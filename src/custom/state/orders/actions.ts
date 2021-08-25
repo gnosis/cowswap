@@ -1,5 +1,5 @@
 import { createAction } from '@reduxjs/toolkit'
-import { OrderID } from 'utils/operator'
+import { OrderID } from 'priceApi/gnosis'
 import { OrderCreation } from 'utils/signatures'
 import { Token } from '@uniswap/sdk-core'
 import { SupportedChainId as ChainId } from 'constants/chains'

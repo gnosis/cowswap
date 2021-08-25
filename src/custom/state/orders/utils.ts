@@ -2,7 +2,7 @@ import { OrderKind } from '@gnosis.pm/gp-v2-contracts'
 import { Price } from '@uniswap/sdk-core'
 
 import { ONE_HUNDRED_PERCENT, PENDING_ORDERS_BUFFER } from 'constants/index'
-import { OrderMetaData } from 'utils/operator'
+import { OrderMetaData } from 'priceApi/gnosis'
 import { Order } from 'state/orders/actions'
 import { PriceInformation } from 'priceApi/price'
 import { OUT_OF_MARKET_PRICE_DELTA_PERCENTAGE } from 'state/orders/consts'

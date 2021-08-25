@@ -4,7 +4,7 @@ import { OrderStatus, OrderKind, ChangeOrderStatusParams } from 'state/orders/ac
 import { AddUnserialisedPendingOrderParams } from 'state/orders/hooks'
 
 import { signOrder, signOrderCancellation, UnsignedOrder } from 'utils/signatures'
-import { sendSignedOrderCancellation, sendSignedOrder, OrderID } from 'utils/operator'
+import { sendSignedOrderCancellation, sendSignedOrder, OrderID } from 'priceApi/gnosis'
 import { Signer } from 'ethers'
 import { APP_DATA_HASH, RADIX_DECIMAL, SHORT_PRECISION } from 'constants/index'
 import { SupportedChainId as ChainId } from 'constants/chains'

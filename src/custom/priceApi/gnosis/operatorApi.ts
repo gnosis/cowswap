@@ -2,15 +2,15 @@ import { SupportedChainId as ChainId } from 'constants/chains'
 import { OrderKind } from '@gnosis.pm/gp-v2-contracts'
 import { getSigningSchemeApiValue, OrderCreation, OrderCancellation } from 'utils/signatures'
 import { APP_DATA_HASH } from 'constants/index'
-import { registerOnWindow } from '../misc'
-import { isLocal, isDev, isPr, isBarn } from '../environments'
-import OperatorError, { ApiErrorCodeDetails, ApiErrorCodes, ApiErrorObject } from 'utils/operator/errors/OperatorError'
+import { registerOnWindow } from '../../utils/misc'
+import { isLocal, isDev, isPr, isBarn } from '../../utils/environments'
+import OperatorError, { ApiErrorCodeDetails, ApiErrorCodes, ApiErrorObject } from 'priceApi/gnosis/errors/OperatorError'
 import QuoteError, {
   GpQuoteErrorCodes,
   GpQuoteErrorObject,
   mapOperatorErrorToQuoteError,
   GpQuoteErrorDetails,
-} from 'utils/operator/errors/QuoteError'
+} from 'priceApi/gnosis/errors/QuoteError'
 import { toErc20Address } from 'utils/tokens'
 import { FeeInformation, FeeQuoteParams, PriceInformation, PriceQuoteParams } from 'priceApi/price'
 import { AppDataDoc } from 'utils/metadata'
@@ -171,7 +171,7 @@ export async function sendSignedOrderCancellation(params: OrderCancellationParam
   console.log('[utils:operator] Cancelled order', cancellation.orderUid, chainId)
 }
 
-const UNHANDLED_QUOTE_ERROR: GpQuoteErrorObject = {
+export const UNHANDLED_QUOTE_ERROR: GpQuoteErrorObject = {
   errorType: GpQuoteErrorCodes.UNHANDLED_ERROR,
   description: GpQuoteErrorDetails.UNHANDLED_ERROR,
 }

@@ -8,6 +8,7 @@ import { getValidParams, PriceInformation, PriceQuoteParams } from 'priceApi/pri
 
 type ParaSwapPriceQuote = OptimalRatesWithPartnerFees
 
+const API_NAME = 'ParaSwap'
 // Provided manually just to make sure it matches what GPv2 backend is using, although the value used  is the current SDK default
 const API_URL = 'https://apiv4.paraswap.io/v2'
 
@@ -75,7 +76,7 @@ export async function getPriceQuote(params: PriceQuoteParams): Promise<ParaSwapP
     paraSwapLibs.set(chainId, paraSwap)
   }
 
-  console.log('[util:paraswap] Get price from Paraswap', params)
+  console.log(`[pricesApi:${API_NAME}] Get price from Paraswap`, params)
 
   // Buy/sell token and side (sell/buy)
   const { sellToken, buyToken } = getTokensFromMarket({ baseToken, quoteToken, kind })
