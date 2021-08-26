@@ -134,8 +134,9 @@ const SwapModWrapper = styled(SwapMod)`
       z-index: 2;
     }
 
+    ${AutoRow} svg,
     ${AutoRow} svg > path {
-      stroke: ${({ theme }) => theme.text1};
+      stroke: ${({ theme }) => theme.text2};
     }
   }
 `
