@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 
-import { FeeQuoteParams, getBestQuote, QuoteParams, QuoteResult } from 'priceApi/price'
+import { FeeQuoteParams, getBestQuote, QuoteParams, QuoteResult } from '@src/custom/utils/price'
 import { isValidOperatorError, ApiErrorCodes } from 'priceApi/gnosis/errors/OperatorError'
 import { GpQuoteErrorCodes, isValidQuoteError } from 'priceApi/gnosis/errors/QuoteError'
 import { registerOnWindow, getPromiseFulfilledValue, isPromiseFulfilled } from 'utils/misc'

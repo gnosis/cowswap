@@ -3,7 +3,7 @@ import { OrderKind } from '@gnosis.pm/gp-v2-contracts'
 import { NetworkID } from 'paraswap'
 import { SupportedChainId as ChainId } from 'constants/chains'
 import { getTokensFromMarket } from 'utils/misc'
-import { getValidParams, PriceInformation, PriceQuoteParams } from 'priceApi/price'
+import { getValidParams, PriceInformation, PriceQuoteParams } from '@src/custom/utils/price'
 
 // https://github.com/0xProject/0x-api/blob/8c4cc7bb8d4fa06a220b7dfd5784361c05daa92a/src/types.ts#L229
 interface GetSwapQuoteResponseLiquiditySource {

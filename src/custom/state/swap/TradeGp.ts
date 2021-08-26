@@ -1,5 +1,5 @@
 import { CanonicalMarketParams, getCanonicalMarket } from 'utils/misc'
-import { FeeInformation, PriceInformation } from 'priceApi/price'
+import { FeeInformation, PriceInformation } from '@src/custom/utils/price'
 import { CurrencyAmount, Currency, TradeType, Price, Percent, Fraction } from '@uniswap/sdk-core'
 import { Trade } from '@uniswap/v2-sdk'
 

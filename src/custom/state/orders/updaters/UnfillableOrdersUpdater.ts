@@ -8,7 +8,7 @@ import { PENDING_ORDERS_PRICE_CHECK_POLL_INTERVAL } from 'state/orders/consts'
 
 import { SupportedChainId as ChainId } from 'constants/chains'
 
-import { getBestPrice, PriceInformation } from 'priceApi/price'
+import { getBestPrice, PriceInformation } from '@src/custom/utils/price'
 import { isOrderUnfillable } from 'state/orders/utils'
 
 /**

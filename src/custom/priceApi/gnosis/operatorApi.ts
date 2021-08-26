@@ -12,7 +12,7 @@ import QuoteError, {
   GpQuoteErrorDetails,
 } from 'priceApi/gnosis/errors/QuoteError'
 import { toErc20Address } from 'utils/tokens'
-import { FeeInformation, FeeQuoteParams, PriceInformation, PriceQuoteParams } from 'priceApi/price'
+import { FeeInformation, FeeQuoteParams, PriceInformation, PriceQuoteParams } from '@src/custom/utils/price'
 import { AppDataDoc } from 'utils/metadata'
 import MetadataError, {
   MetadataApiErrorCodeDetails,
