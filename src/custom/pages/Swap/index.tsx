@@ -29,6 +29,7 @@ import {
   FIAT_PRECISION,
   INITIAL_ALLOWED_SLIPPAGE_PERCENT,
   LONG_LOAD_THRESHOLD,
+  PERCENTAGE_PRECISION,
   SHORT_PRECISION,
 } from 'constants/index'
 import { formatSmart } from 'utils/format'
@@ -405,7 +406,6 @@ const HighFeeWarningContainer = styled(AuxInformationContainer).attrs((props) =>
   hideInput: true,
 }))<HighFeeContainerProps>`
   padding: ${({ padding = '5px 16px' }) => padding};
-  font-weight: 700;
   &&&&& {
     background: ${({ theme }) => transparentize(0.8, theme.red1)};
     color: ${({ theme }) => theme.red1};
@@ -418,6 +418,8 @@ const HighFeeWarningContainer = styled(AuxInformationContainer).attrs((props) =>
     justify-content: space-between;
     align-items: center;
     gap: 2px;
+
+    font-size: 13px;
 
     svg {
       &:first-child {
@@ -448,10 +450,10 @@ const HighFeeWarningMessage = ({ feePercentage }: { feePercentage?: Fraction }) 
       <u>
         <strong>{feePercentage?.toFixed(2)}%</strong>
       </u>{' '}
-      of your input swap amount.
+      of your swap amount.
       <br />
-      You may still move forward with this swap but it is highly recommended that you wait for lower fees, or switch to
-      xDai.
+      <br />
+      You may still move forward with this swap but a high percentage of it will be consumed by fees.
     </small>
   </div>
 )
@@ -481,7 +483,11 @@ export const HighFeeWarning = (props: HighFeeWarningProps) => {
   return (
     <HighFeeWarningContainer {...props}>
       <div>
-        <AlertTriangle size={20} /> <div>Unfavourable swap detected!</div>{' '}
+        <AlertTriangle size={20} />
+        <div>
+          Fees on this swap exceed {formatSmart(FEE_SIZE_THRESHOLD.multiply('100'), PERCENTAGE_PRECISION)}% of the swap
+          amount.
+        </div>{' '}
         <MouseoverTooltipContent
           bgColor={theme.bg1}
           color={theme.text1}
