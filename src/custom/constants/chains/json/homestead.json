@@ -5,17 +5,14 @@
     "name": "Ethereum Mainnet",
     "shortName": "Mainnet",
     "network": "homestead",
-    "unknown": false,
-    "rpc": "https://mainnet.infura.io/v3/daaa68ec242643719749dd1caba2fc66",
-    "ws": "wss://mainnet.infura.io/ws/v3/daaa68ec242643719749dd1caba2fc66",
-    "loggingRpc": "https://eth-mainnet.alchemyapi.io/v2/cQGZUiTLRCFsQS7kbRxPJK4eH4fTTu88",
+    "rpc": "https://mainnet.infura.io/v3/1221fd11e90849509afafd330ec7acc6",
+    "ws": "wss://mainnet.infura.io/ws/v3/1221fd11e90849509afafd330ec7acc6",
     "explorer": "https://etherscan.io",
     "nativeAsset": {
       "name": "Ether",
       "address": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
       "symbol": "ETH",
       "decimals": 18,
-      "deeplinkId": "ether",
       "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2/logo.png"
     }
   }
