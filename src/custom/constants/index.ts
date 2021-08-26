@@ -3,12 +3,10 @@ import { Token, Fraction, Percent } from '@uniswap/sdk-core'
 import { GPv2Settlement, GPv2VaultRelayer } from '@gnosis.pm/gp-v2-contracts/networks.json'
 import { WalletInfo, SUPPORTED_WALLETS as SUPPORTED_WALLETS_UNISWAP } from 'constants/wallet'
 
-import JSBI from 'jsbi'
 import { SupportedChainId as ChainId } from 'constants/chains'
+import { getAppDataHash } from './appDataHash'
 
-// default allowed slippage, in bips
-export const INITIAL_ALLOWED_SLIPPAGE = 50
-export const INITIAL_ALLOWED_SLIPPAGE_PERCENT = new Percent(JSBI.BigInt(INITIAL_ALLOWED_SLIPPAGE), JSBI.BigInt(10000))
+export const INITIAL_ALLOWED_SLIPPAGE_PERCENT = new Percent('1', '100') // 1%
 export const RADIX_DECIMAL = 10
 export const RADIX_HEX = 16
 
@@ -16,16 +14,15 @@ export const ONE_HUNDRED_PERCENT = new Percent(1, 1)
 
 export const DEFAULT_DECIMALS = 18
 export const DEFAULT_PRECISION = 6
+export const DEFAULT_SMALL_LIMIT = '0.000001'
 export const SHORT_PRECISION = 4
-export const SHORTEST_PRECISION = 3
 export const LONG_PRECISION = 10
 export const FIAT_PRECISION = 2
 export const PERCENTAGE_PRECISION = 2
 
 export const LONG_LOAD_THRESHOLD = 2000
 
-export const APP_ID = Number(process.env.REACT_APP_ID)
-
+export const APP_DATA_HASH = getAppDataHash()
 export const PRODUCTION_URL = 'cowswap.exchange'
 
 const DISABLED_WALLETS = /^(?:WALLET_LINK|COINBASE_LINK|FORTMATIC|Portis)$/i
