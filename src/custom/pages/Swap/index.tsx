@@ -44,7 +44,6 @@ import { computeTradePriceBreakdown, FEE_TOOLTIP_MSG } from 'components/swap/Tra
 import { useExpertModeManager, useUserSlippageToleranceWithDefault } from 'state/user/hooks'
 import { RowReceivedAfterSlippage, RowSlippage } from 'components/swap/TradeSummary'
 import { AuxInformationContainer } from 'components/CurrencyInputPanel'
-import { transparentize } from 'polished'
 import useDebounce from 'hooks/useDebounce'
 
 interface TradeBasicDetailsProp extends BoxProps {
@@ -405,27 +404,29 @@ const HighFeeWarningContainer = styled(AuxInformationContainer).attrs((props) =>
   ...props,
   hideInput: true,
 }))<HighFeeContainerProps>`
-  padding: ${({ padding = '5px 16px' }) => padding};
   &&&&& {
-    background: ${({ theme }) => transparentize(0.8, theme.red1)};
-    color: ${({ theme }) => theme.red1};
+    background: ${({ theme }) => theme.info};
+    color: ${({ theme }) => theme.infoText};
   }
+  padding: ${({ padding = '5px 12px' }) => padding};
   width: ${({ width = '100%' }) => width};
   border-radius: ${({ theme }) => theme.buttonPrimary.borderRadius};
   margin: ${({ margin = '0 auto 12px auto' }) => margin};
+
   > div {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
-    gap: 2px;
+    gap: 5px;
 
-    font-size: 13px;
+    font-size: 13.5px;
+    font-weight: 500;
 
     svg {
       &:first-child {
-        margin-right: 4px;
+        margin-right: 5px;
       }
-      stroke: ${({ theme }) => theme.red1};
+      stroke: ${({ theme }) => theme.infoText};
     }
 
     > ${WarningCheckboxContainer} {
@@ -486,7 +487,7 @@ export const HighFeeWarning = (props: HighFeeWarningProps) => {
         <AlertTriangle size={20} />
         <div>
           Fees on this swap exceed {formatSmart(FEE_SIZE_THRESHOLD.multiply('100'), PERCENTAGE_PRECISION)}% of the swap
-          amount.
+          amount
         </div>{' '}
         <MouseoverTooltipContent
           bgColor={theme.bg1}
