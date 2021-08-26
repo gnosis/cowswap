@@ -16,18 +16,15 @@ interface Config {
   name: string
   shortName: string
   network: string
-  unknown: boolean
   rpc: string
   publicRpc?: string
   ws: string
-  loggingRpc: string
   explorer: string
   nativeAsset: {
     name: string
     address: string
     symbol: string
     decimals: number
-    deeplinkId: string
     logoURI: string
   }
 }
@@ -47,15 +44,11 @@ interface NetworkConfigDetails {
   nativeAssetDecimals: number
 }
 
+// only supported chain ids in BE
 export enum ChainId {
   MAINNET = 1,
-  // ROPSTEN = 3,
   RINKEBY = 4,
-  // GOERLI = 5,
-  // KOVAN = 42,
   XDAI = 100,
-  //   ARBITRUM_KOVAN = 144545313136048,
-  //   ARBITRUM_ONE = 42161,
 }
 
 type NetworkConfig = {
@@ -92,7 +85,7 @@ const NETWORK_CONFIG: NetworkConfig = {
 const SWITCH_ETHEREUM_CHAIN_METHOD = 'wallet_switchEthereumChain'
 const ADD_ETHEREUM_CHAIN_METHOD = 'wallet_addEthereumChain'
 
-export async function switchToAppNetwork(provider: Web3Provider, network: ChainId) {
+async function switchToNetwork(provider: Web3Provider, network: ChainId) {
   const hexChainId = `0x${network.toString(16)}`
   try {
     await provider.send(SWITCH_ETHEREUM_CHAIN_METHOD, [{ chainId: hexChainId }])
@@ -110,7 +103,7 @@ export async function switchToAppNetwork(provider: Web3Provider, network: ChainI
   return false
 }
 
-export async function importNetworkDetailsToWallet(provider: Web3Provider, network: ChainId) {
+async function importNetworkDetailsToWallet(provider: Web3Provider, network: ChainId) {
   const hexChainId = `0x${network.toString(16)}`
   const { chainName, rpcUrls, iconUrls, nativeAssetName, nativeAssetSymbol, nativeAssetDecimals } =
     NETWORK_CONFIG[network]
@@ -146,7 +139,7 @@ export async function importNetworkDetailsToWallet(provider: Web3Provider, netwo
   }
 }
 
-export function useSwitchToAppNetwork() {
+export function useSwitchToNetwork() {
   const { library } = useActiveWeb3React()
 
   return useCallback(
@@ -154,7 +147,7 @@ export function useSwitchToAppNetwork() {
       if (!library) {
         console.debug('[hooks/web3]::No web3 library instantiated!')
       } else {
-        switchToAppNetwork(library, network)
+        switchToNetwork(library, network)
       }
     },
     [library]
