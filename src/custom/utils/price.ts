@@ -1,20 +1,17 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import BigNumberJs from 'bignumber.js'
 
-import { getFeeQuote, getPriceQuote as getPriceQuoteGp, OrderMetaData } from '@src/custom/api/gnosisProtocol'
-import GpQuoteError, { GpQuoteErrorCodes } from '@src/custom/api/gnosisProtocol/errors/QuoteError'
+import { getFeeQuote, getPriceQuote as getPriceQuoteGp, OrderMetaData } from 'api/gnosisProtocol'
+import GpQuoteError, { GpQuoteErrorCodes } from 'api/gnosisProtocol/errors/QuoteError'
 import { getCanonicalMarket, isPromiseFulfilled, withTimeout } from 'utils/misc'
 import { formatAtoms } from 'utils/format'
 import { PRICE_API_TIMEOUT_MS } from 'constants/index'
-import {
-  getPriceQuote as getPriceQuoteParaswap,
-  toPriceInformation as toPriceInformationParaswap,
-} from '@src/custom/api/paraswap'
+import { getPriceQuote as getPriceQuoteParaswap, toPriceInformation as toPriceInformationParaswap } from 'api/paraswap'
 import {
   getPriceQuote as getPriceQuoteMatcha,
   MatchaPriceQuote,
   toPriceInformation as toPriceInformationMatcha,
-} from '@src/custom/api/matcha-0x'
+} from 'api/matcha-0x'
 
 import { OptimalRatesWithPartnerFees as OptimalRatesWithPartnerFeesParaswap } from 'paraswap'
 import { OrderKind } from '@gnosis.pm/gp-v2-contracts'

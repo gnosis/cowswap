@@ -2,8 +2,8 @@ import { useEffect } from 'react'
 
 import { DEFAULT_DECIMALS } from 'custom/constants'
 
-import { UnsupportedToken } from '@src/custom/api/gnosisProtocol'
-import { FeeQuoteParams } from '@src/custom/utils/price'
+import { UnsupportedToken } from 'api/gnosisProtocol'
+import { FeeQuoteParams } from 'utils/price'
 import { OrderKind } from '@gnosis.pm/gp-v2-contracts'
 
 import { useSwapState, tryParseAmount } from 'state/swap/hooks'

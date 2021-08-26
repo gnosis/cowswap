@@ -2,9 +2,9 @@ import { OrderKind } from '@gnosis.pm/gp-v2-contracts'
 import { Price } from '@uniswap/sdk-core'
 
 import { ONE_HUNDRED_PERCENT, PENDING_ORDERS_BUFFER } from 'constants/index'
-import { OrderMetaData } from '@src/custom/api/gnosisProtocol'
+import { OrderMetaData } from 'api/gnosisProtocol'
 import { Order } from 'state/orders/actions'
-import { PriceInformation } from '@src/custom/utils/price'
+import { PriceInformation } from 'utils/price'
 import { OUT_OF_MARKET_PRICE_DELTA_PERCENTAGE } from 'state/orders/consts'
 
 export type ApiOrderStatus = 'unknown' | 'fulfilled' | 'expired' | 'cancelled' | 'pending'

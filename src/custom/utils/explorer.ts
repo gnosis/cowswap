@@ -1,5 +1,5 @@
 import { SupportedChainId as ChainId } from 'constants/chains'
-import { OrderID } from '@src/custom/api/gnosisProtocol'
+import { OrderID } from 'api/gnosisProtocol'
 import { isLocal, isDev, isPr, isStaging, isBarn } from './environments'
 
 function _getExplorerUrlByEnvironment() {
