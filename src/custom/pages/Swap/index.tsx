@@ -415,7 +415,7 @@ const HighFeeWarningContainer = styled(AuxInformationContainer).attrs((props) =>
 
   > div {
     display: flex;
-    justify-content: center;
+    justify-content: space-evenly;
     align-items: center;
     gap: 5px;
 
@@ -432,9 +432,11 @@ const HighFeeWarningContainer = styled(AuxInformationContainer).attrs((props) =>
     > ${WarningCheckboxContainer} {
       font-size: 10px;
       margin-left: auto;
+      min-width: max-content;
+
       > input {
         cursor: pointer;
-        margin-right: 4px;
+        margin: 1px 4px 0 0;
       }
     }
   }
@@ -486,8 +488,7 @@ export const HighFeeWarning = (props: HighFeeWarningProps) => {
       <div>
         <AlertTriangle size={20} />
         <div>
-          Fees on this swap exceed {formatSmart(FEE_SIZE_THRESHOLD.multiply('100'), PERCENTAGE_PRECISION)}% of the swap
-          amount
+          Fees exceed {formatSmart(FEE_SIZE_THRESHOLD.multiply('100'), PERCENTAGE_PRECISION)}% of the swap amount
         </div>{' '}
         <MouseoverTooltipContent
           bgColor={theme.bg1}
@@ -498,7 +499,7 @@ export const HighFeeWarning = (props: HighFeeWarningProps) => {
         </MouseoverTooltipContent>
         {acceptWarningCb && (
           <WarningCheckboxContainer>
-            <input type="checkbox" onChange={acceptWarningCb} /> I understand the risk
+            <input type="checkbox" onChange={acceptWarningCb} /> I understand
           </WarningCheckboxContainer>
         )}
       </div>

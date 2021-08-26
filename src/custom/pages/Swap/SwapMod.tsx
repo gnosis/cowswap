@@ -688,6 +688,7 @@ export default function Swap({
             trade={trade}
             acceptWarningCb={!isExpertMode ? () => setFeeWarningAccepted((state) => !state) : undefined}
             width="99%"
+            padding="5px 15px"
           />
           <BottomGrouping>
             {swapIsUnsupported ? (
