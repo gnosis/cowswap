@@ -8,13 +8,13 @@ import OperatorError, {
   ApiErrorCodeDetails,
   ApiErrorCodes,
   ApiErrorObject,
-} from '@src/custom/api/gnosis/errors/OperatorError'
+} from '@src/custom/api/gnosisProtocol/errors/OperatorError'
 import QuoteError, {
   GpQuoteErrorCodes,
   GpQuoteErrorObject,
   mapOperatorErrorToQuoteError,
   GpQuoteErrorDetails,
-} from '@src/custom/api/gnosis/errors/QuoteError'
+} from '@src/custom/api/gnosisProtocol/errors/QuoteError'
 import { toErc20Address } from 'utils/tokens'
 import { FeeInformation, FeeQuoteParams, PriceInformation, PriceQuoteParams } from '@src/custom/utils/price'
 import { AppDataDoc } from 'utils/metadata'

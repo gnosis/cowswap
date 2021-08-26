@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 
 import { DEFAULT_DECIMALS } from 'custom/constants'
 
-import { UnsupportedToken } from '@src/custom/api/gnosis'
+import { UnsupportedToken } from '@src/custom/api/gnosisProtocol'
 import { FeeQuoteParams } from '@src/custom/utils/price'
 import { OrderKind } from '@gnosis.pm/gp-v2-contracts'
 

@@ -9,7 +9,7 @@ import { OPERATOR_API_POLL_INTERVAL } from 'state/orders/consts'
 
 import { SupportedChainId as ChainId } from 'constants/chains'
 
-import { OrderID } from '@src/custom/api/gnosis'
+import { OrderID } from '@src/custom/api/gnosisProtocol'
 
 import { fetchOrderPopupData, OrderLogPopupMixData } from 'state/orders/updaters/utils'
 

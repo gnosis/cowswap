@@ -1,8 +1,8 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import BigNumberJs from 'bignumber.js'
 
-import { getFeeQuote, getPriceQuote as getPriceQuoteGp, OrderMetaData } from '@src/custom/api/gnosis'
-import GpQuoteError, { GpQuoteErrorCodes } from '@src/custom/api/gnosis/errors/QuoteError'
+import { getFeeQuote, getPriceQuote as getPriceQuoteGp, OrderMetaData } from '@src/custom/api/gnosisProtocol'
+import GpQuoteError, { GpQuoteErrorCodes } from '@src/custom/api/gnosisProtocol/errors/QuoteError'
 import { getCanonicalMarket, isPromiseFulfilled, withTimeout } from 'utils/misc'
 import { formatAtoms } from 'utils/format'
 import { PRICE_API_TIMEOUT_MS } from 'constants/index'

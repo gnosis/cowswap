@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 
 import { formatOrderId, shortenOrderId } from 'utils'
-import { OrderID } from '@src/custom/api/gnosis'
+import { OrderID } from '@src/custom/api/gnosisProtocol'
 import { addPopup } from 'state/application/actions'
 import { OrderStatus } from './actions'
 import { CancellationSummary } from 'components/AccountDetails/Transaction'

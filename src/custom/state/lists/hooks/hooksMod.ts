@@ -14,7 +14,7 @@ import {
   RemoveGpUnsupportedTokenParams,
   removeGpUnsupportedToken,
 } from '../actions'
-import { UnsupportedToken } from '@src/custom/api/gnosis'
+import { UnsupportedToken } from '@src/custom/api/gnosisProtocol'
 import { isAddress } from 'utils'
 import { SupportedChainId as ChainId } from 'constants/chains'
 import { supportedChainId } from 'utils/supportedChainId'
