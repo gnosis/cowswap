@@ -4,13 +4,17 @@ import { getSigningSchemeApiValue, OrderCreation, OrderCancellation } from 'util
 import { APP_DATA_HASH } from 'constants/index'
 import { registerOnWindow } from '../../utils/misc'
 import { isLocal, isDev, isPr, isBarn } from '../../utils/environments'
-import OperatorError, { ApiErrorCodeDetails, ApiErrorCodes, ApiErrorObject } from 'priceApi/gnosis/errors/OperatorError'
+import OperatorError, {
+  ApiErrorCodeDetails,
+  ApiErrorCodes,
+  ApiErrorObject,
+} from '@src/custom/api/gnosis/errors/OperatorError'
 import QuoteError, {
   GpQuoteErrorCodes,
   GpQuoteErrorObject,
   mapOperatorErrorToQuoteError,
   GpQuoteErrorDetails,
-} from 'priceApi/gnosis/errors/QuoteError'
+} from '@src/custom/api/gnosis/errors/QuoteError'
 import { toErc20Address } from 'utils/tokens'
 import { FeeInformation, FeeQuoteParams, PriceInformation, PriceQuoteParams } from '@src/custom/utils/price'
 import { AppDataDoc } from 'utils/metadata'

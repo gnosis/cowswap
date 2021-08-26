@@ -1,8 +1,8 @@
 import { useCallback } from 'react'
 
 import { FeeQuoteParams, getBestQuote, QuoteParams, QuoteResult } from '@src/custom/utils/price'
-import { isValidOperatorError, ApiErrorCodes } from 'priceApi/gnosis/errors/OperatorError'
-import { GpQuoteErrorCodes, isValidQuoteError } from 'priceApi/gnosis/errors/QuoteError'
+import { isValidOperatorError, ApiErrorCodes } from '@src/custom/api/gnosis/errors/OperatorError'
+import { GpQuoteErrorCodes, isValidQuoteError } from '@src/custom/api/gnosis/errors/QuoteError'
 import { registerOnWindow, getPromiseFulfilledValue, isPromiseFulfilled } from 'utils/misc'
 
 import { isOnline } from 'hooks/useIsOnline'

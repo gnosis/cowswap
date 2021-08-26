@@ -1,5 +1,5 @@
 import { createReducer, PayloadAction } from '@reduxjs/toolkit'
-import { OrderID } from 'priceApi/gnosis'
+import { OrderID } from '@src/custom/api/gnosis'
 import { SupportedChainId as ChainId } from 'constants/chains'
 import {
   addPendingOrder,
