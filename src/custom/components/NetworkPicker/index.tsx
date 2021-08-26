@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react'
 
 import { mapEnumKeysToArray } from 'utils/misc'
-import { ChainId as GpSupportedChainIds, useActiveWeb3React, useSwitchToAppNetwork } from 'hooks/web3'
+import { ChainId as GpSupportedChainIds, useActiveWeb3React, useSwitchToNetwork } from 'hooks/web3'
 
 // TODO:
 // - better styles
@@ -11,7 +11,7 @@ import { ChainId as GpSupportedChainIds, useActiveWeb3React, useSwitchToAppNetwo
 
 export default function NetworkPicker() {
   const { chainId: currentChainId } = useActiveWeb3React()
-  const switchToNetwork = useSwitchToAppNetwork()
+  const switchToNetwork = useSwitchToNetwork()
 
   const { chainNames, chainIds } = useMemo(() => {
     const chainList = mapEnumKeysToArray<GpSupportedChainIds>(GpSupportedChainIds)
