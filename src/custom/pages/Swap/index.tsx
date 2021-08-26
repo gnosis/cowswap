@@ -443,7 +443,7 @@ const HighFeeWarningContainer = styled(AuxInformationContainer).attrs((props) =>
 `
 
 const ErrorStyledInfo = styled(StyledInfo)`
-  color: ${({ theme }) => theme.red1};
+  color: ${({ theme }) => theme.infoText};
 `
 
 const HighFeeWarningMessage = ({ feePercentage }: { feePercentage?: Fraction }) => (
