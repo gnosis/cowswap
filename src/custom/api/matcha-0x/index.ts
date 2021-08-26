@@ -5,6 +5,9 @@ import { SupportedChainId as ChainId } from 'constants/chains'
 import { getTokensFromMarket } from 'utils/misc'
 import { getValidParams, PriceInformation, PriceQuoteParams } from 'utils/price'
 
+// copy/pasting as the library types correspond to the internal types, not API response
+// e.g "price: BigNumber" when we want the API response type: "price: string"
+// see link below to see
 // https://github.com/0xProject/0x-api/blob/8c4cc7bb8d4fa06a220b7dfd5784361c05daa92a/src/types.ts#L229
 interface GetSwapQuoteResponseLiquiditySource {
   name: string
@@ -41,8 +44,8 @@ function getMatchaChainId(chainId: ChainId): NetworkID | null {
   switch (chainId) {
     // Support: Mainnet, Ropsten, Polygon, Binance Smart Chain
     // See https://0x.org/docs/api#introduction
+    // but we only support mainnet of that list so..
     case ChainId.MAINNET:
-    case ChainId.ROPSTEN:
       return chainId
 
     default:
@@ -56,6 +59,7 @@ function getApiUrl(): Partial<Record<ChainId, string>> {
   // See https://0x.org/docs/api#introduction
   return {
     [ChainId.MAINNET]: 'https://api.0x.org/swap',
+    // we don't support ropsten but let's leave it for posterity
     [ChainId.ROPSTEN]: 'https://ropsten.api.0x.org/swap',
   }
 }
@@ -71,7 +75,7 @@ const DEFAULT_HEADERS = {
 // https://etherscan.io/address/0x9008d19f58aabd9ed0d60971565aa8510560ab41
 const AFFILIATE_ADDRESS = '0x9008D19f58AAbD9eD0D60971565AA8510560ab41'
 const EXCLUDED_SOURCES = ''
-const MATCHA_DEFAULT_OPTIONS = `&affiliateAddress=${AFFILIATE_ADDRESS}&excludedSources=${EXCLUDED_SOURCES}`
+const MATCHA_DEFAULT_OPTIONS = `affiliateAddress=${AFFILIATE_ADDRESS}&excludedSources=${EXCLUDED_SOURCES}`
 
 function _getApiBaseUrl(chainId: ChainId): string {
   const baseUrl = API_BASE_URL[chainId]
@@ -114,7 +118,7 @@ export async function getPriceQuote(params: PriceQuoteParams): Promise<MatchaPri
 
   const response = await _get(
     chainId,
-    `/price?sellToken=${sellToken}&buyToken=${buyToken}&${swapSide}=${amount}${MATCHA_DEFAULT_OPTIONS}`
+    `/price?sellToken=${sellToken}&buyToken=${buyToken}&${swapSide}=${amount}&${MATCHA_DEFAULT_OPTIONS}`
   ).catch((error) => {
     console.error(`Error getting ${API_NAME} price quote:`, error)
     throw new Error(error)
