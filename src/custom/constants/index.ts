@@ -98,4 +98,4 @@ export const GAS_FEE_ENDPOINTS = {
 export const UNSUPPORTED_TOKENS_FAQ_URL = '/faq#what-token-pairs-does-cowswap-allow-to-trade'
 
 // fee threshold - should be greater than percentage, show warning
-export const FEE_SIZE_THRESHOLD = new Fraction(30, 100)
+export const FEE_SIZE_THRESHOLD = new Fraction(30, 100) // 30%
