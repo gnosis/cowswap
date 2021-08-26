@@ -282,19 +282,29 @@ export const CancellationSummary = styled.span`
 export const TransactionAlertMessage = styled.div`
   width: 100%;
   padding: 0;
-  background: ${({ theme }) => theme.yellow};
-  color: black;
-  font-size: 13px;
+  color: ${({ theme }) => theme.text2};
   display: flex;
   justify-content: center;
+  margin: 0;
+  font-size: 12px;
 
   > p {
+    margin: 6px 20px 6px 0;
     padding: 10px;
-    margin: 0;
-    margin: 0 auto;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    line-height: 1.4;
+    background: ${({ theme }) => theme.yellow};
+    width: 100%;
+    height: 100%;
   }
 
   > p > a {
     color: ${({ theme }) => theme.primary1};
+  }
+
+  > p > span {
+    margin: 0 6px 0 0;
   }
 `

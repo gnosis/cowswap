@@ -93,8 +93,9 @@ function ActivitySummary(params: {
   activityData: ReturnType<typeof useActivityDescriptors>
   isCancelled?: boolean
   isExpired?: boolean
+  isUnfillable?: boolean
 }) {
-  const { id, activityData, isCancelled, isExpired } = params
+  const { id, activityData, isCancelled, isExpired, isUnfillable } = params
 
   if (!activityData) return null
 
@@ -185,6 +186,7 @@ function ActivitySummary(params: {
                 </>
               )}
             </SummaryInnerRow>
+            {!isUnfillable && unfillableAlert()}
             <SummaryInnerRow isCancelled={isCancelled} isExpired={isExpired}>
               {fulfillmentTime ? (
                 <>
@@ -302,6 +304,21 @@ function CancellationModal(props: CancellationModalProps): JSX.Element | null {
   )
 }
 
+function unfillableAlert(): JSX.Element {
+  return (
+    <>
+      <TransactionAlertMessage>
+        <p>
+          <span role="img" aria-label="alert">
+            🚨
+          </span>{' '}
+          Limit price out of range. Wait for a matching price or cancel your order.
+        </p>
+      </TransactionAlertMessage>
+    </>
+  )
+}
+
 export default function Transaction({ hash: id }: { hash: string }) {
   const { chainId } = useActiveWeb3React()
   // Return info necessary for rendering order/transaction info from the incoming id
@@ -352,7 +369,13 @@ export default function Transaction({ hash: id }: { hash: string }) {
               </IconType>
             )}
             <TransactionStatusText>
-              <ActivitySummary activityData={activityData} id={id} isCancelled={isCancelled} isExpired={isExpired} />
+              <ActivitySummary
+                activityData={activityData}
+                id={id}
+                isCancelled={isCancelled}
+                isExpired={isExpired}
+                isUnfillable={isUnfillable}
+              />
             </TransactionStatusText>
           </RowFixed>
         </TransactionState>
@@ -398,21 +421,6 @@ export default function Transaction({ hash: id }: { hash: string }) {
           )}
         </StatusLabelWrapper>
       </TransactionWrapper>
-
-      {isUnfillable && (
-        <TransactionAlertMessage>
-          <p>
-            <span role="img" aria-label="alert">
-              🚨
-            </span>{' '}
-            Price out of range.{' '}
-            <a href="#/faq" target="_blank" rel="noopener nofollow">
-              Read more
-            </a>
-            .
-          </p>
-        </TransactionAlertMessage>
-      )}
     </Wrapper>
   )
 }
