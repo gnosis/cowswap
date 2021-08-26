@@ -392,20 +392,12 @@ interface HighFeeContainerProps {
   width?: string
 }
 
-// const ShowMoreButton = styled.span`
-//   text-decoration: underline;
-//   cursor: pointer;
-//   margin-left: auto;
-// `
-
-const WarningCheckboxContainer = styled.small`
-  &&&& {
-    display: flex;
-    font-weight: bold;
-    gap: 2px;
-    justify-content: center;
-    align-items: center;
-  }
+const WarningCheckboxContainer = styled.div`
+  display: flex;
+  font-weight: bold;
+  gap: 2px;
+  justify-content: center;
+  align-items: center;
 `
 
 const HighFeeWarningContainer = styled(AuxInformationContainer).attrs((props) => ({
@@ -413,7 +405,6 @@ const HighFeeWarningContainer = styled(AuxInformationContainer).attrs((props) =>
   hideInput: true,
 }))<HighFeeContainerProps>`
   padding: ${({ padding = '5px 16px' }) => padding};
-  font-size: small;
   font-weight: 700;
   &&&&& {
     background: ${({ theme }) => transparentize(0.8, theme.red1)};
@@ -422,11 +413,12 @@ const HighFeeWarningContainer = styled(AuxInformationContainer).attrs((props) =>
   width: ${({ width = '100%' }) => width};
   border-radius: ${({ theme }) => theme.buttonPrimary.borderRadius};
   margin: ${({ margin = '0 auto 12px auto' }) => margin};
-  > small {
+  > div {
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 2px;
+
     svg {
       &:first-child {
         margin-right: 4px;
@@ -434,19 +426,14 @@ const HighFeeWarningContainer = styled(AuxInformationContainer).attrs((props) =>
       stroke: ${({ theme }) => theme.red1};
     }
 
-    > div:first-of-type {
-      margin-top: 2px;
-    }
     > ${WarningCheckboxContainer} {
+      font-size: 10px;
       margin-left: auto;
       > input {
         cursor: pointer;
+        margin-right: 4px;
       }
     }
-  }
-  > div {
-    display: flex;
-    padding: 8px 0;
   }
 `
 
@@ -493,7 +480,7 @@ export const HighFeeWarning = (props: HighFeeWarningProps) => {
 
   return (
     <HighFeeWarningContainer {...props}>
-      <small>
+      <div>
         <AlertTriangle size={20} /> <div>Unfavourable swap detected!</div>{' '}
         <MouseoverTooltipContent
           bgColor={theme.bg1}
@@ -507,7 +494,7 @@ export const HighFeeWarning = (props: HighFeeWarningProps) => {
             <input type="checkbox" onChange={acceptWarningCb} /> I understand the risk
           </WarningCheckboxContainer>
         )}
-      </small>
+      </div>
     </HighFeeWarningContainer>
   )
 }
