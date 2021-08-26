@@ -684,9 +684,11 @@ export default function Swap({
               </Card>
             )}
           </AutoColumn>
-          {!isExpertMode && (
-            <HighFeeWarning trade={trade} acceptWarningCb={() => setFeeWarningAccepted((state) => !state)} />
-          )}
+          <HighFeeWarning
+            trade={trade}
+            acceptWarningCb={!isExpertMode ? () => setFeeWarningAccepted((state) => !state) : undefined}
+            width="99%"
+          />
           <BottomGrouping>
             {swapIsUnsupported ? (
               <ButtonPrimary disabled={true} buttonSize={ButtonSize.BIG}>
