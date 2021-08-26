@@ -186,7 +186,7 @@ function ActivitySummary(params: {
                 </>
               )}
             </SummaryInnerRow>
-            {!isUnfillable && unfillableAlert()}
+            {isUnfillable && unfillableAlert()}
             <SummaryInnerRow isCancelled={isCancelled} isExpired={isExpired}>
               {fulfillmentTime ? (
                 <>
