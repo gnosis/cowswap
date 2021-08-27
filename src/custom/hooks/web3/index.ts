@@ -3,7 +3,7 @@ import { Web3Provider } from '@ethersproject/providers'
 import { useActiveWeb3React } from '@src/hooks/web3'
 
 // json chain data
-import homestead from 'constants/chains/json/homestead.json'
+import mainnet from 'constants/chains/json/mainnet.json'
 import rinkeby from 'constants/chains/json/rinkeby.json'
 import xdai from 'constants/chains/json/xdai.json'
 
@@ -30,7 +30,7 @@ interface Config {
 }
 
 const config: Record<string, Config> = {
-  1: homestead,
+  1: mainnet,
   4: rinkeby,
   100: xdai,
 }
