@@ -151,6 +151,12 @@ export function useCoingeckoUsdPrice({ tokenAddress }: Pick<CoinGeckoUsdPricePar
           baseAmount: usdParsed,
         })
 
+        console.debug(
+          '[useCoingeckoUsdPrice] Best Coingecko USD price amount',
+          usdPrice.toSignificant(12),
+          usdPrice.invert().toSignificant(12)
+        )
+
         setPrice(usdPrice)
       })
       .catch((error) => {
