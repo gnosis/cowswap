@@ -84,7 +84,7 @@ export const Summary = styled.div`
 
 export const SummaryInner = styled.div`
   display: flex;
-  flex-flow: column wrap;
+  flex-flow: row wrap;
   width: 100%;
   opacity: 0.75;
   font-size: 13px;
@@ -95,6 +95,7 @@ export const SummaryInnerRow = styled.div<{ isExpired?: boolean; isCancelled?: b
   color: inherit;
   grid-template-rows: 1fr;
   grid-template-columns: 100px 1fr;
+  width: 100%;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
     grid-template-columns: 1fr; 
