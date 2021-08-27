@@ -126,7 +126,7 @@ export function formatSmart(
 }
 
 /**
- * Formats CurrencyAmount with max precision
+ * Formats Fraction with max precision
  *
  * If value has less that `decimals` precision, show the value with 1 significant digit
  * E.g.:
