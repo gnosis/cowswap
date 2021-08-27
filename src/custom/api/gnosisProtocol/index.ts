@@ -1,6 +1,6 @@
-export type { UnsupportedToken, OrderID, OrderMetaData } from './gnosisProtocolApi'
-import * as realApi from './gnosisProtocolApi'
-import * as mockApi from './gnosisProtocolMock'
+export type { UnsupportedToken, OrderID, OrderMetaData } from './api'
+import * as realApi from './api'
+import * as mockApi from './mock'
 
 const useMock = process.env.REACT_APP_MOCK === 'true'
 
