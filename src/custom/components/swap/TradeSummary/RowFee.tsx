@@ -10,7 +10,7 @@ import { RowBetween, RowFixed } from 'components/Row'
 import { MouseoverTooltipContent } from 'components/Tooltip'
 import { AMOUNT_PRECISION, FIAT_PRECISION } from 'constants/index'
 import { LightGreyText } from 'pages/Swap'
-import { useUSDCValue } from 'hooks/useUSDCPrice'
+import { useHigherUSDValue /* , useUSDCValue */ } from 'hooks/useUSDCPrice'
 
 export const GASLESS_FEE_TOOLTIP_MSG =
   'On CowSwap you sign your order (hence no gas costs!). The fees are covering your gas costs already.'
@@ -61,7 +61,8 @@ export function RowFee({
   // trades are null when there is a fee quote error e.g
   // so we can take both
   const feeAmount = trade?.fee.feeAsCurrency || fee
-  const feeFiatValue = useUSDCValue(feeAmount)
+  // const feeFiatValue = useUSDCValue(feeAmount)
+  const feeFiatValue = useHigherUSDValue(feeAmount)
   const feeFiatDisplay = `(≈$${formatSmart(feeFiatValue, FIAT_PRECISION)})`
 
   const displayFee = realizedFee || fee
