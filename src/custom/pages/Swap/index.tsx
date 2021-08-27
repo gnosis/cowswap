@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/no-static-element-interactions */
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { RouteComponentProps } from 'react-router-dom'
 import styled, { DefaultTheme, ThemeContext } from 'styled-components'
@@ -8,7 +7,7 @@ import { BoxProps, Text } from 'rebass'
 import { ButtonSize, TYPE } from 'theme/index'
 
 import SwapMod from './SwapMod'
-import { AutoRow, RowBetween, RowFixed } from 'components/Row'
+import { AutoRow, RowBetween } from 'components/Row'
 import { BottomGrouping as BottomGroupingUni, Wrapper as WrapperUni, Dots } from 'components/swap/styleds'
 import { AutoColumn } from 'components/Column'
 import { ClickableText } from 'pages/Pool/styleds'
@@ -26,11 +25,9 @@ import { useReplaceSwapState, useSwapState } from 'state/swap/hooks'
 import { ArrowWrapperLoader, ArrowWrapperLoaderProps, Wrapper as ArrowWrapper } from 'components/ArrowWrapperLoader'
 import {
   FEE_SIZE_THRESHOLD,
-  FIAT_PRECISION,
   INITIAL_ALLOWED_SLIPPAGE_PERCENT,
   LONG_LOAD_THRESHOLD,
   PERCENTAGE_PRECISION,
-  SHORT_PRECISION,
 } from 'constants/index'
 import { formatSmart } from 'utils/format'
 import { MouseoverTooltipContent } from 'components/Tooltip'
@@ -39,10 +36,10 @@ import { AlertTriangle, Repeat } from 'react-feather'
 import { Trans } from '@lingui/macro'
 import TradePrice from 'components/swap/TradePrice'
 import TradeGp from 'state/swap/TradeGp'
-import { useUSDCValue } from 'hooks/useUSDCPrice'
-import { computeTradePriceBreakdown, FEE_TOOLTIP_MSG } from 'components/swap/TradeSummary/TradeSummaryMod'
+import { RowSlippage } from 'components/swap/TradeSummary/RowSlippage'
+import { RowReceivedAfterSlippage } from 'components/swap/TradeSummary/RowReceivedAfterSlippage'
+import { RowFee } from 'components/swap/TradeSummary/RowFee'
 import { useExpertModeManager, useUserSlippageToleranceWithDefault } from 'state/user/hooks'
-import { RowReceivedAfterSlippage, RowSlippage } from 'components/swap/TradeSummary'
 import { AuxInformationContainer } from 'components/CurrencyInputPanel'
 import useDebounce from 'hooks/useDebounce'
 
@@ -54,6 +51,11 @@ interface TradeBasicDetailsProp extends BoxProps {
 const BottomGrouping = styled(BottomGroupingUni)`
   > div > button {
     align-self: stretch;
+  }
+
+  div > svg,
+  div > svg > path {
+    stroke: ${({ theme }) => theme.text2};
   }
 `
 
@@ -143,10 +145,6 @@ const SwapModWrapper = styled(SwapMod)`
     ${AutoRow} {
       z-index: 2;
     }
-
-    ${AutoRow} svg > path {
-      stroke: ${({ theme }) => theme.text1};
-    }
   }
 `
 export interface SwapProps extends RouteComponentProps {
@@ -224,37 +222,16 @@ export const LightGreyText = styled.span`
 `
 
 function TradeBasicDetails({ trade, fee, ...boxProps }: TradeBasicDetailsProp) {
-  const theme = useContext(ThemeContext)
-  // trades are null when there is a fee quote error e.g
-  // so we can take both
-  const feeAmount = trade?.fee.feeAsCurrency || fee
-  const feeFiatValue = useUSDCValue(feeAmount)
-
-  const { realizedFee } = computeTradePriceBreakdown(trade)
-  const feeFiatDisplay = `(≈$${formatSmart(feeFiatValue, FIAT_PRECISION)})`
-
   const allowedSlippage = useUserSlippageToleranceWithDefault(INITIAL_ALLOWED_SLIPPAGE_PERCENT)
   const [isExpertMode] = useExpertModeManager()
-
-  const displayFee = realizedFee || fee
-  const feeCurrencySymbol = displayFee?.currency.symbol || '-'
-  const fullDisplayFee = displayFee?.toFixed(displayFee?.currency.decimals) || '-'
+  const allowsOffchainSigning = true // TODO: Deal with this in next PR
 
   return (
     <LowerSectionWrapper {...boxProps}>
       {/* Fees */}
-      <RowFixed>
-        <TYPE.black fontSize={14} fontWeight={500} color={theme.text1}>
-          Fees (incl. gas costs)
-        </TYPE.black>
-        <MouseoverTooltipContent bgColor={theme.bg1} color={theme.text1} content={FEE_TOOLTIP_MSG}>
-          <StyledInfo />
-        </MouseoverTooltipContent>
-      </RowFixed>
-      <TYPE.black fontSize={14} color={theme.text1} title={`${fullDisplayFee} ${feeCurrencySymbol}`}>
-        {formatSmart(displayFee, SHORT_PRECISION)} {feeCurrencySymbol}{' '}
-        {feeFiatValue && <LightGreyText>{feeFiatDisplay}</LightGreyText>}
-      </TYPE.black>
+      {(trade || fee) && (
+        <RowFee trade={trade} showHelpers={true} allowsOffchainSigning={allowsOffchainSigning} fee={fee} />
+      )}
 
       {isExpertMode && trade && (
         <>
@@ -262,7 +239,12 @@ function TradeBasicDetails({ trade, fee, ...boxProps }: TradeBasicDetailsProp) {
           <RowSlippage allowedSlippage={allowedSlippage} />
 
           {/* Min/Max received */}
-          <RowReceivedAfterSlippage trade={trade} allowedSlippage={allowedSlippage} showHelpers={true} />
+          <RowReceivedAfterSlippage
+            trade={trade}
+            allowedSlippage={allowedSlippage}
+            showHelpers={true}
+            allowsOffchainSigning={allowsOffchainSigning}
+          />
         </>
       )}
     </LowerSectionWrapper>
