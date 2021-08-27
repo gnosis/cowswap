@@ -46,6 +46,41 @@ function _buildSmallLimit(smallLimit: string | undefined, decimalsToShow: number
 }
 
 /**
+ * Gets/adjusts CurrencyAmount display amount and precision
+ *
+ * Additional adjustment might be required in case amount is smaller than 1 token atom.
+ * E.g.:
+ *   Token decimals: `2`; value: `0.001`
+ *   Without adjustment, we'll have `precision:2` and `amount:0`.
+ *   This is formatted to `0`, which is not entirely true, but the formatter doesn't know there are more stuff.
+ *
+ *   So we get the remainder of the division and add as many decimals as needed to precision:
+ *   Remainder: `0.1`; extra decimals: `1`
+ *   => amount: 1
+ *   => precision: precision + extra decimals => 2 + 1 => 3
+ *
+ *   When formatting, smallLimit will be set to 0.01, formatting the result as `< 0.01`
+ *
+ * @param value
+ */
+function _adjustCurrencyAmountPrecision(value: CurrencyAmount<Currency>): { amount: string; precision: number } {
+  // Amount is in atoms, need to convert it to units by setting precision = token.decimals
+  let precision = value.currency.decimals
+  // Returns an integer value rounded down
+  let amount = value.quotient.toString()
+
+  // If given amount is zero it means  we have less that 1 atom
+  // Adjust the precision and amount to indicate value is >0, even though tiny
+  if (+amount === 0) {
+    const remainder = value.remainder.toSignificant(1) // get only the first digit of the remainder
+    const decimalPart = remainder.slice(2) // drop `0.` part
+    precision += decimalPart.length // how many more digits do we have? add that to the precision
+    amount = decimalPart.replace(/^0+/, '') // remove potential leading zeros, precision already accounts for it
+  }
+  return { amount, precision }
+}
+
+/**
  * formatSmart
  * @param value
  * @param decimalsToShow
@@ -63,9 +98,9 @@ export function formatSmart(
   let amount
   let smallLimitPrecision
   if (value instanceof CurrencyAmount) {
-    // Amount is in atoms, need to convert it to units by setting precision = token.decimals
-    precision = value.currency.decimals
-    amount = value.quotient.toString()
+    const adjustedValues = _adjustCurrencyAmountPrecision(value)
+    amount = adjustedValues.amount
+    precision = adjustedValues.precision
     smallLimitPrecision = Math.min(decimalsToShow, precision ?? DEFAULT_DECIMALS)
   } else {
     // Amount is already at desired precision (e.g.: a price), just need to format it nicely
