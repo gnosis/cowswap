@@ -4,7 +4,6 @@ import { useContext } from 'react'
 import { Text } from 'rebass'
 import styled, { ThemeContext } from 'styled-components'
 import { formatMax, formatSmart } from 'utils/format' // mod
-import { FULL_PRICE_PRECISION } from 'constants/index' // mod
 import { LightGreyText } from 'pages/Swap'
 
 export interface TradePriceProps {
