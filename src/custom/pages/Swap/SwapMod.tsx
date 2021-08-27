@@ -78,7 +78,7 @@ import { SwapProps, ButtonError, ButtonPrimary, ButtonLight } from '.' // mod
 import TradeGp from 'state/swap/TradeGp'
 import AdvancedSwapDetailsDropdown from 'components/swap/AdvancedSwapDetailsDropdown'
 import { formatSmart } from 'utils/format'
-import { RowSlippage } from 'components/swap/TradeSummary'
+import { RowSlippage } from 'components/swap/TradeSummary/RowSlippage'
 
 export const StyledInfo = styled(Info)`
   opacity: 0.4;
