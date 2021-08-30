@@ -105,8 +105,6 @@ export default function Swap({
 }: SwapProps) {
   const loadedUrlParams = useDefaultsFromURLSearch()
 
-  const [feeWarningAccepted, setFeeWarningAccepted] = useState(false) // mod - high fee warning disable state
-
   // token warning stuff
   const [loadedInputCurrency, loadedOutputCurrency] = [
     useCurrency(loadedUrlParams?.inputCurrencyId),
@@ -141,6 +139,14 @@ export default function Swap({
   // for expert mode
   // const toggleSettings = useToggleSettingsMenu()
   const [isExpertMode] = useExpertModeManager()
+
+  const [feeWarningAccepted, setFeeWarningAccepted] = useState(isExpertMode) // mod - high fee warning disable state
+
+  // whenever expert mode is toggled, set feeWarning to true
+  // and the inverse. this prevents broken state when switching between modes
+  useEffect(() => {
+    setFeeWarningAccepted(isExpertMode)
+  }, [isExpertMode])
 
   // get version from the url
   // const toggledVersion = useToggledVersion()
