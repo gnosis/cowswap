@@ -150,6 +150,7 @@ SwapModalHeaderProps) {
             showHelper
             trade={trade}
             type="From"
+            fiatValue={fiatValueInput}
           />
         </AuxInformationContainer>
       )}
@@ -202,6 +203,7 @@ SwapModalHeaderProps) {
             showHelper
             trade={trade}
             type="To"
+            fiatValue={fiatValueOutput}
           />
         </AuxInformationContainer>
       )}
