@@ -79,8 +79,16 @@ function _adjustCurrencyAmountPrecision(value: CurrencyAmount<Currency>): { amou
   // Adjust the precision and amount to indicate value is >0, even though tiny
   if (+amount === 0) {
     const remainder = value.remainder.toSignificant(1) // get only the first digit of the remainder
-    const decimalPart = remainder.slice(2) // drop `0.` part
-    precision += decimalPart.length // how many more digits do we have? add that to the precision
+    // It can happen that remainder is `1`.
+    // I know, how can the rest of the division be 1 is quotient is 0? o.O
+    // Turns out the answer is rounding.
+    // Requesting toSignificant(1) can return `0` if the value is something like 0.9
+    // For this reason, we only remove `0.` and increase the precision if necessary
+    let decimalPart = remainder
+    if (/^0\./.test(remainder)) {
+      decimalPart = remainder.slice(2) // drop `0.` part
+      precision += decimalPart.length // how many more digits do we have? add that to the precision
+    }
     amount = decimalPart.replace(/^0+/, '') // remove potential leading zeros, precision already accounts for it
   }
   return { amount, precision }
