@@ -689,7 +689,7 @@ export default function Swap({
           </AutoColumn>
           <HighFeeWarning
             trade={trade}
-            acceptWarningCb={!isExpertMode ? () => setFeeWarningAccepted((state) => !state) : undefined}
+            acceptWarningCb={!isExpertMode && account ? () => setFeeWarningAccepted((state) => !state) : undefined}
             width="99%"
             padding="5px 15px"
           />
