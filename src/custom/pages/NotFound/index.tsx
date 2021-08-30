@@ -7,7 +7,11 @@ import cow404IMG from 'assets/cow-swap/cow-404.png'
 
 const Wrapper = styled(Page)`
   ${GdocsListStyle}
-
+  min-height: auto;
+  padding-bottom: 32px;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    padding-bottom: 24px;
+  `}
   ${Title} {
     margin-bottom: 50px;
     font-size: 26px;
@@ -15,6 +19,9 @@ const Wrapper = styled(Page)`
       font-size: 18px;
       text-align: center;
     `}
+  }
+  ${Content} {
+    margin-bottom: 0;
   }
 `
 
