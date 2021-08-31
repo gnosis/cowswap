@@ -89,7 +89,7 @@ export default function useUSDCPrice(currency?: Currency) {
 }
 
 interface GetPriceQuoteParams {
-  currencyAmount?: CurrencyAmount<Currency> | null
+  currencyAmount: CurrencyAmount<Currency> | undefined
   error: Error | null
   price: Price<Token, Currency> | null
 }
@@ -111,7 +111,7 @@ function useGetPriceQuote({ price, error, currencyAmount }: GetPriceQuoteParams)
  * Returns the price in USDC of the input currency from price APIs
  * @param currencyAmount currency to compute the USDC price of
  */
-export function useUSDCValue(currencyAmount?: CurrencyAmount<Currency> | null) {
+export function useUSDCValue(currencyAmount: CurrencyAmount<Currency> | undefined) {
   const usdcPrice = useUSDCPrice(currencyAmount?.currency)
 
   return useGetPriceQuote({ ...usdcPrice, currencyAmount })

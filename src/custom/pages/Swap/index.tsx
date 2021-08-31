@@ -194,7 +194,7 @@ export const Price: React.FC<PriceProps> = ({
   ...boxProps
 }: PriceProps) => {
   const priceSide = useMemo(() => {
-    if (!trade) return null
+    if (!trade) return undefined
 
     const { executionPrice: price } = trade
 
@@ -238,7 +238,7 @@ function TradeBasicDetails({ trade, fee, isFeeGreater, ...boxProps }: TradeBasic
   const [isExpertMode] = useExpertModeManager()
   const allowsOffchainSigning = true // TODO: Deal with this in next PR
 
-  const feeFiatValue = useHigherUSDValue(trade?.fee.feeAsCurrency || fee)
+  const feeFiatValue = useHigherUSDValue((trade?.fee.feeAsCurrency || fee) ?? undefined)
 
   return (
     <LowerSectionWrapper {...boxProps}>
