@@ -12,9 +12,9 @@ import { OrderKind } from 'state/orders/actions'
 import { CoinGeckoUsdPriceParams, getUSDPriceQuote, toPriceInformation } from 'api/coingecko'
 import { tryParseAmount } from 'state/swap/hooks'
 import { DEFAULT_NETWORK_FOR_LISTS } from 'constants/lists'
-import { useToken } from 'hooks/Tokens'
 import { currencyId } from 'utils/currencyId'
 import { parseUnits } from 'ethers/lib/utils'
+import { USDC } from 'constants/tokens'
 
 export * from '@src/hooks/useUSDCPrice'
 
@@ -124,31 +124,33 @@ export function useCoingeckoUsdPrice({ tokenAddress }: Pick<CoinGeckoUsdPricePar
   const [price, setPrice] = useState<Price<Token, Currency> | null>(null)
   const [error, setError] = useState<Error | null>(null)
 
-  const currency = useToken(tokenAddress)
-
   useEffect(() => {
     getUSDPriceQuote({
       chainId,
       tokenAddress,
     })
+      // expose the original response to keep in line
+      // with other API flow
       .then(toPriceInformation)
-      .then((response) => {
-        if (!currency || !response?.amount) return
+      .then((priceResponse) => {
+        if (!priceResponse?.amount) return
 
-        const { amount } = response
-        // api returns base units, we want atoms and CurrencyAmount
-        const usdParsed = tryParseAmount(amount.toString(), currency)
+        const { amount } = priceResponse
+        // api returns converted units e.g $2.25 instead of 2255231233312312 (atoms)
+        // we need to parse all USD returned amounts
+        // and convert to the same currency for both sides (SDK math invariant)
+        // in our case we stick to the USDC paradigm
+        const usdAsUSDC = tryParseAmount(amount.toString(), USDC)
         // parse failure is unlikely - type safe
-        if (!usdParsed) return
-
+        if (!usdAsUSDC) return
         // create a new Price object
         const usdPrice = new Price({
           quoteAmount: CurrencyAmount.fromRawAmount(
-            usdParsed.currency,
+            usdAsUSDC.currency,
             // we use 1 as the denominator
-            parseUnits('1', usdParsed.currency.decimals).toString()
+            parseUnits('1', USDC.decimals).toString()
           ),
-          baseAmount: usdParsed,
+          baseAmount: usdAsUSDC,
         })
 
         console.debug(
@@ -170,7 +172,7 @@ export function useCoingeckoUsdPrice({ tokenAddress }: Pick<CoinGeckoUsdPricePar
           setPrice(null)
         })
       })
-  }, [chainId, currency, tokenAddress])
+  }, [chainId, tokenAddress])
 
   return { price, error }
 }
