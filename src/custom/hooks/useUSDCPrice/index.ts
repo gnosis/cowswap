@@ -179,7 +179,7 @@ type CoinGeckoUsdValueParams = Pick<CoinGeckoUsdPriceParams, 'tokenAddress'> & {
   currencyAmount?: CurrencyAmount<Currency>
 }
 
-export function useCoingeckoUSDValue(params: CoinGeckoUsdValueParams) {
+export function useCoingeckoUsdValue(params: CoinGeckoUsdValueParams) {
   const { currencyAmount } = params
   const coingeckoUsdPrice = useCoingeckoUsdPrice(params)
 
@@ -188,7 +188,7 @@ export function useCoingeckoUSDValue(params: CoinGeckoUsdValueParams) {
 
 export function useHigherUSDValue(currencyAmount: CurrencyAmount<Currency> | undefined) {
   const usdcValue = useUSDCValue(currencyAmount)
-  const coingeckoUsdPrice = useCoingeckoUSDValue({
+  const coingeckoUsdPrice = useCoingeckoUsdValue({
     tokenAddress: currencyAmount ? currencyId(currencyAmount.currency) : '',
     currencyAmount,
   })
