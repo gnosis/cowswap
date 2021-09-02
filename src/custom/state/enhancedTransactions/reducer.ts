@@ -10,20 +10,15 @@ export const reducer = createReducer(initialState, (builder) =>
         return
       }
       const allTxs = transactions[chainId] ?? {}
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { [hash]: omit, ...txs } = allTxs
-
-      transactions[chainId] = txs
+      delete allTxs[hash]
     })
     .addCase(replaceTransaction, (transactions, { payload: { chainId, oldHash, newHash } }) => {
       if (!transactions[chainId]?.[oldHash]) {
         throw Error('Attempted to replace an unknown transaction.')
       }
       const txs = transactions[chainId] ?? {}
-      const { [oldHash]: replacedTx, ...rest } = txs
-      rest[newHash] = { ...replacedTx, hash: newHash, addedTime: new Date().getTime() }
-
-      transactions[chainId] = rest
+      txs[newHash] = { ...txs[oldHash], hash: newHash, addedTime: new Date().getTime() }
+      delete txs[oldHash]
     })
 )
 
