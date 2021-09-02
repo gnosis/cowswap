@@ -16,6 +16,8 @@ It allows you to buy and sell tokens using gas-less orders that are settled peer
     * ENS Website (alternative): <https://cowswap.eth.link>, or <https://cowswap.eth/> if you have MetaMask or an ENS compatible browser.
     * The website can also be run locally, or from IPFS. Every release will have an IPFS hash associated, available in the [Releases](https://github.com/gnosis/gp-swap-ui/releases) section.
 
+- Docs: <https://docs.cowswap.exchange>
+- Stats: <https://dune.xyz/gnosis.protocol/Gnosis-Protocol-V2>
 - Twitter: [@gnosisPM](https://twitter.com/gnosisPM)
 - Reddit: [/r/gnosisPM](https://www.reddit.com/r/gnosisPM)
 - Discord: <https://chat.cowswap.exchange>
@@ -93,14 +95,6 @@ which has the hexadecimal digest `0x487B02C558D729ABAF3ECF17881A4181E5BC2446429A
 The format of the JSON follows this typescript format: <src/custom/utils/metadata.ts>
 
 To set your own `AppData`, change `REACT_APP_DOMAIN_REGEX_<environment>` environment variable. Ask for yours at [chat.cowswap.exchange/](https://chat.cowswap.exchange/). For more details, check out the environment file (<.env>)
-
-REACT_APP_DOMAIN_REGEX_LOCAL="^(:?localhost:\d{2,5}|(?:127|192)(?:\.[0-9]{1,3}){3})"
-REACT_APP_DOMAIN_REGEX_PR="^pr\d+--gpswapui\.review"
-REACT_APP_DOMAIN_REGEX_DEV="^cowswap\.dev"
-REACT_APP_DOMAIN_REGEX_STAGING="^cowswap\.staging"
-REACT_APP_DOMAIN_REGEX_PROD="^cowswap\.exchange$"
-REACT_APP_DOMAIN_REGEX_ENS="^cowswap\.eth"
-REACT_APP_DOMAIN_REGEX_BARN="^barn\.cowswap\.exchange"
 
 
 ### Supported networks

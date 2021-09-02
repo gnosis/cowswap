@@ -22,8 +22,8 @@ import { FiatValue } from 'components/CurrencyInputPanel/FiatValue'
 // import { formatCurrencyAmount } from 'utils/formatCurrencyAmount'
 
 import { WithClassName } from 'types'
-import { formatSmart } from 'utils/format'
-import { SHORT_PRECISION } from 'constants/index'
+import { formatMax, formatSmart } from 'utils/format'
+import { AMOUNT_PRECISION } from 'constants/index'
 import { AuxInformationContainer } from '.' // mod
 
 export const InputPanel = styled.div<{ hideInput?: boolean }>`
@@ -271,14 +271,16 @@ export default function CurrencyInputPanel({
                       fontWeight={400}
                       fontSize={14}
                       style={{ display: 'inline', cursor: 'pointer' }}
-                      title={`${selectedCurrencyBalance?.toFixed(currency?.decimals) || '-'} ${currency?.symbol || ''}`}
+                      title={`${formatMax(selectedCurrencyBalance, currency?.decimals) || '-'} ${
+                        currency?.symbol || ''
+                      }`}
                     >
                       {!hideBalance && currency && selectedCurrencyBalance ? (
                         renderBalance ? (
                           renderBalance(selectedCurrencyBalance)
                         ) : (
                           <Trans>
-                            Balance: {formatSmart(selectedCurrencyBalance, SHORT_PRECISION)} {currency.symbol}
+                            Balance: {formatSmart(selectedCurrencyBalance, AMOUNT_PRECISION)} {currency.symbol}
                           </Trans>
                         )
                       ) : null}
