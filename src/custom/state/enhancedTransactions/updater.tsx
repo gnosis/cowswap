@@ -1,20 +1,17 @@
-import { useEffect, useMemo } from 'react'
-import { useAppDispatch, useAppSelector } from 'state/hooks'
+import { useEffect } from 'react'
+import { useAppDispatch } from 'state/hooks'
 import { useActiveWeb3React } from 'hooks/web3'
 import { sdk } from 'utils/blocknative'
 import { cancelTransaction, replaceTransaction } from 'state/enhancedTransactions/actions'
+import { useAllPendingHashes } from 'state/enhancedTransactions/hooks'
 
 export default function Updater(): null {
   const { chainId, library } = useActiveWeb3React()
   const dispatch = useAppDispatch()
-  const state = useAppSelector((state) => state.transactions)
-
-  const transactions = useMemo(() => (chainId ? state[chainId] ?? {} : {}), [chainId, state])
+  const pendingHashes = useAllPendingHashes()
 
   useEffect(() => {
     if (!chainId || !library) return
-
-    const pendingHashes = Object.keys(transactions).filter((hash) => !transactions[hash].receipt)
 
     for (const hash of pendingHashes) {
       const { emitter } = sdk[chainId].transaction(hash)
@@ -41,7 +38,7 @@ export default function Updater(): null {
         sdk[chainId].unsubscribe(hash)
       }
     }
-  }, [chainId, library, transactions, dispatch])
+  }, [chainId, library, pendingHashes, dispatch])
 
   return null
 }
