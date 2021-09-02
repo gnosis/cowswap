@@ -14,28 +14,36 @@ export default function Updater(): null {
     if (!chainId || !library) return
 
     for (const hash of pendingHashes) {
-      const { emitter } = sdk[chainId].transaction(hash)
-      const currentHash = hash
-      let isSpeedup = false
+      try {
+        const { emitter } = sdk[chainId].transaction(hash)
+        const currentHash = hash
+        let isSpeedup = false
 
-      emitter.on('txSpeedUp', (e) => {
-        isSpeedup = true
-        if ('hash' in e && typeof e.hash === 'string') {
-          dispatch(replaceTransaction({ chainId, oldHash: currentHash, newHash: e.hash }))
-        }
-      })
+        emitter.on('txSpeedUp', (e) => {
+          isSpeedup = true
+          if ('hash' in e && typeof e.hash === 'string') {
+            dispatch(replaceTransaction({ chainId, oldHash: currentHash, newHash: e.hash }))
+          }
+        })
 
-      emitter.on('txConfirmed', (e) => {
-        // canceled txs are automatically watched by bnc so if the confirmed tx hash is different than the previously tracked one, it means the user sent a cancel tx
-        if ('hash' in e && e.hash !== currentHash && !isSpeedup) {
-          dispatch(cancelTransaction({ chainId, hash: currentHash }))
-        }
-      })
+        emitter.on('txConfirmed', (e) => {
+          // canceled txs are automatically watched by bnc so if the confirmed tx hash is different than the previously tracked one, it means the user sent a cancel tx
+          if ('hash' in e && e.hash !== currentHash && !isSpeedup) {
+            dispatch(cancelTransaction({ chainId, hash: currentHash }))
+          }
+        })
+      } catch (error) {
+        console.error('Failed to watch', hash, error)
+      }
     }
 
     return () => {
       for (const hash of pendingHashes) {
-        sdk[chainId].unsubscribe(hash)
+        try {
+          sdk[chainId].unsubscribe(hash)
+        } catch (error) {
+          console.error('Failed to unsubscribe', hash)
+        }
       }
     }
   }, [chainId, library, pendingHashes, dispatch])
