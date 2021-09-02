@@ -14,7 +14,8 @@ export const reducer = createReducer(initialState, (builder) =>
     })
     .addCase(replaceTransaction, (transactions, { payload: { chainId, oldHash, newHash } }) => {
       if (!transactions[chainId]?.[oldHash]) {
-        throw Error('Attempted to replace an unknown transaction.')
+        console.error('Attempted to replace an unknown transaction.')
+        return
       }
       const txs = transactions[chainId] ?? {}
       txs[newHash] = { ...txs[oldHash], hash: newHash, addedTime: new Date().getTime() }
