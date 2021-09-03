@@ -19,7 +19,7 @@ jobs:
       - name: Set up node
         uses: actions/setup-node@v2
         with:
-          node-version: lts
+          node-version: lts/*
 
       - name: Set output of cache
         id: yarn-cache
