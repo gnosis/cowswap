@@ -23,19 +23,17 @@ import MetadataError, {
 function getOperatorUrl(): Partial<Record<ChainId, string>> {
   if (isLocal || isDev || isPr || isBarn) {
     return {
-      [ChainId.MAINNET]:
-        process.env.REACT_APP_API_URL_STAGING_MAINNET || 'https://protocol-mainnet.dev.gnosisdev.com/api',
-      [ChainId.RINKEBY]:
-        process.env.REACT_APP_API_URL_STAGING_RINKEBY || 'https://protocol-rinkeby.dev.gnosisdev.com/api',
-      [ChainId.XDAI]: process.env.REACT_APP_API_URL_STAGING_XDAI || 'https://protocol-xdai.dev.gnosisdev.com/api',
+      [ChainId.MAINNET]: process.env.REACT_APP_API_URL_STAGING_MAINNET || 'http://localhost:8080/api',
+      [ChainId.RINKEBY]: process.env.REACT_APP_API_URL_STAGING_RINKEBY || 'http://localhost:8080/api',
+      [ChainId.XDAI]: process.env.REACT_APP_API_URL_STAGING_XDAI || 'http://localhost:8080/api',
     }
   }
 
   // Production, staging, ens, ...
   return {
-    [ChainId.MAINNET]: process.env.REACT_APP_API_URL_PROD_MAINNET || 'https://protocol-mainnet.gnosis.io/api',
-    [ChainId.RINKEBY]: process.env.REACT_APP_API_URL_PROD_RINKEBY || 'https://protocol-rinkeby.gnosis.io/api',
-    [ChainId.XDAI]: process.env.REACT_APP_API_URL_PROD_XDAI || 'https://protocol-xdai.gnosis.io/api',
+    [ChainId.MAINNET]: process.env.REACT_APP_API_URL_PROD_MAINNET || 'http://localhost:8080/api',
+    [ChainId.RINKEBY]: process.env.REACT_APP_API_URL_PROD_RINKEBY || 'http://localhost:8080/api',
+    [ChainId.XDAI]: process.env.REACT_APP_API_URL_PROD_XDAI || 'http://localhost:8080/api',
   }
 }
 
