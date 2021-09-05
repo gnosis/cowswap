@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { RouteComponentProps } from 'react-router-dom'
 import styled, { DefaultTheme, ThemeContext } from 'styled-components'
 import { Currency, CurrencyAmount, Fraction, Token } from '@uniswap/sdk-core'
@@ -21,7 +21,7 @@ import {
   ButtonLight as ButtonLightMod,
 } from 'components/Button'
 import EthWethWrap, { Props as EthWethWrapProps } from 'components/swap/EthWethWrap'
-import { useReplaceSwapState, useSwapState } from 'state/swap/hooks'
+import { useHighFeeWarning, useReplaceSwapState, useSwapState } from 'state/swap/hooks'
 import { ArrowWrapperLoader, ArrowWrapperLoaderProps, Wrapper as ArrowWrapper } from 'components/ArrowWrapperLoader'
 import {
   FEE_SIZE_THRESHOLD,
@@ -41,7 +41,6 @@ import { RowReceivedAfterSlippage } from 'components/swap/TradeSummary/RowReceiv
 import { RowFee } from 'components/swap/TradeSummary/RowFee'
 import { useExpertModeManager, useUserSlippageToleranceWithDefault } from 'state/user/hooks'
 import { AuxInformationContainer } from 'components/CurrencyInputPanel'
-import useDebounce from 'hooks/useDebounce'
 
 interface TradeBasicDetailsProp extends BoxProps {
   trade?: TradeGp
@@ -401,7 +400,7 @@ const HighFeeWarningContainer = styled(AuxInformationContainer).attrs((props) =>
     align-items: center;
     gap: 5px;
 
-    font-size: 13.5px;
+    font-size: 13px;
     font-weight: 500;
 
     svg {
@@ -443,34 +442,25 @@ const HighFeeWarningMessage = ({ feePercentage }: { feePercentage?: Fraction }) 
   </div>
 )
 
-export type HighFeeWarningProps = { trade?: TradeGp; acceptWarningCb?: () => void } & HighFeeContainerProps
-
-const HIGH_FEE_DEBOUNCE_TIME = 400
+export type HighFeeWarningProps = {
+  trade?: TradeGp
+  acceptedStatus?: boolean
+  acceptWarningCb?: () => void
+} & HighFeeContainerProps
 
 export const HighFeeWarning = (props: HighFeeWarningProps) => {
-  const { trade, acceptWarningCb } = props
-
+  const { acceptedStatus, acceptWarningCb, trade } = props
+  const { isHighFee, feePercentage } = useHighFeeWarning(trade)
   const theme = useContext(ThemeContext)
-
-  // only considers inputAmount vs fee (fee is in input token)
-  const [isHighFeeRaw, feePercentage] = useMemo(() => {
-    if (!trade) return []
-
-    const feePercentage = trade.fee.feeAsCurrency.divide(trade.inputAmount).asFraction
-    return [feePercentage.greaterThan(FEE_SIZE_THRESHOLD), feePercentage.multiply('100')]
-  }, [trade])
-
-  // debounce the calcublation of high fee boolean
-  const isHighFee = useDebounce(!!isHighFeeRaw, HIGH_FEE_DEBOUNCE_TIME)
 
   if (!isHighFee) return null
 
   return (
     <HighFeeWarningContainer {...props}>
       <div>
-        <AlertTriangle size={20} />
+        <AlertTriangle size={18} />
         <div>
-          Fees exceed {formatSmart(FEE_SIZE_THRESHOLD.multiply('100'), PERCENTAGE_PRECISION)}% of the swap amount
+          Fees exceed {formatSmart(FEE_SIZE_THRESHOLD.multiply('100'), PERCENTAGE_PRECISION)}% of the swap amount!
         </div>{' '}
         <MouseoverTooltipContent
           bgColor={theme.bg1}
@@ -481,7 +471,7 @@ export const HighFeeWarning = (props: HighFeeWarningProps) => {
         </MouseoverTooltipContent>
         {acceptWarningCb && (
           <WarningCheckboxContainer>
-            <input type="checkbox" onChange={acceptWarningCb} /> I understand
+            <input type="checkbox" onChange={acceptWarningCb} checked={!!acceptedStatus} /> Swap anyway
           </WarningCheckboxContainer>
         )}
       </div>
