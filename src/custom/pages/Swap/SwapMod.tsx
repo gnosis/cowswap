@@ -56,6 +56,7 @@ import {
   useSwapState,
   useDetectNativeToken,
   useIsFeeGreaterThanInput,
+  useHighFeeWarning,
 } from 'state/swap/hooks'
 import { useExpertModeManager, useUserSingleHopOnly } from 'state/user/hooks'
 import { /* HideSmall, */ LinkStyledButton, TYPE, ButtonSize } from 'theme'
@@ -139,14 +140,6 @@ export default function Swap({
   // for expert mode
   // const toggleSettings = useToggleSettingsMenu()
   const [isExpertMode] = useExpertModeManager()
-
-  const [feeWarningAccepted, setFeeWarningAccepted] = useState(isExpertMode) // mod - high fee warning disable state
-
-  // whenever expert mode is toggled, set feeWarning to true
-  // and the inverse. this prevents broken state when switching between modes
-  useEffect(() => {
-    setFeeWarningAccepted(isExpertMode)
-  }, [isExpertMode])
 
   // get version from the url
   // const toggledVersion = useToggledVersion()
@@ -236,6 +229,8 @@ export default function Swap({
           },
     [independentField, parsedAmount, showWrap, trade]
   )
+
+  const { feeWarningAccepted, setFeeWarningAccepted } = useHighFeeWarning(trade)
 
   const fiatValueInput = useUSDCValue(parsedAmounts[Field.INPUT])
   const fiatValueOutput = useUSDCValue(parsedAmounts[Field.OUTPUT])
@@ -695,6 +690,7 @@ export default function Swap({
           </AutoColumn>
           <HighFeeWarning
             trade={trade}
+            acceptedStatus={feeWarningAccepted}
             acceptWarningCb={!isExpertMode && account ? () => setFeeWarningAccepted((state) => !state) : undefined}
             width="99%"
             padding="5px 15px"
