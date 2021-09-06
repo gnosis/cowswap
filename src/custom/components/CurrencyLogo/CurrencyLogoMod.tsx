@@ -5,7 +5,7 @@ import EthereumLogo from 'assets/images/ethereum-logo.png'
 import useHttpLocations from 'hooks/useHttpLocations'
 import { WrappedTokenInfo } from 'state/lists/wrappedTokenInfo'
 import Logo from 'components/Logo'
-import { ADDRESS_IMAGE_OVERRIDE } from '@src/custom/constants/tokens'
+import { ADDRESS_IMAGE_OVERRIDE } from 'constants/tokens'
 
 export const getTokenLogoURL = (address: string) =>
   `https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/${address}/logo.png`
@@ -40,7 +40,6 @@ export default function CurrencyLogo({
   const srcs: string[] = useMemo(() => {
     if (!currency || currency.isNative) return []
     const imageOverride = ADDRESS_IMAGE_OVERRIDE[currency.address]
-    console.log('imageOverride', imageOverride)
 
     if (currency.isToken) {
       const defaultUrls = imageOverride ? [imageOverride] : [getTokenLogoURL(currency.address)]

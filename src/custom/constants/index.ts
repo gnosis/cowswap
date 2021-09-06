@@ -1,29 +1,29 @@
 import { Token, Fraction, Percent } from '@uniswap/sdk-core'
 
-import { GPv2Settlement, GPv2AllowanceManager } from '@gnosis.pm/gp-v2-contracts/networks.json'
+import { GPv2Settlement, GPv2VaultRelayer } from '@gnosis.pm/gp-v2-contracts/networks.json'
 import { WalletInfo, SUPPORTED_WALLETS as SUPPORTED_WALLETS_UNISWAP } from 'constants/wallet'
 
-import JSBI from 'jsbi'
 import { SupportedChainId as ChainId } from 'constants/chains'
+import { getAppDataHash } from './appDataHash'
 
-// default allowed slippage, in bips
-export const INITIAL_ALLOWED_SLIPPAGE = 50
-export const INITIAL_ALLOWED_SLIPPAGE_PERCENT = new Percent(JSBI.BigInt(INITIAL_ALLOWED_SLIPPAGE), JSBI.BigInt(10000))
+export const INITIAL_ALLOWED_SLIPPAGE_PERCENT = new Percent('1', '100') // 1%
 export const RADIX_DECIMAL = 10
 export const RADIX_HEX = 16
 
+export const ONE_HUNDRED_PERCENT = new Percent(1, 1)
+
 export const DEFAULT_DECIMALS = 18
 export const DEFAULT_PRECISION = 6
-export const SHORT_PRECISION = 4
-export const SHORTEST_PRECISION = 3
+export const DEFAULT_SMALL_LIMIT = '0.000001'
+export const AMOUNT_PRECISION = 4
 export const LONG_PRECISION = 10
+export const FULL_PRICE_PRECISION = 20
 export const FIAT_PRECISION = 2
 export const PERCENTAGE_PRECISION = 2
 
 export const LONG_LOAD_THRESHOLD = 2000
 
-export const APP_ID = Number(process.env.REACT_APP_ID)
-
+export const APP_DATA_HASH = getAppDataHash()
 export const PRODUCTION_URL = 'cowswap.exchange'
 
 const DISABLED_WALLETS = /^(?:WALLET_LINK|COINBASE_LINK|FORTMATIC|Portis)$/i
@@ -46,21 +46,21 @@ export const GP_SETTLEMENT_CONTRACT_ADDRESS: Partial<Record<number, string>> = {
   [ChainId.XDAI]: GPv2Settlement[ChainId.XDAI].address,
 }
 
-export const GP_ALLOWANCE_MANAGER_CONTRACT_ADDRESS: Partial<Record<number, string>> = {
-  [ChainId.MAINNET]: GPv2AllowanceManager[ChainId.MAINNET].address,
-  [ChainId.RINKEBY]: GPv2AllowanceManager[ChainId.RINKEBY].address,
-  [ChainId.XDAI]: GPv2AllowanceManager[ChainId.XDAI].address,
+export const GP_VAULT_RELAYER: Partial<Record<number, string>> = {
+  [ChainId.MAINNET]: GPv2VaultRelayer[ChainId.MAINNET].address,
+  [ChainId.RINKEBY]: GPv2VaultRelayer[ChainId.RINKEBY].address,
+  [ChainId.XDAI]: GPv2VaultRelayer[ChainId.XDAI].address,
 }
 
 // See https://github.com/gnosis/gp-v2-contracts/commit/821b5a8da213297b0f7f1d8b17c893c5627020af#diff-12bbbe13cd5cf42d639e34a39d8795021ba40d3ee1e1a8282df652eb161a11d6R13
-export const BUY_ETHER_ADDRESS = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
-export const BUY_ETHER_TOKEN: { [chainId in ChainId]: Token } = {
-  [ChainId.MAINNET]: new Token(ChainId.MAINNET, BUY_ETHER_ADDRESS, 18, 'ETH', 'Ether'),
-  [ChainId.RINKEBY]: new Token(ChainId.RINKEBY, BUY_ETHER_ADDRESS, 18, 'ETH', 'Ether'),
-  [ChainId.ROPSTEN]: new Token(ChainId.ROPSTEN, BUY_ETHER_ADDRESS, 18, 'ETH', 'Ether'),
-  [ChainId.GOERLI]: new Token(ChainId.GOERLI, BUY_ETHER_ADDRESS, 18, 'ETH', 'Ether'),
-  [ChainId.KOVAN]: new Token(ChainId.KOVAN, BUY_ETHER_ADDRESS, 18, 'ETH', 'Ether'),
-  [ChainId.XDAI]: new Token(ChainId.XDAI, BUY_ETHER_ADDRESS, 18, 'xDAI', 'xDAI'),
+export const NATIVE_CURRENCY_BUY_ADDRESS = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
+export const NATIVE_CURRENCY_BUY_TOKEN: { [chainId in ChainId | number]: Token } = {
+  [ChainId.MAINNET]: new Token(ChainId.MAINNET, NATIVE_CURRENCY_BUY_ADDRESS, 18, 'ETH', 'Ether'),
+  [ChainId.RINKEBY]: new Token(ChainId.RINKEBY, NATIVE_CURRENCY_BUY_ADDRESS, 18, 'ETH', 'Ether'),
+  [ChainId.ROPSTEN]: new Token(ChainId.ROPSTEN, NATIVE_CURRENCY_BUY_ADDRESS, 18, 'ETH', 'Ether'),
+  [ChainId.GOERLI]: new Token(ChainId.GOERLI, NATIVE_CURRENCY_BUY_ADDRESS, 18, 'ETH', 'Ether'),
+  [ChainId.KOVAN]: new Token(ChainId.KOVAN, NATIVE_CURRENCY_BUY_ADDRESS, 18, 'ETH', 'Ether'),
+  [ChainId.XDAI]: new Token(ChainId.XDAI, NATIVE_CURRENCY_BUY_ADDRESS, 18, 'xDAI', 'xDAI'),
 }
 
 export const ORDER_ID_SHORT_LENGTH = 8
@@ -77,6 +77,7 @@ export const XDAI_LOGO_URI =
 
 // 0.1 balance threshold
 export const LOW_NATIVE_BALANCE_THRESHOLD = new Fraction('1', '10')
+export const DOCS_LINK = 'https://docs.cowswap.exchange'
 export const CONTRACTS_CODE_LINK = 'https://github.com/gnosis/gp-v2-contracts'
 export const CODE_LINK = 'https://github.com/gnosis/gp-swap-ui'
 export const DISCORD_LINK = 'https://chat.cowswap.exchange'

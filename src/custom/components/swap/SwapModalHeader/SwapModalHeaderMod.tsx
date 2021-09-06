@@ -23,10 +23,10 @@ import { AdvancedSwapDetails } from 'components/swap/AdvancedSwapDetails'
 
 // MOD
 import TradeGp from 'state/swap/TradeGp'
-import { INPUT_OUTPUT_EXPLANATION } from 'constants/index'
+import { AMOUNT_PRECISION, INPUT_OUTPUT_EXPLANATION } from 'constants/index'
 import { computeSlippageAdjustedAmounts } from 'utils/prices'
 import { Field } from 'state/swap/actions'
-import { formatSmart } from 'utils/format'
+import { formatMax, formatSmart } from 'utils/format'
 import { AuxInformationContainer } from 'components/CurrencyInputPanel'
 import FeeInformationTooltip from '../FeeInformationTooltip'
 import { LightCardType } from '.'
@@ -69,7 +69,7 @@ export default function SwapModalHeader({
   showAcceptChanges,
   onAcceptChanges,
   LightCard,
-}: /* 
+}: /*
 {
   trade: V2Trade<Currency, Currency, TradeType> | V3Trade<Currency, Currency, TradeType>
   allowedSlippage: Percent
@@ -105,6 +105,9 @@ SwapModalHeaderProps) {
     [trade]
   )
 
+  const fullInputWithoutFee = formatMax(trade?.inputAmountWithoutFee, trade?.inputAmount.currency.decimals) || '-'
+  const fullOutputWithoutFee = formatMax(trade?.outputAmountWithoutFee, trade?.outputAmount.currency.decimals) || '-'
+
   return (
     <AutoColumn gap={'4px'} style={{ marginTop: '1rem' }}>
       <LightCard flatBorder={!!exactInLabel} padding="0.75rem 1rem">
@@ -127,8 +130,9 @@ SwapModalHeaderProps) {
                 fontSize={24}
                 fontWeight={500}
                 color={showAcceptChanges && trade.tradeType === TradeType.EXACT_OUTPUT ? theme.primary1 : ''}
+                title={`${fullInputWithoutFee} ${trade.inputAmount.currency.symbol || ''}`}
               >
-                {formatSmart(trade.inputAmountWithoutFee)}
+                {formatSmart(trade.inputAmountWithoutFee, AMOUNT_PRECISION)}
               </TruncatedText>
             </RowFixed>
           </RowBetween>
@@ -137,9 +141,9 @@ SwapModalHeaderProps) {
       {!!exactInLabel && (
         <AuxInformationContainer margin="-4px auto 4px" hideInput borderColor={transparentize(0.5, theme.bg0)}>
           <FeeInformationTooltip
-            amountAfterFees={formatSmart(trade.inputAmountWithFee)}
-            amountBeforeFees={formatSmart(trade.inputAmountWithoutFee)}
-            feeAmount={formatSmart(trade.fee.feeAsCurrency)}
+            amountAfterFees={formatSmart(trade.inputAmountWithFee, AMOUNT_PRECISION)}
+            amountBeforeFees={formatSmart(trade.inputAmountWithoutFee, AMOUNT_PRECISION)}
+            feeAmount={formatSmart(trade.fee.feeAsCurrency, AMOUNT_PRECISION)}
             label={exactInLabel}
             showHelper
             trade={trade}
@@ -175,8 +179,12 @@ SwapModalHeaderProps) {
               </Text>
             </RowFixed>
             <RowFixed gap={'0px'}>
-              <TruncatedText fontSize={24} fontWeight={500}>
-                {formatSmart(trade.outputAmountWithoutFee)}
+              <TruncatedText
+                fontSize={24}
+                fontWeight={500}
+                title={`${fullOutputWithoutFee} ${trade.outputAmount.currency.symbol || ''}`}
+              >
+                {formatSmart(trade.outputAmountWithoutFee, AMOUNT_PRECISION)}
               </TruncatedText>
             </RowFixed>
           </RowBetween>
@@ -185,9 +193,9 @@ SwapModalHeaderProps) {
       {!!exactOutLabel && (
         <AuxInformationContainer margin="-4px auto 4px" hideInput borderColor={transparentize(0.5, theme.bg0)}>
           <FeeInformationTooltip
-            amountAfterFees={formatSmart(trade.outputAmount)}
-            amountBeforeFees={formatSmart(trade.outputAmountWithoutFee)}
-            feeAmount={formatSmart(trade.outputAmountWithoutFee?.subtract(trade.outputAmount))}
+            amountAfterFees={formatSmart(trade.outputAmount, AMOUNT_PRECISION)}
+            amountBeforeFees={formatSmart(trade.outputAmountWithoutFee, AMOUNT_PRECISION)}
+            feeAmount={formatSmart(trade.outputAmountWithoutFee?.subtract(trade.outputAmount), AMOUNT_PRECISION)}
             label={exactOutLabel}
             showHelper
             trade={trade}
@@ -240,7 +248,7 @@ SwapModalHeaderProps) {
               Output is estimated. You will receive at least{' '}
               <b>
                 {/* {trade.minimumAmountOut(allowedSlippage).toSignificant(6)} {trade.outputAmount.currency.symbol} */}
-                {formatSmart(slippageOut) || '-'} {trade.outputAmount.currency.symbol}
+                {formatSmart(slippageOut, AMOUNT_PRECISION) || '-'} {trade.outputAmount.currency.symbol}
               </b>{' '}
               or the swap will not execute. {INPUT_OUTPUT_EXPLANATION}
             </Trans>
@@ -251,7 +259,7 @@ SwapModalHeaderProps) {
               Input is estimated. You will sell at most{' '}
               <b>
                 {/* {trade.maximumAmountIn(allowedSlippage).toSignificant(6)} {trade.inputAmount.currency.symbol} */}
-                {formatSmart(slippageIn) || '-'} {trade.inputAmount.currency.symbol}
+                {formatSmart(slippageIn, AMOUNT_PRECISION) || '-'} {trade.inputAmount.currency.symbol}
               </b>{' '}
               {/* or the transaction will revert. */}
               or the swap will not execute. {INPUT_OUTPUT_EXPLANATION}

@@ -1,9 +1,14 @@
 import React from 'react'
 import styled from 'styled-components'
-import TradeSummaryMod from './TradeSummaryMod'
-import { RowFixed } from 'components/Row'
-import { WithClassName } from 'types'
 import { AdvancedSwapDetailsProps } from '../AdvancedSwapDetails'
+
+import { AutoColumn } from 'components/Column'
+import { RowFixed } from 'components/Row'
+
+// Sub-components
+import { RowFee } from './RowFee'
+import { RowSlippage } from './RowSlippage'
+import { RowReceivedAfterSlippage } from './RowReceivedAfterSlippage'
 
 const Wrapper = styled.div`
   ${RowFixed} {
@@ -13,12 +18,46 @@ const Wrapper = styled.div`
   }
 `
 
-export type TradeSummaryProps = Required<AdvancedSwapDetailsProps> & WithClassName
+export type TradeSummaryProps = Required<AdvancedSwapDetailsProps>
 
-export default function TradeSummary({ className, trade, allowedSlippage, showHelpers, showFee }: TradeSummaryProps) {
+export default function TradeSummary({ trade, allowedSlippage, showHelpers, showFee }: TradeSummaryProps) {
+  const allowsOffchainSigning = true // TODO: Next PR will handle this
+
   return (
-    <Wrapper className={className}>
-      <TradeSummaryMod trade={trade} allowedSlippage={allowedSlippage} showHelpers={showHelpers} showFee={showFee} />
+    <Wrapper>
+      <AutoColumn gap="2px">
+        {/* Slippage */}
+        {showFee && (
+          <RowFee
+            trade={trade}
+            allowsOffchainSigning={allowsOffchainSigning}
+            showHelpers={showHelpers}
+            fontSize={12}
+            fontWeight={400}
+            rowHeight={24}
+          />
+        )}
+
+        {/* Slippage */}
+        <RowSlippage
+          allowedSlippage={allowedSlippage}
+          fontSize={12}
+          fontWeight={400}
+          rowHeight={24}
+          showSettingOnClick={false}
+        />
+
+        {/* Min/Max received */}
+        <RowReceivedAfterSlippage
+          trade={trade}
+          allowsOffchainSigning={allowsOffchainSigning}
+          showHelpers={showHelpers}
+          allowedSlippage={allowedSlippage}
+          fontSize={12}
+          fontWeight={400}
+          rowHeight={24}
+        />
+      </AutoColumn>
     </Wrapper>
   )
 }

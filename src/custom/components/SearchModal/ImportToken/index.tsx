@@ -1,6 +1,7 @@
 import React from 'react'
 import { Token } from '@uniswap/sdk-core'
 import { Trans } from '@lingui/macro'
+import styled from 'styled-components/macro'
 import { DefaultTheme } from 'styled-components'
 import { AlertCircle } from 'react-feather'
 import { AddressText, ImportProps, ImportToken as ImportTokenMod, WarningWrapper } from './ImportTokenMod'
@@ -12,6 +13,7 @@ import { ExternalLink } from 'theme/components'
 import ListLogo from 'components/ListLogo'
 import { ExplorerDataType, getExplorerLink } from 'utils/getExplorerLink'
 import CurrencyLogo from 'components/CurrencyLogo'
+import { PaddedColumn } from '@src/components/SearchModal/styleds'
 
 export interface CardComponentProps extends Pick<ImportProps, 'list'> {
   chainId?: number
@@ -19,6 +21,32 @@ export interface CardComponentProps extends Pick<ImportProps, 'list'> {
   token: Token
   key: string
 }
+
+const Wrapper = styled.div`
+  > div {
+    height: 100%;
+  }
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    overflow-y: scroll;
+  `}
+
+  ${AutoColumn} > ${AutoColumn} > svg {
+    stroke: ${({ theme }) => theme.red1};
+  }
+
+  ${RowFixed} > svg {
+    stroke: ${({ theme }) => theme.red1};
+  }
+
+  ${PaddedColumn} {
+    ${({ theme }) => theme.mediaWidth.upToSmall`
+      position: sticky;
+      top: 0;
+      background: ${({ theme }) => theme.bg1};
+    `}
+  }
+`
 
 function CardComponent({ theme, key, token, chainId, list }: CardComponentProps) {
   return (
@@ -49,7 +77,7 @@ function CardComponent({ theme, key, token, chainId, list }: CardComponentProps)
         ) : (
           <WarningWrapper borderRadius="4px" padding="4px" highWarning={true}>
             <RowFixed>
-              <AlertCircle stroke={theme.red1} size="10px" />
+              <AlertCircle size="10px" />
               <TYPE.body color={theme.red1} ml="4px" fontSize="10px" fontWeight={500}>
                 <Trans>Unknown Source</Trans>
               </TYPE.body>
@@ -62,5 +90,9 @@ function CardComponent({ theme, key, token, chainId, list }: CardComponentProps)
 }
 
 export function ImportToken(props: Omit<ImportProps, 'CardComponent'>) {
-  return <ImportTokenMod {...props} CardComponent={CardComponent} />
+  return (
+    <Wrapper>
+      <ImportTokenMod {...props} CardComponent={CardComponent} />{' '}
+    </Wrapper>
+  )
 }

@@ -1,5 +1,5 @@
 import { createReducer, PayloadAction } from '@reduxjs/toolkit'
-import { OrderID } from 'utils/operator'
+import { OrderID } from 'api/gnosisProtocol'
 import { SupportedChainId as ChainId } from 'constants/chains'
 import {
   addPendingOrder,
@@ -15,6 +15,7 @@ import {
   cancelOrdersBatch,
   requestOrderCancellation,
   SerializedOrder,
+  setIsOrderUnfillable,
 } from './actions'
 import { ContractDeploymentBlocks } from './consts'
 import { Writable } from 'types'
@@ -135,7 +136,7 @@ export default createReducer(initialState, (builder) =>
 
       // if there are any newly fulfilled orders
       // update them
-      ordersData.forEach(({ id, fulfillmentTime, transactionHash }) => {
+      ordersData.forEach(({ id, fulfillmentTime, transactionHash, apiAdditionalInfo }) => {
         const orderObject = pendingOrders[id] || cancelledOrders[id]
 
         if (orderObject) {
@@ -147,6 +148,8 @@ export default createReducer(initialState, (builder) =>
 
           orderObject.order.fulfilledTransactionHash = transactionHash
           orderObject.order.isCancelling = false
+
+          orderObject.order.apiAdditionalInfo = apiAdditionalInfo
 
           fulfilledOrders[id] = orderObject
         }
@@ -250,5 +253,15 @@ export default createReducer(initialState, (builder) =>
       const { chainId, lastCheckedBlock } = action.payload
 
       state[chainId].lastCheckedBlock = lastCheckedBlock
+    })
+    .addCase(setIsOrderUnfillable, (state, action) => {
+      prefillState(state, action)
+      const { chainId, id, isUnfillable } = action.payload
+
+      const orderObject = state[chainId].pending[id]
+
+      if (orderObject?.order) {
+        orderObject.order.isUnfillable = isUnfillable
+      }
     })
 )
