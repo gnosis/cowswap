@@ -101,7 +101,7 @@ export const AuxInformationContainer = styled(Container)<{
   }
 `
 
-export const Wrapper = styled.div<{ selected: boolean; showLoader: boolean; showMaxButton?: boolean }>`
+export const Wrapper = styled.div<{ selected: boolean; showLoader: boolean }>`
   // CSS Override
 
   ${InputPanel} {
