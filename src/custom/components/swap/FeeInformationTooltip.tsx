@@ -2,7 +2,7 @@ import React, { useMemo } from 'react'
 import TradeGp from 'state/swap/TradeGp'
 import QuestionHelper from 'components/QuestionHelper'
 import styled from 'styled-components'
-import { formatSmart } from 'utils/format'
+import { formatMax, formatSmart } from 'utils/format'
 import useTheme from 'hooks/useTheme'
 import { FIAT_PRECISION } from 'constants/index'
 import { CurrencyAmount, Token } from '@uniswap/sdk-core'
@@ -90,7 +90,7 @@ export default function FeeInformationTooltip(props: FeeInformationTooltipProps)
 
   const [symbol, fullFeeAmount] = useMemo(() => {
     const amount = trade?.[type === 'From' ? 'inputAmount' : 'outputAmount']
-    return amount ? [amount.currency.symbol || '', amount.toFixed(amount.currency.decimals) || '-'] : []
+    return amount ? [amount.currency.symbol || '', formatMax(amount, amount.currency.decimals) || '-'] : []
   }, [trade, type])
 
   if (!trade || !showHelper) return null
