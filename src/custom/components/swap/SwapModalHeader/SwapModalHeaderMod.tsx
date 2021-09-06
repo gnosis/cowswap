@@ -31,7 +31,8 @@ import { AuxInformationContainer } from 'components/CurrencyInputPanel'
 import FeeInformationTooltip from '../FeeInformationTooltip'
 import { LightCardType } from '.'
 import { transparentize } from 'polished'
-import { HighFeeWarningProps, Price } from 'pages/Swap'
+import { Price } from 'pages/Swap'
+import { HighFeeWarningProps } from 'components/HighFeeWarning'
 
 export const ArrowWrapper = styled.div`
   padding: 4px;

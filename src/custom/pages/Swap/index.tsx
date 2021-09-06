@@ -1,7 +1,7 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { RouteComponentProps } from 'react-router-dom'
-import styled, { DefaultTheme, ThemeContext } from 'styled-components'
-import { Currency, CurrencyAmount, Fraction, Token } from '@uniswap/sdk-core'
+import styled, { DefaultTheme } from 'styled-components'
+import { Currency, CurrencyAmount, Token } from '@uniswap/sdk-core'
 import { BoxProps, Text } from 'rebass'
 
 import { ButtonSize, TYPE } from 'theme/index'
@@ -21,18 +21,10 @@ import {
   ButtonLight as ButtonLightMod,
 } from 'components/Button'
 import EthWethWrap, { Props as EthWethWrapProps } from 'components/swap/EthWethWrap'
-import { useHighFeeWarning, useReplaceSwapState, useSwapState } from 'state/swap/hooks'
+import { useReplaceSwapState, useSwapState } from 'state/swap/hooks'
 import { ArrowWrapperLoader, ArrowWrapperLoaderProps, Wrapper as ArrowWrapper } from 'components/ArrowWrapperLoader'
-import {
-  FEE_SIZE_THRESHOLD,
-  INITIAL_ALLOWED_SLIPPAGE_PERCENT,
-  LONG_LOAD_THRESHOLD,
-  PERCENTAGE_PRECISION,
-} from 'constants/index'
-import { formatSmart } from 'utils/format'
-import { MouseoverTooltipContent } from 'components/Tooltip'
-import { StyledInfo } from 'pages/Swap/SwapMod'
-import { AlertTriangle, Repeat } from 'react-feather'
+import { INITIAL_ALLOWED_SLIPPAGE_PERCENT, LONG_LOAD_THRESHOLD } from 'constants/index'
+import { Repeat } from 'react-feather'
 import { Trans } from '@lingui/macro'
 import TradePrice from 'components/swap/TradePrice'
 import TradeGp from 'state/swap/TradeGp'
@@ -40,7 +32,7 @@ import { RowSlippage } from 'components/swap/TradeSummary/RowSlippage'
 import { RowReceivedAfterSlippage } from 'components/swap/TradeSummary/RowReceivedAfterSlippage'
 import { RowFee } from 'components/swap/TradeSummary/RowFee'
 import { useExpertModeManager, useUserSlippageToleranceWithDefault } from 'state/user/hooks'
-import { AuxInformationContainer } from 'components/CurrencyInputPanel'
+import { HighFeeWarning, HighFeeWarningProps } from 'components/HighFeeWarning'
 
 interface TradeBasicDetailsProp extends BoxProps {
   trade?: TradeGp
@@ -366,118 +358,6 @@ const SwapButton = ({ children, showLoading, showButton = false }: SwapButtonPro
       {children}
     </Text>
   )
-
-interface HighFeeContainerProps {
-  padding?: string
-  margin?: string
-  width?: string
-}
-
-const WarningCheckboxContainer = styled.div`
-  display: flex;
-  font-weight: bold;
-  gap: 2px;
-  justify-content: center;
-  align-items: center;
-`
-
-const HighFeeWarningContainer = styled(AuxInformationContainer).attrs((props) => ({
-  ...props,
-  hideInput: true,
-}))<HighFeeContainerProps>`
-  &&&&& {
-    background: ${({ theme }) => theme.info};
-    color: ${({ theme }) => theme.infoText};
-  }
-  padding: ${({ padding = '5px 12px' }) => padding};
-  width: ${({ width = '100%' }) => width};
-  border-radius: ${({ theme }) => theme.buttonPrimary.borderRadius};
-  margin: ${({ margin = '0 auto 12px auto' }) => margin};
-
-  > div {
-    display: flex;
-    justify-content: space-evenly;
-    align-items: center;
-    gap: 5px;
-
-    font-size: 13px;
-    font-weight: 500;
-
-    svg {
-      &:first-child {
-        margin-right: 5px;
-      }
-      stroke: ${({ theme }) => theme.infoText};
-    }
-
-    > ${WarningCheckboxContainer} {
-      font-size: 10px;
-      margin-left: auto;
-      min-width: max-content;
-
-      > input {
-        cursor: pointer;
-        margin: 1px 4px 0 0;
-      }
-    }
-  }
-`
-
-const ErrorStyledInfo = styled(StyledInfo)`
-  color: ${({ theme }) => theme.infoText};
-`
-
-const HighFeeWarningMessage = ({ feePercentage }: { feePercentage?: Fraction }) => (
-  <div>
-    <small>
-      Current fees on this network make up{' '}
-      <u>
-        <strong>{feePercentage?.toFixed(2)}%</strong>
-      </u>{' '}
-      of your swap amount.
-      <br />
-      <br />
-      You may still move forward with this swap but a high percentage of it will be consumed by fees.
-    </small>
-  </div>
-)
-
-export type HighFeeWarningProps = {
-  trade?: TradeGp
-  acceptedStatus?: boolean
-  acceptWarningCb?: () => void
-} & HighFeeContainerProps
-
-export const HighFeeWarning = (props: HighFeeWarningProps) => {
-  const { acceptedStatus, acceptWarningCb, trade } = props
-  const { isHighFee, feePercentage } = useHighFeeWarning(trade)
-  const theme = useContext(ThemeContext)
-
-  if (!isHighFee) return null
-
-  return (
-    <HighFeeWarningContainer {...props}>
-      <div>
-        <AlertTriangle size={18} />
-        <div>
-          Fees exceed {formatSmart(FEE_SIZE_THRESHOLD.multiply('100'), PERCENTAGE_PRECISION)}% of the swap amount!
-        </div>{' '}
-        <MouseoverTooltipContent
-          bgColor={theme.bg1}
-          color={theme.text1}
-          content={<HighFeeWarningMessage feePercentage={feePercentage} />}
-        >
-          <ErrorStyledInfo />
-        </MouseoverTooltipContent>
-        {acceptWarningCb && (
-          <WarningCheckboxContainer>
-            <input type="checkbox" onChange={acceptWarningCb} checked={!!acceptedStatus} /> Swap anyway
-          </WarningCheckboxContainer>
-        )}
-      </div>
-    </HighFeeWarningContainer>
-  )
-}
 
 export default function Swap(props: RouteComponentProps) {
   return (
