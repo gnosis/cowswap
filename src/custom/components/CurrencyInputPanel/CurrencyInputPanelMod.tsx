@@ -270,7 +270,11 @@ export default function CurrencyInputPanel({
                       color={theme.text1}
                       fontWeight={400}
                       fontSize={14}
-                      style={{ display: 'inline', cursor: 'pointer' }}
+                      style={{
+                        display: 'inline',
+                        // cursor: 'pointer'
+                        cursor: showMaxButton ? 'pointer' : 'initial', // mod
+                      }}
                       title={`${selectedCurrencyBalance?.toFixed(currency?.decimals) || '-'} ${currency?.symbol || ''}`}
                     >
                       {!hideBalance && currency && selectedCurrencyBalance ? (
