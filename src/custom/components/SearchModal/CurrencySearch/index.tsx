@@ -16,24 +16,27 @@ export const ContentWrapper = styled(Column)`
   position: relative;
 
   ${SearchInput} {
-    border: 1px solid ${({ theme }) => transparentize(0.7, theme.text1)}};
-  }
-
-  ${SearchInput}:focus {
-    border-color: ${({ theme }) => theme.primary1}};
+    border: none;
+    transition: background 0.3s ease-in-out;
+    ${({ theme }) => theme.neumorphism.boxShadow}
   }
 
   ${SearchInput}::placeholder {
+    font-size: 16px;
     color: ${({ theme }) => transparentize(0.5, theme.text1)};
+  }
+
+  ${SearchInput}:focus::placeholder {
+    color: ${({ theme }) => transparentize(0.7, theme.text1)};
   }
 
   ${Separator} {
     background: none;
 
-      // Target the token list container
-      + div {
-        ${({ theme }) => theme.neumorphism.boxShadow}
-      }
+    // Target the token list container
+    + div {
+      ${({ theme }) => theme.neumorphism.boxShadow}
+    }
   }
 `
 
