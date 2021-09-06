@@ -6,7 +6,7 @@ import styled from 'styled-components'
 import { LightCard as LightCardUni } from 'components/Card'
 import { darken, transparentize } from 'polished'
 import { AuxInformationContainer } from 'components/CurrencyInputPanel'
-import { HighFeeWarning } from 'pages/Swap'
+import { HighFeeWarning } from 'components/HighFeeWarning'
 
 const LightCard = styled(LightCardUni)<{ flatBorder?: boolean }>`
   background-color: ${({ theme }) => darken(0.06, theme.bg1)};

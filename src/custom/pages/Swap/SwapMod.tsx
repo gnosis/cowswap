@@ -7,11 +7,11 @@ import UnsupportedCurrencyFooter from 'components/swap/UnsupportedCurrencyFooter
 import { MouseoverTooltip /* , MouseoverTooltipContent */ } from 'components/Tooltip'
 // import JSBI from 'jsbi'
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
-import { ArrowDown, /*, ArrowLeft */ CheckCircle, HelpCircle, Info } from 'react-feather'
+import { ArrowDown, /*, ArrowLeft */ CheckCircle, HelpCircle /* , Info */ } from 'react-feather'
 import ReactGA from 'react-ga'
 // import { Link, RouteComponentProps } from 'react-router-dom'
 import { Text } from 'rebass'
-import styled, { ThemeContext } from 'styled-components'
+import { /* styled, */ ThemeContext } from 'styled-components'
 import AddressInputPanel from 'components/AddressInputPanel'
 import {
   ButtonConfirmed,
@@ -81,15 +81,16 @@ import AdvancedSwapDetailsDropdown from 'components/swap/AdvancedSwapDetailsDrop
 import { formatSmart } from 'utils/format'
 import { RowSlippage } from 'components/swap/TradeSummary/RowSlippage'
 
-export const StyledInfo = styled(Info)`
-  opacity: 0.4;
-  color: ${({ theme }) => theme.text1};
-  height: 16px;
-  width: 16px;
-  :hover {
-    opacity: 0.8;
-  }
-`
+// MOD - exported in ./styleds to avoid circ dep
+// export const StyledInfo = styled(Info)`
+//   opacity: 0.4;
+//   color: ${({ theme }) => theme.text1};
+//   height: 16px;
+//   width: 16px;
+//   :hover {
+//     opacity: 0.8;
+//   }
+// `
 
 export default function Swap({
   history,
