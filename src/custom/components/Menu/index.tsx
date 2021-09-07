@@ -1,5 +1,6 @@
 import React from 'react'
-import { Code, MessageCircle, HelpCircle, BookOpen, PieChart } from 'react-feather'
+import { Code, MessageCircle, HelpCircle, FileText, BookOpen, PieChart } from 'react-feather'
+
 import MenuMod, { MenuItem, InternalMenuItem, MenuFlyout as MenuFlyoutUni } from './MenuMod'
 import { useCloseModals } from 'state/application/hooks'
 import styled from 'styled-components'
