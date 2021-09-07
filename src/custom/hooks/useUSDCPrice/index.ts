@@ -117,7 +117,7 @@ export function useUSDCValue(currencyAmount?: CurrencyAmount<Currency>) {
   return useGetPriceQuote({ ...usdcPrice, currencyAmount })
 }
 
-export function useCoingeckoUsdPrice(currency?: Currency, amount?: string) {
+export function useCoingeckoUsdPrice(currency?: Currency) {
   // default to MAINNET (if disconnected e.g)
   const { chainId = DEFAULT_NETWORK_FOR_LISTS } = useActiveWeb3React()
   const [price, setPrice] = useState<Price<Token, Currency> | null>(null)
@@ -125,12 +125,12 @@ export function useCoingeckoUsdPrice(currency?: Currency, amount?: string) {
 
   useEffect(() => {
     const isSupportedChainId = supportedChainId(chainId)
-    if (!isSupportedChainId || !currency || !amount) return
+    if (!isSupportedChainId || !currency) return
 
-    const currencyAmount = tryParseAmount(amount, currency)
+    const baseAmount = tryParseAmount('1', currency)
     const tokenAddress = currencyId(currency)
 
-    if (currencyAmount) {
+    if (baseAmount) {
       getUSDPriceQuote({
         chainId: isSupportedChainId,
         tokenAddress,
@@ -141,21 +141,21 @@ export function useCoingeckoUsdPrice(currency?: Currency, amount?: string) {
 
           if (!priceResponse?.amount) return
 
-          const { amount } = priceResponse
+          const { amount: apiUsdPrice } = priceResponse
           // api returns converted units e.g $2.25 instead of 2255231233312312 (atoms)
           // we need to parse all USD returned amounts
           // and convert to the same currency for both sides (SDK math invariant)
           // in our case we stick to the USDC paradigm
-          const usdAsUSDC = tryParseAmount(amount.toString(), USDC)
+          const quoteAmount = tryParseAmount(apiUsdPrice.toString(), USDC)
           // parse failure is unlikely - type safe
-          if (!usdAsUSDC) return
+          if (!quoteAmount) return
           // create a new Price object
           // we need to invert here as it is
           // constructed based on the coingecko USD price response
           // e.g 1 unit of USER'S TOKEN represented in USD
           const usdPrice = new Price({
-            baseAmount: currencyAmount,
-            quoteAmount: usdAsUSDC,
+            baseAmount,
+            quoteAmount,
           }).invert()
 
           console.debug(
@@ -178,13 +178,13 @@ export function useCoingeckoUsdPrice(currency?: Currency, amount?: string) {
           })
         })
     }
-  }, [amount, chainId, currency])
+  }, [chainId, currency])
 
   return { price, error }
 }
 
 export function useCoingeckoUsdValue(currencyAmount: CurrencyAmount<Currency> | undefined) {
-  const coingeckoUsdPrice = useCoingeckoUsdPrice(currencyAmount?.currency, currencyAmount?.toExact())
+  const coingeckoUsdPrice = useCoingeckoUsdPrice(currencyAmount?.currency)
 
   return useGetPriceQuote({ ...coingeckoUsdPrice, currencyAmount })
 }
