@@ -1,4 +1,4 @@
-import IPFS from 'ipfs-core'
+import { create } from 'ipfs-http-client'
 import CID from 'cids'
 import multihashes from 'multihashes'
 import pinataSDK from '@pinata/sdk'
@@ -62,9 +62,9 @@ export function generateAppDataDoc(metadata: MetadataDoc = {}): AppDataDoc {
 
 export async function uploadMetadataDocToIpfs(appDataDoc: AppDataDoc): Promise<string> {
   try {
-    const ipfs = await IPFS.create()
+    const client = create({ url: 'https://ipfs.infura.io:5001/api/v0' })
     const doc = JSON.stringify(appDataDoc)
-    const { cid } = await ipfs.add(doc)
+    const { cid } = await client.add(doc)
     await pinata.pinByHash(cid.toString())
     const { digest } = multihashes.decode(new CID(cid.toString()).multihash)
     return `0x${Buffer.from(digest).toString('hex')}`
