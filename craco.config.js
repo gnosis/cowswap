@@ -33,7 +33,6 @@ module.exports = function () {
     },
     webpack: {
       plugins,
-      devtool: SENTRY_AUTH_TOKEN ? 'source-map' : '',
       alias: {
         '@src': path.resolve(__dirname, 'src'),
       },
