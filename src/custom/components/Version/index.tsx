@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled from 'styled-components/macro'
 import { ExternalLink, TYPE } from 'theme'
 
 import { version as WEB_VERSION } from '@src/../package.json'

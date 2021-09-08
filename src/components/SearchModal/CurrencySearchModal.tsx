@@ -10,7 +10,7 @@ import Manage from 'components/SearchModal/Manage'
 import { TokenList } from '@uniswap/token-lists'
 import { ImportList } from 'components/SearchModal/ImportList'
 
-interface CurrencySearchModalProps {
+export interface CurrencySearchModalProps {
   isOpen: boolean
   onDismiss: () => void
   selectedCurrency?: Currency | null

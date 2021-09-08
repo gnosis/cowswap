@@ -1,3 +1,5 @@
+export * from '@src/constants/chains'
+
 export enum SupportedChainId {
   MAINNET = 1,
   ROPSTEN = 3,

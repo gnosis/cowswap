@@ -1,4 +1,3 @@
-
 import { ArrowRight } from 'react-feather'
 import { CurrencyAmount, Currency } from '@uniswap/sdk-core'
 import { WrapCardContainer, WrapCard } from './WrapCard'

@@ -1,4 +1,3 @@
-
 import { Trans } from '@lingui/macro'
 
 import ConfirmSwapModalMod from './ConfirmSwapModalMod'

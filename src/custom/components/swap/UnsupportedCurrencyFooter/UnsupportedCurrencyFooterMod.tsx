@@ -45,7 +45,7 @@ export const AddressText = styled(TYPE.blue)`
 // MOD
 export interface UnsupportedCurrencyFooterParams {
   show: boolean
-  currencies: (Currency | undefined)[]
+  currencies: (Currency | null | undefined)[]
   detailsTitle?: ReactNode
   detailsText?: ReactNode
   showDetailsText?: ReactNode

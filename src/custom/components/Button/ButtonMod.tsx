@@ -265,7 +265,7 @@ export const ButtonText = styled(Base)`
   }
 `
 
-const ButtonConfirmedStyle = styled(Base)`
+export const ButtonConfirmedStyle = styled(Base)`
   background-color: ${({ theme }) => theme.bg3};
   color: ${({ theme }) => theme.text1};
   /* border: 1px solid ${({ theme }) => theme.green1}; */

@@ -19,7 +19,7 @@ import useTransactionDeadline from './useTransactionDeadline'
 import useENS from './useENS'
 import { Version } from './useToggledVersion'
 
-enum SwapCallbackState {
+export enum SwapCallbackState {
   INVALID,
   LOADING,
   VALID,

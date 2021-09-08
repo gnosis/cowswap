@@ -1,8 +1,7 @@
-
 // import { computeTradePriceBreakdown } from '../TradeSummary'
 import SwapModalHeaderMod, { SwapModalHeaderProps } from './SwapModalHeaderMod'
 import { AutoColumn } from 'components/Column'
-import styled from 'styled-components'
+import styled from 'styled-components/macro'
 import { LightCard as LightCardUni } from 'components/Card'
 import { darken, transparentize } from 'polished'
 import { AuxInformationContainer } from 'components/CurrencyInputPanel'

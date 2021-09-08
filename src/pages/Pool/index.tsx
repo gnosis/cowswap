@@ -300,6 +300,7 @@ export default function Pool() {
               )}
               {closedPositions.length > 0 ? (
                 <ShowInactiveToggle>
+                  {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
                   <label>
                     <TYPE.body onClick={() => setUserHideClosedPositions(!userHideClosedPositions)}>
                       <Trans>Show closed positions</Trans>

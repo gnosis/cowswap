@@ -6,6 +6,7 @@ import {
   updateBlockNumber,
   ApplicationModal,
   setOpenModal,
+  updateChainId,
 } from 'state/application/actions'
 
 type PopupList = Array<{ key: string; show: boolean; content: PopupContent; removeAfterMs: number | null }>

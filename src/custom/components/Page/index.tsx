@@ -1,6 +1,6 @@
 import { PropsWithChildren } from 'react'
 
-import styled, { css } from 'styled-components'
+import styled, { css } from 'styled-components/macro'
 import AppBody from 'pages/AppBody'
 import { WithClassName } from 'types'
 

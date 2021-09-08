@@ -26,7 +26,7 @@ import { Trans } from '@lingui/macro'
 import { CHAIN_INFO, L2_CHAIN_IDS, SupportedL2ChainId } from 'constants/chains'
 import { useIsTransactionConfirmed, useTransaction } from 'state/transactions/hooks'
 import Badge from 'components/Badge'
-import AnimatedConfirmation from './AnimatedConfirmation'
+import AnimatedConfirmation from 'components/TransactionConfirmationModal/AnimatedConfirmation'
 // MOD
 import { GpModal } from 'components/Modal'
 import { lighten } from 'polished'

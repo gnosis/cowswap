@@ -5,7 +5,12 @@ import { Colors } from 'theme/styled'
 import { colors as colorsUniswap } from '@src/theme'
 import { ButtonSize } from 'theme'
 
-import { DefaultTheme, ThemeProvider as StyledComponentsThemeProvider, createGlobalStyle, css } from 'styled-components'
+import {
+  DefaultTheme,
+  ThemeProvider as StyledComponentsThemeProvider,
+  createGlobalStyle,
+  css,
+} from 'styled-components/macro'
 import { useMemo } from 'react'
 
 import { theme as themeUniswap } from '@src/theme'

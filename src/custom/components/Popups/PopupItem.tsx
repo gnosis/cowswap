@@ -1,5 +1,4 @@
-
-import styled from 'styled-components'
+import styled from 'styled-components/macro'
 import { PopupContent } from 'state/application/actions'
 import { default as PopupItemUni, Fader } from './PopupItemMod'
 

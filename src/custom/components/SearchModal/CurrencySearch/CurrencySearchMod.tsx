@@ -51,6 +51,8 @@ export interface CurrencySearchProps {
   showCommonBases?: boolean
   showManageView: () => void
   showImportView: () => void
+  showCurrencyAmount?: boolean
+  disableNonToken?: boolean
   setImportToken: (token: Token) => void
   FooterButtonTextComponent: (props: { theme: DefaultTheme }) => JSX.Element // MOD
 }
@@ -64,6 +66,7 @@ export function CurrencySearch({
   isOpen,
   showManageView,
   showImportView,
+  showCurrencyAmount,
   setImportToken,
   FooterButtonTextComponent, // MOD
 }: CurrencySearchProps) {

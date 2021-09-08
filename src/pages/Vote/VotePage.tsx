@@ -340,7 +340,7 @@ export default function VotePage({
               <Trans>Description</Trans>
             </TYPE.mediumHeader>
             <MarkDownWrapper>
-              <ReactMarkdown source={proposalData?.description} />
+              {proposalData?.description && <ReactMarkdown source={proposalData.description} />}
             </MarkDownWrapper>
           </AutoColumn>
           <AutoColumn gap="md">
@@ -354,7 +354,7 @@ export default function VotePage({
                   : ''
               }
             >
-              <ReactMarkdown source={proposalData?.proposer} />
+              {proposalData?.proposer && <ReactMarkdown source={proposalData.proposer} />}
             </ProposerAddressLink>
           </AutoColumn>
         </ProposalInfo>

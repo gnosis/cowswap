@@ -4,7 +4,7 @@ import ReactMarkdown, { ReactMarkdownPropsBase } from 'react-markdown'
 import useFetchFile from 'hooks/useFetchFile'
 import { HeadingRenderer } from './renderers'
 import Page, { Title, Content } from 'components/Page'
-import styled from 'styled-components'
+import styled from 'styled-components/macro'
 import { WithClassName } from 'types'
 import { LinkScrollable, Link } from 'components/Link'
 

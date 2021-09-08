@@ -6,7 +6,7 @@ import PopupItem from 'components/Popups/PopupItem'
 import { useURLWarningVisible } from 'state/user/hooks'
 import { useActiveWeb3React } from 'hooks/web3'
 import { SupportedChainId } from 'constants/chains'
-import { MEDIA_WIDTHS } from 'theme'
+import { MEDIA_WIDTHS } from '@src/theme'
 
 const MobilePopupWrapper = styled.div<{ height: string | number }>`
   position: relative;

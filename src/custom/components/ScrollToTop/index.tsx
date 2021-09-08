@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import styled from 'styled-components'
+import styled from 'styled-components/macro'
 import { ArrowUpCircle } from 'react-feather'
 import useDebouncedChangeHandler from 'hooks/useDebouncedChangeHandler'
 

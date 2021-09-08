@@ -122,7 +122,7 @@ export function ImportToken({
                     </TYPE.small>
                   </RowFixed>
                 ) : (
-                  <WarningWrapper borderRadius="4px" padding="4px" highWarning={true}>
+                  <WarningWrapper $borderRadius="4px" padding="4px" highWarning={true}>
                     <RowFixed>
                       <AlertCircle stroke={theme.red1} size="10px" />
                       <TYPE.body color={theme.red1} ml="4px" fontSize="10px" fontWeight={500}>

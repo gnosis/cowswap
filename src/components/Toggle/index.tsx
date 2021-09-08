@@ -4,7 +4,7 @@ import { darken } from 'polished'
 import { ReactNode } from 'react'
 import styled from 'styled-components/macro'
 
-const ToggleElement = styled.span<{ isActive?: boolean; isOnSwitch?: boolean }>`
+export const ToggleElement = styled.span<{ isActive?: boolean; isOnSwitch?: boolean }>`
   padding: 0.25rem 0.6rem;
   border-radius: 9px;
   background: ${({ theme, isActive, isOnSwitch }) => (isActive ? (isOnSwitch ? theme.primary1 : theme.bg4) : 'none')};
@@ -30,7 +30,7 @@ const StyledToggle = styled.button<{ isActive?: boolean; activeElement?: boolean
   padding: 2px;
 `
 
-interface ToggleProps extends WithClassName {
+export interface ToggleProps extends WithClassName {
   id?: string
   isActive: boolean
   toggle: () => void

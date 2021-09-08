@@ -29,7 +29,7 @@ import OrdersPanel from 'components/OrdersPanel'
 
 import { supportedChainId } from 'utils/supportedChainId'
 import { formatSmart } from 'utils/format'
-import { YellowCard } from 'components/Card'
+import NetworkCard from 'components/Header/NetworkCard'
 
 export const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
   [ChainId.RINKEBY]: 'Rinkeby',
@@ -81,32 +81,6 @@ export const HeaderModWrapper = styled(HeaderMod)`
   ${HeaderLinks} {
     margin: 5px 0 0 0;
   }
-`
-
-const NetworkCardUni = styled(YellowCard)`
-  border-radius: 12px;
-  padding: 8px 12px;
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    margin: 0;
-    margin-right: 0.5rem;
-    width: initial;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    flex-shrink: 1;
-  `};
-`
-
-const NetworkCard = styled(NetworkCardUni)`
-  background-color: ${({ theme }) => theme.networkCard.background};
-  color: ${({ theme }) => theme.networkCard.text};
-
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    margin: 0 0 0 8px;
-  `};
-
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    display: none;
-  `};
 `
 
 const TwitterLink = styled(StyledMenuButton)`
@@ -190,11 +164,7 @@ export default function Header() {
       </HeaderRow>
       <HeaderControls>
         <HeaderElement>
-          <HideSmall>
-            {chainId && NETWORK_LABELS[chainId] && (
-              <NetworkCard title={NETWORK_LABELS[chainId]}>{NETWORK_LABELS[chainId]}</NetworkCard>
-            )}
-          </HideSmall>
+          <HideSmall>{chainId && NETWORK_LABELS[chainId] && <NetworkCard />}</HideSmall>
           <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
             {account && userEthBalance ? (
               <BalanceText style={{ flexShrink: 0 }} pl="0.75rem" pr="0.5rem" fontWeight={500}>

@@ -1,5 +1,5 @@
 import Page, { Title, Content, GdocsListStyle } from 'components/Page'
-import styled from 'styled-components'
+import styled from 'styled-components/macro'
 import { Trans } from '@lingui/macro'
 import CowsImg from 'assets/images/cows.png'
 import CopyHelper from 'components/Copy'

@@ -1,5 +1,5 @@
 import styled from 'styled-components/macro'
-import { useLastTruthy } from '../../hooks/useLast'
+import { useLastTruthy } from 'hooks/useLast'
 import { AdvancedSwapDetails, AdvancedSwapDetailsProps } from '@src/components/swap/AdvancedSwapDetails'
 
 const AdvancedDetailsFooter = styled.div<{ show: boolean }>`

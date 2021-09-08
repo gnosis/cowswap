@@ -23,11 +23,6 @@ export enum FlyoutAlignment {
   RIGHT = 'RIGHT',
 }
 
-export enum FlyoutAlignment {
-  LEFT = 'LEFT',
-  RIGHT = 'RIGHT',
-}
-
 const StyledMenuIcon = styled(MenuIcon)`
   path {
     stroke: ${({ theme }) => theme.text1};
@@ -336,57 +331,6 @@ export const NewMenu = ({ flyoutAlignment = FlyoutAlignment.RIGHT, ToggleUI, men
               </ExternalMenuItem>
             ) : (
               <NewMenuItem to={link} key={i}>
-                {content}
-              </NewMenuItem>
-            )
-          )}
-        </NewMenuFlyout>
-      )}
-    </StyledMenu>
-  )
-}
-
-interface NewMenuProps {
-  flyoutAlignment?: FlyoutAlignment
-  ToggleUI?: React.FunctionComponent
-  menuItems: {
-    content: any
-    link: string
-    external: boolean
-  }[]
-}
-
-const NewMenuFlyout = styled(MenuFlyout)`
-  top: 3rem !important;
-`
-const NewMenuItem = styled(InternalMenuItem)`
-  width: max-content;
-  text-decoration: none;
-`
-
-const ExternalMenuItem = styled(MenuItem)`
-  width: max-content;
-  text-decoration: none;
-`
-
-export const NewMenu = ({ flyoutAlignment = FlyoutAlignment.RIGHT, ToggleUI, menuItems, ...rest }: NewMenuProps) => {
-  const node = useRef<HTMLDivElement>()
-  const open = useModalOpen(ApplicationModal.POOL_OVERVIEW_OPTIONS)
-  const toggle = useToggleModal(ApplicationModal.POOL_OVERVIEW_OPTIONS)
-  useOnClickOutside(node, open ? toggle : undefined)
-  const ToggleElement = ToggleUI || StyledMenuIcon
-  return (
-    <StyledMenu ref={node as any} {...rest}>
-      <ToggleElement onClick={toggle} />
-      {open && (
-        <NewMenuFlyout flyoutAlignment={flyoutAlignment}>
-          {menuItems.map(({ content, link, external }, i) =>
-            external ? (
-              <ExternalMenuItem id="link" href={link} key={link + i}>
-                {content}
-              </ExternalMenuItem>
-            ) : (
-              <NewMenuItem id="link" to={link} key={link + i}>
                 {content}
               </NewMenuItem>
             )

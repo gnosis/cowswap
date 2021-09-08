@@ -4,7 +4,7 @@ import SlippageTabsMod, {
   OptionCustom,
 } from './TransactionSettingsMod'
 import { RowFixed } from 'components/Row'
-import styled from 'styled-components'
+import styled from 'styled-components/macro'
 
 // TODO: option was restyled in v3, review if this change is necessary
 export const Option = styled(FancyButtonUni)<{ active: boolean }>`

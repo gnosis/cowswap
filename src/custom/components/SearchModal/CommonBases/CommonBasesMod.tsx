@@ -5,17 +5,10 @@ import styled from 'styled-components/macro'
 
 import { COMMON_BASES } from 'constants/routing'
 import { currencyId } from 'utils/currencyId'
-// import { AutoColumn } from 'components/Column'
 import QuestionHelper from 'components/QuestionHelper'
 import { AutoRow } from 'components/Row'
 import CurrencyLogo from 'components/CurrencyLogo'
-import { BaseWrapper, CommonBasesRow, CommonBasesProps, AutoColumn } from '.' // mod
-
-const MobileWrapper = styled(AutoColumn)`
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    display: none;
-  `};
-`
+import { BaseWrapper, CommonBasesRow, CommonBasesProps, MobileWrapper } from '.' // mod
 
 export const BaseWrapperMod = styled.div<{ disable?: boolean }>`
   // mod

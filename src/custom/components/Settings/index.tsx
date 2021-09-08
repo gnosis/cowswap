@@ -1,6 +1,6 @@
 import { WithClassName } from 'types'
 
-import styled from 'styled-components'
+import styled from 'styled-components/macro'
 import { RowFixed } from 'components/Row'
 import SettingsMod, { StyledMenuButton, MenuFlyout, StyledMenuIcon, EmojiWrapper } from './SettingsMod'
 import { Percent } from '@uniswap/sdk-core'

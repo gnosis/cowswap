@@ -56,7 +56,7 @@ export interface Colors {
   warning: Color
 }
 
-declare module 'styled-components/macro' {
+declare module 'styled-components' {
   export interface DefaultTheme extends Colors {
     grids: Grids
 

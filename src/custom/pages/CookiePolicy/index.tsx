@@ -1,7 +1,7 @@
 import contentFile from './CookiePolicy.md'
 import { MarkdownPage } from 'components/Markdown'
 import { GdocsListStyle } from 'components/Page'
-import styled from 'styled-components'
+import styled from 'styled-components/macro'
 
 const Wrapper = styled(MarkdownPage)`
   ${GdocsListStyle}

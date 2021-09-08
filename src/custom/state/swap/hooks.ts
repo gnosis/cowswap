@@ -380,7 +380,7 @@ export function useReplaceSwapState() {
 
 interface CurrencyWithAddress {
   currency?: Currency
-  address?: string
+  address?: string | null
 }
 
 export function useDetectNativeToken(input?: CurrencyWithAddress, output?: CurrencyWithAddress, chainId?: ChainId) {
@@ -411,7 +411,7 @@ export function useDetectNativeToken(input?: CurrencyWithAddress, output?: Curre
   }, [input, output, chainId])
 }
 
-export function useIsFeeGreaterThanInput({ address, chainId }: { address?: string; chainId?: ChainId }): {
+export function useIsFeeGreaterThanInput({ address, chainId }: { address?: string | null; chainId?: ChainId }): {
   isFeeGreater: boolean
   fee: CurrencyAmount<Currency> | null
 } {

@@ -1,4 +1,3 @@
-
 import { Percent } from '@uniswap/sdk-core'
 import styled from 'styled-components/macro'
 import { useLastTruthy } from 'hooks/useLast'

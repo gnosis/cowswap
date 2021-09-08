@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import TradeGp from 'state/swap/TradeGp'
 import QuestionHelper from 'components/QuestionHelper'
-import styled from 'styled-components'
+import styled from 'styled-components/macro'
 import { useUSDCValue } from 'hooks/useUSDCPrice'
 import { formatMax, formatSmart } from 'utils/format'
 import useTheme from 'hooks/useTheme'
