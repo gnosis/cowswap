@@ -1,4 +1,3 @@
-import React from 'react'
 import SlippageTabsMod, {
   TransactionSettingsProps as TransactionSettingsPropsMod,
   FancyButton as FancyButtonUni,

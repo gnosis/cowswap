@@ -1,5 +1,5 @@
 import { Trans } from '@lingui/macro'
-import React, { ErrorInfo } from 'react'
+import { ErrorInfo } from 'react'
 import store, { AppState } from '../../state'
 import { ExternalLink, TYPE } from '../../theme'
 import { AutoColumn } from '../Column'

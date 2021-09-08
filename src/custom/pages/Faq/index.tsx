@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import { useCallback, useState } from 'react'
 import Page, { Content, Title } from 'components/Page'
 import styled from 'styled-components'
 import { DISCORD_LINK } from 'constants/index'

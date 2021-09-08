@@ -1,4 +1,4 @@
-import React from 'react'
+
 import ListUpdatePopupMod from './ListUpdatePopupMod'
 import { TokenList } from '@uniswap/token-lists'
 import { ListRowProps } from '../SearchModal/ManageLists'

@@ -1,4 +1,4 @@
-import React, { PropsWithChildren } from 'react'
+import { PropsWithChildren } from 'react'
 
 import styled, { css } from 'styled-components'
 import AppBody from 'pages/AppBody'

@@ -1,4 +1,4 @@
-import React from 'react'
+
 import { GpModal } from 'components/Modal' // mod
 import styled from 'styled-components'
 import WalletModalMod, { WalletModalProps } from './WalletModalMod'

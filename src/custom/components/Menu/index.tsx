@@ -1,12 +1,12 @@
-import React from 'react'
 import { Code, MessageCircle, HelpCircle, BookOpen, PieChart } from 'react-feather'
 
 import MenuMod, { MenuItem, InternalMenuItem, MenuFlyout as MenuFlyoutUni } from './MenuMod'
-import { useCloseModals } from 'state/application/hooks'
-import styled from 'styled-components'
+import { useToggleModal } from 'state/application/hooks'
+import styled from 'styled-components/macro'
 import { Separator as SeparatorBase } from 'components/swap/styleds'
 import { CONTRACTS_CODE_LINK, DISCORD_LINK, DOCS_LINK, DUNE_DASHBOARD_LINK } from 'constants/index'
 import GameIcon from 'assets/cow-swap/game.gif'
+import { ApplicationModal } from 'state/application/actions'
 
 export const StyledMenu = styled(MenuMod)`
   hr {
@@ -141,7 +141,7 @@ export const CloseMenu = styled.button`
 `
 
 export function Menu() {
-  const close = useCloseModals()
+  const close = useToggleModal(ApplicationModal.MENU)
 
   return (
     <StyledMenu>

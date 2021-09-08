@@ -1,5 +1,5 @@
 // import { darken } from 'polished'
-import React from 'react'
+
 import styled, { css } from 'styled-components'
 import { darken } from 'polished'
 import useLoadingWithTimeout from 'hooks/useLoadingWithTimeout'

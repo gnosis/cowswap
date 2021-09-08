@@ -1,4 +1,3 @@
-import React from 'react'
 import styled from 'styled-components'
 import loadingCowGif from 'assets/cow-swap/cow-load.gif'
 import { ArrowDown } from 'react-feather'

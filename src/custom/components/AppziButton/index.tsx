@@ -1,4 +1,3 @@
-import React from 'react'
 import styled from 'styled-components'
 import { ButtonPrimary } from '../Button'
 import FeedbackIcon from './../../assets/cow-swap/feedback.svg'

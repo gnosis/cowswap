@@ -1,4 +1,3 @@
-import React from 'react'
 import { Token } from '@uniswap/sdk-core'
 import { Trans } from '@lingui/macro'
 import styled from 'styled-components/macro'

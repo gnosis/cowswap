@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react'
+import { ReactNode } from 'react'
 import ReactMarkdownHtml from 'react-markdown/with-html'
 import ReactMarkdown, { ReactMarkdownPropsBase } from 'react-markdown'
 import useFetchFile from 'hooks/useFetchFile'

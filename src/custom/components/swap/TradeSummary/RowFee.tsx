@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import { useContext } from 'react'
 import { CurrencyAmount, Currency, TradeType } from '@uniswap/sdk-core'
 import { ThemeContext } from 'styled-components'
 import { TYPE } from 'theme'

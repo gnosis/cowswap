@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo, useEffect, ReactNode } from 'react'
+import { useState, useCallback, useMemo, useEffect, ReactNode } from 'react'
 import styled from 'styled-components'
 import { TransactionResponse } from '@ethersproject/providers'
 import { AlertTriangle } from 'react-feather'

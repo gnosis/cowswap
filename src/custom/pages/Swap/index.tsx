@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { RouteComponentProps } from 'react-router-dom'
 import styled, { DefaultTheme } from 'styled-components'
 import { Currency, CurrencyAmount, Token } from '@uniswap/sdk-core'

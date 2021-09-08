@@ -1,4 +1,4 @@
-import React from 'react'
+
 import styled from 'styled-components'
 import { ButtonProps } from 'rebass/styled-components'
 import { ChevronDown } from 'react-feather'

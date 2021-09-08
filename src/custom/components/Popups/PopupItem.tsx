@@ -1,4 +1,4 @@
-import React from 'react'
+
 import styled from 'styled-components'
 import { PopupContent } from 'state/application/actions'
 import { default as PopupItemUni, Fader } from './PopupItemMod'

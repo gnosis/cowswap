@@ -7,6 +7,7 @@ describe('application reducer', () => {
 
   beforeEach(() => {
     store = createStore(reducer, {
+      chainId: null,
       popupList: [],
       blockNumber: {
         [1]: 3,
@@ -48,6 +49,16 @@ describe('application reducer', () => {
       expect(store.getState().openModal).toEqual(ApplicationModal.CLAIM_POPUP)
       store.dispatch(setOpenModal(null))
       expect(store.getState().openModal).toEqual(null)
+    })
+  })
+
+  describe('updateChainId', () => {
+    it('updates chain id', () => {
+      expect(store.getState().chainId).toEqual(null)
+
+      store.dispatch(updateChainId({ chainId: 1 }))
+
+      expect(store.getState().chainId).toEqual(1)
     })
   })
 

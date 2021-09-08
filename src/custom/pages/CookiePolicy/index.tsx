@@ -1,4 +1,3 @@
-import React from 'react'
 import contentFile from './CookiePolicy.md'
 import { MarkdownPage } from 'components/Markdown'
 import { GdocsListStyle } from 'components/Page'

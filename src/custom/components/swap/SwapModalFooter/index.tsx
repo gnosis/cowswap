@@ -1,4 +1,4 @@
-import React from 'react'
+
 import SwapModalFooterMod, { SwapModalFooterProps } from './SwapModalFooterMod'
 import { StyledBalanceMaxMini } from 'components/swap/styleds'
 import { RowBetween, RowFixed } from 'components/Row'

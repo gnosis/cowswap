@@ -1,4 +1,4 @@
-import React from 'react'
+
 import { Trans } from '@lingui/macro'
 import { RowFixed } from 'components/Row'
 import { IconWrapper, TYPE } from 'theme'

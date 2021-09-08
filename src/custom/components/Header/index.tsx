@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { SupportedChainId as ChainId } from 'constants/chains'
 import Web3Status from 'components/Web3Status'
 import { ExternalLink } from 'theme'
 
 import HeaderMod, {
-  NetworkCard as NetworkCardUni,
   Title,
   HeaderLinks,
   HeaderRow,
@@ -19,7 +18,7 @@ import HeaderMod, {
 } from './HeaderMod'
 import Menu from '../Menu'
 import { Moon, Sun } from 'react-feather'
-import styled from 'styled-components'
+import styled from 'styled-components/macro'
 import { useActiveWeb3React } from 'hooks/web3'
 import { useETHBalances } from 'state/wallet/hooks'
 import { AMOUNT_PRECISION } from 'constants/index'
@@ -30,6 +29,7 @@ import OrdersPanel from 'components/OrdersPanel'
 
 import { supportedChainId } from 'utils/supportedChainId'
 import { formatSmart } from 'utils/format'
+import { YellowCard } from 'components/Card'
 
 export const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
   [ChainId.RINKEBY]: 'Rinkeby',
@@ -81,6 +81,19 @@ export const HeaderModWrapper = styled(HeaderMod)`
   ${HeaderLinks} {
     margin: 5px 0 0 0;
   }
+`
+
+const NetworkCardUni = styled(YellowCard)`
+  border-radius: 12px;
+  padding: 8px 12px;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    margin: 0;
+    margin-right: 0.5rem;
+    width: initial;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex-shrink: 1;
+  `};
 `
 
 const NetworkCard = styled(NetworkCardUni)`

@@ -1,4 +1,3 @@
-import React from 'react'
 import Page, { Content } from 'components/Page'
 import styled from 'styled-components'
 import { CowGame } from '@gnosis.pm/cow-runner-game'

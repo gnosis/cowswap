@@ -1,4 +1,4 @@
-import React from 'react'
+
 import styled from 'styled-components'
 import { Currency, CurrencyAmount } from '@uniswap/sdk-core'
 import { LONG_PRECISION, UNSUPPORTED_TOKENS_FAQ_URL } from 'constants/index'

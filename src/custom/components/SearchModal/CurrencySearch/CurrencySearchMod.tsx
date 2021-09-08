@@ -1,5 +1,5 @@
 import { Currency, Token } from '@uniswap/sdk-core'
-import React, { KeyboardEvent, RefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { KeyboardEvent, RefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import ReactGA from 'react-ga'
 import { t, Trans } from '@lingui/macro'
 import { FixedSizeList } from 'react-window'
@@ -214,6 +214,7 @@ export function CurrencySearch({
                 fixedListRef={fixedList}
                 showImportView={showImportView}
                 setImportToken={setImportToken}
+                showCurrencyAmount={showCurrencyAmount}
               />
             )}
           </AutoSizer>

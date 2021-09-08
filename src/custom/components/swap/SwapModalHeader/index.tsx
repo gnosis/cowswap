@@ -1,4 +1,4 @@
-import React from 'react'
+
 // import { computeTradePriceBreakdown } from '../TradeSummary'
 import SwapModalHeaderMod, { SwapModalHeaderProps } from './SwapModalHeaderMod'
 import { AutoColumn } from 'components/Column'

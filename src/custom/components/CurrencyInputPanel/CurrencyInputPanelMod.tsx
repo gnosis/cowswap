@@ -1,6 +1,6 @@
 import { Pair } from '@uniswap/v2-sdk'
 import { Currency, CurrencyAmount, Percent, Token } from '@uniswap/sdk-core'
-import React, { useState, useCallback, ReactNode } from 'react'
+import { useState, useCallback, ReactNode } from 'react'
 import styled from 'styled-components/macro'
 import { darken } from 'polished'
 import { useCurrencyBalance } from 'state/wallet/hooks'
@@ -175,6 +175,8 @@ export default function CurrencyInputPanel({
   otherCurrency,
   id,
   showCommonBases,
+  showCurrencyAmount,
+  disableNonToken,
   renderBalance,
   fiatValue,
   priceImpact,
@@ -210,6 +212,7 @@ export default function CurrencyInputPanel({
         <Container hideInput={hideInput} showAux={!!label}>
           <InputRow style={hideInput ? { padding: '0', borderRadius: '8px' } : {}} selected={!onCurrencySelect}>
             <CurrencySelect
+              visible={currency !== null}
               selected={!!currency}
               hideInput={hideInput}
               className="open-currency-select-button"
@@ -311,6 +314,8 @@ export default function CurrencyInputPanel({
             selectedCurrency={currency}
             otherSelectedCurrency={otherCurrency}
             showCommonBases={showCommonBases}
+            showCurrencyAmount={showCurrencyAmount}
+            disableNonToken={disableNonToken}
           />
         )}
       </InputPanel>

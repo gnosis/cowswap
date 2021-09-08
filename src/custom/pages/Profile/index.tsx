@@ -1,4 +1,3 @@
-import React from 'react'
 import Page, { Title, Content, GdocsListStyle } from 'components/Page'
 import styled from 'styled-components'
 import { Trans } from '@lingui/macro'

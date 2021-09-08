@@ -1,4 +1,4 @@
-import React, { useContext, useMemo } from 'react'
+import { useContext, useMemo } from 'react'
 import { Percent, TradeType } from '@uniswap/sdk-core'
 import { ThemeContext } from 'styled-components'
 import { Trans } from '@lingui/macro'

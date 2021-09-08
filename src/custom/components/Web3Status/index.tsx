@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import styled from 'styled-components'
 import WalletModal from 'components/WalletModal'
 import { Web3StatusInner, Web3StatusConnected } from './Web3StatusMod'

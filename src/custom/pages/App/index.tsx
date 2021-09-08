@@ -1,4 +1,3 @@
-import React from 'react'
 import AppMod from './AppMod'
 import styled from 'styled-components'
 import { RedirectPathToSwapOnly, RedirectToSwap } from 'pages/Swap/redirects'

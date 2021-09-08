@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import TradeGp from 'state/swap/TradeGp'
 import QuestionHelper from 'components/QuestionHelper'
 import styled from 'styled-components'

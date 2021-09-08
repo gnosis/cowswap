@@ -1,5 +1,5 @@
 import { DefaultTheme, ThemeProvider as StyledComponentsThemeProvider, createGlobalStyle, css } from 'styled-components'
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import Cursor1 from 'assets/cow-swap/cursor1.gif'
 import Cursor2 from 'assets/cow-swap/cursor2.gif'
 import Cursor3 from 'assets/cow-swap/cursor3.gif'
