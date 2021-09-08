@@ -47,7 +47,7 @@ import {
 } from './styled'
 import { getLimitPrice, getExecutionPrice } from 'state/orders/utils'
 import { DEFAULT_PRECISION } from 'constants/index'
-import { useWalletInfo } from '@src/custom/hooks/useWalletInfo'
+import { useWalletInfo } from 'hooks/useWalletInfo'
 
 const DEFAULT_ORDER_SUMMARY = {
   from: '',
