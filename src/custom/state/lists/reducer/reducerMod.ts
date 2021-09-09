@@ -103,7 +103,6 @@ export default createReducer(initialState, (builder) =>
         state.byUrl[url] = {
           current: null,
           pendingUpdate: null,
-          ...state.byUrl[url],
           loadingRequestId: requestId,
           error: null,
         }
@@ -123,7 +122,6 @@ export default createReducer(initialState, (builder) =>
           if (upgradeType === VersionUpgrade.NONE) return
           if (loadingRequestId === null || loadingRequestId === requestId) {
             state.byUrl[url] = {
-              ...state.byUrl[url],
               loadingRequestId: null,
               error: null,
               current: current,
@@ -137,7 +135,6 @@ export default createReducer(initialState, (builder) =>
           }
 
           state.byUrl[url] = {
-            ...state.byUrl[url],
             loadingRequestId: null,
             error: null,
             current: tokenList,
@@ -156,7 +153,6 @@ export default createReducer(initialState, (builder) =>
         }
 
         state.byUrl[url] = {
-          ...state.byUrl[url],
           loadingRequestId: null,
           error: errorMessage,
           current: null,
