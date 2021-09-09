@@ -1,5 +1,4 @@
-import { Code, MessageCircle, HelpCircle, BookOpen, PieChart } from 'react-feather'
-
+import { Code, MessageCircle, HelpCircle, FileText, BookOpen, PieChart } from 'react-feather'
 import MenuMod, { MenuItem, InternalMenuItem, MenuFlyout as MenuFlyoutUni } from './MenuMod'
 import { useToggleModal } from 'state/application/hooks'
 import styled from 'styled-components/macro'
@@ -149,6 +148,12 @@ export function Menu() {
     <StyledMenu>
       <MenuFlyout>
         <CloseMenu onClick={close} />
+        <InternalMenuItem to="/about" onClick={close}>
+          <span aria-hidden="true" onClick={close} onKeyDown={close}>
+            <FileText size={14} />
+            About
+          </span>
+        </InternalMenuItem>
         <InternalMenuItem to="/faq" onClick={close}>
           <HelpCircle size={14} />
           FAQ

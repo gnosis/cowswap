@@ -1,6 +1,6 @@
 import styled from 'styled-components/macro'
 import { PopupContent } from 'state/application/actions'
-import { default as PopupItemUni, Fader } from './PopupItemMod'
+import { default as PopupItemUni, Fader, StyledClose } from './PopupItemMod'
 
 export const Wrapper = styled(PopupItemUni)`
   ${(props) => props.className} {
@@ -10,6 +10,10 @@ export const Wrapper = styled(PopupItemUni)`
     ${Fader} {
       background-color: ${({ theme }) => theme.disabled};
       height: 4px;
+    }
+
+    ${StyledClose} {
+      stroke: ${({ theme }) => theme.text1};
     }
 
     a {

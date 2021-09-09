@@ -19,6 +19,7 @@ import ListsUpdater from 'state/lists/updater'
 import MulticallUpdater from './state/multicall/updater'
 import LogsUpdater from './state/logs/updater'
 import TransactionUpdater from './state/transactions/updater'
+import EnhancedTransactionUpdater from 'state/enhancedTransactions/updater'
 import UserUpdater from './state/user/updater'
 import FeesUpdater from 'state/price/updater'
 import GasUpdater from 'state/gas/updater'
@@ -29,6 +30,11 @@ import getLibrary from './utils/getLibrary'
 import { analyticsId } from './custom/utils/analytics'
 import AppziButton from 'components/AppziButton'
 import RadialGradientByChainUpdater from 'theme/RadialGradientByChainUpdater'
+import { nodeRemoveChildFix } from 'utils/node'
+
+// Node removeChild hackaround
+// based on: https://github.com/facebook/react/issues/11538#issuecomment-417504600
+nodeRemoveChildFix()
 
 const Web3ProviderNetwork = createWeb3ReactRoot(NetworkContextName)
 
@@ -63,6 +69,7 @@ function Updaters() {
       <UserUpdater />
       <ApplicationUpdater />
       <TransactionUpdater />
+      <EnhancedTransactionUpdater />
       <MulticallUpdater />
       <PendingOrdersUpdater />
       <CancelledOrdersUpdater />
