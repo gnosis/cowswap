@@ -10,7 +10,7 @@ import Copy from 'components/Copy'
 import Transaction from 'components/AccountDetails/Transaction'
 
 import { ReactComponent as Close } from '../../assets/images/x.svg'
-import { injected, walletconnect, walletlink, fortmatic, portis } from '../../connectors'
+import { injected, walletconnect, walletlink, fortmatic, portis } from 'connectors'
 import CoinbaseWalletIcon from '../../assets/images/coinbaseWalletIcon.svg'
 import WalletConnectIcon from '../../assets/images/walletConnectIcon.svg'
 import FortmaticIcon from '../../assets/images/fortmaticIcon.png'

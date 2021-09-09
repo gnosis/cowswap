@@ -3,7 +3,7 @@ import { useWeb3React } from '@web3-react/core'
 import styled from 'styled-components/macro'
 import { Trans } from '@lingui/macro'
 
-import { network } from '../../connectors'
+import { network } from 'connectors'
 import { useEagerConnect, useInactiveListener } from '../../hooks/web3'
 import { NetworkContextName } from '../../constants/misc'
 import Loader from '../Loader'
