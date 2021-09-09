@@ -32,7 +32,7 @@ export function generateReferralMetadataDoc(
       ...appDataDoc.metadata,
       referrer: {
         address: referralAddress,
-        version: '1.0.0',
+        version: '0.1.0',
       },
     },
   }
@@ -40,7 +40,7 @@ export function generateReferralMetadataDoc(
 
 export function generateAppDataDoc(metadata: MetadataDoc = {}): AppDataDoc {
   return {
-    version: '1.0.0',
+    version: '0.1.0',
     appCode: DEFAULT_APP_CODE,
     metadata: {
       ...metadata,
