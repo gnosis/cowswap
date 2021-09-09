@@ -380,6 +380,10 @@ export default function Swap({
   // errors
   const [showInverted, setShowInverted] = useState<boolean>(false)
 
+  const throwError = () => {
+    throw new Error('Sentry test error!!!')
+  }
+
   // warnings on the greater of fiat value price impact and execution price impact
   // const priceImpactSeverity = useMemo(() => {
   //   const executionPriceImpact = trade?.priceImpact
@@ -692,6 +696,9 @@ export default function Swap({
               </Card>
             )}
           </AutoColumn>
+
+          <button onClick={throwError}>Throw error</button>
+
           <BottomGrouping>
             {swapIsUnsupported ? (
               <ButtonPrimary disabled={true} buttonSize={ButtonSize.BIG}>
