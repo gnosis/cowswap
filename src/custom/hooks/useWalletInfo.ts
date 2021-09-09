@@ -8,6 +8,10 @@ import { NetworkContextName } from 'constants/misc'
 import { UNSUPPORTED_WC_WALLETS } from 'constants/index'
 import { getProviderType, WalletProvider } from 'connectors'
 import { useActiveWeb3Instance } from 'hooks/index'
+import Safe, { EthersAdapter } from '@gnosis.pm/safe-core-sdk'
+import { ethers } from 'ethers'
+
+const GNOSIS_SAFE_WALLET_NAMES = ['Gnosis Safe Multisig']
 
 export interface ConnectedWalletInfo {
   active: boolean
@@ -20,6 +24,7 @@ export interface ConnectedWalletInfo {
   icon?: string
   isSupportedWallet: boolean
   allowsOffchainSigning: boolean
+  gnosisSafe?: Safe
 }
 
 async function checkIsSmartContractWallet(
@@ -53,7 +58,8 @@ async function getWcPeerMetadata(connector: WalletConnectConnector): Promise<{ w
 }
 
 export function useWalletInfo(): ConnectedWalletInfo {
-  const { active, account, connector } = useWeb3React()
+  const { active, account, connector, library } = useWeb3React()
+  // const { library } = useActiveWeb3React()
   const web3Instance = useActiveWeb3Instance()
   const [walletName, setWalletName] = useState<string>()
   const [icon, setIcon] = useState<string>()
@@ -61,6 +67,22 @@ export function useWalletInfo(): ConnectedWalletInfo {
   const [isSmartContractWallet, setIsSmartContractWallet] = useState(false)
   const contextNetwork = useWeb3React(NetworkContextName)
   const { ENSName } = useENSName(account ?? undefined)
+  const [gnosisSafe, setGnosisSafe] = useState<Safe>()
+
+  useEffect(() => {
+    const signer = library?.getSigner()
+    if (!signer || !account || !walletName || !GNOSIS_SAFE_WALLET_NAMES.includes(walletName)) {
+      setGnosisSafe(undefined)
+    } else {
+      const ethAdapter = new EthersAdapter({
+        ethers,
+        signer, // we don't need the signer, since we use WC and not an EOA to interact with the safe. However, it needs it!
+      })
+      Safe.create({ ethAdapter, safeAddress: account }).then(setGnosisSafe).catch(console.error)
+    }
+  }, [library, account, walletName])
+
+  console.log('gnosisSafe', gnosisSafe)
 
   useEffect(() => {
     // Set the current provider
@@ -103,5 +125,6 @@ export function useWalletInfo(): ConnectedWalletInfo {
     // allowsOffchainSigning: !isSmartContractWallet,
     // TODO: Uncomment previous line after testing. This is just convenient to test presign functionality with an EOA
     allowsOffchainSigning: false,
+    gnosisSafe,
   }
 }
