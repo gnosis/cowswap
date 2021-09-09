@@ -100,9 +100,12 @@ export default createReducer(initialState, (builder) =>
       fetchTokenList.pending,
       (baseState, { payload: { chainId = DEFAULT_NETWORK_FOR_LISTS, requestId, url } }) => {
         const state = baseState[chainId]
+        const current = state.byUrl[url]?.current ?? null
+        const pendingUpdate = state.byUrl[url]?.pendingUpdate ?? null
+
         state.byUrl[url] = {
-          current: null,
-          pendingUpdate: null,
+          current,
+          pendingUpdate,
           loadingRequestId: requestId,
           error: null,
         }
