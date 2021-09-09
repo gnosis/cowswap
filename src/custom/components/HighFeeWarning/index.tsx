@@ -97,6 +97,9 @@ const HighFeeWarningMessage = ({ feePercentage }: { feePercentage?: Fraction }) 
       of your swap amount.
       <br />
       <br />
+      Consider waiting for lower fees.
+      <br />
+      <br />
       You may still move forward with this swap but a high percentage of it will be consumed by fees.
     </small>
   </div>
