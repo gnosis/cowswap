@@ -2,10 +2,10 @@ import React, { useMemo } from 'react'
 import TradeGp from 'state/swap/TradeGp'
 import QuestionHelper from 'components/QuestionHelper'
 import styled from 'styled-components'
-import { useUSDCValue } from 'hooks/useUSDCPrice'
-import { formatSmart } from 'utils/format'
+import { formatMax, formatSmart } from 'utils/format'
 import useTheme from 'hooks/useTheme'
 import { FIAT_PRECISION } from 'constants/index'
+import { CurrencyAmount, Token } from '@uniswap/sdk-core'
 
 interface FeeInformationTooltipProps {
   trade?: TradeGp
@@ -15,6 +15,7 @@ interface FeeInformationTooltipProps {
   amountAfterFees?: string
   feeAmount?: string
   type: 'From' | 'To'
+  fiatValue: CurrencyAmount<Token> | null
   showFiat?: boolean
 }
 
@@ -73,12 +74,24 @@ const FeeInnerWrapper = styled.div`
 `
 
 export default function FeeInformationTooltip(props: FeeInformationTooltipProps) {
-  const { trade, label, amountBeforeFees, amountAfterFees, feeAmount, type, showHelper, showFiat = false } = props
+  const {
+    trade,
+    label,
+    amountBeforeFees,
+    amountAfterFees,
+    feeAmount,
+    type,
+    showHelper,
+    fiatValue,
+    showFiat = false,
+  } = props
 
   const theme = useTheme()
-  const fiatValue = useUSDCValue(type === 'From' ? trade?.inputAmount : trade?.outputAmount)
 
-  const symbol = useMemo(() => trade?.[type === 'From' ? 'inputAmount' : 'outputAmount'].currency.symbol, [trade, type])
+  const [symbol, fullFeeAmount] = useMemo(() => {
+    const amount = trade?.[type === 'From' ? 'inputAmount' : 'outputAmount']
+    return amount ? [amount.currency.symbol || '', formatMax(amount, amount.currency.decimals) || '-'] : []
+  }, [trade, type])
 
   if (!trade || !showHelper) return null
 
@@ -119,7 +132,7 @@ export default function FeeInformationTooltip(props: FeeInformationTooltipProps)
           }
         />
       </span>
-      <FeeAmountAndFiat>
+      <FeeAmountAndFiat title={`${fullFeeAmount} ${symbol}`}>
         {amountAfterFees} {showFiat && fiatValue && <small>≈ ${formatSmart(fiatValue, FIAT_PRECISION)}</small>}
       </FeeAmountAndFiat>
     </FeeInformationTooltipWrapper>

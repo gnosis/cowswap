@@ -1,11 +1,11 @@
 import React from 'react'
-import { Code, MessageCircle, HelpCircle /*PieChart*/ } from 'react-feather'
+import { Code, MessageCircle, HelpCircle, FileText, BookOpen, PieChart } from 'react-feather'
 
 import MenuMod, { MenuItem, InternalMenuItem, MenuFlyout as MenuFlyoutUni } from './MenuMod'
 import { useCloseModals } from 'state/application/hooks'
 import styled from 'styled-components'
 import { Separator as SeparatorBase } from 'components/swap/styleds'
-import { CONTRACTS_CODE_LINK, DISCORD_LINK } from 'constants/index'
+import { CONTRACTS_CODE_LINK, DISCORD_LINK, DOCS_LINK, DUNE_DASHBOARD_LINK } from 'constants/index'
 import GameIcon from 'assets/cow-swap/game.gif'
 
 export const StyledMenu = styled(MenuMod)`
@@ -147,15 +147,26 @@ export function Menu() {
     <StyledMenu>
       <MenuFlyout>
         <CloseMenu onClick={close} />
+        <InternalMenuItem to="/about" onClick={close}>
+          <span aria-hidden="true" onClick={close} onKeyDown={close}>
+            <FileText size={14} />
+            About
+          </span>
+        </InternalMenuItem>
         <InternalMenuItem to="/faq" onClick={close}>
           <HelpCircle size={14} />
           FAQ
         </InternalMenuItem>
 
-        {/* <MenuItem id="link" href={DUNE_DASHBOARD_LINK}>
+        <MenuItem id="link" href={DOCS_LINK}>
+          <BookOpen size={14} />
+          Docs
+        </MenuItem>
+
+        <MenuItem id="link" href={DUNE_DASHBOARD_LINK}>
           <PieChart size={14} />
           Stats
-        </MenuItem> */}
+        </MenuItem>
 
         <MenuItem id="link" href={CONTRACTS_CODE_LINK}>
           <span aria-hidden="true" onClick={close} onKeyDown={close}>

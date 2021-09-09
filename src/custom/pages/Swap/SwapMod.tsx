@@ -44,7 +44,7 @@ import useIsArgentWallet from 'hooks/useIsArgentWallet'
 import { useIsSwapUnsupported } from 'hooks/useIsSwapUnsupported'
 import { useSwapCallback } from 'hooks/useSwapCallback'
 import { /* useToggledVersion, */ Version } from 'hooks/useToggledVersion'
-import { useUSDCValue } from 'hooks/useUSDCPrice'
+import { useHigherUSDValue /* , useUSDCValue */ } from 'hooks/useUSDCPrice'
 import useWrapCallback, { WrapType } from 'hooks/useWrapCallback'
 import { useActiveWeb3React } from 'hooks/web3'
 import { useWalletModalToggle /*, useToggleSettingsMenu */ } from 'state/application/hooks'
@@ -66,7 +66,7 @@ import { maxAmountSpend } from 'utils/maxAmountSpend'
 // import { warningSeverity } from 'utils/prices'
 import AppBody from 'pages/AppBody'
 
-import { /*PERCENTAGE_PRECISION,*/ INITIAL_ALLOWED_SLIPPAGE_PERCENT } from 'constants/index'
+import { AMOUNT_PRECISION, /*PERCENTAGE_PRECISION,*/ INITIAL_ALLOWED_SLIPPAGE_PERCENT } from 'constants/index'
 import { computeSlippageAdjustedAmounts } from 'utils/prices'
 // import { ClickableText } from 'pages/Pool/styleds'
 import FeeInformationTooltip from 'components/swap/FeeInformationTooltip'
@@ -78,7 +78,8 @@ import { SwapProps, ButtonError, ButtonPrimary, ButtonLight } from '.' // mod
 import TradeGp from 'state/swap/TradeGp'
 import AdvancedSwapDetailsDropdown from 'components/swap/AdvancedSwapDetailsDropdown'
 import { formatSmart } from 'utils/format'
-import { RowSlippage } from '@src/custom/components/swap/TradeSummary'
+import { RowSlippage } from 'components/swap/TradeSummary/RowSlippage'
+import usePrevious from 'hooks/usePrevious'
 
 export const StyledInfo = styled(Info)`
   opacity: 0.4;
@@ -228,8 +229,10 @@ export default function Swap({
     [independentField, parsedAmount, showWrap, trade]
   )
 
-  const fiatValueInput = useUSDCValue(parsedAmounts[Field.INPUT])
-  const fiatValueOutput = useUSDCValue(parsedAmounts[Field.OUTPUT])
+  // const fiatValueInput = useUSDCValue(parsedAmounts[Field.INPUT])
+  // const fiatValueOutput = useUSDCValue(parsedAmounts[Field.OUTPUT])
+  const fiatValueInput = useHigherUSDValue(parsedAmounts[Field.INPUT])
+  const fiatValueOutput = useHigherUSDValue(parsedAmounts[Field.OUTPUT])
   const priceImpact = computeFiatValuePriceImpact(fiatValueInput, fiatValueOutput)
 
   const { onSwitchTokens, onCurrencySelection, onUserInput, onChangeRecipient } = useSwapActionHandlers()
@@ -275,7 +278,7 @@ export default function Swap({
     [independentField]: typedValue,
     [dependentField]: showWrap
       ? parsedAmounts[independentField]?.toExact() ?? ''
-      : formatSmart(parsedAmounts[dependentField]) ?? '',
+      : formatSmart(parsedAmounts[dependentField], AMOUNT_PRECISION) ?? '',
   }
 
   /* const userHasSpecifiedInputOutput = Boolean(
@@ -286,6 +289,7 @@ export default function Swap({
 
   // check whether the user has approved the router on the input token
   const [approvalState, approveCallback] = useApproveCallbackFromTrade(trade, allowedSlippage)
+  const prevApprovalState = usePrevious(approvalState)
   const { state: signatureState, gatherPermitSignature } = useERC20PermitFromTrade(trade, allowedSlippage)
 
   const handleApprove = useCallback(async () => {
@@ -310,8 +314,11 @@ export default function Swap({
   useEffect(() => {
     if (approvalState === ApprovalState.PENDING) {
       setApprovalSubmitted(true)
+    } else if (prevApprovalState === ApprovalState.PENDING && approvalState === ApprovalState.NOT_APPROVED) {
+      // user canceled the approval tx, reset the UI
+      setApprovalSubmitted(false)
     }
-  }, [approvalState, approvalSubmitted])
+  }, [approvalState, approvalSubmitted, prevApprovalState])
 
   const maxInputAmount: CurrencyAmount<Currency> | undefined = maxAmountSpend(currencyBalances[Field.INPUT])
   const showMaxButton = Boolean(maxInputAmount?.greaterThan(0) && !parsedAmounts[Field.INPUT]?.equalTo(maxInputAmount))
@@ -445,7 +452,7 @@ export default function Swap({
     if (trade.tradeType === TradeType.EXACT_INPUT && trade.inputAmountWithFee.lessThan(trade.fee.amount)) {
       amountBeforeFees = '0'
     } else {
-      amountBeforeFees = formatSmart(trade.inputAmountWithoutFee)
+      amountBeforeFees = formatSmart(trade.inputAmountWithoutFee, AMOUNT_PRECISION)
     }
   }
 
@@ -487,9 +494,10 @@ export default function Swap({
                       trade={trade}
                       showHelper={independentField === Field.OUTPUT}
                       amountBeforeFees={amountBeforeFees}
-                      amountAfterFees={formatSmart(trade?.inputAmountWithFee)}
+                      amountAfterFees={formatSmart(trade?.inputAmountWithFee, AMOUNT_PRECISION)}
                       type="From"
-                      feeAmount={formatSmart(trade?.fee?.feeAsCurrency)}
+                      feeAmount={formatSmart(trade?.fee?.feeAsCurrency, AMOUNT_PRECISION)}
+                      fiatValue={fiatValueInput}
                     />
                   )
                 }
@@ -541,10 +549,14 @@ export default function Swap({
                       label={exactOutLabel}
                       trade={trade}
                       showHelper={independentField === Field.INPUT}
-                      amountBeforeFees={formatSmart(trade?.outputAmountWithoutFee)}
-                      amountAfterFees={formatSmart(trade?.outputAmount)}
+                      amountBeforeFees={formatSmart(trade?.outputAmountWithoutFee, AMOUNT_PRECISION)}
+                      amountAfterFees={formatSmart(trade?.outputAmount, AMOUNT_PRECISION)}
                       type="To"
-                      feeAmount={formatSmart(trade?.outputAmountWithoutFee?.subtract(trade?.outputAmount))}
+                      feeAmount={formatSmart(
+                        trade?.outputAmountWithoutFee?.subtract(trade?.outputAmount),
+                        AMOUNT_PRECISION
+                      )}
+                      fiatValue={fiatValueOutput}
                     />
                   )
                 }
@@ -665,7 +677,7 @@ export default function Swap({
                     // </RowBetween>
                     <RowSlippage allowedSlippage={allowedSlippage} fontSize={12} fontWeight={400} rowHeight={24} />
                   )}
-                  {(isFeeGreater || trade) && fee && <TradeBasicDetails fee={fee} trade={trade} />}
+                  {(isFeeGreater || trade) && fee && <TradeBasicDetails trade={trade} fee={fee} />}
                 </AutoColumn>
                 {/* ETH exactIn && wrapCallback returned us cb */}
                 {isNativeIn && onWrap && (

@@ -1,6 +1,6 @@
 import { ChainId } from 'state/lists/actions'
-import deterministicHash from '../deterministicHash'
-import { AppMetadata, UploadMetadataParams } from './operatorApi'
+import deterministicHash from 'utils/deterministicHash'
+import { AppMetadata, UploadMetadataParams } from './api'
 
 const appDataDoc = {
   version: '1.0.0',

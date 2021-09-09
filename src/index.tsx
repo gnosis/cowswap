@@ -17,15 +17,21 @@ import ApplicationUpdater from './state/application/updater'
 import ListsUpdater from 'state/lists/updater'
 import MulticallUpdater from './state/multicall/updater'
 import TransactionUpdater from './state/transactions/updater'
+import EnhancedTransactionUpdater from 'state/enhancedTransactions/updater'
 import UserUpdater from './state/user/updater'
 import FeesUpdater from 'state/price/updater'
 import GasUpdater from 'state/gas/updater'
-import { CancelledOrdersUpdater, EventUpdater } from 'state/orders/updater'
+import { CancelledOrdersUpdater, PendingOrdersUpdater, UnfillableOrdersUpdater } from 'state/orders/updaters'
 // import { EventUpdater } from 'state/orders/mocks'
 import ThemeProvider, { FixedGlobalStyle, ThemedGlobalStyle } from 'theme'
 import getLibrary from './utils/getLibrary'
 import { analyticsId } from './custom/utils/analytics'
 import AppziButton from 'components/AppziButton'
+import { nodeRemoveChildFix } from 'utils/node'
+
+// Node removeChild hackaround
+// based on: https://github.com/facebook/react/issues/11538#issuecomment-417504600
+nodeRemoveChildFix()
 
 const Web3ProviderNetwork = createWeb3ReactRoot(NetworkContextName)
 
@@ -59,10 +65,12 @@ function Updaters() {
       <UserUpdater />
       <ApplicationUpdater />
       <TransactionUpdater />
+      <EnhancedTransactionUpdater />
       <MulticallUpdater />
-      <EventUpdater />
+      <PendingOrdersUpdater />
       <CancelledOrdersUpdater />
       <FeesUpdater />
+      <UnfillableOrdersUpdater />
       <GasUpdater />
     </>
   )

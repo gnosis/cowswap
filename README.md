@@ -16,6 +16,8 @@ It allows you to buy and sell tokens using gas-less orders that are settled peer
     * ENS Website (alternative): <https://cowswap.eth.link>, or <https://cowswap.eth/> if you have MetaMask or an ENS compatible browser.
     * The website can also be run locally, or from IPFS. Every release will have an IPFS hash associated, available in the [Releases](https://github.com/gnosis/gp-swap-ui/releases) section.
 
+- Docs: <https://docs.cowswap.exchange>
+- Stats: <https://dune.xyz/gnosis.protocol/Gnosis-Protocol-V2>
 - Twitter: [@gnosisPM](https://twitter.com/gnosisPM)
 - Reddit: [/r/gnosisPM](https://www.reddit.com/r/gnosisPM)
 - Discord: <https://chat.cowswap.exchange>
@@ -78,11 +80,21 @@ Make a copy of `.env` named `.env.local`, this will allow you to set your own co
 ### Production configuration
 Modify the environment variables in `.env.production`, or override them in build time.
 
-### App Id
-The app id is included in all signed transaction, although the Gnosis Protocol is not using this information for now, it
-could be used for implementing incentive programs.
+### Metadata attached to orders (AppData)
+The app will attach some metadata to all orders.
 
-To set your own, change `REACT_APP_ID` environment variable. Ask for your id at [chat.gnosis.io](https://chat.gnosis.io)
+This metadata will be sent to the smart contract as an hexadecimal value in an order field called `AppData`. This value comes from hashing the content of a metadata JSON containing some information about the trade.
+
+Any web app or client using Gnosis Protocol can upload to IPFS a metadata JSON and use the digest hex to attach that 
+information to the order.
+
+For example, CowSwap uploaded the file https://cloudflare-ipfs.com/ipfs/QmTDarZ47oek1miuRd8uuNCy5AFfjzQbWJ7348izx9N8wQ 
+which has the hexadecimal digest `0x487B02C558D729ABAF3ECF17881A4181E5BC2446429A0995142297E897B6EB37` (See 
+[CID Explorer](https://cid.ipfs.io/#QmTDarZ47oek1miuRd8uuNCy5AFfjzQbWJ7348izx9N8wQ) for more details).
+
+The format of the JSON follows this typescript format: <src/custom/utils/metadata.ts>
+
+To set your own `AppData`, change `REACT_APP_DOMAIN_REGEX_<environment>` environment variable. Ask for yours at [chat.cowswap.exchange/](https://chat.cowswap.exchange/). For more details, check out the environment file (<.env>)
 
 
 ### Supported networks
