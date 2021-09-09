@@ -30,11 +30,9 @@ import { fetchOrderPopupData, OrderLogPopupMixData } from 'state/orders/updaters
  * @returns ids of the pending orders that were pending for pre-sign, and we now know are pre-signed
  */
 function _getNewlyPreSignedOrders(allPendingOrders: Order[], signedOrdersIds: OrderID[]) {
-  const presignaturePendingIds = allPendingOrders
-    .filter((order) => order.status === OrderStatus.PRESIGNATURE_PENDING)
+  return allPendingOrders
+    .filter((order) => order.status === OrderStatus.PRESIGNATURE_PENDING && signedOrdersIds.includes(order.id))
     .map((order) => order.id)
-
-  return signedOrdersIds.filter((order: OrderID) => presignaturePendingIds.includes(order))
 }
 
 export function PendingOrdersUpdater(): null {
