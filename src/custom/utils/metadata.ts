@@ -1,4 +1,3 @@
-import { create } from 'ipfs-http-client'
 import CID from 'cids'
 import multihashes from 'multihashes'
 import pinataSDK from '@pinata/sdk'
@@ -61,6 +60,7 @@ export function generateAppDataDoc(metadata: MetadataDoc = {}): AppDataDoc {
 
 export async function uploadMetadataDocToIpfs(appDataDoc: AppDataDoc): Promise<string> {
   try {
+    const { create } = await import('ipfs-http-client')
     const client = create({ url: getIpfsUri() })
     const doc = safeStringify.stableStringify(appDataDoc)
     const { cid } = await client.add(doc)
