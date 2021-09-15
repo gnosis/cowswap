@@ -321,8 +321,15 @@ export default function Faq() {
             >
               audited
             </ExternalLink>
-            . Whilst CowSwap has taken a major step forward in terms of security and stability, as with other crypto
-            protocols or dapps, it&#39;s recommended to use it at <strong>your own risk</strong>.
+            . Whilst CowSwap has taken a major step forward in terms of security and stability, as with other crypto 
+            protocols or dapps, your use is at your own risk. <strong> Please review our terms and conditions {' '}</strong>
+            <ExternalLink
+              href="https://cowswap.exchange/#/terms-and-conditions"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              audited
+            </ExternalLink>            
           </p>
         </Content>
       </Page>
