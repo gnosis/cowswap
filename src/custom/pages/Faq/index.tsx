@@ -321,15 +321,15 @@ export default function Faq() {
             >
               audited
             </ExternalLink>
-            . Whilst CowSwap has taken a major step forward in terms of security and stability, as with other crypto 
-            protocols or dapps, your use is at your own risk. <strong> Please review our terms and conditions {' '}</strong>
+            . Whilst CowSwap has taken a major step forward in terms of security and stability, as with other crypto
+            protocols or dapps, your use is at your own risk. <strong> Please review our terms and conditions </strong>
             <ExternalLink
               href="https://cowswap.exchange/#/terms-and-conditions"
               target="_blank"
               rel="noopener noreferrer"
             >
               audited
-            </ExternalLink>            
+            </ExternalLink>
           </p>
         </Content>
       </Page>
@@ -721,7 +721,7 @@ export default function Faq() {
             </span>
           </p>
 
-          {/* 
+          {/*
         <h2 id="discardedquestionstobeaddedlater">Discarded Questions to be added later</h2>
 
         <ul>
