@@ -97,6 +97,15 @@ export function themeVariables(darkMode: boolean, colorsTheme: Colors) {
         box-shadow: inset 2px -2px 4px ${darkMode ? '#1d4373' : '#ffffff'},
           inset -2px 2px 4px ${darkMode ? '#021E34' : 'rgb(162 200 216)'};
       `,
+      boxShadowEmbossed: css`
+        box-shadow: 10px 10px 20px ${darkMode ? '#01121f' : '#e2ecf1'},
+          -10px -10px 20px ${darkMode ? '#032a49' : '#ffffff'};
+        background: linear-gradient(
+          145deg,
+          ${darkMode ? '#021E34' : 'rgb(201 232 243 / 60%)'},
+          ${darkMode ? '#022038' : '#ffffff'}
+        );
+      `,
     },
     header: {
       border: `1px solid ${colorsTheme.border}`,
