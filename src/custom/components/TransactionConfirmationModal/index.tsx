@@ -22,25 +22,20 @@ import { ConfirmationModalContent as ConfirmationModalContentMod } from './Trans
 import { ColumnCenter } from 'components/Column'
 // import { lighten } from 'polished'
 import { getStatusIcon } from 'components/AccountDetails'
-import { IconWrapper } from 'components/AccountDetailsMod'
 
 const Wrapper = styled.div`
   width: 100%;
 
   @keyframes spinner {
     0% {
-      transform: scale(0.8);
-      opacity: 0;
-    }
-    50% {
-      transform: scale(1);
-      opacity: 1;
+      transform: rotate(0);
     }
     100% {
-      transform: scale(1);
+      transform: rotate(360deg);
     }
   }
 `
+
 const Section = styled.div`
   padding: 24px;
   align-items: center;
@@ -70,19 +65,15 @@ const IconSpinner = styled.div`
   ${({ theme }) => theme.neumorphism.boxShadow}
   border-radius: 74px;
 
-  ${IconWrapper} {
-    height: 100%;
-    width: 100%;
-  }
-
   > div {
     height: 100%;
     width: 100%;
+    position: relative;
+    background: transparent;
   }
 
   > div > div {
-    height: 100%;
-    width: 100%;
+    animation: spinner 2s linear 0.8s infinite;
   }
 
   > div > div > svg {
