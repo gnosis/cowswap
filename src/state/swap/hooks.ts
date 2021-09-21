@@ -79,7 +79,7 @@ export function tryParseAmount<T extends Currency>(value?: string, currency?: T)
   }
   try {
     // Here we drop everything after given token decimals to avoid parsing issues
-    const truncatedValue = truncateOnMaxDecimals(value, currency.decimals)
+    const truncatedValue = currency.decimals ? truncateOnMaxDecimals(value, currency.decimals) : value
     const typedValueParsed = parseUnits(truncatedValue, currency.decimals).toString()
     if (typedValueParsed !== '0') {
       return CurrencyAmount.fromRawAmount(currency, JSBI.BigInt(typedValueParsed))
