@@ -16,6 +16,7 @@ export const GpModal = styled(Modal)`
       height: 100%;
       width: 100vw;
       border-radius: 0;
+      overflow-y: auto;
     `}
 
     ${HeaderRow} {

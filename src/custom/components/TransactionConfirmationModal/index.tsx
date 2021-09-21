@@ -26,7 +26,7 @@ import { getStatusIcon } from 'components/AccountDetails'
 const Wrapper = styled.div`
   width: 100%;
 
-  @keyframes spinner {
+  @keyframes rotate-center {
     0% {
       transform: rotate(0);
     }
@@ -70,10 +70,13 @@ const IconSpinner = styled.div`
     width: 100%;
     position: relative;
     background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   > div > div {
-    animation: spinner 2s linear 0.8s infinite;
+    animation: rotate-center 2s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite both;
   }
 
   > div > div > svg {
@@ -180,10 +183,20 @@ const LowerSection = styled.div`
   padding: 40px;
   margin: 16px auto 0;
 
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    height: 100%;
+  `}
+
   > h3 {
     text-align: center;
     width: 100%;
     font-size: 21px;
+    margin: 0 auto 42px;
+  }
+
+  > h3 > span:last-of-type {
+    display: block;
+    font-weight: 400;
   }
 `
 
@@ -200,14 +213,11 @@ const StepsWrapper = styled.div`
     animation: SlideInStep 1s forwards linear;
     opacity: 0;
     transform: translateX(-5px);
-  }
-
-  > div:hover {
-    opacity: 1;
+    z-index: 2;
   }
 
   > div:last-of-type {
-    animation-delay: 0.75s;
+    animation-delay: 1s;
   }
 
   > hr {
@@ -223,6 +233,7 @@ const StepsWrapper = styled.div`
     left: 0;
     right: 0;
     top: 38px;
+    z-index: 1;
   }
 
   > hr::before {
@@ -240,6 +251,13 @@ const StepsWrapper = styled.div`
     font-size: 13px;
     line-height: 1.4;
     text-align: center;
+  }
+
+  > div > p > b {
+    display: block;
+    font-weight: bold;
+    font-size: 16px;
+    margin: 0 0 6px;
   }
 
   @keyframes SlideInStep {
@@ -307,7 +325,7 @@ export function ConfirmationPendingContent({
       <UpperSection>
         <CloseIconWrapper onClick={onDismiss} />
 
-        <IconSpinner>{getStatusIcon(connector, walletInfo)}</IconSpinner>
+        <IconSpinner>{getStatusIcon(connector, walletInfo, 46)}</IconSpinner>
 
         <Text fontWeight={500} fontSize={16} color="" textAlign="center">
           {pendingText}
@@ -316,7 +334,10 @@ export function ConfirmationPendingContent({
 
       <LowerSection>
         <h3>
-          <Trans>Almost there!</Trans>
+          <Trans>
+            <span>Almost there!</span>
+            <span>Follow these steps:</span>
+          </Trans>
         </h3>
 
         <StepsWrapper>
@@ -325,7 +346,9 @@ export function ConfirmationPendingContent({
               <UserCheck />
             </StepsIconWraper>
             <p>
-              <Trans>1. Sign and submit the order with your {WalletName}.</Trans>
+              <Trans>
+                <b>1. Sign</b> Sign and submit the order with your {WalletName}.
+              </Trans>
             </p>
           </div>
           <hr />
@@ -334,7 +357,9 @@ export function ConfirmationPendingContent({
               <CheckCircle />
             </StepsIconWraper>
             <p>
-              <Trans>2. The order is then submitted and ready to be settled.</Trans>
+              <Trans>
+                <b>2. Submitted</b> The order is submitted and ready to be settled.
+              </Trans>
             </p>
           </div>
         </StepsWrapper>
