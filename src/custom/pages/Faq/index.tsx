@@ -3,7 +3,7 @@ import Page, { Content, Title } from 'components/Page'
 import styled from 'styled-components'
 import { DISCORD_LINK } from 'constants/index'
 import { Link } from 'react-router-dom'
-import { ExternalLink as ExternalLinkTheme } from 'theme'
+import { ExternalLink as ExternalLinkTheme, StyledInternalLink } from 'theme'
 import { LinkScrollable } from 'components/Link'
 
 const ExternalLink = styled(ExternalLinkTheme)``
@@ -55,7 +55,7 @@ const Wrapper = styled.div`
   }
 
   ${Content} {
-    > div ${ExternalLink}, > p ${ExternalLink} {
+    > div ${ExternalLink}, > p ${ExternalLink}, > p ${StyledInternalLink} {
       color: ${({ theme }) => theme.text1};
       text-decoration: underline;
       font-weight: 400;
@@ -322,14 +322,11 @@ export default function Faq() {
               audited
             </ExternalLink>
             . Whilst CowSwap has taken a major step forward in terms of security and stability, as with other crypto
-            protocols or dapps, your use is at your own risk. <strong> Please review our terms and conditions </strong>
-            <ExternalLink
-              href="https://cowswap.exchange/#/terms-and-conditions"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              audited
-            </ExternalLink>
+            protocols or dapps, your use is at your own risk.{' '}
+            <strong>
+              Please review our <StyledInternalLink to="/terms-and-conditions">Terms and Conditions</StyledInternalLink>
+              .
+            </strong>
           </p>
         </Content>
       </Page>
