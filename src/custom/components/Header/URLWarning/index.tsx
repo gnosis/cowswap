@@ -17,7 +17,6 @@ const Wrapper = styled.div`
   width: 100%;
 
   ${PhishAlert} {
-    display: flex;
     justify-content: center;
     font-size: 12px;
     padding: 8px;
