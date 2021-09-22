@@ -25,7 +25,7 @@ import ModalMod from '@src/components/Modal'
 import Option from 'components/WalletModal/Option'
 import PendingView from 'components/WalletModal/PendingView'
 import { LightCard } from 'components/Card'
-import { WrongNetworkMessage, WrongNetworkTitle } from 'components/WalletModal/WrongNetworkMessage'
+import { WrongNetworkMessage } from 'components/WalletModal/WrongNetworkMessage'
 
 export const CloseIcon = styled.div`
   position: absolute;
