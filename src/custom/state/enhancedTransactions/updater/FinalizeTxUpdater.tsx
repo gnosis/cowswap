@@ -178,7 +178,7 @@ export default function Updater(): null {
       // Cancel all promises
       promiseCancellations.forEach((cancel) => cancel())
     }
-  }, [chainId, library, transactions, lastBlockNumber, dispatch, addPopup, getReceipt])
+  }, [chainId, library, transactions, lastBlockNumber, dispatch, addPopup, getReceipt, getSafeInfo])
 
   return null
 }
