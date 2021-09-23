@@ -2,12 +2,9 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useActiveWeb3React } from 'hooks/web3'
 import NotificationBanner from 'components/NotificationBanner'
-import { useReferralAddress, useResetReferralAddress } from 'state/affiliate/hooks'
-import { updateAppDataHash } from 'state/affiliate/actions'
+import { useReferralAddress, useResetReferralAddress, useUploadReferralDocAndSetDataHash } from 'state/affiliate/hooks'
 import { useAppDispatch } from 'state/hooks'
 import { hasTrades } from 'utils/trade'
-import { uploadMetadataDocToIpfs } from 'utils/metadata'
-import { generateReferralMetadataDoc } from 'utils/metadata'
 import { SupportedChainId } from 'constants/chains'
 
 type AffiliateStatus = 'NOT_CONNECTED' | 'OWN_LINK' | 'ALREADY_TRADED' | 'ACTIVE' | 'UNSUPPORTED_NETWORK'
@@ -23,6 +20,7 @@ const STATUS_TO_MESSAGE_MAPPING: Record<AffiliateStatus, string> = {
 export default function AffiliateStatusCheck() {
   const appDispatch = useAppDispatch()
   const resetReferralAddress = useResetReferralAddress()
+  const uploadReferralDocAndSetDataHash = useUploadReferralDocAndSetDataHash()
   const history = useHistory()
   const { account, chainId } = useActiveWeb3React()
   const referralAddress = useReferralAddress()
@@ -52,16 +50,14 @@ export default function AffiliateStatusCheck() {
     }
 
     try {
-      const appDataHash = await uploadMetadataDocToIpfs(generateReferralMetadataDoc(referralAddress))
-
-      appDispatch(updateAppDataHash(appDataHash))
+      await uploadReferralDocAndSetDataHash(referralAddress)
 
       setAffiliateState('ACTIVE')
     } catch (error) {
       console.error(error)
       setError('There was an error while uploading the referral document to IPFS')
     }
-  }, [chainId, account, referralAddress, resetReferralAddress, appDispatch])
+  }, [chainId, account, referralAddress, resetReferralAddress, uploadReferralDocAndSetDataHash])
 
   useEffect(() => {
     if (!referralAddress) {
