@@ -47,6 +47,7 @@ export default function AffiliateStatusCheck() {
     } catch (error) {
       console.error(error)
       setError('There was an error validating existing trades')
+      return
     }
 
     try {
