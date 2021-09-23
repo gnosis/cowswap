@@ -152,7 +152,7 @@ export async function sendOrderCancellation(params: OrderCancellationParams): Pr
 }
 
 export async function hasTrades(chainId: ChainId, address: string): Promise<boolean> {
-  const trades = await getTrades(chainId, address)
+  const trades = await getTrades({ chainId, owner: address, limit: 1 })
 
   return trades.length > 0
 }
