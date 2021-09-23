@@ -7,11 +7,11 @@ import UnsupportedCurrencyFooter from 'components/swap/UnsupportedCurrencyFooter
 import { MouseoverTooltip /* , MouseoverTooltipContent */ } from 'components/Tooltip'
 // import JSBI from 'jsbi'
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
-import { ArrowDown, /*, ArrowLeft */ CheckCircle, HelpCircle, Info } from 'react-feather'
+import { ArrowDown, /*, ArrowLeft */ CheckCircle, HelpCircle /* , Info */ } from 'react-feather'
 import ReactGA from 'react-ga'
 // import { Link, RouteComponentProps } from 'react-router-dom'
 import { Text } from 'rebass'
-import styled, { ThemeContext } from 'styled-components'
+import { /* styled, */ ThemeContext } from 'styled-components'
 import AddressInputPanel from 'components/AddressInputPanel'
 import {
   ButtonConfirmed,
@@ -56,6 +56,7 @@ import {
   useSwapState,
   useDetectNativeToken,
   useIsFeeGreaterThanInput,
+  useHighFeeWarning,
 } from 'state/swap/hooks'
 import { useExpertModeManager, useUserSingleHopOnly } from 'state/user/hooks'
 import { /* HideSmall, */ LinkStyledButton, TYPE, ButtonSize } from 'theme'
@@ -79,16 +80,18 @@ import TradeGp from 'state/swap/TradeGp'
 import AdvancedSwapDetailsDropdown from 'components/swap/AdvancedSwapDetailsDropdown'
 import { formatSmart } from 'utils/format'
 import { RowSlippage } from 'components/swap/TradeSummary/RowSlippage'
+import usePrevious from 'hooks/usePrevious'
 
-export const StyledInfo = styled(Info)`
-  opacity: 0.4;
-  color: ${({ theme }) => theme.text1};
-  height: 16px;
-  width: 16px;
-  :hover {
-    opacity: 0.8;
-  }
-`
+// MOD - exported in ./styleds to avoid circ dep
+// export const StyledInfo = styled(Info)`
+//   opacity: 0.4;
+//   color: ${({ theme }) => theme.text1};
+//   height: 16px;
+//   width: 16px;
+//   :hover {
+//     opacity: 0.8;
+//   }
+// `
 
 export default function Swap({
   history,
@@ -100,6 +103,7 @@ export default function Swap({
   SwapButton,
   ArrowWrapperLoader,
   Price,
+  HighFeeWarning,
   className,
 }: SwapProps) {
   const loadedUrlParams = useDefaultsFromURLSearch()
@@ -228,14 +232,17 @@ export default function Swap({
     [independentField, parsedAmount, showWrap, trade]
   )
 
+  const { feeWarningAccepted, setFeeWarningAccepted } = useHighFeeWarning(trade) // mod
   // const fiatValueInput = useUSDCValue(parsedAmounts[Field.INPUT])
   // const fiatValueOutput = useUSDCValue(parsedAmounts[Field.OUTPUT])
   const fiatValueInput = useHigherUSDValue(parsedAmounts[Field.INPUT]) // mod
   const fiatValueOutput = useHigherUSDValue(parsedAmounts[Field.OUTPUT]) // mod
+
   const priceImpact = computeFiatValuePriceImpact(fiatValueInput, fiatValueOutput)
 
   const { onSwitchTokens, onCurrencySelection, onUserInput, onChangeRecipient } = useSwapActionHandlers()
-  const isValid = !swapInputError
+  // const isValid = !swapInputError
+  const isValid = !swapInputError && feeWarningAccepted // mod
   const dependentField: Field = independentField === Field.INPUT ? Field.OUTPUT : Field.INPUT
 
   const handleTypeInput = useCallback(
@@ -288,6 +295,7 @@ export default function Swap({
 
   // check whether the user has approved the router on the input token
   const [approvalState, approveCallback] = useApproveCallbackFromTrade(trade, allowedSlippage)
+  const prevApprovalState = usePrevious(approvalState)
   const { state: signatureState, gatherPermitSignature } = useERC20PermitFromTrade(trade, allowedSlippage)
 
   const handleApprove = useCallback(async () => {
@@ -312,8 +320,11 @@ export default function Swap({
   useEffect(() => {
     if (approvalState === ApprovalState.PENDING) {
       setApprovalSubmitted(true)
+    } else if (prevApprovalState === ApprovalState.PENDING && approvalState === ApprovalState.NOT_APPROVED) {
+      // user canceled the approval tx, reset the UI
+      setApprovalSubmitted(false)
     }
-  }, [approvalState, approvalSubmitted])
+  }, [approvalState, approvalSubmitted, prevApprovalState])
 
   const maxInputAmount: CurrencyAmount<Currency> | undefined = maxAmountSpend(currencyBalances[Field.INPUT])
   const showMaxButton = Boolean(maxInputAmount?.greaterThan(0) && !parsedAmounts[Field.INPUT]?.equalTo(maxInputAmount))
@@ -685,9 +696,16 @@ export default function Swap({
               </Card>
             )}
           </AutoColumn>
+          <HighFeeWarning
+            trade={trade}
+            acceptedStatus={feeWarningAccepted}
+            acceptWarningCb={!isExpertMode && account ? () => setFeeWarningAccepted((state) => !state) : undefined}
+            width="99%"
+            padding="5px 15px"
+          />
           <BottomGrouping>
             {swapIsUnsupported ? (
-              <ButtonPrimary disabled={true} buttonSize={ButtonSize.BIG}>
+              <ButtonPrimary disabled buttonSize={ButtonSize.BIG}>
                 <TYPE.main mb="4px">
                   <Trans>Unsupported Token</Trans>
                 </TYPE.main>
@@ -720,6 +738,13 @@ export default function Swap({
               <GreyCard style={{ textAlign: 'center' }}>
                 <TYPE.main mb="4px">
                   <Trans>Insufficient liquidity for this trade.</Trans>
+                </TYPE.main>
+                {/* {singleHopOnly && <TYPE.main mb="4px">Try enabling multi-hop trades.</TYPE.main>} */}
+              </GreyCard>
+            ) : quote?.error === 'zero-price' ? (
+              <GreyCard style={{ textAlign: 'center' }}>
+                <TYPE.main mb="4px">
+                  <Trans>Invalid price. Try increasing input/output amount.</Trans>
                 </TYPE.main>
                 {/* {singleHopOnly && <TYPE.main mb="4px">Try enabling multi-hop trades.</TYPE.main>} */}
               </GreyCard>
