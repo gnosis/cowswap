@@ -1,5 +1,6 @@
 import { SupportedChainId as ChainId } from 'constants/chains'
 import { OrderKind } from '@gnosis.pm/gp-v2-contracts'
+import { stringify } from 'qs'
 import { getSigningSchemeApiValue, OrderCreation, OrderCancellation } from 'utils/signatures'
 import { APP_DATA_HASH } from 'constants/index'
 import { registerOnWindow } from '../../utils/misc'
@@ -95,6 +96,11 @@ export interface UnsupportedToken {
     address: string
     dateAdded: number
   }
+}
+
+type PaginationParams = {
+  limit?: number
+  offset?: number
 }
 
 function _getApiBaseUrl(chainId: ChainId): string {
@@ -259,10 +265,17 @@ export async function getOrder(chainId: ChainId, orderId: string): Promise<Order
   }
 }
 
-export async function getTrades(chainId: ChainId, owner: string): Promise<TradeMetaData[]> {
-  console.log('[util:operator] Get trades for', chainId, owner)
+type GetTradesParams = {
+  chainId: ChainId
+  owner: string
+} & PaginationParams
+
+export async function getTrades(params: GetTradesParams): Promise<TradeMetaData[]> {
+  const { chainId, owner, limit, offset } = params
+  const qsParams = stringify({ owner, limit, offset })
+  console.log('[util:operator] Get trades for', chainId, owner, { limit, offset })
   try {
-    const response = await _get(chainId, `/trades?owner=${owner}`)
+    const response = await _get(chainId, `/trades?${qsParams}`)
 
     if (!response.ok) {
       const errorResponse = await response.json()
