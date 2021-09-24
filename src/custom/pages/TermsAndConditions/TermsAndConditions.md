@@ -98,13 +98,21 @@ Please read these Terms carefully before using our Platform. By using our Platfo
 
    2. Force Majeure shall mean any event, circumstance or cause beyond our
       reasonable control, which makes the provision of our Platform impossible
-      or onerous, including, without limitation: 1. acts of God, flood, storm, drought, earthquake or other natural
-      disaster; 2. epidemic or pandemic; 3. terrorist attack, civil war, civil commotion or riots, war, threat
-      of or preparation for war, armed conflict, imposition of sanctions,
-      embargo, or breaking off of diplomatic relations; 4. nuclear, chemical or biological contamination; 5. any law or any action taken by a government or public authority,
-      including without limitation imposing a prohibition, or failing to
-      grant a necessary licence or consent; 6. collapse of buildings, breakdown of plant or machinery, fire,
-      explosion or accident; and 7. strike, industrial action or lockout.
+      or onerous, including, without limitation:
+
+      1. acts of God, flood, storm, drought, earthquake or other natural
+         disaster;
+      2. epidemic or pandemic;
+      3. terrorist attack, civil war, civil commotion or riots, war, threat
+         of or preparation for war, armed conflict, imposition of sanctions,
+         embargo, or breaking off of diplomatic relations;
+      4. nuclear, chemical or biological contamination;
+      5. any law or any action taken by a government or public authority,
+         including without limitation imposing a prohibition, or failing to
+         grant a necessary licence or consent;
+      6. collapse of buildings, breakdown of plant or machinery, fire,
+         explosion or accident; and
+      7. strike, industrial action or lockout.
 
    3. You are also responsible for ensuring that all persons who access our
       Platform through your internet connection are aware of these Terms and
