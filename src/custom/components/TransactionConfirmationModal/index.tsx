@@ -174,6 +174,10 @@ const UpperSection = styled.div`
   display: flex;
   flex-flow: column wrap;
   padding: 16px 0;
+
+  > div {
+    padding: 0 24px;
+  }
 `
 
 const LowerSection = styled.div`
@@ -302,6 +306,18 @@ const StepsIconWraper = styled.div`
 export * from './TransactionConfirmationModalMod'
 export { default } from './TransactionConfirmationModalMod'
 
+enum walletType {
+  SAFE,
+  SC,
+  EOA,
+}
+
+enum orderTypes {
+  CANCEL,
+  APPROVAL,
+  ORDER,
+}
+
 export function ConfirmationPendingContent({
   onDismiss,
   pendingText,
@@ -311,13 +327,8 @@ export function ConfirmationPendingContent({
 }) {
   const { connector } = useActiveWeb3React()
   const walletInfo = useWalletInfo()
-
-  enum walletType {
-    SAFE,
-    SC,
-    EOA,
-  }
   const WalletName = walletType.SAFE ? 'Gnosis Safe' : walletType.SC ? 'smart contract wallet' : 'wallet'
+  const orderType = orderTypes.APPROVAL
   console.log(walletInfo)
 
   return (
@@ -327,7 +338,7 @@ export function ConfirmationPendingContent({
 
         <IconSpinner>{getStatusIcon(connector, walletInfo, 46)}</IconSpinner>
 
-        <Text fontWeight={500} fontSize={16} color="" textAlign="center">
+        <Text fontWeight={500} fontSize={16} textAlign="center">
           {pendingText}
         </Text>
       </UpperSection>
@@ -335,7 +346,17 @@ export function ConfirmationPendingContent({
       <LowerSection>
         <h3>
           <Trans>
-            <span>Almost there!</span>
+            {orderType === orderTypes.CANCEL ? (
+              <>
+                <span>Soft cancel your order.</span>
+              </>
+            ) : orderType === orderTypes.APPROVAL ? (
+              <>
+                <span>Approve the token.</span>
+              </>
+            ) : (
+              <span>Almost there!</span>
+            )}
             <span>Follow these steps:</span>
           </Trans>
         </h3>
@@ -347,7 +368,15 @@ export function ConfirmationPendingContent({
             </StepsIconWraper>
             <p>
               <Trans>
-                <b>1. Sign</b> Sign and submit the order with your {WalletName}.
+                {isCancel ? (
+                  <>
+                    <b>1. Sign</b> Sign and submit the cancellation request with your {WalletName}.
+                  </>
+                ) : (
+                  <>
+                    <b>1. Sign</b> Sign and submit the order with your {WalletName}.
+                  </>
+                )}
               </Trans>
             </p>
           </div>
@@ -358,7 +387,15 @@ export function ConfirmationPendingContent({
             </StepsIconWraper>
             <p>
               <Trans>
-                <b>2. Submitted</b> The order is submitted and ready to be settled.
+                {isCancel ? (
+                  <>
+                    <b>2. Cancelling</b> The cancellation request is submitted.
+                  </>
+                ) : (
+                  <>
+                    <b>2. Submitted</b> The order is submitted and ready to be settled.
+                  </>
+                )}
               </Trans>
             </p>
           </div>
