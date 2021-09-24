@@ -37,7 +37,6 @@ interface GetWrapUnwrapCallback {
   wethContract: Contract
   openTransactionConfirmationModal: (message: string) => void
   closeModals: () => void
-  isGnosisSafeWallet: boolean
 }
 
 const NOT_APPLICABLE = { wrapType: WrapType.NOT_APPLICABLE }
@@ -123,13 +122,12 @@ export default function useWrapCallback(
   inputAmount?: CurrencyAmount<Currency>,
   isEthTradeOverride?: boolean
 ): WrapUnwrapCallback {
-  const { chainId: connectedChainId, account, gnosisSafeInfo } = useWalletInfo()
+  const { chainId: connectedChainId, account } = useWalletInfo()
   const chainId = supportedChainId(connectedChainId)
   const wethContract = useWETHContract()
   const balance = useCurrencyBalance(account ?? undefined, inputCurrency)
   // we can always parse the amount typed as the input currency, since wrapping is 1:1
   const addTransaction = useTransactionAdder()
-  const isGnosisSafeWallet = !!gnosisSafeInfo
 
   return useMemo(() => {
     if (!wethContract || !chainId || !inputCurrency || !outputCurrency) return NOT_APPLICABLE
@@ -149,7 +147,6 @@ export default function useWrapCallback(
         inputAmount,
         addTransaction,
         wethContract,
-        isGnosisSafeWallet,
         openTransactionConfirmationModal,
         closeModals,
       })
@@ -162,7 +159,6 @@ export default function useWrapCallback(
     isEthTradeOverride,
     balance,
     inputAmount,
-    isGnosisSafeWallet,
     addTransaction,
     openTransactionConfirmationModal,
     closeModals,
