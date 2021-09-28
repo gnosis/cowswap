@@ -22,6 +22,7 @@ import { ConfirmationModalContent as ConfirmationModalContentMod } from './Trans
 import { ColumnCenter } from 'components/Column'
 // import { lighten } from 'polished'
 import { getStatusIcon } from 'components/AccountDetails'
+import { shortenAddress } from 'utils'
 
 const Wrapper = styled.div`
   width: 100%;
@@ -312,6 +313,10 @@ const StepsWrapper = styled.div`
     text-align: center;
   }
 
+  > div > p > span {
+    opacity: 0.7;
+  }
+
   @keyframes SlideInStep {
     from {
       opacity: 0;
@@ -357,7 +362,7 @@ export function ConfirmationPendingContent({
 }) {
   const { connector } = useActiveWeb3React()
   const walletInfo = useWalletInfo()
-  const { isSupportedWallet, walletName, isSmartContractWallet } = useWalletInfo()
+  const { isSupportedWallet, walletName, isSmartContractWallet, ensName, account } = useWalletInfo()
 
   const getWalletType = (): walletTypes => {
     if (walletName === 'Gnosis Safe' && isSmartContractWallet) {
@@ -370,7 +375,7 @@ export function ConfirmationPendingContent({
   }
   const walletType = isSupportedWallet && getWalletType()
 
-  const WalletName =
+  const WalletNameLabel =
     walletType === walletTypes.SAFE ? 'Gnosis Safe' : walletType === walletTypes.SC ? 'smart contract wallet' : 'wallet'
   const orderType = orderTypes.ORDER as orderTypes
 
@@ -417,7 +422,7 @@ export function ConfirmationPendingContent({
                   : orderType === orderTypes.APPROVAL
                   ? 'token approval'
                   : 'order'}{' '}
-                with your {WalletName}
+                with your {WalletNameLabel} {account && <span>({ensName || shortenAddress(account)})</span>}
               </Trans>
             </p>
           </div>
@@ -428,13 +433,11 @@ export function ConfirmationPendingContent({
             </StepsIconWrapper>
             <p>
               <Trans>
-                {orderType === orderTypes.CANCEL ? (
-                  <>The cancellation request is submitted.</>
-                ) : orderType === orderTypes.APPROVAL ? (
-                  <>The token approval is submitted.</>
-                ) : (
-                  <>The order is submitted and ready to be settled.</>
-                )}
+                {orderType === orderTypes.CANCEL
+                  ? 'The cancellation request is submitted.'
+                  : orderType === orderTypes.APPROVAL
+                  ? 'The token approval is submitted.'
+                  : 'The order is submitted and ready to be settled.'}
               </Trans>
             </p>
           </div>
