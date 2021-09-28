@@ -223,6 +223,7 @@ export default function AccountDetails({
           <div>
             {renderTransactions(pendingTransactions)}
             {renderTransactions(confirmedTransactions)}
+            {explorerOrdersLink && <ExternalLink href={explorerOrdersLink}>View all orders</ExternalLink>}
           </div>
         </LowerSection>
       ) : (

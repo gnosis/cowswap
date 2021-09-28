@@ -172,7 +172,12 @@ export const LowerSection = styled.div`
     flex-flow: column wrap;
     width: 100%;
     background-color: ${({ theme }) => theme.bg2};
-    padding: 0 0 100px;
+    padding: 0;
+
+    ${StyledLink} {
+      align-self: center;
+      margin: 20px 0;
+    }
   }
 
   h5 {
