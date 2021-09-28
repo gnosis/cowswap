@@ -371,7 +371,7 @@ export function ConfirmationPendingContent({
   const walletType = isSupportedWallet && getWalletType()
 
   const WalletName =
-    walletType === walletTypes.SAFE ? walletName : walletType === walletTypes.SC ? 'smart contract wallet' : 'wallet'
+    walletType === walletTypes.SAFE ? 'Gnosis Safe' : walletType === walletTypes.SC ? 'smart contract wallet' : 'wallet'
   const orderType = orderTypes.ORDER as orderTypes
 
   return (
