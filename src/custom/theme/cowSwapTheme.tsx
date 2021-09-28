@@ -126,13 +126,8 @@ function themeVariables(darkMode: boolean, colorsTheme: Colors) {
           inset -2px 2px 4px ${darkMode ? '#021E34' : 'rgb(162 200 216)'};
       `,
       boxShadowEmbossed: css`
-        box-shadow: 10px 10px 20px ${darkMode ? '#01121f' : '#e2ecf1'},
-          -10px -10px 20px ${darkMode ? '#032a49' : '#ffffff'};
-        background: linear-gradient(
-          145deg,
-          ${darkMode ? '#021E34' : 'rgb(201 232 243 / 60%)'},
-          ${darkMode ? '#022038' : '#ffffff'}
-        );
+        background: linear-gradient(145deg, ${colorsTheme.bg3}, ${colorsTheme.bg4});
+        box-shadow: inset 0 1px 1px 0 hsl(0deg 0% 100% / 10%), 0 10px 40px -20px #000000;
       `,
     },
     header: {

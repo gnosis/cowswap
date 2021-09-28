@@ -25,15 +25,6 @@ import { getStatusIcon } from 'components/AccountDetails'
 
 const Wrapper = styled.div`
   width: 100%;
-
-  @keyframes rotate-center {
-    0% {
-      transform: rotate(0);
-    }
-    100% {
-      transform: rotate(360deg);
-    }
-  }
 `
 
 const Section = styled.div`
@@ -56,14 +47,15 @@ const CloseIconWrapper = styled(CloseIcon)`
 `
 
 const IconSpinner = styled.div`
+  --icon-size: 70px;
   margin: 0 auto 21px;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 74px;
-  height: 74px;
+  width: var(--icon-size);
+  height: var(--icon-size);
   ${({ theme }) => theme.neumorphism.boxShadow}
-  border-radius: 74px;
+  border-radius: var(--icon-size);
 
   > div {
     height: 100%;
@@ -76,7 +68,6 @@ const IconSpinner = styled.div`
   }
 
   > div > div {
-    animation: rotate-center 2s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite both;
   }
 
   > div > div > svg {
@@ -204,6 +195,50 @@ const LowerSection = styled.div`
   }
 `
 
+const StepsIconWrapper = styled.div`
+  --circle-size: 65px;
+  --border-radius: 100%;
+  --border-size: 2px;
+  --border-bg: conic-gradient(${({ theme }) => theme.bg3} 40grad, 80grad, ${({ theme }) => theme.primary1} 360grad);
+
+  border-radius: var(--circle-size);
+  height: var(--circle-size);
+  width: var(--circle-size);
+  margin: 0 auto 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: var(--border-size);
+    right: var(--border-size);
+    bottom: var(--border-size);
+    left: var(--border-size);
+    z-index: -1;
+    border-radius: calc(var(--border-radius) - var(--border-size));
+    ${({ theme }) => theme.neumorphism.boxShadowEmbossed};
+  }
+
+  > svg {
+    height: 100%;
+    width: 100%;
+    padding: 18px;
+    stroke: ${({ theme }) => theme.text1};
+  }
+
+  @keyframes spin {
+    from {
+      transform: rotate(0);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+`
+
 const StepsWrapper = styled.div`
   display: flex;
   flex-flow: row wrap;
@@ -220,23 +255,43 @@ const StepsWrapper = styled.div`
     z-index: 2;
   }
 
-  > div:last-of-type {
+  > div:first-child {
+    ${StepsIconWrapper} {
+      &::before {
+        content: '';
+        display: block;
+        background: var(--border-bg);
+        width: var(--circle-size);
+        padding: 0;
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        margin: auto;
+        border-radius: 100%;
+        z-index: -2;
+        animation: spin 1.5s linear infinite;
+      }
+    }
+  }
+
+  > div:last-child {
     animation-delay: 1s;
   }
 
   > hr {
     flex: 1 1 auto;
-    height: 2px;
+    height: 1px;
     border: 0;
-    background: linear-gradient(to left, ${({ theme }) => theme.bg1} 20%, ${({ theme }) => theme.bg4} 0%) repeat-x top /
-      12px 2px;
+    background: ${({ theme }) => theme.border2};
     margin: auto;
     position: absolute;
     width: 100%;
-    max-width: 156px;
+    max-width: 162px;
     left: 0;
     right: 0;
-    top: 38px;
+    top: 32px;
     z-index: 1;
   }
 
@@ -255,13 +310,6 @@ const StepsWrapper = styled.div`
     font-size: 13px;
     line-height: 1.4;
     text-align: center;
-  }
-
-  > div > p > b {
-    display: block;
-    font-weight: bold;
-    font-size: 16px;
-    margin: 0 0 6px;
   }
 
   @keyframes SlideInStep {
@@ -285,28 +333,10 @@ const StepsWrapper = styled.div`
   }
 `
 
-const StepsIconWraper = styled.div`
-  border-radius: 75px;
-  height: 75px;
-  width: 75px;
-  margin: 0 auto 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  ${({ theme }) => theme.neumorphism.boxShadowEmbossed}
-
-  > svg {
-    height: 100%;
-    width: 100%;
-    padding: 22px;
-    stroke: ${({ theme }) => theme.text1};
-  }
-`
-
 export * from './TransactionConfirmationModalMod'
 export { default } from './TransactionConfirmationModalMod'
 
-enum walletType {
+enum walletTypes {
   SAFE,
   SC,
   EOA,
@@ -327,9 +357,23 @@ export function ConfirmationPendingContent({
 }) {
   const { connector } = useActiveWeb3React()
   const walletInfo = useWalletInfo()
-  const WalletName = walletType.SAFE ? 'Gnosis Safe' : walletType.SC ? 'smart contract wallet' : 'wallet'
-  const orderType = orderTypes.APPROVAL
-  console.log(walletInfo)
+  const { isSupportedWallet, walletName, isSmartContractWallet } = useWalletInfo()
+
+  const getWalletType = (): walletTypes => {
+    if (walletName === 'Gnosis Safe' && isSmartContractWallet) {
+      return walletTypes.SAFE
+    } else if (isSmartContractWallet) {
+      return walletTypes.SC
+    } else {
+      return walletTypes.EOA
+    }
+  }
+  const walletType = isSupportedWallet && getWalletType()
+
+  const WalletName =
+    walletType === walletTypes.SAFE ? walletName : walletType === walletTypes.SC ? 'smart contract wallet' : 'wallet'
+  const orderType = orderTypes.CANCEL as orderTypes
+  console.log('order type = ', orderType)
 
   return (
     <Wrapper>
@@ -363,38 +407,34 @@ export function ConfirmationPendingContent({
 
         <StepsWrapper>
           <div>
-            <StepsIconWraper>
+            <StepsIconWrapper>
               <UserCheck />
-            </StepsIconWraper>
+            </StepsIconWrapper>
             <p>
               <Trans>
-                {isCancel ? (
-                  <>
-                    <b>1. Sign</b> Sign and submit the cancellation request with your {WalletName}.
-                  </>
-                ) : (
-                  <>
-                    <b>1. Sign</b> Sign and submit the order with your {WalletName}.
-                  </>
-                )}
+                Sign the{' '}
+                {orderType === orderTypes.CANCEL
+                  ? 'cancellation'
+                  : orderType === orderTypes.APPROVAL
+                  ? 'token approval'
+                  : 'order'}{' '}
+                with your {WalletName}
               </Trans>
             </p>
           </div>
           <hr />
           <div>
-            <StepsIconWraper>
+            <StepsIconWrapper>
               <CheckCircle />
-            </StepsIconWraper>
+            </StepsIconWrapper>
             <p>
               <Trans>
-                {isCancel ? (
-                  <>
-                    <b>2. Cancelling</b> The cancellation request is submitted.
-                  </>
+                {orderType === orderTypes.CANCEL ? (
+                  <>The cancellation request is submitted.</>
+                ) : orderType === orderTypes.APPROVAL ? (
+                  <>The token approval is submitted.</>
                 ) : (
-                  <>
-                    <b>2. Submitted</b> The order is submitted and ready to be settled.
-                  </>
+                  <>The order is submitted and ready to be settled.</>
                 )}
               </Trans>
             </p>
