@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import { CopyIcon, TransactionStatusText } from 'components/Copy'
-import { LinkStyledButton } from 'theme'
+import { LinkStyledButton, StyledLink } from 'theme'
 import { NetworkCard as NetworkCardUni } from 'components/Header/HeaderMod'
 import {
   WalletName,
@@ -188,7 +188,8 @@ export const LowerSection = styled.div`
     }
   }
 
-  ${LinkStyledButton} {
+  ${LinkStyledButton},${StyledLink} {
     text-decoration: underline;
+    font-size: 14px;
   }
 `
