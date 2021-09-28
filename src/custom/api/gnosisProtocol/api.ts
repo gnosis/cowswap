@@ -19,7 +19,6 @@ import QuoteError, {
 import { toErc20Address } from 'utils/tokens'
 import { FeeInformation, FeeQuoteParams, PriceInformation, PriceQuoteParams } from 'utils/price'
 import { AppDataDoc } from 'utils/metadata'
-import MetadataError from './errors/MetadataError'
 
 import { DEFAULT_NETWORK_FOR_LISTS } from 'constants/lists'
 import { GAS_FEE_ENDPOINTS } from 'constants/index'
@@ -294,26 +293,6 @@ export type UploadMetadataParams = {
   chainId: ChainId
 }
 
-export async function uploadAppDataDoc(params: UploadMetadataParams): Promise<string> {
-  const { chainId, metadata } = params
-  console.log('[utils:operator] Post AppData doc', params)
-
-  // Call API
-  // TODO: the final endpoint IS TBD
-  const response = await _post(chainId, `/appData`, {
-    ...metadata,
-  })
-
-  // Handle response
-  if (!response.ok) {
-    // Raise an exception
-    const errorMessage = await MetadataError.getErrorFromStatusCode(response, 'update')
-    throw new Error(errorMessage)
-  }
-
-  return await response.json()
-}
-
 export interface GasFeeEndpointResponse {
   lastUpdate: string
   lowest: string
@@ -330,5 +309,5 @@ export async function getGasPrices(chainId: ChainId = DEFAULT_NETWORK_FOR_LISTS)
 
 // Register some globals for convenience
 registerOnWindow({
-  operator: { getFeeQuote, getTrades, getOrder, sendSignedOrder, uploadAppDataDoc, apiGet: _get, apiPost: _post },
+  operator: { getFeeQuote, getTrades, getOrder, sendSignedOrder, apiGet: _get, apiPost: _post },
 })
