@@ -8,11 +8,11 @@ import UnsupportedCurrencyFooter from 'components/swap/UnsupportedCurrencyFooter
 import { MouseoverTooltip /* , MouseoverTooltipContent */ } from 'components/Tooltip'
 // import JSBI from 'jsbi'
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
-import { ArrowDown, /*, ArrowLeft */ CheckCircle, HelpCircle, Info } from 'react-feather'
+import { ArrowDown, /*, ArrowLeft */ CheckCircle, HelpCircle /* , Info */ } from 'react-feather'
 import ReactGA from 'react-ga'
 // import { Link, RouteComponentProps } from 'react-router-dom'
 import { Text } from 'rebass'
-import styled, { ThemeContext } from 'styled-components/macro'
+import { /* styled, */ ThemeContext } from 'styled-components/macro'
 import AddressInputPanel from 'components/AddressInputPanel'
 import {
   ButtonConfirmed,
@@ -56,6 +56,7 @@ import {
   useSwapState,
   useDetectNativeToken,
   useIsFeeGreaterThanInput,
+  useHighFeeWarning,
 } from 'state/swap/hooks'
 import { useExpertModeManager, useUserSingleHopOnly } from 'state/user/hooks'
 import { /* HideSmall, */ LinkStyledButton, TYPE, ButtonSize } from 'theme'
@@ -80,15 +81,16 @@ import { formatSmart } from 'utils/format'
 import { RowSlippage } from 'components/swap/TradeSummary/RowSlippage'
 import usePrevious from 'hooks/usePrevious'
 
-export const StyledInfo = styled(Info)`
-  opacity: 0.4;
-  color: ${({ theme }) => theme.text1};
-  height: 16px;
-  width: 16px;
-  :hover {
-    opacity: 0.8;
-  }
-`
+// MOD - exported in ./styleds to avoid circ dep
+// export const StyledInfo = styled(Info)`
+//   opacity: 0.4;
+//   color: ${({ theme }) => theme.text1};
+//   height: 16px;
+//   width: 16px;
+//   :hover {
+//     opacity: 0.8;
+//   }
+// `
 
 export default function Swap({
   history,
@@ -100,6 +102,7 @@ export default function Swap({
   SwapButton,
   ArrowWrapperLoader,
   Price,
+  HighFeeWarning,
   className,
 }: SwapProps) {
   const { account, chainId } = useActiveWeb3React()
@@ -227,14 +230,17 @@ export default function Swap({
     [independentField, parsedAmount, showWrap, trade]
   )
 
+  const { feeWarningAccepted, setFeeWarningAccepted } = useHighFeeWarning(trade)
   // const fiatValueInput = useUSDCValue(parsedAmounts[Field.INPUT])
   // const fiatValueOutput = useUSDCValue(parsedAmounts[Field.OUTPUT])
   const fiatValueInput = useHigherUSDValue(parsedAmounts[Field.INPUT])
   const fiatValueOutput = useHigherUSDValue(parsedAmounts[Field.OUTPUT])
+
   const priceImpact = computeFiatValuePriceImpact(fiatValueInput, fiatValueOutput)
 
   const { onSwitchTokens, onCurrencySelection, onUserInput, onChangeRecipient } = useSwapActionHandlers()
-  const isValid = !swapInputError
+  // const isValid = !swapInputError
+  const isValid = !swapInputError && feeWarningAccepted // mod
   const dependentField: Field = independentField === Field.INPUT ? Field.OUTPUT : Field.INPUT
 
   const handleTypeInput = useCallback(
@@ -696,6 +702,13 @@ export default function Swap({
               </Card>
             )}
           </AutoColumn>
+          <HighFeeWarning
+            trade={trade}
+            acceptedStatus={feeWarningAccepted}
+            acceptWarningCb={!isExpertMode && account ? () => setFeeWarningAccepted((state) => !state) : undefined}
+            width="99%"
+            padding="5px 15px"
+          />
           <BottomGrouping>
             {swapIsUnsupported ? (
               <ButtonPrimary disabled={true} buttonSize={ButtonSize.BIG}>
@@ -731,6 +744,13 @@ export default function Swap({
               <GreyCard style={{ textAlign: 'center' }}>
                 <TYPE.main mb="4px">
                   <Trans>Insufficient liquidity for this trade.</Trans>
+                </TYPE.main>
+                {/* {singleHopOnly && <TYPE.main mb="4px">Try enabling multi-hop trades.</TYPE.main>} */}
+              </GreyCard>
+            ) : quote?.error === 'zero-price' ? (
+              <GreyCard style={{ textAlign: 'center' }}>
+                <TYPE.main mb="4px">
+                  <Trans>Invalid price. Try increasing input/output amount.</Trans>
                 </TYPE.main>
                 {/* {singleHopOnly && <TYPE.main mb="4px">Try enabling multi-hop trades.</TYPE.main>} */}
               </GreyCard>

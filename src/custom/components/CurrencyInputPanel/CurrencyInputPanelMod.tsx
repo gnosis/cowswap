@@ -290,7 +290,7 @@ export default function CurrencyInputPanel({
                           renderBalance(selectedCurrencyBalance)
                         ) : (
                           <Trans>
-                            Balance: {formatSmart(selectedCurrencyBalance, AMOUNT_PRECISION)} {currency.symbol}
+                            Balance: {formatSmart(selectedCurrencyBalance, AMOUNT_PRECISION) || '0'} {currency.symbol}
                           </Trans>
                         )
                       ) : null}
