@@ -372,8 +372,7 @@ export function ConfirmationPendingContent({
 
   const WalletName =
     walletType === walletTypes.SAFE ? walletName : walletType === walletTypes.SC ? 'smart contract wallet' : 'wallet'
-  const orderType = orderTypes.CANCEL as orderTypes
-  console.log('order type = ', orderType)
+  const orderType = orderTypes.ORDER as orderTypes
 
   return (
     <Wrapper>
