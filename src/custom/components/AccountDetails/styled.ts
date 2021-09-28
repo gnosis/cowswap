@@ -170,7 +170,6 @@ export const LowerSection = styled.div`
   > div {
     display: flex;
     flex-flow: column wrap;
-    padding: 0;
     width: 100%;
     background-color: ${({ theme }) => theme.bg2};
     padding: 0 0 100px;
