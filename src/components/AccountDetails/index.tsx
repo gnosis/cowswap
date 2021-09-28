@@ -174,8 +174,6 @@ const IconWrapper = styled.div<{ size?: number }>`
   span {
     height: ${({ size }) => (size ? size + 'px' : '32px')};
     width: ${({ size }) => (size ? size + 'px' : '32px')};
-    height: 50px;
-    width: 50px;
   }
   ${({ theme }) => theme.mediaWidth.upToMedium`
     align-items: flex-end;
