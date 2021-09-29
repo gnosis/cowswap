@@ -13,7 +13,7 @@ export * from './URLWarningMod'
 
 const Wrapper = styled.div`
   width: 100%;
-
+  z-index: 1;
   ${PhishAlert} {
     justify-content: center;
     font-size: 12px;

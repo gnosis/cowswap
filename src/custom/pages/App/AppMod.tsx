@@ -1,5 +1,6 @@
 import ApeModeQueryParamReader from 'hooks/useApeModeQueryParamReader'
-import { Route, Switch } from 'react-router-dom'
+import { Suspense, /* PropsWithChildren, */ ReactNode, useState, useEffect } from 'react'
+import { Route, Switch, useLocation } from 'react-router-dom'
 import styled from 'styled-components/macro'
 import GoogleAnalyticsReporter from 'components/analytics/GoogleAnalyticsReporter'
 // import AddressClaimModal from '../components/claim/AddressClaimModal'
@@ -34,17 +35,35 @@ import VotePage from './Vote/VotePage'
 */
 import ReferralLinkUpdater from 'state/affiliate/updater'
 import URLWarning from 'components/Header/URLWarning'
-import { Suspense, /* PropsWithChildren, */ ReactNode } from 'react'
 
 import Footer from 'components/Footer'
-import { BodyWrapper } from '.' // mod
+import { BodyWrapper } from '.'
+import * as CSS from 'csstype' // mod
 
-const AppWrapper = styled.div`
+interface AppWrapProps {
+  bgBlur?: boolean
+}
+
+const AppWrapper = styled.div<Partial<CSS.Properties & AppWrapProps>>`
   display: flex;
   flex-flow: column;
   align-items: flex-start;
-  min-height: 100vh; // MOD
-  overflow-x: hidden; // MOD
+  min-height: 100vh;
+  overflow-x: hidden;
+  &:after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    filter: blur(20px);
+    backdrop-filter: blur(20px);
+    background-image: ${({ theme }) => theme.body.background};
+    opacity: 0;
+    transition: 0.5s;
+  }
+  ${(props) => (props.bgBlur ? '&:after {opacity: 1}' : '&:after {opacity:0}')};
 `
 
 /* const BodyWrapper = styled.div`
@@ -66,8 +85,9 @@ const HeaderWrapper = styled.div`
   width: 100%;
   justify-content: space-between;
 `
-// MOD
-const FooterWrapper = styled(HeaderWrapper)``
+const FooterWrapper = styled(HeaderWrapper)`
+  z-index: 1;
+`
 
 const Marginer = styled.div`
   margin-top: 5rem;
@@ -80,6 +100,11 @@ const Marginer = styled.div`
 // }
 
 export default function App(props?: { children?: ReactNode }) {
+  const [bgBlur, setBgBlur] = useState(false)
+  const location = useLocation()
+  useEffect(() => {
+    setBgBlur(location.pathname.length > 1 && location.pathname !== '/swap')
+  }, [location.pathname])
   return (
     <ErrorBoundary>
       <Suspense fallback={null}>
@@ -87,7 +112,7 @@ export default function App(props?: { children?: ReactNode }) {
         <Route component={DarkModeQueryParamReader} />
         <Route component={ApeModeQueryParamReader} />
         <Web3ReactManager>
-          <AppWrapper>
+          <AppWrapper bgBlur={bgBlur}>
             <Popups />
             <URLWarning />
             <HeaderWrapper>
