@@ -15,7 +15,7 @@ import { unwrappedToken } from 'utils/unwrappedToken'
 import RangeBadge from 'components/Badge/RangeBadge'
 import { RowBetween } from 'components/Row'
 import HoverInlineText from 'components/HoverInlineText'
-import { DAI, USDC, USDT, WBTC, WETH9_EXTENDED } from '../../constants/tokens'
+import { DAI, USDC, USDT, WBTC, WETH9_EXTENDED } from 'constants/tokens'
 import { Trans } from '@lingui/macro'
 import useIsTickAtLimit from 'hooks/useIsTickAtLimit'
 import { Bound } from 'state/mint/v3/actions'
@@ -126,7 +126,7 @@ const DataText = styled.div`
   `};
 `
 
-interface PositionListItemProps {
+export interface PositionListItemProps {
   positionDetails: PositionDetails
 }
 
