@@ -21,7 +21,7 @@ export default function Tooltip({ text, ...rest }: TooltipProps) {
   return <Popover content={<TooltipContainer>{text}</TooltipContainer>} {...rest} />
 }
 
-function TooltipContent({ content, ...rest }: TooltipContentProps) {
+export function TooltipContent({ content, ...rest }: TooltipContentProps) {
   return <Popover content={<TooltipContainer>{content}</TooltipContainer>} {...rest} />
 }
 

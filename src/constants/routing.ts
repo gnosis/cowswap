@@ -4,7 +4,7 @@ import { SupportedChainId } from './chains'
 import {
   AMPL,
   DAI,
-  ExtendedEther,
+  GpEther as ExtendedEther,
   FEI,
   FRAX,
   FXS,
@@ -18,7 +18,7 @@ import {
   DAI_OPTIMISM,
   USDT_OPTIMISM,
   WBTC_OPTIMISM,
-} from './tokens'
+} from 'constants/tokens'
 
 type ChainTokenList = {
   readonly [chainId: number]: Token[]
