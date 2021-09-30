@@ -24,8 +24,6 @@ export const NETWORK_LABELS: { [chainId in SupportedChainId | number]: string } 
 
 export const ALL_SUPPORTED_CHAIN_IDS: SupportedChainId[] = [
   SupportedChainId.MAINNET,
-  SupportedChainId.ROPSTEN,
   SupportedChainId.RINKEBY,
-  SupportedChainId.GOERLI,
-  SupportedChainId.KOVAN,
+  SupportedChainId.XDAI,
 ]

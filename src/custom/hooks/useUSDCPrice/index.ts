@@ -23,6 +23,8 @@ export * from '@src/hooks/useUSDCPrice'
 
 const STABLECOIN_AMOUNT_OUT: { [chainId: number]: CurrencyAmount<Token> } = {
   ...STABLECOIN_AMOUNT_OUT_UNI,
+  // MOD: lowers threshold from 100k to 100
+  [SupportedChainId.MAINNET]: CurrencyAmount.fromRawAmount(USDC, 100e6),
   [SupportedChainId.XDAI]: CurrencyAmount.fromRawAmount(USDC_XDAI, 10_000e6),
 }
 
