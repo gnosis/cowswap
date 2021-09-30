@@ -56,6 +56,7 @@ export type FeeQuoteParams = Pick<OrderMetaData, 'sellToken' | 'buyToken' | 'kin
   fromDecimals: number
   toDecimals: number
   chainId: ChainId
+  userAddress?: string | null
 }
 
 export type PriceQuoteParams = Omit<FeeQuoteParams, 'sellToken' | 'buyToken'> & {
@@ -63,6 +64,7 @@ export type PriceQuoteParams = Omit<FeeQuoteParams, 'sellToken' | 'buyToken'> & 
   quoteToken: string
   fromDecimals: number
   toDecimals: number
+  userAddress?: string | null
 }
 
 export type PriceSource = 'gnosis-protocol' | 'paraswap' | 'matcha-0x'
@@ -194,7 +196,7 @@ export async function getBestPrice(params: PriceQuoteParams, options?: GetBestPr
  *  Return the best quote considering all price feeds. The quote contains information about the price and fee
  */
 export async function getBestQuote({ quoteParams, fetchFee, previousFee }: QuoteParams): Promise<QuoteResult> {
-  const { sellToken, buyToken, fromDecimals, toDecimals, amount, kind, chainId } = quoteParams
+  const { sellToken, buyToken, fromDecimals, toDecimals, amount, kind, chainId, userAddress } = quoteParams
   const { baseToken, quoteToken } = getCanonicalMarket({ sellToken, buyToken, kind })
 
   // Get a new fee quote (if required)
@@ -225,7 +227,16 @@ export async function getBestQuote({ quoteParams, fetchFee, previousFee }: Quote
   // Get price for price estimation
   const pricePromise =
     !feeExceedsPrice && exchangeAmount
-      ? getBestPrice({ chainId, baseToken, quoteToken, fromDecimals, toDecimals, amount: exchangeAmount, kind })
+      ? getBestPrice({
+          chainId,
+          baseToken,
+          quoteToken,
+          fromDecimals,
+          toDecimals,
+          amount: exchangeAmount,
+          kind,
+          userAddress,
+        })
       : // fee exceeds our price, is invalid
         Promise.reject(FEE_EXCEEDS_FROM_ERROR)
 

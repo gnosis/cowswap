@@ -6,7 +6,7 @@ import { APIError, RateOptions } from 'paraswap/build/types'
 import { SupportedChainId as ChainId } from 'constants/chains'
 import { getTokensFromMarket } from 'utils/misc'
 import { getValidParams, PriceInformation, PriceQuoteParams } from 'utils/price'
-import { SOLVER_ADDRESS as userAddress } from 'custom/constants'
+import { SOLVER_ADDRESS as defaultUserAddress } from 'custom/constants'
 
 type ParaSwapPriceQuote = OptimalRate
 
@@ -63,7 +63,7 @@ function getPriceQuoteFromError(error: APIError): ParaSwapPriceQuote | null {
 }
 
 export async function getPriceQuote(params: PriceQuoteParams): Promise<ParaSwapPriceQuote | null> {
-  const { baseToken, quoteToken, fromDecimals, toDecimals, amount, kind, chainId } = getValidParams(params)
+  const { baseToken, quoteToken, fromDecimals, toDecimals, amount, kind, chainId, userAddress } = getValidParams(params)
 
   let paraSwap = paraSwapLibs.get(chainId)
   if (!paraSwap) {
@@ -93,7 +93,7 @@ export async function getPriceQuote(params: PriceQuoteParams): Promise<ParaSwapP
     sellToken,
     buyToken,
     amount,
-    userAddress,
+    userAddress || defaultUserAddress,
     swapSide,
     options,
     fromDecimals,
