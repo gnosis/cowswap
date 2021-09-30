@@ -29,13 +29,13 @@ import OrdersPanel from 'components/OrdersPanel'
 
 import { supportedChainId } from 'utils/supportedChainId'
 import { formatSmart } from 'utils/format'
-import NetworkCard from 'components/Header/NetworkCard'
+import NetworkCard from './NetworkCard'
 
 export const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
   [ChainId.RINKEBY]: 'Rinkeby',
-  [ChainId.ROPSTEN]: 'Ropsten',
-  [ChainId.GOERLI]: 'Görli',
-  [ChainId.KOVAN]: 'Kovan',
+  // [ChainId.ROPSTEN]: 'Ropsten',
+  // [ChainId.GOERLI]: 'Görli',
+  // [ChainId.KOVAN]: 'Kovan',
   [ChainId.XDAI]: 'xDAI',
 }
 
@@ -164,7 +164,9 @@ export default function Header() {
       </HeaderRow>
       <HeaderControls>
         <HeaderElement>
-          <HideSmall>{chainId && NETWORK_LABELS[chainId] && <NetworkCard />}</HideSmall>
+          <HideSmall>
+            <NetworkCard />
+          </HideSmall>
           <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
             {account && userEthBalance ? (
               <BalanceText style={{ flexShrink: 0 }} pl="0.75rem" pr="0.5rem" fontWeight={500}>

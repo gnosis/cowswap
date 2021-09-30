@@ -46,7 +46,7 @@ export const L2_CHAIN_IDS = [
 
 export type SupportedL2ChainId = typeof L2_CHAIN_IDS[number]
 
-interface L1ChainInfo {
+export interface L1ChainInfo {
   readonly docs: string
   readonly explorer: string
   readonly infoLink: string
@@ -57,7 +57,7 @@ export interface L2ChainInfo extends L1ChainInfo {
   readonly logoUrl: string
 }
 
-type ChainInfo = { readonly [chainId: number]: L1ChainInfo | L2ChainInfo } & {
+export type ChainInfo = { readonly [chainId: number]: L1ChainInfo | L2ChainInfo } & {
   readonly [chainId in SupportedL2ChainId]: L2ChainInfo
 } & { readonly [chainId in SupportedL1ChainId]: L1ChainInfo }
 

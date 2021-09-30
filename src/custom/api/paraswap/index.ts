@@ -21,8 +21,6 @@ function getParaswapChainId(chainId: ChainId): NetworkID | null {
     // Only Mainnnet and Ropsten supported
     //  See https://developers.paraswap.network/api/list-all-tokens
     case ChainId.MAINNET:
-    case ChainId.ROPSTEN:
-      return chainId
 
     default:
       // Unsupported network

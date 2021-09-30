@@ -2,14 +2,23 @@ import { Trans } from '@lingui/macro'
 import { YellowCard } from 'components/Card'
 import { useOnClickOutside } from 'hooks/useOnClickOutside'
 import { useActiveWeb3React } from 'hooks/web3'
-import { useEffect, useRef, useState } from 'react'
-import { ArrowDownCircle, ChevronDown, ToggleLeft } from 'react-feather'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { /* ArrowDownCircle, */ ChevronDown, ToggleLeft } from 'react-feather'
 import { ApplicationModal } from 'state/application/actions'
 import { useModalOpen, useToggleModal } from 'state/application/hooks'
 import styled, { css } from 'styled-components/macro'
-import { ExternalLink } from 'theme'
+// import { ExternalLink } from 'theme'
 import { switchToNetwork } from 'utils/switchToNetwork'
-import { CHAIN_INFO, L2_CHAIN_IDS, SupportedChainId, SupportedL2ChainId } from '@src/constants/chains'
+import {
+  CHAIN_INFO,
+  // L1_CHAIN_IDS,
+  /* L2_CHAIN_IDS, */ NETWORK_LABELS,
+  SupportedChainId,
+  // SupportedL2ChainId,
+  ALL_SUPPORTED_CHAIN_IDS,
+} from 'constants/chains'
+import { supportedChainId } from 'utils/supportedChainId'
+import EthereumLogo from 'assets/images/ethereum-logo.png'
 
 const BaseWrapper = css`
   position: relative;
@@ -45,7 +54,7 @@ const BaseMenuItem = css`
     text-decoration: none;
   }
 `
-const DisabledMenuItem = styled.div`
+/* const DisabledMenuItem = styled.div`
   ${BaseMenuItem}
   align-items: center;
   background-color: ${({ theme }) => theme.bg2};
@@ -59,7 +68,7 @@ const DisabledMenuItem = styled.div`
   :focus {
     color: ${({ theme }) => theme.text2};
   }
-`
+` */
 const FallbackWrapper = styled(YellowCard)`
   ${BaseWrapper}
   width: auto;
@@ -111,7 +120,7 @@ const MenuFlyout = styled.span`
     margin-bottom: 8px;
   }
 `
-const LinkOutCircle = styled(ArrowDownCircle)`
+/* const LinkOutCircle = styled(ArrowDownCircle)`
   transform: rotate(230deg);
   width: 16px;
   height: 16px;
@@ -119,7 +128,7 @@ const LinkOutCircle = styled(ArrowDownCircle)`
 `
 const MenuItem = styled(ExternalLink)`
   ${BaseMenuItem}
-`
+` */
 const ButtonMenuItem = styled.button`
   ${BaseMenuItem}
   border: none;
@@ -163,13 +172,14 @@ const NetworkName = styled.div<{ chainId: SupportedChainId }>`
 `
 
 export default function NetworkCard() {
-  const { chainId, library } = useActiveWeb3React()
+  const { chainId: preChainId, library } = useActiveWeb3React()
   const node = useRef<HTMLDivElement>(null)
   const open = useModalOpen(ApplicationModal.ARBITRUM_OPTIONS)
   const toggle = useToggleModal(ApplicationModal.ARBITRUM_OPTIONS)
   useOnClickOutside(node, open ? toggle : undefined)
 
   const [implements3085, setImplements3085] = useState(false)
+  const chainId = useMemo(() => supportedChainId(preChainId), [preChainId])
   useEffect(() => {
     // metamask is currently the only known implementer of this EIP
     // here we proceed w/ a noop feature check to ensure the user's version of metamask supports network switching
@@ -180,26 +190,27 @@ export default function NetworkCard() {
     switchToNetwork({ library, chainId })
       .then((x) => x ?? setImplements3085(true))
       .catch(() => setImplements3085(false))
-  }, [library, chainId])
+  }, [chainId, library])
 
   const info = chainId ? CHAIN_INFO[chainId] : undefined
-  if (!chainId || chainId === SupportedChainId.MAINNET || !info || !library) {
+  if (!chainId || !info || !library) {
     return null
   }
 
-  if (L2_CHAIN_IDS.includes(chainId)) {
-    const info = CHAIN_INFO[chainId as SupportedL2ChainId]
-    const isArbitrum = [SupportedChainId.ARBITRUM_ONE, SupportedChainId.ARBITRUM_RINKEBY].includes(chainId)
+  // if (L1_CHAIN_IDS.includes(chainId)) {
+  if (ALL_SUPPORTED_CHAIN_IDS.includes(chainId)) {
+    // const info = CHAIN_INFO[chainId /*  as SupportedL2ChainId */]
+    // const isArbitrum = [SupportedChainId.ARBITRUM_ONE, SupportedChainId.ARBITRUM_RINKEBY].includes(chainId)
     return (
       <L2Wrapper ref={node}>
         <NetworkInfo onClick={toggle} chainId={chainId}>
-          <Icon src={info.logoUrl} />
+          <Icon src={EthereumLogo} />
           <NetworkName chainId={chainId}>{info.label}</NetworkName>
           <ChevronDown size={16} style={{ marginTop: '2px' }} strokeWidth={2.5} />
         </NetworkInfo>
         {open && (
           <MenuFlyout>
-            <MenuItem href={info.bridge}>
+            {/* <MenuItem href={info.bridge}>
               <div>{isArbitrum ? <Trans>{info.label} Bridge</Trans> : <Trans>Optimistic L2 Gateway</Trans>}</div>
               <LinkOutCircle />
             </MenuItem>
@@ -212,9 +223,9 @@ export default function NetworkCard() {
                 <Trans>Learn more</Trans>
               </div>
               <LinkOutCircle />
-            </MenuItem>
-            {implements3085 ? (
-              <ButtonMenuItem onClick={() => switchToNetwork({ library, chainId: 1 })}>
+            </MenuItem> */}
+            {/* {implements3085 ? (
+              <ButtonMenuItem onClick={() => switchToNetwork({ library, chainId: SupportedChainId.MAINNET })}>
                 <div>
                   <Trans>Switch to L1 (Mainnet)</Trans>
                 </div>
@@ -224,7 +235,16 @@ export default function NetworkCard() {
               <DisabledMenuItem>
                 <Trans>Change your network to go back to L1</Trans>
               </DisabledMenuItem>
-            )}
+            )} */}
+            {implements3085 &&
+              ALL_SUPPORTED_CHAIN_IDS.map((chainId) => (
+                <ButtonMenuItem key={chainId} onClick={() => switchToNetwork({ library, chainId })}>
+                  <div>
+                    <Trans>{NETWORK_LABELS[chainId]}</Trans>
+                  </div>
+                  <ToggleLeft opacity={0.6} size={16} />
+                </ButtonMenuItem>
+              ))}
           </MenuFlyout>
         )}
       </L2Wrapper>

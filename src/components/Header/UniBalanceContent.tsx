@@ -1,6 +1,6 @@
 import { Trans } from '@lingui/macro'
 import { CurrencyAmount, Token } from '@uniswap/sdk-core'
-import { CHAIN_INFO, SupportedChainId } from 'constants/chains'
+import { CHAIN_INFO, SupportedChainId } from '@src/constants/chains'
 import { useMemo } from 'react'
 import { X } from 'react-feather'
 import styled from 'styled-components/macro'
