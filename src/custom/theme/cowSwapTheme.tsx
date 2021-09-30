@@ -117,9 +117,9 @@ function themeVariables(darkMode: boolean, colorsTheme: Colors) {
       `,
     },
     appBody: {
-      boxShadow: `4px 4px 0px #000000;`,
+      boxShadow: `4px 4px 0px ${darkMode ? '#021e34' : '#000000'};`,
       borderRadius: '16px',
-      border: `3px solid #000000`,
+      border: `3px solid ${darkMode ? '#021e34' : '#000000'};`,
       padding: '12px 6px',
       maxWidth: {
         normal: '460px',
