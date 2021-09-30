@@ -1,5 +1,4 @@
 {
-  "projectId": "yp82ef",
   "baseUrl": "http://localhost:3000",
   "defaultCommandTimeout": 20000,
   "pageLoadTimeout": 120000,
