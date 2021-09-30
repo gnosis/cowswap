@@ -184,6 +184,7 @@ export const LowerSection = styled.div`
 const NetworkCardUni = styled(YellowCard)`
   border-radius: 12px;
   padding: 8px 12px;
+
   ${({ theme }) => theme.mediaWidth.upToSmall`
     margin: 0;
     margin-right: 0.5rem;
@@ -198,11 +199,12 @@ export const NetworkCard = styled(NetworkCardUni)`
   background-color: ${({ theme }) => theme.networkCard.background};
   color: ${({ theme }) => theme.networkCard.text};
 
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    margin: 0 0 0 8px;
-  `};
+  padding: 6px 8px;
+  font-size: 13px;
+  margin: 0 8px 0 0;
+  letter-spacing: 0.7px;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
-    display: none;
+    flex-shrink: 0;
   `};
 `

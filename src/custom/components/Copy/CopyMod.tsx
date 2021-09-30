@@ -12,7 +12,6 @@ export const CopyIcon = styled(LinkStyledButton)`
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0;
   text-decoration: none;
   font-size: 0.825rem;
   border-radius: 50%;
