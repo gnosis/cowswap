@@ -147,7 +147,6 @@ export function formatSmart(
  *   Token decimals: `10`; value: `412310.0014123`
  *   => `412310.0014123000`
  *
- *
  * @param value
  * @param decimals
  */
@@ -155,10 +154,22 @@ export function formatMax(value?: Fraction, decimals?: number): string | undefin
   if (!value) {
     return
   }
-  let amount = value.toFixed(decimals || LONG_PRECISION)
+  let amount = value.toFixed(decimals ?? LONG_PRECISION)
 
   if (+amount === 0) {
     amount = value.toSignificant(1)
   }
   return amount
+}
+
+/**
+ * Truncated given `value` on `decimals`.
+ * E.g.: value=10.001; decimals=2 => 10.00
+ *
+ * @param value
+ * @param decimals
+ */
+export function truncateOnMaxDecimals(value: string, decimals: number): string {
+  const regex = new RegExp(`(\\d*\\.\\d{${decimals}})\\d*`)
+  return value.replace(regex, '$1')
 }
