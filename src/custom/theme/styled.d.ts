@@ -77,6 +77,10 @@ declare module 'styled-components' {
       boxShadow: FlattenSimpleInterpolation
       boxShadowEmbossed: FlattenSimpleInterpolation
     }
+    card: {
+      background: FlattenSimpleInterpolation
+      boxShadow: FlattenSimpleInterpolation
+    }
     header: {
       border: string
       menuFlyout: {

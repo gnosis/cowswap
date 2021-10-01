@@ -312,12 +312,12 @@ export const TransactionInnerDetail = styled.div`
   display: flex;
   flex-flow: column wrap;
   width: 100%;
-  background: linear-gradient(145deg, #0f2644, #021e34);
   border-radius: 12px;
   padding: 16px;
   color: ${({ theme }) => theme.text1};
   margin: 24px 24px 8px 0;
-  box-shadow: inset 0 1px 1px 0 hsl(213deg 63% 23%), 0 2px 30px -20px rgb(0 0 0);
+  ${({ theme }) => theme.card.background};
+  ${({ theme }) => theme.card.boxShadow};
 
   > strong {
     text-transform: uppercase;
@@ -332,12 +332,22 @@ export const TransactionInnerDetail = styled.div`
 
   > a {
     text-align: center;
-    border-radius: 4px;
-    border: 1px solid #163861;
+    border-radius: 16px;
+    border: 1px solid ${({ theme }) => transparentize(0.8, theme.text1)};
     padding: 8px;
     display: block;
-    color: #c5daef;
+    color: ${({ theme }) => theme.text1};
     margin: 8px 0 0;
+    transition: border 0.2s ease-in-out;
+    text-decoration: none !important; // Todo: Do not use !important by editing the source
+  }
+
+  > a:focus {
+    text-decoration: none;
+  }
+
+  > a:hover {
+    border: 1px solid ${({ theme }) => transparentize(0.4, theme.text1)};
   }
 `
 

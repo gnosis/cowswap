@@ -136,6 +136,15 @@ function themeVariables(darkMode: boolean, colorsTheme: Colors) {
         box-shadow: inset 0 1px 1px 0 hsl(0deg 0% 100% / 10%), 0 10px 40px -20px #000000;
       `,
     },
+    card: {
+      background: css`
+        background: linear-gradient(145deg, ${darkMode ? '#0f2644' : '#f3fbff'}, ${darkMode ? '#021e34' : '#d5e8f0'});
+      `,
+      boxShadow: css`
+        box-shadow: inset 0 1px 1px 0 ${darkMode ? '#1d4373' : '#ffffff'},
+          0 2px 30px -20px ${darkMode ? '#001626' : '#003358'};
+      `,
+    },
     header: {
       border: 'none',
       menuFlyout: {
