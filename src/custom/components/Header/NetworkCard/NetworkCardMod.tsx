@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/macro'
+// import { Trans } from '@lingui/macro'
 import { YellowCard } from 'components/Card'
 import { useOnClickOutside } from 'hooks/useOnClickOutside'
 import { useActiveWeb3React } from 'hooks/web3'
@@ -94,7 +94,8 @@ const MenuFlyout = styled.span`
   box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.01), 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04),
     0px 24px 32px rgba(0, 0, 0, 0.01);
   border-radius: 12px;
-  padding: 1rem;
+  // padding: 1rem;
+  padding: 0.3rem;
   display: flex;
   flex-direction: column;
   font-size: 1rem;
@@ -102,7 +103,8 @@ const MenuFlyout = styled.span`
   left: 0rem;
   top: 3rem;
   z-index: 100;
-  width: 237px;
+  // width: 237px;
+  min-width: 185px;
   ${({ theme }) => theme.mediaWidth.upToMedium`
    
     bottom: unset;
@@ -113,12 +115,12 @@ const MenuFlyout = styled.span`
   > {
     padding: 12px;
   }
-  > :not(:first-child) {
-    margin-top: 8px;
-  }
-  > :not(:last-child) {
-    margin-bottom: 8px;
-  }
+  // > :not(:first-child) {
+  //   margin-top: 8px;
+  // }
+  // > :not(:last-child) {
+  //   margin-bottom: 8px;
+  // }
 `
 /* const LinkOutCircle = styled(ArrowDownCircle)`
   transform: rotate(230deg);
@@ -129,17 +131,41 @@ const MenuFlyout = styled.span`
 const MenuItem = styled(ExternalLink)`
   ${BaseMenuItem}
 ` */
+
+const NetworkName = styled.div<{ chainId: SupportedChainId }>`
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 500;
+  padding: 0 2px 0.5px 4px;
+  margin: 0 2px;
+  white-space: pre;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+   display: none;
+  `};
+`
+
 const ButtonMenuItem = styled.button`
   ${BaseMenuItem}
   border: none;
   box-shadow: none;
-  color: ${({ theme }) => theme.text2};
+  // color: ${({ theme }) => theme.text2};
+  color: ${({ theme }) => theme.text1};
   outline: none;
-  padding: 0;
+  padding: 6px 10px;
+
+  > ${NetworkName} {
+    margin: 0 auto 0 8px;
+  }
+
+  &:hover {
+    background: ${({ theme }) => theme.bg4};
+  }
+
+  transition: background 0.13s ease-in-out;
 `
 const NetworkInfo = styled.button<{ chainId: SupportedChainId }>`
   align-items: center;
-  background-color: ${({ theme }) => theme.bg0};
+  background-color: ${({ theme }) => theme.bg4};
   border-radius: 12px;
   border: 1px solid ${({ theme }) => theme.bg0};
   color: ${({ theme }) => theme.text1};
@@ -158,17 +184,6 @@ const NetworkInfo = styled.button<{ chainId: SupportedChainId }>`
     outline: none;
     border: 1px solid ${({ theme }) => theme.bg3};
   }
-`
-const NetworkName = styled.div<{ chainId: SupportedChainId }>`
-  border-radius: 6px;
-  font-size: 16px;
-  font-weight: 500;
-  padding: 0 2px 0.5px 4px;
-  margin: 0 2px;
-  white-space: pre;
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-   display: none;
-  `};
 `
 
 export default function NetworkCard() {
@@ -237,14 +252,19 @@ export default function NetworkCard() {
               </DisabledMenuItem>
             )} */}
             {implements3085 &&
-              ALL_SUPPORTED_CHAIN_IDS.map((chainId) => (
-                <ButtonMenuItem key={chainId} onClick={() => switchToNetwork({ library, chainId })}>
-                  <div>
-                    <Trans>{NETWORK_LABELS[chainId]}</Trans>
-                  </div>
-                  <ToggleLeft opacity={0.6} size={16} />
-                </ButtonMenuItem>
-              ))}
+              ALL_SUPPORTED_CHAIN_IDS.map((supportedChainId) => {
+                if (supportedChainId === chainId) return null
+                return (
+                  <ButtonMenuItem
+                    key={supportedChainId}
+                    onClick={() => switchToNetwork({ library, chainId: supportedChainId })}
+                  >
+                    <Icon src={EthereumLogo} />
+                    <NetworkName chainId={supportedChainId}>{NETWORK_LABELS[supportedChainId]}</NetworkName>
+                    <ToggleLeft opacity={0.6} size={16} />
+                  </ButtonMenuItem>
+                )
+              })}
           </MenuFlyout>
         )}
       </L2Wrapper>

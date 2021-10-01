@@ -1,6 +1,5 @@
 import { L1ChainInfo } from '@src/constants/chains'
 import EthereumLogo from 'assets/images/ethereum-logo.png'
-import { XDAI_LOGO_URI } from '..'
 export * from '@src/constants/chains'
 
 export enum SupportedChainId {
@@ -54,7 +53,7 @@ export const CHAIN_INFO: ChainInfo = {
     explorer: 'https://gnosis-protocol.io/xdai',
     infoLink: '',
     label: 'xDai',
-    logoUrl: XDAI_LOGO_URI,
+    logoUrl: EthereumLogo,
   },
   /* [SupportedChainId.ROPSTEN]: {
     docs: 'https://docs.uniswap.org/',
