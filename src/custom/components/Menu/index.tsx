@@ -1,6 +1,6 @@
-import { Code, MessageCircle, HelpCircle, BookOpen, PieChart } from 'react-feather'
+import { Code, MessageCircle, HelpCircle, BookOpen, PieChart, Moon, Sun } from 'react-feather'
 
-import MenuMod, { MenuItem, InternalMenuItem, MenuFlyout as MenuFlyoutUni } from './MenuMod'
+import MenuMod, { MenuItem, InternalMenuItem, MenuFlyout as MenuFlyoutUni, MenuItemBase } from './MenuMod'
 import { useToggleModal } from 'state/application/hooks'
 import styled from 'styled-components/macro'
 import { Separator as SeparatorBase } from 'components/SearchModal/styleds'
@@ -8,7 +8,30 @@ import { CONTRACTS_CODE_LINK, DISCORD_LINK, DOCS_LINK, DUNE_DASHBOARD_LINK } fro
 import GameIcon from 'assets/cow-swap/game.gif'
 import { ApplicationModal } from 'state/application/actions'
 
+import TwitterImage from 'assets/cow-swap/twitter.svg'
+import { ExternalLink } from 'theme'
+
 export * from './MenuMod'
+
+const MenuItemResponsive = styled.div`
+  ${MenuItemBase}
+  display: none;
+  font-weight: 500;
+  flex: 0 1 auto;
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+      display: flex;
+      flex: 0 1 auto;
+      padding: 16px;
+      font-size: 18px;
+        svg {
+          width: 18px;
+          height: 18px;
+          object-fit: contain;
+          margin: 0 8px 0 0;
+        }
+    `};
+`
 
 export const StyledMenu = styled(MenuMod)`
   hr {
@@ -16,7 +39,8 @@ export const StyledMenu = styled(MenuMod)`
   }
 
   ${MenuItem},
-  ${InternalMenuItem} {
+  ${InternalMenuItem},
+  ${MenuItemResponsive} {
     color: ${({ theme }) => theme.header.menuFlyout.color};
     background: ${({ theme }) => theme.header.menuFlyout.background};
     :hover {
@@ -142,7 +166,12 @@ export const CloseMenu = styled.button`
   }
 `
 
-export function Menu() {
+interface MenuProps {
+  darkMode: boolean
+  toggleDarkMode: () => void
+}
+
+export function Menu({ darkMode, toggleDarkMode }: MenuProps) {
   const close = useToggleModal(ApplicationModal.MENU)
 
   return (
@@ -176,6 +205,24 @@ export function Menu() {
             Discord
           </span>
         </MenuItem>
+
+        <MenuItemResponsive>
+          <ExternalLink href="https://twitter.com/mevprotection" target="_blank">
+            <img src={TwitterImage} alt="Follow CowSwap on Twitter!" /> Twitter
+          </ExternalLink>
+        </MenuItemResponsive>
+        <MenuItemResponsive onClick={() => toggleDarkMode()}>
+          {darkMode ? (
+            <>
+              <Moon size={20} /> Dark Theme
+            </>
+          ) : (
+            <>
+              <Sun size={20} />
+              Light Theme
+            </>
+          )}
+        </MenuItemResponsive>
 
         <InternalMenuItem to="/play" onClick={close}>
           <span role="img" aria-label="Play CowGame">

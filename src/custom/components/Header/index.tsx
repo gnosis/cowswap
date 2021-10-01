@@ -10,7 +10,6 @@ import HeaderMod, {
   HeaderControls as HeaderControlsUni,
   BalanceText as BalanceTextUni,
   HeaderElement,
-  HideSmall,
   AccountElement,
   HeaderElementWrap,
   StyledNavLink as StyledNavLinkUni,
@@ -83,7 +82,7 @@ export const HeaderModWrapper = styled(HeaderMod)`
   }
 `
 
-const TwitterLink = styled(StyledMenuButton)`
+export const TwitterLink = styled(StyledMenuButton)`
   margin-left: 0.5rem;
   padding: 0;
 
@@ -163,13 +162,11 @@ export default function Header() {
         </HeaderLinks>
       </HeaderRow>
       <HeaderControls>
+        <NetworkCard />
         <HeaderElement>
-          <HideSmall>
-            <NetworkCard />
-          </HideSmall>
           <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
             {account && userEthBalance ? (
-              <BalanceText style={{ flexShrink: 0 }} pl="0.75rem" pr="0.5rem" fontWeight={500}>
+              <BalanceText style={{ flexShrink: 0, userSelect: 'none' }} pl="0.75rem" pr="0.5rem" fontWeight={500}>
                 {formatSmart(userEthBalance, AMOUNT_PRECISION)} {nativeToken}
               </BalanceText>
             ) : null}
@@ -185,8 +182,8 @@ export default function Header() {
           <StyledMenuButton onClick={() => toggleDarkMode()}>
             {darkMode ? <Moon size={20} /> : <Sun size={20} />}
           </StyledMenuButton>
-          <Menu />
         </HeaderElementWrap>
+        <Menu darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
       </HeaderControls>
       {isOrdersPanelOpen && <OrdersPanel closeOrdersPanel={closeOrdersPanel} />}
     </HeaderModWrapper>
