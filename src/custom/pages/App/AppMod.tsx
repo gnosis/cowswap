@@ -38,30 +38,29 @@ import Footer from 'components/Footer'
 import { BodyWrapper } from '.'
 import * as CSS from 'csstype' // mod
 
-interface AppWrapProps {
+interface OverlayProps {
   bgBlur?: boolean
 }
 
-const AppWrapper = styled.div<Partial<CSS.Properties & AppWrapProps>>`
+const AppWrapper = styled.div`
   display: flex;
   flex-flow: column;
   align-items: flex-start;
   min-height: 100vh;
   overflow-x: hidden;
-  &:after {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    filter: blur(20px);
-    backdrop-filter: blur(20px);
-    background-image: ${({ theme }) => theme.body.background};
-    opacity: 0;
-    transition: 0.5s;
-  }
-  ${(props) => (props.bgBlur ? '&:after {opacity: 1}' : '&:after {opacity:0}')};
+`
+
+const Overlay = styled.div<Partial<CSS.Properties & OverlayProps>>`
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  filter: blur(20px);
+  backdrop-filter: blur(20px);
+  background-image: ${({ theme }) => theme.body.background};
+  opacity: ${(props) => (props.bgBlur ? '1' : '0')};
+  transition: 0.5s;
 `
 
 const HeaderWrapper = styled.div`
@@ -114,7 +113,7 @@ export default function App(props?: { children?: ReactNode }) {
         <Route component={GoogleAnalyticsReporter} />
         <Route component={DarkModeQueryParamReader} />
         <Route component={ApeModeQueryParamReader} />
-        <AppWrapper bgBlur={bgBlur}>
+        <AppWrapper>
           <Popups />
           <URLWarning />
           <HeaderWrapper>
@@ -157,6 +156,7 @@ export default function App(props?: { children?: ReactNode }) {
           <FooterWrapper>
             <Footer />
           </FooterWrapper>
+          <Overlay bgBlur={bgBlur} />
         </AppWrapper>
       </Suspense>
     </ErrorBoundary>
