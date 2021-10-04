@@ -208,8 +208,8 @@ export const StatusLabel = styled.div<{ isPending: boolean; isCancelling: boolea
     opacity: 0.1;
   }
 
-  ${({ color, isCancelling, isPending, isPresignaturePending }) =>
-    (isCancelling || isPending || isPresignaturePending) &&
+  ${({ color, isCancelling, isPresignaturePending }) =>
+    (isCancelling || isPresignaturePending) &&
     color &&
     css`
       &::after {
@@ -239,6 +239,7 @@ export const StatusLabel = styled.div<{ isPending: boolean; isCancelling: boolea
 
   > svg {
     margin: 0 5px 0 0;
+    max-height: 13px;
   }
 
   > svg > path {
