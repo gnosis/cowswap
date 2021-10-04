@@ -10,6 +10,7 @@ import { OrderStatus } from 'state/orders/actions'
 
 const Wrapper = styled.div`
   color: ${({ theme }) => theme.wallet?.color};
+  width: 100%;
 
   ${Web3StatusConnected} {
     color: ${({ theme }) => theme.wallet?.color};

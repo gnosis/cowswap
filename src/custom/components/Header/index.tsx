@@ -15,7 +15,7 @@ import HeaderMod, {
   StyledNavLink as StyledNavLinkUni,
   StyledMenuButton,
 } from './HeaderMod'
-import Menu from '../Menu'
+import Menu from 'components/Menu'
 import { Moon, Sun } from 'react-feather'
 import styled from 'styled-components/macro'
 import { useActiveWeb3React } from 'hooks/web3'
@@ -113,6 +113,7 @@ export const LogoImage = styled.img.attrs((props) => ({
   height: props.theme.logo.height,
 }))`
   object-fit: contain;
+  width: 100%;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
     width: 150px;
@@ -121,9 +122,13 @@ export const LogoImage = styled.img.attrs((props) => ({
 
 const UniIcon = styled.div`
   display: flex;
-  margin: 0 16px 0 0;
   position: relative;
   transition: transform 0.3s ease;
+
+  ${({ theme }) => theme.mediaWidth.upToVerySmall`
+    overflow-x: hidden;
+    width: 30px;
+  `};
 
   &:hover {
     transform: rotate(-5deg);
@@ -149,7 +154,7 @@ export default function Header() {
 
   return (
     <HeaderModWrapper>
-      <HeaderRow>
+      <HeaderRow marginRight="0">
         <Title href=".">
           <UniIcon>
             <LogoImage />

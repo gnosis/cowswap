@@ -79,6 +79,10 @@ export const HeaderElement = styled.div`
    flex-direction: row-reverse;
     align-items: center;
   `};
+
+  ${({ theme }) => theme.mediaWidth.upToVerySmall`
+    width: 115px;
+  `};
 `
 
 export const HeaderElementWrap = styled.div`
@@ -98,13 +102,8 @@ export const HeaderRow = styled(RowFixed)`
 export const HeaderLinks = styled(Row)`
   justify-content: center;
   ${({ theme }) => theme.mediaWidth.upToMedium`
-    padding: 1rem 0 1rem 1rem;
-    justify-content: flex-end;
-    position: fixed;
-    bottom: 0; 
-    left: 0; 
-    right: 0;
-`};
+    display: none;
+  `};
 `
 
 export const AccountElement = styled.div<{ active: boolean }>`
@@ -164,7 +163,7 @@ export const Title = styled.a`
   align-items: center;
   pointer-events: auto;
   justify-self: flex-start;
-  margin-right: 12px;
+  // margin-right: 12px;
   ${({ theme }) => theme.mediaWidth.upToSmall`
     justify-self: center;
   `};

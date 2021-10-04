@@ -1,4 +1,4 @@
-import { Code, MessageCircle, HelpCircle, BookOpen, PieChart, Moon, Sun } from 'react-feather'
+import { Code, MessageCircle, HelpCircle, BookOpen, PieChart, Moon, Sun, Repeat, Star } from 'react-feather'
 
 import MenuMod, { MenuItem, InternalMenuItem, MenuFlyout as MenuFlyoutUni, MenuItemBase } from './MenuMod'
 import { useToggleModal } from 'state/application/hooks'
@@ -13,24 +13,34 @@ import { ExternalLink } from 'theme'
 
 export * from './MenuMod'
 
-const MenuItemResponsive = styled.div`
-  ${MenuItemBase}
+const ResponsiveInternalMenuItem = styled(InternalMenuItem)`
   display: none;
-  font-weight: 500;
-  flex: 0 1 auto;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
-      display: flex;
-      flex: 0 1 auto;
-      padding: 16px;
-      font-size: 18px;
-        svg {
-          width: 18px;
-          height: 18px;
-          object-fit: contain;
-          margin: 0 8px 0 0;
-        }
-    `};
+      display: flex;   
+  `};
+`
+
+const MenuItemResponsiveBase = styled.div`
+  ${MenuItemBase}
+  display: none;
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    display: flex;   
+  `};
+`
+
+const MenuItemResponsive = styled(MenuItemResponsiveBase)`
+  font-weight: 500;
+  flex: 0 1 auto;
+  padding: 16px;
+  font-size: 18px;
+  svg {
+    width: 18px;
+    height: 18px;
+    object-fit: contain;
+    margin: 0 8px 0 0;
+  }
 `
 
 export const StyledMenu = styled(MenuMod)`
@@ -70,11 +80,6 @@ const MenuFlyout = styled(MenuFlyoutUni)`
   top: calc(100% + 16px);
   order: 1;
 
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    top: initial;
-    bottom: calc(100% + 32px);
-  `}
-
   ${({ theme }) => theme.mediaWidth.upToSmall`
     top: 0;
     left: 0;
@@ -87,9 +92,12 @@ const MenuFlyout = styled(MenuFlyoutUni)`
     overflow-y: auto;
   `};
 
+  > a:not(${ResponsiveInternalMenuItem}) {
+    display: flex;
+  }
+
   > a {
     transition: background 0.2s ease-in-out;
-    display: flex;
     align-items: center;
     text-decoration: none;
 
@@ -178,6 +186,13 @@ export function Menu({ darkMode, toggleDarkMode }: MenuProps) {
     <StyledMenu>
       <MenuFlyout>
         <CloseMenu onClick={close} />
+        <ResponsiveInternalMenuItem to="/" onClick={close}>
+          <Repeat size={14} /> Swap
+        </ResponsiveInternalMenuItem>
+        <ResponsiveInternalMenuItem to="/about" onClick={close}>
+          <Star size={14} /> About
+        </ResponsiveInternalMenuItem>
+
         <InternalMenuItem to="/faq" onClick={close}>
           <HelpCircle size={14} />
           FAQ
