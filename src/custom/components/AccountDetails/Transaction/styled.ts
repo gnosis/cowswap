@@ -5,11 +5,25 @@ import { TransactionState as OldTransactionState } from '../TransactionMod'
 import { RowFixed } from 'components/Row'
 import { transparentize } from 'polished'
 
+export const TransactionWrapper = styled.div`
+  width: calc(100% - 32px);
+  border-radius: 12px;
+  font-size: initial;
+  display: flex;
+  margin: 0 auto 12px;
+  padding: 22px;
+  ${({ theme }) => theme.card.background};
+  ${({ theme }) => theme.card.boxShadow};
+`
+
 export const Wrapper = styled.div`
   display: flex;
   flex-flow: column wrap;
   width: 100%;
-  border-bottom: 1px solid ${({ theme }) => theme.bg3};
+
+  /* &:first-child > ${TransactionWrapper} {
+    margin: 0 auto;
+  } */
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
   border-bottom: 2px solid #d9e8ef;
@@ -194,7 +208,7 @@ export const StatusLabel = styled.div<{ isPending: boolean; isCancelling: boolea
     opacity: 0.1;
   }
 
-  ${({ theme, color, isCancelling, isPending, isPresignaturePending }) =>
+  ${({ color, isCancelling, isPending, isPresignaturePending }) =>
     (isCancelling || isPending || isPresignaturePending) &&
     color &&
     css`
@@ -208,8 +222,8 @@ export const StatusLabel = styled.div<{ isPending: boolean; isCancelling: boolea
         background-image: linear-gradient(
           90deg,
           rgba(255, 255, 255, 0) 0,
-          ${transparentize(0.9, color)} 20%,
-          ${theme.bg2} 60%,
+          ${transparentize(0.3, color)} 20%,
+          ${color} 60%,
           rgba(255, 255, 255, 0)
         );
         animation: shimmer 2s infinite;
@@ -225,6 +239,10 @@ export const StatusLabel = styled.div<{ isPending: boolean; isCancelling: boolea
 
   > svg {
     margin: 0 5px 0 0;
+  }
+
+  > svg > path {
+    fill: ${({ color }) => color};
   }
 `
 
@@ -358,4 +376,10 @@ export const TextAlert = styled.span`
   color: #ff956e;
   border-radius: 4px;
   text-align: center;
+`
+
+export const CreationTimeText = styled.div`
+  padding: 12px 22px;
+  font-size: 14px;
+  font-weight: 500;
 `
