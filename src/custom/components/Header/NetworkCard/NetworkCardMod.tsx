@@ -5,7 +5,7 @@ import { useActiveWeb3React } from 'hooks/web3'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { /* ArrowDownCircle, */ ChevronDown, ToggleLeft } from 'react-feather'
 import { ApplicationModal } from 'state/application/actions'
-import { useModalOpen, useToggleModal } from 'state/application/hooks'
+import { useModalOpen, useToggleModal, useWalletModalToggle } from 'state/application/hooks'
 import styled, { css } from 'styled-components/macro'
 // import { ExternalLink } from 'theme'
 import { switchToNetwork } from 'utils/switchToNetwork'
@@ -187,10 +187,11 @@ const NetworkInfo = styled.button<{ chainId: SupportedChainId }>`
 `
 
 export default function NetworkCard() {
-  const { chainId: preChainId, library } = useActiveWeb3React()
+  const { account, chainId: preChainId, library } = useActiveWeb3React()
   const node = useRef<HTMLDivElement>(null)
   const open = useModalOpen(ApplicationModal.ARBITRUM_OPTIONS)
   const toggle = useToggleModal(ApplicationModal.ARBITRUM_OPTIONS)
+  const toggleWalletModal = useWalletModalToggle() // mod
   useOnClickOutside(node, open ? toggle : undefined)
 
   const [implements3085, setImplements3085] = useState(false)
@@ -251,20 +252,20 @@ export default function NetworkCard() {
                 <Trans>Change your network to go back to L1</Trans>
               </DisabledMenuItem>
             )} */}
-            {implements3085 &&
-              ALL_SUPPORTED_CHAIN_IDS.map((supportedChainId) => {
-                if (supportedChainId === chainId) return null
-                return (
-                  <ButtonMenuItem
-                    key={supportedChainId}
-                    onClick={() => switchToNetwork({ library, chainId: supportedChainId })}
-                  >
-                    <Icon src={EthereumLogo} />
-                    <NetworkName chainId={supportedChainId}>{NETWORK_LABELS[supportedChainId]}</NetworkName>
-                    <ToggleLeft opacity={0.6} size={16} />
-                  </ButtonMenuItem>
-                )
-              })}
+            {ALL_SUPPORTED_CHAIN_IDS.map((supportedChainId) => {
+              if (supportedChainId === chainId) return null
+              const callback = () =>
+                !account
+                  ? toggleWalletModal()
+                  : implements3085 && switchToNetwork({ library, chainId: supportedChainId })
+              return (
+                <ButtonMenuItem key={supportedChainId} onClick={callback}>
+                  <Icon src={EthereumLogo} />
+                  <NetworkName chainId={supportedChainId}>{NETWORK_LABELS[supportedChainId]}</NetworkName>
+                  <ToggleLeft opacity={0.6} size={16} />
+                </ButtonMenuItem>
+              )
+            })}
           </MenuFlyout>
         )}
       </L2Wrapper>
