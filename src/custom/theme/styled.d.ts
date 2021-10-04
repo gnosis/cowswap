@@ -149,5 +149,13 @@ declare module 'styled-components' {
       background?: string
       color?: string
     }
+    mediaWidth: {
+      upToExtraSmall: ThemedCssFunction<DefaultTheme>
+      // MOD
+      upToVerySmall: ThemedCssFunction<DefaultTheme>
+      upToSmall: ThemedCssFunction<DefaultTheme>
+      upToMedium: ThemedCssFunction<DefaultTheme>
+      upToLarge: ThemedCssFunction<DefaultTheme>
+    }
   }
 }
