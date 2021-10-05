@@ -75,10 +75,12 @@ function GnosisSafeTxDetails(props: {
         </TextAlert>
       )}
 
-      {/* Gnosis Safe Web Link (only shown when the transaction has been mined) */}
       {/* View in: Gnosis Safe */}
       {/* TODO: Load gnosisSafeThreshold (not default!) */}
-      {enhancedTransaction && enhancedTransaction.safeTransaction && (
+
+      {/* Gnosis Safe Web Link (only shown when the transaction has been mined) */}
+      {/* {enhancedTransaction && enhancedTransaction.safeTransaction && ( */}
+      {enhancedTransaction && (
         <GnosisSafeLink chainId={chainId} enhancedTransaction={enhancedTransaction} gnosisSafeThreshold={2} />
       )}
     </TransactionInnerDetail>
