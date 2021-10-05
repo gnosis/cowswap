@@ -1,6 +1,6 @@
 import { SupportedChainId as ChainId } from 'constants/chains'
 import { OrderKind } from '@gnosis.pm/gp-v2-contracts'
-import { stringify } from 'qs'
+import qs from 'qs'
 import { getSigningSchemeApiValue, OrderCreation, OrderCancellation } from 'utils/signatures'
 import { APP_DATA_HASH } from 'constants/index'
 import { registerOnWindow } from '../../utils/misc'
@@ -311,7 +311,7 @@ export async function getProfileData(chainId: ChainId, address: string): Promise
 export async function getOrders(chainId: ChainId, owner: string, limit = 1000, offset = 0): Promise<OrderMetaData[]> {
   console.log(`[api:${API_NAME}] Get orders for `, chainId, owner, limit, offset)
 
-  const queryString = stringify({ limit, offset }, { addQueryPrefix: true })
+  const queryString = qs.stringify({ limit, offset }, { addQueryPrefix: true })
 
   try {
     const response = await _get(chainId, `/account/${owner}/orders/${queryString}`)
