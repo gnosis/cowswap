@@ -22,7 +22,7 @@ import UserUpdater from './state/user/updater'
 import FeesUpdater from 'state/price/updater'
 import GasUpdater from 'state/gas/updater'
 import {
-  APIOrdersUpdater,
+  ApiOrdersUpdater,
   CancelledOrdersUpdater,
   PendingOrdersUpdater,
   UnfillableOrdersUpdater,
@@ -76,7 +76,7 @@ function Updaters() {
       <CancelledOrdersUpdater />
       <FeesUpdater />
       <UnfillableOrdersUpdater />
-      <APIOrdersUpdater />
+      <ApiOrdersUpdater />
       <GasUpdater />
     </>
   )
