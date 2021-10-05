@@ -104,7 +104,7 @@ export function ActivityDetails(props: {
   activityDerivedState: ActivityDerivedState
   activityLinkUrl: string | undefined
   disableMouseActions: boolean | undefined
-  creationTime: string | undefined
+  creationTime?: string | undefined
 }) {
   const { activityDerivedState, chainId, activityLinkUrl, disableMouseActions, creationTime } = props
   const { id, isOrder, summary, order, enhancedTransaction, isCancelled, isExpired, isUnfillable, gnosisSafeInfo } =
