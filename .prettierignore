@@ -14,3 +14,6 @@ public/index.html
 # local stuff
 .yalc
 .vscode
+
+# I guess this is breaking CI, always formatting back and forth
+tsconfig.json
