@@ -2,7 +2,7 @@ import { createReducer, PayloadAction } from '@reduxjs/toolkit'
 import { OrderID } from 'api/gnosisProtocol'
 import { SupportedChainId as ChainId } from 'constants/chains'
 import {
-  addOrUpdateOrdersBatch,
+  addOrUpdateOrders,
   addPendingOrder,
   cancelOrder,
   cancelOrdersBatch,
@@ -117,7 +117,7 @@ export default createReducer(initialState, (builder) =>
       delete state[chainId].expired[id]
       delete state[chainId].cancelled[id]
     })
-    .addCase(addOrUpdateOrdersBatch, (state, action) => {
+    .addCase(addOrUpdateOrders, (state, action) => {
       prefillState(state, action)
       const { chainId, orders } = action.payload
 
@@ -126,7 +126,7 @@ export default createReducer(initialState, (builder) =>
 
         // sanity check, is the status set?
         if (!status) {
-          console.error(`addOrUpdateOrdersBatch:: Status not set for order ${id}`)
+          console.error(`addOrUpdateOrders:: Status not set for order ${id}`)
           return
         }
 
