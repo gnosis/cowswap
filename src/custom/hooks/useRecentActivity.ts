@@ -5,6 +5,7 @@ import { useActiveWeb3React } from 'hooks/web3'
 import { Order, OrderStatus } from 'state/orders/actions'
 import { TransactionDetails } from 'state/transactions/reducer'
 import { SupportedChainId as ChainId } from 'constants/chains'
+import { MAXIMUM_ORDERS_TO_DISPLAY } from 'constants/index'
 
 export type TransactionAndOrder =
   | (Order & { addedTime: number })
@@ -58,8 +59,8 @@ export default function useRecentActivity() {
         )
         // sort orders by calculated `addedTime` descending
         .sort((a, b) => b.addedTime - a.addedTime)
-        // show at most 10 regular orders, and as much pending as there are
-        .filter((order, index) => index < 10 || order.status === OrderStatus.PENDING)
+        // show at most MAXIMUM_ORDERS_TO_DISPLAY regular orders, and as much pending as there are
+        .filter((order, index) => index < MAXIMUM_ORDERS_TO_DISPLAY || order.status === OrderStatus.PENDING)
     )
   }, [account, allNonEmptyOrders, chainId])
 
