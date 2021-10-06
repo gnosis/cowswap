@@ -271,10 +271,14 @@ export default function NetworkCard() {
               if (supportedChainId === chainId) return null
               const callback = () => networkCallback(supportedChainId)
               return (
-                <ButtonMenuItem key={supportedChainId} onClick={callback} $disabled={!implements3085}>
+                <ButtonMenuItem
+                  key={supportedChainId}
+                  onClick={callback}
+                  $disabled={Boolean(!implements3085 && account)}
+                >
                   <Icon src={EthereumLogo} />
                   <NetworkName chainId={supportedChainId}>{NETWORK_LABELS[supportedChainId]}</NetworkName>
-                  {implements3085 ? (
+                  {implements3085 || !account ? (
                     <ToggleLeft opacity={0.6} size={16} />
                   ) : (
                     <>
