@@ -14,12 +14,15 @@ import {
   TextAlert,
   TransactionState as ActivityLink,
   CreationTimeText,
+  ActivityVisual,
 } from './styled'
 
 import { getLimitPrice, getExecutionPrice } from 'state/orders/utils'
 import { DEFAULT_PRECISION } from 'constants/index'
 import { ActivityDerivedState } from './index'
 import { GnosisSafeLink } from './StatusDetails'
+import CurrencyLogo from 'components/CurrencyLogo'
+import { useToken } from 'hooks/Tokens'
 
 const DEFAULT_ORDER_SUMMARY = {
   from: '',
@@ -109,11 +112,16 @@ export function ActivityDetails(props: {
   const { activityDerivedState, chainId, activityLinkUrl, disableMouseActions, creationTime } = props
   const { id, isOrder, summary, order, enhancedTransaction, isCancelled, isExpired, isUnfillable, gnosisSafeInfo } =
     activityDerivedState
+  const approvalToken = useToken(enhancedTransaction?.approval?.tokenAddress) || null
 
   if (!order && !enhancedTransaction) return null
 
   // Order Summary default object
   let orderSummary: OrderSummaryType
+
+  // const orderSellCurrency: Currency | undefined = (activityDerivedState?.order?.inputToken as Currency) || undefined
+  // const orderBuyCurrency: Currency | undefined = (activityDerivedState?.order?.outputToken as Currency) || undefined
+
   if (order) {
     const { inputToken, sellAmount, feeAmount, outputToken, buyAmount, validTo, kind, fulfillmentTime } = order
 
@@ -174,17 +182,30 @@ export function ActivityDetails(props: {
 
   const { kind, from, to, executionPrice, limitPrice, fulfillmentTime, validTo } = orderSummary
   const activityName = isOrder ? `${kind} order` : 'Transaction'
+  const inputToken = activityDerivedState?.order?.inputToken || null
+  const outputToken = activityDerivedState?.order?.outputToken || null
+
+  console.log(isOrder && order)
 
   return (
     <Summary>
       <span>
         {creationTime && <CreationTimeText>{creationTime}</CreationTimeText>}
+        <b>{activityName}</b>
 
-        <b>{activityName} </b>
-        {activityLinkUrl && (
-          <ActivityLink href={activityLinkUrl} disableMouseActions={disableMouseActions}>
-            View details ↗
-          </ActivityLink>
+        {/* Token Approval Currency Logo */}
+        {!isOrder && approvalToken && (
+          <ActivityVisual>
+            <CurrencyLogo currency={approvalToken} size={'24px'} />
+          </ActivityVisual>
+        )}
+
+        {/* Order Currency Logo */}
+        {inputToken && outputToken && (
+          <ActivityVisual>
+            <CurrencyLogo currency={inputToken} size={'24px'} />
+            <CurrencyLogo currency={outputToken} size={'24px'} />
+          </ActivityVisual>
         )}
       </span>
       <SummaryInner>
@@ -231,8 +252,19 @@ export function ActivityDetails(props: {
         ) : (
           summary ?? id
         )}
-        {/* TODO: Load gnosisSafeThreshold (not default!) */}
-        {gnosisSafeInfo && enhancedTransaction && enhancedTransaction.safeTransaction && (
+
+        {activityLinkUrl && (
+          <ActivityLink href={activityLinkUrl} disableMouseActions={disableMouseActions}>
+            View details ↗
+          </ActivityLink>
+        )}
+
+        {/* 
+        TODO: Load gnosisSafeThreshold (not default!)
+        `enhancedTransaction` currently returns undefined (no data yet!) 
+        for regular orders done with a Safe. Only works for token approvals with a Safe. 
+        */}
+        {gnosisSafeInfo && enhancedTransaction?.safeTransaction && (
           <GnosisSafeTxDetails
             enhancedTransaction={enhancedTransaction}
             gnosisSafeThreshold={gnosisSafeInfo.threshold}

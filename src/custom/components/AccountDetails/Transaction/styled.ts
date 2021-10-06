@@ -1,9 +1,10 @@
-import styled, { css } from 'styled-components'
+import styled, { css, keyframes } from 'styled-components'
 import { StyledSVG } from 'components/Loader'
 import { LinkStyledButton } from 'theme'
 import { TransactionState as OldTransactionState } from '../TransactionMod'
 import { RowFixed } from 'components/Row'
 import { transparentize } from 'polished'
+import { StyledLogo } from 'components/CurrencyLogo'
 
 export const TransactionWrapper = styled.div`
   width: 100%;
@@ -110,7 +111,7 @@ export const Summary = styled.div`
     font-size: 16px;
     color: inherit;
     text-transform: capitalize;
-    margin: 0 0 6px;
+    margin: 0 0 3px;
     flex: 0 0 auto;
 
     ${({ theme }) => theme.mediaWidth.upToSmall`
@@ -154,7 +155,7 @@ export const SummaryInnerRow = styled.div<{ isExpired?: boolean; isCancelled?: b
   display: grid;
   color: inherit;
   grid-template-rows: 1fr;
-  grid-template-columns: 85px 1fr;
+  grid-template-columns: 100px 1fr;
   width: 100%;
   margin: 0 0 4px;
 
@@ -324,10 +325,10 @@ export const TransactionState = styled(OldTransactionState).attrs(
   ${(props): string | false => !!props.disableMouseActions && `pointer-events: none; cursor: none;`}
   width: 100%;
   border-radius: 0;
-  font-size: initial;
   display: flex;
-  margin: 0;
   padding: 0;
+  font-size: 14px;
+  margin: 6px 0 0;
 
   ${RowFixed} {
     width: 100%;
@@ -451,4 +452,36 @@ export const CreationTimeText = styled.div`
     order: 1;
     flex: 1 1 max-content;
   `};
+`
+
+const rotate360 = keyframes`
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+`
+
+export const ActivityVisual = styled.div`
+  display: flex;
+  margin: 6px 0;
+
+  ${StyledLogo} {
+    padding: 2px;
+    ${({ theme }) => theme.card.background};
+    box-sizing: content-box;
+    box-shadow: none;
+    color: ${({ theme }) =>
+      theme.text1}!important; // Todo: Re-factor StyledLogo to prevent inline style and needing to use !important here
+  }
+
+  ${StyledLogo}:last-child {
+    margin: 0 0 0 -8px;
+  }
+
+  &:hover ${StyledLogo} {
+    animation: ${rotate360} 1s cubic-bezier(0.83, 0, 0.17, 1) infinite;
+    transform: translateZ(0);
+  }
 `
