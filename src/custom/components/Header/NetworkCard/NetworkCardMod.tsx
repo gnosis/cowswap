@@ -148,7 +148,7 @@ const NetworkName = styled.div<{ chainId: SupportedChainId; hide?: boolean }>`
 
 const ButtonMenuItem = styled.button<{ $disabled?: boolean; $selected?: boolean }>`
   ${BaseMenuItem}
-  cursor: ${({ $disabled }) => ($disabled ? 'not-allowed' : 'pointer')};
+  cursor: ${({ $disabled, $selected }) => ($disabled ? 'not-allowed' : $selected ? 'initial' : 'pointer')};
   border: none;
   box-shadow: none;
   // color: ${({ theme }) => theme.text2};
@@ -157,7 +157,7 @@ const ButtonMenuItem = styled.button<{ $disabled?: boolean; $selected?: boolean 
   outline: none;
   padding: 6px 10px;
 
-  ${({ $selected }) => $selected && `margin-bottom: 3px;`}
+  ${({ $selected }) => $selected && `margin: 3px 0;`}
 
   > ${NetworkName} {
     margin: 0 auto 0 8px;
@@ -274,15 +274,18 @@ export default function NetworkCard() {
                 <Trans>Change your network to go back to L1</Trans>
               </DisabledMenuItem>
             )} */}
-            {/*  Current selected network */}
-            <ButtonMenuItem $selected>
-              <Icon src={EthereumLogo} />
-              <NetworkName chainId={chainId}>{NETWORK_LABELS[chainId]}</NetworkName>
-              <StyledPollingDot />
-            </ButtonMenuItem>
             {/* Supported networks to change to */}
             {ALL_SUPPORTED_CHAIN_IDS.map((supportedChainId) => {
-              if (supportedChainId === chainId) return
+              if (supportedChainId === chainId) {
+                /*  Current selected network */
+                return (
+                  <ButtonMenuItem $selected>
+                    <Icon src={EthereumLogo} />
+                    <NetworkName chainId={chainId}>{NETWORK_LABELS[chainId]}</NetworkName>
+                    <StyledPollingDot />
+                  </ButtonMenuItem>
+                )
+              }
 
               const callback = () => networkCallback(supportedChainId)
               return (
