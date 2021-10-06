@@ -83,7 +83,7 @@ export const Summary = styled.div`
   flex-flow: row wrap;
   width: 100%;
   grid-template-rows: 1fr;
-  grid-template-columns: 124px 1fr;
+  grid-template-columns: 80px max-content;
   color: ${({ theme }) => theme.text1};
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
@@ -98,28 +98,6 @@ export const Summary = styled.div`
     align-items: flex-start;
     margin: 0;
     justify-content: flex-start;
-
-    ${({ theme }) => theme.mediaWidth.upToSmall`
-      width: 100%;
-      flex-flow: row wrap;
-    `};
-  }
-
-  > span > b {
-    font-weight: bold;
-    line-height: 1;
-    font-size: 16px;
-    color: inherit;
-    text-transform: capitalize;
-    margin: 0 0 3px;
-    flex: 0 0 auto;
-
-    ${({ theme }) => theme.mediaWidth.upToSmall`
-      order: 3;
-      font-size: 18px;
-      flex: 1 1 100%;
-      font-weight: bold;
-    `}
   }
 
   > span > a {
@@ -143,12 +121,27 @@ export const SummaryInner = styled.div`
   opacity: 1;
   font-size: 13px;
   word-break: break-all;
+  position: relative;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
     font-size: 14px;
     margin: 16px 0 0;
     width: 100%;
   `};
+
+  > b {
+    font-weight: bold;
+    line-height: 1;
+    font-size: 16px;
+    color: inherit;
+    text-transform: capitalize;
+    margin: 0 0 16px;
+    flex: 0 0 auto;
+
+    ${({ theme }) => theme.mediaWidth.upToSmall`
+      font-size: 18px;
+    `}
+  }
 `
 
 export const SummaryInnerRow = styled.div<{ isExpired?: boolean; isCancelled?: boolean }>`
@@ -446,12 +439,6 @@ export const CreationTimeText = styled.div`
   font-weight: 400;
   opacity: 0.8;
   padding: 0 0 12px;
-
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    width: 100%;
-    order: 1;
-    flex: 1 1 max-content;
-  `};
 `
 
 const rotate360 = keyframes`
@@ -465,7 +452,7 @@ const rotate360 = keyframes`
 
 export const ActivityVisual = styled.div`
   display: flex;
-  margin: 6px 0;
+  margin: 0 0 6px;
 
   ${StyledLogo} {
     padding: 2px;

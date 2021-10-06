@@ -191,7 +191,6 @@ export function ActivityDetails(props: {
     <Summary>
       <span>
         {creationTime && <CreationTimeText>{creationTime}</CreationTimeText>}
-        <b>{activityName}</b>
 
         {/* Token Approval Currency Logo */}
         {!isOrder && approvalToken && (
@@ -209,6 +208,7 @@ export function ActivityDetails(props: {
         )}
       </span>
       <SummaryInner>
+        <b>{activityName}</b>
         {isOrder ? (
           <>
             <SummaryInnerRow>
