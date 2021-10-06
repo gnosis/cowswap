@@ -2,8 +2,8 @@
 import { YellowCard } from 'components/Card'
 import { useOnClickOutside } from 'hooks/useOnClickOutside'
 import { useActiveWeb3React } from 'hooks/web3'
-import { useEffect, useMemo, useRef, useState } from 'react'
-import { /* ArrowDownCircle, */ ChevronDown, ToggleLeft } from 'react-feather'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { /* ArrowDownCircle, */ AlertCircle, ChevronDown, ToggleLeft } from 'react-feather'
 import { ApplicationModal } from 'state/application/actions'
 import { useModalOpen, useToggleModal, useWalletModalToggle } from 'state/application/hooks'
 import styled, { css } from 'styled-components/macro'
@@ -19,6 +19,7 @@ import {
 } from 'constants/chains'
 import { supportedChainId } from 'utils/supportedChainId'
 import EthereumLogo from 'assets/images/ethereum-logo.png'
+import QuestionHelper from 'components/QuestionHelper'
 
 const BaseWrapper = css`
   position: relative;
@@ -144,8 +145,9 @@ const NetworkName = styled.div<{ chainId: SupportedChainId }>`
   `};
 `
 
-const ButtonMenuItem = styled.button`
+const ButtonMenuItem = styled.button<{ $disabled?: boolean }>`
   ${BaseMenuItem}
+  cursor: ${({ $disabled }) => ($disabled ? 'not-allowed' : 'pointer')};
   border: none;
   box-shadow: none;
   // color: ${({ theme }) => theme.text2};
@@ -201,12 +203,25 @@ export default function NetworkCard() {
     // here we proceed w/ a noop feature check to ensure the user's version of metamask supports network switching
     // if not, we hide the UI
     if (!library?.provider?.request || !chainId || !library?.provider?.isMetaMask) {
-      return
+      return setImplements3085(false)
     }
     switchToNetwork({ library, chainId })
       .then((x) => x ?? setImplements3085(true))
       .catch(() => setImplements3085(false))
   }, [chainId, library])
+
+  const networkCallback = useCallback(
+    (supportedChainId) => {
+      if (!account) {
+        return toggleWalletModal()
+      } else if (implements3085 && library && supportedChainId) {
+        return switchToNetwork({ library, chainId: supportedChainId })
+      } else {
+        return
+      }
+    },
+    [account, implements3085, library, toggleWalletModal]
+  )
 
   const info = chainId ? CHAIN_INFO[chainId] : undefined
   if (!chainId || !info || !library) {
@@ -254,15 +269,19 @@ export default function NetworkCard() {
             )} */}
             {ALL_SUPPORTED_CHAIN_IDS.map((supportedChainId) => {
               if (supportedChainId === chainId) return null
-              const callback = () =>
-                !account
-                  ? toggleWalletModal()
-                  : implements3085 && switchToNetwork({ library, chainId: supportedChainId })
+              const callback = () => networkCallback(supportedChainId)
               return (
-                <ButtonMenuItem key={supportedChainId} onClick={callback}>
+                <ButtonMenuItem key={supportedChainId} onClick={callback} $disabled={!implements3085}>
                   <Icon src={EthereumLogo} />
                   <NetworkName chainId={supportedChainId}>{NETWORK_LABELS[supportedChainId]}</NetworkName>
-                  <ToggleLeft opacity={0.6} size={16} />
+                  {implements3085 ? (
+                    <ToggleLeft opacity={0.6} size={16} />
+                  ) : (
+                    <>
+                      <AlertCircle size={16} />
+                      <QuestionHelper text="Switching networks inside CowSwap is not supported by your wallet. Please change networks in your wallet app." />
+                    </>
+                  )}
                 </ButtonMenuItem>
               )
             })}
