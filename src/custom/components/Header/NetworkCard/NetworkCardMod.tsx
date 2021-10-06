@@ -20,6 +20,7 @@ import {
 import { supportedChainId } from 'utils/supportedChainId'
 import EthereumLogo from 'assets/images/ethereum-logo.png'
 import QuestionHelper from 'components/QuestionHelper'
+import { StyledPollingDot } from '@src/components/Header/Polling'
 
 const BaseWrapper = css`
   position: relative;
@@ -51,7 +52,7 @@ const BaseMenuItem = css`
   font-weight: 400;
   justify-content: space-between;
   :hover {
-    color: ${({ theme }) => theme.text1};
+    // color: ${({ theme }) => theme.text1};
     text-decoration: none;
   }
 `
@@ -133,34 +134,38 @@ const MenuItem = styled(ExternalLink)`
   ${BaseMenuItem}
 ` */
 
-const NetworkName = styled.div<{ chainId: SupportedChainId }>`
+const NetworkName = styled.div<{ chainId: SupportedChainId; hide?: boolean }>`
   border-radius: 6px;
   font-size: 16px;
   font-weight: 500;
   padding: 0 2px 0.5px 4px;
   margin: 0 2px;
   white-space: pre;
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-   display: none;
+  ${({ theme, hide }) => theme.mediaWidth.upToSmall`
+   display: ${hide ? 'none' : 'block'};
   `};
 `
 
-const ButtonMenuItem = styled.button<{ $disabled?: boolean }>`
+const ButtonMenuItem = styled.button<{ $disabled?: boolean; $selected?: boolean }>`
   ${BaseMenuItem}
   cursor: ${({ $disabled }) => ($disabled ? 'not-allowed' : 'pointer')};
   border: none;
   box-shadow: none;
   // color: ${({ theme }) => theme.text2};
-  color: ${({ theme }) => theme.text1};
+  color: ${({ theme, $selected }) => ($selected ? theme.text2 : theme.text1)};
+  background-color: ${({ theme, $selected }) => $selected && theme.primary1};
   outline: none;
   padding: 6px 10px;
+
+  ${({ $selected }) => $selected && `margin-bottom: 3px;`}
 
   > ${NetworkName} {
     margin: 0 auto 0 8px;
   }
 
   &:hover {
-    background: ${({ theme }) => theme.bg4};
+    color: ${({ theme, $selected }) => !$selected && theme.text1};
+    background: ${({ theme, $selected }) => !$selected && theme.bg4};
   }
 
   transition: background 0.13s ease-in-out;
@@ -236,7 +241,9 @@ export default function NetworkCard() {
       <L2Wrapper ref={node}>
         <NetworkInfo onClick={toggle} chainId={chainId}>
           <Icon src={EthereumLogo} />
-          <NetworkName chainId={chainId}>{info.label}</NetworkName>
+          <NetworkName chainId={chainId} hide>
+            {info.label}
+          </NetworkName>
           <ChevronDown size={16} style={{ marginTop: '2px' }} strokeWidth={2.5} />
         </NetworkInfo>
         {open && (
@@ -267,8 +274,16 @@ export default function NetworkCard() {
                 <Trans>Change your network to go back to L1</Trans>
               </DisabledMenuItem>
             )} */}
+            {/*  Current selected network */}
+            <ButtonMenuItem $selected>
+              <Icon src={EthereumLogo} />
+              <NetworkName chainId={chainId}>{NETWORK_LABELS[chainId]}</NetworkName>
+              <StyledPollingDot />
+            </ButtonMenuItem>
+            {/* Supported networks to change to */}
             {ALL_SUPPORTED_CHAIN_IDS.map((supportedChainId) => {
-              if (supportedChainId === chainId) return null
+              if (supportedChainId === chainId) return
+
               const callback = () => networkCallback(supportedChainId)
               return (
                 <ButtonMenuItem

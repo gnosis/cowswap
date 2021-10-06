@@ -26,7 +26,7 @@ const StyledPollingNumber = styled(TYPE.small)<{ breathe: boolean; hovering: boo
     opacity: 1;
   }
 `
-const StyledPollingDot = styled.div`
+export const StyledPollingDot = styled.div`
   width: 8px;
   height: 8px;
   min-height: 8px;
