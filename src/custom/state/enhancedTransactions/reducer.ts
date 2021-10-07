@@ -4,8 +4,8 @@ import {
   clearAllTransactions,
   checkedTransaction,
   finalizeTransaction,
-  cancelTransaction,
   replaceTransaction,
+  REPLACEMENT_TYPE,
   // updateSafeTransactions,
 } from 'state/enhancedTransactions/actions'
 import { SerializableTransactionReceipt } from '@src/state/transactions/actions'
@@ -31,6 +31,8 @@ export interface EnhancedTransactionDetails {
   // Operations
   approval?: { tokenAddress: string; spender: string }
   presign?: { orderId: string }
+
+  replacementType?: REPLACEMENT_TYPE // if the user cancelled or speedup the tx it will be reflected here
 }
 
 export interface EnhancedTransactionState {
@@ -93,22 +95,13 @@ export default createReducer(initialState, (builder) =>
       tx.confirmedTime = now()
     })
 
-    .addCase(cancelTransaction, (transactions, { payload: { chainId, hash } }) => {
-      if (!transactions[chainId]?.[hash]) {
-        console.error('Attempted to cancel an unknown transaction.')
-        return
-      }
-      const allTxs = transactions[chainId] ?? {}
-      delete allTxs[hash]
-    })
-
-    .addCase(replaceTransaction, (transactions, { payload: { chainId, oldHash, newHash } }) => {
+    .addCase(replaceTransaction, (transactions, { payload: { chainId, oldHash, newHash, type } }) => {
       if (!transactions[chainId]?.[oldHash]) {
         console.error('Attempted to replace an unknown transaction.')
         return
       }
       const allTxs = transactions[chainId] ?? {}
-      allTxs[newHash] = { ...allTxs[oldHash], hash: newHash, addedTime: new Date().getTime() }
+      allTxs[newHash] = { ...allTxs[oldHash], hash: newHash, addedTime: new Date().getTime(), replacementType: type }
       delete allTxs[oldHash]
     })
 )
