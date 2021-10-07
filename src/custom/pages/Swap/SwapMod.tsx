@@ -224,8 +224,9 @@ export default function Swap({
     currencies[Field.INPUT],
     currencies[Field.OUTPUT],
     // if native input !== NATIVE_TOKEN, validation fails
-    nativeInput || parsedAmount
+    nativeInput || parsedAmount,
     // should override and get wrapCallback?
+    isNativeInSwap
   )
   const showWrap: boolean = !isNativeInSwap && wrapType !== WrapType.NOT_APPLICABLE
   const { address: recipientAddress } = useENSAddress(recipient)
@@ -487,6 +488,8 @@ export default function Swap({
       amountBeforeFees = formatSmart(trade.inputAmountWithoutFee, AMOUNT_PRECISION)
     }
   }
+
+  console.log('{isNativeIn && onWrap', { isNativeIn, onWrap })
 
   return (
     <>
