@@ -38,7 +38,7 @@ export const Wrapper = styled.div`
   padding: 0;
   height: 100%;
 
-  ${({ theme }) => theme.mediaWidth.upToMedium`padding: 42px 0 0;`};
+  ${({ theme }) => theme.mediaWidth.upToMedium`padding: 12px 0 0;`};
 
   ${WalletName},
   ${AddressLink},
@@ -139,12 +139,13 @@ export const InfoCard = styled.div`
   justify-content: space-between;
   margin: 0 24px 24px;
   border-radius: 16px;
+  padding: 24px;
   ${({ theme }) => theme.card.background3};
   ${({ theme }) => theme.card.boxShadow};
-  padding: 24px;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
     padding: 16px 10px 24px;
+    margin: 0 16px 16px;
   `};
 `
 

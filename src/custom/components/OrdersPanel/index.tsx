@@ -30,18 +30,19 @@ const SideBar = styled.div`
   overflow-y: overlay;
   animation: slideIn 0.3s cubic-bezier(0.87, 0, 0.13, 1);
   ${({ theme }) => theme.card.background2};
-
   backdrop-filter: blur(25px);
 
   ${({ theme }) => theme.mediaWidth.upToMedium`    
     width: 100%;
     height: 100%;
     max-width: 100%;
+    border-radius: 0;
+    backdrop-filter: blur(65px);
   `};
 
   &::-webkit-scrollbar {
-    width: 24px;
-    border-radius: 24px;
+    width: 16px;
+    border-radius: 16px;
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
     background: transparent;
@@ -49,8 +50,8 @@ const SideBar = styled.div`
 
   &::-webkit-scrollbar-thumb {
     background: ${({ theme }) => theme.card.border};
-    border: 8px solid transparent;
-    border-radius: 24px;
+    border: 4px solid transparent;
+    border-radius: 16px;
     background-clip: padding-box;
   }
 
@@ -101,21 +102,18 @@ const Header = styled.div`
   display: flex;
   justify-content: space-between;
   padding: 20px 30px;
-  opacity: 0.85;
+  align-items: center;
   transition: opacity 0.2s ease-in-out;
 
   ${({ theme }) => theme.mediaWidth.upToMedium`
     top: 0;
+    padding: 0 16px;
     z-index: 99999;
-    position: fixed;
+    position: sticky;
     left: 0;
-    right: initial;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 42px;
+    height: 52px;
     backdrop-filter: blur(5px);
+    ${({ theme }) => theme.card.background2};
   `};
 
   &:hover {

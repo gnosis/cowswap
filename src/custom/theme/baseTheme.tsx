@@ -158,8 +158,8 @@ export function themeVariables(darkMode: boolean, colorsTheme: Colors) {
       background2: css`
         background: linear-gradient(
           145deg,
-          ${darkMode ? '#081526' : 'rgb(255 255 255 / 85%)'},
-          ${darkMode ? 'rgb(8 21 38 / 70%)' : 'rgb(197 218 239 / 80%)'}
+          ${darkMode ? '#081526' : '#d5e9f0'},
+          ${darkMode ? 'rgb(8 21 38 / 70%)' : 'rgb(213 233 240 / 75%)'}
         );
       `,
       background3: css`
