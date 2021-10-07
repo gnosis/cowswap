@@ -6,7 +6,7 @@ import {
   finalizeTransaction,
   replaceTransaction,
   updateSafeTransaction,
-  REPLACEMENT_TYPE,
+  ReplacementType,
 } from 'state/enhancedTransactions/actions'
 import { SafeMultisigTransactionResponse } from '@gnosis.pm/safe-service-client'
 import { SerializableTransactionReceipt } from '@src/state/transactions/actions'
@@ -37,7 +37,7 @@ export interface EnhancedTransactionDetails {
 
   // Wallet specific
   safeTransaction?: SafeMultisigTransactionResponse // Gnosis Safe transaction info
-  replacementType?: REPLACEMENT_TYPE // if the user cancelled or speedup the tx it will be reflected here
+  replacementType?: ReplacementType // if the user cancelled or speedup the tx it will be reflected here
 }
 
 export interface EnhancedTransactionState {
