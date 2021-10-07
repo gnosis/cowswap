@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
-import { isTransactionRecent, useAllTransactions } from 'state/enhancedTransactions/hooks'
-import { useOrder, useOrders } from 'state/orders/hooks'
+import { isTransactionRecent, useAllTransactions, useTransactionsByHash } from 'state/enhancedTransactions/hooks'
+import { useOrder, useOrders, useOrdersById } from 'state/orders/hooks'
 import { useActiveWeb3React } from 'hooks/web3'
 import { Order, OrderStatus } from 'state/orders/actions'
 import { EnhancedTransactionDetails } from 'state/enhancedTransactions/reducer'
@@ -182,6 +182,28 @@ function createActivityDescriptor(tx?: EnhancedTransactionDetails, order?: Order
     type,
     date,
   }
+}
+
+export function useMultipleActivityDescriptors({
+  chainId,
+  ids,
+}: UseActivityDescriptionParams): ActivityDescriptors[] | null {
+  const txs = useTransactionsByHash({ hashes: ids })
+  const orders = useOrdersById({ chainId, ids })
+
+  return useMemo(() => {
+    if (!chainId) return null
+
+    console.log(`useMultipleActivityDescriptors::memo`, ids.length, Object.keys(txs).length, Object.keys(orders).length)
+
+    return ids.reduce<ActivityDescriptors[]>((acc, id) => {
+      const activity = createActivityDescriptor(txs[id], orders[id])
+      if (activity) {
+        acc.push(activity)
+      }
+      return acc
+    }, [])
+  }, [chainId, ids, orders, txs])
 }
 
 export function useSingleActivityDescriptor({
