@@ -40,7 +40,9 @@ const DAY_MS = 86_400_000
  * @param order
  */
 function isOrderRecent(order: Order): boolean {
-  return Date.now() - Date.parse(order.creationTime) < DAY_MS
+  // TODO: TEMPORARY CHANGE TO SEE HISTORY FOR 10 INSTEAD OF 1 DAY
+  // TODO: will become obsolete with the api orders stuff
+  return Date.now() - Date.parse(order.creationTime) < DAY_MS * 10
 }
 
 /**
