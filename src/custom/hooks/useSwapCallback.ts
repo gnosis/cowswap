@@ -54,7 +54,7 @@ interface SwapCallbackParams {
   trade?: TradeGp // trade to execute, required
   allowedSlippage?: Percent // in bips
   recipientAddressOrName: string | null // the ENS name or address of the recipient of the trade, or null if swap should be returned to sender
-  openTransactionConfirmationModal: (message: string) => void
+  openTransactionConfirmationModal: () => void
   closeModals: () => void
 }
 
@@ -154,7 +154,7 @@ export function useSwapCallback(params: SwapCallbackParams): {
 
         const wrapPromise = isSellEth && wrapEther ? wrapEther(inputAmountWithSlippage) : undefined
 
-        openTransactionConfirmationModal('Swap tokens!')
+        openTransactionConfirmationModal()
 
         // TODO: indicate somehow in the order when the user was to receive ETH === isBuyEth flag
         const postOrderPromise = sendOrder({

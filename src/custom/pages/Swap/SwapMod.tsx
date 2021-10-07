@@ -363,7 +363,16 @@ export default function Swap({
     trade,
     allowedSlippage,
     recipientAddressOrName: recipient,
-    openTransactionConfirmationModal,
+    openTransactionConfirmationModal: () => {
+      setSwapState({
+        tradeToConfirm: trade,
+        attemptingTxn: true,
+        swapErrorMessage: undefined,
+        showConfirm: true,
+        txHash: undefined,
+      })
+    },
+    //openTransactionConfirmationModal,
     closeModals,
   })
 
