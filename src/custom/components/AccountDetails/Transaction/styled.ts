@@ -275,16 +275,6 @@ export const StatusLabel = styled.div<{ isPending: boolean; isCancelling: boolea
   }
 `
 
-export const TransactionWrapper = styled.div`
-  width: 100%;
-  border-radius: 0;
-  font-size: initial;
-  display: flex;
-  margin: 0;
-  padding: 16px;
-  transition: background 0.2s ease-in-out;
-`
-
 export const StatusLabelBelow = styled.div<{ isCancelling?: boolean }>`
   width: 100%;
   display: flex;
