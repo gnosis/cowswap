@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import ReactGA from 'react-ga'
 import { useAppDispatch } from 'state/hooks'
 import { useActiveWeb3React } from 'hooks/web3'
 import { sdk } from 'utils/blocknative'
@@ -14,13 +15,30 @@ function watchTxChanges(pendingHashes: string[], chainId: number, dispatch: Disp
 
       emitter.on('txSpeedUp', (e) => {
         if ('hash' in e && typeof e.hash === 'string') {
+          ReactGA.event({
+            category: 'Transaction',
+            action: 'Speedup',
+          })
           dispatch(replaceTransaction({ chainId, oldHash: currentHash, newHash: e.hash, type: 'speedup' }))
         }
       })
 
       emitter.on('txCancel', (e) => {
         if ('hash' in e && typeof e.hash === 'string') {
+          ReactGA.event({
+            category: 'Transaction',
+            action: 'Cancelled',
+          })
           dispatch(replaceTransaction({ chainId, oldHash: currentHash, newHash: e.hash, type: 'cancel' }))
+        }
+      })
+
+      emitter.on('txFailed', (e) => {
+        if ('hash' in e && typeof e.hash === 'string') {
+          ReactGA.event({
+            category: 'Transaction',
+            action: 'Failed',
+          })
         }
       })
     } catch (error) {
