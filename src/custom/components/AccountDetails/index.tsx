@@ -27,7 +27,7 @@ import {
   AccountControl,
   AddressLink,
   IconWrapper,
-  renderTransactions,
+  renderActivities,
 } from './AccountDetailsMod'
 import {
   NetworkCard,
@@ -43,6 +43,7 @@ import {
 import { ConnectedWalletInfo, useWalletInfo } from 'hooks/useWalletInfo'
 import { MouseoverTooltip } from 'components/Tooltip'
 import { supportedChainId } from 'utils/supportedChainId'
+import { ActivityDescriptors, useMultipleActivityDescriptors } from 'hooks/useRecentActivity'
 
 type AbstractConnector = Pick<ReturnType<typeof useActiveWeb3React>, 'connector'>['connector']
 
@@ -186,7 +187,16 @@ export default function AccountDetails({
     }
   }, [dispatch, chainId])
   const explorerLabel = chainId && account ? getExplorerLabel(chainId, account, 'address') : undefined
-  const activityTotalCount = (pendingTransactions?.length || 0) + (confirmedTransactions?.length || 0)
+
+  // TODO: for now I'm merging both Pending and Confirmed activities
+  // TODO: if you wan to show them separately just call this hook once with each list
+  const activities = useMultipleActivityDescriptors({
+    chainId,
+    ids: (pendingTransactions || []).concat(confirmedTransactions || []),
+  })
+  // TODO: and also group them separately
+  const activitiesGroupedByDate = groupActivitiesByDay(activities || [])
+  const activityTotalCount = activities?.length || 0
 
   const handleDisconnectClick = () => {
     ;(connector as any).close()
@@ -254,8 +264,17 @@ export default function AccountDetails({
           </span>
 
           <div>
-            {renderTransactions(pendingTransactions)}
-            {renderTransactions(confirmedTransactions)}
+            {activitiesGroupedByDate.map(({ date, activities }) => {
+              return (
+                <>
+                  {/* TODO: style me! */}
+                  <h3>{date.toString()}</h3>
+                  {renderActivities(activities)}
+                </>
+              )
+            })}
+            {/*{renderTransactions(pendingTransactions)}*/}
+            {/*{renderTransactions(confirmedTransactions)}*/}
           </div>
         </LowerSection>
       ) : (
