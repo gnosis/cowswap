@@ -35,12 +35,23 @@ interface GetWrapUnwrapCallback {
   inputAmount?: CurrencyAmount<Currency>
   addTransaction: TransactionAdder
   wethContract: Contract
+  openTransactionConfirmationModal: (message: string) => void
+  closeModals: () => void
 }
 
 const NOT_APPLICABLE = { wrapType: WrapType.NOT_APPLICABLE }
 
 function _getWrapUnwrapCallback(params: GetWrapUnwrapCallback): WrapUnwrapCallback {
-  const { chainId, isWrap, balance, inputAmount, addTransaction, wethContract } = params
+  const {
+    chainId,
+    isWrap,
+    balance,
+    inputAmount,
+    addTransaction,
+    wethContract,
+    openTransactionConfirmationModal,
+    closeModals,
+  } = params
   const { native, wrapped } = getChainCurrencySymbols(chainId)
   const symbol = isWrap ? native : wrapped
 
@@ -66,11 +77,14 @@ function _getWrapUnwrapCallback(params: GetWrapUnwrapCallback): WrapUnwrapCallba
 
     wrapUnwrapCallback = async () => {
       try {
+        openTransactionConfirmationModal(summary)
         const txReceipt = await wrapUnwrap()
         addTransaction(txReceipt, { summary })
+        closeModals()
 
         return txReceipt
       } catch (error) {
+        closeModals()
         const actionName = WrapType.WRAP ? 'wrapping' : 'unwrapping'
         console.error(t`Error ${actionName} ${symbol}`, error)
 
@@ -93,9 +107,11 @@ function _getWrapUnwrapCallback(params: GetWrapUnwrapCallback): WrapUnwrapCallba
  * @param typedValue the user input value
  */
 export default function useWrapCallback(
-  inputCurrency: Currency | undefined,
-  outputCurrency: Currency | undefined,
-  inputAmount: CurrencyAmount<Currency> | undefined,
+  openTransactionConfirmationModal: (message: string) => void,
+  closeModals: () => void,
+  inputCurrency?: Currency,
+  outputCurrency?: Currency,
+  inputAmount?: CurrencyAmount<Currency>,
   isEthTradeOverride?: boolean
 ): WrapUnwrapCallback {
   const { chainId: connectedChainId, account } = useActiveWeb3React()
@@ -123,7 +139,20 @@ export default function useWrapCallback(
         inputAmount,
         addTransaction,
         wethContract,
+        openTransactionConfirmationModal,
+        closeModals,
       })
     }
-  }, [wethContract, chainId, inputCurrency, outputCurrency, isEthTradeOverride, balance, inputAmount, addTransaction])
+  }, [
+    wethContract,
+    chainId,
+    inputCurrency,
+    outputCurrency,
+    isEthTradeOverride,
+    balance,
+    inputAmount,
+    addTransaction,
+    openTransactionConfirmationModal,
+    closeModals,
+  ])
 }

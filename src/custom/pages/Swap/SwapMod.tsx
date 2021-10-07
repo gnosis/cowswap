@@ -216,8 +216,8 @@ export default function Swap({
     execute: onWrap,
     inputError: wrapInputError,
   } = useWrapCallback(
-    () => {
-      setTransactionConfirmationModalMsg('Approving token for trading')
+    (message: string) => {
+      setTransactionConfirmationModalMsg(message)
       openTransactionConfirmationModal()
     },
     closeModals,
@@ -313,8 +313,8 @@ export default function Swap({
 
   // check whether the user has approved the router on the input token
   const [approvalState, approveCallback] = useApproveCallbackFromTrade(
-    () => {
-      setTransactionConfirmationModalMsg('Approving token for trading')
+    (message: string) => {
+      setTransactionConfirmationModalMsg(message)
       openTransactionConfirmationModal()
     },
     closeModals,
