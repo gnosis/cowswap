@@ -23,11 +23,11 @@ export const checkedTransaction = createAction<{
   blockNumber: number
 }>('enhancedTransactions/checkedTransaction')
 
-export type REPLACEMENT_TYPE = 'speedup' | 'cancel'
+export type ReplacementType = 'speedup' | 'cancel'
 
 export const replaceTransaction = createAction<{
   chainId: number
   oldHash: string
   newHash: string
-  type: REPLACEMENT_TYPE
+  type: ReplacementType
 }>('enhancedTransactions/replaceTransaction')

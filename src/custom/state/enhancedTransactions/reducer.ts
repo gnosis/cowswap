@@ -5,7 +5,7 @@ import {
   checkedTransaction,
   finalizeTransaction,
   replaceTransaction,
-  REPLACEMENT_TYPE,
+  ReplacementType,
   // updateSafeTransactions,
 } from 'state/enhancedTransactions/actions'
 import { SerializableTransactionReceipt } from '@src/state/transactions/actions'
@@ -32,7 +32,7 @@ export interface EnhancedTransactionDetails {
   approval?: { tokenAddress: string; spender: string }
   presign?: { orderId: string }
 
-  replacementType?: REPLACEMENT_TYPE // if the user cancelled or speedup the tx it will be reflected here
+  replacementType?: ReplacementType // if the user cancelled or speedup the tx it will be reflected here
 }
 
 export interface EnhancedTransactionState {
