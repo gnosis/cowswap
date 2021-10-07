@@ -3,7 +3,7 @@ import { SupportedChainId } from 'constants/chains'
 
 export * from '@src/constants/addresses'
 
-export const MULTICALL2_ADDRESSES: AddressMap = {
+export const MULTICALL_ADDRESS: AddressMap = {
   ...MULTICALL2_ADDRESSES_UNI,
-  [SupportedChainId.XDAI]: '0x08612d3C4A5Dfe2FaaFaFe6a4ff712C2dC675bF7',
+  [SupportedChainId.XDAI]: '0x0f41c16b8ad27c11f181eca85f0941868c1297af',
 }
