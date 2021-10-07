@@ -128,6 +128,34 @@ export function getStatusIcon(connector?: AbstractConnector, walletInfo?: Connec
   return null
 }
 
+type ActivitiesGroupedByDate = {
+  date: Date
+  activities: ActivityDescriptors[]
+}[]
+
+function groupActivitiesByDay(activities: ActivityDescriptors[]): ActivitiesGroupedByDate {
+  const mapByTimestamp: { [timestamp: number]: ActivityDescriptors[] } = {}
+
+  activities.forEach((activity) => {
+    const { date } = activity
+    // get timestamp of the day, drop hours, minutes and seconds
+    const timestamp = new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime()
+
+    mapByTimestamp[timestamp] = (mapByTimestamp[timestamp] || []).concat(activity)
+  })
+
+  return (
+    Object.keys(mapByTimestamp)
+      .map(Number) // Keys are always string, convert back to number
+      // .sort((a, b) => b - a) // Should be sorted already I guess, but just in case
+      .reduce<ActivitiesGroupedByDate>((acc, timestamp) => {
+        // For easier handling later, transform into a list of objects with nested lists
+        acc.push({ date: new Date(timestamp), activities: mapByTimestamp[timestamp] })
+        return acc
+      }, [])
+  )
+}
+
 interface AccountDetailsProps {
   pendingTransactions: string[]
   confirmedTransactions: string[]
