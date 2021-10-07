@@ -36,7 +36,7 @@ export default function useUSDCPrice(currency?: Currency) {
   const [bestUsdPrice, setBestUsdPrice] = useState<Price<Token, Currency> | null>(null)
   const [error, setError] = useState<Error | null>(null)
 
-  const { chainId } = useActiveWeb3React()
+  const { chainId, account } = useActiveWeb3React()
 
   const amountOut = chainId ? STABLECOIN_AMOUNT_OUT[chainId] : undefined
   const stablecoin = amountOut?.currency
@@ -82,6 +82,7 @@ export default function useUSDCPrice(currency?: Currency) {
       chainId: isSupportedChain,
       fromDecimals: currency.decimals,
       toDecimals: stablecoin.decimals,
+      userAddress: account,
     }
 
     if (currency.wrapped.equals(stablecoin)) {
@@ -120,7 +121,7 @@ export default function useUSDCPrice(currency?: Currency) {
           })
         })
     }
-  }, [amountOut, chainId, currency, stablecoin])
+  }, [amountOut, chainId, currency, stablecoin, account])
 
   return { price: bestUsdPrice, error }
 }

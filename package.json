@@ -3,7 +3,7 @@
   "description": "CowSwap - Gnosis Protocol",
   "homepage": ".",
   "private": true,
-  "version": "1.2.0",
+  "version": "1.2.1",
   "engines": {
     "node": ">=14.0.0"
   },
@@ -60,8 +60,8 @@
     "@uniswap/liquidity-staker": "^1.0.2",
     "@uniswap/merkle-distributor": "1.0.1",
     "@uniswap/sdk": "npm:@anxolin/uniswap-sdk#3.0.3-rc.3",
-    "@uniswap/token-lists": "^1.0.0-beta.25",
     "@uniswap/sdk-core": "^3.0.1",
+    "@uniswap/token-lists": "^1.0.0-beta.25",
     "@uniswap/v2-core": "1.0.0",
     "@uniswap/v2-periphery": "^1.1.0-beta.0",
     "@uniswap/v2-sdk": "^3.0.0-alpha.2",
@@ -199,9 +199,10 @@
     "bnc-sdk": "^3.5.0",
     "fast-safe-stringify": "^2.0.8",
     "ipfs-http-client": "^52.0.3",
-    "paraswap": "^4.18.0",
+    "paraswap": "^5.0.1",
     "react-appzi": "^1.0.4",
     "react-inlinesvg": "^2.3.0",
-    "react-router-hash-link": "^2.4.0"
+    "react-router-hash-link": "^2.4.0",
+    "timeago.js": "^4.0.2"
   }
 }

@@ -12,6 +12,12 @@ import {
 
 const TEN = new BigNumber(10)
 
+export const numberFormatter = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+  minimumFractionDigits: 0,
+})
+
 export function formatAtoms(amount: string, decimals: number): string {
   return new BigNumber(amount).div(TEN.pow(decimals)).toString(10)
 }
@@ -154,7 +160,7 @@ export function formatMax(value?: Fraction, decimals?: number): string | undefin
   if (!value) {
     return
   }
-  let amount = value.toFixed(decimals || LONG_PRECISION)
+  let amount = value.toFixed(decimals ?? LONG_PRECISION)
 
   if (+amount === 0) {
     amount = value.toSignificant(1)
