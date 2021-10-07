@@ -82,7 +82,7 @@ function transformApiOrderToStoreOrder(
 export function ApiOrdersUpdater(): null {
   const { account, chainId } = useActiveWeb3React()
   const allTokens = useAllTokens()
-  const tokenAreLoaded = useMemo(() => Object.keys(allTokens).length > 0, [allTokens])
+  const tokensAreLoaded = useMemo(() => Object.keys(allTokens).length > 0, [allTokens])
   const addOrUpdateOrders = useAddOrUpdateOrders()
   const getTokensFromChain = useTokensLazy()
 
@@ -130,10 +130,10 @@ export function ApiOrdersUpdater(): null {
   )
 
   useEffect(() => {
-    if (account && chainId && tokenAreLoaded) {
+    if (account && chainId && tokensAreLoaded) {
       updateOrders(chainId, account)
     }
-  }, [account, chainId, tokenAreLoaded, updateOrders])
+  }, [account, chainId, tokensAreLoaded, updateOrders])
 
   return null
 }
