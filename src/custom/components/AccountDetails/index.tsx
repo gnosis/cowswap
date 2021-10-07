@@ -188,13 +188,10 @@ export default function AccountDetails({
   }, [dispatch, chainId])
   const explorerLabel = chainId && account ? getExplorerLabel(chainId, account, 'address') : undefined
 
-  // TODO: for now I'm merging both Pending and Confirmed activities
-  // TODO: if you wan to show them separately just call this hook once with each list
   const activities = useMultipleActivityDescriptors({
     chainId,
     ids: (pendingTransactions || []).concat(confirmedTransactions || []),
   })
-  // TODO: and also group them separately
   const activitiesGroupedByDate = groupActivitiesByDay(activities || [])
   const activityTotalCount = activities?.length || 0
 
@@ -273,8 +270,6 @@ export default function AccountDetails({
                 </>
               )
             })}
-            {/*{renderTransactions(pendingTransactions)}*/}
-            {/*{renderTransactions(confirmedTransactions)}*/}
           </div>
         </LowerSection>
       ) : (
