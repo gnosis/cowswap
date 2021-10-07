@@ -78,11 +78,15 @@ export const MenuItem = styled(MenuItemMod)`
   }
 `
 
+function _replaceUniText(text: string) {
+  return text.replace('Uniswap', 'CowSwap')
+}
+
 function TagDescriptor({ tags, bg, children }: { children?: React.ReactNode; tags: TagInfo[]; bg?: string }) {
   const tag = tags[0]
   return (
     <TagContainer>
-      <MouseoverTooltip text={tag.description}>
+      <MouseoverTooltip text={_replaceUniText(tag.description)}>
         <Tag bg={bg} key={tag.id}>
           {tag.name}
         </Tag>
@@ -91,7 +95,7 @@ function TagDescriptor({ tags, bg, children }: { children?: React.ReactNode; tag
         <MouseoverTooltip
           text={tags
             .slice(1)
-            .map(({ name, description }) => t`${name}: ${description}`)
+            .map(({ name, description }) => t`${name}: ${_replaceUniText(description)}`)
             .join('; \n')}
         >
           <Tag>...</Tag>
