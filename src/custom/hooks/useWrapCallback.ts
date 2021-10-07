@@ -66,18 +66,23 @@ function _getWrapUnwrapCallback(params: GetWrapUnwrapCallback): WrapUnwrapCallba
   if (sufficientBalance && inputAmount) {
     let wrapUnwrap: () => TransactionResponse
     let summary: string
+    let confirmationMessage: string
 
     if (isWrap) {
       wrapUnwrap = () => wethContract.deposit({ value: `0x${inputAmount.quotient.toString(RADIX_HEX)}` })
-      summary = t`Wrap ${formatSmart(inputAmount, AMOUNT_PRECISION)} ${native} to ${wrapped}`
+      const baseSummary = t`Wrap ${formatSmart(inputAmount, AMOUNT_PRECISION)} ${native} to ${wrapped}`
+      summary = t`Wrap ${baseSummary}`
+      confirmationMessage = t`Wrapping ${baseSummary}`
     } else {
       wrapUnwrap = () => wethContract.withdraw(`0x${inputAmount.quotient.toString(RADIX_HEX)}`)
-      summary = t`Unwrap ${formatSmart(inputAmount, AMOUNT_PRECISION)} ${wrapped} to ${native}`
+      const baseSummary = t`${formatSmart(inputAmount, AMOUNT_PRECISION)} ${wrapped} to ${native}`
+      summary = t`Unwrap ${baseSummary}`
+      confirmationMessage = t`Unwrapping ${baseSummary}`
     }
 
     wrapUnwrapCallback = async () => {
       try {
-        openTransactionConfirmationModal(summary)
+        openTransactionConfirmationModal(confirmationMessage)
         const txReceipt = await wrapUnwrap()
         addTransaction(txReceipt, { summary })
         closeModals()
