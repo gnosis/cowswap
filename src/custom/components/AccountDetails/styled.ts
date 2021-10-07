@@ -13,7 +13,6 @@ import {
   AccountControl,
   IconWrapper,
 } from './AccountDetailsMod'
-import { transparentize } from 'polished'
 
 export const WalletActions = styled.div`
   display: flex;

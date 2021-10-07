@@ -93,7 +93,7 @@ export function StatusDetails(props: { chainId: number; activityDerivedState: Ac
         {isPending
           ? 'Open'
           : isConfirmed && isTransaction
-          ? 'Approved'
+          ? 'Confirmed'
           : isConfirmed
           ? 'Filled'
           : isExpired && isTransaction
