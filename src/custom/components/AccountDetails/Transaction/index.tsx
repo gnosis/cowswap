@@ -4,12 +4,12 @@ import { useActiveWeb3React } from 'hooks/web3'
 import { getEtherscanLink } from 'utils'
 import { RowFixed } from 'components/Row'
 
-import { Wrapper, TransactionWrapper, TransactionStatusText as ActivityDetailsText, CreationDateText } from './styled'
+import { TransactionStatusText as ActivityDetailsText, TransactionWrapper, Wrapper } from './styled'
 import { useWalletInfo } from 'hooks/useWalletInfo'
 import { EnhancedTransactionDetails } from 'state/enhancedTransactions/reducer'
 import { getSafeWebUrl } from 'api/gnosisSafe'
 import { getExplorerOrderLink } from 'utils/explorer'
-import { useActivityDescriptors, ActivityStatus, ActivityType, ActivityDescriptors } from 'hooks/useRecentActivity'
+import { ActivityDescriptors, ActivityStatus, ActivityType } from 'hooks/useRecentActivity'
 
 import { ActivityDetails } from './ActivityDetails'
 
@@ -157,12 +157,16 @@ function getActivityDerivedState(props: {
   }
 }
 
-export default function Transaction({ hash: id }: { hash: string }) {
+export default function Activity({ activity: activityData }: { activity: ActivityDescriptors }) {
+  const { activity, type } = activityData
+  // TODO: this is messy, clean it up
+  const id = type === ActivityType.ORDER ? (activity as Order).id : (activity as EnhancedTransactionDetails).hash
+
   const { chainId } = useActiveWeb3React()
   const { allowsOffchainSigning, gnosisSafeInfo } = useWalletInfo()
   // Return info necessary for rendering order/transaction info from the incoming id
   //    - activity data can be either EnhancedTransactionDetails or Order
-  const activityData = useActivityDescriptors({ id, chainId })
+  // const activityData = useSingleActivityDescriptor({ id, chainId })
 
   // Get some derived information about the activity. It helps to simplify the rendering of the sub-components
   const activityDerivedState = useMemo(
@@ -182,23 +186,23 @@ export default function Transaction({ hash: id }: { hash: string }) {
     ? new Date(Date.parse(creationTimeOrder))
     : undefined
 
-  const timeFormatOptionMDY: Intl.DateTimeFormatOptions = {
-    dateStyle: 'long',
-  }
+  // const timeFormatOptionMDY: Intl.DateTimeFormatOptions = {
+  //   dateStyle: 'long',
+  // }
 
   const timeFormatOptionHM: Intl.DateTimeFormatOptions = {
     timeStyle: 'short',
   }
 
   // Month Day, Year
-  const creationTimeMDY = creationTimeFull?.toLocaleString(undefined, timeFormatOptionMDY)
+  // const creationTimeMDY = creationTimeFull?.toLocaleString(undefined, timeFormatOptionMDY)
 
   // Hour:Minute
   const creationTime = creationTimeFull?.toLocaleString(undefined, timeFormatOptionHM)
 
   return (
     <Wrapper>
-      {creationTimeMDY && <CreationDateText>{creationTimeMDY}</CreationDateText>}
+      {/*{creationTimeMDY && <CreationDateText>{creationTimeMDY}</CreationDateText>}*/}
       <TransactionWrapper>
         <RowFixed>
           {/* Details of activity: transaction/order details */}
