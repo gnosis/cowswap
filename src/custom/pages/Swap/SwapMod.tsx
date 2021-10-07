@@ -147,6 +147,7 @@ export default function Swap({
   const toggleWalletModal = useWalletModalToggle()
 
   // Transaction confirmation modal
+  const [transactionConfirmationModalMsg, setTransactionConfirmationModalMsg] = useState<string>()
   const openTransactionConfirmationModal = useOpenModal(ApplicationModal.TRANSACTION_CONFIRMATION)
   const closeModals = useCloseModals()
   // const toggleTransactionConfirmation = useToggleTransactionConfirmation()
@@ -215,12 +216,16 @@ export default function Swap({
     execute: onWrap,
     inputError: wrapInputError,
   } = useWrapCallback(
+    () => {
+      setTransactionConfirmationModalMsg('Approving token for trading')
+      openTransactionConfirmationModal()
+    },
+    closeModals,
     currencies[Field.INPUT],
     currencies[Field.OUTPUT],
     // if native input !== NATIVE_TOKEN, validation fails
-    nativeInput || parsedAmount,
+    nativeInput || parsedAmount
     // should override and get wrapCallback?
-    isNativeInSwap
   )
   const showWrap: boolean = !isNativeInSwap && wrapType !== WrapType.NOT_APPLICABLE
   const { address: recipientAddress } = useENSAddress(recipient)
@@ -308,7 +313,10 @@ export default function Swap({
 
   // check whether the user has approved the router on the input token
   const [approvalState, approveCallback] = useApproveCallbackFromTrade(
-    openTransactionConfirmationModal,
+    () => {
+      setTransactionConfirmationModalMsg('Approving token for trading')
+      openTransactionConfirmationModal()
+    },
     closeModals,
     trade,
     allowedSlippage
@@ -491,7 +499,7 @@ export default function Swap({
       <TransactionConfirmationModal
         attemptingTxn={true}
         isOpen={showTransactionConfirmationModal}
-        pendingText="Approving token for trading"
+        pendingText={transactionConfirmationModalMsg}
         onDismiss={closeModals}
       />
 
