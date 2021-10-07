@@ -16,7 +16,7 @@ export * from './MenuMod'
 const ResponsiveInternalMenuItem = styled(InternalMenuItem)`
   display: none;
 
-  ${({ theme }) => theme.mediaWidth.upToSmall`
+  ${({ theme }) => theme.mediaWidth.upToMedium`
       display: flex;   
   `};
 `
@@ -226,6 +226,14 @@ export function Menu({ darkMode, toggleDarkMode }: MenuProps) {
             <img src={TwitterImage} alt="Follow CowSwap on Twitter!" /> Twitter
           </ExternalLink>
         </MenuItemResponsive>
+
+        <InternalMenuItem to="/play" onClick={close}>
+          <span role="img" aria-label="Play CowGame">
+            <img src={GameIcon} alt="Play CowGame" />
+          </span>{' '}
+          CowGame
+        </InternalMenuItem>
+
         <MenuItemResponsive onClick={() => toggleDarkMode()}>
           {darkMode ? (
             <>
@@ -238,13 +246,6 @@ export function Menu({ darkMode, toggleDarkMode }: MenuProps) {
             </>
           )}
         </MenuItemResponsive>
-
-        <InternalMenuItem to="/play" onClick={close}>
-          <span role="img" aria-label="Play CowGame">
-            <img src={GameIcon} alt="Play CowGame" />
-          </span>{' '}
-          CowGame
-        </InternalMenuItem>
 
         <Separator />
 
