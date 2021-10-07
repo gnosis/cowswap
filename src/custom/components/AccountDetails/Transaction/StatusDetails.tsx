@@ -58,7 +58,6 @@ export function StatusDetails(props: { chainId: number; activityDerivedState: Ac
     isTransaction,
     isCancelled,
     isCancellable,
-    gnosisSafeInfo,
   } = activityDerivedState
 
   const [showCancelModal, setShowCancelModal] = useState(false)
