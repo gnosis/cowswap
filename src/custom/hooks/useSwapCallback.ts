@@ -156,7 +156,6 @@ export function useSwapCallback(params: SwapCallbackParams): {
 
         openTransactionConfirmationModal()
 
-        // TODO: indicate somehow in the order when the user was to receive ETH === isBuyEth flag
         const postOrderPromise = sendOrder({
           kind,
           account,
