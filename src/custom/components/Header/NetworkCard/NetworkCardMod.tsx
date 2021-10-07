@@ -164,8 +164,8 @@ const ButtonMenuItem = styled.button<{ $disabled?: boolean; $selected?: boolean 
   }
 
   &:hover {
-    color: ${({ theme, $selected }) => !$selected && theme.text1};
-    background: ${({ theme, $selected }) => !$selected && theme.bg4};
+    color: ${({ theme, $selected, $disabled }) => (!$selected || !$disabled) && theme.text1};
+    background: ${({ theme, $selected, $disabled }) => ($disabled ? 'transparent' : !$selected && theme.bg4)};
   }
 
   transition: background 0.13s ease-in-out;
@@ -279,7 +279,7 @@ export default function NetworkCard() {
               if (supportedChainId === chainId) {
                 /*  Current selected network */
                 return (
-                  <ButtonMenuItem $selected>
+                  <ButtonMenuItem $selected key={'selected_' + chainId}>
                     <Icon src={EthereumLogo} />
                     <NetworkName chainId={chainId}>{NETWORK_LABELS[chainId]}</NetworkName>
                     <StyledPollingDot />
