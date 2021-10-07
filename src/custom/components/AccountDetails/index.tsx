@@ -37,7 +37,7 @@ import {
   NoActivityMessage,
   LowerSection,
   WalletActions,
-  WalletLowerActions,
+  WalletSecondaryActions,
   WalletNameAddress,
 } from './styled'
 import { ConnectedWalletInfo, useWalletInfo } from 'hooks/useWalletInfo'
@@ -172,9 +172,6 @@ export default function AccountDetails({
         <AccountGroupingRow id="web3-account-identifier-row">
           <AccountControl>
             <div>
-              {chainId && NETWORK_LABELS[chainId] && (
-                <NetworkCard title={NETWORK_LABELS[chainId]}>{NETWORK_LABELS[chainId]}</NetworkCard>
-              )}
               {getStatusIcon(connector, walletInfo)}
 
               {(ENSName || account) && (
@@ -184,12 +181,18 @@ export default function AccountDetails({
               )}
             </div>
 
-            <WalletActions>{formatConnectorName(connector, walletInfo)}</WalletActions>
+            <WalletActions>
+              {' '}
+              {chainId && NETWORK_LABELS[chainId] && (
+                <NetworkCard title={NETWORK_LABELS[chainId]}>{NETWORK_LABELS[chainId]}</NetworkCard>
+              )}{' '}
+              {formatConnectorName(connector, walletInfo)}
+            </WalletActions>
           </AccountControl>
         </AccountGroupingRow>
         <AccountGroupingRow>
           <AccountControl>
-            <WalletLowerActions>
+            <WalletSecondaryActions>
               {connector !== injected && connector !== walletlink && (
                 <WalletAction onClick={handleDisconnectClick}>
                   <Trans>Disconnect</Trans>
@@ -207,7 +210,7 @@ export default function AccountDetails({
                   {explorerLabel} ↗
                 </AddressLink>
               )}
-            </WalletLowerActions>
+            </WalletSecondaryActions>
           </AccountControl>
         </AccountGroupingRow>
       </InfoCard>

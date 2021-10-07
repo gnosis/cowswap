@@ -79,6 +79,9 @@ declare module 'styled-components' {
     }
     card: {
       background: FlattenSimpleInterpolation
+      background2: FlattenSimpleInterpolation
+      background3: FlattenSimpleInterpolation
+      border: string
       boxShadow: FlattenSimpleInterpolation
     }
     header: {

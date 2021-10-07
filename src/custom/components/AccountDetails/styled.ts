@@ -17,26 +17,17 @@ import { transparentize } from 'polished'
 
 export const WalletActions = styled.div`
   display: flex;
+  flex-flow: row wrap;
   margin: 10px 0 0;
 `
 
-export const WalletLowerActions = styled.div`
-  width: 100%;
-  padding: 9px;
-  border-radius: 21px;
-  justify-content: space-evenly;
-  ${({ theme }) => theme.neumorphism.boxShadow}
-  margin: 8px 0 0;
-
-  > a {
-    align-items: center;
-  }
-`
+export const WalletSecondaryActions = styled.div``
 
 export const WalletNameAddress = styled.div`
   width: 100%;
-  font-size: 21px;
+  font-size: 23px;
   font-weight: 500;
+  margin: 0 0 0 8px;
 `
 
 export const Wrapper = styled.div`
@@ -54,16 +45,20 @@ export const Wrapper = styled.div`
   ${CopyIcon},
   ${WalletAction} {
     color: ${({ theme }) => theme.text1};
-    opacity: 0.7;
+    opacity: 0.85;
     transition: color 0.2s ease-in-out, opacity 0.2s ease-in-out;
     margin: 0;
+    padding: 0;
     border: 0;
-    font-size: 13px;
+    font-size: 14px;
     font-weight: normal;
 
+    &:focus,
     &:hover {
       opacity: 1;
       transform: none;
+      box-shadow: none;
+      border: 0;
     }
   }
 
@@ -82,7 +77,7 @@ export const Wrapper = styled.div`
     width: 100%;
     text-align: center;
     justify-content: center;
-    margin: 0 auto 12px;
+    margin: 0;
     font-size: 12px;
   }
 
@@ -90,6 +85,23 @@ export const Wrapper = styled.div`
     padding: 0;
     width: 100%;
     flex-flow: column wrap;
+  }
+
+  ${AccountControl} ${WalletSecondaryActions} {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 8px;
+    justify-items: flex-end;
+
+    > a {
+      align-items: center;
+    }
+
+    > a:not(:last-child) {
+      margin: 0 0 5px;
+    }
   }
 
   ${AccountControl} ${WalletActions} {
@@ -107,6 +119,8 @@ export const NetworkCard = styled(NetworkCardUni)`
   font-size: 13px;
   margin: 0 8px 0 0;
   letter-spacing: 0.7px;
+  width: auto;
+  min-width: initial;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
     flex-shrink: 0;
@@ -121,14 +135,16 @@ export const UpperSection = styled(UpperSectionMod)`
 export const InfoCard = styled.div`
   width: 100%;
   display: flex;
-  flex-flow: column wrap;
-  margin: 0;
-  border-radius: 0;
-  padding: 16px 24px 10px;
-  background: ${({ theme }) => theme.bg3};
+  flex-flow: row wrap;
+  justify-content: space-between;
+  margin: 0 24px 24px;
+  border-radius: 16px;
+  ${({ theme }) => theme.card.background3};
+  ${({ theme }) => theme.card.boxShadow};
+  padding: 24px;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
-  padding: 16px 10px 24px;
+    padding: 16px 10px 24px;
   `};
 `
 
@@ -138,10 +154,12 @@ export const AccountSection = styled(AccountSectionMod)`
 `
 
 export const AccountGroupingRow = styled(AccountGroupingRowMod)`
+  margin: 0;
+
   > div {
     flex-flow: column wrap;
     justify-content: flex-start;
-    align-items: center;
+    align-items: flex-start;
   }
 `
 
@@ -171,29 +189,7 @@ export const LowerSection = styled.div`
     display: flex;
     color: ${({ theme }) => theme.text1};
     justify-content: space-between;
-    padding: 8px 0 12px;
-    border-bottom: 1px solid ${({ theme }) => theme.bg3};
-    position: sticky;
-    top: 38px;
-    background: ${({ theme }) => theme.bg3};
-    z-index: 10;
-
-    &::after {
-      content: '';
-      display: block;
-      background: linear-gradient(
-        to bottom,
-        ${({ theme }) => theme.bg3} 0%,
-        ${({ theme }) => transparentize(1, theme.bg3)} 100%
-      );
-      pointer-events: none;
-      height: 20px;
-      width: 100%;
-      position: absolute;
-      left: 0;
-      bottom: -20px;
-      margin: auto;
-    }
+    padding: 0 0 12px;
 
     ${({ theme }) => theme.mediaWidth.upToMedium`
       top: 42px;

@@ -13,8 +13,7 @@ export const TransactionWrapper = styled.div`
   font-size: initial;
   display: flex;
   padding: 22px;
-  ${({ theme }) => theme.card.background};
-  ${({ theme }) => theme.card.boxShadow};
+  border: 1px solid ${({ theme }) => theme.card.border};
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
     flex-flow: column wrap;
@@ -225,7 +224,7 @@ export const StatusLabelWrapper = styled.div`
 export const StatusLabel = styled.div<{ isPending: boolean; isCancelling: boolean; isPresignaturePending: boolean }>`
   height: 28px;
   width: 100px;
-  ${({ isPending, isCancelling, theme }) => !isCancelling && isPending && `border:  1px solid ${theme.border2};`}
+  ${({ isPending, isCancelling, theme }) => !isCancelling && isPending && `border:  1px solid ${theme.card.border};`}
   color: ${({ isPending, theme, color }) => (isPending ? theme.text1 : color)};
   position: relative;
   border-radius: 4px;
@@ -373,7 +372,6 @@ export const TransactionInnerDetail = styled.div`
   min-width: 300px;
   color: ${({ theme }) => theme.text1};
   margin: 24px auto 8px 0;
-  ${({ theme }) => theme.card.background};
   border: 1px solid ${({ theme }) => theme.bg1};
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
@@ -456,14 +454,14 @@ export const ActivityVisual = styled.div`
 
   ${StyledLogo} {
     padding: 2px;
-    ${({ theme }) => theme.card.background};
+    ${({ theme }) => theme.card.background2};
     box-sizing: content-box;
     box-shadow: none;
     color: ${({ theme }) =>
       theme.text1}!important; // Todo: Re-factor StyledLogo to prevent inline style and needing to use !important here
   }
 
-  ${StyledLogo}:last-child {
+  ${StyledLogo}:not(:first-child):last-child {
     margin: 0 0 0 -8px;
   }
 

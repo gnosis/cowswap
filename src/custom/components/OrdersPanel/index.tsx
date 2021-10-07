@@ -25,11 +25,13 @@ const SideBar = styled.div`
   left: 0;
   z-index: 99;
   padding: 0;
-  background: ${({ theme }) => theme.bg1};
   cursor: default;
   overflow-y: auto; // fallback for 'overlay'
   overflow-y: overlay;
   animation: slideIn 0.3s cubic-bezier(0.87, 0, 0.13, 1);
+  ${({ theme }) => theme.card.background2};
+
+  backdrop-filter: blur(25px);
 
   ${({ theme }) => theme.mediaWidth.upToMedium`    
     width: 100%;
@@ -46,7 +48,7 @@ const SideBar = styled.div`
   }
 
   &::-webkit-scrollbar-thumb {
-    background: ${({ theme }) => theme.bg2};
+    background: ${({ theme }) => theme.card.border};
     border: 8px solid transparent;
     border-radius: 24px;
     background-clip: padding-box;
@@ -86,7 +88,7 @@ const SidebarBackground = styled.div`
   z-index: 1;
   width: 100%;
   height: 100%;
-  background: ${({ theme }) => transparentize(0.4, theme.bg4)};
+  background: ${({ theme }) => transparentize(0.4, theme.black)};
   backdrop-filter: blur(3px);
 
   ${({ theme }) => theme.mediaWidth.upToSmall`    
@@ -94,15 +96,13 @@ const SidebarBackground = styled.div`
   `};
 `
 
-const CloseIcon = styled(Close)`
-  z-index: 20;
-  position: sticky;
-  top: 0;
+const Header = styled.div`
   width: 100%;
-  height: 38px;
-  padding: 10px 0;
-  background: ${({ theme }) => theme.bg1};
-  transition: background 0.3s ease-in-out;
+  display: flex;
+  justify-content: space-between;
+  padding: 20px 30px;
+  opacity: 0.85;
+  transition: opacity 0.2s ease-in-out;
 
   ${({ theme }) => theme.mediaWidth.upToMedium`
     top: 0;
@@ -120,10 +120,16 @@ const CloseIcon = styled(Close)`
 
   &:hover {
     cursor: pointer;
-    background: ${({ theme }) => theme.bg4};
-    color: ${({ theme }) => theme.text1};
+    opacity: 1;
   }
 
+  > strong {
+    font-size: 15px;
+    ${({ theme }) => theme.text1};
+  }
+`
+
+const CloseIcon = styled(Close)`
   path {
     stroke: ${({ theme }) => theme.text4};
   }
@@ -177,7 +183,11 @@ export default function OrdersPanel({ closeOrdersPanel }: OrdersPanelProps) {
       <SidebarBackground onClick={closeOrdersPanel} />
       <SideBar>
         <Wrapper>
-          <CloseIcon onClick={closeOrdersPanel} />
+          <Header>
+            <strong>Account</strong>
+            <CloseIcon onClick={closeOrdersPanel} />
+          </Header>
+
           <AccountDetails
             ENSName={ENSName}
             pendingTransactions={pendingActivity}

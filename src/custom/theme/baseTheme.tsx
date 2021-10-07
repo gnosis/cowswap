@@ -155,9 +155,24 @@ export function themeVariables(darkMode: boolean, colorsTheme: Colors) {
       background: css`
         background: linear-gradient(145deg, ${darkMode ? '#0f2644' : '#f3fbff'}, ${darkMode ? '#021e34' : '#ffffff'});
       `,
+      background2: css`
+        background: linear-gradient(
+          145deg,
+          ${darkMode ? '#081526' : 'rgb(255 255 255 / 85%)'},
+          ${darkMode ? 'rgb(8 21 38 / 70%)' : 'rgb(197 218 239 / 80%)'}
+        );
+      `,
+      background3: css`
+        background: linear-gradient(
+          145deg,
+          ${darkMode ? '#0e274e' : 'rgb(255 255 255 / 70%)'},
+          ${darkMode ? 'rgb(15 38 68 / 30%)' : 'rgb(255 255 255 / 40%)'}
+        );
+      `,
+      border: `${darkMode ? '#102a48' : 'rgb(16 42 72 / 25%)'}`,
       boxShadow: css`
-        box-shadow: inset 0 1px 1px 0 ${darkMode ? '#1d4373' : '#ffffff'},
-          0 2px 30px -20px ${darkMode ? '#001626' : 'rgb(0 51 88 / 60%)'};
+        box-shadow: inset 0 1px 1px 0 ${darkMode ? 'rgb(29 67 115 / 70%)' : '#ffffff'},
+          0 2px 30px -20px ${darkMode ? 'rgb(1 8 18 / 45%)' : 'rgb(0 51 88 / 60%)'};
       `,
     },
     header: {
@@ -241,7 +256,7 @@ export function themeVariables(darkMode: boolean, colorsTheme: Colors) {
     footerColor: darkMode ? colorsTheme.text1 : colorsTheme.greenShade,
     networkCard: {
       background: 'rgb(255 120 74 / 60%)',
-      text: colorsTheme.text1,
+      text: colorsTheme.black,
     },
     wallet: {
       color: darkMode ? colorsTheme.text2 : colorsTheme.text1,

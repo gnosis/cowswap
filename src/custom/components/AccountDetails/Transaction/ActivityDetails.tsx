@@ -185,8 +185,6 @@ export function ActivityDetails(props: {
   const inputToken = activityDerivedState?.order?.inputToken || null
   const outputToken = activityDerivedState?.order?.outputToken || null
 
-  console.log(isOrder && order)
-
   return (
     <Summary>
       <span>
