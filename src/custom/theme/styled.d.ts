@@ -11,6 +11,10 @@ export interface Colors extends ColorsUniswap {
   greenShade: Color
   blueShade: Color
   blueShade2: Color
+  success: Color
+  danger: Color
+  pending: Color
+  attention: Color
   border: Color
   border2: Color
   disabled: Color
@@ -76,6 +80,10 @@ declare module 'styled-components' {
     neumorphism: {
       boxShadow: FlattenSimpleInterpolation
       boxShadowEmbossed: FlattenSimpleInterpolation
+    }
+    card: {
+      background: FlattenSimpleInterpolation
+      boxShadow: FlattenSimpleInterpolation
     }
     header: {
       border: string

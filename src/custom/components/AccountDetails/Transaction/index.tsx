@@ -4,12 +4,7 @@ import { useActiveWeb3React } from 'hooks/web3'
 import { getEtherscanLink } from 'utils'
 import { RowFixed } from 'components/Row'
 
-import {
-  Wrapper,
-  TransactionWrapper,
-  TransactionStatusText as ActivityDetailsText,
-  TransactionState as ActivityLink,
-} from './styled'
+import { Wrapper, TransactionWrapper, TransactionStatusText as ActivityDetailsText, CreationTimeText } from './styled'
 import { useWalletInfo } from 'hooks/useWalletInfo'
 import { EnhancedTransactionDetails } from 'state/enhancedTransactions/reducer'
 import { getSafeWebUrl } from 'api/gnosisSafe'
@@ -17,13 +12,15 @@ import { getExplorerOrderLink } from 'utils/explorer'
 import { useActivityDescriptors, ActivityStatus, ActivityType, ActivityDescriptors } from 'hooks/useRecentActivity'
 
 import { ActivityDetails } from './ActivityDetails'
+
 import { StatusDetails } from './StatusDetails'
-import { StateIcon } from './StateIcon'
+// import { StateIcon } from './StateIcon'
 import { Order } from 'state/orders/actions'
 import { SafeInfoResponse } from '@gnosis.pm/safe-service-client'
 
+// ToDo: Refactor to use theme variables instead
 const PILL_COLOUR_MAP = {
-  CONFIRMED: '#3B7848',
+  CONFIRMED: '#00d897', // Todo: use color '#00815a' for light mode.
   PENDING_ORDER: '#43758C',
   PRESIGNATURE_PENDING: '#43758C',
   PENDING_TX: '#43758C',
@@ -34,6 +31,7 @@ const PILL_COLOUR_MAP = {
 
 export function determinePillColour(status: ActivityStatus, type: ActivityType) {
   const isOrder = type === ActivityType.ORDER
+
   switch (status) {
     case ActivityStatus.PENDING:
       return isOrder ? PILL_COLOUR_MAP.PENDING_ORDER : PILL_COLOUR_MAP.PENDING_TX
@@ -176,20 +174,39 @@ export default function Transaction({ hash: id }: { hash: string }) {
   const { activityLinkUrl } = activityDerivedState
   const hasLink = activityLinkUrl !== null
 
+  const creationTimeFormat: Intl.DateTimeFormatOptions = {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  }
+
+  const creationTimeEnhanced = activityDerivedState?.enhancedTransaction?.addedTime
+  const creationTimeOrder = activityDerivedState?.order?.creationTime
+
+  const creationTime = creationTimeEnhanced
+    ? new Date(creationTimeEnhanced).toLocaleDateString('en-US', creationTimeFormat)
+    : creationTimeOrder
+    ? new Date(Date.parse(creationTimeOrder)).toLocaleDateString('en-US', creationTimeFormat)
+    : undefined
+
   return (
     <Wrapper>
+      {creationTime && <CreationTimeText>{creationTime}</CreationTimeText>}
       <TransactionWrapper>
-        <ActivityLink href={activityLinkUrl ?? undefined} disableMouseActions={!hasLink}>
-          <RowFixed>
-            {/* Icon state: confirmed, expired, canceled, pending, ...  */}
-            {activityData?.activity && <StateIcon activityDerivedState={activityDerivedState} />}
+        <RowFixed>
+          {/* Icon state: confirmed, expired, canceled, pending, ...  */}
+          {/* {activityData?.activity && <StateIcon activityDerivedState={activityDerivedState} />} */}
 
-            {/* Details of activity: transaction/order details */}
-            <ActivityDetailsText>
-              <ActivityDetails chainId={chainId} activityDerivedState={activityDerivedState} />
-            </ActivityDetailsText>
-          </RowFixed>
-        </ActivityLink>
+          {/* Details of activity: transaction/order details */}
+          <ActivityDetailsText>
+            <ActivityDetails
+              chainId={chainId}
+              activityDerivedState={activityDerivedState}
+              activityLinkUrl={activityLinkUrl ?? undefined}
+              disableMouseActions={!hasLink}
+            />
+          </ActivityDetailsText>
+        </RowFixed>
 
         {/* Status Details: icon, cancel, links */}
         <StatusDetails chainId={chainId} activityDerivedState={activityDerivedState} />
