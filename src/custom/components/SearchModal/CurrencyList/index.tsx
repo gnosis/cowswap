@@ -8,7 +8,7 @@ import { RowFixed } from 'components/Row'
 import { LightGreyCard } from 'components/Card'
 import { HashLink } from 'react-router-hash-link'
 import { t } from '@lingui/macro'
-import { TagInfo, WrappedTokenInfo } from 'state/lists/wrappedTokenInfo'
+import { TagInfo /* , WrappedTokenInfo */ } from 'state/lists/wrappedTokenInfo'
 import { formatSmart } from 'utils/format'
 import Column from 'components/Column'
 import { MenuItem as MenuItemMod } from '@src/components/SearchModal/styleds'
@@ -102,7 +102,7 @@ function TagDescriptor({ tags, bg, children }: { children?: React.ReactNode; tag
   )
 }
 
-function TokenTags({ currency, isUnsupported }: { currency: Currency; isUnsupported: boolean }) {
+function TokenTags({ /* currency, */ isUnsupported }: { /* currency: Currency; */ isUnsupported: boolean }) {
   if (isUnsupported) {
     return (
       <TagDescriptor bg="#f3a1a1" tags={UNSUPPORTED_TOKEN_TAG}>
