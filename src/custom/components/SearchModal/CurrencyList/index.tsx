@@ -78,15 +78,11 @@ export const MenuItem = styled(MenuItemMod)`
   }
 `
 
-function _replaceUniText(text: string) {
-  return text.replace('Uniswap', 'CowSwap')
-}
-
 function TagDescriptor({ tags, bg, children }: { children?: React.ReactNode; tags: TagInfo[]; bg?: string }) {
   const tag = tags[0]
   return (
     <TagContainer>
-      <MouseoverTooltip text={_replaceUniText(tag.description)}>
+      <MouseoverTooltip text={tag.description}>
         <Tag bg={bg} key={tag.id}>
           {tag.name}
         </Tag>
@@ -95,7 +91,7 @@ function TagDescriptor({ tags, bg, children }: { children?: React.ReactNode; tag
         <MouseoverTooltip
           text={tags
             .slice(1)
-            .map(({ name, description }) => t`${name}: ${_replaceUniText(description)}`)
+            .map(({ name, description }) => t`${name}: ${description}`)
             .join('; \n')}
         >
           <Tag>...</Tag>
@@ -119,14 +115,16 @@ function TokenTags({ currency, isUnsupported }: { currency: Currency; isUnsuppor
     )
   }
 
-  if (!(currency instanceof WrappedTokenInfo)) {
+  return <span /> // MOD: return only UnsupportedToken tags
+
+  /* if (!(currency instanceof WrappedTokenInfo)) {
     return <span />
   }
 
   const tags = currency.tags
   if (!tags || tags.length === 0) return <span />
 
-  return <TagDescriptor tags={tags} />
+  return <TagDescriptor tags={tags} /> */
 }
 
 export function Balance({ balance }: { balance: CurrencyAmount<Currency> }) {
