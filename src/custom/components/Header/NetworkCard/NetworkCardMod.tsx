@@ -301,7 +301,7 @@ export default function NetworkCard() {
                   ) : (
                     <>
                       <AlertCircle size={16} />
-                      <QuestionHelper text="Switching networks inside CowSwap is not supported by your wallet. Please change networks in your wallet app." />
+                      <QuestionHelper text="Switching networks inside CowSwap is not supported by your wallet." />
                     </>
                   )}
                 </ButtonMenuItem>
