@@ -194,7 +194,6 @@ export function useMultipleActivityDescriptors({
   return useMemo(() => {
     if (!chainId) return null
 
-    console.log(`useMultipleActivityDescriptors::memo`, ids.length, Object.keys(txs).length, Object.keys(orders).length)
 
     return ids.reduce<ActivityDescriptors[]>((acc, id) => {
       const activity = createActivityDescriptor(txs[id], orders[id])
