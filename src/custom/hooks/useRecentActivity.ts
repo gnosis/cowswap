@@ -104,74 +104,100 @@ export interface ActivityDescriptors {
   summary?: string
   status: ActivityStatus
   type: ActivityType
+  date: Date
 }
 
-export function useActivityDescriptors({ chainId, id }: { chainId?: ChainId; id: string }): ActivityDescriptors | null {
+type UseActivityDescriptionParams = {
+  chainId?: ChainId
+  ids: string[]
+}
+
+function createActivityDescriptor(tx?: EnhancedTransactionDetails, order?: Order): ActivityDescriptors | null {
+  if (!tx && !order) return null
+
+  let activity: EnhancedTransactionDetails | Order, type: ActivityType
+
+  let isPending: boolean,
+    isPresignaturePending: boolean,
+    isConfirmed: boolean,
+    isCancelling: boolean,
+    isCancelled: boolean,
+    date: Date
+
+  if (!tx && order) {
+    // We're dealing with an ORDER
+    // setup variables accordingly...
+    isPending = order?.status === OrderStatus.PENDING
+    isPresignaturePending = order?.status === OrderStatus.PRESIGNATURE_PENDING
+    isConfirmed = !isPending && order?.status === OrderStatus.FULFILLED
+    isCancelling = (order.isCancelling || false) && isPending
+    isCancelled = !isConfirmed && order?.status === OrderStatus.CANCELLED
+
+    activity = order
+    type = ActivityType.ORDER
+
+    date = new Date(order?.creationTime)
+  } else if (tx) {
+    // We're dealing with a TRANSACTION
+    // setup variables accordingly...
+    const isReceiptConfirmed =
+      tx.receipt?.status === TxReceiptStatus.CONFIRMED || typeof tx.receipt?.status === 'undefined'
+    isPending = !tx.receipt
+    isPresignaturePending = false
+    isConfirmed = !isPending && isReceiptConfirmed
+    // TODO: can't tell when it's cancelled from the network yet
+    isCancelling = false
+    isCancelled = false
+
+    activity = tx
+    type = ActivityType.TX
+
+    date = new Date(tx.addedTime)
+  } else {
+    // Shouldn't happen but TS is bugging me
+    return null
+  }
+
+  let status
+
+  if (isCancelling) {
+    status = ActivityStatus.CANCELLING
+  } else if (isPending) {
+    status = ActivityStatus.PENDING
+  } else if (isPresignaturePending) {
+    status = ActivityStatus.PRESIGNATURE_PENDING
+  } else if (isConfirmed) {
+    status = ActivityStatus.CONFIRMED
+  } else if (isCancelled) {
+    status = ActivityStatus.CANCELLED
+  } else {
+    status = ActivityStatus.EXPIRED
+  }
+  const summary = activity.summary
+
+  return {
+    activity,
+    summary,
+    status,
+    type,
+    date,
+  }
+}
+
+export function useSingleActivityDescriptor({
+  chainId,
+  id,
+}: {
+  chainId?: ChainId
+  id: string
+}): ActivityDescriptors | null {
   const allTransactions = useAllTransactions()
   const order = useOrder({ id, chainId })
 
   const tx = allTransactions?.[id]
 
   return useMemo(() => {
-    if ((!tx && !order) || !chainId) return null
-
-    let activity: EnhancedTransactionDetails | Order, type: ActivityType
-
-    let isPending: boolean,
-      isPresignaturePending: boolean,
-      isConfirmed: boolean,
-      isCancelling: boolean,
-      isCancelled: boolean
-
-    if (!tx && order) {
-      // We're dealing with an ORDER
-      // setup variables accordingly...
-      isPending = order?.status === OrderStatus.PENDING
-      isPresignaturePending = order?.status === OrderStatus.PRESIGNATURE_PENDING
-      isConfirmed = !isPending && order?.status === OrderStatus.FULFILLED
-      isCancelling = (order.isCancelling || false) && isPending
-      isCancelled = !isConfirmed && order?.status === OrderStatus.CANCELLED
-
-      activity = order
-      type = ActivityType.ORDER
-    } else {
-      // We're dealing with a TRANSACTION
-      // setup variables accordingly...
-      const isReceiptConfirmed =
-        tx.receipt?.status === TxReceiptStatus.CONFIRMED || typeof tx.receipt?.status === 'undefined'
-      isPending = !tx?.receipt
-      isPresignaturePending = false
-      isConfirmed = !isPending && isReceiptConfirmed
-      // TODO: can't tell when it's cancelled from the network yet
-      isCancelling = false
-      isCancelled = false
-
-      activity = tx
-      type = ActivityType.TX
-    }
-
-    let status
-
-    if (isCancelling) {
-      status = ActivityStatus.CANCELLING
-    } else if (isPending) {
-      status = ActivityStatus.PENDING
-    } else if (isPresignaturePending) {
-      status = ActivityStatus.PRESIGNATURE_PENDING
-    } else if (isConfirmed) {
-      status = ActivityStatus.CONFIRMED
-    } else if (isCancelled) {
-      status = ActivityStatus.CANCELLED
-    } else {
-      status = ActivityStatus.EXPIRED
-    }
-    const summary = activity.summary
-
-    return {
-      activity,
-      summary,
-      status,
-      type,
-    }
+    if (!chainId) return null
+    return createActivityDescriptor(tx, order)
   }, [chainId, order, tx])
 }
