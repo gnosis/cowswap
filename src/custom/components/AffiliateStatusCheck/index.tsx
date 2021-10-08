@@ -5,6 +5,7 @@ import NotificationBanner from 'components/NotificationBanner'
 import { useReferralAddress, useResetReferralAddress, useUploadReferralDocAndSetDataHash } from 'state/affiliate/hooks'
 import { useAppDispatch } from 'state/hooks'
 import { hasTrades } from 'utils/trade'
+import { retry, RetryOptions } from 'utils/retry'
 import { SupportedChainId } from 'constants/chains'
 
 type AffiliateStatus = 'NOT_CONNECTED' | 'OWN_LINK' | 'ALREADY_TRADED' | 'ACTIVE' | 'UNSUPPORTED_NETWORK'
@@ -17,6 +18,8 @@ const STATUS_TO_MESSAGE_MAPPING: Record<AffiliateStatus, string> = {
   UNSUPPORTED_NETWORK: 'Only Mainnet is supported. Please change the network to participate',
 }
 
+const DEFAULT_RETRY_OPTIONS: RetryOptions = { n: 3, minWait: 1000, maxWait: 3000 }
+
 export default function AffiliateStatusCheck() {
   const appDispatch = useAppDispatch()
   const resetReferralAddress = useResetReferralAddress()
@@ -27,7 +30,6 @@ export default function AffiliateStatusCheck() {
   const [affiliateState, setAffiliateState] = useState<AffiliateStatus | null>()
   const [error, setError] = useState('')
 
-  // TODO: retry on error?
   const uploadDataDoc = useCallback(async () => {
     setError('')
 
@@ -37,7 +39,7 @@ export default function AffiliateStatusCheck() {
 
     try {
       // we first validate that the user hasn't already traded
-      const userHasTrades = await hasTrades(chainId, account)
+      const userHasTrades = await retry(() => hasTrades(chainId, account), DEFAULT_RETRY_OPTIONS).promise
 
       if (userHasTrades) {
         resetReferralAddress()
@@ -51,7 +53,7 @@ export default function AffiliateStatusCheck() {
     }
 
     try {
-      await uploadReferralDocAndSetDataHash(referralAddress)
+      await retry(() => uploadReferralDocAndSetDataHash(referralAddress), DEFAULT_RETRY_OPTIONS).promise
 
       setAffiliateState('ACTIVE')
     } catch (error) {
