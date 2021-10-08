@@ -306,6 +306,38 @@ export async function getTrades(params: GetTradesParams): Promise<TradeMetaData[
   }
 }
 
+export type ProfileData = {
+  totalTrades: number
+  totalReferrals: number
+  tradeVolumeUsd: number
+  referralVolumeUsd: number
+  lastUpdated: string
+}
+
+export async function getProfileData(chainId: ChainId, address: string): Promise<ProfileData | null> {
+  console.log(`[api:${API_NAME}] Get profile data for`, chainId, address)
+  try {
+    if (chainId !== ChainId.MAINNET) {
+      console.info('Profile data is only available for mainnet')
+      return null
+    }
+
+    const response = await _get(chainId, `/profile/${address}`)
+
+    // TODO: Update the error handler when the openAPI profile spec is defined
+    if (!response.ok) {
+      const errorResponse = await response.json()
+      console.log(errorResponse)
+      throw new Error(errorResponse?.description)
+    } else {
+      return response.json()
+    }
+  } catch (error) {
+    console.error('Error getting profile data:', error)
+    throw error
+  }
+}
+
 export interface GasFeeEndpointResponse {
   lastUpdate: string
   lowest: string
