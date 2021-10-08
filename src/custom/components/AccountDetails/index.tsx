@@ -153,16 +153,12 @@ function groupActivitiesByDay(activities: ActivityDescriptors[]): ActivitiesGrou
     mapByTimestamp[timestamp] = (mapByTimestamp[timestamp] || []).concat(activity)
   })
 
-  return (
-    Object.keys(mapByTimestamp)
-      .map(Number) // Keys are always string, convert back to number
-      // .sort((a, b) => b - a) // Should be sorted already I guess, but just in case
-      .reduce<ActivitiesGroupedByDate>((acc, timestamp) => {
-        // For easier handling later, transform into a list of objects with nested lists
-        acc.push({ date: new Date(timestamp), activities: mapByTimestamp[timestamp] })
-        return acc
-      }, [])
-  )
+  return Object.keys(mapByTimestamp).map((strTimestamp) => {
+    // Keys are always string, convert back to number
+    const timestamp = Number(strTimestamp)
+    // For easier handling later, transform into a list of objects with nested lists
+    return { date: new Date(timestamp), activities: mapByTimestamp[timestamp] }
+  })
 }
 
 interface AccountDetailsProps {
