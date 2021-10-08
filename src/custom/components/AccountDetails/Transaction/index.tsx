@@ -107,17 +107,16 @@ function getActivityLinkUrl(params: {
 
 function getActivityDerivedState(props: {
   chainId?: number
-  id: string
   activityData: ActivityDescriptors | null
   allowsOffchainSigning: boolean
   gnosisSafeInfo?: SafeInfoResponse
 }): ActivityDerivedState | null {
-  const { chainId, id, activityData, allowsOffchainSigning, gnosisSafeInfo } = props
+  const { chainId, activityData, allowsOffchainSigning, gnosisSafeInfo } = props
   if (activityData === null || chainId === undefined) {
     return null
   }
 
-  const { activity, status, type, summary } = activityData
+  const { id, activity, status, type, summary } = activityData
   const isTransaction = type === ActivityType.TX
   const isOrder = type === ActivityType.ORDER
   const order = isOrder ? (activity as Order) : undefined
@@ -158,10 +157,6 @@ function getActivityDerivedState(props: {
 }
 
 export default function Activity({ activity: activityData }: { activity: ActivityDescriptors }) {
-  const { activity, type } = activityData
-  // TODO: this is messy, clean it up
-  const id = type === ActivityType.ORDER ? (activity as Order).id : (activity as EnhancedTransactionDetails).hash
-
   const { chainId } = useActiveWeb3React()
   const { allowsOffchainSigning, gnosisSafeInfo } = useWalletInfo()
   // Return info necessary for rendering order/transaction info from the incoming id
@@ -170,8 +165,8 @@ export default function Activity({ activity: activityData }: { activity: Activit
 
   // Get some derived information about the activity. It helps to simplify the rendering of the sub-components
   const activityDerivedState = useMemo(
-    () => getActivityDerivedState({ chainId, id, activityData, allowsOffchainSigning, gnosisSafeInfo }),
-    [chainId, id, activityData, allowsOffchainSigning, gnosisSafeInfo]
+    () => getActivityDerivedState({ chainId, activityData, allowsOffchainSigning, gnosisSafeInfo }),
+    [chainId, activityData, allowsOffchainSigning, gnosisSafeInfo]
   )
 
   if (!activityDerivedState || !chainId) return null

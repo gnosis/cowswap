@@ -100,6 +100,7 @@ export default function useRecentActivity() {
 }
 
 export interface ActivityDescriptors {
+  id: string
   activity: EnhancedTransactionDetails | Order
   summary?: string
   status: ActivityStatus
@@ -117,7 +118,8 @@ function createActivityDescriptor(tx?: EnhancedTransactionDetails, order?: Order
 
   let activity: EnhancedTransactionDetails | Order, type: ActivityType
 
-  let isPending: boolean,
+  let id: string,
+    isPending: boolean,
     isPresignaturePending: boolean,
     isConfirmed: boolean,
     isCancelling: boolean,
@@ -127,6 +129,8 @@ function createActivityDescriptor(tx?: EnhancedTransactionDetails, order?: Order
   if (!tx && order) {
     // We're dealing with an ORDER
     // setup variables accordingly...
+    id = order.id
+
     isPending = order?.status === OrderStatus.PENDING
     isPresignaturePending = order?.status === OrderStatus.PRESIGNATURE_PENDING
     isConfirmed = !isPending && order?.status === OrderStatus.FULFILLED
@@ -140,6 +144,8 @@ function createActivityDescriptor(tx?: EnhancedTransactionDetails, order?: Order
   } else if (tx) {
     // We're dealing with a TRANSACTION
     // setup variables accordingly...
+    id = tx.hash
+
     const isReceiptConfirmed =
       tx.receipt?.status === TxReceiptStatus.CONFIRMED || typeof tx.receipt?.status === 'undefined'
     isPending = !tx.receipt
@@ -176,6 +182,7 @@ function createActivityDescriptor(tx?: EnhancedTransactionDetails, order?: Order
   const summary = activity.summary
 
   return {
+    id,
     activity,
     summary,
     status,
