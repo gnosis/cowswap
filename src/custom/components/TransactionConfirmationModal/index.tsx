@@ -2,7 +2,7 @@ import { Currency } from '@uniswap/sdk-core'
 import { useActiveWeb3React } from 'hooks/web3'
 import { useWalletInfo } from 'hooks/useWalletInfo'
 import { SupportedChainId as ChainId } from 'constants/chains'
-import React, { ReactNode, useContext } from 'react'
+import React, { ReactNode, useContext, useMemo } from 'react'
 import styled, { ThemeContext } from 'styled-components'
 import {
   CloseIcon,
@@ -341,7 +341,7 @@ const StepsWrapper = styled.div`
 export * from './TransactionConfirmationModalMod'
 export { default } from './TransactionConfirmationModalMod'
 
-enum walletTypes {
+enum WalletType {
   SAFE,
   SC,
   EOA,
@@ -353,6 +353,17 @@ enum OperationType {
   APPROVE_TOKEN,
   ORDER_SIGN,
   ORDER_CANCEL,
+}
+
+function getWalletNameLabel(walletType: WalletType): string {
+  switch (walletType) {
+    case WalletType.SAFE:
+      return 'Gnosis Safe'
+    case WalletType.SC:
+      return 'smart contract wallet'
+    case WalletType.EOA:
+      return 'wallet'
+  }
 }
 
 function getOperationMessage(operationType: OperationType): string {
@@ -404,23 +415,20 @@ export function ConfirmationPendingContent({
 }) {
   const { connector } = useActiveWeb3React()
   const walletInfo = useWalletInfo()
-  const { isSupportedWallet, walletName, isSmartContractWallet, ensName, account } = useWalletInfo()
+  const { ensName, account, isSmartContractWallet, gnosisSafeInfo } = useWalletInfo()
 
-  const getWalletType = (): walletTypes => {
-    if (walletName === 'Gnosis Safe' && isSmartContractWallet) {
-      return walletTypes.SAFE
+  const walletType = useMemo((): WalletType => {
+    if (gnosisSafeInfo) {
+      return WalletType.SAFE
     } else if (isSmartContractWallet) {
-      return walletTypes.SC
+      return WalletType.SC
     } else {
-      return walletTypes.EOA
+      return WalletType.EOA
     }
-  }
-  const walletType = isSupportedWallet && getWalletType()
+  }, [gnosisSafeInfo, isSmartContractWallet])
+  const walletNameLabel = getWalletNameLabel(walletType)
 
-  const WalletNameLabel =
-    walletType === walletTypes.SAFE ? 'Gnosis Safe' : walletType === walletTypes.SC ? 'smart contract wallet' : 'wallet'
-  const operationType = OperationType.ORDER_SIGN
-
+  const operationType = OperationType.ORDER_SIGN // TODO: Receive as a param
   const operationMessage = getOperationMessage(operationType)
   const operationLabel = getOperationLabel(operationType)
   const operationSubmittedMessage = getSubmittedMessage(operationLabel, operationType)
@@ -452,7 +460,7 @@ export function ConfirmationPendingContent({
             </StepsIconWrapper>
             <p>
               <Trans>
-                Sign the {operationLabel} with your {WalletNameLabel}{' '}
+                Sign the {operationLabel} with your {walletNameLabel}{' '}
                 {account && <span>({ensName || shortenAddress(account)})</span>}
               </Trans>
             </p>
