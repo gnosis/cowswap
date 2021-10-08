@@ -210,8 +210,8 @@ export const MainWalletAction = styled(WalletAction)`
 export function renderActivities(activities: ActivityDescriptors[]) {
   return (
     <TransactionListWrapper>
-      {activities.map((activity, i) => {
-        return <Activity key={i} activity={activity} />
+      {activities.map((activity) => {
+        return <Activity key={activity.id} activity={activity} />
       })}
     </TransactionListWrapper>
   )
