@@ -18,7 +18,6 @@ import QuoteError, {
 } from 'api/gnosisProtocol/errors/QuoteError'
 import { toErc20Address } from 'utils/tokens'
 import { FeeInformation, FeeQuoteParams, PriceInformation, PriceQuoteParams } from 'utils/price'
-import { AppDataDoc } from 'utils/metadata'
 
 import { DEFAULT_NETWORK_FOR_LISTS } from 'constants/lists'
 import { GAS_FEE_ENDPOINTS } from 'constants/index'
@@ -305,11 +304,6 @@ export async function getTrades(params: GetTradesParams): Promise<TradeMetaData[
     console.error('Error getting trades:', error)
     throw new Error('Error getting trades: ' + error)
   }
-}
-
-export type UploadMetadataParams = {
-  metadata: AppDataDoc
-  chainId: ChainId
 }
 
 export interface GasFeeEndpointResponse {
