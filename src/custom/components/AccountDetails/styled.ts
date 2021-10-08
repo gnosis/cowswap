@@ -86,6 +86,12 @@ export const Wrapper = styled.div`
     flex-flow: column wrap;
   }
 
+  ${AccountControl} {
+    ${({ theme }) => theme.mediaWidth.upToSmall`
+        align-items: center;
+    `};
+  }
+
   ${AccountControl} ${WalletSecondaryActions} {
     width: 100%;
     margin: 0;
@@ -93,6 +99,11 @@ export const Wrapper = styled.div`
     display: grid;
     gap: 8px;
     justify-items: flex-end;
+
+    ${({ theme }) => theme.mediaWidth.upToSmall`
+      justify-items: center;
+      margin: 12px auto 0;
+    `};
 
     > a {
       align-items: center;
@@ -105,8 +116,10 @@ export const Wrapper = styled.div`
 
   ${AccountControl} ${WalletActions} {
     ${({ theme }) => theme.mediaWidth.upToSmall`
-        flex-flow: column wrap;
         width: 100%;
+        flex-flow: row wrap;
+        justify-content: center;
+        margin: 12px auto;
     `};
   }
 `
@@ -123,6 +136,8 @@ export const NetworkCard = styled(NetworkCardUni)`
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
     flex-shrink: 0;
+    margin: 12px auto 0;
+    order: 1;
   `};
 `
 
@@ -155,6 +170,10 @@ export const AccountSection = styled(AccountSectionMod)`
 
 export const AccountGroupingRow = styled(AccountGroupingRowMod)`
   margin: 0;
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    width: 100%;
+  `};
 
   > div {
     flex-flow: column wrap;
