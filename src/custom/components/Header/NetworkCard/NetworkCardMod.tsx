@@ -21,6 +21,7 @@ import { supportedChainId } from 'utils/supportedChainId'
 import EthereumLogo from 'assets/images/ethereum-logo.png'
 import QuestionHelper from 'components/QuestionHelper'
 import { StyledPollingDot } from '@src/components/Header/Polling'
+import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
 
 const BaseWrapper = css`
   position: relative;
@@ -134,7 +135,7 @@ const MenuItem = styled(ExternalLink)`
   ${BaseMenuItem}
 ` */
 
-const NetworkName = styled.div<{ chainId: SupportedChainId; hide?: boolean }>`
+const NetworkName = styled.div<{ chainId?: SupportedChainId; hide?: boolean }>`
   border-radius: 6px;
   font-size: 16px;
   font-weight: 500;
@@ -195,14 +196,22 @@ const NetworkInfo = styled.button<{ chainId: SupportedChainId }>`
 
 export default function NetworkCard() {
   const { account, chainId: preChainId, library } = useActiveWeb3React()
+  const { error } = useWeb3React() // MOD: check unsupported network
   const node = useRef<HTMLDivElement>(null)
   const open = useModalOpen(ApplicationModal.ARBITRUM_OPTIONS)
   const toggle = useToggleModal(ApplicationModal.ARBITRUM_OPTIONS)
-  const toggleWalletModal = useWalletModalToggle() // mod
+  const toggleWalletModal = useWalletModalToggle() // MOD
   useOnClickOutside(node, open ? toggle : undefined)
 
   const [implements3085, setImplements3085] = useState(false)
-  const chainId = useMemo(() => supportedChainId(preChainId), [preChainId])
+
+  // MOD: get supported chain and check unsupported
+  const [chainId, isUnsupportedChain] = useMemo(() => {
+    const chainId = supportedChainId(preChainId)
+
+    return [chainId, error instanceof UnsupportedChainIdError] // Mod - return if chainId is unsupported
+  }, [preChainId, error])
+
   useEffect(() => {
     // metamask is currently the only known implementer of this EIP
     // here we proceed w/ a noop feature check to ensure the user's version of metamask supports network switching
@@ -229,7 +238,7 @@ export default function NetworkCard() {
   )
 
   const info = chainId ? CHAIN_INFO[chainId] : undefined
-  if (!chainId || !info || !library) {
+  if (!chainId || !info || !library || isUnsupportedChain) {
     return null
   }
 
