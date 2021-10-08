@@ -43,7 +43,12 @@ import {
 import { ConnectedWalletInfo, useWalletInfo } from 'hooks/useWalletInfo'
 import { MouseoverTooltip } from 'components/Tooltip'
 import { supportedChainId } from 'utils/supportedChainId'
-import { ActivityDescriptors, groupActivitiesByDay, useMultipleActivityDescriptors } from 'hooks/useRecentActivity'
+import { groupActivitiesByDay, useMultipleActivityDescriptors } from 'hooks/useRecentActivity'
+import { CreationDateText } from 'components/AccountDetails/Transaction/styled'
+
+const DATE_FORMAT_OPTION: Intl.DateTimeFormatOptions = {
+  dateStyle: 'long',
+}
 
 type AbstractConnector = Pick<ReturnType<typeof useActiveWeb3React>, 'connector'>['connector']
 
@@ -234,7 +239,7 @@ export default function AccountDetails({
             {activitiesGroupedByDate.map(({ date, activities }) => (
               <Fragment key={date.getTime()}>
                 {/* TODO: style me! */}
-                <h3>{date.toString()}</h3>
+                <CreationDateText>{date.toLocaleString(undefined, DATE_FORMAT_OPTION)}</CreationDateText>
                 {renderActivities(activities)}
               </Fragment>
             ))}

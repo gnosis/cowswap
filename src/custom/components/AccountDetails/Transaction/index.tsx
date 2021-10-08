@@ -159,9 +159,6 @@ function getActivityDerivedState(props: {
 export default function Activity({ activity: activityData }: { activity: ActivityDescriptors }) {
   const { chainId } = useActiveWeb3React()
   const { allowsOffchainSigning, gnosisSafeInfo } = useWalletInfo()
-  // Return info necessary for rendering order/transaction info from the incoming id
-  //    - activity data can be either EnhancedTransactionDetails or Order
-  // const activityData = useSingleActivityDescriptor({ id, chainId })
 
   // Get some derived information about the activity. It helps to simplify the rendering of the sub-components
   const activityDerivedState = useMemo(
@@ -181,23 +178,15 @@ export default function Activity({ activity: activityData }: { activity: Activit
     ? new Date(Date.parse(creationTimeOrder))
     : undefined
 
-  // const timeFormatOptionMDY: Intl.DateTimeFormatOptions = {
-  //   dateStyle: 'long',
-  // }
-
   const timeFormatOptionHM: Intl.DateTimeFormatOptions = {
     timeStyle: 'short',
   }
-
-  // Month Day, Year
-  // const creationTimeMDY = creationTimeFull?.toLocaleString(undefined, timeFormatOptionMDY)
 
   // Hour:Minute
   const creationTime = creationTimeFull?.toLocaleString(undefined, timeFormatOptionHM)
 
   return (
     <Wrapper>
-      {/*{creationTimeMDY && <CreationDateText>{creationTimeMDY}</CreationDateText>}*/}
       <TransactionWrapper>
         <RowFixed>
           {/* Details of activity: transaction/order details */}
