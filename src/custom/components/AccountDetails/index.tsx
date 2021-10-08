@@ -231,15 +231,13 @@ export default function AccountDetails({
           </span>
 
           <div>
-            {activitiesGroupedByDate.map(({ date, activities }) => {
-              return (
-                <Fragment key={date.getTime()}>
-                  {/* TODO: style me! */}
-                  <h3>{date.toString()}</h3>
-                  {renderActivities(activities)}
-                </Fragment>
-              )
-            })}
+            {activitiesGroupedByDate.map(({ date, activities }) => (
+              <Fragment key={date.getTime()}>
+                {/* TODO: style me! */}
+                <h3>{date.toString()}</h3>
+                {renderActivities(activities)}
+              </Fragment>
+            ))}
           </div>
         </LowerSection>
       ) : (
