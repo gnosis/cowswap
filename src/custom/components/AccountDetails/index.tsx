@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, Fragment } from 'react'
 import { batch, useDispatch } from 'react-redux'
 
 import { useActiveWeb3React } from 'hooks/web3'
@@ -263,11 +263,11 @@ export default function AccountDetails({
           <div>
             {activitiesGroupedByDate.map(({ date, activities }) => {
               return (
-                <>
+                <Fragment key={date.getTime()}>
                   {/* TODO: style me! */}
                   <h3>{date.toString()}</h3>
                   {renderActivities(activities)}
-                </>
+                </Fragment>
               )
             })}
           </div>
