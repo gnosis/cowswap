@@ -180,7 +180,7 @@ export const SummaryInnerRow = styled.div<{ isExpired?: boolean; isCancelled?: b
   }
 
   > i {
-    word-break: break-all;
+    word-break: break-word;
     white-space: break-spaces;
     text-decoration: ${({ isExpired, isCancelled }) => (isExpired || isCancelled) && 'line-through'};
 
