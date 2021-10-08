@@ -393,6 +393,7 @@ export const TransactionInnerDetail = styled.div`
     margin: 24px auto 12px;
     width: 100%;
     max-width: 100%;
+    grid-column: 1 / -1;
   `};
 
   > strong {
