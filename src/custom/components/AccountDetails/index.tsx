@@ -138,8 +138,8 @@ interface AccountDetailsProps {
 }
 
 export default function AccountDetails({
-  pendingTransactions,
-  confirmedTransactions,
+  pendingTransactions = [],
+  confirmedTransactions = [],
   ENSName,
   toggleWalletModal,
   closeOrdersPanel,
@@ -160,11 +160,9 @@ export default function AccountDetails({
   }, [dispatch, chainId])
   const explorerLabel = chainId && account ? getExplorerLabel(chainId, account, 'address') : undefined
 
-  const activities = useMultipleActivityDescriptors({
-    chainId,
-    ids: (pendingTransactions || []).concat(confirmedTransactions || []),
-  })
-  const activitiesGroupedByDate = groupActivitiesByDay(activities || [])
+  const activities =
+    useMultipleActivityDescriptors({ chainId, ids: pendingTransactions.concat(confirmedTransactions) }) || []
+  const activitiesGroupedByDate = groupActivitiesByDay(activities)
   const activityTotalCount = activities?.length || 0
 
   const handleDisconnectClick = () => {
