@@ -5,6 +5,7 @@ import { useActiveWeb3React } from 'hooks/web3'
 import { Order, OrderStatus } from 'state/orders/actions'
 import { EnhancedTransactionDetails } from 'state/enhancedTransactions/reducer'
 import { SupportedChainId as ChainId } from 'constants/chains'
+import { getDateTimestamp } from 'utils/time'
 
 export type TransactionAndOrder =
   | (Order & { addedTime: number })
@@ -227,4 +228,34 @@ export function useSingleActivityDescriptor({
     if (!chainId) return null
     return createActivityDescriptor(tx, order)
   }, [chainId, order, tx])
+}
+
+type ActivitiesGroupedByDate = {
+  date: Date
+  activities: ActivityDescriptors[]
+}[]
+
+/**
+ * Helper function that groups a list of activities by day
+ * To be used on the return of `useMultipleActivityDescriptors`
+ *
+ * @param activities
+ */
+export function groupActivitiesByDay(activities: ActivityDescriptors[]): ActivitiesGroupedByDate {
+  const mapByTimestamp: { [timestamp: number]: ActivityDescriptors[] } = {}
+
+  activities.forEach((activity) => {
+    const { date } = activity
+
+    const timestamp = getDateTimestamp(date)
+
+    mapByTimestamp[timestamp] = (mapByTimestamp[timestamp] || []).concat(activity)
+  })
+
+  return Object.keys(mapByTimestamp).map((strTimestamp) => {
+    // Keys are always string, convert back to number
+    const timestamp = Number(strTimestamp)
+    // For easier handling later, transform into a list of objects with nested lists
+    return { date: new Date(timestamp), activities: mapByTimestamp[timestamp] }
+  })
 }
