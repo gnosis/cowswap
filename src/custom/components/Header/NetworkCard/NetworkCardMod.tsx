@@ -205,6 +205,10 @@ export default function NetworkCard() {
 
   const [implements3085, setImplements3085] = useState(false)
 
+  // MOD: checks if a requested network switch was sent
+  // used for when user disconnected and selects a network internally
+  // if 3085 supported, will connect wallet and change network
+  const [queuedNetworkSwitch, setQueuedNetworkSwitch] = useState(null)
   // MOD: get supported chain and check unsupported
   const [chainId, isUnsupportedChain] = useMemo(() => {
     const chainId = supportedChainId(preChainId)
@@ -227,15 +231,25 @@ export default function NetworkCard() {
   const networkCallback = useCallback(
     (supportedChainId) => {
       if (!account) {
-        return toggleWalletModal()
+        toggleWalletModal()
+        return setQueuedNetworkSwitch(supportedChainId)
       } else if (implements3085 && library && supportedChainId) {
         return switchToNetwork({ library, chainId: supportedChainId })
-      } else {
-        return
       }
+
+      return
     },
     [account, implements3085, library, toggleWalletModal]
   )
+
+  // MOD: used with mod hook - used to connect disconnected wallet to selected network
+  // if wallet supports 3085
+  useEffect(() => {
+    if (queuedNetworkSwitch && account && chainId && implements3085) {
+      networkCallback(queuedNetworkSwitch)
+      setQueuedNetworkSwitch(null)
+    }
+  }, [networkCallback, queuedNetworkSwitch, chainId, account, implements3085])
 
   const info = chainId ? CHAIN_INFO[chainId] : undefined
   if (!chainId || !info || !library || isUnsupportedChain) {
