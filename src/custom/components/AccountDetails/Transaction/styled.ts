@@ -382,11 +382,12 @@ export const TransactionInnerDetail = styled.div`
   display: flex;
   flex-flow: column wrap;
   border-radius: 16px;
-  padding: 18px;
+  padding: 16px;
   min-width: 300px;
   color: ${({ theme }) => theme.text1};
-  margin: 24px auto 8px 0;
-  border: 1px solid ${({ theme }) => theme.bg1};
+  margin: 24px auto 0;
+  ${({ theme }) => theme.card.background3};
+  ${({ theme }) => theme.card.boxShadow};
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
     margin: 24px auto 12px;
@@ -413,29 +414,24 @@ export const TransactionInnerDetail = styled.div`
   > a {
     text-align: center;
     border-radius: 16px;
-    border: 1px solid ${({ theme }) => transparentize(0.3, theme.bg1)};
+    ${({ theme }) => theme.card.border};
     padding: 8px;
     display: block;
     color: ${({ theme }) => theme.text1};
     margin: 8px 0 0;
-    transition: background 0.3s ease-in-out;
     text-decoration: none !important; // Todo: Do not use !important by editing the source
   }
 
   > a:focus {
     text-decoration: none;
   }
-
-  > a:hover {
-    background: ${({ theme }) => theme.bg1};
-  }
 `
 
 export const TextAlert = styled.div<{ isPending: boolean }>`
-  background: ${({ isPending }) => (isPending ? 'rgb(214 123 90 / 10%)' : 'green')};
+  background: ${({ isPending }) => (isPending ? 'rgb(255 87 34 / 15%)' : 'rgb(0 216 151 / 15%)')};
   margin: 6px 0 3px;
   padding: 8px 12px;
-  color: ${({ isPending }) => (isPending ? '#ff956e' : '#ff956e')};
+  color: ${({ isPending }) => (isPending ? '#ff5722' : '#00d897')};
   border-radius: 8px;
   text-align: center;
 `
