@@ -43,7 +43,7 @@ import {
 import { ConnectedWalletInfo, useWalletInfo } from 'hooks/useWalletInfo'
 import { MouseoverTooltip } from 'components/Tooltip'
 import { supportedChainId } from 'utils/supportedChainId'
-import { ActivityDescriptors, useMultipleActivityDescriptors } from 'hooks/useRecentActivity'
+import { ActivityDescriptors, groupActivitiesByDay, useMultipleActivityDescriptors } from 'hooks/useRecentActivity'
 
 type AbstractConnector = Pick<ReturnType<typeof useActiveWeb3React>, 'connector'>['connector']
 
@@ -127,38 +127,6 @@ export function getStatusIcon(connector?: AbstractConnector, walletInfo?: Connec
     )
   }
   return null
-}
-
-type ActivitiesGroupedByDate = {
-  date: Date
-  activities: ActivityDescriptors[]
-}[]
-
-/**
- * Given a Date obj, remove hours, minutes and seconds, and return the timestamp of it
- * @param date
- */
-function getDateTimestamp(date: Date): number {
-  return new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime()
-}
-
-function groupActivitiesByDay(activities: ActivityDescriptors[]): ActivitiesGroupedByDate {
-  const mapByTimestamp: { [timestamp: number]: ActivityDescriptors[] } = {}
-
-  activities.forEach((activity) => {
-    const { date } = activity
-
-    const timestamp = getDateTimestamp(date)
-
-    mapByTimestamp[timestamp] = (mapByTimestamp[timestamp] || []).concat(activity)
-  })
-
-  return Object.keys(mapByTimestamp).map((strTimestamp) => {
-    // Keys are always string, convert back to number
-    const timestamp = Number(strTimestamp)
-    // For easier handling later, transform into a list of objects with nested lists
-    return { date: new Date(timestamp), activities: mapByTimestamp[timestamp] }
-  })
 }
 
 interface AccountDetailsProps {
