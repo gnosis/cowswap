@@ -134,13 +134,21 @@ type ActivitiesGroupedByDate = {
   activities: ActivityDescriptors[]
 }[]
 
+/**
+ * Given a Date obj, remove hours, minutes and seconds, and return the timestamp of it
+ * @param date
+ */
+function getDateTimestamp(date: Date): number {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime()
+}
+
 function groupActivitiesByDay(activities: ActivityDescriptors[]): ActivitiesGroupedByDate {
   const mapByTimestamp: { [timestamp: number]: ActivityDescriptors[] } = {}
 
   activities.forEach((activity) => {
     const { date } = activity
-    // get timestamp of the day, drop hours, minutes and seconds
-    const timestamp = new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime()
+
+    const timestamp = getDateTimestamp(date)
 
     mapByTimestamp[timestamp] = (mapByTimestamp[timestamp] || []).concat(activity)
   })
