@@ -28,6 +28,7 @@ const SideBar = styled.div`
   cursor: default;
   overflow-y: auto; // fallback for 'overlay'
   overflow-y: overlay;
+  box-shadow: 0 16px 32px 0 rgb(0 0 0 / 5%);
   animation: slideIn 0.3s cubic-bezier(0.87, 0, 0.13, 1);
   ${({ theme }) => theme.card.background2};
   backdrop-filter: blur(25px);

@@ -14,6 +14,7 @@ export const TransactionWrapper = styled.div`
   display: flex;
   padding: 22px;
   border: 1px solid ${({ theme }) => theme.card.border};
+  position: relative;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
     flex-flow: column wrap;
@@ -119,13 +120,16 @@ export const SummaryInner = styled.div`
   margin: 0;
   opacity: 1;
   font-size: 13px;
-  word-break: break-all;
-  position: relative;
+  word-break: break-word;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
-    font-size: 14px;
     margin: 16px 0 0;
     width: 100%;
+    display: grid;
+    grid-template-columns: fit-content(100%) fit-content(100%);
+    grid-gap: 0 18px;
+    justify-items: flex-start;
+    align-items: flex-start;
   `};
 
   > b {
@@ -139,6 +143,7 @@ export const SummaryInner = styled.div`
 
     ${({ theme }) => theme.mediaWidth.upToSmall`
       font-size: 18px;
+      grid-column: 1 / -1;
     `}
   }
 `
@@ -216,7 +221,7 @@ export const StatusLabelWrapper = styled.div`
   margin: 0 0 auto auto;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
-    margin: 12px auto 0;
+    margin: 16px auto 0;
     width: 100%;
   `};
 `
@@ -239,6 +244,7 @@ export const StatusLabel = styled.div<{ isPending: boolean; isCancelling: boolea
     width: 100%;
     font-size: 13px;
     height: 32px;
+    padding: 0 12px;
   `};
 
   &::before {
@@ -321,6 +327,14 @@ export const TransactionState = styled(OldTransactionState).attrs(
   padding: 0;
   font-size: 14px;
   margin: 6px 0 0;
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    margin: 18px auto 0;
+    position: absolute;
+    top: 0;
+    right: 16px;
+    width: auto;
+  `};
 
   ${RowFixed} {
     width: 100%;

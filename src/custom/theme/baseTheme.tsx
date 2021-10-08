@@ -158,8 +158,8 @@ export function themeVariables(darkMode: boolean, colorsTheme: Colors) {
       background2: css`
         background: linear-gradient(
           145deg,
-          ${darkMode ? '#081526' : '#d5e9f0'},
-          ${darkMode ? 'rgb(8 21 38 / 70%)' : 'rgb(213 233 240 / 75%)'}
+          ${darkMode ? '#111726' : '#d5e9f0'},
+          ${darkMode ? 'rgb(7 13 30 / 85%)' : 'rgb(213 233 240 / 75%)'}
         );
       `,
       background3: css`
@@ -169,7 +169,8 @@ export function themeVariables(darkMode: boolean, colorsTheme: Colors) {
           ${darkMode ? 'rgb(15 38 68 / 30%)' : 'rgb(255 255 255 / 40%)'}
         );
       `,
-      border: `${darkMode ? '#102a48' : 'rgb(16 42 72 / 25%)'}`,
+
+      border: `${darkMode ? '#1a2744' : 'rgb(16 42 72 / 25%)'}`,
       boxShadow: css`
         box-shadow: inset 0 1px 1px 0 ${darkMode ? 'rgb(29 67 115 / 70%)' : '#ffffff'},
           0 2px 30px -20px ${darkMode ? 'rgb(1 8 18 / 45%)' : 'rgb(0 51 88 / 60%)'};
