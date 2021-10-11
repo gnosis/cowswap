@@ -11,7 +11,7 @@ import { SOLVER_ADDRESS as defaultUserAddress } from 'constants/index'
 type ParaSwapPriceQuote = OptimalRate
 
 export const API_NAME = 'ParaSwap'
-const ENABLED = process.env.PRICE_FEED_PARASWAP_ENABLED !== 'false'
+const ENABLED = process.env.REACT_APP_PRICE_FEED_PARASWAP_ENABLED !== 'false'
 
 // Provided manually just to make sure it matches what GPv2 backend is using, although the value used  is the current SDK default
 const API_URL = 'https://apiv5.paraswap.io'
