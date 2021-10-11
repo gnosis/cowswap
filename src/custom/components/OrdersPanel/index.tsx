@@ -31,14 +31,12 @@ const SideBar = styled.div`
   box-shadow: 0 16px 32px 0 rgb(0 0 0 / 5%);
   animation: slideIn 0.3s cubic-bezier(0.87, 0, 0.13, 1);
   ${({ theme }) => theme.card.background2};
-  backdrop-filter: blur(25px);
 
   ${({ theme }) => theme.mediaWidth.upToMedium`    
     width: 100%;
     height: 100%;
     max-width: 100%;
     border-radius: 0;
-    backdrop-filter: blur(65px);
   `};
 
   &::-webkit-scrollbar {

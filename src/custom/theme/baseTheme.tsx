@@ -168,11 +168,7 @@ export function themeVariables(darkMode: boolean, colorsTheme: Colors) {
         background: linear-gradient(145deg, ${darkMode ? '#0f2644' : '#f3fbff'}, ${darkMode ? '#021e34' : '#ffffff'});
       `,
       background2: css`
-        background: linear-gradient(
-          145deg,
-          ${darkMode ? '#111726' : '#d5e9f0'},
-          ${darkMode ? 'rgb(7 13 30 / 85%)' : 'rgb(213 233 240 / 75%)'}
-        );
+        background: ${darkMode ? '#031628' : '#d5e9f0'};
       `,
       background3: css`
         background: linear-gradient(
@@ -182,7 +178,7 @@ export function themeVariables(darkMode: boolean, colorsTheme: Colors) {
         );
       `,
 
-      border: `${darkMode ? '#1a2744' : 'rgb(16 42 72 / 25%)'}`,
+      border: `${darkMode ? 'rgb(197 218 239 / 10%)' : 'rgb(16 42 72 / 20%)'}`,
       boxShadow: css`
         box-shadow: inset 0 1px 1px 0 ${darkMode ? 'rgb(29 67 115 / 70%)' : '#ffffff'},
           0 2px 30px -20px ${darkMode ? 'rgb(1 8 18 / 45%)' : 'rgb(0 51 88 / 60%)'};
