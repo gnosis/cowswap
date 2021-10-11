@@ -469,6 +469,7 @@ export const ActivityVisual = styled.div`
     padding: 2px;
     box-sizing: content-box;
     box-shadow: none;
+    background: ${({ theme }) => theme.card.background2};
     color: ${({ theme }) =>
       theme.text1}!important; // Todo: Re-factor StyledLogo to prevent inline style and needing to use !important here
   }
