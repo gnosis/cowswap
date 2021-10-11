@@ -53,6 +53,7 @@ const DEFAULT_HEADERS = {
   'X-AppId': APP_DATA_HASH.toString(),
 }
 const API_NAME = 'Gnosis Protocol'
+const ENABLED = process.env.REACT_APP_PRICE_FEED_GP_ENABLED !== 'false'
 /**
  * Unique identifier for the order, calculated by keccak256(orderDigest, ownerAddress, validTo),
    where orderDigest = keccak256(orderStruct). bytes32.
@@ -205,9 +206,13 @@ async function _handleQuoteResponse(response: Response) {
   }
 }
 
-export async function getPriceQuote(params: PriceQuoteParams): Promise<PriceInformation> {
+export async function getPriceQuote(params: PriceQuoteParams): Promise<PriceInformation | null> {
   const { baseToken, quoteToken, amount, kind, chainId } = params
   console.log(`[api:${API_NAME}] Get price from API`, params)
+
+  if (!ENABLED) {
+    return null
+  }
 
   const response = await _get(
     chainId,
