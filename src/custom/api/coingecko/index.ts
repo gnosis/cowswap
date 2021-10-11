@@ -10,6 +10,8 @@ function getApiUrl(): string {
 // https://api.coingecko.com/api/v3/simple/token_price/ethereum?contract_addresses=0x33e18a092a93ff21ad04746c7da12e35d34dc7c4&vs_currencies=usd
 // Defaults
 const API_NAME: PriceFeed = 'Coingecko'
+const ENABLED = process.env.PRICE_FEED_COINGECKO_ENABLED !== 'false'
+
 const API_BASE_URL = getApiUrl()
 const API_VERSION = 'v3'
 const DEFAULT_HEADERS = {
@@ -27,6 +29,9 @@ function _getApiBaseUrl(chainId: ChainId): string {
 }
 
 function _getCoinGeckoAssetPlatform(chainId: ChainId) {
+  if (!ENABLED) {
+    return null
+  }
   switch (chainId) {
     // Use of asset platforms - supports ethereum and xdai
     // https://api.coingecko.com/api/v3/asset_platforms
