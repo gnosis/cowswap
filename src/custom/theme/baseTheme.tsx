@@ -72,7 +72,7 @@ export function colors(darkMode: boolean): Colors {
     blueShade2: '#011e34',
 
     // states
-    success: '#00d897',
+    success: darkMode ? '#00d897' : '#00815a',
     danger: '#f1356e',
     pending: '#43758C',
     attention: '#ff5722',
@@ -158,25 +158,19 @@ export function themeVariables(darkMode: boolean, colorsTheme: Colors) {
         box-shadow: inset 2px -2px 4px ${darkMode ? '#1d4373' : '#ffffff'},
           inset -2px 2px 4px ${darkMode ? '#021E34' : 'rgb(162 200 216)'};
       `,
-      boxShadowEmbossed: css`
-        background: linear-gradient(145deg, ${colorsTheme.bg3}, ${colorsTheme.bg4});
-        box-shadow: inset 0 1px 1px 0 hsl(0deg 0% 100% / 10%), 0 10px 40px -20px #000000;
-      `,
     },
     card: {
       background: css`
-        background: linear-gradient(145deg, ${darkMode ? '#0f2644' : '#f3fbff'}, ${darkMode ? '#021e34' : '#ffffff'});
+        background: linear-gradient(145deg, ${colorsTheme.bg3}, ${colorsTheme.bg4});
       `,
-      background2: css`
-        background: ${darkMode ? '#031628' : '#ffffff'};
-      `,
+      background2: darkMode ? '#01182a' : '#ffffff',
       background3: css`
-        background: ${darkMode ? '#0f2644' : '#eaeff5'};
+        background: ${darkMode ? 'rgb(22 56 97 / 40%)' : 'rgb(197 218 239 / 40%)'};
       `,
       border: `${darkMode ? 'rgb(197 218 239 / 10%)' : 'rgb(16 42 72 / 20%)'}`,
       boxShadow: css`
-        box-shadow: inset 0 1px 1px 0 ${darkMode ? 'rgb(29 67 115 / 70%)' : '#ffffff'},
-          0 2px 30px -20px ${darkMode ? 'rgb(1 8 18 / 45%)' : 'rgb(0 51 88 / 60%)'};
+        background: linear-gradient(145deg, ${colorsTheme.bg3}, ${colorsTheme.bg4});
+        box-shadow: inset 0 1px 1px 0 hsl(0deg 0% 100% / 10%), 0 10px 40px -20px #000000;
       `,
     },
     header: {

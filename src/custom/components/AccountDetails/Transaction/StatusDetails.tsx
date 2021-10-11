@@ -34,7 +34,7 @@ export function GnosisSafeLink(props: {
     return null
   }
 
-  return <ExternalLink href={safeUrl}>View Gnosis Safe</ExternalLink>
+  return <ExternalLink href={safeUrl}>View Gnosis Safe ↗</ExternalLink>
 }
 
 export function StatusDetails(props: { chainId: number; activityDerivedState: ActivityDerivedState }) {

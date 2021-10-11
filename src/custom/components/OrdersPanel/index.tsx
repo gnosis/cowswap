@@ -30,7 +30,7 @@ const SideBar = styled.div`
   overflow-y: overlay;
   box-shadow: 0 16px 32px 0 rgb(0 0 0 / 5%);
   animation: slideIn 0.3s cubic-bezier(0.87, 0, 0.13, 1);
-  ${({ theme }) => theme.card.background2};
+  background: ${({ theme }) => theme.card.background2};
 
   ${({ theme }) => theme.mediaWidth.upToMedium`    
     width: 100%;
@@ -112,7 +112,7 @@ const Header = styled.div`
     left: 0;
     height: 52px;
     backdrop-filter: blur(5px);
-    ${({ theme }) => theme.card.background2};
+    ${({ theme }) => theme.card.background};
   `};
 
   &:hover {
