@@ -6,11 +6,11 @@ import { APIError, RateOptions } from 'paraswap/build/types'
 import { SupportedChainId as ChainId } from 'constants/chains'
 import { getTokensFromMarket } from 'utils/misc'
 import { getValidParams, PriceInformation, PriceQuoteParams } from 'utils/price'
-import { SOLVER_ADDRESS as defaultUserAddress } from 'custom/constants'
+import { PriceFeed, SOLVER_ADDRESS as defaultUserAddress } from 'constants/index'
 
 type ParaSwapPriceQuote = OptimalRate
 
-const API_NAME = 'ParaSwap'
+export const API_NAME: PriceFeed = 'ParaSwap'
 // Provided manually just to make sure it matches what GPv2 backend is using, although the value used  is the current SDK default
 const API_URL = 'https://apiv5.paraswap.io'
 

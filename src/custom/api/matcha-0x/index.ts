@@ -4,6 +4,7 @@ import { NetworkID } from 'paraswap'
 import { SupportedChainId as ChainId } from 'constants/chains'
 import { getTokensFromMarket } from 'utils/misc'
 import { getValidParams, PriceInformation, PriceQuoteParams } from 'utils/price'
+import { PriceFeed } from 'constants/index'
 
 // copy/pasting as the library types correspond to the internal types, not API response
 // e.g "price: BigNumber" when we want the API response type: "price: string"
@@ -65,7 +66,7 @@ function getApiUrl(): Partial<Record<ChainId, string>> {
 }
 
 // Defaults
-const API_NAME = 'Matcha(0x)'
+const API_NAME: PriceFeed = 'Matcha(0x)'
 const API_BASE_URL = getApiUrl()
 const API_VERSION = 'v1'
 const DEFAULT_HEADERS = {

@@ -1,5 +1,6 @@
 import { SupportedChainId as ChainId } from 'constants/chains'
 import { PriceInformation } from 'utils/price'
+import { PriceFeed } from 'constants/index'
 
 function getApiUrl(): string {
   // it's all the same base url
@@ -8,7 +9,7 @@ function getApiUrl(): string {
 
 // https://api.coingecko.com/api/v3/simple/token_price/ethereum?contract_addresses=0x33e18a092a93ff21ad04746c7da12e35d34dc7c4&vs_currencies=usd
 // Defaults
-const API_NAME = 'Coingecko'
+const API_NAME: PriceFeed = 'Coingecko'
 const API_BASE_URL = getApiUrl()
 const API_VERSION = 'v3'
 const DEFAULT_HEADERS = {
