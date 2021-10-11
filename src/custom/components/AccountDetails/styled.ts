@@ -155,7 +155,6 @@ export const InfoCard = styled.div`
   border-radius: 16px;
   padding: 24px;
   ${({ theme }) => theme.card.background3};
-  ${({ theme }) => theme.card.boxShadow};
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
     padding: 16px 10px 24px;

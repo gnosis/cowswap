@@ -168,16 +168,11 @@ export function themeVariables(darkMode: boolean, colorsTheme: Colors) {
         background: linear-gradient(145deg, ${darkMode ? '#0f2644' : '#f3fbff'}, ${darkMode ? '#021e34' : '#ffffff'});
       `,
       background2: css`
-        background: ${darkMode ? '#031628' : '#d5e9f0'};
+        background: ${darkMode ? '#031628' : '#ffffff'};
       `,
       background3: css`
-        background: linear-gradient(
-          145deg,
-          ${darkMode ? '#0e274e' : 'rgb(255 255 255 / 70%)'},
-          ${darkMode ? 'rgb(15 38 68 / 30%)' : 'rgb(255 255 255 / 40%)'}
-        );
+        background: ${darkMode ? '#0f2644' : '#eaeff5'};
       `,
-
       border: `${darkMode ? 'rgb(197 218 239 / 10%)' : 'rgb(16 42 72 / 20%)'}`,
       boxShadow: css`
         box-shadow: inset 0 1px 1px 0 ${darkMode ? 'rgb(29 67 115 / 70%)' : '#ffffff'},
