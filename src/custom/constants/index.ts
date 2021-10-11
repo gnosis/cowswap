@@ -97,6 +97,15 @@ export const GAS_FEE_ENDPOINTS = {
   [ChainId.XDAI]: 'https://safe-relay.gnosis.io/api/v1/gas-station/',
 }
 
+export type PriceFeed = 'Gnosis Protocol' | 'ParaSwap' | 'Coingecko' | 'Matcha(0x)'
+
+export const PRICES_FEEDS_ENABLED: Record<PriceFeed, boolean> = {
+  'Gnosis Protocol': true,
+  ParaSwap: true,
+  Coingecko: true,
+  'Matcha(0x)': true,
+}
+
 export const UNSUPPORTED_TOKENS_FAQ_URL = '/faq#what-token-pairs-does-cowswap-allow-to-trade'
 
 // fee threshold - should be greater than percentage, show warning
