@@ -1,7 +1,7 @@
 import { SupportedChainId as ChainId } from 'constants/chains'
 import { OrderKind } from '@gnosis.pm/gp-v2-contracts'
 import { getSigningSchemeApiValue, OrderCreation, OrderCancellation } from 'utils/signatures'
-import { APP_DATA_HASH, PriceFeed } from 'constants/index'
+import { APP_DATA_HASH } from 'constants/index'
 import { registerOnWindow } from 'utils/misc'
 import { isLocal, isDev, isPr, isBarn } from '../../utils/environments'
 import OperatorError, {
@@ -52,7 +52,7 @@ const DEFAULT_HEADERS = {
   'Content-Type': 'application/json',
   'X-AppId': APP_DATA_HASH.toString(),
 }
-const API_NAME: PriceFeed = 'Gnosis Protocol'
+const API_NAME = 'Gnosis Protocol'
 /**
  * Unique identifier for the order, calculated by keccak256(orderDigest, ownerAddress, validTo),
    where orderDigest = keccak256(orderStruct). bytes32.

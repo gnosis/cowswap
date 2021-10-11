@@ -6,11 +6,11 @@ import { APIError, RateOptions } from 'paraswap/build/types'
 import { SupportedChainId as ChainId } from 'constants/chains'
 import { getTokensFromMarket } from 'utils/misc'
 import { getValidParams, PriceInformation, PriceQuoteParams } from 'utils/price'
-import { PriceFeed, SOLVER_ADDRESS as defaultUserAddress } from 'constants/index'
+import { SOLVER_ADDRESS as defaultUserAddress } from 'constants/index'
 
 type ParaSwapPriceQuote = OptimalRate
 
-export const API_NAME: PriceFeed = 'ParaSwap'
+export const API_NAME = 'ParaSwap'
 const ENABLED = process.env.PRICE_FEED_PARASWAP_ENABLED !== 'false'
 
 // Provided manually just to make sure it matches what GPv2 backend is using, although the value used  is the current SDK default
