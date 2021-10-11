@@ -234,9 +234,10 @@ export const StatusLabel = styled.div<{
 }>`
   height: 28px;
   width: 100px;
-  ${({ isPending, isCancelling, theme }) => !isCancelling && isPending && `border:  1px solid ${theme.card.border};`}
-  color: ${({ isPending, theme, color }) =>
-    isPending ? theme.text1 : color === 'success' ? theme.success : theme.attention};
+  ${({ isPending, isPresignaturePending, isCancelling, theme }) =>
+    !isCancelling && (isPending || isPresignaturePending) && `border:  1px solid ${theme.card.border};`}
+  color: ${({ isPending, isPresignaturePending, theme, color }) =>
+    isPending || isPresignaturePending ? theme.text1 : color === 'success' ? theme.success : theme.attention};
   position: relative;
   border-radius: 4px;
   display: flex;
@@ -255,8 +256,14 @@ export const StatusLabel = styled.div<{
 
   &::before {
     content: '';
-    background: ${({ color, isPending, isCancelling, theme }) =>
-      !isCancelling && isPending ? 'transparent' : color === 'success' ? theme.success : theme.attention};
+    background: ${({ color, isPending, isPresignaturePending, isCancelling, theme }) =>
+      !isCancelling && isPending
+        ? 'transparent'
+        : isPresignaturePending
+        ? theme.pending
+        : color === 'success'
+        ? theme.success
+        : theme.attention};
     position: absolute;
     left: 0;
     top: 0;
@@ -302,7 +309,8 @@ export const StatusLabel = styled.div<{
   }
 
   > svg > path {
-    fill: ${({ theme, color, isPending }) => (isPending ? theme.text1 : color)};
+    fill: ${({ theme, color, isPending, isPresignaturePending }) =>
+      isPending || isPresignaturePending ? theme.text1 : color === 'success' ? theme.success : theme.attention};
   }
 `
 
