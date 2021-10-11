@@ -125,6 +125,9 @@ export function themeVariables(darkMode: boolean, colorsTheme: Colors) {
       width: '208px',
       height: '50px',
     },
+    util: {
+      invertImageForDarkMode: darkMode ? 'filter: invert(1) grayscale(1);' : null,
+    },
     cursor: css`
       cursor: url(${Cursor1}), auto;
       animation: cursor 1s infinite;

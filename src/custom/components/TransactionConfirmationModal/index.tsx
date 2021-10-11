@@ -25,7 +25,6 @@ import { getStatusIcon } from 'components/AccountDetails'
 import { shortenAddress } from 'utils'
 
 const Wrapper = styled.div`
-  --icon-size: 70px;
   width: 100%;
 `
 
@@ -48,7 +47,8 @@ const CloseIconWrapper = styled(CloseIcon)`
   }
 `
 
-const IconSpinner = styled.div`
+const WalletIcon = styled.div`
+  --icon-size: 54px;
   margin: 0 auto 21px;
   display: flex;
   align-items: center;
@@ -66,12 +66,18 @@ const IconSpinner = styled.div`
     align-items: center;
     justify-content: center;
     padding: 0;
+    margin: 0;
   }
 
-  > div > div > img,
+  > div > img,
   > div > div > svg {
     height: 100%;
     width: 100%;
+    object-fit: contain;
+  }
+
+  > div > img[alt='Gnosis Safe Multisig logo'] {
+    ${({ theme }) => theme.util.invertImageForDarkMode};
   }
 `
 
@@ -436,7 +442,7 @@ export function ConfirmationPendingContent({
       <UpperSection>
         <CloseIconWrapper onClick={onDismiss} />
 
-        <IconSpinner>{getStatusIcon(connector, walletInfo, 46)}</IconSpinner>
+        <WalletIcon>{getStatusIcon(connector, walletInfo, 46)}</WalletIcon>
 
         <Text fontWeight={500} fontSize={16} textAlign="center">
           {pendingText}

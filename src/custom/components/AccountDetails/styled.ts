@@ -124,6 +124,12 @@ export const Wrapper = styled.div`
   }
 `
 
+export const WalletWrapper = styled.div`
+  > div > img[alt='Gnosis Safe Multisig logo'] {
+    ${({ theme }) => theme.util.invertImageForDarkMode};
+  }
+`
+
 export const NetworkCard = styled(NetworkCardUni)`
   background-color: ${({ theme }) => theme.networkCard.background};
   color: ${({ theme }) => theme.networkCard.text};

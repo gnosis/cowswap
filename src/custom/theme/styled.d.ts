@@ -63,6 +63,9 @@ declare module 'styled-components' {
       width?: string
       height?: string
     }
+    util: {
+      invertImageForDarkMode: string | null
+    }
     cursor?: FlattenSimpleInterpolation
     body: {
       background?: FlattenSimpleInterpolation
