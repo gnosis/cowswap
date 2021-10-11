@@ -248,17 +248,17 @@ export async function getBestQuote({ quoteParams, fetchFee, previousFee }: Quote
   const pricePromise =
     !feeExceedsPrice && exchangeAmount
       ? getBestPrice({
-        chainId,
-        baseToken,
-        quoteToken,
-        fromDecimals,
-        toDecimals,
-        amount: exchangeAmount,
-        kind,
-        userAddress,
-      })
+          chainId,
+          baseToken,
+          quoteToken,
+          fromDecimals,
+          toDecimals,
+          amount: exchangeAmount,
+          kind,
+          userAddress,
+        })
       : // fee exceeds our price, is invalid
-      Promise.reject(FEE_EXCEEDS_FROM_ERROR)
+        Promise.reject(FEE_EXCEEDS_FROM_ERROR)
 
   return Promise.allSettled([pricePromise, feePromise])
 }
