@@ -1,6 +1,6 @@
-import { Code, MessageCircle, HelpCircle, BookOpen, PieChart } from 'react-feather'
+import { Code, MessageCircle, HelpCircle, BookOpen, PieChart, Moon, Sun, Repeat, Star } from 'react-feather'
 
-import MenuMod, { MenuItem, InternalMenuItem, MenuFlyout as MenuFlyoutUni } from './MenuMod'
+import MenuMod, { MenuItem, InternalMenuItem, MenuFlyout as MenuFlyoutUni, MenuItemBase } from './MenuMod'
 import { useToggleModal } from 'state/application/hooks'
 import styled from 'styled-components/macro'
 import { Separator as SeparatorBase } from 'components/SearchModal/styleds'
@@ -8,7 +8,40 @@ import { CONTRACTS_CODE_LINK, DISCORD_LINK, DOCS_LINK, DUNE_DASHBOARD_LINK } fro
 import GameIcon from 'assets/cow-swap/game.gif'
 import { ApplicationModal } from 'state/application/actions'
 
+import TwitterImage from 'assets/cow-swap/twitter.svg'
+import { ExternalLink } from 'theme'
+
 export * from './MenuMod'
+
+const ResponsiveInternalMenuItem = styled(InternalMenuItem)`
+  display: none;
+
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+      display: flex;   
+  `};
+`
+
+const MenuItemResponsiveBase = styled.div`
+  ${MenuItemBase}
+  display: none;
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    display: flex;   
+  `};
+`
+
+const MenuItemResponsive = styled(MenuItemResponsiveBase)`
+  font-weight: 500;
+  flex: 0 1 auto;
+  padding: 16px;
+  font-size: 18px;
+  svg {
+    width: 18px;
+    height: 18px;
+    object-fit: contain;
+    margin: 0 8px 0 0;
+  }
+`
 
 export const StyledMenu = styled(MenuMod)`
   hr {
@@ -16,7 +49,8 @@ export const StyledMenu = styled(MenuMod)`
   }
 
   ${MenuItem},
-  ${InternalMenuItem} {
+  ${InternalMenuItem},
+  ${MenuItemResponsive} {
     color: ${({ theme }) => theme.header.menuFlyout.color};
     background: ${({ theme }) => theme.header.menuFlyout.background};
     :hover {
@@ -46,11 +80,6 @@ const MenuFlyout = styled(MenuFlyoutUni)`
   top: calc(100% + 16px);
   order: 1;
 
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    top: initial;
-    bottom: calc(100% + 32px);
-  `}
-
   ${({ theme }) => theme.mediaWidth.upToSmall`
     top: 0;
     left: 0;
@@ -63,9 +92,12 @@ const MenuFlyout = styled(MenuFlyoutUni)`
     overflow-y: auto;
   `};
 
+  > a:not(${ResponsiveInternalMenuItem}) {
+    display: flex;
+  }
+
   > a {
     transition: background 0.2s ease-in-out;
-    display: flex;
     align-items: center;
     text-decoration: none;
 
@@ -142,13 +174,25 @@ export const CloseMenu = styled.button`
   }
 `
 
-export function Menu() {
+interface MenuProps {
+  darkMode: boolean
+  toggleDarkMode: () => void
+}
+
+export function Menu({ darkMode, toggleDarkMode }: MenuProps) {
   const close = useToggleModal(ApplicationModal.MENU)
 
   return (
     <StyledMenu>
       <MenuFlyout>
         <CloseMenu onClick={close} />
+        <ResponsiveInternalMenuItem to="/" onClick={close}>
+          <Repeat size={14} /> Swap
+        </ResponsiveInternalMenuItem>
+        <ResponsiveInternalMenuItem to="/about" onClick={close}>
+          <Star size={14} /> About
+        </ResponsiveInternalMenuItem>
+
         <InternalMenuItem to="/faq" onClick={close}>
           <HelpCircle size={14} />
           FAQ
@@ -177,12 +221,31 @@ export function Menu() {
           </span>
         </MenuItem>
 
+        <MenuItemResponsive>
+          <ExternalLink href="https://twitter.com/mevprotection" target="_blank">
+            <img src={TwitterImage} alt="Follow CowSwap on Twitter!" /> Twitter
+          </ExternalLink>
+        </MenuItemResponsive>
+
         <InternalMenuItem to="/play" onClick={close}>
           <span role="img" aria-label="Play CowGame">
             <img src={GameIcon} alt="Play CowGame" />
           </span>{' '}
           CowGame
         </InternalMenuItem>
+
+        <MenuItemResponsive onClick={() => toggleDarkMode()}>
+          {darkMode ? (
+            <>
+              <Moon size={20} /> Dark Theme
+            </>
+          ) : (
+            <>
+              <Sun size={20} />
+              Light Theme
+            </>
+          )}
+        </MenuItemResponsive>
 
         <Separator />
 

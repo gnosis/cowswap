@@ -1,4 +1,4 @@
-import { SupportedChainId } from '@src/constants/chains'
+import { SupportedChainId } from 'constants/chains'
 import { BigNumber, utils } from 'ethers'
 import { Web3Provider } from '@ethersproject/providers'
 

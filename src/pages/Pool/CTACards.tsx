@@ -1,7 +1,7 @@
 import { Trans } from '@lingui/macro'
 import { AutoColumn } from 'components/Column'
 import { MinimalNetworkAlert } from 'components/NetworkAlert/MinimalNetworkAlert'
-import { CHAIN_INFO, SupportedChainId } from 'constants/chains'
+import { CHAIN_INFO, SupportedChainId } from '@src/constants/chains'
 import { useActiveWeb3React } from 'hooks/web3'
 import styled from 'styled-components/macro'
 import { TYPE } from 'theme'

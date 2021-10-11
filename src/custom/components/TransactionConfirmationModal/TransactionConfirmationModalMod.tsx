@@ -23,7 +23,7 @@ import Circle from 'assets/images/blue-loader.svg'
 import { useActiveWeb3React } from 'hooks/web3'
 // import useAddTokenToMetamask from 'hooks/useAddTokenToMetamask'
 import { Trans } from '@lingui/macro'
-import { CHAIN_INFO, L2_CHAIN_IDS, SupportedL2ChainId } from 'constants/chains'
+import { CHAIN_INFO, L2_CHAIN_IDS /* , SupportedL2ChainId */, SupportedChainId } from 'constants/chains'
 import { useIsTransactionConfirmed, useTransaction } from 'state/transactions/hooks'
 import Badge from 'components/Badge'
 import AnimatedConfirmation from 'components/TransactionConfirmationModal/AnimatedConfirmation'
@@ -240,7 +240,8 @@ function L2Content({
 }: {
   onDismiss: () => void
   hash: string | undefined
-  chainId: number
+  // chainId: number
+  chainId: SupportedChainId
   currencyToAdd?: Currency | undefined
   pendingText: ReactNode
   inline?: boolean // not in modal
@@ -256,7 +257,7 @@ function L2Content({
     ? (transaction.confirmedTime - transaction.addedTime) / 1000
     : undefined
 
-  const info = CHAIN_INFO[chainId as SupportedL2ChainId]
+  const info = CHAIN_INFO[chainId /*  as SupportedL2ChainId */]
 
   return (
     <Wrapper>

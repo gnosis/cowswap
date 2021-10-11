@@ -77,10 +77,10 @@ export const COMMON_BASES: ChainCurrencyList = {
     WBTC,
     WETH9_EXTENDED[SupportedChainId.MAINNET],
   ],
-  [SupportedChainId.ROPSTEN]: [
-    // ExtendedEther.onChain(SupportedChainId.ROPSTEN),
-    WETH9_EXTENDED[SupportedChainId.ROPSTEN],
-  ],
+  // [SupportedChainId.ROPSTEN]: [
+  //   // ExtendedEther.onChain(SupportedChainId.ROPSTEN),
+  //   WETH9_EXTENDED[SupportedChainId.ROPSTEN],
+  // ],
   [SupportedChainId.RINKEBY]: [
     // ExtendedEther.onChain(SupportedChainId.RINKEBY),
     WETH9_EXTENDED[SupportedChainId.RINKEBY],
@@ -88,12 +88,12 @@ export const COMMON_BASES: ChainCurrencyList = {
     USDC_RINKEBY,
     USDT_RINKEBY,
   ],
-  [SupportedChainId.GOERLI]: [
-    /* ExtendedEther.onChain(SupportedChainId.GOERLI),  */ WETH9_EXTENDED[SupportedChainId.GOERLI],
-  ],
-  [SupportedChainId.KOVAN]: [
-    /* ExtendedEther.onChain(SupportedChainId.KOVAN),  */ WETH9_EXTENDED[SupportedChainId.KOVAN],
-  ],
+  // [SupportedChainId.GOERLI]: [
+  //   /* ExtendedEther.onChain(SupportedChainId.GOERLI),  */ WETH9_EXTENDED[SupportedChainId.GOERLI],
+  // ],
+  // [SupportedChainId.KOVAN]: [
+  //   /* ExtendedEther.onChain(SupportedChainId.KOVAN),  */ WETH9_EXTENDED[SupportedChainId.KOVAN],
+  // ],
   [SupportedChainId.XDAI]: [
     // ExtendedEther.onChain(SupportedChainId.XDA),
     USDC_XDAI,

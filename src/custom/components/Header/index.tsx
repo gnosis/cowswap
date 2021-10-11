@@ -10,13 +10,12 @@ import HeaderMod, {
   HeaderControls as HeaderControlsUni,
   BalanceText as BalanceTextUni,
   HeaderElement,
-  HideSmall,
   AccountElement,
   HeaderElementWrap,
   StyledNavLink as StyledNavLinkUni,
   StyledMenuButton,
 } from './HeaderMod'
-import Menu from '../Menu'
+import Menu from 'components/Menu'
 import { Moon, Sun } from 'react-feather'
 import styled from 'styled-components/macro'
 import { useActiveWeb3React } from 'hooks/web3'
@@ -29,13 +28,13 @@ import OrdersPanel from 'components/OrdersPanel'
 
 import { supportedChainId } from 'utils/supportedChainId'
 import { formatSmart } from 'utils/format'
-import NetworkCard from 'components/Header/NetworkCard'
+import NetworkCard from './NetworkCard'
 
 export const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
   [ChainId.RINKEBY]: 'Rinkeby',
-  [ChainId.ROPSTEN]: 'Ropsten',
-  [ChainId.GOERLI]: 'Görli',
-  [ChainId.KOVAN]: 'Kovan',
+  // [ChainId.ROPSTEN]: 'Ropsten',
+  // [ChainId.GOERLI]: 'Görli',
+  // [ChainId.KOVAN]: 'Kovan',
   [ChainId.XDAI]: 'xDAI',
 }
 
@@ -83,7 +82,7 @@ export const HeaderModWrapper = styled(HeaderMod)`
   }
 `
 
-const TwitterLink = styled(StyledMenuButton)`
+export const TwitterLink = styled(StyledMenuButton)`
   margin-left: 0.5rem;
   padding: 0;
 
@@ -114,6 +113,7 @@ export const LogoImage = styled.img.attrs((props) => ({
   height: props.theme.logo.height,
 }))`
   object-fit: contain;
+  width: 100%;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
     width: 150px;
@@ -122,9 +122,13 @@ export const LogoImage = styled.img.attrs((props) => ({
 
 const UniIcon = styled.div`
   display: flex;
-  margin: 0 16px 0 0;
   position: relative;
   transition: transform 0.3s ease;
+
+  ${({ theme }) => theme.mediaWidth.upToVerySmall`
+    overflow-x: hidden;
+    width: 30px;
+  `};
 
   &:hover {
     transform: rotate(-5deg);
@@ -150,7 +154,7 @@ export default function Header() {
 
   return (
     <HeaderModWrapper>
-      <HeaderRow>
+      <HeaderRow marginRight="0">
         <Title href=".">
           <UniIcon>
             <LogoImage />
@@ -163,11 +167,11 @@ export default function Header() {
         </HeaderLinks>
       </HeaderRow>
       <HeaderControls>
+        <NetworkCard />
         <HeaderElement>
-          <HideSmall>{chainId && NETWORK_LABELS[chainId] && <NetworkCard />}</HideSmall>
           <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
             {account && userEthBalance ? (
-              <BalanceText style={{ flexShrink: 0 }} pl="0.75rem" pr="0.5rem" fontWeight={500}>
+              <BalanceText style={{ flexShrink: 0, userSelect: 'none' }} pl="0.75rem" pr="0.5rem" fontWeight={500}>
                 {formatSmart(userEthBalance, AMOUNT_PRECISION)} {nativeToken}
               </BalanceText>
             ) : null}
@@ -183,8 +187,8 @@ export default function Header() {
           <StyledMenuButton onClick={() => toggleDarkMode()}>
             {darkMode ? <Moon size={20} /> : <Sun size={20} />}
           </StyledMenuButton>
-          <Menu />
         </HeaderElementWrap>
+        <Menu darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
       </HeaderControls>
       {isOrdersPanelOpen && <OrdersPanel closeOrdersPanel={closeOrdersPanel} />}
     </HeaderModWrapper>

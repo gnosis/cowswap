@@ -13,7 +13,7 @@ import { ExternalLink } from 'theme'
 import { ButtonPrimary } from '../Button'
 import { useDarkModeManager } from 'state/user/hooks'
 
-import { L2_CHAIN_IDS, CHAIN_INFO, SupportedChainId } from 'constants/chains'
+import { L2_CHAIN_IDS, CHAIN_INFO, SupportedChainId } from '@src/constants/chains'
 import { LOCALE_LABEL, SupportedLocale, SUPPORTED_LOCALES } from 'constants/locales'
 import { useLocationLinkProps } from 'hooks/useLocationLinkProps'
 import { useActiveLocale } from 'hooks/useActiveLocale'

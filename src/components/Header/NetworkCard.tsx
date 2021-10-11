@@ -214,7 +214,7 @@ export default function NetworkCard() {
               <LinkOutCircle />
             </MenuItem>
             {implements3085 ? (
-              <ButtonMenuItem onClick={() => switchToNetwork({ library, chainId: SupportedChainId.MAINNET })}>
+              <ButtonMenuItem onClick={() => switchToNetwork({ library, chainId: 1 })}>
                 <div>
                   <Trans>Switch to L1 (Mainnet)</Trans>
                 </div>

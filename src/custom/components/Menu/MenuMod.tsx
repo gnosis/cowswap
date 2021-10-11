@@ -98,7 +98,7 @@ export const MenuFlyout = styled.span<{ flyoutAlignment?: FlyoutAlignment }>`
   `};
 `
 
-export const MenuItem = styled(ExternalLink)`
+export const MenuItemBase = css`
   display: flex;
   flex: 1;
   flex-direction: row;
@@ -113,6 +113,10 @@ export const MenuItem = styled(ExternalLink)`
   > svg {
     margin-right: 8px;
   }
+`
+
+export const MenuItem = styled(ExternalLink)`
+  ${MenuItemBase}
 `
 
 export const InternalMenuItem = styled(Link)`
