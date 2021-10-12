@@ -1,4 +1,4 @@
-import { Code, MessageCircle, HelpCircle, BookOpen, PieChart, Moon, Sun, Repeat, Star } from 'react-feather'
+import { Code, MessageCircle, HelpCircle, BookOpen, PieChart, Moon, Sun, Repeat, Star, Twitter } from 'react-feather'
 
 import MenuMod, { MenuItem, InternalMenuItem, MenuFlyout as MenuFlyoutUni, MenuItemBase } from './MenuMod'
 import { useToggleModal } from 'state/application/hooks'
@@ -8,7 +8,6 @@ import { CONTRACTS_CODE_LINK, DISCORD_LINK, DOCS_LINK, DUNE_DASHBOARD_LINK } fro
 import GameIcon from 'assets/cow-swap/game.gif'
 import { ApplicationModal } from 'state/application/actions'
 
-import TwitterImage from 'assets/cow-swap/twitter.svg'
 import { ExternalLink } from 'theme'
 
 export * from './MenuMod'
@@ -174,6 +173,12 @@ export const CloseMenu = styled.button`
   }
 `
 
+const TwitterExternalLink = styled(ExternalLink).attrs(
+  ({ href = 'https://twitter.com/mevprotection', target = '_blank' }) => ({ href, target })
+)`
+  color: ${({ theme }) => theme.header.menuFlyout.color};
+`
+
 interface MenuProps {
   darkMode: boolean
   toggleDarkMode: () => void
@@ -222,15 +227,16 @@ export function Menu({ darkMode, toggleDarkMode }: MenuProps) {
         </MenuItem>
 
         <MenuItemResponsive>
-          <ExternalLink href="https://twitter.com/mevprotection" target="_blank">
-            <img src={TwitterImage} alt="Follow CowSwap on Twitter!" /> Twitter
-          </ExternalLink>
+          <TwitterExternalLink>
+            <Twitter size={14} />
+            Twitter
+          </TwitterExternalLink>
         </MenuItemResponsive>
 
         <InternalMenuItem to="/play" onClick={close}>
           <span role="img" aria-label="Play CowGame">
             <img src={GameIcon} alt="Play CowGame" />
-          </span>{' '}
+          </span>
           CowGame
         </InternalMenuItem>
 

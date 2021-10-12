@@ -129,8 +129,10 @@ export const InternalMenuItem = styled(Link)`
     cursor: pointer;
     text-decoration: none;
   }
-  > svg {
+  > svg,
+  span {
     margin-right: 8px;
+    width: 14px;
   }
 `
 
