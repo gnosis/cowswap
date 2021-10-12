@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useMemo } from 'react'
+import { useEffect, useCallback, useMemo, useRef } from 'react'
 
 import { getAddress } from '@ethersproject/address'
 import { Token } from '@uniswap/sdk-core'
@@ -86,8 +86,20 @@ export function ApiOrdersUpdater(): null {
   const addOrUpdateOrders = useAddOrUpdateOrders()
   const getTokensFromChain = useTokensLazy()
 
+  // Using a ref to store allTokens to avoid re-fetching when new tokens are added
+  // but still use the latest whenever the callback is invoked
+  const allTokensRef = useRef(allTokens)
+  // Updated on every change
+  allTokensRef.current = allTokens
+
   const updateOrders = useCallback(
     async (chainId: ChainId, account: string): Promise<void> => {
+      const tokens = allTokensRef.current
+      console.log(
+        `ApiOrdersUpdater:: updating orders. Network ${chainId}, account ${account}, loaded tokens count ${
+          Object.keys(tokens).length
+        }`
+      )
       try {
         // Fetch latest orders from API
         const apiOrders = await getOrders(chainId, account, AMOUNT_OF_ORDERS_TO_FETCH)
@@ -96,8 +108,8 @@ export function ApiOrdersUpdater(): null {
 
         // Find out which tokens are not yet loaded in the UI
         apiOrders.forEach(({ sellToken, buyToken }) => {
-          if (!getTokenFromMapping(sellToken, chainId, allTokens)) tokensToFetch.add(sellToken)
-          if (!getTokenFromMapping(buyToken, chainId, allTokens)) tokensToFetch.add(buyToken)
+          if (!getTokenFromMapping(sellToken, chainId, tokens)) tokensToFetch.add(sellToken)
+          if (!getTokenFromMapping(buyToken, chainId, tokens)) tokensToFetch.add(buyToken)
         })
 
         let fetchedTokens
@@ -108,7 +120,7 @@ export function ApiOrdersUpdater(): null {
         }
 
         // Merge fetched tokens with what's currently loaded
-        const reallyAllTokens = fetchedTokens ? { ...allTokens, ...fetchedTokens } : allTokens
+        const reallyAllTokens = fetchedTokens ? { ...tokens, ...fetchedTokens } : tokens
 
         // Build store order objects, for all orders which we found both input/output tokens
         // Don't add order for those we didn't
@@ -126,7 +138,7 @@ export function ApiOrdersUpdater(): null {
         console.error(`ApiOrdersUpdater::Failed to fetch orders`, e)
       }
     },
-    [addOrUpdateOrders, allTokens, getTokensFromChain]
+    [addOrUpdateOrders, getTokensFromChain]
   )
 
   useEffect(() => {
