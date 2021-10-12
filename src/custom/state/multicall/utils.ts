@@ -90,6 +90,13 @@ async function executeCalls({
 
 /**
  * Non-hook version of useSingleCallResult
+ *
+ * Based on /src/state/multicall/hooks.ts > useSingleCallResult
+ *
+ * All types and intermediate steps are based on the original hooks
+ * This was kept as close as possible to original.
+ * Probably not all steps/types make sense for our use-case but changing them
+ * might require changing the base multicall implementation.
  */
 export async function getSingleCallResult(params: GetSingleCallParams) {
   const { contract, methodName } = params
@@ -181,6 +188,23 @@ function extractResults(params: ExtractResultsParams) {
 
 /**
  * Version of `getSingleCallResult` that handles multiple calls at once
+ *
+ * Based on /src/state/multicall/hooks.ts > useSingleCallResult
+ *
+ * All types and intermediate steps are based on the original hooks
+ * This was kept as close as possible to original.
+ * Probably not all steps/types make sense for our use-case but changing them
+ * might require changing the base multicall implementation.
+ *
+ * One thing to keep in mind is that multicalls are stored on redux and executed via an updater
+ * This function makes the execution "immediate" instead. Well, kind of. It still is async, but
+ * the results can be awaited.
+ * The original implementation can be summarized in 3 parts:
+ * 1. A hook to prepare the Call objects and add them to the redux
+ * 2. The updater that gets Call objects, executes them and add the results to redux
+ * 3. A hook to get the results from redux
+ *
+ * Here there's just one part, doing all at once.
  */
 export async function getMultipleCallsResults(params: GetMultipleCallsParams): Promise<(Result | null | undefined)[]> {
   const { callsParams, multicall2Contract, latestBlockNumber } = params
