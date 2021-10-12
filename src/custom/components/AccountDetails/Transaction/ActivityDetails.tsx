@@ -247,7 +247,7 @@ export function ActivityDetails(props: {
           </ActivityLink>
         )}
 
-        {!isUnfillable && unfillableAlert()}
+        {isUnfillable && unfillableAlert()}
 
         {/* 
         TODO: Load gnosisSafeThreshold (not default!)
