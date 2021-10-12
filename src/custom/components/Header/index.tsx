@@ -29,6 +29,7 @@ import OrdersPanel from 'components/OrdersPanel'
 import { supportedChainId } from 'utils/supportedChainId'
 import { formatSmart } from 'utils/format'
 import NetworkCard from './NetworkCard'
+import SVG from 'react-inlinesvg'
 
 export const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
   [ChainId.RINKEBY]: 'Rinkeby',
@@ -88,21 +89,31 @@ export const TwitterLink = styled(StyledMenuButton)`
 
   > a {
     ${({ theme }) => theme.cursor};
-    padding: 7px;
+    padding: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: -3px;
     height: 35px;
     width: 35px;
   }
 
-  > a > img {
+  > a > svg {
     width: 100%;
     height: 100%;
     object-fit: contain;
     border: 0;
     display: flex;
+    margin: 0;
+    padding: 0;
+    stroke: transparent;
+  }
+
+  > a > svg > path {
+    fill: ${({ theme }) => theme.text1};
+  }
+
+  > a:hover > svg > path {
+    fill: ${({ theme }) => theme.primary1};
   }
 `
 
@@ -181,7 +192,7 @@ export default function Header() {
         <HeaderElementWrap>
           <TwitterLink>
             <ExternalLink href="https://twitter.com/mevprotection" target="_blank" rel="noopener noreferrer">
-              <img src={TwitterImage} alt="Follow CowSwap on Twitter!" />
+              <SVG src={TwitterImage} description="Follow CowSwap on Twitter!" />
             </ExternalLink>
           </TwitterLink>
           <StyledMenuButton onClick={() => toggleDarkMode()}>
