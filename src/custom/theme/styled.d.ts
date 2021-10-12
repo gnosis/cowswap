@@ -88,6 +88,13 @@ declare module 'styled-components' {
       border: string
       boxShadow: FlattenSimpleInterpolation
     }
+    card: {
+      background: FlattenSimpleInterpolation
+      background2: FlattenSimpleInterpolation
+      background3: FlattenSimpleInterpolation
+      border: string
+      boxShadow: FlattenSimpleInterpolation
+    }
     header: {
       border: string
       menuFlyout: {
