@@ -171,7 +171,7 @@ const ButtonMenuItem = styled.button<{ $disabled?: boolean; $selected?: boolean 
 
   transition: background 0.13s ease-in-out;
 `
-const NetworkInfo = styled.button<{ chainId: SupportedChainId }>`
+export const NetworkInfo = styled.button<{ chainId: SupportedChainId }>`
   align-items: center;
   background-color: ${({ theme }) => theme.bg4};
   border-radius: 12px;

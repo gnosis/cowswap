@@ -1,6 +1,12 @@
 import { Code, HelpCircle, BookOpen, PieChart, Moon, Sun, Repeat, Star } from 'react-feather'
 
-import MenuMod, { MenuItem, InternalMenuItem, MenuFlyout as MenuFlyoutUni, MenuItemBase } from './MenuMod'
+import MenuMod, {
+  MenuItem,
+  InternalMenuItem,
+  MenuFlyout as MenuFlyoutUni,
+  MenuItemBase,
+  StyledMenuButton,
+} from './MenuMod'
 import { useToggleModal } from 'state/application/hooks'
 import styled from 'styled-components/macro'
 import { Separator as SeparatorBase } from 'components/SearchModal/styleds'
@@ -69,7 +75,7 @@ export const StyledMenu = styled(MenuMod)`
     stroke: transparent;
 
     > path {
-      fill: ${({ theme }) => theme.text1};
+      fill: ${({ theme }) => theme.header.menuFlyout.color};
     }
   }
 
@@ -78,6 +84,10 @@ export const StyledMenu = styled(MenuMod)`
     height: 20px;
     object-fit: contain;
     padding: 0 6px 0 0;
+  }
+
+  ${StyledMenuButton} {
+    height: 38px;
   }
 `
 
@@ -89,7 +99,7 @@ const Policy = styled(InternalMenuItem).attrs((attrs) => ({
 `
 
 const MenuFlyout = styled(MenuFlyoutUni)`
-  min-width: 11rem;
+  min-width: 240px;
   box-shadow: 0 0 100vh 100vw rgb(0 0 0 / 25%);
   top: calc(100% + 16px);
   order: 1;
@@ -127,21 +137,21 @@ const MenuFlyout = styled(MenuFlyoutUni)`
       display: flex;
       align-items: center;
     }
-
-    > span > svg {
-      width: 18px;
-      height: 18px;
-      object-fit: contain;
-      margin: 0 8px 0 0;
-
-      > path {
-        fill: ${({ theme }) => theme.text1};
-      }
-    }
   }
   > a:hover {
     background: ${({ theme }) => theme.disabled};
     border-radius: 6px;
+  }
+
+  > a > span > svg {
+    width: 18px;
+    height: 18px;
+    object-fit: contain;
+    margin: 0 8px 0 0;
+
+    > path {
+      fill: ${({ theme }) => theme.text1};
+    }
   }
 `
 
