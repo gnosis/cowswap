@@ -63,6 +63,10 @@ export const StyledMenu = styled(MenuMod)`
     font-size: 16px;
     width: 100%;
 
+    ${({ theme }) => theme.mediaWidth.upToSmall`
+      padding: 16px;
+    `};
+
     &:hover {
       color: ${({ theme }) => theme.header.menuFlyout.colorHover};
       background: ${({ theme }) => theme.header.menuFlyout.colorHoverBg};
@@ -116,6 +120,8 @@ const MenuFlyout = styled(MenuFlyoutUni)`
     overflow-y: auto;
     flex-flow: row wrap;
     padding: 0 0 56px;
+    align-items: flex-start;
+    align-content: flex-start;
   `};
 
   > a:not(${ResponsiveInternalMenuItem}) {
@@ -162,7 +168,7 @@ export const Separator = styled(SeparatorBase)`
 
   ${({ theme }) => theme.mediaWidth.upToMedium`
     width: 100%;
-    margin: 24px auto;
+    margin: 16px auto;
   `};
 `
 
