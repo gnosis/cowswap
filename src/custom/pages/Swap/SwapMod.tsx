@@ -221,7 +221,7 @@ export default function Swap({
 
   const {
     wrapType,
-    execute: onWrapAux,
+    execute: onWrap,
     inputError: wrapInputError,
   } = useWrapCallback(
     openTransactionConfirmationModal,
@@ -233,9 +233,6 @@ export default function Swap({
     // should override and get wrapCallback?
     isNativeInSwap
   )
-  const onWrap = useMemo(() => {
-    return onWrapAux ? () => onWrapAux().catch((error) => console.error('Error Wrapping Ether', error)) : undefined
-  }, [onWrapAux])
   const showWrap: boolean = !isNativeInSwap && wrapType !== WrapType.NOT_APPLICABLE
   const { address: recipientAddress } = useENSAddress(recipient)
   const trade = showWrap ? undefined : tradeCurrentVersion
@@ -782,7 +779,11 @@ export default function Swap({
                 </Text>
               </ButtonError>
             ) : showWrap ? (
-              <ButtonPrimary disabled={Boolean(wrapInputError)} onClick={onWrap} buttonSize={ButtonSize.BIG}>
+              <ButtonPrimary
+                disabled={Boolean(wrapInputError)}
+                onClick={() => onWrap && onWrap().catch((error) => console.error('Error ' + wrapType, error))}
+                buttonSize={ButtonSize.BIG}
+              >
                 {wrapInputError ??
                   (wrapType === WrapType.WRAP ? (
                     <Trans>Wrap</Trans>
