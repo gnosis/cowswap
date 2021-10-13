@@ -35,13 +35,14 @@ export const ChildWrapper = styled.div`
   flex-grow: 1;
   justify-content: center;
   border-radius: 21px;
-  padding: 15px;
+  padding: 20px;
   ${({ theme }) => theme.neumorphism.boxShadow};
   background-color: ${({ theme }) => theme.bg7};
   ${({ theme }) => theme.mediaWidth.upToSmall`
     grid-column-start: 1;
     grid-column-end: 2;
     width: 100%;
+    padding: 15px;
   `}
   > .item {
     width: 100%;
@@ -129,6 +130,7 @@ export const FlexCol = styled.div`
   justify-content: center;
   strong {
     font-size: 21px;
+    line-height: 32px;
     ${({ theme }) => theme.mediaWidth.upToSmall`
     font-size: 14px;
   `}
@@ -136,5 +138,6 @@ export const FlexCol = styled.div`
   span:not([role='img']) {
     font-size: 14px;
     color: ${({ theme }) => theme.text6};
+    line-height: 32px;
   }
 `
