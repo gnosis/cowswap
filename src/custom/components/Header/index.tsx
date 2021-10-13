@@ -26,6 +26,8 @@ import { useDarkModeManager } from 'state/user/hooks'
 import { darken } from 'polished'
 import TwitterImage from 'assets/cow-swap/twitter.svg'
 import OrdersPanel from 'components/OrdersPanel'
+import { ApplicationModal } from 'state/application/actions'
+import { useModalOpen } from 'state/application/hooks'
 
 import { supportedChainId } from 'utils/supportedChainId'
 import { formatSmart } from 'utils/format'
@@ -194,12 +196,15 @@ export default function Header() {
   const [isOrdersPanelOpen, setIsOrdersPanelOpen] = useState<boolean>(false)
   const closeOrdersPanel = () => setIsOrdersPanelOpen(false)
   const openOrdersPanel = () => setIsOrdersPanelOpen(true)
+  const isMenuOpen = useModalOpen(ApplicationModal.MENU)
 
-  // Toggle the 'noScroll' class on body, whenever the orders panel is open.
+  // Toggle the 'noScroll' class on body, whenever the orders panel or flyout menu is open.
   // This removes the inner scrollbar on the page body, to prevent showing double scrollbars.
   useEffect(() => {
-    isOrdersPanelOpen ? document.body.classList.add('noScroll') : document.body.classList.remove('noScroll')
-  }, [isOrdersPanelOpen])
+    isOrdersPanelOpen || isMenuOpen
+      ? document.body.classList.add('noScroll')
+      : document.body.classList.remove('noScroll')
+  }, [isOrdersPanelOpen, isMenuOpen])
 
   return (
     <Wrapper>

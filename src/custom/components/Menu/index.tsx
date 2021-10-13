@@ -112,8 +112,8 @@ const MenuFlyout = styled(MenuFlyoutUni)`
     top: 0;
     left: 0;
     position: fixed;
-    height: 100vh;
-    width: 100vw;
+    height: 100%;
+    width: 100%;
     border-radius: 0;
     box-shadow: none;
     padding: 0;
