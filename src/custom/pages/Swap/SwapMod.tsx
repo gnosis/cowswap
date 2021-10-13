@@ -328,17 +328,24 @@ export default function Swap({
   const { state: signatureState, gatherPermitSignature } = useERC20PermitFromTrade(trade, allowedSlippage)
 
   const handleApprove = useCallback(async () => {
+    let approveRequired = false
     if (signatureState === UseERC20PermitState.NOT_SIGNED && gatherPermitSignature) {
       try {
         await gatherPermitSignature()
       } catch (error) {
         // try to approve if gatherPermitSignature failed for any reason other than the user rejecting it
         if (error?.code !== 4001) {
-          await approveCallback()
+          approveRequired = true
         }
       }
     } else {
-      await approveCallback()
+      approveRequired = true
+    }
+
+    if (approveRequired) {
+      return approveCallback().catch((error) =>
+        console.error('Error setting the allowance for token', error, { error })
+      )
     }
   }, [approveCallback, gatherPermitSignature, signatureState])
 
