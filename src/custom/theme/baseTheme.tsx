@@ -43,7 +43,6 @@ export function colors(darkMode: boolean): Colors {
     bg3: darkMode ? '#163861' : '#d5e8f0',
     bg4: darkMode ? '#021E34' : '#ffffff',
     bg5: darkMode ? '#1d4373' : '#D5E9F0',
-    // bg6: darkMode ? '#021E34' : '#D5E9F0',
     bg6: darkMode ? '#163861' : '#b0dfee',
     bg7: darkMode ? '#1F4471' : '#CEE7EF',
 
@@ -83,9 +82,7 @@ export function colors(darkMode: boolean): Colors {
     cardBorder: darkMode ? '#021E34' : 'rgba(255, 255, 255, 0.5)',
     cardShadow1: darkMode ? '#4C7487' : '#FFFFFF',
     cardShadow2: darkMode ? 'rgba(1, 10, 16, 0.15)' : 'rgba(11, 37, 53, 0.93)',
-    // cardShadow2: darkMode ? 'rgba(11, 37, 53, 0.93)' : 'rgba(1, 10, 16, 0.15)'
 
-    // disabled: darkMode ? '#31323e' : 'rgb(237, 238, 242)',
     disabled: darkMode ? 'rgba(197, 218, 239, 0.4)' : '#afcbda',
     redShade: darkMode ? '#842100' : '#AE2C00',
     textLink: darkMode ? '#ffffff' : '#AE2C00',
@@ -166,9 +163,9 @@ export function themeVariables(darkMode: boolean, colorsTheme: Colors) {
       background: css`
         background: linear-gradient(145deg, ${colorsTheme.bg3}, ${colorsTheme.bg4});
       `,
-      background2: darkMode ? '#01182a' : '#ffffff',
+      background2: darkMode ? '#01182a' : colorsTheme.bg3,
       background3: css`
-        background: ${darkMode ? 'rgb(22 56 97 / 40%)' : 'rgb(197 218 239 / 40%)'};
+        background: ${darkMode ? '#0f2644' : '#ffffff'};
       `,
       border: `${darkMode ? 'rgb(197 218 239 / 10%)' : 'rgb(16 42 72 / 20%)'}`,
       boxShadow: css`

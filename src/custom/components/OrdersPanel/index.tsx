@@ -111,7 +111,7 @@ const Header = styled.div`
     position: sticky;
     left: 0;
     height: 52px;
-    background: ${({ theme }) => theme.bg3};
+    background: ${({ theme }) => theme.card.background2};
   `};
 
   &:hover {

@@ -324,8 +324,10 @@ export const StatusLabelBelow = styled.div<{ isCancelling?: boolean }>`
   margin: 7px auto 0;
   color: ${({ isCancelling, theme }) => (isCancelling ? theme.primary1 : 'inherit')};
 
-  ${LinkStyledButton} {
+  > ${LinkStyledButton} {
     margin: 2px 0;
+    opacity: 1;
+    color: ${({ theme }) => theme.primary1};
   }
 `
 
