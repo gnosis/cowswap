@@ -414,6 +414,7 @@ export default function Swap({
         })
       })
       .catch((error) => {
+        console.error('Error swapping tokens', error)
         setSwapState({
           attemptingTxn: false,
           tradeToConfirm,
