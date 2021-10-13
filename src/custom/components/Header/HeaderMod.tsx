@@ -25,7 +25,7 @@ import Web3Status from '../Web3Status'
 import NetworkCard from './NetworkCard'
 import UniBalanceContent from './UniBalanceContent' */
 
-const HeaderFrame = styled.div<{ showBackground: boolean }>`
+export const HeaderFrame = styled.div<{ showBackground: boolean }>`
   display: grid;
   grid-template-columns: 1fr 120px;
   align-items: center;
