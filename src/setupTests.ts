@@ -2,4 +2,4 @@
 import '@testing-library/jest-dom'
 
 // include style rules in snapshots
-import 'jest-styled-components'
+import "jest-styled-components"
