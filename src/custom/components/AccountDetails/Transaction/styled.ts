@@ -126,7 +126,7 @@ export const SummaryInner = styled.div`
     margin: 16px 0 0;
     width: 100%;
     display: grid;
-    grid-template-columns: fit-content(100%) fit-content(100%);
+    grid-template-columns: auto auto;
     grid-gap: 0 18px;
     justify-items: flex-start;
     align-items: flex-start;
@@ -431,6 +431,10 @@ export const TransactionInnerDetail = styled.div`
     margin: 0;
     font-size: 14px;
     font-weight: 500;
+
+    ${({ theme }) => theme.mediaWidth.upToSmall`
+      text-align: center;
+    `}
   }
 
   > a:focus {
@@ -440,11 +444,15 @@ export const TransactionInnerDetail = styled.div`
 
 export const TextAlert = styled.div<{ isPending: boolean }>`
   background: ${({ isPending }) => (isPending ? 'rgb(255 87 34 / 15%)' : 'rgb(0 216 151 / 15%)')};
-  margin: 6px 0 3px;
+  margin: 2px 0 16px;
   padding: 8px 12px;
   color: ${({ isPending }) => (isPending ? '#ff5722' : '#00d897')};
   border-radius: 8px;
   text-align: center;
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+      margin: 6px 0 24px;
+  `}
 `
 
 export const CreationDateText = styled.div`
