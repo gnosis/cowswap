@@ -66,10 +66,13 @@ jobs:
       - name: Compile types
         if: steps.cache-compiled-types.outputs.cache-hit != 'true'
         run: yarn postinstall
-
+        
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
+      - name: Compile types
+        if: steps.cache-compiled-types.outputs.cache-hit != 'true'
+        run: yarn postinstall
   test:
     name: Test
     needs: setup
