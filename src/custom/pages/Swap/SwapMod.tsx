@@ -343,9 +343,7 @@ export default function Swap({
     }
 
     if (approveRequired) {
-      return approveCallback().catch((error) =>
-        console.error('Error setting the allowance for token', error, { error })
-      )
+      return approveCallback().catch((error) => console.error('Error setting the allowance for token', error))
     }
   }, [approveCallback, gatherPermitSignature, signatureState])
 
