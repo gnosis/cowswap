@@ -106,11 +106,11 @@ export const HeaderLinks = styled(Row)`
   `};
 `
 
-export const AccountElement = styled.div<{ active: boolean }>`
+export const AccountElement = styled.div<{ active: boolean; hide: boolean }>`
   display: flex;
   flex-direction: row;
   align-items: center;
-  background-color: ${({ theme, active }) => (!active ? theme.bg1 : theme.bg3)};
+  background-color: ${({ theme, active, hide }) => (hide ? 'transparent' : !active ? theme.bg1 : theme.bg3)};
   border-radius: 12px;
   white-space: nowrap;
   width: 100%;
@@ -119,6 +119,14 @@ export const AccountElement = styled.div<{ active: boolean }>`
   :focus {
     border: 1px solid blue;
   }
+
+  ${({ hide }) =>
+    hide &&
+    `
+    ${BalanceText} {
+      visibility: hidden;
+    }
+  `}
 `
 
 /*

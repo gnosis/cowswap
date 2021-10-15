@@ -66,7 +66,9 @@ const StyledNavLink = styled(StyledNavLinkUni)`
   }
 `
 
-const BalanceText = styled(BalanceTextUni)`
+const BalanceText = styled(BalanceTextUni)<{ $hidden?: boolean }>`
+  margin-left: auto;
+  min-width: 150px;
   ${({ theme }) => theme.mediaWidth.upToSmall`
     display: none;
   `};
@@ -223,12 +225,10 @@ export default function Header() {
         <HeaderControls>
           <NetworkCard />
           <HeaderElement>
-            <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
-              {account && userEthBalance ? (
-                <BalanceText style={{ flexShrink: 0, userSelect: 'none' }} pl="0.75rem" pr="0.5rem" fontWeight={500}>
-                  {formatSmart(userEthBalance, AMOUNT_PRECISION)} {nativeToken}
-                </BalanceText>
-              ) : null}
+            <AccountElement active={!!account} hide={!account || !userEthBalance} style={{ pointerEvents: 'auto' }}>
+              <BalanceText style={{ flexShrink: 0, userSelect: 'none' }} pl="0.75rem" pr="0.5rem" fontWeight={500}>
+                {formatSmart(userEthBalance, AMOUNT_PRECISION) || '0'} {nativeToken}
+              </BalanceText>
               <Web3Status openOrdersPanel={openOrdersPanel} />
             </AccountElement>
           </HeaderElement>

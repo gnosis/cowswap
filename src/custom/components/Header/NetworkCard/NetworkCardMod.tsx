@@ -3,7 +3,7 @@ import { YellowCard } from 'components/Card'
 import { useOnClickOutside } from 'hooks/useOnClickOutside'
 import { useActiveWeb3React } from 'hooks/web3'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { /* ArrowDownCircle, */ AlertCircle, ChevronDown, ToggleLeft } from 'react-feather'
+import { /* ArrowDownCircle, */ AlertCircle, ChevronDown /* , ToggleLeft */ } from 'react-feather'
 import { ApplicationModal } from 'state/application/actions'
 import { useModalOpen, useToggleModal, useWalletModalToggle } from 'state/application/hooks'
 import styled, { css } from 'styled-components/macro'
@@ -194,6 +194,10 @@ export const NetworkInfo = styled.button<{ chainId: SupportedChainId }>`
   }
 `
 
+const GreyPollingDot = styled(StyledPollingDot)`
+  background: grey;
+`
+
 export default function NetworkCard() {
   const { account, chainId: preChainId, library } = useActiveWeb3React()
   const { error } = useWeb3React() // MOD: check unsupported network
@@ -320,7 +324,7 @@ export default function NetworkCard() {
                   <Icon src={EthereumLogo} />
                   <NetworkName chainId={supportedChainId}>{NETWORK_LABELS[supportedChainId]}</NetworkName>
                   {implements3085 || !account ? (
-                    <ToggleLeft opacity={0.6} size={16} />
+                    <GreyPollingDot />
                   ) : (
                     <>
                       <AlertCircle size={16} />
