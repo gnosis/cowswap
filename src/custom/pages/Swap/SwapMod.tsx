@@ -16,8 +16,8 @@ import AddressInputPanel from 'components/AddressInputPanel'
 import {
   ButtonConfirmed,
   /* ButtonError,
-  ButtonGray, 
-  ButtonLight, 
+  ButtonGray,
+  ButtonLight,
   ButtonPrimary */
 } from 'components/Button'
 import Card, { GreyCard } from 'components/Card'
@@ -506,8 +506,6 @@ export default function Swap({
     }
   }
 
-  console.log('{isNativeIn && onWrap', { isNativeIn, onWrap })
-
   return (
     <>
       <TokenWarningModal
@@ -572,7 +570,7 @@ export default function Swap({
                 id="swap-currency-input"
               />
               {/* UNI ARROW SWITCHER */}
-              {/* 
+              {/*
               <ArrowWrapper clickable>
                 <ArrowDown
                   size="16"

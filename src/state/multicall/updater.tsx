@@ -22,7 +22,7 @@ import { useAppDispatch, useAppSelector } from 'state/hooks'
  * @param chunk chunk of calls to make
  * @param minBlockNumber minimum block number of the result set
  */
-async function fetchChunk(
+export async function fetchChunk(
   multicall2Contract: Multicall2,
   chunk: Call[],
   minBlockNumber: number
