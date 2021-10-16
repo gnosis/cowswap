@@ -225,7 +225,7 @@ export default function Header() {
         <HeaderControls>
           <NetworkCard />
           <HeaderElement>
-            <AccountElement active={!!account} hide={!account || !userEthBalance} style={{ pointerEvents: 'auto' }}>
+            <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
               <BalanceText style={{ flexShrink: 0, userSelect: 'none' }} pl="0.75rem" pr="0.5rem" fontWeight={500}>
                 {formatSmart(userEthBalance, AMOUNT_PRECISION) || '0'} {nativeToken}
               </BalanceText>

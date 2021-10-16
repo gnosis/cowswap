@@ -12,9 +12,7 @@ import { ButtonSecondary } from 'components/Button'
 const Wrapper = styled.div`
   color: ${({ theme }) => theme.wallet?.color};
   width: 100%;
-  // mod
-  max-width: 150px;
-  margin-left: auto;
+  margin: auto;
 
   ${ButtonSecondary} {
     height: 38px;
