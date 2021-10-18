@@ -1,7 +1,6 @@
 import { createReducer, PayloadAction } from '@reduxjs/toolkit'
 import { OrderID } from 'api/gnosisProtocol'
 import { SupportedChainId as ChainId } from 'constants/chains'
-import { SafeMultisigTransactionResponse } from '@gnosis.pm/safe-service-client'
 import {
   addPendingOrder,
   preSignOrders,
