@@ -5,7 +5,6 @@ import { Token } from '@uniswap/sdk-core'
 import { SupportedChainId as ChainId } from 'constants/chains'
 import { SerializedToken } from '@src/state/user/actions'
 export { OrderKind } from '@gnosis.pm/gp-v2-contracts'
-// import { SafeMultisigTransactionResponse } from '@gnosis.pm/safe-service-client'
 
 export enum OrderStatus {
   PENDING = 'pending',
@@ -38,7 +37,6 @@ export interface BaseOrder extends Omit<OrderCreation, 'signingScheme'> {
 
   // Wallet specific
   presignGnosisSafeTxHash?: string
-  // presignGnosisSafeTx?: SafeMultisigTransactionResponse // Gnosis Safe transaction info
 }
 
 /**
