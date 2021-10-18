@@ -74,7 +74,10 @@ async function _updatePresignGnosisSafeTx(
         })
         .catch((error) => {
           if (!error.isCancelledError) {
-            console.error(`[FinalizeTxUpdater] Failed to check transaction hash: ${hash}`, error)
+            console.error(
+              `[PendingOrdersUpdater] Failed to check Gnosis Safe tx hash: ${presignGnosisSafeTxHash}`,
+              error
+            )
           }
         })
     })
