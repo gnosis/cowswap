@@ -2,7 +2,6 @@ import React from 'react'
 import { CurrencyAmount } from '@uniswap/sdk-core'
 
 import { OrderStatus } from 'state/orders/actions'
-import { EnhancedTransactionDetails } from 'state/enhancedTransactions/reducer'
 
 import { formatSmart } from 'utils/format'
 import {
@@ -25,6 +24,7 @@ import CurrencyLogo from 'components/CurrencyLogo'
 import AttentionIcon from 'assets/cow-swap/attention.svg'
 import { useToken } from 'hooks/Tokens'
 import SVG from 'react-inlinesvg'
+import { SafeMultisigTransactionResponse } from '@gnosis.pm/safe-service-client'
 
 const DEFAULT_ORDER_SUMMARY = {
   from: '',
@@ -45,17 +45,17 @@ function unfillableAlert(): JSX.Element {
 }
 
 function GnosisSafeTxDetails(props: {
-  enhancedTransaction: EnhancedTransactionDetails | null
+  safeTransaction: SafeMultisigTransactionResponse
   gnosisSafeThreshold: number
   chainId: number
 }): JSX.Element | null {
-  const { enhancedTransaction, gnosisSafeThreshold, chainId } = props
+  const { safeTransaction, gnosisSafeThreshold, chainId } = props
 
-  if (!enhancedTransaction || !enhancedTransaction.safeTransaction) {
+  if (!safeTransaction) {
     return null
   }
 
-  const { confirmations, nonce } = enhancedTransaction.safeTransaction
+  const { confirmations, nonce } = safeTransaction
   const numConfirmations = confirmations?.length ?? 0
   const pendingSignaturesCount = gnosisSafeThreshold - numConfirmations
   const isPendingSignatures = pendingSignaturesCount > 0
@@ -78,11 +78,7 @@ function GnosisSafeTxDetails(props: {
       )}
 
       {/* View in: Gnosis Safe */}
-      <GnosisSafeLink
-        chainId={chainId}
-        enhancedTransaction={enhancedTransaction}
-        gnosisSafeThreshold={gnosisSafeThreshold}
-      />
+      <GnosisSafeLink chainId={chainId} safeTransaction={safeTransaction} gnosisSafeThreshold={gnosisSafeThreshold} />
     </TransactionInnerDetail>
   )
 }
@@ -175,6 +171,7 @@ export function ActivityDetails(props: {
   const activityName = isOrder ? `${kind} order` : 'Transaction'
   const inputToken = activityDerivedState?.order?.inputToken || null
   const outputToken = activityDerivedState?.order?.outputToken || null
+  const safeTransaction = enhancedTransaction?.safeTransaction || order?.presignGnosisSafeTx
 
   return (
     <Summary>
@@ -249,15 +246,10 @@ export function ActivityDetails(props: {
 
         {isUnfillable && unfillableAlert()}
 
-        {/* 
-        TODO: Load gnosisSafeThreshold (not default!)
-        `enhancedTransaction` currently returns undefined (no data yet!) 
-        for regular orders done with a Safe. Only works for token approvals with a Safe. 
-        */}
-        {gnosisSafeInfo && enhancedTransaction?.safeTransaction && (
+        {gnosisSafeInfo && safeTransaction && (
           <GnosisSafeTxDetails
             chainId={chainId}
-            enhancedTransaction={enhancedTransaction}
+            safeTransaction={safeTransaction}
             gnosisSafeThreshold={gnosisSafeInfo.threshold}
           />
         )}
