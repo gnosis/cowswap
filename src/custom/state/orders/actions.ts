@@ -113,7 +113,7 @@ export interface BatchOrdersUpdateParams {
 
 export type PresignedOrdersParams = BatchOrdersUpdateParams
 export interface UpdatePresignGnosisSafeTxParams {
-  orderId: OrderId
+  orderId: OrderID
   chainId: ChainId
   safeTransaction: SafeMultisigTransactionResponse
 }
