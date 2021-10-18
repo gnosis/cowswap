@@ -1,6 +1,7 @@
 import { createReducer, PayloadAction } from '@reduxjs/toolkit'
 import { OrderID } from 'api/gnosisProtocol'
 import { SupportedChainId as ChainId } from 'constants/chains'
+import { SafeMultisigTransactionResponse } from '@gnosis.pm/safe-service-client'
 import {
   addPendingOrder,
   preSignOrders,
@@ -21,16 +22,18 @@ import {
 import { ContractDeploymentBlocks } from './consts'
 import { Writable } from 'types'
 
-// previous order state, to use in checks
-// in case users have older, stale state and we need to handle
-export interface V2OrderObject {
-  id: OrderObject['id']
-  order: Omit<OrderObject['order'], 'inputToken' | 'outputToken'>
-}
-
 export interface OrderObject {
   id: OrderID
   order: SerializedOrder
+}
+
+type V2Order = Omit<OrderObject['order'], 'inputToken' | 'outputToken'>
+
+// Previous order state, to use in checks
+// in case users have older, stale state and we need to handle
+export interface V2OrderObject {
+  id: OrderObject['id']
+  order: V2Order
 }
 
 // {order uuid => OrderObject} mapping
