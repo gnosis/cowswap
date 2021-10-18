@@ -130,7 +130,7 @@ export const FlexCol = styled.div`
   justify-content: center;
   strong {
     font-size: 21px;
-    line-height: 32px;
+    line-height: 40px;
     ${({ theme }) => theme.mediaWidth.upToSmall`
     font-size: 14px;
   `}
