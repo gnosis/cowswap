@@ -240,14 +240,6 @@ async function _swap(params: SwapParams): Promise<string> {
     },
   })
 
-  // {
-  //   chainId,
-  //   id,
-  //   order: {
-  //     ...pendingOrderParams.order
-  //     presign
-  //   },
-  // }
 
   return orderId
 }
