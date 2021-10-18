@@ -48,8 +48,10 @@ function GnosisSafeTxDetails(props: {
   safeTransaction: SafeMultisigTransactionResponse
   gnosisSafeThreshold: number
   chainId: number
+  isExpired: boolean
+  isCancelled: isCancelled
 }): JSX.Element | null {
-  const { safeTransaction, gnosisSafeThreshold, chainId } = props
+  const { safeTransaction, gnosisSafeThreshold, chainId, isExpired, isCancelled } = props
 
   if (!safeTransaction) {
     return null
@@ -72,7 +74,7 @@ function GnosisSafeTxDetails(props: {
         </b>
       </span>
       {isPendingSignatures && (
-        <TextAlert isPending={isPendingSignatures}>
+        <TextAlert isPending={isPendingSignatures} isExpired={isExpired} isCancelled={isCancelled}>
           {pendingSignaturesCount} more signature{pendingSignaturesCount > 1 ? 's are' : ' is'} required
         </TextAlert>
       )}
@@ -251,6 +253,8 @@ export function ActivityDetails(props: {
             chainId={chainId}
             safeTransaction={safeTransaction}
             gnosisSafeThreshold={gnosisSafeInfo.threshold}
+            isExpired={isExpired}
+            isCancelled={isCancelled}
           />
         )}
       </SummaryInner>
