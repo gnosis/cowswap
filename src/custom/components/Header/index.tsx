@@ -226,9 +226,11 @@ export default function Header() {
           <NetworkCard />
           <HeaderElement>
             <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
-              <BalanceText style={{ flexShrink: 0, userSelect: 'none' }} pl="0.75rem" pr="0.5rem" fontWeight={500}>
-                {formatSmart(userEthBalance, AMOUNT_PRECISION) || '0'} {nativeToken}
-              </BalanceText>
+              {account && userEthBalance && (
+                <BalanceText style={{ flexShrink: 0, userSelect: 'none' }} pl="0.75rem" pr="0.5rem" fontWeight={500}>
+                  {formatSmart(userEthBalance, AMOUNT_PRECISION) || '0'} {nativeToken}
+                </BalanceText>
+              )}
               <Web3Status openOrdersPanel={openOrdersPanel} />
             </AccountElement>
           </HeaderElement>

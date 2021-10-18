@@ -116,12 +116,6 @@ export const AccountElement = styled.div<{ active: boolean }>`
   width: 100%;
   cursor: pointer;
 
-  min-width: 260px;
-
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    min-width: auto;
-  `}
-
   :focus {
     border: 1px solid blue;
   }
