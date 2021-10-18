@@ -49,7 +49,7 @@ function GnosisSafeTxDetails(props: {
   gnosisSafeThreshold: number
   chainId: number
   isExpired: boolean
-  isCancelled: isCancelled
+  isCancelled: boolean
 }): JSX.Element | null {
   const { safeTransaction, gnosisSafeThreshold, chainId, isExpired, isCancelled } = props
 
