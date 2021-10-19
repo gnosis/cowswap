@@ -164,9 +164,13 @@ export const LogoImage = styled.div`
   margin: 0 32px 0 0;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
+    width: 160px;
+  `}
+
+  ${({ theme }) => theme.mediaWidth.upToVerySmall`
     background: ${({ theme }) => `url(${theme.logo.srcIcon}) no-repeat left/contain`};
     height: 34px;
-  `};
+  `}
 
   > svg {
     width: 100%;
