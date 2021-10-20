@@ -194,6 +194,7 @@
     "@sentry/react": "^6.11.0",
     "@sentry/tracing": "^6.11.0",
     "@uniswap/default-token-list": "^2.0.0",
+    "@web3-react/walletconnect-connector": "^7.0.2-alpha.0",
     "bignumber.js": "9.0.1",
     "bnc-sdk": "^3.5.0",
     "fast-safe-stringify": "^2.0.8",
