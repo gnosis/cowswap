@@ -11,11 +11,11 @@ import { SupportedChainId } from 'constants/chains'
 type AffiliateStatus = 'NOT_CONNECTED' | 'OWN_LINK' | 'ALREADY_TRADED' | 'ACTIVE' | 'UNSUPPORTED_NETWORK'
 
 const STATUS_TO_MESSAGE_MAPPING: Record<AffiliateStatus, string> = {
-  NOT_CONNECTED: 'Please connect your wallet to participate',
-  OWN_LINK: 'You followed your own referral link',
-  ALREADY_TRADED: 'You have already traded with the current account',
-  ACTIVE: 'Your affiliate link will be effective on next trade',
-  UNSUPPORTED_NETWORK: 'Only Mainnet is supported. Please change the network to participate',
+  NOT_CONNECTED: 'Please connect your wallet to participate.',
+  OWN_LINK: 'Your affiliate code works! Anyone new user following this link would credit you his trading volume.',
+  ALREADY_TRADED: 'You have already traded with the current account.',
+  ACTIVE: 'Valid affiliate code: You can now do your first trade, to join the program.',
+  UNSUPPORTED_NETWORK: 'Only Mainnet is supported. Please change the network to participate.',
 }
 
 const DEFAULT_RETRY_OPTIONS: RetryOptions = { n: 3, minWait: 1000, maxWait: 3000 }
@@ -48,7 +48,7 @@ export default function AffiliateStatusCheck() {
       }
     } catch (error) {
       console.error(error)
-      setError('There was an error validating existing trades')
+      setError('There was an error validating existing trades.')
       return
     }
 
@@ -58,7 +58,7 @@ export default function AffiliateStatusCheck() {
       setAffiliateState('ACTIVE')
     } catch (error) {
       console.error(error)
-      setError('There was an error while uploading the referral document to IPFS')
+      setError('There was an error while uploading the referral document to IPFS.')
     }
   }, [chainId, account, referralAddress, resetReferralAddress, uploadReferralDocAndSetDataHash])
 
