@@ -42,7 +42,7 @@ export const ChildWrapper = styled.div`
     grid-column-start: 1;
     grid-column-end: 2;
     width: 100%;
-    padding: 15px;
+    padding: 14px;
   `}
   > .item {
     width: 100%;
@@ -130,7 +130,7 @@ export const FlexCol = styled.div`
   justify-content: center;
   strong {
     font-size: 21px;
-    line-height: 40px;
+    margin-top: 6px;
     ${({ theme }) => theme.mediaWidth.upToSmall`
     font-size: 14px;
   `}
