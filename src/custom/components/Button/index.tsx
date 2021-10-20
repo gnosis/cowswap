@@ -44,10 +44,8 @@ export const ButtonPrimary = styled(ButtonPrimaryMod)`
   &:focus,
   &:hover,
   &:active {
-    ${({ theme }) => theme.buttonPrimary.background}
-    border: ${({ theme }) => theme.buttonPrimary.border};
-    box-shadow: none;
-    transform: translateY(3px);
+    background-color: ${({ theme }) => theme.primary4};
+    color: ${({ theme }) => theme.primaryText1}!important;
   }
   &:disabled {
     background-color: ${({ theme }) => theme.disabled};
