@@ -1,6 +1,5 @@
 import { Colors as ColorsUniswap } from '@src/theme/styled'
 import { ButtonSize } from 'theme'
-export { Color, Grids } from '@src/theme/styled'
 
 // Override colors
 export interface Colors extends ColorsUniswap {
@@ -11,6 +10,10 @@ export interface Colors extends ColorsUniswap {
   greenShade: Color
   blueShade: Color
   blueShade2: Color
+  success: Color
+  danger: Color
+  pending: Color
+  attention: Color
   border: Color
   border2: Color
   disabled: Color
@@ -59,9 +62,12 @@ declare module 'styled-components' {
       width?: string
       height?: string
     }
+    util: {
+      invertImageForDarkMode: string | null
+    }
     cursor?: FlattenSimpleInterpolation
     body: {
-      background?: FlattenSimpleInterpolation
+      background?: any
     }
     appBody: {
       boxShadow: string
@@ -74,6 +80,13 @@ declare module 'styled-components' {
       }
     }
     neumorphism: {
+      boxShadow: FlattenSimpleInterpolation
+    }
+    card: {
+      background: FlattenSimpleInterpolation
+      background2: string
+      background3: FlattenSimpleInterpolation
+      border: string
       boxShadow: FlattenSimpleInterpolation
     }
     header: {
@@ -149,6 +162,14 @@ declare module 'styled-components' {
     wallet: {
       background?: string
       color?: string
+    }
+    mediaWidth: {
+      upToExtraSmall: ThemedCssFunction<DefaultTheme>
+      // MOD
+      upToVerySmall: ThemedCssFunction<DefaultTheme>
+      upToSmall: ThemedCssFunction<DefaultTheme>
+      upToMedium: ThemedCssFunction<DefaultTheme>
+      upToLarge: ThemedCssFunction<DefaultTheme>
     }
   }
 }

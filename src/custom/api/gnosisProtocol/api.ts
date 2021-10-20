@@ -1,8 +1,8 @@
 import { SupportedChainId as ChainId } from 'constants/chains'
 import { OrderKind } from '@gnosis.pm/gp-v2-contracts'
-import { getSigningSchemeApiValue, OrderCreation, OrderCancellation } from 'utils/signatures'
+import { getSigningSchemeApiValue, OrderCreation, OrderCancellation, SigningSchemeValue } from 'utils/signatures'
 import { APP_DATA_HASH } from 'constants/index'
-import { registerOnWindow } from '../../utils/misc'
+import { registerOnWindow } from 'utils/misc'
 import { isLocal, isDev, isPr, isBarn } from '../../utils/environments'
 import OperatorError, {
   ApiErrorCodeDetails,
@@ -26,6 +26,7 @@ import MetadataError, {
 
 import { DEFAULT_NETWORK_FOR_LISTS } from 'constants/lists'
 import { GAS_FEE_ENDPOINTS } from 'constants/index'
+import * as Sentry from '@sentry/browser'
 
 function getGnosisProtocolUrl(): Partial<Record<ChainId, string>> {
   if (isLocal || isDev || isPr || isBarn) {
@@ -53,11 +54,13 @@ const DEFAULT_HEADERS = {
   'X-AppId': APP_DATA_HASH.toString(),
 }
 const API_NAME = 'Gnosis Protocol'
+const ENABLED = process.env.REACT_APP_PRICE_FEED_GP_ENABLED !== 'false'
 /**
  * Unique identifier for the order, calculated by keccak256(orderDigest, ownerAddress, validTo),
    where orderDigest = keccak256(orderStruct). bytes32.
  */
 export type OrderID = string
+export type ApiOrderStatus = 'fulfilled' | 'expired' | 'cancelled' | 'presignaturePending' | 'open'
 
 export interface OrderMetaData {
   creationDate: string
@@ -79,6 +82,8 @@ export interface OrderMetaData {
   kind: OrderKind
   partiallyFillable: false
   signature: string
+  signingScheme: SigningSchemeValue
+  status: ApiOrderStatus
 }
 
 export interface UnsupportedToken {
@@ -125,11 +130,7 @@ function _delete(chainId: ChainId, url: string, data: any): Promise<Response> {
   return _fetch(chainId, url, 'DELETE', data)
 }
 
-export async function sendSignedOrder(params: {
-  chainId: ChainId
-  order: OrderCreation
-  owner: string
-}): Promise<OrderID> {
+export async function sendOrder(params: { chainId: ChainId; order: OrderCreation; owner: string }): Promise<OrderID> {
   const { chainId, order, owner } = params
   console.log(`[api:${API_NAME}] Post signed order for network`, chainId, order)
 
@@ -193,21 +194,43 @@ const UNHANDLED_METADATA_ERROR: MetadataApiErrorObject = {
   description: MetadataApiErrorCodeDetails.UNHANDLED_GET_ERROR,
 }
 
-async function _handleQuoteResponse(response: Response) {
+async function _handleQuoteResponse(response: Response, params?: FeeQuoteParams) {
   if (!response.ok) {
     const errorObj: ApiErrorObject = await response.json()
 
     // we need to map the backend error codes to match our own for quotes
     const mappedError = mapOperatorErrorToQuoteError(errorObj)
-    throw new QuoteError(mappedError)
+    const quoteError = new QuoteError(mappedError)
+
+    if (params) {
+      const { sellToken, buyToken } = params
+
+      const sentryError = new Error()
+      Object.assign(sentryError, quoteError, {
+        message: `Error querying fee from API - sellToken: ${sellToken}, buyToken: ${buyToken}`,
+        name: 'FeeErrorObject',
+      })
+
+      // report to sentry
+      Sentry.captureException(sentryError, {
+        tags: { errorType: 'getFeeQuote' },
+        contexts: { params },
+      })
+    }
+
+    throw quoteError
   } else {
     return response.json()
   }
 }
 
-export async function getPriceQuote(params: PriceQuoteParams): Promise<PriceInformation> {
+export async function getPriceQuote(params: PriceQuoteParams): Promise<PriceInformation | null> {
   const { baseToken, quoteToken, amount, kind, chainId } = params
   console.log(`[api:${API_NAME}] Get price from API`, params)
+
+  if (!ENABLED) {
+    return null
+  }
 
   const response = await _get(
     chainId,
@@ -235,7 +258,7 @@ export async function getFeeQuote(params: FeeQuoteParams): Promise<FeeInformatio
     throw new QuoteError(UNHANDLED_QUOTE_ERROR)
   })
 
-  return _handleQuoteResponse(response)
+  return _handleQuoteResponse(response, params)
 }
 
 export async function getOrder(chainId: ChainId, orderId: string): Promise<OrderMetaData | null> {
@@ -252,6 +275,38 @@ export async function getOrder(chainId: ChainId, orderId: string): Promise<Order
   } catch (error) {
     console.error('Error getting order information:', error)
     throw new OperatorError(UNHANDLED_ORDER_ERROR)
+  }
+}
+
+export type ProfileData = {
+  totalTrades: number
+  totalReferrals: number
+  tradeVolumeUsd: number
+  referralVolumeUsd: number
+  lastUpdated: string
+}
+
+export async function getProfileData(chainId: ChainId, address: string): Promise<ProfileData | null> {
+  console.log(`[api:${API_NAME}] Get profile data for`, chainId, address)
+  try {
+    if (chainId !== ChainId.MAINNET) {
+      console.info('Profile data is only available for mainnet')
+      return null
+    }
+
+    const response = await _get(chainId, `/profile/${address}`)
+
+    // TODO: Update the error handler when the openAPI profile spec is defined
+    if (!response.ok) {
+      const errorResponse = await response.json()
+      console.log(errorResponse)
+      throw new Error(errorResponse?.description)
+    } else {
+      return response.json()
+    }
+  } catch (error) {
+    console.error('Error getting profile data:', error)
+    throw error
   }
 }
 
@@ -325,5 +380,13 @@ export async function getGasPrices(chainId: ChainId = DEFAULT_NETWORK_FOR_LISTS)
 
 // Register some globals for convenience
 registerOnWindow({
-  operator: { getFeeQuote, getAppDataDoc, getOrder, sendSignedOrder, uploadAppDataDoc, apiGet: _get, apiPost: _post },
+  operator: {
+    getFeeQuote,
+    getAppDataDoc,
+    getOrder,
+    sendSignedOrder: sendOrder,
+    uploadAppDataDoc,
+    apiGet: _get,
+    apiPost: _post,
+  },
 })

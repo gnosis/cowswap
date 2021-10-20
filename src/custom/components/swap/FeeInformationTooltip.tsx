@@ -1,7 +1,7 @@
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import TradeGp from 'state/swap/TradeGp'
 import QuestionHelper from 'components/QuestionHelper'
-import styled from 'styled-components'
+import styled from 'styled-components/macro'
 import { formatMax, formatSmart } from 'utils/format'
 import useTheme from 'hooks/useTheme'
 import { FIAT_PRECISION } from 'constants/index'
@@ -17,6 +17,7 @@ interface FeeInformationTooltipProps {
   type: 'From' | 'To'
   fiatValue: CurrencyAmount<Token> | null
   showFiat?: boolean
+  allowsOffchainSigning: boolean
 }
 
 const WrappedQuestionHelper = styled(QuestionHelper)`
@@ -84,6 +85,7 @@ export default function FeeInformationTooltip(props: FeeInformationTooltipProps)
     showHelper,
     fiatValue,
     showFiat = false,
+    allowsOffchainSigning,
   } = props
 
   const theme = useTheme()
@@ -117,10 +119,13 @@ export default function FeeInformationTooltip(props: FeeInformationTooltipProps)
                   {feeAmount} {symbol}
                 </span>{' '}
               </FeeTooltipLine>
-              <FeeTooltipLine>
-                <span>Gas costs</span>
-                <strong className="green">Free</strong>{' '}
-              </FeeTooltipLine>
+              {/* TODO: Add gas costs when available (wait for design) */}
+              {allowsOffchainSigning && (
+                <FeeTooltipLine>
+                  <span>Gas costs</span>
+                  <strong className="green">Free</strong>
+                </FeeTooltipLine>
+              )}
               <Breakline />
               <FeeTooltipLine>
                 <strong>{type}</strong>
