@@ -95,7 +95,7 @@ export const StyledTitle = styled(Title)`
 export const ItemTitle = styled.h3`
   display: flex;
   align-items: center;
-  margin: 0 0 34px 0;
+  margin: 0 0 16px 0;
   font-size: 18px;
   line-height: 1.21;
   color: ${({ theme }) => theme.text1};
