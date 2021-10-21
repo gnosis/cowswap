@@ -1,7 +1,7 @@
 const ETHERS_EXPECTED_ERROR = 'could not detect network (event="noNetwork"'
 
 Cypress.on('uncaught:exception', (err) => {
-  // we expect a 3rd party library error with message 'list not defined'
+  // we expect an ethers library error with message 'could not detect network ...' we're always testing rinkeby anyways
   // and don't want to fail the test so we return false
   if (err.message.includes(ETHERS_EXPECTED_ERROR)) {
     return false
