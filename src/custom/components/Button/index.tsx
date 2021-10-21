@@ -34,7 +34,7 @@ export const ButtonPrimary = styled(ButtonPrimaryMod)`
   ${({ theme }) => theme.cursor};
   overflow: hidden;
   position: relative;
-  transition: box-shadow 0.1s ease-in-out, transform 0.1s ease-in-out;
+  transition: box-shadow 0.1s ease-in-out, transform 0.1s ease-in-out !important;
 
   > div {
     font-size: ${({ theme }) => theme.buttonPrimary.fontSize};
