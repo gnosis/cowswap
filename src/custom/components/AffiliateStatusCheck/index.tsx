@@ -14,7 +14,8 @@ const STATUS_TO_MESSAGE_MAPPING: Record<AffiliateStatus, string> = {
   NOT_CONNECTED: 'Affiliate program: Please connect your wallet to participate.',
   OWN_LINK:
     'Affiliate program: Your affiliate code works! Any new user following this link would credit you his trading volume.',
-  ALREADY_TRADED: 'Invalid affiliate code: Referral only valid for new accounts.',
+  ALREADY_TRADED:
+    'Invalid affiliate code: The currently connected wallet has traded before or is already part of the affiliate program.',
   ACTIVE: 'Valid affiliate code: You can now do your first trade to join the program.',
   UNSUPPORTED_NETWORK: 'Affiliate program: Only Mainnet is supported. Please change the network to participate.',
 }
