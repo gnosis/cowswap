@@ -11,11 +11,12 @@ import { SupportedChainId } from 'constants/chains'
 type AffiliateStatus = 'NOT_CONNECTED' | 'OWN_LINK' | 'ALREADY_TRADED' | 'ACTIVE' | 'UNSUPPORTED_NETWORK'
 
 const STATUS_TO_MESSAGE_MAPPING: Record<AffiliateStatus, string> = {
-  NOT_CONNECTED: 'Please connect your wallet to participate.',
-  OWN_LINK: 'Your affiliate code works! Anyone new user following this link would credit you his trading volume.',
+  NOT_CONNECTED: 'Affiliate program: Please connect your wallet to participate.',
+  OWN_LINK:
+    'Affiliate program: Your affiliate code works! Anyone new user following this link would credit you his trading volume.',
   ALREADY_TRADED: 'Invalid affiliate code: Referral only valid for new accounts.',
   ACTIVE: 'Valid affiliate code: You can now do your first trade, to join the program.',
-  UNSUPPORTED_NETWORK: 'Only Mainnet is supported. Please change the network to participate.',
+  UNSUPPORTED_NETWORK: 'Affiliate program: Only Mainnet is supported. Please change the network to participate.',
 }
 
 const DEFAULT_RETRY_OPTIONS: RetryOptions = { n: 3, minWait: 1000, maxWait: 3000 }
@@ -101,7 +102,7 @@ export default function AffiliateStatusCheck() {
   if (affiliateState) {
     return (
       <NotificationBanner isVisible level="info">
-        Affiliate program: {STATUS_TO_MESSAGE_MAPPING[affiliateState]}
+        {STATUS_TO_MESSAGE_MAPPING[affiliateState]}
       </NotificationBanner>
     )
   }
