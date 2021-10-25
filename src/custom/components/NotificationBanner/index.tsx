@@ -2,6 +2,7 @@ import { useState } from 'react'
 import styled from 'styled-components/macro'
 import { Colors } from 'theme/styled'
 import { X } from 'react-feather'
+import { MEDIA_WIDTHS } from '@src/theme'
 
 type Level = 'info' | 'warning' | 'error'
 
@@ -22,6 +23,10 @@ const Banner = styled.div<Pick<BannerProps, 'isVisible' | 'level'>>`
   align-items: center;
   display: ${({ isVisible }) => (isVisible ? 'flex' : 'none')};
   z-index: 1;
+
+  @media screen and (max-width: ${MEDIA_WIDTHS.upToSmall}px) {
+    font-size: 12px;
+  }
 `
 
 const StyledClose = styled(X)`
