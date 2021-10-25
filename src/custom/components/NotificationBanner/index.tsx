@@ -13,7 +13,7 @@ export interface BannerProps {
 
 const Banner = styled.div<Pick<BannerProps, 'isVisible' | 'level'>>`
   width: 100%;
-  height: 40px;
+  min-height: 40px;
   padding: 6px 6px;
   background-color: ${({ theme, level }) => theme[level]};
   color: ${({ theme, level }) => theme[`${level}Text` as keyof Colors]};
