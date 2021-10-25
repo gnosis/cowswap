@@ -745,6 +745,38 @@ export default function Faq() {
         */}
         </Content>
       </Page>
+
+      <Page>
+        <Content>
+          <h2 id="affiliate">Affiliate program</h2>
+
+          <h3 id="what-is-the-profile-page">What is the Profile page?</h3>
+
+          <p>Some text</p>
+
+          <h3 id="in-which-networks-it-is-available">In which networks it&apos;s available?</h3>
+
+          <p>Some text</p>
+
+          <h3 id="what-are-the-rewards-for-following-the-referral-link">
+            What are the rewards for following the referral link?
+          </h3>
+
+          <p>Some text</p>
+
+          <h3 id="who-can-share">Who can share?</h3>
+
+          <p>Some text</p>
+
+          <h3 id="who-can-follow">Who can follow?</h3>
+
+          <p>Some text</p>
+
+          <h3 id="what-is-needed-to-qualify">What is needed to qualify?</h3>
+
+          <p>Some text</p>
+        </Content>
+      </Page>
     </Wrapper>
   )
 }
