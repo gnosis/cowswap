@@ -8,6 +8,7 @@ import { GpModal as Modal } from 'components/Modal'
 import {
   ConfirmationModalContent,
   ConfirmationPendingContent,
+  OperationType,
   TransactionErrorContent,
 } from 'components/TransactionConfirmationModal'
 import { CancellationSummary } from './styled'
@@ -101,6 +102,7 @@ export function CancellationModal(props: CancellationModalProps): JSX.Element | 
         <ConfirmationPendingContent
           onDismiss={onDismiss}
           pendingText={`Soft cancelling order with id ${shortId}\n\n${summary}`}
+          operationType={OperationType.ORDER_CANCEL}
         />
       ) : (
         <RequestCancellationModal onDismiss={onDismiss} onClick={onClick} summary={summary} shortId={shortId} />

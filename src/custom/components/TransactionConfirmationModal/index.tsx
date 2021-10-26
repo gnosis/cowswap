@@ -345,13 +345,13 @@ const StepsWrapper = styled.div`
 export * from './TransactionConfirmationModalMod'
 export { default } from './TransactionConfirmationModalMod'
 
-enum WalletType {
+export enum WalletType {
   SAFE,
   SC,
   EOA,
 }
 
-enum OperationType {
+export enum OperationType {
   WRAP_ETHER,
   UNWRAP_WETH,
   APPROVE_TOKEN,
@@ -413,9 +413,11 @@ function getSubmittedMessage(operationLabel: string, operationType: OperationTyp
 export function ConfirmationPendingContent({
   onDismiss,
   pendingText,
+  operationType,
 }: {
   onDismiss: () => void
   pendingText: ReactNode
+  operationType: OperationType
 }) {
   const { connector } = useActiveWeb3React()
   const walletInfo = useWalletInfo()
@@ -430,9 +432,8 @@ export function ConfirmationPendingContent({
       return WalletType.EOA
     }
   }, [gnosisSafeInfo, isSmartContractWallet])
-  const walletNameLabel = getWalletNameLabel(walletType)
 
-  const operationType = OperationType.ORDER_SIGN // TODO: Receive as a param
+  const walletNameLabel = getWalletNameLabel(walletType)
   const operationMessage = getOperationMessage(operationType)
   const operationLabel = getOperationLabel(operationType)
   const operationSubmittedMessage = getSubmittedMessage(operationLabel, operationType)
