@@ -66,6 +66,8 @@ function GnosisSafeTxDetails(props: {
 
   let signaturesMessage: JSX.Element
 
+  const areIsMessage = pendingSignaturesCount > 1 ? 's are' : ' is'
+
   if (isExecutedActivity) {
     signaturesMessage = (
       <span>
@@ -86,9 +88,14 @@ function GnosisSafeTxDetails(props: {
     )
   } else if (numConfirmations == 0) {
     signaturesMessage = (
-      <span>
-        <b>No signatures yet</b>
-      </span>
+      <>
+        <span>
+          <b>No signatures yet</b>
+        </span>
+        <TextAlert isPending={isPendingSignatures} isCancelled={isCancelled} isExpired={isExpired}>
+          {gnosisSafeThreshold} signature{areIsMessage} required
+        </TextAlert>
+      </>
     )
   } else if (numConfirmations >= gnosisSafeThreshold) {
     signaturesMessage = (
@@ -106,7 +113,7 @@ function GnosisSafeTxDetails(props: {
           </b>
         </span>
         <TextAlert isPending={isPendingSignatures} isCancelled={isCancelled} isExpired={isExpired}>
-          {pendingSignaturesCount} more signature{pendingSignaturesCount > 1 ? 's are' : ' is'} required
+          {pendingSignaturesCount} more signature{areIsMessage} required
         </TextAlert>
       </>
     )
