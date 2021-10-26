@@ -59,7 +59,7 @@ async function _updatePresignGnosisSafeTx(
   const getSafeTxPromises = allPendingOrders
     // Update orders that are pending for presingature
     .filter((order) => order.presignGnosisSafeTxHash && order.status === OrderStatus.PRESIGNATURE_PENDING)
-    .map(async (order) => {
+    .map((order): Promise<void> => {
       // Get safe info and receipt
       const presignGnosisSafeTxHash = order.presignGnosisSafeTxHash as string
       console.log('[PendingOrdersUpdater] Get Gnosis Transaction info for tx:', presignGnosisSafeTxHash)
@@ -67,8 +67,8 @@ async function _updatePresignGnosisSafeTx(
       const { promise: safeTransactionPromise } = getSafeInfo(presignGnosisSafeTxHash)
 
       // Get safe info
-      safeTransactionPromise
-        .then(async (safeTransaction) => {
+      return safeTransactionPromise
+        .then((safeTransaction) => {
           console.log('[PendingOrdersUpdater] Update Gnosis Safe transaction info: ', safeTransaction)
           updatePresignGnosisSafeTx({ orderId: order.id, chainId, safeTransaction })
         })
