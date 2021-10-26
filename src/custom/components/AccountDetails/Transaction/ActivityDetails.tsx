@@ -58,26 +58,58 @@ function GnosisSafeTxDetails(props: {
   }
 
   const { confirmations, nonce } = safeTransaction
+
   const numConfirmations = confirmations?.length ?? 0
   const pendingSignaturesCount = gnosisSafeThreshold - numConfirmations
   const isPendingSignatures = pendingSignaturesCount > 0
+
+  let signaturesMessage: JSX.Element
+  if (isCancelled) {
+    signaturesMessage = (
+      <span>
+        Cancelled order, <b>no signatures required</b>
+      </span>
+    )
+  } else if (isExpired) {
+    signaturesMessage = (
+      <span>
+        Expired order, <b>no signatures required</b>
+      </span>
+    )
+  } else if (numConfirmations == 0) {
+    signaturesMessage = (
+      <span>
+        <b>No signatures yet</b>
+      </span>
+    )
+  } else if (numConfirmations >= gnosisSafeThreshold) {
+    signaturesMessage = (
+      <span>
+        <b>Enough signatures</b>
+      </span>
+    )
+  } else {
+    signaturesMessage = (
+      <>
+        <span>
+          Signed:{' '}
+          <b>
+            {numConfirmations} out of {gnosisSafeThreshold} signers
+          </b>
+        </span>
+        <TextAlert isPending={isPendingSignatures}>
+          {pendingSignaturesCount} more signature{pendingSignaturesCount > 1 ? 's are' : ' is'} required
+        </TextAlert>
+      </>
+    )
+  }
 
   return (
     <TransactionInnerDetail>
       <span>
         Safe Nonce: <b>{nonce}</b>
       </span>
-      <span>
-        Signed:{' '}
-        <b>
-          {numConfirmations} out of {gnosisSafeThreshold} signers
-        </b>
-      </span>
-      {isPendingSignatures && (
-        <TextAlert isPending={isPendingSignatures} isExpired={isExpired} isCancelled={isCancelled}>
-          {pendingSignaturesCount} more signature{pendingSignaturesCount > 1 ? 's are' : ' is'} required
-        </TextAlert>
-      )}
+      {signaturesMessage}
 
       {/* View in: Gnosis Safe */}
       <GnosisSafeLink chainId={chainId} safeTransaction={safeTransaction} gnosisSafeThreshold={gnosisSafeThreshold} />
