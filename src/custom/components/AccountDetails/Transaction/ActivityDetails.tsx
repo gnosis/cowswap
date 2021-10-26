@@ -50,8 +50,9 @@ function GnosisSafeTxDetails(props: {
   chainId: number
   isExpired: boolean
   isCancelled: boolean
+  isExecutedActivity: boolean
 }): JSX.Element | null {
-  const { safeTransaction, gnosisSafeThreshold, chainId, isExpired, isCancelled } = props
+  const { safeTransaction, gnosisSafeThreshold, chainId, isExpired, isCancelled, isExecutedActivity } = props
 
   if (!safeTransaction) {
     return null
@@ -64,7 +65,14 @@ function GnosisSafeTxDetails(props: {
   const isPendingSignatures = pendingSignaturesCount > 0
 
   let signaturesMessage: JSX.Element
-  if (isCancelled) {
+
+  if (isExecutedActivity) {
+    signaturesMessage = (
+      <span>
+        Executed, <b>no signatures required</b>
+      </span>
+    )
+  } else if (isCancelled) {
     signaturesMessage = (
       <span>
         Cancelled order, <b>no signatures required</b>
@@ -207,6 +215,11 @@ export function ActivityDetails(props: {
   const outputToken = activityDerivedState?.order?.outputToken || null
   const safeTransaction = enhancedTransaction?.safeTransaction || order?.presignGnosisSafeTx
 
+  // The activity is executed Is tx mined or is the swap executed
+  const isExecutedActivity = isOrder
+    ? order?.fulfillmentTime !== undefined
+    : enhancedTransaction?.confirmedTime !== undefined
+
   return (
     <Summary>
       <span>
@@ -287,6 +300,7 @@ export function ActivityDetails(props: {
             gnosisSafeThreshold={gnosisSafeInfo.threshold}
             isExpired={isExpired}
             isCancelled={isCancelled}
+            isExecutedActivity={isExecutedActivity}
           />
         )}
       </SummaryInner>
