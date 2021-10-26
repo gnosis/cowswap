@@ -58,7 +58,7 @@ function GnosisSafeTxDetails(props: {
     return null
   }
 
-  const { confirmations, nonce } = safeTransaction
+  const { confirmations, nonce, isExecuted } = safeTransaction
 
   const numConfirmations = confirmations?.length ?? 0
   const pendingSignaturesCount = gnosisSafeThreshold - numConfirmations
@@ -98,10 +98,19 @@ function GnosisSafeTxDetails(props: {
       </>
     )
   } else if (numConfirmations >= gnosisSafeThreshold) {
-    signaturesMessage = (
+    signaturesMessage = isExecuted ? (
       <span>
-        <b>Enough signatures</b>
+        <b>Enough signatures{isExecuted}</b>
       </span>
+    ) : (
+      <>
+        <span>
+          Enough signatures, <b>but not executed</b>
+        </span>
+        <TextAlert isPending={isPendingSignatures} isCancelled={isCancelled} isExpired={isExpired}>
+          Execute Gnosis Safe transaction
+        </TextAlert>
+      </>
     )
   } else {
     signaturesMessage = (
