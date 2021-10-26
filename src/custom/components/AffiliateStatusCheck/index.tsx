@@ -50,7 +50,7 @@ export default function AffiliateStatusCheck() {
       }
     } catch (error) {
       console.error(error)
-      setError('There was an error validating existing trades.')
+      setError('There was an error validating existing trades. Try again.')
       return
     }
 
@@ -60,7 +60,7 @@ export default function AffiliateStatusCheck() {
       setAffiliateState('ACTIVE')
     } catch (error) {
       console.error(error)
-      setError('There was an error while uploading the referral document to IPFS.')
+      setError('There was an error while uploading the referral document to IPFS. Try again.')
     }
   }, [chainId, account, referralAddress, resetReferralAddress, uploadReferralDocAndSetDataHash])
 
