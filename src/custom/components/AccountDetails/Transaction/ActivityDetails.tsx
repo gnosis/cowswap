@@ -97,7 +97,7 @@ function GnosisSafeTxDetails(props: {
             {numConfirmations} out of {gnosisSafeThreshold} signers
           </b>
         </span>
-        <TextAlert isPending={isPendingSignatures}>
+        <TextAlert isPending={isPendingSignatures} isCancelled={isCancelled} isExpired={isExpired}>
           {pendingSignaturesCount} more signature{pendingSignaturesCount > 1 ? 's are' : ' is'} required
         </TextAlert>
       </>
