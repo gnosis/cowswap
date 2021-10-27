@@ -67,10 +67,11 @@ export type CancellationModalProps = {
   isOpen: boolean
   orderId: string
   summary: string | undefined
+  chainId: number
 }
 
 export function CancellationModal(props: CancellationModalProps): JSX.Element | null {
-  const { orderId, isOpen, onDismiss, summary } = props
+  const { chainId, orderId, isOpen, onDismiss, summary } = props
   const shortId = shortenOrderId(orderId)
 
   const [isWaitingSignature, setIsWaitingSignature] = useState(false)
@@ -100,6 +101,7 @@ export function CancellationModal(props: CancellationModalProps): JSX.Element | 
         <TransactionErrorContent onDismiss={onDismiss} message={error || 'Failed to cancel order'} />
       ) : isWaitingSignature ? (
         <ConfirmationPendingContent
+          chainId={chainId}
           onDismiss={onDismiss}
           pendingText={
             <>

@@ -373,7 +373,12 @@ export default function TransactionConfirmationModal({
       {isL2 && (hash || attemptingTxn) ? (
         <L2Content chainId={chainId} hash={hash} onDismiss={onDismiss} pendingText={pendingText} />
       ) : attemptingTxn ? (
-        <ConfirmationPendingContent operationType={operationType} onDismiss={onDismiss} pendingText={pendingText} />
+        <ConfirmationPendingContent
+          chainId={chainId}
+          operationType={operationType}
+          onDismiss={onDismiss}
+          pendingText={pendingText}
+        />
       ) : hash ? (
         <TransactionSubmittedContent
           chainId={chainId}

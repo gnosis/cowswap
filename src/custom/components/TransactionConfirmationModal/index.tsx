@@ -370,7 +370,7 @@ function getWalletNameLabel(walletType: WalletType): string {
   }
 }
 
-function getOperationMessage(operationType: OperationType): string {
+function getOperationMessage(operationType: OperationType, chainId: number): string {
   switch (operationType) {
     case OperationType.WRAP_ETHER:
       return 'Wrap Ether'
@@ -414,10 +414,12 @@ export function ConfirmationPendingContent({
   onDismiss,
   pendingText,
   operationType,
+  chainId,
 }: {
   onDismiss: () => void
   pendingText: ReactNode
   operationType: OperationType
+  chainId: number
 }) {
   const { connector } = useActiveWeb3React()
   const walletInfo = useWalletInfo()
@@ -434,7 +436,7 @@ export function ConfirmationPendingContent({
   }, [gnosisSafeInfo, isSmartContractWallet])
 
   const walletNameLabel = getWalletNameLabel(walletType)
-  const operationMessage = getOperationMessage(operationType)
+  const operationMessage = getOperationMessage(operationType, chainId)
   const operationLabel = getOperationLabel(operationType)
   const operationSubmittedMessage = getSubmittedMessage(operationLabel, operationType)
 
