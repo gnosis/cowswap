@@ -113,7 +113,8 @@ async function _updateOrders({
   getSafeInfo,
 }: UpdateOrdersParams): Promise<void> {
   // Only check pending orders of current connected account
-  const pending = orders.filter((order) => order.owner === account)
+  const lowerCaseAccount = account.toLowerCase()
+  const pending = orders.filter(({ owner }) => owner.toLowerCase() === lowerCaseAccount)
 
   // Exit early when there are no pending orders
   if (pending.length === 0) {
@@ -192,8 +193,12 @@ export function PendingOrdersUpdater(): null {
   const getSafeInfo = useGetSafeInfo()
 
   const updateOrders = useCallback(
-    async (chainId: ChainId) =>
-      _updateOrders({
+    async (chainId: ChainId, account: string) => {
+      if (!account) {
+        return []
+      }
+
+      return _updateOrders({
         account,
         chainId,
         orders: pendingRef.current,
@@ -203,16 +208,9 @@ export function PendingOrdersUpdater(): null {
         presignOrders,
         updatePresignGnosisSafeTx,
         getSafeInfo,
-      }),
-    [
-      account,
-      cancelOrdersBatch,
-      updatePresignGnosisSafeTx,
-      expireOrdersBatch,
-      fulfillOrdersBatch,
-      presignOrders,
-      getSafeInfo,
-    ]
+      })
+    },
+    [cancelOrdersBatch, updatePresignGnosisSafeTx, expireOrdersBatch, fulfillOrdersBatch, presignOrders, getSafeInfo]
   )
 
   useEffect(() => {
