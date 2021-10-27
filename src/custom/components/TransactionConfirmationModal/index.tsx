@@ -375,7 +375,7 @@ function getOperationMessage(operationType: OperationType): string {
     case OperationType.WRAP_ETHER:
       return 'Wrap Ether'
     case OperationType.UNWRAP_WETH:
-      return 'Wrap Ether'
+      return 'Unwrap WETH'
     case OperationType.APPROVE_TOKEN:
       return 'Approve the token'
     case OperationType.ORDER_CANCEL:
