@@ -101,7 +101,13 @@ export function CancellationModal(props: CancellationModalProps): JSX.Element | 
       ) : isWaitingSignature ? (
         <ConfirmationPendingContent
           onDismiss={onDismiss}
-          pendingText={`Soft cancelling order with id ${shortId}\n\n${summary}`}
+          pendingText={
+            <>
+              Soft cancelling order with id {shortId}:
+              <br />
+              <em>{summary}</em>
+            </>
+          }
           operationType={OperationType.ORDER_CANCEL}
         />
       ) : (
