@@ -69,23 +69,11 @@ function GnosisSafeTxDetails(props: {
   const areIsMessage = pendingSignaturesCount > 1 ? 's are' : ' is'
 
   if (isExecutedActivity) {
-    signaturesMessage = (
-      <span>
-        Executed, <b>no signatures required</b>
-      </span>
-    )
+    signaturesMessage = <span>Executed</span>
   } else if (isCancelled) {
-    signaturesMessage = (
-      <span>
-        Cancelled order, <b>no signatures required</b>
-      </span>
-    )
+    signaturesMessage = <span>Cancelled order</span>
   } else if (isExpired) {
-    signaturesMessage = (
-      <span>
-        Expired order, <b>no signatures required</b>
-      </span>
-    )
+    signaturesMessage = <span>Expired order</span>
   } else if (numConfirmations == 0) {
     signaturesMessage = (
       <>
@@ -100,7 +88,7 @@ function GnosisSafeTxDetails(props: {
   } else if (numConfirmations >= gnosisSafeThreshold) {
     signaturesMessage = isExecuted ? (
       <span>
-        <b>Enough signatures{isExecuted}</b>
+        <b>Enough signatures</b>
       </span>
     ) : (
       <>
