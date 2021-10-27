@@ -376,13 +376,13 @@ function getOperationMessage(operationType: OperationType, chainId: number): str
 
   switch (operationType) {
     case OperationType.WRAP_ETHER:
-      return 'Wrap ' + native
+      return 'Wrapping ' + native
     case OperationType.UNWRAP_WETH:
-      return 'Unwrap ' + wrapped
+      return 'Unwrapping ' + wrapped
     case OperationType.APPROVE_TOKEN:
-      return 'Approve the token'
+      return 'Approving token'
     case OperationType.ORDER_CANCEL:
-      return 'Soft cancel your order'
+      return 'Soft canceling your order'
 
     default:
       return 'Almost there!'
