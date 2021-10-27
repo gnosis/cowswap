@@ -51,8 +51,9 @@ export function PendingOrdersUpdater(): null {
 
   const updateOrders = useCallback(
     async (chainId: ChainId, account: string) => {
+      const lowerCaseAccount = account.toLowerCase()
       // Only check pending orders of current connected account
-      const pending = pendingRef.current.filter((order) => order.owner === account)
+      const pending = pendingRef.current.filter(({ owner }) => owner.toLowerCase() === lowerCaseAccount)
 
       // Exit early when there are no pending orders
       if (pending.length === 0) {
