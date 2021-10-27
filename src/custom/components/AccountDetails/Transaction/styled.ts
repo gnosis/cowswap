@@ -24,10 +24,6 @@ export const TransactionWrapper = styled.div`
   ${RowFixed} {
     width: 100%;
   }
-
-  div > a {
-    color: ${({ theme }) => theme.primary1};
-  }
 `
 
 export const Wrapper = styled.div`
