@@ -23,6 +23,7 @@ import { ColumnCenter } from 'components/Column'
 // import { lighten } from 'polished'
 import { getStatusIcon } from 'components/AccountDetails'
 import { shortenAddress } from 'utils'
+import { getChainCurrencySymbols } from 'utils/xdai/hack'
 
 const Wrapper = styled.div`
   width: 100%;
@@ -371,11 +372,13 @@ function getWalletNameLabel(walletType: WalletType): string {
 }
 
 function getOperationMessage(operationType: OperationType, chainId: number): string {
+  const { native, wrapped } = getChainCurrencySymbols(chainId)
+
   switch (operationType) {
     case OperationType.WRAP_ETHER:
-      return 'Wrap Ether'
+      return 'Wrap ' + native
     case OperationType.UNWRAP_WETH:
-      return 'Unwrap WETH'
+      return 'Unwrap ' + wrapped
     case OperationType.APPROVE_TOKEN:
       return 'Approve the token'
     case OperationType.ORDER_CANCEL:
