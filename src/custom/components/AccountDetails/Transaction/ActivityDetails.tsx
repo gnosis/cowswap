@@ -24,7 +24,7 @@ import CurrencyLogo from 'components/CurrencyLogo'
 import AttentionIcon from 'assets/cow-swap/attention.svg'
 import { useToken } from 'hooks/Tokens'
 import SVG from 'react-inlinesvg'
-import { SafeMultisigTransactionResponse } from '@gnosis.pm/safe-service-client'
+import { ActivityStatus } from '@src/custom/hooks/useRecentActivity'
 
 const DEFAULT_ORDER_SUMMARY = {
   from: '',
@@ -45,20 +45,29 @@ function unfillableAlert(): JSX.Element {
 }
 
 function GnosisSafeTxDetails(props: {
-  safeTransaction: SafeMultisigTransactionResponse
-  gnosisSafeThreshold: number
   chainId: number
-  isExpired: boolean
-  isCancelled: boolean
-  isExecutedActivity: boolean
+  activityDerivedState: ActivityDerivedState
 }): JSX.Element | null {
-  const { safeTransaction, gnosisSafeThreshold, chainId, isExpired, isCancelled, isExecutedActivity } = props
+  const { chainId, activityDerivedState } = props
+  const { gnosisSafeInfo, enhancedTransaction, status, isOrder, order, isExpired, isCancelled } = activityDerivedState
+  const gnosisSafeThreshold = gnosisSafeInfo?.threshold
+  const safeTransaction = enhancedTransaction?.safeTransaction || order?.presignGnosisSafeTx
 
-  if (!safeTransaction) {
+  if (!gnosisSafeThreshold || !gnosisSafeInfo || !safeTransaction) {
     return null
   }
 
-  const { confirmations, nonce } = safeTransaction
+  // The activity is executed Is tx mined or is the swap executed
+  const isExecutedActivity = isOrder
+    ? order?.fulfillmentTime !== undefined
+    : enhancedTransaction?.confirmedTime !== undefined
+
+  // Check if its in a state where we dont need more signatures. We do this, because this state comes from CowSwap API, which
+  // sometimes can be faster getting the state than Gnosis Safe API (that would give us the pending signatures). We use
+  // this check to infer that we don't need to sign anything anymore
+  const alreadySigned = isOrder ? status !== ActivityStatus.PRESIGNATURE_PENDING : status !== ActivityStatus.PENDING
+
+  const { confirmations, nonce, isExecuted } = safeTransaction
 
   const numConfirmations = confirmations?.length ?? 0
   const pendingSignaturesCount = gnosisSafeThreshold - numConfirmations
@@ -69,23 +78,13 @@ function GnosisSafeTxDetails(props: {
   const areIsMessage = pendingSignaturesCount > 1 ? 's are' : ' is'
 
   if (isExecutedActivity) {
-    signaturesMessage = (
-      <span>
-        Executed, <b>no signatures required</b>
-      </span>
-    )
+    signaturesMessage = <span>Executed</span>
   } else if (isCancelled) {
-    signaturesMessage = (
-      <span>
-        Cancelled order, <b>no signatures required</b>
-      </span>
-    )
+    signaturesMessage = <span>Cancelled order</span>
   } else if (isExpired) {
-    signaturesMessage = (
-      <span>
-        Expired order, <b>no signatures required</b>
-      </span>
-    )
+    signaturesMessage = <span>Expired order</span>
+  } else if (alreadySigned) {
+    signaturesMessage = <span>Enough signatures</span>
   } else if (numConfirmations == 0) {
     signaturesMessage = (
       <>
@@ -98,10 +97,19 @@ function GnosisSafeTxDetails(props: {
       </>
     )
   } else if (numConfirmations >= gnosisSafeThreshold) {
-    signaturesMessage = (
+    signaturesMessage = isExecuted ? (
       <span>
         <b>Enough signatures</b>
       </span>
+    ) : (
+      <>
+        <span>
+          Enough signatures, <b>but not executed</b>
+        </span>
+        <TextAlert isPending={isPendingSignatures} isCancelled={isCancelled} isExpired={isExpired}>
+          Execute Gnosis Safe transaction
+        </TextAlert>
+      </>
     )
   } else {
     signaturesMessage = (
@@ -150,7 +158,7 @@ export function ActivityDetails(props: {
   creationTime?: string | undefined
 }) {
   const { activityDerivedState, chainId, activityLinkUrl, disableMouseActions, creationTime } = props
-  const { id, isOrder, summary, order, enhancedTransaction, isCancelled, isExpired, isUnfillable, gnosisSafeInfo } =
+  const { id, isOrder, summary, order, enhancedTransaction, isCancelled, isExpired, isUnfillable } =
     activityDerivedState
   const approvalToken = useToken(enhancedTransaction?.approval?.tokenAddress) || null
 
@@ -220,12 +228,6 @@ export function ActivityDetails(props: {
   const activityName = isOrder ? `${kind} order` : 'Transaction'
   const inputToken = activityDerivedState?.order?.inputToken || null
   const outputToken = activityDerivedState?.order?.outputToken || null
-  const safeTransaction = enhancedTransaction?.safeTransaction || order?.presignGnosisSafeTx
-
-  // The activity is executed Is tx mined or is the swap executed
-  const isExecutedActivity = isOrder
-    ? order?.fulfillmentTime !== undefined
-    : enhancedTransaction?.confirmedTime !== undefined
 
   return (
     <Summary>
@@ -300,16 +302,7 @@ export function ActivityDetails(props: {
 
         {isUnfillable && unfillableAlert()}
 
-        {gnosisSafeInfo && safeTransaction && (
-          <GnosisSafeTxDetails
-            chainId={chainId}
-            safeTransaction={safeTransaction}
-            gnosisSafeThreshold={gnosisSafeInfo.threshold}
-            isExpired={isExpired}
-            isCancelled={isCancelled}
-            isExecutedActivity={isExecutedActivity}
-          />
-        )}
+        <GnosisSafeTxDetails chainId={chainId} activityDerivedState={activityDerivedState} />
       </SummaryInner>
     </Summary>
   )
