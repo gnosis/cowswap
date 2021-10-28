@@ -93,7 +93,7 @@ export const Content = styled.div`
     line-height: 1.6;
   }
 
-  a {
+  a:not([class*='ButtonPrimary']) {
     color: ${({ theme }) => theme.text1};
     transition: color 0.2s ease-in-out;
 

@@ -25,7 +25,6 @@ export * from './ButtonMod'
 export const ButtonPrimary = styled(ButtonPrimaryMod)`
   // CSS overrides
   ${({ theme }) => theme.buttonPrimary.background}
-  color: ${({ theme }) => theme.primaryText1};
   font-size: ${({ theme }) => theme.buttonPrimary.fontSize};
   font-weight: ${({ theme }) => theme.buttonPrimary.fontWeight};
   border: ${({ theme }) => theme.buttonPrimary.border};
@@ -34,7 +33,7 @@ export const ButtonPrimary = styled(ButtonPrimaryMod)`
   ${({ theme }) => theme.cursor};
   overflow: hidden;
   position: relative;
-  transition: box-shadow 0.1s ease-in-out, transform 0.1s ease-in-out !important;
+  transition: box-shadow 0.1s ease-in-out, transform 0.1s ease-in-out;
 
   > div {
     font-size: ${({ theme }) => theme.buttonPrimary.fontSize};
@@ -47,8 +46,7 @@ export const ButtonPrimary = styled(ButtonPrimaryMod)`
     border: ${({ theme }) => theme.buttonPrimary.border};
     box-shadow: none;
     transform: translateY(3px);
-    background-color: ${({ theme }) => theme.primary4};
-    color: ${({ theme }) => theme.primaryText1}!important;
+    ${({ theme }) => theme.buttonPrimary.background}
   }
   &:disabled {
     background-color: ${({ theme }) => theme.disabled};
