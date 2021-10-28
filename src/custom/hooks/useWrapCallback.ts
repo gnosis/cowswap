@@ -44,6 +44,30 @@ interface GetWrapUnwrapCallback {
 
 const NOT_APPLICABLE = { wrapType: WrapType.NOT_APPLICABLE }
 
+function _getGnosisSafeAccesList(gnosisSafeInfo: SafeInfoResponse, chainId?: ChainId) {
+  if (chainId === ChainId.XDAI) {
+    return {
+      // Fix for xDAI. Needs more reasearch, also needs a fix in Gnosi Safe web app too
+      // In reality the gasLimit doesnt really matter. It will matter only for the last signer
+      gasLimit: '110000',
+    }
+  } else {
+    return {
+      type: 1,
+      accessList: [
+        {
+          address: gnosisSafeInfo.address,
+          storageKeys: ['0x0000000000000000000000000000000000000000000000000000000000000000'],
+        },
+        {
+          address: gnosisSafeInfo.masterCopy,
+          storageKeys: [],
+        },
+      ],
+    }
+  }
+}
+
 function _getWrapUnwrapCallback(params: GetWrapUnwrapCallback): WrapUnwrapCallback {
   const {
     chainId,
@@ -76,29 +100,17 @@ function _getWrapUnwrapCallback(params: GetWrapUnwrapCallback): WrapUnwrapCallba
     const amountHex = `0x${inputAmount.quotient.toString(RADIX_HEX)}`
     if (isWrap) {
       operationType = OperationType.WRAP_ETHER
-      wrapUnwrap = async () => wethContract.deposit({ value: amountHex })
+      wrapUnwrap = async () => {
+        const options = gnosisSafeInfo ? _getGnosisSafeAccesList(gnosisSafeInfo, chainId) : {}
+        return wethContract.deposit({ ...options, value: amountHex })
+      }
       const baseSummary = t`${formatSmart(inputAmount, AMOUNT_PRECISION)} ${native} to ${wrapped}`
       summary = t`Wrap ${baseSummary}`
       confirmationMessage = t`Wrapping ${baseSummary}`
     } else {
       operationType = OperationType.UNWRAP_WETH
       wrapUnwrap = async () => {
-        const options = gnosisSafeInfo
-          ? {
-              type: 1,
-              accessList: [
-                {
-                  address: gnosisSafeInfo.address,
-                  storageKeys: ['0x0000000000000000000000000000000000000000000000000000000000000000'],
-                },
-                {
-                  address: gnosisSafeInfo.masterCopy,
-                  storageKeys: [],
-                },
-              ],
-            }
-          : {}
-
+        const options = gnosisSafeInfo ? _getGnosisSafeAccesList(gnosisSafeInfo, chainId) : {}
         return wethContract.withdraw(amountHex, options)
       }
       const baseSummary = t`${formatSmart(inputAmount, AMOUNT_PRECISION)} ${wrapped} to ${native}`
