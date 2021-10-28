@@ -55,8 +55,8 @@ export default function Profile() {
           )}
         </CardHead>
         {chainId && chainId !== ChainId.MAINNET && (
-          <NotificationBanner isVisible level="info">
-            Profile data is only available for mainnet
+          <NotificationBanner isVisible level="info" canClose={false}>
+            Profile data is only available for mainnet. Please change the network to see it.
           </NotificationBanner>
         )}
         <ChildWrapper>
