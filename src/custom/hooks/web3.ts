@@ -1,11 +1,10 @@
 import { Web3Provider } from '@ethersproject/providers'
-import { useSafeAppConnection } from '@gnosis.pm/safe-apps-web3-react'
 import { useWeb3React as useWeb3ReactCore } from '@web3-react/core'
 import { Web3ReactContextInterface } from '@web3-react/core/dist/types'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { isMobile } from 'react-device-detect'
-import { gnosisSafe, injected } from 'connectors'
-import { NetworkContextName } from '../constants/misc'
+import { injected, walletconnect, getProviderType, WalletProvider } from 'connectors'
+import { NetworkContextName } from 'constants/misc'
 
 export function useActiveWeb3React(): Web3ReactContextInterface<Web3Provider> {
   const context = useWeb3ReactCore<Web3Provider>()
@@ -13,38 +12,76 @@ export function useActiveWeb3React(): Web3ReactContextInterface<Web3Provider> {
   return context.active ? context : contextNetwork
 }
 
+// last wallet provider key used in local storage
+export const STORAGE_KEY_LAST_PROVIDER = 'lastProvider'
+
 export function useEagerConnect() {
-  const { activate, active } = useWeb3ReactCore() // specifically using useWeb3ReactCore because of what this hook does
+  const { activate, active, connector } = useWeb3ReactCore() // specifically using useWeb3ReactCore because of what this hook does
   const [tried, setTried] = useState(false)
 
-  const triedToConnectToSafe = useSafeAppConnection(gnosisSafe)
+  // handle setting/removing wallet provider in local storage
+  const handleBeforeUnload = useCallback(() => {
+    const walletType = getProviderType(connector)
+
+    if (!walletType || !active) {
+      localStorage.removeItem(STORAGE_KEY_LAST_PROVIDER)
+    } else {
+      localStorage.setItem(STORAGE_KEY_LAST_PROVIDER, walletType)
+    }
+  }, [connector, active])
 
   useEffect(() => {
-    if (triedToConnectToSafe && !active) {
-      injected.isAuthorized().then((isAuthorized) => {
-        if (isAuthorized) {
-          activate(injected, undefined, true).catch(() => {
-            setTried(true)
-          })
-        } else {
-          if (isMobile && window.ethereum) {
+    if (!active) {
+      const latestProvider = localStorage.getItem(STORAGE_KEY_LAST_PROVIDER)
+
+      // if there is no last saved provider set tried state to true
+      if (!latestProvider) {
+        setTried(true)
+      }
+
+      // check if the last saved provider is Metamask
+      if (latestProvider === WalletProvider.INJECTED) {
+        // check if the our application is authorized/connected with Metamask
+        injected.isAuthorized().then((isAuthorized) => {
+          if (isAuthorized) {
             activate(injected, undefined, true).catch(() => {
               setTried(true)
             })
           } else {
-            setTried(true)
+            if (isMobile && window.ethereum) {
+              activate(injected, undefined, true).catch(() => {
+                setTried(true)
+              })
+            } else {
+              setTried(true)
+            }
           }
-        }
-      })
+        })
+        // check if the last saved provider is WalletConnect
+      } else if (latestProvider === WalletProvider.WALLET_CONNECT) {
+        activate(walletconnect, undefined, true).catch(() => {
+          setTried(true)
+        })
+      }
     }
-  }, [activate, active, triedToConnectToSafe]) // intentionally only running on mount (make sure it's only mounted once :))
+  }, [activate, active, connector]) // intentionally only running on mount (make sure it's only mounted once :))
 
   // if the connection worked, wait until we get confirmation of that to flip the flag
   useEffect(() => {
-    if (active && triedToConnectToSafe) {
+    if (active) {
       setTried(true)
     }
-  }, [active, triedToConnectToSafe])
+  }, [active])
+
+  useEffect(() => {
+    // add beforeunload event listener on initial component mount
+    window.addEventListener('beforeunload', handleBeforeUnload)
+
+    // remove beforeunload event listener on component unmount
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload)
+    }
+  })
 
   return tried
 }
