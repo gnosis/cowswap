@@ -14,6 +14,7 @@ import { ActivityDerivedState, determinePillColour } from './index'
 import { CancellationModal } from './CancelationModal'
 import { getSafeWebUrl } from 'api/gnosisSafe'
 import { SafeMultisigTransactionResponse } from '@gnosis.pm/safe-service-client'
+import { HashType } from '@src/custom/state/enhancedTransactions/reducer'
 
 export function GnosisSafeLink(props: {
   chainId: number
@@ -45,8 +46,17 @@ function _getStateLabel({
   isCancelling,
   isPresignaturePending,
   isCancelled,
+  enhancedTransaction,
 }: ActivityDerivedState) {
   if (isPending) {
+    if (enhancedTransaction) {
+      console.log('enhancedTransaction', enhancedTransaction)
+      const { safeTransaction, transactionHash } = enhancedTransaction
+      if (safeTransaction && !transactionHash) {
+        return 'Signing...'
+      }
+    }
+
     return isOrder ? 'Open' : 'Pending...'
   }
 
