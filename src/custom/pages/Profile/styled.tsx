@@ -113,6 +113,8 @@ export const FlexWrap = styled.div`
   justify-content: center;
   button {
     max-width: 180px;
+    margin-left: auto;
+    margin-right: auto;
   }
   ${({ theme }) => theme.mediaWidth.upToSmall`
     flex-wrap: wrap;
