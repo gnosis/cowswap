@@ -39,6 +39,11 @@ export default function AffiliateStatusCheck() {
       return
     }
 
+    if (!referralAddress.isValid) {
+      setError('The referral address is invalid.')
+      return
+    }
+
     try {
       // we first validate that the user hasn't already traded
       const userHasTrades = await retry(() => hasTrades(chainId, account), DEFAULT_RETRY_OPTIONS).promise
@@ -55,7 +60,7 @@ export default function AffiliateStatusCheck() {
     }
 
     try {
-      await retry(() => uploadReferralDocAndSetDataHash(referralAddress), DEFAULT_RETRY_OPTIONS).promise
+      await retry(() => uploadReferralDocAndSetDataHash(referralAddress.value), DEFAULT_RETRY_OPTIONS).promise
 
       setAffiliateState('ACTIVE')
     } catch (error) {
@@ -81,7 +86,7 @@ export default function AffiliateStatusCheck() {
       return
     }
 
-    if (referralAddress === account) {
+    if (referralAddress.value === account) {
       // clean-up saved referral address if the user follows its own referral link
       resetReferralAddress()
       history.push('/profile')
