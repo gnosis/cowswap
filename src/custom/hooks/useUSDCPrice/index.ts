@@ -4,7 +4,7 @@ import { SupportedChainId } from 'constants/chains'
 /* import { DAI_OPTIMISM, USDC, USDC_ARBITRUM } from '../constants/tokens'
 import { useV2TradeExactOut } from './useV2Trade'
 import { useBestV3TradeExactOut } from './useBestV3Trade' */
-import { useActiveWeb3React } from 'hooks/web3'
+import { useActiveWeb3React } from '@src/hooks/web3'
 
 import { supportedChainId } from 'utils/supportedChainId'
 import { getBestPrice } from 'utils/price'

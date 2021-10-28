@@ -45,7 +45,7 @@ import { useSwapCallback } from 'hooks/useSwapCallback'
 import { /* useToggledVersion, */ Version } from 'hooks/useToggledVersion'
 import { useHigherUSDValue /* , useUSDCValue */ } from 'hooks/useUSDCPrice'
 import useWrapCallback, { WrapType } from 'hooks/useWrapCallback'
-import { useActiveWeb3React } from 'hooks/web3'
+import { useActiveWeb3React } from '@src/hooks/web3'
 import {
   useCloseModals,
   useModalOpen,

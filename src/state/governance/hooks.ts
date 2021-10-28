@@ -20,7 +20,7 @@ import {
   useLatestGovernanceContract,
   useUniContract,
 } from 'hooks/useContract'
-import { useActiveWeb3React } from 'hooks/web3'
+import { useActiveWeb3React } from '@src/hooks/web3'
 import { useCallback, useMemo } from 'react'
 import { calculateGasMargin } from 'utils/calculateGasMargin'
 import { SupportedChainId } from '../../constants/chains'

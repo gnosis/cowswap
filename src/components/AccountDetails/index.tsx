@@ -1,7 +1,7 @@
 import { useCallback, useContext } from 'react'
 import styled, { ThemeContext } from 'styled-components/macro'
 import { SUPPORTED_WALLETS } from 'constants/wallet'
-import { useActiveWeb3React } from '../../hooks/web3'
+import { useActiveWeb3React } from '@src/hooks/web3'
 import { clearAllTransactions } from '../../state/transactions/actions'
 import { shortenAddress } from 'utils'
 import { ExplorerDataType, getExplorerLink } from 'utils/getExplorerLink'

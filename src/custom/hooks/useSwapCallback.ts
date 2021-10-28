@@ -9,7 +9,7 @@ import { AddOrderCallback, AddUnserialisedPendingOrderParams, useAddPendingOrder
 import { SwapCallbackState } from '@src/hooks/useSwapCallback'
 import useENS from '@src/hooks/useENS'
 
-import { useActiveWeb3React } from 'hooks/web3'
+import { useActiveWeb3React } from '@src/hooks/web3'
 import { useWrapEther, Wrap } from 'hooks/useWrapEther'
 
 import { computeSlippageAdjustedAmounts } from 'utils/prices'

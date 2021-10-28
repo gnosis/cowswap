@@ -13,7 +13,7 @@ import { useIsTransactionPending } from 'state/enhancedTransactions/hooks'
 
 import Modal from 'components/Modal'
 import { useGasPrices } from 'state/gas/hooks'
-import { useActiveWeb3React } from 'hooks/web3'
+import { useActiveWeb3React } from '@src/hooks/web3'
 import { BigNumber } from 'ethers'
 import {
   DEFAULT_GAS_FEE,

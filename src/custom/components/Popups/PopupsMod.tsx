@@ -4,7 +4,7 @@ import { AutoColumn } from 'components/Column'
 import PopupItem from 'components/Popups/PopupItem'
 // import ClaimPopup from './ClaimPopup'
 import { useURLWarningVisible } from 'state/user/hooks'
-import { useActiveWeb3React } from 'hooks/web3'
+import { useActiveWeb3React } from '@src/hooks/web3'
 import { SupportedChainId } from 'constants/chains'
 import { MEDIA_WIDTHS } from '@src/theme'
 

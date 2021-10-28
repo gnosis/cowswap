@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import styled, { keyframes } from 'styled-components/macro'
-import { useActiveWeb3React } from 'hooks/web3'
+import { useActiveWeb3React } from '@src/hooks/web3'
 
 import { useBlockNumber } from 'state/application/hooks'
 import { getEtherscanLink } from 'utils'

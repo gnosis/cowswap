@@ -19,7 +19,7 @@ import HeaderMod, {
 import Menu from 'components/Menu'
 import { Moon, Sun } from 'react-feather'
 import styled from 'styled-components/macro'
-import { useActiveWeb3React } from 'hooks/web3'
+import { useActiveWeb3React } from '@src/hooks/web3'
 import { useETHBalances } from 'state/wallet/hooks'
 import { AMOUNT_PRECISION } from 'constants/index'
 import { useDarkModeManager } from 'state/user/hooks'

@@ -14,7 +14,7 @@ import { ChevronsRight } from 'react-feather'
 
 import { AutoColumn } from '../../components/Column'
 
-import { useActiveWeb3React } from '../../hooks/web3'
+import { useActiveWeb3React } from '@src/hooks/web3'
 import { useV2Pairs } from '../../hooks/useV2Pairs'
 import { toV2LiquidityToken, useTrackedTokenPairs } from '../../state/user/hooks'
 import { Dots } from '../../components/swap/styleds'

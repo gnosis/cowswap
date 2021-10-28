@@ -10,7 +10,7 @@ import { useAppDispatch, useAppSelector } from '@src/state/hooks'
 import { V2_FACTORY_ADDRESSES } from '../../constants/addresses'
 import { BASES_TO_TRACK_LIQUIDITY_FOR, PINNED_PAIRS } from '../../constants/routing'
 import { useAllTokens } from '../../hooks/Tokens'
-import { useActiveWeb3React } from '../../hooks/web3'
+import { useActiveWeb3React } from '@src/hooks/web3'
 import { AppState } from '../index'
 import {
   addSerializedPair,

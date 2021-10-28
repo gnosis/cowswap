@@ -15,7 +15,7 @@ import { ProposalAction, ProposalActionSelector, ProposalActionSelectorModal } f
 import { ProposalEditor } from './ProposalEditor'
 import { ProposalActionDetail } from './ProposalActionDetail'
 import { ProposalSubmissionModal } from './ProposalSubmissionModal'
-import { useActiveWeb3React } from 'hooks/web3'
+import { useActiveWeb3React } from '@src/hooks/web3'
 import {
   CreateProposalData,
   ProposalState,

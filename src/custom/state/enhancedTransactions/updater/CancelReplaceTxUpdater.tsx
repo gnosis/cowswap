@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useAppDispatch } from 'state/hooks'
-import { useActiveWeb3React } from 'hooks/web3'
+import { useActiveWeb3React } from '@src/hooks/web3'
 import { sdk } from 'utils/blocknative'
 import { cancelTransaction, replaceTransaction } from 'state/enhancedTransactions/actions'
 import { useAllTransactionHashes } from 'state/enhancedTransactions/hooks'

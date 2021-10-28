@@ -3,7 +3,7 @@ import { batch } from 'react-redux'
 import { Token } from '@uniswap/sdk-core'
 
 import { Order, OrderStatus, OrderKind } from './actions'
-import { useActiveWeb3React } from 'hooks/web3'
+import { useActiveWeb3React } from '@src/hooks/web3'
 import { useAddPendingOrder, usePendingOrders, useFulfillOrder } from './hooks'
 import { useCombinedActiveList } from 'state/lists/hooks'
 import { registerOnWindow } from 'utils/misc'

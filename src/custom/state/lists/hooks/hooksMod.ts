@@ -9,7 +9,7 @@ import { AppState } from 'state'
 import { UNSUPPORTED_LIST_URLS, DEFAULT_NETWORK_FOR_LISTS } from 'constants/lists'
 import { WrappedTokenInfo } from 'state/lists/wrappedTokenInfo'
 // MOD
-import { useActiveWeb3React } from 'hooks/web3'
+import { useActiveWeb3React } from '@src/hooks/web3'
 import {
   addGpUnsupportedToken,
   AddGpUnsupportedTokenParams,

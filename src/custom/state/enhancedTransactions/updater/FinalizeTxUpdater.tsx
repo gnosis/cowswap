@@ -5,7 +5,7 @@
 import { useEffect, useMemo } from 'react'
 import { useAppDispatch } from 'state/hooks'
 // import { SupportedChainId } from 'constants/chains'
-import { useActiveWeb3React } from 'hooks/web3'
+import { useActiveWeb3React } from '@src/hooks/web3'
 import { updateBlockNumber } from 'state/application/actions'
 import { useAddPopup, useBlockNumber } from 'state/application/hooks'
 import { checkedTransaction, finalizeTransaction, updateSafeTransaction } from '../actions'

@@ -1,5 +1,5 @@
 import { useCallback } from 'react'
-import { useActiveWeb3React } from 'hooks/web3'
+import { useActiveWeb3React } from '@src/hooks/web3'
 import { retry, RetryableError, RetryOptions } from 'utils/retry'
 import { TransactionReceipt } from '@ethersproject/abstract-provider'
 import { RetryResult } from 'types/index'
