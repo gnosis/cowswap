@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { SupportedChainId as ChainId } from 'constants/chains'
 import Web3Status from 'components/Web3Status'
 import { ExternalLink } from 'theme'
+import { stringify } from 'qs'
 
 import HeaderMod, {
   Title,
@@ -33,6 +34,7 @@ import { supportedChainId } from 'utils/supportedChainId'
 import { formatSmart } from 'utils/format'
 import NetworkCard, { NetworkInfo } from './NetworkCard'
 import SVG from 'react-inlinesvg'
+import useParsedQueryString from 'hooks/useParsedQueryString'
 
 export const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
   [ChainId.RINKEBY]: 'Rinkeby',
@@ -200,6 +202,7 @@ export default function Header() {
   const closeOrdersPanel = () => setIsOrdersPanelOpen(false)
   const openOrdersPanel = () => setIsOrdersPanelOpen(true)
   const isMenuOpen = useModalOpen(ApplicationModal.MENU)
+  const parsedQs = useParsedQueryString()
 
   // Toggle the 'noScroll' class on body, whenever the orders panel or flyout menu is open.
   // This removes the inner scrollbar on the page body, to prevent showing double scrollbars.
@@ -213,7 +216,7 @@ export default function Header() {
     <Wrapper>
       <HeaderModWrapper>
         <HeaderRow marginRight="0">
-          <Title href=".">
+          <Title href={'./#/?' + stringify(parsedQs)}>
             <UniIcon>
               <LogoImage />
             </UniIcon>

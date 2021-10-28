@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useLocation } from 'react-router-dom'
 import { useActiveWeb3React } from 'hooks/web3'
 import NotificationBanner from 'components/NotificationBanner'
 import { useReferralAddress, useResetReferralAddress, useUploadReferralDocAndSetDataHash } from 'state/affiliate/hooks'
@@ -7,6 +7,7 @@ import { useAppDispatch } from 'state/hooks'
 import { hasTrades } from 'utils/trade'
 import { retry, RetryOptions } from 'utils/retry'
 import { SupportedChainId } from 'constants/chains'
+import useParseReferralQueryParam from 'hooks/useParseReferralQueryParam'
 
 type AffiliateStatus = 'NOT_CONNECTED' | 'OWN_LINK' | 'ALREADY_TRADED' | 'ACTIVE' | 'UNSUPPORTED_NETWORK'
 
@@ -27,8 +28,10 @@ export default function AffiliateStatusCheck() {
   const resetReferralAddress = useResetReferralAddress()
   const uploadReferralDocAndSetDataHash = useUploadReferralDocAndSetDataHash()
   const history = useHistory()
+  const location = useLocation()
   const { account, chainId } = useActiveWeb3React()
   const referralAddress = useReferralAddress()
+  const referralAddressQueryParam = useParseReferralQueryParam()
   const [affiliateState, setAffiliateState] = useState<AffiliateStatus | null>()
   const [error, setError] = useState('')
 
@@ -89,13 +92,26 @@ export default function AffiliateStatusCheck() {
     if (referralAddress.value === account) {
       // clean-up saved referral address if the user follows its own referral link
       resetReferralAddress()
-      history.push('/profile')
       setAffiliateState('OWN_LINK')
+
+      if (referralAddressQueryParam) {
+        history.push('/profile' + location.search)
+      }
       return
     }
 
     uploadDataDoc()
-  }, [referralAddress, account, resetReferralAddress, history, chainId, appDispatch, uploadDataDoc])
+  }, [
+    referralAddress,
+    account,
+    resetReferralAddress,
+    history,
+    chainId,
+    appDispatch,
+    uploadDataDoc,
+    location,
+    referralAddressQueryParam,
+  ])
 
   if (error) {
     return (
