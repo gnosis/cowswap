@@ -15,6 +15,10 @@ import { formatSmart } from 'utils/format'
 import { useWalletInfo } from './useWalletInfo'
 import { SafeInfoResponse } from '@gnosis.pm/safe-service-client'
 import { OperationType } from '../components/TransactionConfirmationModal'
+import { ethers } from 'ethers'
+import { calculateGasMargin } from '@src/utils/calculateGasMargin'
+
+const WRAP_UNWRAP_GAS_LIMIT_DEFAULT = ethers.BigNumber.from('180000')
 
 export enum WrapType {
   NOT_APPLICABLE,
@@ -44,28 +48,13 @@ interface GetWrapUnwrapCallback {
 
 const NOT_APPLICABLE = { wrapType: WrapType.NOT_APPLICABLE }
 
-function _getGnosisSafeAccesList(gnosisSafeInfo: SafeInfoResponse, chainId?: ChainId) {
-  if (chainId === ChainId.XDAI) {
-    return {
-      // Fix for xDAI. Needs more reasearch, also needs a fix in Gnosi Safe web app too
-      // In reality the gasLimit doesnt really matter. It will matter only for the last signer
-      gasLimit: '110000',
-    }
-  } else {
-    return {
-      type: 1,
-      accessList: [
-        {
-          address: gnosisSafeInfo.address,
-          storageKeys: ['0x0000000000000000000000000000000000000000000000000000000000000000'],
-        },
-        {
-          address: gnosisSafeInfo.masterCopy,
-          storageKeys: [],
-        },
-      ],
-    }
-  }
+function _handleGasEstimateError(error: any) {
+  console.log(
+    '[useWrapCallback] Error estimating gas for wrap/unwrap. Using default gas limit ' +
+      WRAP_UNWRAP_GAS_LIMIT_DEFAULT.toString(),
+    error
+  )
+  return WRAP_UNWRAP_GAS_LIMIT_DEFAULT
 }
 
 function _getWrapUnwrapCallback(params: GetWrapUnwrapCallback): WrapUnwrapCallback {
@@ -75,7 +64,6 @@ function _getWrapUnwrapCallback(params: GetWrapUnwrapCallback): WrapUnwrapCallba
     balance,
     inputAmount,
     wethContract,
-    gnosisSafeInfo,
     addTransaction,
     openTransactionConfirmationModal,
     closeModals,
@@ -97,12 +85,17 @@ function _getWrapUnwrapCallback(params: GetWrapUnwrapCallback): WrapUnwrapCallba
     let confirmationMessage: string
     let operationType: OperationType
 
+    if (!chainId) {
+      throw new Error('ChainId is unknown')
+    }
+
     const amountHex = `0x${inputAmount.quotient.toString(RADIX_HEX)}`
     if (isWrap) {
       operationType = OperationType.WRAP_ETHER
       wrapUnwrap = async () => {
-        const options = gnosisSafeInfo ? _getGnosisSafeAccesList(gnosisSafeInfo, chainId) : {}
-        return wethContract.deposit({ ...options, value: amountHex })
+        const estimatedGas = await wethContract.estimateGas.deposit({ value: amountHex }).catch(_handleGasEstimateError)
+
+        return wethContract.deposit({ value: amountHex }, { gasLimit: calculateGasMargin(chainId, estimatedGas) })
       }
       const baseSummary = t`${formatSmart(inputAmount, AMOUNT_PRECISION)} ${native} to ${wrapped}`
       summary = t`Wrap ${baseSummary}`
@@ -110,8 +103,8 @@ function _getWrapUnwrapCallback(params: GetWrapUnwrapCallback): WrapUnwrapCallba
     } else {
       operationType = OperationType.UNWRAP_WETH
       wrapUnwrap = async () => {
-        const options = gnosisSafeInfo ? _getGnosisSafeAccesList(gnosisSafeInfo, chainId) : {}
-        return wethContract.withdraw(amountHex, options)
+        const estimatedGas = await wethContract.estimateGas.withdraw(amountHex).catch(_handleGasEstimateError)
+        return wethContract.withdraw(amountHex, { gasLimit: calculateGasMargin(chainId, estimatedGas) })
       }
       const baseSummary = t`${formatSmart(inputAmount, AMOUNT_PRECISION)} ${wrapped} to ${native}`
       summary = t`Unwrap ${baseSummary}`
