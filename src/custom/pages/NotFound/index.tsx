@@ -31,6 +31,7 @@ const Container = styled.div`
   ${ButtonPrimary} {
     width: 196px;
     padding: 9px;
+    color: ${({ theme }) => theme.primaryText1};
     &:hover {
       ${({ theme }) => theme.buttonPrimary.background}
     }

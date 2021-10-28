@@ -30,6 +30,7 @@ export const ButtonPrimary = styled(ButtonPrimaryMod)`
   border: ${({ theme }) => theme.buttonPrimary.border};
   box-shadow: ${({ theme }) => theme.buttonPrimary.boxShadow};
   border-radius: ${({ theme }) => theme.buttonPrimary.borderRadius};
+  color: ${({ theme }) => theme.primaryText1};
   ${({ theme }) => theme.cursor};
   overflow: hidden;
   position: relative;
