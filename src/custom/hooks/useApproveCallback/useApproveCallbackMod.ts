@@ -10,6 +10,9 @@ import { calculateGasMargin } from 'utils/calculateGasMargin'
 import { useTokenContract } from 'hooks/useContract'
 import { useActiveWeb3React } from 'hooks/web3'
 import { useTokenAllowance } from 'hooks/useTokenAllowance'
+import { ethers } from 'ethers'
+
+const APPROVE_GAS_LIMIT_DEFAULT = ethers.BigNumber.from('150000')
 
 export enum ApprovalState {
   UNKNOWN = 'UNKNOWN',
@@ -84,7 +87,15 @@ export function useApproveCallback(
     const estimatedGas = await tokenContract.estimateGas.approve(spender, MaxUint256).catch(() => {
       // general fallback for tokens who restrict approval amounts
       useExact = true
-      return tokenContract.estimateGas.approve(spender, amountToApprove.quotient.toString())
+      return tokenContract.estimateGas.approve(spender, amountToApprove.quotient.toString()).catch((error) => {
+        console.log(
+          '[useApproveCallbackMod] Error estimating gas for approval. Using default gas limit ' +
+            APPROVE_GAS_LIMIT_DEFAULT.toString(),
+          error
+        )
+        useExact = false
+        return APPROVE_GAS_LIMIT_DEFAULT
+      })
     })
 
     openTransactionConfirmationModal(`Approving ${amountToApprove.currency.symbol} for trading`)
