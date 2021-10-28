@@ -10,7 +10,7 @@ import { useStakingContract } from 'hooks/useContract'
 import { SubmittedView, LoadingView } from '../ModalViews'
 import { TransactionResponse } from '@ethersproject/providers'
 import { useTransactionAdder } from '../../state/transactions/hooks'
-import { useActiveWeb3React } from '@src/hooks/web3'
+import { useActiveWeb3React } from '../../hooks/web3'
 import { t, Trans } from '@lingui/macro'
 
 const ContentWrapper = styled(AutoColumn)`

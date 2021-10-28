@@ -1,7 +1,7 @@
 import React, { useCallback, Fragment } from 'react'
 import { batch, useDispatch } from 'react-redux'
 
-import { useActiveWeb3React } from '@src/hooks/web3'
+import { useActiveWeb3React } from 'hooks/web3'
 import { AppDispatch } from 'state'
 import { clearAllTransactions } from 'state/enhancedTransactions/actions'
 import { getExplorerLabel, shortenAddress } from 'utils'

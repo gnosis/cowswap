@@ -14,7 +14,7 @@ import CurrencySearchModal from '../../components/SearchModal/CurrencySearchModa
 import { SwitchLocaleLink } from '../../components/SwitchLocaleLink'
 import { ExtendedEther } from '../../constants/tokens'
 import { PairState, useV2Pair } from '../../hooks/useV2Pairs'
-import { useActiveWeb3React } from '@src/hooks/web3'
+import { useActiveWeb3React } from '../../hooks/web3'
 import { usePairAdder } from '../../state/user/hooks'
 import { useTokenBalance } from '../../state/wallet/hooks'
 import { StyledInternalLink } from 'theme'

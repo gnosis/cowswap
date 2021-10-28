@@ -1,5 +1,5 @@
 import { useContext } from 'react'
-import { useActiveWeb3React } from '@src/hooks/web3'
+import { useActiveWeb3React } from '../../hooks/web3'
 import { ExplorerDataType, getExplorerLink } from '../../utils/getExplorerLink'
 
 import { AutoColumn, ColumnCenter } from '../Column'

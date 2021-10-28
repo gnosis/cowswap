@@ -11,7 +11,7 @@ import { DEFAULT_DEADLINE_FROM_NOW } from 'constants/misc'
 import { darken } from 'polished'
 import { useSetUserSlippageTolerance, useUserSlippageTolerance, useUserTransactionTTL } from 'state/user/hooks'
 import { L2_CHAIN_IDS } from 'constants/chains'
-import { useActiveWeb3React } from '@src/hooks/web3'
+import { useActiveWeb3React } from 'hooks/web3'
 import { INPUT_OUTPUT_EXPLANATION } from 'constants/index'
 
 enum SlippageError {

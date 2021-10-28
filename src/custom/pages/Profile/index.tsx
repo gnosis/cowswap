@@ -9,7 +9,7 @@ import {
   ItemTitle,
   ChildWrapper,
 } from 'pages/Profile/styled'
-import { useActiveWeb3React } from '@src/hooks/web3'
+import { useActiveWeb3React } from 'hooks/web3'
 import Copy from 'components/Copy/CopyMod'
 import { HelpCircle, RefreshCcw } from 'react-feather'
 import Web3Status from 'components/Web3Status'

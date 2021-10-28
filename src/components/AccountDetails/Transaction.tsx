@@ -1,7 +1,7 @@
 import styled from 'styled-components/macro'
 import { CheckCircle, Triangle } from 'react-feather'
 
-import { useActiveWeb3React } from '@src/hooks/web3'
+import { useActiveWeb3React } from '../../hooks/web3'
 import { ExternalLink } from '../../theme'
 import { useAllTransactions } from '../../state/transactions/hooks'
 import { ExplorerDataType, getExplorerLink } from '../../utils/getExplorerLink'

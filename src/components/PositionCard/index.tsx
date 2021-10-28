@@ -9,7 +9,7 @@ import styled from 'styled-components/macro'
 import { useTotalSupply } from '../../hooks/useTotalSupply'
 import { Trans } from '@lingui/macro'
 
-import { useActiveWeb3React } from '@src/hooks/web3'
+import { useActiveWeb3React } from '../../hooks/web3'
 import { useTokenBalance } from '../../state/wallet/hooks'
 import { ExternalLink, TYPE } from 'theme'
 import { currencyId } from '../../utils/currencyId'
