@@ -103,6 +103,11 @@ export const Wrapper = styled.div<{ isDarkMode: boolean }>`
         position: absolute;
         right: -42px;
         top: 90px;
+
+        ${({ theme }) => theme.mediaWidth.upToSmall`
+          display: none;
+          content: none;
+        `};
       }
     `}
 
