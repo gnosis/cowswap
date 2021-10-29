@@ -6,9 +6,6 @@ import * as OrderActions from './actions'
 
 import { OrderIDWithPopup, OrderTxTypes, PopupPayload, buildCancellationPopupSummary, setPopupData } from './helpers'
 
-// Halloween temporary
-import { useIsDarkMode } from 'state/user/hooks'
-
 // action syntactic sugar
 const isSingleOrderChangeAction = isAnyOf(
   OrderActions.addPendingOrder,
