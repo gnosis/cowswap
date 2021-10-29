@@ -5,6 +5,7 @@ import { AppState } from 'state'
 import * as OrderActions from './actions'
 
 import { OrderIDWithPopup, OrderTxTypes, PopupPayload, buildCancellationPopupSummary, setPopupData } from './helpers'
+import { registerOnWindow } from 'utils/misc'
 
 type SoundType = 'SEND' | 'SUCCESS' | 'ERROR'
 type Sounds = Record<SoundType, string>
@@ -204,6 +205,25 @@ function getCowSoundError(isDarkMode: boolean): HTMLAudioElement {
   return getAudio('ERROR', isDarkMode)
 }
 
+function removeLighningEffect() {
+  const bodyStyle = document.body.style
+
+  bodyStyle.filter = ''
+  bodyStyle.background = ''
+}
+
+function addLighningEffect() {
+  const bodyStyle = document.body.style
+
+  bodyStyle.filter = 'invert(1) grayscale(1)'
+  bodyStyle.background = 'white'
+
+  setTimeout(() => {
+    removeLighningEffect()
+  }, 4000)
+}
+registerOnWindow({ addLighningEffect })
+
 // on each Pending, Expired, Fulfilled order action
 // a corresponsing sound is dispatched
 export const soundMiddleware: Middleware<Record<string, unknown>, AppState> = (store) => (next) => (action) => {
@@ -237,7 +257,15 @@ export const soundMiddleware: Middleware<Record<string, unknown>, AppState> = (s
     cowSound = getCowSoundError(isDarkMode)
   }
 
-  cowSound?.play().catch((e) => console.error('🐮 Moooooo sound cannot be played', e))
+  if (cowSound) {
+    if (isDarkMode) {
+      addLighningEffect()
+    }
+    cowSound?.play().catch((e) => {
+      removeLighningEffect()
+      console.error('🐮 Moooooo sound cannot be played', e)
+    })
+  }
 
   return result
 }
