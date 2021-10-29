@@ -6,6 +6,9 @@ import * as OrderActions from './actions'
 
 import { OrderIDWithPopup, OrderTxTypes, PopupPayload, buildCancellationPopupSummary, setPopupData } from './helpers'
 
+// Halloween temporary
+import { useIsDarkMode } from 'state/user/hooks'
+
 // action syntactic sugar
 const isSingleOrderChangeAction = isAnyOf(
   OrderActions.addPendingOrder,
@@ -158,8 +161,10 @@ export const popupMiddleware: Middleware<Record<string, unknown>, AppState> = (s
 }
 
 let moooooSend: HTMLAudioElement
-function getCowSoundSend(): HTMLAudioElement {
-  if (!moooooSend) {
+function getCowSoundSend(darkMode: boolean): HTMLAudioElement {
+  if (darkMode && !moooooSend) {
+    moooooSend = new Audio('/audio/mooooo-halloween.wav')
+  } else if (!moooooSend) {
     moooooSend = new Audio('/audio/mooooo-send__lower-90.mp3')
   }
 
@@ -167,8 +172,10 @@ function getCowSoundSend(): HTMLAudioElement {
 }
 
 let moooooSuccess: HTMLAudioElement
-function getCowSoundSuccess(): HTMLAudioElement {
-  if (!moooooSuccess) {
+function getCowSoundSuccess(darkMode: boolean): HTMLAudioElement {
+  if (darkMode && !moooooSuccess) {
+    moooooSend = new Audio('/audio/mooooo-halloween.wav')
+  } else if (!moooooSuccess) {
     moooooSuccess = new Audio('/audio/mooooo-success__ben__lower-90.mp3')
   }
 
@@ -189,6 +196,9 @@ function getCowSoundError(): HTMLAudioElement {
 export const soundMiddleware: Middleware<Record<string, unknown>, AppState> = (store) => (next) => (action) => {
   const result = next(action)
 
+  // Halloween temporary
+  const darkMode = useIsDarkMode()
+
   if (isBatchOrderAction(action)) {
     const { chainId } = action.payload
     const orders = store.getState().orders[chainId]
@@ -203,9 +213,9 @@ export const soundMiddleware: Middleware<Record<string, unknown>, AppState> = (s
 
   let cowSound
   if (isPendingOrderAction(action)) {
-    cowSound = getCowSoundSend()
+    cowSound = getCowSoundSend(darkMode)
   } else if (isFulfillOrderAction(action)) {
-    cowSound = getCowSoundSuccess()
+    cowSound = getCowSoundSuccess(darkMode)
   } else if (isExpireOrdersAction(action)) {
     cowSound = getCowSoundError()
   } else if (isCancelOrderAction(action)) {
