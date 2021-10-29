@@ -15,7 +15,7 @@ const COW_SOUNDS: Sounds = {
   SUCCESS: '/audio/mooooo-success__ben__lower-90.mp3',
   ERROR: '/audio/mooooo-error__lower-90.mp3',
 }
-const HALLOWING_SOUNDS: Sounds = {
+const HALLOWEEN_SOUNDS: Sounds = {
   SEND: '/audio/mooooo-halloween.wav',
   SUCCESS: '/audio/mooooo-halloween.wav',
   ERROR: '/audio/mooooo-halloween.wav',
@@ -175,7 +175,7 @@ export const popupMiddleware: Middleware<Record<string, unknown>, AppState> = (s
 
 function getCowSounds(isDarkMode: boolean): Sounds {
   if (isDarkMode) {
-    return HALLOWING_SOUNDS
+    return HALLOWEEN_SOUNDS
   } else {
     return COW_SOUNDS
   }
@@ -205,24 +205,18 @@ function getCowSoundError(isDarkMode: boolean): HTMLAudioElement {
   return getAudio('ERROR', isDarkMode)
 }
 
-function removeLighningEffect() {
-  const bodyStyle = document.body.style
-
-  bodyStyle.filter = ''
-  bodyStyle.background = ''
+function removeLightningEffect() {
+  document.body.classList.remove('lightning')
 }
 
-function addLighningEffect() {
-  const bodyStyle = document.body.style
-
-  bodyStyle.filter = 'invert(1) grayscale(1)'
-  bodyStyle.background = 'white'
+function addLightningEffect() {
+  document.body.classList.add('lightning')
 
   setTimeout(() => {
-    removeLighningEffect()
-  }, 4000)
+    removeLightningEffect()
+  }, 5000)
 }
-registerOnWindow({ addLighningEffect })
+registerOnWindow({ addLightningEffect })
 
 // on each Pending, Expired, Fulfilled order action
 // a corresponsing sound is dispatched
@@ -259,10 +253,10 @@ export const soundMiddleware: Middleware<Record<string, unknown>, AppState> = (s
 
   if (cowSound) {
     if (isDarkMode) {
-      addLighningEffect()
+      setTimeout(addLightningEffect, 300)
     }
     cowSound?.play().catch((e) => {
-      removeLighningEffect()
+      removeLightningEffect()
       console.error('🐮 Moooooo sound cannot be played', e)
     })
   }
