@@ -11,3 +11,8 @@ body.lightning {
   filter: invert(1) grayscale(1);
   animation: blinker 333ms linear infinite;
 }
+
+/* TODO: Michel, is it good enough if we just add the styles here? */
+body.hallowing yourSelector {
+  color: white;
+}

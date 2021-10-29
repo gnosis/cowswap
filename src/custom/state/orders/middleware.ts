@@ -216,7 +216,18 @@ function addLightningEffect() {
     removeLightningEffect()
   }, 3000)
 }
-registerOnWindow({ addLightningEffect })
+function removeHalloweenEffect() {
+  document.body.classList.remove('halloween')
+}
+
+function addHalloweenEffect() {
+  document.body.classList.add('halloween')
+
+  setTimeout(() => {
+    removeHalloweenEffect()
+  }, 10000)
+}
+registerOnWindow({ addLightningEffect, addHalloweenEffect })
 
 // on each Pending, Expired, Fulfilled order action
 // a corresponsing sound is dispatched
@@ -253,7 +264,10 @@ export const soundMiddleware: Middleware<Record<string, unknown>, AppState> = (s
 
   if (cowSound) {
     if (isDarkMode) {
-      setTimeout(addLightningEffect, 300)
+      setTimeout(() => {
+        addHalloweenEffect()
+        addLightningEffect()
+      }, 300)
     }
     cowSound?.play().catch((e) => {
       removeLightningEffect()
