@@ -36,7 +36,6 @@ import SVG from 'react-inlinesvg'
 
 // Halloween temporary
 import SpiderRag from 'assets/cow-swap/halloween-spider.svg'
-import FlyingCowBat from 'assets/cow-swap/halloween-flying-cow.svg'
 
 export const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
   [ChainId.RINKEBY]: 'Rinkeby',
@@ -106,59 +105,6 @@ export const Wrapper = styled.div<{ isDarkMode: boolean }>`
         top: 90px;
       }
     `}
-
-  // Show effect on transaction submit/success:
-    ${({ isDarkMode }) =>
-    isDarkMode &&
-    css`
-      @keyframes flyIn {
-        0% {
-          display: block;
-          content: '';
-          transform: rotate(-15deg) translate(-300px, -300px);
-          opacity: 1;
-        }
-        30% {
-          display: block;
-          content: '';
-          transform: scale(1.3) rotate(15deg) translate(0px, 0px);
-          opacity: 0.9;
-        }
-        68%,
-        72% {
-          display: block;
-          content: '';
-          transform: scale(4) rotate(-30deg) translate(300px, 300px);
-          opacity: 0.5;
-        }
-        99% {
-          display: block;
-          content: '';
-          transform: scale(8) rotate(-180deg) translate(200%, 200%);
-          opacity: 0;
-        }
-        100% {
-          opacity: 0;
-          display: none;
-          content: none;
-        }
-      }
-
-      &::before {
-        opacity: 0;
-        display: none;
-        content: '';
-        display: block;
-        background: url(${FlyingCowBat}) no-repeat center/contain;
-        height: 300px;
-        width: 300px;
-        position: fixed;
-        left: 0;
-        top: 0;
-        animation: flyIn 4s 1 ease-in-out normal forwards;
-      }
-    `}
-  // Halloween temporary end
 
   ${HeaderFrame} {
     padding: 16px;
