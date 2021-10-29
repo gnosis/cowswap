@@ -197,7 +197,8 @@ export const soundMiddleware: Middleware<Record<string, unknown>, AppState> = (s
   const result = next(action)
 
   // Halloween temporary
-  const darkMode = useIsDarkMode()
+  const { userDarkMode, matchesDarkMode } = store.getState().user
+  const isDarkMode = userDarkMode === null ? matchesDarkMode : userDarkMode
 
   if (isBatchOrderAction(action)) {
     const { chainId } = action.payload
@@ -213,9 +214,9 @@ export const soundMiddleware: Middleware<Record<string, unknown>, AppState> = (s
 
   let cowSound
   if (isPendingOrderAction(action)) {
-    cowSound = getCowSoundSend(darkMode)
+    cowSound = getCowSoundSend(isDarkMode)
   } else if (isFulfillOrderAction(action)) {
-    cowSound = getCowSoundSuccess(darkMode)
+    cowSound = getCowSoundSuccess(isDarkMode)
   } else if (isExpireOrdersAction(action)) {
     cowSound = getCowSoundError()
   } else if (isCancelOrderAction(action)) {
