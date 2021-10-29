@@ -16,9 +16,9 @@ const COW_SOUNDS: Sounds = {
   ERROR: '/audio/mooooo-error__lower-90.mp3',
 }
 const HALLOWEEN_SOUNDS: Sounds = {
-  SEND: '/audio/mooooo-halloween.wav',
-  SUCCESS: '/audio/mooooo-halloween.wav',
-  ERROR: '/audio/mooooo-halloween.wav',
+  SEND: '/audio/mooooo-halloween__lower.wav',
+  SUCCESS: '/audio/mooooo-halloween__lower.wav',
+  ERROR: '/audio/mooooo-halloween__lower.wav',
 }
 const SOUND_CACHE: Record<string, HTMLAudioElement | undefined> = {}
 
@@ -214,7 +214,7 @@ function addLightningEffect() {
 
   setTimeout(() => {
     removeLightningEffect()
-  }, 5000)
+  }, 3000)
 }
 registerOnWindow({ addLightningEffect })
 

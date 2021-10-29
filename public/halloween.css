@@ -9,5 +9,5 @@
 
 body.lightning {
   filter: invert(1) grayscale(1);
-  animation: blinker 200ms linear infinite;
+  animation: blinker 333ms linear infinite;
 }
