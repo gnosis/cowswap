@@ -1,11 +1,13 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useActiveWeb3React } from 'hooks/web3'
+import { useOrders } from 'state/orders/hooks'
 import NotificationBanner from 'components/NotificationBanner'
 import { useReferralAddress, useUploadReferralDocAndSetDataHash } from 'state/affiliate/hooks'
 import { useAppDispatch } from 'state/hooks'
 import { hasTrades } from 'utils/trade'
 import { retry, RetryOptions } from 'utils/retry'
+import { isOrderRecent } from 'utils/trade'
 import { SupportedChainId } from 'constants/chains'
 
 type AffiliateStatus = 'NOT_CONNECTED' | 'OWN_LINK' | 'ALREADY_TRADED' | 'ACTIVE' | 'UNSUPPORTED_NETWORK'
@@ -22,11 +24,15 @@ const STATUS_TO_MESSAGE_MAPPING: Record<AffiliateStatus, string> = {
 
 const DEFAULT_RETRY_OPTIONS: RetryOptions = { n: 3, minWait: 1000, maxWait: 3000 }
 
+// One minute in MS (milliseconds not Microsoft)
+const MINUTE_MS = 60_0000
+
 export default function AffiliateStatusCheck() {
   const appDispatch = useAppDispatch()
   const uploadReferralDocAndSetDataHash = useUploadReferralDocAndSetDataHash()
   const history = useHistory()
   const { account, chainId } = useActiveWeb3React()
+  const allNonEmptyOrders = useOrders({ chainId })
   const referralAddress = useReferralAddress()
   const [affiliateState, setAffiliateState] = useState<AffiliateStatus | null>()
   const [error, setError] = useState('')
@@ -85,8 +91,14 @@ export default function AffiliateStatusCheck() {
       return
     }
 
+    const hasJustTraded = allNonEmptyOrders.filter((order) => isOrderRecent(order, MINUTE_MS)).length >= 1
+    if (hasJustTraded) {
+      setAffiliateState(null)
+      return
+    }
+
     uploadDataDoc()
-  }, [referralAddress, account, history, chainId, appDispatch, uploadDataDoc])
+  }, [referralAddress, account, history, chainId, appDispatch, uploadDataDoc, allNonEmptyOrders])
 
   if (error) {
     return (

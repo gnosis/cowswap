@@ -5,6 +5,7 @@ import { useActiveWeb3React } from 'hooks/web3'
 import { Order, OrderStatus } from 'state/orders/actions'
 import { TransactionDetails } from 'state/transactions/reducer'
 import { SupportedChainId as ChainId } from 'constants/chains'
+import { isOrderRecent } from 'utils/trade'
 
 export type TransactionAndOrder =
   | (Order & { addedTime: number })
@@ -29,17 +30,6 @@ export enum ActivityStatus {
 enum TxReceiptStatus {
   PENDING,
   CONFIRMED,
-}
-
-// One FULL day in MS (milliseconds not Microsoft)
-const DAY_MS = 86_400_000
-
-/**
- * Returns whether a order happened in the last day (86400 seconds * 1000 milliseconds / second)
- * @param order
- */
-function isOrderRecent(order: Order): boolean {
-  return Date.now() - Date.parse(order.creationTime) < DAY_MS
 }
 
 /**

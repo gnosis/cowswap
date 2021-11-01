@@ -1,6 +1,6 @@
 import { CurrencyAmount, Currency, Token } from '@uniswap/sdk-core'
 import { isAddress, shortenAddress } from 'utils'
-import { OrderStatus, OrderKind, ChangeOrderStatusParams } from 'state/orders/actions'
+import { OrderStatus, OrderKind, ChangeOrderStatusParams, Order } from 'state/orders/actions'
 import { AddUnserialisedPendingOrderParams } from 'state/orders/hooks'
 
 import { signOrder, signOrderCancellation, UnsignedOrder } from 'utils/signatures'
@@ -155,4 +155,15 @@ export async function hasTrades(chainId: ChainId, address: string): Promise<bool
   const trades = await getTrades({ chainId, owner: address, limit: 1 })
 
   return trades.length > 0
+}
+
+// One FULL day in MS (milliseconds not Microsoft)
+const DAY_MS = 86_400_000
+
+/**
+ * Returns whether a order happened in the last day (86400 seconds * 1000 milliseconds / second)
+ * @param order
+ */
+export function isOrderRecent(order: Order, time: number = DAY_MS): boolean {
+  return Date.now() - Date.parse(order.creationTime) < time
 }
