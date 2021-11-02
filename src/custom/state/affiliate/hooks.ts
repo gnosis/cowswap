@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux'
 import { AppState } from 'state'
 import { useAppDispatch } from 'state/hooks'
-import { updateAppDataHash, updateReferralAddress } from 'state/affiliate/actions'
+import { updateAppDataHash } from 'state/affiliate/actions'
 import { useCallback } from 'react'
 import { generateReferralMetadataDoc, uploadMetadataDocToIpfs } from 'utils/metadata'
 
@@ -22,12 +22,6 @@ export function useReferralAddress() {
   >((state) => {
     return state.affiliate.referralAddress
   })
-}
-
-export function useResetReferralAddress() {
-  const dispatch = useAppDispatch()
-
-  return useCallback(() => dispatch(updateReferralAddress(null)), [dispatch])
 }
 
 export function useUploadReferralDocAndSetDataHash() {
