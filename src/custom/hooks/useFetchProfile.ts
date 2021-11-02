@@ -15,6 +15,8 @@ const emptyState: FetchProfileState = {
   isLoading: false,
 }
 
+const FETCH_INTERVAL_IN_MINUTES = 5
+
 export default function useFetchProfile(): FetchProfileState {
   const { account, chainId } = useActiveWeb3React()
   const [profile, setProfile] = useState<FetchProfileState>(emptyState)
@@ -30,7 +32,10 @@ export default function useFetchProfile(): FetchProfileState {
       }
     }
 
+    const intervalId = setInterval(fetchAndSetProfileData, FETCH_INTERVAL_IN_MINUTES * 60_000)
+
     fetchAndSetProfileData()
+    return () => clearInterval(intervalId)
   }, [account, chainId])
 
   return profile
