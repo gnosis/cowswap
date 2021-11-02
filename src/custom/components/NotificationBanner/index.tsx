@@ -42,14 +42,12 @@ const BannerContainer = styled.div`
 `
 export default function NotificationBanner(props: BannerProps) {
   const [isActive, setIsActive] = useState(props.isVisible)
+  const { canClose = true } = props
+
   return (
     <Banner {...props} isVisible={isActive}>
       <BannerContainer>{props.children}</BannerContainer>
-      {props.canClose && <StyledClose size={16} onClick={() => setIsActive(false)} />}
+      {canClose && <StyledClose size={16} onClick={() => setIsActive(false)} />}
     </Banner>
   )
-}
-
-NotificationBanner.defaultProps = {
-  canClose: true,
 }
