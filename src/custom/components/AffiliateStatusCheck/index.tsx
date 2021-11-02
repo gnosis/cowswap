@@ -1,14 +1,14 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useLocation } from 'react-router-dom'
 import { useActiveWeb3React } from 'hooks/web3'
-import { useOrders } from 'state/orders/hooks'
+import useRecentActivity from 'hooks/useRecentActivity'
 import NotificationBanner from 'components/NotificationBanner'
-import { useReferralAddress, useUploadReferralDocAndSetDataHash } from 'state/affiliate/hooks'
+import { useReferralAddress, useResetReferralAddress, useUploadReferralDocAndSetDataHash } from 'state/affiliate/hooks'
 import { useAppDispatch } from 'state/hooks'
-import { hasTrades } from 'utils/trade'
+import { hasTrades, isConfirmed } from 'utils/trade'
 import { retry, RetryOptions } from 'utils/retry'
-import { isOrderRecent } from 'utils/trade'
 import { SupportedChainId } from 'constants/chains'
+import useParseReferralQueryParam from 'hooks/useParseReferralQueryParam'
 
 type AffiliateStatus = 'NOT_CONNECTED' | 'OWN_LINK' | 'ALREADY_TRADED' | 'ACTIVE' | 'UNSUPPORTED_NETWORK'
 
@@ -29,17 +29,24 @@ const MINUTE_MS = 60_0000
 
 export default function AffiliateStatusCheck() {
   const appDispatch = useAppDispatch()
+  const resetReferralAddress = useResetReferralAddress()
   const uploadReferralDocAndSetDataHash = useUploadReferralDocAndSetDataHash()
   const history = useHistory()
+  const location = useLocation()
   const { account, chainId } = useActiveWeb3React()
-  const allNonEmptyOrders = useOrders({ chainId })
+  const allRecentActivity = useRecentActivity()
   const referralAddress = useReferralAddress()
+  const referralAddressQueryParam = useParseReferralQueryParam()
   const [affiliateState, setAffiliateState] = useState<AffiliateStatus | null>()
   const [error, setError] = useState('')
 
   const uploadDataDoc = useCallback(async () => {
-    setError('')
     if (!chainId || !account || !referralAddress) {
+      return
+    }
+
+    if (!referralAddress.isValid) {
+      setError('The referral address is invalid.')
       return
     }
 
@@ -58,7 +65,7 @@ export default function AffiliateStatusCheck() {
     }
 
     try {
-      await retry(() => uploadReferralDocAndSetDataHash(referralAddress), DEFAULT_RETRY_OPTIONS).promise
+      await retry(() => uploadReferralDocAndSetDataHash(referralAddress.value), DEFAULT_RETRY_OPTIONS).promise
 
       setAffiliateState('ACTIVE')
     } catch (error) {
@@ -73,6 +80,7 @@ export default function AffiliateStatusCheck() {
     }
 
     setAffiliateState(null)
+    setError('')
 
     if (!account) {
       setAffiliateState('NOT_CONNECTED')
@@ -84,21 +92,41 @@ export default function AffiliateStatusCheck() {
       return
     }
 
-    if (referralAddress === account) {
+    if (referralAddress.value === account) {
       // clean-up saved referral address if the user follows its own referral link
       history.push('/profile')
       setAffiliateState('OWN_LINK')
+
+      if (referralAddressQueryParam) {
+        history.push('/profile' + location.search)
+      }
       return
     }
 
-    const hasJustTraded = allNonEmptyOrders.filter((order) => isOrderRecent(order, MINUTE_MS)).length >= 1
+    const hasJustTraded =
+      allRecentActivity
+        .filter(isConfirmed)
+        .filter((tx: any) => tx.Date.now() - Date.parse(tx.confirmedTime) < MINUTE_MS).length >= 1
+
     if (hasJustTraded) {
       setAffiliateState(null)
+      resetReferralAddress()
       return
     }
 
     uploadDataDoc()
-  }, [referralAddress, account, history, chainId, appDispatch, uploadDataDoc, allNonEmptyOrders])
+  }, [
+    referralAddress,
+    account,
+    history,
+    chainId,
+    appDispatch,
+    uploadDataDoc,
+    allRecentActivity,
+    resetReferralAddress,
+    location.search,
+    referralAddressQueryParam,
+  ])
 
   if (error) {
     return (

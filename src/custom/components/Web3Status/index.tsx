@@ -4,9 +4,9 @@ import WalletModal from 'components/WalletModal'
 import { Web3StatusInner, Web3StatusConnected, Text } from './Web3StatusMod'
 import { AbstractConnector } from '@web3-react/abstract-connector'
 import { getStatusIcon } from 'components/AccountDetails'
-import useRecentActivity, { TransactionAndOrder } from 'hooks/useRecentActivity'
+import useRecentActivity from 'hooks/useRecentActivity'
+import { isPending, isConfirmed } from 'utils/trade'
 import { useWalletInfo } from 'hooks/useWalletInfo'
-import { OrderStatus } from 'state/orders/actions'
 import { ButtonSecondary } from 'components/Button'
 
 const Wrapper = styled.div`
@@ -49,10 +49,6 @@ const Wrapper = styled.div`
     `}
   }
 `
-
-const isPending = (data: TransactionAndOrder) => data.status === OrderStatus.PENDING
-const isConfirmed = (data: TransactionAndOrder) =>
-  data.status === OrderStatus.FULFILLED || data.status === OrderStatus.EXPIRED || data.status === OrderStatus.CANCELLED
 
 function StatusIcon({ connector }: { connector: AbstractConnector }): JSX.Element | null {
   const walletInfo = useWalletInfo()
