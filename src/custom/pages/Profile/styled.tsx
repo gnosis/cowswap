@@ -64,9 +64,6 @@ export const GridWrap = styled.div<Partial<CSS.Properties & { horizontal?: boole
       grid-column-start: 1;
       grid-column-end: 2;
     }
-    > :nth-child(4) {
-      display: none;
-    }
   `};
 `
 
@@ -116,6 +113,9 @@ export const FlexWrap = styled.div`
   align-items: center;
   flex-direction: row;
   justify-content: center;
+  > div {
+    width: auto;
+  }
   button {
     max-width: 180px;
   }
