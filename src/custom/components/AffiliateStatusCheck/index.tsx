@@ -35,7 +35,6 @@ export default function AffiliateStatusCheck() {
   const [error, setError] = useState('')
 
   const uploadDataDoc = useCallback(async () => {
-    setError('')
     if (!chainId || !account || !referralAddress) {
       return
     }
@@ -75,6 +74,7 @@ export default function AffiliateStatusCheck() {
     }
 
     setAffiliateState(null)
+    setError('')
 
     if (!account) {
       setAffiliateState('NOT_CONNECTED')
@@ -98,7 +98,16 @@ export default function AffiliateStatusCheck() {
     }
 
     uploadDataDoc()
-  }, [referralAddress, account, history, chainId, appDispatch, uploadDataDoc, location, referralAddressQueryParam])
+  }, [
+    referralAddress,
+    account,
+    history,
+    chainId,
+    appDispatch,
+    uploadDataDoc,
+    location.search,
+    referralAddressQueryParam,
+  ])
 
   if (error) {
     return (
