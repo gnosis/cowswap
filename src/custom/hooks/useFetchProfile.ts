@@ -3,22 +3,35 @@ import { useEffect, useState } from 'react'
 import { getProfileData } from 'api/gnosisProtocol'
 import { ProfileData } from 'api/gnosisProtocol/api'
 
-export default function useFetchProfile() {
+type FetchProfileState = {
+  profileData: ProfileData | null
+  //error: string
+  isLoading: boolean
+}
+
+const emptyState: FetchProfileState = {
+  profileData: null,
+  //error: '',
+  isLoading: false,
+}
+
+export default function useFetchProfile(): FetchProfileState {
   const { account, chainId } = useActiveWeb3React()
-  const [profileData, setProfileData] = useState<ProfileData | null>(null)
+  const [profile, setProfile] = useState<FetchProfileState>(emptyState)
 
   useEffect(() => {
     async function fetchAndSetProfileData() {
       if (chainId && account) {
+        setProfile({ ...emptyState, isLoading: true })
         const profileData = await getProfileData(chainId, account)
-        setProfileData(profileData)
+        setProfile({ ...emptyState, isLoading: false, profileData })
       } else {
-        setProfileData(null)
+        setProfile(emptyState)
       }
     }
 
     fetchAndSetProfileData()
   }, [account, chainId])
 
-  return profileData
+  return profile
 }
