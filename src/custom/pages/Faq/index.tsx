@@ -409,8 +409,7 @@ export default function Faq() {
           </p>
           <h3 id="wallet-not-supported">Why is my wallet not supported?</h3>
           <p>
-            CowSwap uses offline signatures to offer gasless orders, additionally has support for smart contract wallets
-            by using some alternative signing method called{' '}
+            CowSwap uses offline signatures to offer gasless orders. Additionally, Smart Contract (SC) wallets are supported through an alternative signing method called{' '}
             <LinkScrollable href={'#what-is-presign'}>pre-sign</LinkScrollable>.
           </p>
           <p>
