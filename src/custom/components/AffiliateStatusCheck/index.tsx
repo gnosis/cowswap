@@ -5,10 +5,11 @@ import useRecentActivity from 'hooks/useRecentActivity'
 import NotificationBanner from 'components/NotificationBanner'
 import { useReferralAddress, useResetReferralAddress, useUploadReferralDocAndSetDataHash } from 'state/affiliate/hooks'
 import { useAppDispatch } from 'state/hooks'
-import { hasTrades, isConfirmed } from 'utils/trade'
+import { hasTrades } from 'utils/trade'
 import { retry, RetryOptions } from 'utils/retry'
 import { SupportedChainId } from 'constants/chains'
 import useParseReferralQueryParam from 'hooks/useParseReferralQueryParam'
+import { OrderStatus } from '@src/custom/state/orders/actions'
 
 type AffiliateStatus = 'NOT_CONNECTED' | 'OWN_LINK' | 'ALREADY_TRADED' | 'ACTIVE' | 'UNSUPPORTED_NETWORK'
 
@@ -105,7 +106,7 @@ export default function AffiliateStatusCheck() {
 
     const hasJustTraded =
       allRecentActivity
-        .filter(isConfirmed)
+        .filter((data) => data.status === OrderStatus.FULFILLED)
         .filter((tx: any) => tx.Date.now() - Date.parse(tx.confirmedTime) < MINUTE_MS).length >= 1
 
     if (hasJustTraded) {
