@@ -409,23 +409,29 @@ export default function Faq() {
           </p>
           <h3 id="wallet-not-supported">Why is my wallet not supported?</h3>
           <p>
-            CowSwap uses offline signatures to offer gasless orders. Additionally, Smart Contract (SC) wallets are supported through an alternative signing method called{' '}
+            CowSwap uses offline signatures to offer gasless orders. Additionally, Smart Contract (SC) wallets are
+            supported through an alternative signing method called{' '}
             <LinkScrollable href={'#what-is-presign'}>pre-sign</LinkScrollable>.
           </p>
           <p>
-           Regular, non Smart Contract wallets (called EOA) require the wallet to support offchain-signing (EIP712 standard).
+            Regular, non Smart Contract wallets (called EOA) require the wallet to support offchain-signing (EIP712
+            standard).
           </p>
           <p>
-            Through our own internal testing and user reports, we identified some EOA wallets that do not yet work with offchain-signing. Thus, you might find your wallet is not supported. If that is the case for
-            you, reach out to your wallet developers and ask for it.
+            Through our own internal testing and user reports, we identified some EOA wallets that do not yet work with
+            offchain-signing. Thus, you might find your wallet is not supported. If that is the case for you, reach out
+            to your wallet developers and ask for it.
           </p>
           <h3 id="smart-contract-support">Are Smart Contract wallets supported?</h3>
-          <p>Yes! Any Smart Contract (be it a wallet or regular contract) can trade in CowSwap by using one signing method called pre-sign.</p>
+          <p>
+            Yes! Any Smart Contract (be it a wallet or regular contract) can trade in CowSwap by using one signing
+            method called pre-sign.
+          </p>
           <p>
             pre-sign is a protocol operation that can be invoked by any contract. The operation has a single parameter
-            that is the &quot;orderId&quot; which identifies the order being approved. Once the
-            smart contract pre-signs an order, it becomes automatically tradable, therefore solvers will start
-            considering it for their solutions.
+            that is the &quot;orderId&quot; which identifies the order being approved. Once the smart contract pre-signs
+            an order, it becomes automatically tradable, therefore solvers will start considering it for their
+            solutions.
           </p>
           <p>
             In the future, the protocol could provide EIP712 support for off-chain signing also for smart contracts,
