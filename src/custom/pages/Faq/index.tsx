@@ -419,7 +419,7 @@ export default function Faq() {
             Through our own internal testing and user reports, we identified some EOA wallets that do not yet work with offchain-signing. Thus, you might find your wallet is not supported. If that is the case for
             you, reach out to your wallet developers and ask for it.
           </p>
-          <h3 id="smart-contract-support">Are smart contract integrations supported?</h3>
+          <h3 id="smart-contract-support">Are Smart Contract wallets supported?</h3>
           <p>Yes! Any smart contract can trade in CowSwap by using one signing method called pre-sign.</p>
           <p>
             pre-sign is a protocol operation that can be invoked by any contract. The operation has a single parameter
