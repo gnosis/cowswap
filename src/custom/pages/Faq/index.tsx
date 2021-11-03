@@ -436,7 +436,7 @@ export default function Faq() {
           <p>
             It&apos;s an alternative way of signing orders offered by the protocol. It&apos;s specially interesting for
             smart contract integrations and Smart Contract wallets. See{' '}
-            <LinkScrollable href={'#smart-contract-support'}>smart contract support</LinkScrollable> for more
+            <LinkScrollable href={'#smart-contract-support'}>Smart Contract support</LinkScrollable> for more
             information.
           </p>
           <h3 id="what-are-gnosis-protocol-v2-solvers">What are Gnosis Protocol v2 Solvers?</h3>
