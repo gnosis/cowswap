@@ -1,5 +1,5 @@
 import { SupportedChainId as ChainId } from 'constants/chains'
-import { OrderKind } from '@gnosis.pm/gp-v2-contracts'
+import { OrderKind, QuoteQuery } from '@gnosis.pm/gp-v2-contracts'
 import { getSigningSchemeApiValue, OrderCreation, OrderCancellation, SigningSchemeValue } from 'utils/signatures'
 import { APP_DATA_HASH } from 'constants/index'
 import { registerOnWindow } from 'utils/misc'
@@ -16,7 +16,7 @@ import QuoteError, {
   GpQuoteErrorDetails,
 } from 'api/gnosisProtocol/errors/QuoteError'
 import { toErc20Address } from 'utils/tokens'
-import { FeeInformation, FeeQuoteParams, PriceInformation, PriceQuoteParams } from 'utils/price'
+import { FeeInformation, FeeQuoteParams, PriceInformation, PriceQuoteParams, SimpleGetQuoteResponse } from 'utils/price'
 import { AppDataDoc } from 'utils/metadata'
 import MetadataError, {
   MetadataApiErrorCodeDetails,
@@ -27,6 +27,8 @@ import MetadataError, {
 import { DEFAULT_NETWORK_FOR_LISTS } from 'constants/lists'
 import { GAS_FEE_ENDPOINTS } from 'constants/index'
 import * as Sentry from '@sentry/browser'
+import { ZERO_ADDRESS } from '@src/constants/misc'
+import { getAppDataHash } from 'constants/appDataHash'
 
 function getGnosisProtocolUrl(): Partial<Record<ChainId, string>> {
   if (isLocal || isDev || isPr || isBarn) {
@@ -194,7 +196,7 @@ const UNHANDLED_METADATA_ERROR: MetadataApiErrorObject = {
   description: MetadataApiErrorCodeDetails.UNHANDLED_GET_ERROR,
 }
 
-async function _handleQuoteResponse(response: Response, params?: FeeQuoteParams) {
+async function _handleQuoteResponse<T = any>(response: Response, params?: FeeQuoteParams): Promise<T> {
   if (!response.ok) {
     const errorObj: ApiErrorObject = await response.json()
 
@@ -224,7 +226,45 @@ async function _handleQuoteResponse(response: Response, params?: FeeQuoteParams)
   }
 }
 
-export async function getPriceQuote(params: PriceQuoteParams): Promise<PriceInformation | null> {
+function _mapNewToLegacyParams(params: FeeQuoteParams): QuoteQuery {
+  const { amount, kind, userAddress = ZERO_ADDRESS, validTo, sellToken, buyToken } = params
+
+  const baseParams = {
+    sellToken,
+    buyToken,
+    from: userAddress as string,
+    // TODO: check this
+    receiver: userAddress as string,
+    appData: getAppDataHash(),
+    validTo,
+    partiallyFillable: false,
+  }
+
+  const finalParams: QuoteQuery =
+    kind === OrderKind.SELL
+      ? {
+          kind: OrderKind.SELL,
+          sellAmountBeforeFee: amount,
+          ...baseParams,
+        }
+      : {
+          kind: OrderKind.BUY,
+          buyAmountAfterFee: amount,
+          ...baseParams,
+        }
+
+  return finalParams
+}
+
+export async function getPriceQuote(params: FeeQuoteParams) {
+  const { chainId } = params
+  const quoteParams = _mapNewToLegacyParams(params)
+  const response = await _post(chainId, '/quote', quoteParams)
+
+  return _handleQuoteResponse<SimpleGetQuoteResponse>(response)
+}
+
+export async function getPriceQuoteLegacy(params: PriceQuoteParams): Promise<PriceInformation | null> {
   const { baseToken, quoteToken, amount, kind, chainId } = params
   console.log(`[api:${API_NAME}] Get price from API`, params)
 
@@ -240,7 +280,7 @@ export async function getPriceQuote(params: PriceQuoteParams): Promise<PriceInfo
     throw new QuoteError(UNHANDLED_QUOTE_ERROR)
   })
 
-  return _handleQuoteResponse(response)
+  return _handleQuoteResponse<PriceInformation | null>(response)
 }
 
 export async function getFeeQuote(params: FeeQuoteParams): Promise<FeeInformation> {
