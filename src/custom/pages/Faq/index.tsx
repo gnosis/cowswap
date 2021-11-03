@@ -416,7 +416,7 @@ export default function Faq() {
            Regular, non Smart Contract wallets (called EOA) require the wallet to support offchain-signing (EIP712 standard).
           </p>
           <p>
-            Some wallets have reported issues with this offchain-signing, so they are disabled. If that is the case for
+            Through our own internal testing and user reports, we identified some EOA wallets that do not yet work with offchain-signing. Thus, you might find your wallet is not supported. If that is the case for
             you, reach out to your wallet developers and ask for it.
           </p>
           <h3 id="smart-contract-support">Are smart contract integrations supported?</h3>
