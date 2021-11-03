@@ -685,9 +685,9 @@ export default function Faq() {
             prepared by one of the solvers and sent to the Ethereum network.
           </p>
           <p>
-            Alternatively there is the so-called hard cancellations, which allow to cancel your order onchain. This is
+            Alternatively there is the so-called hard cancellation, which allows to cancel an order on-chain. This is
             not currently supported by CowSwap web interface, and you would need to pay for the gas of the on-chain
-            cancellation, but is available at protocol level.
+            cancellation. For more information, check the Smart Contract implementation.
           </p>
 
           <h3 id="why-does-the-ui-dapp-have-a-warning-fees-exceed-from-amount">
