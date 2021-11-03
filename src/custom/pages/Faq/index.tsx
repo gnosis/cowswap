@@ -435,7 +435,7 @@ export default function Faq() {
           <h3 id="what-is-presign">What is pre-sign?</h3>
           <p>
             It&apos;s an alternative way of signing orders offered by the protocol. It&apos;s specially interesting for
-            smart contract integrations and smart contract wallets. See{' '}
+            smart contract integrations and Smart Contract wallets. See{' '}
             <LinkScrollable href={'#smart-contract-support'}>smart contract support</LinkScrollable> for more
             information.
           </p>
