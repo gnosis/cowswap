@@ -95,7 +95,9 @@ export default function Profile() {
                 <span role="img" aria-label="farmer">
                   🧑‍🌾
                 </span>
-                <strong>{formatInt(profileData?.totalTrades)}</strong>
+                <Loader isLoading={isLoading}>
+                  <strong>{formatInt(profileData?.totalTrades)}</strong>
+                </Loader>
                 <Loader isLoading={isLoading}>
                   <span>Total trades</span>
                 </Loader>
@@ -104,7 +106,9 @@ export default function Profile() {
                 <span role="img" aria-label="moneybag">
                   💰
                 </span>
-                <strong>{formatDecimal(profileData?.tradeVolumeUsd)}</strong>
+                <Loader isLoading={isLoading}>
+                  <strong>{formatDecimal(profileData?.tradeVolumeUsd)}</strong>
+                </Loader>
                 <Loader isLoading={isLoading}>
                   <span>Total traded volume</span>
                 </Loader>
@@ -123,7 +127,9 @@ export default function Profile() {
                 <span role="img" aria-label="handshake">
                   🤝
                 </span>
-                <strong>{formatInt(profileData?.totalReferrals)}</strong>
+                <Loader isLoading={isLoading}>
+                  <strong>{formatInt(profileData?.totalReferrals)}</strong>
+                </Loader>
                 <Loader isLoading={isLoading}>
                   <span>Total referrals</span>
                 </Loader>
@@ -132,7 +138,9 @@ export default function Profile() {
                 <span role="img" aria-label="wingedmoney">
                   💸
                 </span>
-                <strong>{formatDecimal(profileData?.referralVolumeUsd)}</strong>
+                <Loader isLoading={isLoading}>
+                  <strong>{formatDecimal(profileData?.referralVolumeUsd)}</strong>
+                </Loader>
                 <Loader isLoading={isLoading}>
                   <span>Referrals volume</span>
                 </Loader>
