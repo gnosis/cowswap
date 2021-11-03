@@ -589,7 +589,7 @@ export default function Faq() {
               <p>
                 <strong>Pre-sign order</strong> <br />
                 Alternative signing method offered by the protocol to allow Smart Contract integration. See{' '}
-                <LinkScrollable href={'#smart-contract-support'}>smart contract support</LinkScrollable> for more
+                <LinkScrollable href={'#smart-contract-support'}>Smart Contract support</LinkScrollable> for more
                 information.
               </p>
             </li>
