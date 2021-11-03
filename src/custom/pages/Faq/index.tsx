@@ -420,7 +420,7 @@ export default function Faq() {
             you, reach out to your wallet developers and ask for it.
           </p>
           <h3 id="smart-contract-support">Are Smart Contract wallets supported?</h3>
-          <p>Yes! Any smart contract can trade in CowSwap by using one signing method called pre-sign.</p>
+          <p>Yes! Any Smart Contract (be it a wallet or regular contract) can trade in CowSwap by using one signing method called pre-sign.</p>
           <p>
             pre-sign is a protocol operation that can be invoked by any contract. The operation has a single parameter
             that is the &quot;orderId&quot; which identifies the order that the smart contract is approving. Once the
