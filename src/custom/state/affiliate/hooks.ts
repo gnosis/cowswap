@@ -28,13 +28,11 @@ export function useReferralAddress() {
 export function useUploadReferralDocAndSetDataHash() {
   const dispatch = useAppDispatch()
 
-  return 
-  (
-    async (referralAddress: string) => {
-      const appDataHash = await uploadMetadataDocToIpfs(generateReferralMetadataDoc(referralAddress))
+  return
+  ;async (referralAddress: string) => {
+    const appDataHash = await uploadMetadataDocToIpfs(generateReferralMetadataDoc(referralAddress))
 
-      dispatch(updateAppDataHash(appDataHash))
-    },
+    dispatch(updateAppDataHash(appDataHash))
+  },
     [dispatch]
-  )
 }
