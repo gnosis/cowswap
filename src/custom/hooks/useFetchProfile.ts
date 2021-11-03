@@ -5,13 +5,13 @@ import { ProfileData } from 'api/gnosisProtocol/api'
 
 type FetchProfileState = {
   profileData: ProfileData | null
-  //error: string
+  error: string
   isLoading: boolean
 }
 
 const emptyState: FetchProfileState = {
   profileData: null,
-  //error: '',
+  error: '',
   isLoading: false,
 }
 
@@ -22,6 +22,7 @@ export default function useFetchProfile(): FetchProfileState {
   const [profile, setProfile] = useState<FetchProfileState>(emptyState)
 
   useEffect(() => {
+    setProfile({ ...emptyState, isLoading: true })
     async function fetchAndSetProfileData() {
       try {
         if (chainId && account) {
