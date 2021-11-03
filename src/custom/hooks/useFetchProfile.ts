@@ -24,9 +24,9 @@ export default function useFetchProfile(): FetchProfileState {
   useEffect(() => {
     async function fetchAndSetProfileData() {
       if (chainId && account) {
-        setProfile({ ...emptyState, isLoading: true })
+        setProfile((profile) => ({ ...profile, isLoading: true, error: '' }))
         const profileData = await getProfileData(chainId, account)
-        setProfile({ ...emptyState, isLoading: false, profileData })
+        setProfile((profile) => ({ ...profile, isLoading: false, profileData }))
       } else {
         setProfile(emptyState)
       }
