@@ -434,7 +434,7 @@ export default function Faq() {
             solutions.
           </p>
           <p>
-            In the future, the protocol could provide EIP712 support for off-chain signing also for smart contracts,
+            In the future, the protocol might provide EIP712 support for off-chain signing also for smart contracts,
             making gas-less trading possible also for smart contracts.
           </p>
 
