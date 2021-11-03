@@ -413,8 +413,7 @@ export default function Faq() {
             <LinkScrollable href={'#what-is-presign'}>pre-sign</LinkScrollable>.
           </p>
           <p>
-            Smart Contract (SC) are supported by using pre-sign method, however for normal wallets (EOA) CowSwaps
-            requires the wallet to support offchain-signing (EIP712 standard).
+           Regular, non Smart Contract wallets (called EOA) require the wallet to support offchain-signing (EIP712 standard).
           </p>
           <p>
             Some wallets have reported issues with this offchain-signing, so they are disabled. If that is the case for
