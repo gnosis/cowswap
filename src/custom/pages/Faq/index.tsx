@@ -423,7 +423,7 @@ export default function Faq() {
           <p>Yes! Any Smart Contract (be it a wallet or regular contract) can trade in CowSwap by using one signing method called pre-sign.</p>
           <p>
             pre-sign is a protocol operation that can be invoked by any contract. The operation has a single parameter
-            that is the &quot;orderId&quot; which identifies the order that the smart contract is approving. Once the
+            that is the &quot;orderId&quot; which identifies the order being approved. Once the
             smart contract pre-signs an order, it becomes automatically tradable, therefore solvers will start
             considering it for their solutions.
           </p>
