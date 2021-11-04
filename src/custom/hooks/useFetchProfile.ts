@@ -23,12 +23,21 @@ export default function useFetchProfile(): FetchProfileState {
 
   useEffect(() => {
     async function fetchAndSetProfileData() {
-      if (chainId && account) {
-        setProfile((profile) => ({ ...profile, isLoading: true, error: '' }))
-        const profileData = await getProfileData(chainId, account)
-        setProfile((profile) => ({ ...profile, isLoading: false, profileData }))
-      } else {
-        setProfile(emptyState)
+      try {
+        if (chainId && account) {
+          setProfile((profile) => ({ ...profile, isLoading: true, error: '' }))
+          const profileData = await getProfileData(chainId, account)
+          setProfile((profile) => ({ ...profile, isLoading: false, profileData }))
+        } else {
+          setProfile(emptyState)
+        }
+      } catch (error) {
+        console.error(error)
+        setProfile((profile) => ({
+          ...profile,
+          isLoading: false,
+          error: 'There was an error while fetching the profile data',
+        }))
       }
     }
 
