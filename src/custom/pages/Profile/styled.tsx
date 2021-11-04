@@ -146,6 +146,9 @@ export const FlexCol = styled.div`
   span:not([role='img']) {
     font-size: 14px;
     color: ${({ theme }) => theme.text6};
-    line-height: 32px;
+    min-height: 32px;
+    text-align: center;
+    display: flex;
+    align-items: center;
   }
 `
