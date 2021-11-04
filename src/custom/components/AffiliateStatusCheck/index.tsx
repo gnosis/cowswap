@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState, useRef, useMemo } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 import { useActiveWeb3React } from 'hooks/web3'
 import useRecentActivity from 'hooks/useRecentActivity'
@@ -25,9 +25,6 @@ const STATUS_TO_MESSAGE_MAPPING: Record<AffiliateStatus, string> = {
 
 const DEFAULT_RETRY_OPTIONS: RetryOptions = { n: 3, minWait: 1000, maxWait: 3000 }
 
-// One minute in MS (milliseconds not Microsoft)
-const MINUTE_MS = 60_0000
-
 export default function AffiliateStatusCheck() {
   const appDispatch = useAppDispatch()
   const resetReferralAddress = useResetReferralAddress()
@@ -40,6 +37,15 @@ export default function AffiliateStatusCheck() {
   const referralAddressQueryParam = useParseReferralQueryParam()
   const [affiliateState, setAffiliateState] = useState<AffiliateStatus | null>()
   const [error, setError] = useState('')
+  const isFirstTrade = useRef(false)
+
+  const { fulfilledOrders } = useMemo(() => {
+    const fulfilledOrders = allRecentActivity.filter((data) => data.status === OrderStatus.FULFILLED)
+
+    return {
+      fulfilledOrders,
+    }
+  }, [allRecentActivity])
 
   const uploadDataDoc = useCallback(async () => {
     if (!chainId || !account || !referralAddress) {
@@ -54,7 +60,6 @@ export default function AffiliateStatusCheck() {
     try {
       // we first validate that the user hasn't already traded
       const userHasTrades = await retry(() => hasTrades(chainId, account), DEFAULT_RETRY_OPTIONS).promise
-
       if (userHasTrades) {
         setAffiliateState('ALREADY_TRADED')
         return
@@ -69,6 +74,7 @@ export default function AffiliateStatusCheck() {
       await retry(() => uploadReferralDocAndSetDataHash(referralAddress.value), DEFAULT_RETRY_OPTIONS).promise
 
       setAffiliateState('ACTIVE')
+      isFirstTrade.current = true
     } catch (error) {
       console.error(error)
       setError('There was an error while uploading the referral document to IPFS. Please try again.')
@@ -104,14 +110,12 @@ export default function AffiliateStatusCheck() {
       return
     }
 
-    const hasJustTraded =
-      allRecentActivity
-        .filter((data) => data.status === OrderStatus.FULFILLED)
-        .filter((tx: any) => tx.Date.now() - Date.parse(tx.confirmedTime) < MINUTE_MS).length >= 1
+    const hasJustTraded = fulfilledOrders.length >= 1
 
-    if (hasJustTraded) {
+    if (hasJustTraded && isFirstTrade.current) {
       setAffiliateState(null)
       resetReferralAddress()
+      isFirstTrade.current = false
       return
     }
 
@@ -123,10 +127,10 @@ export default function AffiliateStatusCheck() {
     chainId,
     appDispatch,
     uploadDataDoc,
-    allRecentActivity,
     resetReferralAddress,
     location.search,
     referralAddressQueryParam,
+    fulfilledOrders,
   ])
 
   if (error) {
