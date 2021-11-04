@@ -205,18 +205,15 @@ export default function Faq() {
 
           <p>
             Defined by Phil Daian et al. in the{' '}
-            <ExternalLink href="https://arxiv.org/abs/1904.05234" target="_blank" rel="noopener noreferrer">
-              {' '}
-              paper Flash Boys 2.0{' '}
-            </ExternalLink>
-            , MEV is a measure of the profit a miner (or validator, sequencer, etc.) can make through their ability to
-            arbitrarily include, exclude, or re-order transactions within the blocks they produce.
+            <ExternalLink href="https://arxiv.org/abs/1904.05234">paper Flash Boys 2.0 </ExternalLink>, MEV is a measure
+            of the profit a miner (or validator, sequencer, etc.) can make through their ability to arbitrarily include,
+            exclude, or re-order transactions within the blocks they produce.
           </p>
 
           <p>
             Since January 2020 until now (July&#39;21), the total amount of value extracted by miners (etc.) on Ethereum
             transactions has reached{' '}
-            <ExternalLink href="https://explore.flashbots.net/" target="_blank" rel="noopener noreferrer">
+            <ExternalLink href="https://explore.flashbots.net/">
               $ 796.8 Million, including successful and failed transactions.
             </ExternalLink>
           </p>
@@ -226,11 +223,7 @@ export default function Faq() {
           </h3>
 
           <p>
-            <ExternalLink
-              href="https://en.wikipedia.org/wiki/Coincidence_of_wants"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
+            <ExternalLink href="https://en.wikipedia.org/wiki/Coincidence_of_wants">
               Coincidence of Wants (CoWs)
             </ExternalLink>{' '}
             can be explained as “an economic phenomenon where two parties each hold an item the other wants, so they
@@ -294,11 +287,7 @@ export default function Faq() {
 
           <p>
             Finding the best settlement for orders is a challenging task, which very soon may have its own{' '}
-            <ExternalLink
-              href="https://forum.gnosis.io/t/gpv2-road-to-decentralization/1245"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
+            <ExternalLink href="https://forum.gnosis.io/t/gpv2-road-to-decentralization/1245">
               decentralized competition
             </ExternalLink>
             .
@@ -314,11 +303,7 @@ export default function Faq() {
           <p>
             With this upgrade, CowSwap evolves into its most stable, performant form: the code has been thoroughly and
             carefully tested, peer-reviewed and fully{' '}
-            <ExternalLink
-              href="https://github.com/gnosis/gp-v2-contracts/blob/main/audits/GnosisProtocolV2May2021.pdf"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
+            <ExternalLink href="https://github.com/gnosis/gp-v2-contracts/blob/main/audits/GnosisProtocolV2May2021.pdf">
               audited
             </ExternalLink>
             . Whilst CowSwap has taken a major step forward in terms of security and stability, as with other crypto
@@ -341,14 +326,9 @@ export default function Faq() {
           <p>
             There is currently no CowSwap specific token, however, the community has expressed it&#39;s desire to
             participate in this exciting project. That is why there is an ongoing discussion in the{' '}
-            <ExternalLink href="https://forum.gnosis.io/c/gnosis-protocol" target="_blank" rel="noopener noreferrer">
-              Forum
-            </ExternalLink>{' '}
-            and{' '}
-            <ExternalLink href="https://chat.cowswap.exchange" target="_blank" rel="noopener noreferrer">
-              Discord
-            </ExternalLink>{' '}
-            about the possibility of creating one, so make sure your voice is heard!
+            <ExternalLink href="https://forum.gnosis.io/c/gnosis-protocol">Forum</ExternalLink> and{' '}
+            <ExternalLink href="https://chat.cowswap.exchange">Discord</ExternalLink> about the possibility of creating
+            one, so make sure your voice is heard!
           </p>
           <p>
             Be cautious, some people may create fake COW tokens, that are not affiliated with this project. Please note
@@ -356,11 +336,8 @@ export default function Faq() {
             form.
           </p>
           <p>
-            Follow{' '}
-            <ExternalLink href="https://twitter.com/mevprotection" target="_blank" rel="noopener noreferrer">
-              @MEVProtection
-            </ExternalLink>{' '}
-            on Twitter to be up to date!
+            Follow <ExternalLink href="https://twitter.com/mevprotection">@MEVProtection</ExternalLink> on Twitter to be
+            up to date!
           </p>
           <h3 id="what-is-cowswap-s-fee-model">What is CowSwap’s fee model?</h3>
           <p>
@@ -415,10 +392,7 @@ export default function Faq() {
           </p>
           <p>
             Regular, non Smart Contract wallets (called EOA) require the wallet to support offchain-signing (
-            <ExternalLink href="https://eips.ethereum.org/EIPS/eip-712" target="_blank" rel="noopener noreferrer">
-              EIP-712
-            </ExternalLink>{' '}
-            standard).
+            <ExternalLink href="https://eips.ethereum.org/EIPS/eip-712">EIP-712</ExternalLink> standard).
           </p>
           <p>
             Through our own internal testing and user reports, we identified some EOA wallets that do not yet work with
@@ -438,11 +412,8 @@ export default function Faq() {
           </p>
           <p>
             In the future, the protocol might provide{' '}
-            <ExternalLink href="https://eips.ethereum.org/EIPS/eip-1271" target="_blank" rel="noopener noreferrer">
-              EIP-1271
-            </ExternalLink>{' '}
-            support for off-chain signing also for smart contracts, making gas-less trading possible also for smart
-            contracts.
+            <ExternalLink href="https://eips.ethereum.org/EIPS/eip-1271">EIP-1271</ExternalLink> support for off-chain
+            signing also for smart contracts, making gas-less trading possible also for smart contracts.
           </p>
 
           <h3 id="what-is-presign">What is pre-sign?</h3>
@@ -787,10 +758,7 @@ export default function Faq() {
           <hr />
 
           <p>
-            Didn&#39;t find an answer? Join the{' '}
-            <ExternalLink href={DISCORD_LINK} target="_blank" rel="noopener noreferrer">
-              community on Discord
-            </ExternalLink>
+            Didn&#39;t find an answer? Join the <ExternalLink href={DISCORD_LINK}>community on Discord</ExternalLink>
           </p>
           <p>
             We really hope you like CowSwap. If you do,&nbsp;<Link to="/">Milk it!</Link>
