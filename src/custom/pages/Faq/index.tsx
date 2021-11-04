@@ -406,9 +406,8 @@ export default function Faq() {
           </p>
           <p>
             pre-sign is a protocol operation that can be invoked by any contract. The operation has a single parameter
-            that is the &quot;orderId&quot; which identifies the order being approved. Once the smart contract pre-signs
-            an order, it becomes automatically tradable, therefore solvers will start considering it for their
-            solutions.
+            that is the &quot;orderId&quot; which identifies the order being approved. Pre-signing your order in the
+            settlement contract is equivalent to providing an off-chain signature for the orderId.
           </p>
           <p>
             In the future, the protocol might provide{' '}
