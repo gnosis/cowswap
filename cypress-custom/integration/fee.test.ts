@@ -1,21 +1,32 @@
 import { WETH9 as WETH } from '@uniswap/sdk-core'
-import { OrderKind } from '@gnosis.pm/gp-v2-contracts'
-import { FeeQuoteParams, FeeInformation } from '../../src/custom/utils/price'
+import { GetQuoteResponse } from '@gnosis.pm/gp-v2-contracts'
 import { parseUnits } from 'ethers/lib/utils'
 
 const DAI = '0xc7AD46e0b8a400Bb3C915120d284AafbA8fc4735'
 const FOUR_HOURS = 3600 * 4 * 1000
 const DEFAULT_SELL_TOKEN = WETH[4]
+const DEFAULT_APP_DATA = '0x0000000000000000000000000000000000000000000000000000000000000000'
+const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 
-const getFeeQuery = ({ sellToken, buyToken, amount, kind }: Omit<FeeQuoteParams, 'chainId'>) =>
-  `https://protocol-rinkeby.dev.gnosisdev.com/api/v1/fee?sellToken=${sellToken}&buyToken=${buyToken}&amount=${amount}&kind=${kind}`
+const FEE_QUERY = `https://protocol-rinkeby.dev.gnosisdev.com/api/v1/quote`
 
-function _assertFeeData(fee: FeeInformation | string): void {
+const baseParams = {
+  from: ZERO_ADDRESS,
+  receiver: ZERO_ADDRESS,
+  validTo: Math.ceil(Date.now() / 1000 + 500),
+  appData: DEFAULT_APP_DATA,
+  sellTokenBalance: 'erc20',
+  buyTokenBalance: 'erc20',
+  partiallyFillable: false,
+}
+
+function _assertFeeData(fee: GetQuoteResponse): void {
   if (typeof fee === 'string') {
     fee = JSON.parse(fee)
   }
-  expect(fee).to.have.property('amount')
-  expect(fee).to.have.property('expirationDate')
+  expect(fee).to.have.property('quote')
+  expect(fee).to.have.property('expiration')
+  expect(fee.quote).to.have.property('feeAmount')
 }
 
 /* Fee not currently being saved in local so commenting this out
@@ -54,18 +65,25 @@ function _assertFeeFetched(token: string): Cypress.Chainable {
 
 describe('Fee endpoint', () => {
   it('Returns the expected info', () => {
-    const FEE_QUERY = getFeeQuery({
+    const params = {
       sellToken: DEFAULT_SELL_TOKEN.address,
       buyToken: DAI,
-      amount: parseUnits('0.1', DEFAULT_SELL_TOKEN.decimals).toString(),
-      kind: OrderKind.SELL,
+      sellAmountBeforeFee: parseUnits('0.1', DEFAULT_SELL_TOKEN.decimals).toString(),
+      kind: 'sell',
       fromDecimals: DEFAULT_SELL_TOKEN.decimals,
       toDecimals: 6,
-    })
+      // BASE PARAMS
+      ...baseParams,
+    }
 
     // GIVEN: -
     // WHEN: Call fee API
-    cy.request(FEE_QUERY)
+    cy.request({
+      method: 'POST',
+      url: FEE_QUERY,
+      body: params,
+      log: true,
+    })
       .its('body')
       // THEN: The API response has the expected data
       .should(_assertFeeData)
@@ -74,14 +92,6 @@ describe('Fee endpoint', () => {
 
 describe('Fee: Complex fetch and persist fee', () => {
   const INPUT_AMOUNT = '0.1'
-  const FEE_QUERY = getFeeQuery({
-    sellToken: DEFAULT_SELL_TOKEN.address,
-    buyToken: DAI,
-    amount: parseUnits(INPUT_AMOUNT, DEFAULT_SELL_TOKEN.decimals).toString(),
-    kind: OrderKind.SELL,
-    fromDecimals: DEFAULT_SELL_TOKEN.decimals,
-    toDecimals: 6,
-  })
 
   // Needs to run first to pass because of Cypress async issues between tests
   it('Re-fetched when it expires', () => {
@@ -126,14 +136,6 @@ describe('Fee: Complex fetch and persist fee', () => {
 
 describe('Fee: simple checks it exists', () => {
   const INPUT_AMOUNT = '0.1'
-  const FEE_QUERY = getFeeQuery({
-    sellToken: DEFAULT_SELL_TOKEN.address,
-    buyToken: DAI,
-    amount: parseUnits(INPUT_AMOUNT, DEFAULT_SELL_TOKEN.decimals).toString(),
-    kind: OrderKind.SELL,
-    fromDecimals: DEFAULT_SELL_TOKEN.decimals,
-    toDecimals: 6,
-  })
   const FEE_RESP = {
     // 1 min in future
     expirationDate: new Date(Date.now() + 60000).toISOString(),
