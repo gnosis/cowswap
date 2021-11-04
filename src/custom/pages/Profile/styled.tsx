@@ -121,6 +121,9 @@ export const FlexWrap = styled.div`
   }
   ${({ theme }) => theme.mediaWidth.upToSmall`
     flex-wrap: wrap;
+    > div {
+      width: 50%;
+    }
     button {
       max-width: 100%;
     }
