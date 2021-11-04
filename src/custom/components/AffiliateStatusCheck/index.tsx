@@ -1,7 +1,6 @@
-import React, { useCallback, useEffect, useState, useRef, useMemo } from 'react'
+import React, { useCallback, useEffect, useState, useRef } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 import { useActiveWeb3React } from 'hooks/web3'
-import useRecentActivity from 'hooks/useRecentActivity'
 import NotificationBanner from 'components/NotificationBanner'
 import { useReferralAddress, useResetReferralAddress, useUploadReferralDocAndSetDataHash } from 'state/affiliate/hooks'
 import { useAppDispatch } from 'state/hooks'
@@ -9,7 +8,6 @@ import { hasTrades } from 'utils/trade'
 import { retry, RetryOptions } from 'utils/retry'
 import { SupportedChainId } from 'constants/chains'
 import useParseReferralQueryParam from 'hooks/useParseReferralQueryParam'
-import { OrderStatus } from '@src/custom/state/orders/actions'
 
 type AffiliateStatus = 'NOT_CONNECTED' | 'OWN_LINK' | 'ALREADY_TRADED' | 'ACTIVE' | 'UNSUPPORTED_NETWORK'
 
@@ -32,20 +30,11 @@ export default function AffiliateStatusCheck() {
   const history = useHistory()
   const location = useLocation()
   const { account, chainId } = useActiveWeb3React()
-  const allRecentActivity = useRecentActivity()
   const referralAddress = useReferralAddress()
   const referralAddressQueryParam = useParseReferralQueryParam()
   const [affiliateState, setAffiliateState] = useState<AffiliateStatus | null>()
   const [error, setError] = useState('')
   const isFirstTrade = useRef(false)
-
-  const { fulfilledOrders } = useMemo(() => {
-    const fulfilledOrders = allRecentActivity.filter((data) => data.status === OrderStatus.FULFILLED)
-
-    return {
-      fulfilledOrders,
-    }
-  }, [allRecentActivity])
 
   const uploadDataDoc = useCallback(async () => {
     if (!chainId || !account || !referralAddress) {
@@ -61,6 +50,12 @@ export default function AffiliateStatusCheck() {
       // we first validate that the user hasn't already traded
       const userHasTrades = await retry(() => hasTrades(chainId, account), DEFAULT_RETRY_OPTIONS).promise
       if (userHasTrades) {
+        if (isFirstTrade.current) {
+          setAffiliateState(null)
+          resetReferralAddress()
+          isFirstTrade.current = false
+          return
+        }
         setAffiliateState('ALREADY_TRADED')
         return
       }
@@ -79,7 +74,7 @@ export default function AffiliateStatusCheck() {
       console.error(error)
       setError('There was an error while uploading the referral document to IPFS. Please try again.')
     }
-  }, [chainId, account, referralAddress, uploadReferralDocAndSetDataHash])
+  }, [chainId, account, referralAddress, resetReferralAddress, uploadReferralDocAndSetDataHash])
 
   useEffect(() => {
     if (!referralAddress) {
@@ -109,15 +104,6 @@ export default function AffiliateStatusCheck() {
       return
     }
 
-    const hasJustTraded = fulfilledOrders.length >= 1
-
-    if (hasJustTraded && isFirstTrade.current) {
-      setAffiliateState(null)
-      resetReferralAddress()
-      isFirstTrade.current = false
-      return
-    }
-
     uploadDataDoc()
   }, [
     referralAddress,
@@ -129,7 +115,6 @@ export default function AffiliateStatusCheck() {
     resetReferralAddress,
     location.search,
     referralAddressQueryParam,
-    fulfilledOrders,
   ])
 
   if (error) {
