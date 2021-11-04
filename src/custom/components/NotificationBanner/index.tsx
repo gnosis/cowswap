@@ -11,7 +11,7 @@ export interface BannerProps {
   children: React.ReactNode
   level: Level
   isVisible: boolean
-  changeOnProp?: any
+  changeOnProp?: string
   canClose?: boolean
 }
 
