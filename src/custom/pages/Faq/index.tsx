@@ -417,7 +417,7 @@ export default function Faq() {
             Regular, non Smart Contract wallets (called EOA) require the wallet to support offchain-signing (
             <ExternalLink href="https://eips.ethereum.org/EIPS/eip-712" target="_blank" rel="noopener noreferrer">
               EIP-712
-            </ExternalLink>
+            </ExternalLink>{' '}
             standard).
           </p>
           <p>
