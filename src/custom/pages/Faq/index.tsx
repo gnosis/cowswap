@@ -414,7 +414,10 @@ export default function Faq() {
             <LinkScrollable href={'#what-is-presign'}>pre-sign</LinkScrollable>.
           </p>
           <p>
-            Regular, non Smart Contract wallets (called EOA) require the wallet to support offchain-signing (EIP712
+            Regular, non Smart Contract wallets (called EOA) require the wallet to support offchain-signing (
+            <ExternalLink href="https://eips.ethereum.org/EIPS/eip-712" target="_blank" rel="noopener noreferrer">
+              EIP-712
+            </ExternalLink>
             standard).
           </p>
           <p>
@@ -434,8 +437,12 @@ export default function Faq() {
             solutions.
           </p>
           <p>
-            In the future, the protocol might provide EIP712 support for off-chain signing also for smart contracts,
-            making gas-less trading possible also for smart contracts.
+            In the future, the protocol might provide{' '}
+            <ExternalLink href="https://eips.ethereum.org/EIPS/eip-1271" target="_blank" rel="noopener noreferrer">
+              EIP-1271
+            </ExternalLink>{' '}
+            support for off-chain signing also for smart contracts, making gas-less trading possible also for smart
+            contracts.
           </p>
 
           <h3 id="what-is-presign">What is pre-sign?</h3>
