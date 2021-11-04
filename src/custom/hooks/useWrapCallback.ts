@@ -18,6 +18,7 @@ import { OperationType } from '../components/TransactionConfirmationModal'
 import { ethers } from 'ethers'
 import { calculateGasMargin } from '@src/utils/calculateGasMargin'
 
+// Use a 180K gas as a fallback if there's issue calculating the gas estimation (fixes some issues with some nodes failing to calculate gas costs for SC wallets)
 const WRAP_UNWRAP_GAS_LIMIT_DEFAULT = ethers.BigNumber.from('180000')
 
 export enum WrapType {

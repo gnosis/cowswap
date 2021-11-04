@@ -12,6 +12,7 @@ import { useActiveWeb3React } from 'hooks/web3'
 import { useTokenAllowance } from 'hooks/useTokenAllowance'
 import { ethers } from 'ethers'
 
+// Use a 150K gas as a fallback if there's issue calculating the gas estimation (fixes some issues with some nodes failing to calculate gas costs for SC wallets)
 const APPROVE_GAS_LIMIT_DEFAULT = ethers.BigNumber.from('150000')
 
 export enum ApprovalState {
