@@ -7,7 +7,7 @@ import { shortenAddress } from 'utils'
 import { ExplorerDataType, getExplorerLink } from 'utils/getExplorerLink'
 import { AutoRow } from '../Row'
 import Copy from 'components/Copy'
-import Transaction from 'components/AccountDetails/Transaction'
+import Transaction from '@src/components/AccountDetails/Transaction'
 
 import { ReactComponent as Close } from '../../assets/images/x.svg'
 import { injected, walletconnect, walletlink, fortmatic, portis } from 'connectors'

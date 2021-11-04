@@ -1,12 +1,14 @@
 import { createAction } from '@reduxjs/toolkit'
 
-export type PopupContent = {
-  txn: {
-    hash: string
-    success: boolean
-    summary?: string
-  }
-}
+// MOD: Modified PopupContent. The mod happened directly in the src file, to avoid redefining the state/hoos/etc
+export type PopupContent = TxPopupContent | MetaTxPopupContent
+// export interface MetaTxPopupContent {
+//   metatxn: {
+//     id: string
+//     success: boolean
+//     summary?: string | JSX.Element
+//   }
+// }
 
 export enum ApplicationModal {
   WALLET,
@@ -19,6 +21,25 @@ export enum ApplicationModal {
   VOTE,
   POOL_OVERVIEW_OPTIONS,
   ARBITRUM_OPTIONS,
+  // -----------------      MOD: CowSwap specific modals      --------------------
+  TRANSACTION_CONFIRMATION,
+  // ------------------------------------------------------------------------------
+}
+
+export type TxPopupContent = {
+  txn: {
+    hash: string
+    success: boolean
+    summary?: string
+  }
+}
+
+export interface MetaTxPopupContent {
+  metatxn: {
+    id: string
+    success: boolean
+    summary?: string | JSX.Element
+  }
 }
 
 export const updateChainId = createAction<{ chainId: number | null }>('application/updateChainId')

@@ -1,7 +1,7 @@
 import { SupportedChainId as ChainId } from 'constants/chains'
 import { OrderKind } from '@gnosis.pm/gp-v2-contracts'
 import { stringify } from 'qs'
-import { getSigningSchemeApiValue, OrderCreation, OrderCancellation } from 'utils/signatures'
+import { getSigningSchemeApiValue, OrderCreation, OrderCancellation, SigningSchemeValue } from 'utils/signatures'
 import { APP_DATA_HASH } from 'constants/index'
 import { registerOnWindow } from 'utils/misc'
 import { isLocal, isDev, isPr, isBarn } from '../../utils/environments'
@@ -55,6 +55,7 @@ const ENABLED = process.env.REACT_APP_PRICE_FEED_GP_ENABLED !== 'false'
    where orderDigest = keccak256(orderStruct). bytes32.
  */
 export type OrderID = string
+export type ApiOrderStatus = 'fulfilled' | 'expired' | 'cancelled' | 'presignaturePending' | 'open'
 
 export interface OrderMetaData {
   creationDate: string
@@ -76,6 +77,8 @@ export interface OrderMetaData {
   kind: OrderKind
   partiallyFillable: false
   signature: string
+  signingScheme: SigningSchemeValue
+  status: ApiOrderStatus
 }
 
 export interface TradeMetaData {
@@ -140,11 +143,7 @@ function _delete(chainId: ChainId, url: string, data: any): Promise<Response> {
   return _fetch(chainId, url, 'DELETE', data)
 }
 
-export async function sendSignedOrder(params: {
-  chainId: ChainId
-  order: OrderCreation
-  owner: string
-}): Promise<OrderID> {
+export async function sendOrder(params: { chainId: ChainId; order: OrderCreation; owner: string }): Promise<OrderID> {
   const { chainId, order, owner } = params
   console.log(`[api:${API_NAME}] Post signed order for network`, chainId, order)
 
@@ -359,5 +358,5 @@ export async function getGasPrices(chainId: ChainId = DEFAULT_NETWORK_FOR_LISTS)
 
 // Register some globals for convenience
 registerOnWindow({
-  operator: { getFeeQuote, getTrades, getOrder, sendSignedOrder, apiGet: _get, apiPost: _post },
+  operator: { getFeeQuote, getTrades, getOrder, sendSignedOrder: sendOrder, apiGet: _get, apiPost: _post },
 })

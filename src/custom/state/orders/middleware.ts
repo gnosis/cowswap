@@ -15,11 +15,7 @@ const COW_SOUNDS: Sounds = {
   SUCCESS: '/audio/mooooo-success__ben__lower-90.mp3',
   ERROR: '/audio/mooooo-error__lower-90.mp3',
 }
-const HALLOWEEN_SOUNDS: Sounds = {
-  SEND: '/audio/mooooo-halloween__lower.wav',
-  SUCCESS: '/audio/mooooo-halloween__lower.wav',
-  ERROR: '/audio/mooooo-halloween__lower.wav',
-}
+
 const SOUND_CACHE: Record<string, HTMLAudioElement | undefined> = {}
 
 // action syntactic sugar
@@ -30,6 +26,7 @@ const isSingleOrderChangeAction = isAnyOf(
   OrderActions.cancelOrder
 )
 const isPendingOrderAction = isAnyOf(OrderActions.addPendingOrder)
+const isPresignOrders = isAnyOf(OrderActions.preSignOrders)
 const isSingleFulfillOrderAction = isAnyOf(OrderActions.fulfillOrder)
 const isBatchOrderAction = isAnyOf(
   OrderActions.fulfillOrdersBatch,
@@ -57,9 +54,10 @@ export const popupMiddleware: Middleware<Record<string, unknown>, AppState> = (s
 
     if (!orders) return
 
-    const { pending, fulfilled, expired, cancelled } = orders
+    const { pending, presignaturePending, fulfilled, expired, cancelled } = orders
 
-    const orderObject = pending?.[id] || fulfilled?.[id] || expired?.[id] || cancelled?.[id]
+    const orderObject =
+      pending?.[id] || presignaturePending?.[id] || fulfilled?.[id] || expired?.[id] || cancelled?.[id]
 
     // look up Order.summary for Popup
     const summary = orderObject?.order.summary
@@ -68,6 +66,8 @@ export const popupMiddleware: Middleware<Record<string, unknown>, AppState> = (s
     if (isPendingOrderAction(action)) {
       // Pending Order Popup
       popup = setPopupData(OrderTxTypes.METATXN, { summary, status: 'submitted', id })
+    } else if (isPresignOrders(action)) {
+      popup = setPopupData(OrderTxTypes.METATXN, { summary, status: 'presigned', id })
     } else if (isSingleFulfillOrderAction(action)) {
       // it's an OrderTxTypes.TXN, yes, but we still want to point to the explorer
       // because it's nicer there
@@ -173,16 +173,8 @@ export const popupMiddleware: Middleware<Record<string, unknown>, AppState> = (s
   return result
 }
 
-function getCowSounds(isDarkMode: boolean): Sounds {
-  if (isDarkMode) {
-    return HALLOWEEN_SOUNDS
-  } else {
-    return COW_SOUNDS
-  }
-}
-
-function getAudio(type: SoundType, isDarkMode: boolean): HTMLAudioElement {
-  const soundPath = getCowSounds(isDarkMode)[type]
+function getAudio(type: SoundType): HTMLAudioElement {
+  const soundPath = COW_SOUNDS[type]
   let sound = SOUND_CACHE[soundPath]
 
   if (!sound) {
@@ -193,16 +185,16 @@ function getAudio(type: SoundType, isDarkMode: boolean): HTMLAudioElement {
   return sound
 }
 
-function getCowSoundSend(isDarkMode: boolean): HTMLAudioElement {
-  return getAudio('SEND', isDarkMode)
+function getCowSoundSend(): HTMLAudioElement {
+  return getAudio('SEND')
 }
 
-function getCowSoundSuccess(isDarkMode: boolean): HTMLAudioElement {
-  return getAudio('SUCCESS', isDarkMode)
+function getCowSoundSuccess(): HTMLAudioElement {
+  return getAudio('SUCCESS')
 }
 
-function getCowSoundError(isDarkMode: boolean): HTMLAudioElement {
-  return getAudio('ERROR', isDarkMode)
+function getCowSoundError(): HTMLAudioElement {
+  return getAudio('ERROR')
 }
 
 function removeLightningEffect() {
@@ -218,14 +210,9 @@ function addLightningEffect() {
 }
 registerOnWindow({ addLightningEffect })
 
-// on each Pending, Expired, Fulfilled order action
-// a corresponsing sound is dispatched
+// On each Pending, Expired, Fulfilled order action a corresponding sound is dispatched
 export const soundMiddleware: Middleware<Record<string, unknown>, AppState> = (store) => (next) => (action) => {
   const result = next(action)
-
-  // Halloween temporary
-  const { userDarkMode, matchesDarkMode } = store.getState().user
-  const isDarkMode = userDarkMode === null ? matchesDarkMode : userDarkMode
 
   if (isBatchOrderAction(action)) {
     const { chainId } = action.payload
@@ -241,22 +228,17 @@ export const soundMiddleware: Middleware<Record<string, unknown>, AppState> = (s
 
   let cowSound
   if (isPendingOrderAction(action)) {
-    cowSound = getCowSoundSend(isDarkMode)
+    cowSound = getCowSoundSend()
   } else if (isFulfillOrderAction(action)) {
-    cowSound = getCowSoundSuccess(isDarkMode)
+    cowSound = getCowSoundSuccess()
   } else if (isExpireOrdersAction(action)) {
-    cowSound = getCowSoundError(isDarkMode)
+    cowSound = getCowSoundError()
   } else if (isCancelOrderAction(action)) {
-    // TODO: find a unique sound for order cancellation
-    cowSound = getCowSoundError(isDarkMode)
+    cowSound = getCowSoundError()
   }
 
   if (cowSound) {
-    if (isDarkMode) {
-      setTimeout(addLightningEffect, 300)
-    }
-    cowSound?.play().catch((e) => {
-      removeLightningEffect()
+    cowSound.play().catch((e) => {
       console.error('🐮 Moooooo sound cannot be played', e)
     })
   }
