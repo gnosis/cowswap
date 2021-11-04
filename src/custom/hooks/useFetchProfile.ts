@@ -22,7 +22,6 @@ export default function useFetchProfile(): FetchProfileState {
   const [profile, setProfile] = useState<FetchProfileState>(emptyState)
 
   useEffect(() => {
-    setProfile({ ...emptyState, isLoading: true })
     async function fetchAndSetProfileData() {
       try {
         if (chainId && account) {

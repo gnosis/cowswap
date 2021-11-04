@@ -29,22 +29,20 @@ export default function Profile() {
   const { profileData, isLoading, error } = useFetchProfile()
   const lastUpdated = useTimeAgo(profileData?.lastUpdated)
 
-  const renderNotificationMessages = () => {
-    return (
-      <>
-        {error && (
-          <StyledNotificationBanner isVisible level="error" canClose={false}>
-            There was an error loading your profile data. Please try again later.
-          </StyledNotificationBanner>
-        )}
-        {chainId && chainId !== ChainId.MAINNET && (
-          <StyledNotificationBanner isVisible level="info" canClose={false}>
-            Profile data is only available for mainnet. Please change the network to see it.
-          </StyledNotificationBanner>
-        )}
-      </>
-    )
-  }
+  const renderNotificationMessages = (
+    <>
+      {error && (
+        <StyledNotificationBanner isVisible level="error" canClose={false}>
+          There was an error loading your profile data. Please try again later.
+        </StyledNotificationBanner>
+      )}
+      {chainId && chainId !== ChainId.MAINNET && (
+        <StyledNotificationBanner isVisible level="info" canClose={false}>
+          Profile data is only available for mainnet. Please change the network to see it.
+        </StyledNotificationBanner>
+      )}
+    </>
+  )
 
   return (
     <Wrapper>
@@ -74,7 +72,7 @@ export default function Profile() {
             </Loader>
           )}
         </CardHead>
-        {renderNotificationMessages()}
+        {renderNotificationMessages}
         <ChildWrapper>
           <Txt fs={16}>
             <strong>Your referral url</strong>
