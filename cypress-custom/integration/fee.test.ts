@@ -20,6 +20,25 @@ const baseParams = {
   partiallyFillable: false,
 }
 
+const mockQuoteResponse = {
+  quote: {
+    // arb props here..
+    sellToken: '0x6810e776880c02933d47db1b9fc05908e5386b96',
+    buyToken: '0x6810e776880c02933d47db1b9fc05908e5386b96',
+    receiver: '0x6810e776880c02933d47db1b9fc05908e5386b96',
+    sellAmount: '1234567890',
+    buyAmount: '1234567890',
+    validTo: 0,
+    appData: '0x0000000000000000000000000000000000000000000000000000000000000000',
+    feeAmount: '1234567890',
+    kind: 'buy',
+    partiallyFillable: true,
+    sellTokenBalance: 'erc20',
+    buyTokenBalance: 'erc20',
+  },
+  from: ZERO_ADDRESS,
+}
+
 function _assertFeeData(fee: GetQuoteResponse): void {
   if (typeof fee === 'string') {
     fee = JSON.parse(fee)
@@ -99,8 +118,8 @@ describe('Fee: Complex fetch and persist fee', () => {
     const SIX_HOURS = FOUR_HOURS * 1.5
     const LATER_TIME = new Date(Date.now() + SIX_HOURS).toISOString()
     const LATER_FEE = {
-      expirationDate: LATER_TIME,
-      amount: '0',
+      ...mockQuoteResponse,
+      expiration: LATER_TIME,
     }
 
     // only override Date functions (default is to override all time based functions)
@@ -126,9 +145,9 @@ describe('Fee: Complex fetch and persist fee', () => {
           const mockedTime = new Date($clock.details().now)
 
           // THEN: fee time is properly stubbed and
-          expect(body.expirationDate).to.equal(LATER_TIME)
+          expect(body.expiration).to.equal(LATER_TIME)
           // THEN: the mocked later date is indeed less than the new fee (read: the fee is valid)
-          expect(new Date(body.expirationDate)).to.be.greaterThan(mockedTime)
+          expect(new Date(body.expiration)).to.be.greaterThan(mockedTime)
         })
     })
   })
@@ -136,10 +155,10 @@ describe('Fee: Complex fetch and persist fee', () => {
 
 describe('Fee: simple checks it exists', () => {
   const INPUT_AMOUNT = '0.1'
-  const FEE_RESP = {
+  const QUOTE_RESP = {
+    ...mockQuoteResponse,
     // 1 min in future
-    expirationDate: new Date(Date.now() + 60000).toISOString(),
-    amount: parseUnits('0.05', DEFAULT_SELL_TOKEN.decimals).toString(),
+    expiration: new Date(Date.now() + 60000).toISOString(),
   }
 
   it('Fetch fee when selecting both tokens', () => {
@@ -147,7 +166,7 @@ describe('Fee: simple checks it exists', () => {
     cy.stubResponse({
       url: FEE_QUERY,
       alias: 'feeRequest',
-      body: FEE_RESP,
+      body: QUOTE_RESP,
     })
     // GIVEN: A user loads the swap page
     // WHEN: Select DAI token as output and sells 0.1 WETH
