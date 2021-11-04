@@ -2,7 +2,7 @@ import { BigNumber } from '@ethersproject/bignumber'
 import BigNumberJs from 'bignumber.js'
 import * as Sentry from '@sentry/browser'
 
-import { getFeeQuote, getPriceQuote, getPriceQuoteLegacy as getPriceQuoteGp, OrderMetaData } from 'api/gnosisProtocol'
+import { getQuote, getPriceQuoteLegacy as getPriceQuoteGp, OrderMetaData } from 'api/gnosisProtocol'
 import GpQuoteError, { GpQuoteErrorCodes } from 'api/gnosisProtocol/errors/QuoteError'
 import { getCanonicalMarket, isPromiseFulfilled, withTimeout } from 'utils/misc'
 import { formatAtoms } from 'utils/format'
@@ -255,7 +255,7 @@ export async function getBestPrice(params: PriceQuoteParams, options?: GetBestPr
  */
 export async function getFullQuote({ quoteParams }: { quoteParams: FeeQuoteParams }): Promise<QuoteResult> {
   const { kind } = quoteParams
-  const { quote, expirationDate } = await getPriceQuote(quoteParams)
+  const { quote, expirationDate } = await getQuote(quoteParams)
 
   const price = {
     amount: kind === OrderKind.SELL ? quote.buyAmount : quote.sellAmount,
@@ -279,7 +279,7 @@ export async function getBestQuoteLegacy({ quoteParams, fetchFee, previousFee }:
   // Get a new fee quote (if required)
   const feePromise =
     fetchFee || !previousFee
-      ? getFeeQuote({ chainId, sellToken, buyToken, fromDecimals, toDecimals, amount, kind, validTo })
+      ? getQuote(quoteParams).then((resp) => ({ amount: resp.quote.feeAmount, expirationDate: resp.expirationDate }))
       : Promise.resolve(previousFee)
 
   // Get a new price quote
