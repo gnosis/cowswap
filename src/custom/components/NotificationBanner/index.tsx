@@ -44,7 +44,7 @@ const BannerContainer = styled.div`
 `
 export default function NotificationBanner(props: BannerProps) {
   const [isActive, setIsActive] = useState(props.isVisible)
-  const [changeOnPropStore, setChangeOnProp] = useState(props.changeOnProp)
+  const [changeOnProp, setChangeOnProp] = useState(props.changeOnProp)
   const { canClose = true } = props
 
   const [noteBannerVisibility, setNoteBannerVisibility] = useLocalStorage('noteBannerVisibility', true)
