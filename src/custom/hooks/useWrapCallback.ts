@@ -95,8 +95,9 @@ function _getWrapUnwrapCallback(params: GetWrapUnwrapCallback): WrapUnwrapCallba
       operationType = OperationType.WRAP_ETHER
       wrapUnwrap = async () => {
         const estimatedGas = await wethContract.estimateGas.deposit({ value: amountHex }).catch(_handleGasEstimateError)
+        const gasLimit = calculateGasMargin(chainId, estimatedGas)
 
-        return wethContract.deposit({ value: amountHex }, { gasLimit: calculateGasMargin(chainId, estimatedGas) })
+        return wethContract.deposit({ value: amountHex, gasLimit })
       }
       const baseSummary = t`${formatSmart(inputAmount, AMOUNT_PRECISION)} ${native} to ${wrapped}`
       summary = t`Wrap ${baseSummary}`
@@ -105,7 +106,8 @@ function _getWrapUnwrapCallback(params: GetWrapUnwrapCallback): WrapUnwrapCallba
       operationType = OperationType.UNWRAP_WETH
       wrapUnwrap = async () => {
         const estimatedGas = await wethContract.estimateGas.withdraw(amountHex).catch(_handleGasEstimateError)
-        return wethContract.withdraw(amountHex, { gasLimit: calculateGasMargin(chainId, estimatedGas) })
+        const gasLimit = calculateGasMargin(chainId, estimatedGas)
+        return wethContract.withdraw(amountHex, { gasLimit })
       }
       const baseSummary = t`${formatSmart(inputAmount, AMOUNT_PRECISION)} ${wrapped} to ${native}`
       summary = t`Unwrap ${baseSummary}`
