@@ -63,9 +63,10 @@ export default function useRecentActivity() {
     // Filter out any pending/fulfilled orders OLDER than 1 day
     // and adjust order object to match TransactionDetail addedTime format
     // which is used later in app to render list of activity
+    const accountLowerCase = account.toLowerCase()
     const adjustedOrders = allNonEmptyOrders
       // Only show orders for connected account
-      .filter((order) => order.owner.toLowerCase() === account.toLowerCase())
+      .filter((order) => order.owner.toLowerCase() === accountLowerCase)
       // Only recent orders
       .filter(isOrderRecent)
       .map((order) => {
@@ -81,12 +82,17 @@ export default function useRecentActivity() {
   }, [allNonEmptyOrders, account])
 
   const recentTransactionsAdjusted = useMemo<TransactionAndOrder[]>(() => {
+    if (!account) {
+      return []
+    }
+
     // Filter out any pending/fulfilled transactions OLDER than 1 day
     // and adjust order object to match Order id + status format
     // which is used later in app to render list of activity
+    const accountLowerCase = account.toLowerCase()
     const adjustedTransactions = Object.values(allTransactions)
       // Only show orders for connected account
-      .filter((tx) => tx.from.toLowerCase() === account.toLowerCase())
+      .filter((tx) => tx.from.toLowerCase() === accountLowerCase)
       // Only recent transactions
       .filter(isTransactionRecent)
       .map((tx) => {
