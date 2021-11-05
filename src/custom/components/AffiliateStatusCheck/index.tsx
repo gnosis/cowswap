@@ -8,6 +8,8 @@ import { hasTrades } from 'utils/trade'
 import { retry, RetryOptions } from 'utils/retry'
 import { SupportedChainId } from 'constants/chains'
 import useParseReferralQueryParam from 'hooks/useParseReferralQueryParam'
+import useRecentActivity from 'hooks/useRecentActivity'
+import { OrderStatus } from 'state/orders/actions'
 
 type AffiliateStatus = 'NOT_CONNECTED' | 'OWN_LINK' | 'ALREADY_TRADED' | 'ACTIVE' | 'UNSUPPORTED_NETWORK'
 
@@ -32,9 +34,11 @@ export default function AffiliateStatusCheck() {
   const { account, chainId } = useActiveWeb3React()
   const referralAddress = useReferralAddress()
   const referralAddressQueryParam = useParseReferralQueryParam()
+  const allRecentActivity = useRecentActivity()
   const [affiliateState, setAffiliateState] = useState<AffiliateStatus | null>()
   const [error, setError] = useState('')
   const isFirstTrade = useRef(false)
+  const fulfilledActivity = allRecentActivity.filter((data) => data.status === OrderStatus.FULFILLED)
 
   const uploadDataDoc = useCallback(async () => {
     if (!chainId || !account || !referralAddress) {
@@ -46,16 +50,18 @@ export default function AffiliateStatusCheck() {
       return
     }
 
+    if (fulfilledActivity.length >= 1 && isFirstTrade.current) {
+      console.log('Entro')
+      setAffiliateState(null)
+      resetReferralAddress()
+      isFirstTrade.current = false
+      return
+    }
+
     try {
       // we first validate that the user hasn't already traded
       const userHasTrades = await retry(() => hasTrades(chainId, account), DEFAULT_RETRY_OPTIONS).promise
       if (userHasTrades) {
-        if (isFirstTrade.current) {
-          setAffiliateState(null)
-          resetReferralAddress()
-          isFirstTrade.current = false
-          return
-        }
         setAffiliateState('ALREADY_TRADED')
         return
       }
@@ -74,7 +80,14 @@ export default function AffiliateStatusCheck() {
       console.error(error)
       setError('There was an error while uploading the referral document to IPFS. Please try again.')
     }
-  }, [chainId, account, referralAddress, resetReferralAddress, uploadReferralDocAndSetDataHash])
+  }, [
+    chainId,
+    account,
+    referralAddress,
+    resetReferralAddress,
+    uploadReferralDocAndSetDataHash,
+    fulfilledActivity.length,
+  ])
 
   useEffect(() => {
     if (!referralAddress) {
