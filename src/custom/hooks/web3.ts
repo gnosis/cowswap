@@ -10,7 +10,7 @@ export { useActiveWeb3React, useInactiveListener } from '@src/hooks/web3'
 export const STORAGE_KEY_LAST_PROVIDER = 'lastProvider'
 
 export function useEagerConnect() {
-  const { activate, active, connector } = useWeb3ReactCore() // specifically using useWeb3ReactCore because of what this hook does
+  const { activate, active, connector } = useWeb3ReactCore()
   const [tried, setTried] = useState(false)
 
   // handle setting/removing wallet provider in local storage
