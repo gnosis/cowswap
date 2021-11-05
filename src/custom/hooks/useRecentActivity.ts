@@ -99,7 +99,7 @@ export default function useRecentActivity() {
       })
 
     return adjustedTransactions
-  }, [allTransactions])
+  }, [allTransactions, account])
 
   return useMemo(() => {
     // Concat together the EnhancedTransactionDetails[] and Orders[]
