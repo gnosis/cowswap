@@ -64,9 +64,9 @@ export default function useRecentActivity() {
     // and adjust order object to match TransactionDetail addedTime format
     // which is used later in app to render list of activity
     const adjustedOrders = allNonEmptyOrders
-      // only show orders for connected account
+      // Only show orders for connected account
       .filter((order) => order.owner.toLowerCase() === account.toLowerCase())
-      // Only recent
+      // Only recent orders
       .filter(isOrderRecent)
       .map((order) => {
         // we need to essentially match EnhancedTransactionDetails type which uses "addedTime" for date checking
@@ -85,6 +85,9 @@ export default function useRecentActivity() {
     // and adjust order object to match Order id + status format
     // which is used later in app to render list of activity
     const adjustedTransactions = Object.values(allTransactions)
+      // Only show orders for connected account
+      .filter((tx) => tx.from === account)
+      // Only recent transactions
       .filter(isTransactionRecent)
       .map((tx) => {
         return {
