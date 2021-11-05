@@ -86,7 +86,7 @@ export default function useRecentActivity() {
     // which is used later in app to render list of activity
     const adjustedTransactions = Object.values(allTransactions)
       // Only show orders for connected account
-      .filter((tx) => tx.from === account)
+      .filter((tx) => tx.from.toLowerCase() === account.toLowerCase())
       // Only recent transactions
       .filter(isTransactionRecent)
       .map((tx) => {
