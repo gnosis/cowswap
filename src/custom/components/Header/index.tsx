@@ -94,7 +94,7 @@ export const Wrapper = styled.div`
     grid-gap: 16px;
 
     ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-      padding: 10px 10px 0;
+      padding: 10px;
     `}
   }
 
