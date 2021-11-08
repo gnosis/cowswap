@@ -16,7 +16,7 @@ import QuoteError, {
   GpQuoteErrorDetails,
 } from 'api/gnosisProtocol/errors/QuoteError'
 import { toErc20Address } from 'utils/tokens'
-import { FeeInformation, FeeQuoteParams, PriceInformation, PriceQuoteParams, SimpleGetQuoteResponse } from 'utils/price'
+import { FeeQuoteParams, PriceInformation, PriceQuoteParams, SimpleGetQuoteResponse } from 'utils/price'
 import { AppDataDoc } from 'utils/metadata'
 import MetadataError, {
   MetadataApiErrorCodeDetails,
@@ -196,7 +196,10 @@ const UNHANDLED_METADATA_ERROR: MetadataApiErrorObject = {
   description: MetadataApiErrorCodeDetails.UNHANDLED_GET_ERROR,
 }
 
-async function _handleQuoteResponse<T = any>(response: Response, params?: FeeQuoteParams): Promise<T> {
+async function _handleQuoteResponse<T = any, P extends QuoteQuery = QuoteQuery>(
+  response: Response,
+  params?: P
+): Promise<T> {
   if (!response.ok) {
     const errorObj: ApiErrorObject = await response.json()
 
@@ -216,7 +219,7 @@ async function _handleQuoteResponse<T = any>(response: Response, params?: FeeQuo
       // report to sentry
       Sentry.captureException(sentryError, {
         tags: { errorType: 'getFeeQuote' },
-        contexts: { params },
+        contexts: { params: { ...params } },
       })
     }
 
@@ -256,7 +259,7 @@ function _mapNewToLegacyParams(params: FeeQuoteParams): QuoteQuery {
   return finalParams
 }
 
-export async function getPriceQuote(params: FeeQuoteParams) {
+export async function getQuote(params: FeeQuoteParams) {
   const { chainId } = params
   const quoteParams = _mapNewToLegacyParams(params)
   const response = await _post(chainId, '/quote', quoteParams)
@@ -281,24 +284,6 @@ export async function getPriceQuoteLegacy(params: PriceQuoteParams): Promise<Pri
   })
 
   return _handleQuoteResponse<PriceInformation | null>(response)
-}
-
-export async function getFeeQuote(params: FeeQuoteParams): Promise<FeeInformation> {
-  const { sellToken, buyToken, amount, kind, chainId } = params
-  console.log(`[api:${API_NAME}] Get fee from API`, params)
-
-  const response = await _get(
-    chainId,
-    `/fee?sellToken=${toErc20Address(sellToken, chainId)}&buyToken=${toErc20Address(
-      buyToken,
-      chainId
-    )}&amount=${amount}&kind=${kind}`
-  ).catch((error) => {
-    console.error('Error getting fee quote:', error)
-    throw new QuoteError(UNHANDLED_QUOTE_ERROR)
-  })
-
-  return _handleQuoteResponse(response, params)
 }
 
 export async function getOrder(chainId: ChainId, orderId: string): Promise<OrderMetaData | null> {
@@ -421,7 +406,7 @@ export async function getGasPrices(chainId: ChainId = DEFAULT_NETWORK_FOR_LISTS)
 // Register some globals for convenience
 registerOnWindow({
   operator: {
-    getFeeQuote,
+    getQuote,
     getAppDataDoc,
     getOrder,
     sendSignedOrder: sendOrder,
