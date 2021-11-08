@@ -365,25 +365,20 @@ export type ProfileData = {
 
 export async function getProfileData(chainId: ChainId, address: string): Promise<ProfileData | null> {
   console.log(`[api:${API_NAME}] Get profile data for`, chainId, address)
-  try {
-    if (chainId !== ChainId.MAINNET) {
-      console.info('Profile data is only available for mainnet')
-      return null
-    }
+  if (chainId !== ChainId.MAINNET) {
+    console.info('Profile data is only available for mainnet')
+    return null
+  }
 
-    const response = await _getProfile(chainId, `/profile/${address}`)
+  const response = await _getProfile(chainId, `/profile/${address}`)
 
-    // TODO: Update the error handler when the openAPI profile spec is defined
-    if (!response.ok) {
-      const errorResponse = await response.json()
-      console.log(errorResponse)
-      throw new Error(errorResponse?.description)
-    } else {
-      return response.json()
-    }
-  } catch (error) {
-    console.error('Error getting profile data:', error)
-    throw error
+  // TODO: Update the error handler when the openAPI profile spec is defined
+  if (!response.ok) {
+    const errorResponse = await response.json()
+    console.log(errorResponse)
+    throw new Error(errorResponse?.description)
+  } else {
+    return response.json()
   }
 }
 
