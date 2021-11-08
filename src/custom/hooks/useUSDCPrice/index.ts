@@ -250,7 +250,7 @@ export function useHigherUSDValue(currencyAmount: CurrencyAmount<Currency> | und
       // BOTH AVAILABLE
     } else if (usdcValue && coingeckoUsdPrice) {
       console.debug('[USD Estimation]::[BOTH] ==> COIN')
-      // uni logic takes precedence
+      // coingecko logic takes precedence
       return coingeckoUsdPrice
     } else {
       console.debug('[USD Estimation]::None found')
