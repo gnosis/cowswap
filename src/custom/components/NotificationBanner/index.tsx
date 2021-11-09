@@ -11,7 +11,7 @@ export interface BannerProps {
   children: React.ReactNode
   level: Level
   isVisible: boolean
-  changeOnProp?: string
+  changeOnProp?: string | null
   canClose?: boolean
 }
 
@@ -45,6 +45,7 @@ const BannerContainer = styled.div`
 export default function NotificationBanner(props: BannerProps) {
   const [isActive, setIsActive] = useState(props.isVisible)
   const [changeOnProp, setChangeOnProp] = useState(props.changeOnProp)
+  const [changeOnPropStore, setchangeOnPropStore] = useState(props.changeOnProp)
   const { canClose = true } = props
 
   const [noteBannerVisibility, setNoteBannerVisibility] = useLocalStorage('noteBannerVisibility', true)
