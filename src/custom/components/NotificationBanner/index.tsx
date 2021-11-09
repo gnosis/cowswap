@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import styled from 'styled-components/macro'
 import { Colors } from 'theme/styled'
 import { X } from 'react-feather'
@@ -46,6 +46,7 @@ const BannerContainer = styled.div`
 `
 export default function NotificationBanner(props: BannerProps) {
   const [isActive, setIsActive] = useState(props.isVisible)
+  const [changeOnPropStore, setChangeOnPropStore] = useState(props.changeOnProp)
   const { canClose = true } = props
 
   const dispatch = useAppDispatch()
@@ -54,6 +55,14 @@ export default function NotificationBanner(props: BannerProps) {
     setIsActive(false)
     dispatch(dismissNotification(!isNotificationDismissed))
   }
+
+  useEffect(() => {
+    if (changeOnPropStore !== props.changeOnProp) {
+      dispatch(dismissNotification(false))
+      setChangeOnPropStore(props.changeOnProp)
+    }
+  }, [dispatch, props.changeOnProp, changeOnPropStore])
+
   return (
     <Banner {...props} isVisible={isActive} style={{ display: isNotificationDismissed ? 'none' : 'flex' }}>
       <BannerContainer>{props.children}</BannerContainer>
