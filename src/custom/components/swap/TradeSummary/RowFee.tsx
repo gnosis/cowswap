@@ -65,7 +65,7 @@ export function RowFee({
   const { feeToken, feeUsd, fullDisplayFee } = useMemo(() => {
     const smartFeeFiatValue = formatSmart(feeFiatValue, FIAT_PRECISION)
     const smartFeeTokenValue = formatSmart(displayFee, AMOUNT_PRECISION)
-    const feeToken = smartFeeTokenValue ? `${smartFeeTokenValue} ${feeCurrencySymbol}` : '🎉 None!'
+    const feeToken = smartFeeTokenValue ? `${smartFeeTokenValue} ${feeCurrencySymbol}` : '🎉 Free!'
     const fullDisplayFee = formatMax(displayFee, displayFee?.currency.decimals) || '-'
 
     return {
