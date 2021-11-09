@@ -17,6 +17,7 @@ export const Wrapper = styled(Page)`
   background: ${({ theme }) => transparentize(0.5, theme.bg1)};
   box-shadow: none;
   border: 1px solid ${({ theme }) => theme.cardBorder};
+  margin-top: 1rem;
   ${({ theme }) => theme.mediaWidth.upToSmall`
     padding: 16px;
   `}
