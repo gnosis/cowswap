@@ -55,7 +55,7 @@ export default function NotificationBanner(props: BannerProps) {
     dispatch(dismissNotification(!isNotificationDismissed))
   }
   return (
-    <Banner {...props} isVisible={isActive}>
+    <Banner {...props} isVisible={isActive} style={{ display: isNotificationDismissed ? 'none' : 'flex' }}>
       <BannerContainer>{props.children}</BannerContainer>
       {canClose && <StyledClose size={16} onClick={() => noteHandleClose()} />}
     </Banner>
