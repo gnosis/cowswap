@@ -9,7 +9,7 @@ export default function ReferralLinkUpdater() {
   const dispatch = useAppDispatch()
   const referralAddressParam = useParseReferralQueryParam()
   const referralAddress = useReferralAddress()
-
+  console.log('ReferralLinkUpdater', referralAddress)
   useEffect(() => {
     if (!referralAddressParam && !referralAddress?.isValid) {
       dispatch(updateReferralAddress(null))

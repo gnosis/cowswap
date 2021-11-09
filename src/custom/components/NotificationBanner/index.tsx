@@ -1,9 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import styled from 'styled-components/macro'
 import { Colors } from 'theme/styled'
 import { X } from 'react-feather'
 import { MEDIA_WIDTHS } from '@src/theme'
-import { useLocalStorage } from 'hooks/useLocalStorage'
+import { useDismissNotification } from 'state/affiliate/hooks'
+import { useAppDispatch } from '@src/state/hooks'
+import { dismissNotification } from 'state/affiliate/actions'
 
 type Level = 'info' | 'warning' | 'error'
 
@@ -44,24 +46,16 @@ const BannerContainer = styled.div`
 `
 export default function NotificationBanner(props: BannerProps) {
   const [isActive, setIsActive] = useState(props.isVisible)
-  const [changeOnProp, setChangeOnProp] = useState(props.changeOnProp)
-  const [changeOnPropStore, setchangeOnPropStore] = useState(props.changeOnProp)
   const { canClose = true } = props
 
-  const [noteBannerVisibility, setNoteBannerVisibility] = useLocalStorage('noteBannerVisibility', true)
+  const dispatch = useAppDispatch()
+  const isNotificationDismissed = useDismissNotification()
   const noteHandleClose = () => {
     setIsActive(false)
-    setNoteBannerVisibility(false)
+    dispatch(dismissNotification(!isNotificationDismissed))
   }
-
-  useEffect(() => {
-    if (changeOnPropStore !== props.changeOnProp) {
-      setNoteBannerVisibility(true)
-    }
-    setChangeOnProp(changeOnPropStore)
-  }, [props.changeOnProp, changeOnPropStore, setNoteBannerVisibility])
   return (
-    <Banner {...props} isVisible={isActive} style={{ display: noteBannerVisibility ? 'flex' : 'none' }}>
+    <Banner {...props} isVisible={isActive}>
       <BannerContainer>{props.children}</BannerContainer>
       {canClose && <StyledClose size={16} onClick={() => noteHandleClose()} />}
     </Banner>
