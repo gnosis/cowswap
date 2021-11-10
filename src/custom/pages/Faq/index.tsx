@@ -759,8 +759,8 @@ export default function Faq() {
 
           <p>
             Additionally, you will be able to get your own referral/affiliate link, so you can share it with others, and
-            if you do so, you will also be able to see the # of trades and volume that your referral link gets credited
-            from the users who followed your link and interacted with the DEX.
+            if you do so, you will also be able to see the number of trades and volume that your referral link gets
+            credited from the users who followed your link and interacted with the DEX.
           </p>
 
           <h3 id="in-which-networks-it-is-available">In which networks it&apos;s available?</h3>
@@ -773,7 +773,7 @@ export default function Faq() {
 
           <p>
             The affiliate program will initially run as a trial, and therefore there are currently no announced rewards,
-            the tracing, however, has already started.
+            the tracking however, has already started.
           </p>
 
           <p>
@@ -833,7 +833,7 @@ export default function Faq() {
           <ol>
             <li>
               Your friend was trading tokens that don’t have a price feed available (see FAQ entry{' '}
-              <LinkScrollable href={'#cwhy-is-my-total-trade-referral-trade-volume-smaller-than-the-real-volume?'}>
+              <LinkScrollable href={'#why-is-my-total-trade-referral-trade-volume-smaller-than-the-real-volume'}>
                 Why is the volume smaller than the real volume?
               </LinkScrollable>
               ).
@@ -841,11 +841,15 @@ export default function Faq() {
             <li>The data has not yet propagated from the chain to our backend.</li>
             <li>
               Your friend had already traded with that account, which does not count towards referral volume (see FAQ
-              entry Who can follow the referral link?).
+              entry{' '}
+              <LinkScrollable href={'#who-can-follow-the-referral-link'}>
+                Who can follow the referral link?
+              </LinkScrollable>
+              ).
             </li>
           </ol>
 
-          <h3 id="why-is-my-total-trade-referral-trade-volume-smaller-than-the-real-volume?">
+          <h3 id="why-is-my-total-trade-referral-trade-volume-smaller-than-the-real-volume">
             Why is my total trade/referral trade volume smaller than the real volume?
           </h3>
 
