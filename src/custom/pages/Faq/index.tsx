@@ -706,21 +706,6 @@ export default function Faq() {
             buy WETH and will directly unwrap it for you.
           </p>
 
-          <hr />
-
-          <p>
-            Didn&#39;t find an answer? Join the{' '}
-            <ExternalLink href={DISCORD_LINK} target="_blank" rel="noopener noreferrer">
-              community on Discord
-            </ExternalLink>
-          </p>
-          <p>
-            We really hope you like CowSwap. If you do,&nbsp;<Link to="/">Milk it!</Link>
-            <span role="img" aria-label="glass of milk">
-              🥛
-            </span>
-          </p>
-
           {/*
         <h2 id="discardedquestionstobeaddedlater">Discarded Questions to be added later</h2>
 
@@ -861,6 +846,21 @@ export default function Faq() {
               What is the source of truth for accounting trade volume?
             </LinkScrollable>
             ).
+          </p>
+
+          <hr />
+
+          <p>
+            Didn&#39;t find an answer? Join the{' '}
+            <ExternalLink href={DISCORD_LINK} target="_blank" rel="noopener noreferrer">
+              community on Discord
+            </ExternalLink>
+          </p>
+          <p>
+            We really hope you like CowSwap. If you do,&nbsp;<Link to="/">Milk it!</Link>
+            <span role="img" aria-label="glass of milk">
+              🥛
+            </span>
           </p>
         </Content>
       </Page>
