@@ -848,25 +848,11 @@ export default function Faq() {
             ).
           </p>
 
-          <h3 id="why-is-my-total-trade-referral-trade-volume-smaller-than-the-real-volume">
-            Why is my total trade/referral trade volume smaller than the real volume?
-          </h3>
-
-          <p>
-            Some tokens might not yet have a proper price feed linking them to a USD estimation at the date/time when
-            your trade was executed. When that happens the trade volume is set to 0. Thus, your total volume can be
-            smaller, or even be shown as 0 (see FAQ entry{' '}
-            <LinkScrollable href={'#what-is-the-source-of-truth-for-accounting-trade-volume'}>
-              What is the source of truth for accounting trade volume?
-            </LinkScrollable>
-            ).
-          </p>
-
           <h3 id="why-do-i-see-more-trades">
             Why do I see more trades and referrals in my profile page than I actually see in the activity list?
           </h3>
 
-          <p>The number of trades on the profile page is calculated based on blockchain data.</p>
+          <p>The number of trades on the profile page is calculated based on on-chain data.</p>
           <p>We have two publicly facing interfaces where both use the same contracts, which are:</p>
           <ul>
             <li>
@@ -882,9 +868,13 @@ export default function Faq() {
               </ExternalLink>
             </li>
           </ul>
+
           <p>
-            Even though both use the same contract, the backend services are different, and the data is stored in
-            isolated databases. Thus, when accessing{' '}
+            Even though both use the same contract, the backend services, solvers and infrastructure are independent.
+          </p>
+
+          <p>
+            Thus, when accessing{' '}
             <ExternalLink href="https://cowswap.exchange" target="_blank" rel="noopener noreferrer">
               <strong>https://cowswap.exchange</strong>
             </ExternalLink>{' '}
@@ -892,8 +882,12 @@ export default function Faq() {
             <ExternalLink href="https://barn.cowswap.exchange" target="_blank" rel="noopener noreferrer">
               <strong>https://barn.cowswap.exchange</strong>
             </ExternalLink>
-            . If you ever traded on both, you might have more trades than you would expect.
+            .
           </p>
+
+          <p>If you ever traded on both, you might have more trades than you would expect.</p>
+
+          <p>In the future, the data will be consolidated and this number will match your expectations.</p>
 
           <hr />
 
