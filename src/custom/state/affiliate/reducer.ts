@@ -27,6 +27,6 @@ export default createReducer(initialState, (builder) =>
     })
     .addCase(dismissNotification, (state, action) => {
       state.isNotificationClosed = state.isNotificationClosed ?? {}
-      state.isNotificationClosed[action.payload.id] = action.payload.dismiss
+      state.isNotificationClosed[action.payload] = true
     })
 )

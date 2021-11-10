@@ -58,7 +58,7 @@ export default function NotificationBanner(props: BannerProps) {
   const handleClose = () => {
     setIsActive(false)
     if (id) {
-      dispatch(dismissNotification({ id, dismiss: true }))
+      dispatch(dismissNotification(id))
     }
   }
 
