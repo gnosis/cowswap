@@ -752,29 +752,112 @@ export default function Faq() {
 
           <h3 id="what-is-the-profile-page">What is the Profile page?</h3>
 
-          <p>Some text</p>
+          <p>
+            It’s a page where you can see your number of trades and volume that you have done with the wallet you have
+            connected with.
+          </p>
+
+          <p>
+            Additionally, you will be able to get your own referral/affiliate link, so you can share it with others, and
+            if you do so, you will also be able to see the # of trades and volume that your referral link gets credited
+            from the users who followed your link and interacted with the DEX.
+          </p>
 
           <h3 id="in-which-networks-it-is-available">In which networks it&apos;s available?</h3>
 
-          <p>Some text</p>
+          <p>At this time, the affiliate program only works for Ethereum Mainnet.</p>
 
           <h3 id="what-are-the-rewards-for-following-the-referral-link">
             What are the rewards for following the referral link?
           </h3>
 
-          <p>Some text</p>
+          <p>
+            The affiliate program will initially run as a trial, and therefore there are currently no announced rewards,
+            the tracing, however, has already started.
+          </p>
 
-          <h3 id="who-can-share">Who can share?</h3>
+          <p>
+            The CowSwap team wants to allow users to spread the word of the benefits of our dapp & protocol, while
+            tracking the volume they generate and see the impact they have on our cow-mmunity.{' '}
+          </p>
 
-          <p>Some text</p>
+          <p>
+            CowSwap’s positive network effect scales exponentially with more people using it, therefore, the idea behind
+            the affiliate program is to see which users are contributing more to the success of the protocol.
+          </p>
 
-          <h3 id="who-can-follow">Who can follow?</h3>
+          <h3 id="who-can-share-the-referral-link">Who can share the referral link?</h3>
 
-          <p>Some text</p>
+          <p>
+            Everyone can share a link, you only need a valid Ethereum wallet address to create your own personal link.
+          </p>
 
-          <h3 id="what-is-needed-to-qualify">What is needed to qualify?</h3>
+          <h3 id="who-can-follow-the-referral-link">Who can follow the referral link?</h3>
 
-          <p>Some text</p>
+          <p>
+            Everyone! Please share the excitement for the CowSwap protocol & Dapp. It would really make a difference for
+            the Cow-mmunity if you share it with your friends, twitter/youtube followers, or anyone that would be
+            interested.
+          </p>
+
+          <p>
+            Share your referral link with all your friends if you think they can be interested in the qualities Cowswap
+            has to offer. These qualities range from ETH-less trading experience, MEV protection, no fees for failed
+            transactions, and more.{' '}
+            <span role="img" aria-label="cow">
+              🐮
+            </span>
+          </p>
+
+          <p>
+            Note that trades and volume will only be credited to your wallet if the user hasn’t traded in CowSwap with
+            that address before, and their first trade is done after following your link.
+          </p>
+
+          <h3 id="what-is-the-source-of-truth-for-accounting-trade-volume">
+            What is the source of truth for accounting trade volume?
+          </h3>
+
+          <p>
+            The referral program fetches data from Dune, and therefore, the USD value is taken from the information
+            available in Dune under price feed. If the token is not in the Dune price feed, then volume will not be
+            counted.
+          </p>
+
+          <h3 id="why-do-not-i-see-any-referral-trades-in-my-profile-page">
+            I shared my referral with a friend, who then also traded. Why don’t I see any referral trades in my profile
+            page?
+          </h3>
+
+          <p>There could be a few reasons for this:</p>
+          <ol>
+            <li>
+              Your friend was trading tokens that don’t have a price feed available (see FAQ entry{' '}
+              <LinkScrollable href={'#cwhy-is-my-total-trade-referral-trade-volume-smaller-than-the-real-volume?'}>
+                Why is the volume smaller than the real volume?
+              </LinkScrollable>
+              ).
+            </li>
+            <li>The data has not yet propagated from the chain to our backend.</li>
+            <li>
+              Your friend had already traded with that account, which does not count towards referral volume (see FAQ
+              entry Who can follow the referral link?).
+            </li>
+          </ol>
+
+          <h3 id="why-is-my-total-trade-referral-trade-volume-smaller-than-the-real-volume?">
+            Why is my total trade/referral trade volume smaller than the real volume?
+          </h3>
+
+          <p>
+            Some tokens might not yet have a proper price feed linking them to a USD estimation at the date/time when
+            your trade was executed. When that happens the trade volume is set to 0. Thus, your total volume can be
+            smaller, or even be shown as 0 (see FAQ entry{' '}
+            <LinkScrollable href={'#what-is-the-source-of-truth-for-accounting-trade-volume'}>
+              What is the source of truth for accounting trade volume?
+            </LinkScrollable>
+            ).
+          </p>
         </Content>
       </Page>
     </Wrapper>
