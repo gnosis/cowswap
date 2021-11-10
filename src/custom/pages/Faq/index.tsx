@@ -767,8 +767,8 @@ export default function Faq() {
 
           <p>At this time, the affiliate program only works for Ethereum Mainnet.</p>
 
-          <h3 id="what-are-the-rewards-for-following-the-referral-link">
-            What are the rewards for following the referral link?
+          <h3 id="are-there-any-rewards-for-sharing-the-referral-link">
+            Are there any rewards for sharing the referral link?
           </h3>
 
           <p>
