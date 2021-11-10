@@ -27,7 +27,6 @@ export function useReferralAddress() {
 
 export function useDismissNotification() {
   return useSelector<AppState, boolean>((state) => {
-    console.log('state.affiliate.isNotificationClosed', state)
     return state.affiliate.isNotificationClosed || IS_NOTIFICATION_CLOSED
   })
 }
