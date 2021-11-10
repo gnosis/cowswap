@@ -132,7 +132,7 @@ export default function AffiliateStatusCheck() {
 
   if (error) {
     return (
-      <NotificationBanner isVisible changeOnProp={account} level="error">
+      <NotificationBanner isVisible level="error">
         Affiliate program error: {error}
       </NotificationBanner>
     )
@@ -140,11 +140,19 @@ export default function AffiliateStatusCheck() {
 
   if (affiliateState) {
     return (
-      <NotificationBanner isVisible changeOnProp={account} level="info">
+      <NotificationBanner isVisible id={notificationBannerId(account, referralAddress?.value)} level="info">
         {STATUS_TO_MESSAGE_MAPPING[affiliateState]}
       </NotificationBanner>
     )
   }
 
   return null
+}
+
+const notificationBannerId = function (address?: string | null | undefined, referral?: string) {
+  if (!address || !referral) {
+    return
+  }
+
+  return `wallet-${address}:referral-${referral}`
 }
