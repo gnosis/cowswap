@@ -150,8 +150,12 @@ export default function AffiliateStatusCheck() {
 }
 
 const notificationBannerId = function (address?: string | null | undefined, referral?: string) {
-  if (!address || !referral) {
+  if (!referral) {
     return
+  }
+
+  if (!address) {
+    return `referral-${referral}`
   }
 
   return `wallet-${address}:referral-${referral}`
