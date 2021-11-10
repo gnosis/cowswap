@@ -116,7 +116,7 @@ export default function Profile() {
                   <Loader isLoading={isLoading}>
                     <span>
                       Total trades
-                      <MouseoverTooltipContent content="You may see more trades here that what you see in the activity list. To understand why, check out the FAQ.">
+                      <MouseoverTooltipContent content="You may see more trades here than what you see in the activity list. To understand why, check out the FAQ.">
                         <HelpCircle size={14} />
                       </MouseoverTooltipContent>
                     </span>
