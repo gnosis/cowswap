@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState, useRef } from 'react'
+import React, { useCallback, useEffect, useState, useRef, useMemo } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 import { useActiveWeb3React } from 'hooks/web3'
 import NotificationBanner from 'components/NotificationBanner'
@@ -40,6 +40,18 @@ export default function AffiliateStatusCheck() {
   const isFirstTrade = useRef(false)
   const fulfilledActivity = allRecentActivity.filter((data) => data.status === OrderStatus.FULFILLED)
 
+  const notificationBannerId = useMemo(() => {
+    if (!referralAddress?.value) {
+      return
+    }
+
+    if (!account) {
+      return `referral-${referralAddress.value}`
+    }
+
+    return `wallet-${account}:referral-${referralAddress.value}:chain-${chainId}`
+  }, [account, chainId, referralAddress?.value])
+
   const uploadDataDoc = useCallback(async () => {
     if (!chainId || !account || !referralAddress) {
       return
@@ -51,7 +63,6 @@ export default function AffiliateStatusCheck() {
     }
 
     if (fulfilledActivity.length >= 1 && isFirstTrade.current) {
-      console.log('Entro')
       setAffiliateState(null)
       resetReferralAddress()
       isFirstTrade.current = false
@@ -140,23 +151,11 @@ export default function AffiliateStatusCheck() {
 
   if (affiliateState) {
     return (
-      <NotificationBanner isVisible id={notificationBannerId(account, referralAddress?.value)} level="info">
+      <NotificationBanner isVisible id={notificationBannerId} level="info">
         {STATUS_TO_MESSAGE_MAPPING[affiliateState]}
       </NotificationBanner>
     )
   }
 
   return null
-}
-
-const notificationBannerId = function (address?: string | null | undefined, referral?: string) {
-  if (!referral) {
-    return
-  }
-
-  if (!address) {
-    return `referral-${referral}`
-  }
-
-  return `wallet-${address}:referral-${referral}`
 }
