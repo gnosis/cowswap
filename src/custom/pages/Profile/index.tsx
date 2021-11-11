@@ -30,7 +30,8 @@ export default function Profile() {
   const { account, chainId } = useActiveWeb3React()
   const { profileData, isLoading, error } = useFetchProfile()
   const lastUpdated = useTimeAgo(profileData?.lastUpdated)
-
+  const isTTradesTooltipVisible =
+    account && chainId == 1 && profileData?.tradeVolumeUsd && profileData?.tradeVolumeUsd > 0
   const renderNotificationMessages = (
     <>
       {error && (
@@ -116,9 +117,11 @@ export default function Profile() {
                   <Loader isLoading={isLoading}>
                     <span>
                       Total trades
-                      <MouseoverTooltipContent content="You may see more trades here than what you see in the activity list. To understand why, check out the FAQ.">
-                        <HelpCircle size={14} />
-                      </MouseoverTooltipContent>
+                      {isTTradesTooltipVisible && (
+                        <MouseoverTooltipContent content="You may see more trades here than what you see in the activity list. To understand why, check out the FAQ.">
+                          <HelpCircle size={14} />
+                        </MouseoverTooltipContent>
+                      )}
                     </span>
                   </Loader>
                 </FlexCol>
