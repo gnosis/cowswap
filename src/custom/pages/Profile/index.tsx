@@ -30,8 +30,7 @@ export default function Profile() {
   const { account, chainId } = useActiveWeb3React()
   const { profileData, isLoading, error } = useFetchProfile()
   const lastUpdated = useTimeAgo(profileData?.lastUpdated)
-  const isTTradesTooltipVisible =
-    account && chainId == 1 && profileData?.tradeVolumeUsd && profileData?.tradeVolumeUsd > 0
+  const isTTradesTooltipVisible = account && chainId == 1 && parseInt(formatInt(profileData?.totalTrades)) > 0
   const renderNotificationMessages = (
     <>
       {error && (
