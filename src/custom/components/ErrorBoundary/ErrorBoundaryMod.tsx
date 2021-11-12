@@ -17,6 +17,19 @@ const AppWrapper = styled.div`
   align-items: center;
   min-height: 100vh;
   overflow-x: hidden;
+  &:after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    filter: blur(20px);
+    backdrop-filter: blur(20px);
+    background-image: ${({ theme }) => theme.body.background};
+    transition: 0.5s;
+    z-index: -1;
+  }
 `
 
 const Wrapper = styled(Page)`
