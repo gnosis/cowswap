@@ -10,6 +10,8 @@ import { getUserAgent } from 'utils/getUserAgent'
 import { AutoRow } from 'components/Row'
 import { MEDIA_WIDTHS } from '@src/theme'
 import CowError from 'assets/cow-swap/CowError.png'
+import { UniIcon, LogoImage } from '../Header'
+import { HeaderRow } from 'components/Header/HeaderMod'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -69,33 +71,12 @@ const HeaderWrapper = styled.div`
   position: fixed;
   top: 0;
   z-index: 2;
+  padding: 16px;
   @media screen and (max-width: ${MEDIA_WIDTHS.upToSmall}px) {
     position: relative;
   }
 `
 
-export const LogoImage = styled.img.attrs((props) => ({
-  src: props.theme.logo.src,
-  // alt: props.theme.logo.alt,
-  // width: props.theme.logo.width,
-  // height: props.theme.logo.height,
-}))`
-  object-fit: contain;
-
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    width: 150px;
-  `};
-`
-
-const CowLogo = styled.div`
-  display: flex;
-  margin: 1rem;
-  transition: transform 0.3s ease;
-
-  &:hover {
-    transform: rotate(-5deg);
-  }
-`
 const CodeBlockWrapper = styled.div`
   background: ${({ theme }) => theme.bg4};
   overflow: auto;
@@ -154,11 +135,13 @@ export default class ErrorBoundary extends Component<unknown, ErrorBoundaryState
       return (
         <AppWrapper>
           <HeaderWrapper>
-            <a href=".">
-              <CowLogo>
-                <LogoImage />
-              </CowLogo>
-            </a>
+            <HeaderRow marginRight="0">
+              <a href=".">
+                <UniIcon>
+                  <LogoImage />
+                </UniIcon>
+              </a>
+            </HeaderRow>
           </HeaderWrapper>
           <Wrapper>
             <FlexContainer>
