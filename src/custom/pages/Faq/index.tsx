@@ -5,8 +5,21 @@ import { DISCORD_LINK } from 'constants/index'
 import { Link } from 'react-router-dom'
 import { ExternalLink as ExternalLinkTheme, StyledInternalLink } from 'theme'
 import { LinkScrollable } from 'components/Link'
+import { ExternalLink as ExternalLinkIcon } from 'react-feather'
 
-const ExternalLink = styled(ExternalLinkTheme)``
+const ExternalLink = styled(ExternalLinkTheme)`
+  color: ${({ theme }) => theme.text1};
+  text-decoration: underline;
+  font-weight: normal;
+  transition: color 0.2s ease-in-out;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+
+  &:hover {
+    color: ${({ theme }) => theme.textLink};
+  }
+`
 
 const Wrapper = styled.div`
   #table-container {
@@ -55,22 +68,6 @@ const Wrapper = styled.div`
   }
 
   ${Content} {
-    > div ${ExternalLink}, > p ${ExternalLink}, > p ${StyledInternalLink} {
-      color: ${({ theme }) => theme.text1};
-      text-decoration: underline;
-      font-weight: 400;
-      transition: color 0.2s ease-in-out;
-
-      &:hover {
-        color: ${({ theme }) => theme.textLink};
-      }
-    }
-
-    > div > ${ExternalLink} {
-      font-size: 16px;
-      font-weight: bold;
-    }
-
     > div > ul {
       margin: 12px 0 24px;
       padding: 0 0 0 20px;
@@ -207,7 +204,8 @@ export default function Faq() {
             Defined by Phil Daian et al. in the{' '}
             <ExternalLink href="https://arxiv.org/abs/1904.05234" target="_blank" rel="noopener noreferrer">
               {' '}
-              paper Flash Boys 2.0{' '}
+              paper Flash Boys 2.0
+              <ExternalLinkIcon size="16" />
             </ExternalLink>
             , MEV is a measure of the profit a miner (or validator, sequencer, etc.) can make through their ability to
             arbitrarily include, exclude, or re-order transactions within the blocks they produce.
@@ -218,6 +216,7 @@ export default function Faq() {
             transactions has reached{' '}
             <ExternalLink href="https://explore.flashbots.net/" target="_blank" rel="noopener noreferrer">
               $ 796.8 Million, including successful and failed transactions.
+              <ExternalLinkIcon size="16" />
             </ExternalLink>
           </p>
 
@@ -232,6 +231,7 @@ export default function Faq() {
               rel="noopener noreferrer"
             >
               Coincidence of Wants (CoWs)
+              <ExternalLinkIcon size="16" />
             </ExternalLink>{' '}
             can be explained as “an economic phenomenon where two parties each hold an item the other wants, so they
             exchange these items directly.” CowSwap facilitates CoWs among traders and their orders through using batch
@@ -300,6 +300,7 @@ export default function Faq() {
               rel="noopener noreferrer"
             >
               decentralized competition
+              <ExternalLinkIcon size="16" />
             </ExternalLink>
             .
           </p>
@@ -320,6 +321,7 @@ export default function Faq() {
               rel="noopener noreferrer"
             >
               audited
+              <ExternalLinkIcon size="16" />
             </ExternalLink>
             . Whilst CowSwap has taken a major step forward in terms of security and stability, as with other crypto
             protocols or dapps, your use is at your own risk.{' '}
@@ -343,10 +345,12 @@ export default function Faq() {
             participate in this exciting project. That is why there is an ongoing discussion in the{' '}
             <ExternalLink href="https://forum.gnosis.io/c/gnosis-protocol" target="_blank" rel="noopener noreferrer">
               Forum
+              <ExternalLinkIcon size="16" />
             </ExternalLink>{' '}
             and{' '}
             <ExternalLink href="https://chat.cowswap.exchange" target="_blank" rel="noopener noreferrer">
               Discord
+              <ExternalLinkIcon size="16" />
             </ExternalLink>{' '}
             about the possibility of creating one, so make sure your voice is heard!
           </p>
@@ -359,6 +363,7 @@ export default function Faq() {
             Follow{' '}
             <ExternalLink href="https://twitter.com/mevprotection" target="_blank" rel="noopener noreferrer">
               @MEVProtection
+              <ExternalLinkIcon size="16" />
             </ExternalLink>{' '}
             on Twitter to be up to date!
           </p>
@@ -647,6 +652,7 @@ export default function Faq() {
               rel="noopener noreferrer"
             >
               Smart Contract Architecture
+              <ExternalLinkIcon size="16" />
             </ExternalLink>
             ). In order to allow that to happen, the trader must first approve the GPv2 Vault Relayer contract to spend
             tokens on their behalf. The smart contract logic ensures that no token can be spent without deliberately
@@ -862,13 +868,15 @@ export default function Faq() {
             <li>
               The production version:{' '}
               <ExternalLink href="https://cowswap.exchange" target="_blank" rel="noopener noreferrer">
-                <strong>https://cowswap.exchange</strong>
+                https://cowswap.exchange
+                <ExternalLinkIcon size="16" />
               </ExternalLink>
             </li>
             <li>
               The public test version:{' '}
               <ExternalLink href="https://barn.cowswap.exchange" target="_blank" rel="noopener noreferrer">
-                <strong>https://barn.cowswap.exchange</strong>
+                https://barn.cowswap.exchange
+                <ExternalLinkIcon size="16" />
               </ExternalLink>
             </li>
           </ul>
@@ -880,11 +888,13 @@ export default function Faq() {
           <p>
             Thus, when accessing{' '}
             <ExternalLink href="https://cowswap.exchange" target="_blank" rel="noopener noreferrer">
-              <strong>https://cowswap.exchange</strong>
+              https://cowswap.exchange
+              <ExternalLinkIcon size="16" />
             </ExternalLink>{' '}
             you&apos;ll see orders/trades placed only using this interface. The same is true for orders/trades placed on{' '}
             <ExternalLink href="https://barn.cowswap.exchange" target="_blank" rel="noopener noreferrer">
-              <strong>https://barn.cowswap.exchange</strong>
+              https://barn.cowswap.exchange
+              <ExternalLinkIcon size="16" />
             </ExternalLink>
             .
           </p>
@@ -899,6 +909,7 @@ export default function Faq() {
             Didn&#39;t find an answer? Join the{' '}
             <ExternalLink href={DISCORD_LINK} target="_blank" rel="noopener noreferrer">
               community on Discord
+              <ExternalLinkIcon size="16" />
             </ExternalLink>
           </p>
           <p>
