@@ -2049,7 +2049,7 @@
     "@gnosis.pm/dex-contracts" "^0.5.0"
     bignumber.js "^9.0.0"
 
-"@gnosis.pm/gp-v2-contracts@ˆ1.1.2":
+"@gnosis.pm/gp-v2-contracts@^1.1.2":
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/@gnosis.pm/gp-v2-contracts/-/gp-v2-contracts-1.1.2.tgz#0453bb097377dc63cf46ee195f7e521d429f7e22"
   integrity sha512-BvZMNS+fwITb+qs+trs2fyvYksa6MPjjLze9AOXPnvcKVYFEGwG6cfsecBswEMo+xevLIQNDyF7HZRhN7ply8w==
