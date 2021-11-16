@@ -5,6 +5,7 @@ export const DEFAULT_GP_PRICE_STRATEGY = 'LEGACY'
 
 export type GpPriceStrategy = 'COWSWAP' | 'LEGACY'
 // TODO: use actual API call
+// https://github.com/gnosis/gp-v2-contracts/issues/904
 export async function checkGpPriceStrategy(): Promise<GpPriceStrategy> {
   return new Promise((accept) => setTimeout(() => accept(DEFAULT_GP_PRICE_STRATEGY), 500))
 }
