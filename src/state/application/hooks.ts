@@ -1,8 +1,8 @@
 import { useCallback, useMemo } from 'react'
-import { useAppDispatch, useAppSelector } from '@src/state/hooks'
-import { useActiveWeb3React } from '../../hooks/web3'
-import { AppState } from '@src/state'
-import { addPopup, ApplicationModal, PopupContent, removePopup, setOpenModal } from '@src/state/application/actions'
+import { useAppDispatch, useAppSelector } from 'state/hooks'
+import { useActiveWeb3React } from 'hooks/web3'
+import { AppState } from 'state'
+import { addPopup, ApplicationModal, PopupContent, removePopup, setOpenModal } from 'state/application/actions'
 
 export function useBlockNumber(): number | undefined {
   const { chainId } = useActiveWeb3React()
@@ -19,6 +19,16 @@ export function useToggleModal(modal: ApplicationModal): () => void {
   const open = useModalOpen(modal)
   const dispatch = useAppDispatch()
   return useCallback(() => dispatch(setOpenModal(open ? null : modal)), [dispatch, modal, open])
+}
+
+export function useOpenModal(modal: ApplicationModal): () => void {
+  const dispatch = useAppDispatch()
+  return useCallback(() => dispatch(setOpenModal(modal)), [dispatch, modal])
+}
+
+export function useCloseModals(): () => void {
+  const dispatch = useAppDispatch()
+  return useCallback(() => dispatch(setOpenModal(null)), [dispatch])
 }
 
 export function useWalletModalToggle(): () => void {

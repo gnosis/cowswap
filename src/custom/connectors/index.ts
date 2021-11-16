@@ -87,7 +87,6 @@ export const walletconnect = new WalletConnectConnector({
   rpc: rpcNetworks,
   bridge: WALLET_CONNECT_BRIDGE,
   qrcode: true,
-  pollingInterval: 15000,
 })
 
 // mainnet only

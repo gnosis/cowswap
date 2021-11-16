@@ -1,9 +1,9 @@
-import { useCallback } from 'react'
+import React, { useCallback, Fragment } from 'react'
 import { batch, useDispatch } from 'react-redux'
 
 import { useActiveWeb3React } from 'hooks/web3'
 import { AppDispatch } from 'state'
-import { clearAllTransactions } from 'state/transactions/actions'
+import { clearAllTransactions } from 'state/enhancedTransactions/actions'
 import { getExplorerLabel, shortenAddress } from 'utils'
 
 import Copy from 'components/Copy'
@@ -17,7 +17,6 @@ import WalletConnectIcon from 'assets/images/walletConnectIcon.svg'
 import FortmaticIcon from 'assets/images/fortmaticIcon.png'
 import PortisIcon from 'assets/images/portisIcon.png'
 import Identicon from 'components/Identicon'
-import { ExternalLink as LinkIcon } from 'react-feather'
 import { LinkStyledButton } from 'theme'
 import { clearOrders } from 'state/orders/actions'
 import { NETWORK_LABELS } from 'components/Header'
@@ -28,7 +27,7 @@ import {
   AccountControl,
   AddressLink,
   IconWrapper,
-  renderTransactions,
+  renderActivities,
 } from './AccountDetailsMod'
 import {
   NetworkCard,
@@ -38,12 +37,19 @@ import {
   NoActivityMessage,
   LowerSection,
   WalletActions,
-  WalletLowerActions,
+  WalletSecondaryActions,
   WalletNameAddress,
+  WalletWrapper,
 } from './styled'
 import { ConnectedWalletInfo, useWalletInfo } from 'hooks/useWalletInfo'
 import { MouseoverTooltip } from 'components/Tooltip'
 import { supportedChainId } from 'utils/supportedChainId'
+import { groupActivitiesByDay, useMultipleActivityDescriptors } from 'hooks/useRecentActivity'
+import { CreationDateText } from 'components/AccountDetails/Transaction/styled'
+
+const DATE_FORMAT_OPTION: Intl.DateTimeFormatOptions = {
+  dateStyle: 'long',
+}
 
 type AbstractConnector = Pick<ReturnType<typeof useActiveWeb3React>, 'connector'>['connector']
 
@@ -68,13 +74,12 @@ export function formatConnectorName(connector?: AbstractConnector, walletInfo?: 
 
   return (
     <WalletName>
-      Connected with {name} <br />
-      {walletConnectSuffix}
+      Connected with {name} {walletConnectSuffix}
     </WalletName>
   )
 }
 
-export function getStatusIcon(connector?: AbstractConnector, walletInfo?: ConnectedWalletInfo) {
+export function getStatusIcon(connector?: AbstractConnector, walletInfo?: ConnectedWalletInfo, size?: number) {
   if (walletInfo && !walletInfo.isSupportedWallet) {
     /* eslint-disable jsx-a11y/accessible-emoji */
     return (
@@ -92,7 +97,7 @@ export function getStatusIcon(connector?: AbstractConnector, walletInfo?: Connec
       </IconWrapper>
     )
   } else if (connector === injected) {
-    return <Identicon />
+    return <Identicon size={size} />
   } else if (connector === walletconnect) {
     return (
       <IconWrapper size={16}>
@@ -130,7 +135,7 @@ export function getStatusIcon(connector?: AbstractConnector, walletInfo?: Connec
   return null
 }
 
-export interface AccountDetailsProps {
+interface AccountDetailsProps {
   pendingTransactions: string[]
   confirmedTransactions: string[]
   ENSName?: string
@@ -139,8 +144,8 @@ export interface AccountDetailsProps {
 }
 
 export default function AccountDetails({
-  pendingTransactions,
-  confirmedTransactions,
+  pendingTransactions = [],
+  confirmedTransactions = [],
   ENSName,
   toggleWalletModal,
   closeOrdersPanel,
@@ -160,7 +165,11 @@ export default function AccountDetails({
     }
   }, [dispatch, chainId])
   const explorerLabel = chainId && account ? getExplorerLabel(chainId, account, 'address') : undefined
-  const activityTotalCount = (pendingTransactions?.length || 0) + (confirmedTransactions?.length || 0)
+
+  const activities =
+    useMultipleActivityDescriptors({ chainId, ids: pendingTransactions.concat(confirmedTransactions) }) || []
+  const activitiesGroupedByDate = groupActivitiesByDay(activities)
+  const activityTotalCount = activities?.length || 0
 
   const handleDisconnectClick = () => {
     ;(connector as any).close()
@@ -173,10 +182,7 @@ export default function AccountDetails({
       <InfoCard>
         <AccountGroupingRow id="web3-account-identifier-row">
           <AccountControl>
-            <div>
-              {chainId && NETWORK_LABELS[chainId] && (
-                <NetworkCard title={NETWORK_LABELS[chainId]}>{NETWORK_LABELS[chainId]}</NetworkCard>
-              )}
+            <WalletWrapper>
               {getStatusIcon(connector, walletInfo)}
 
               {(ENSName || account) && (
@@ -184,40 +190,38 @@ export default function AccountDetails({
                   <WalletNameAddress>{ENSName ? ENSName : account && shortenAddress(account)}</WalletNameAddress>
                 </Copy>
               )}
-            </div>
+            </WalletWrapper>
 
             <WalletActions>
+              {' '}
+              {chainId && NETWORK_LABELS[chainId] && (
+                <NetworkCard title={NETWORK_LABELS[chainId]}>{NETWORK_LABELS[chainId]}</NetworkCard>
+              )}{' '}
               {formatConnectorName(connector, walletInfo)}
-              <div>
-                {connector !== injected && connector !== walletlink && (
-                  <WalletAction
-                    style={{ fontSize: '.825rem', fontWeight: 400, marginRight: '8px' }}
-                    onClick={handleDisconnectClick}
-                  >
-                    <Trans>Disconnect</Trans>
-                  </WalletAction>
-                )}
-                <WalletAction style={{ fontSize: '.825rem', fontWeight: 400 }} onClick={toggleWalletModal}>
-                  <Trans>Change</Trans>
-                </WalletAction>
-              </div>
             </WalletActions>
           </AccountControl>
         </AccountGroupingRow>
         <AccountGroupingRow>
           <AccountControl>
-            <WalletLowerActions>
+            <WalletSecondaryActions>
+              {connector !== injected && connector !== walletlink && (
+                <WalletAction onClick={handleDisconnectClick}>
+                  <Trans>Disconnect</Trans>
+                </WalletAction>
+              )}
+              <WalletAction onClick={toggleWalletModal}>
+                <Trans>Change Wallet</Trans>
+              </WalletAction>
               {chainId && account && (
                 <AddressLink
                   hasENS={!!ENSName}
                   isENS={ENSName ? true : false}
                   href={getEtherscanLink(chainId, ENSName ? ENSName : account, 'address')}
                 >
-                  <LinkIcon size={16} />
-                  <span style={{ marginLeft: '4px' }}>{explorerLabel}</span>
+                  {explorerLabel} ↗
                 </AddressLink>
               )}
-            </WalletLowerActions>
+            </WalletSecondaryActions>
           </AccountControl>
         </AccountGroupingRow>
       </InfoCard>
@@ -233,8 +237,13 @@ export default function AccountDetails({
           </span>
 
           <div>
-            {renderTransactions(pendingTransactions)}
-            {renderTransactions(confirmedTransactions)}
+            {activitiesGroupedByDate.map(({ date, activities }) => (
+              <Fragment key={date.getTime()}>
+                {/* TODO: style me! */}
+                <CreationDateText>{date.toLocaleString(undefined, DATE_FORMAT_OPTION)}</CreationDateText>
+                {renderActivities(activities)}
+              </Fragment>
+            ))}
           </div>
         </LowerSection>
       ) : (
