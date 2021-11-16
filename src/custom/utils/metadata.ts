@@ -51,6 +51,5 @@ export function generateAppDataDoc(metadata: MetadataDoc = {}): AppDataDoc {
 export async function uploadMetadataDocToIpfs(appDataDoc: AppDataDoc): Promise<string> {
   const { IpfsHash } = await pinJSONToIPFS(appDataDoc)
   const { digest } = multihashes.decode(new CID(IpfsHash).multihash)
-  console.log(`0x${Buffer.from(digest).toString('hex')}`)
   return `0x${Buffer.from(digest).toString('hex')}`
 }
