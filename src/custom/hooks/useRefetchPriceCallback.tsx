@@ -115,8 +115,8 @@ export function useRefetchQuoteCallback() {
   const { getNewQuote, refreshQuote, updateQuote, setQuoteError } = useQuoteDispatchers()
   const addUnsupportedToken = useAddGpUnsupportedToken()
   const removeGpUnsupportedToken = useRemoveGpUnsupportedToken()
-
-  const gpApiStatus = useCheckGpQuoteStatus((process.env.DEFAULT_GP_API as GpQuoteStatus) || 'COWSWAP')
+  // check which GP Quote API to use (NEW/LEGACY)
+  const gpApiStatus = useCheckGpQuoteStatus()
 
   registerOnWindow({
     getNewQuote,

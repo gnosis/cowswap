@@ -59,7 +59,8 @@ export function UnfillableOrdersUpdater(): null {
   const { chainId, account } = useActiveWeb3React()
   const pending = usePendingOrders({ chainId })
   const setIsOrderUnfillable = useSetIsOrderUnfillable()
-  const gpApiStatus = useCheckGpQuoteStatus((process.env.DEFAULT_GP_API as GpQuoteStatus) || 'LEGACY')
+  // check which GP Quote API to use (NEW/LEGACY)
+  const gpApiStatus = useCheckGpQuoteStatus()
 
   // Ref, so we don't rerun useEffect
   const pendingRef = useRef(pending)
