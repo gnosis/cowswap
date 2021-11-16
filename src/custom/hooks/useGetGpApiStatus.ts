@@ -1,14 +1,17 @@
 import ms from 'ms.macro'
 import { useState, useEffect } from 'react'
 
+export const DEFAULT_GP_API_TYPE = 'LEGACY'
+
 export type GpQuoteStatus = 'COWSWAP' | 'LEGACY'
 // TODO: use actual API call
 export async function checkGpQuoteApiStatus(): Promise<GpQuoteStatus> {
   return new Promise((accept) => setTimeout(() => accept('LEGACY'), 500))
 }
+// arbitrary, could be more/less
 const GP_QUOTE_STATUS_INTERVAL_TIME = ms`2 hours`
 
-export default function useCheckGpQuoteStatus(defaultApiToUse: GpQuoteStatus): GpQuoteStatus {
+export default function useCheckGpQuoteStatus(defaultApiToUse: GpQuoteStatus = DEFAULT_GP_API_TYPE): GpQuoteStatus {
   const [gpQuoteApiStatus, setGpQuoteApiStatus] = useState<GpQuoteStatus>(defaultApiToUse)
 
   useEffect(() => {
