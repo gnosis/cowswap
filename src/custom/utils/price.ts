@@ -18,7 +18,7 @@ import { OptimalRate } from 'paraswap-core'
 import { GetQuoteResponse, OrderKind } from '@gnosis.pm/gp-v2-contracts'
 import { ChainId } from 'state/lists/actions'
 import { toErc20Address } from 'utils/tokens'
-import { GpQuoteStatus } from 'hooks/useGetGpApiStatus'
+import { GpPriceStrategy } from '@src/custom/hooks/useGetGpPriceStrategy'
 
 const FEE_EXCEEDS_FROM_ERROR = new GpQuoteError({
   errorType: GpQuoteErrorCodes.FeeExceedsFrom,
@@ -328,7 +328,7 @@ export async function getBestQuote({
   previousFee,
   apiStatus,
 }: QuoteParams & {
-  apiStatus: GpQuoteStatus
+  apiStatus: GpPriceStrategy
 }): Promise<QuoteResult> {
   if (apiStatus === 'COWSWAP') {
     return getFullQuote({ quoteParams }).catch((err) => {

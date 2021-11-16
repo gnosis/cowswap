@@ -10,7 +10,7 @@ import { SupportedChainId as ChainId } from 'constants/chains'
 
 import { getBestQuote, PriceInformation } from 'utils/price'
 import { isOrderUnfillable } from 'state/orders/utils'
-import useCheckGpQuoteStatus, { GpQuoteStatus } from 'hooks/useGetGpApiStatus'
+import useGetGpPriceStrategy, { GpPriceStrategy } from '@src/custom/hooks/useGetGpPriceStrategy'
 import { getPromiseFulfilledValue } from 'utils/misc'
 
 /**
@@ -19,7 +19,7 @@ import { getPromiseFulfilledValue } from 'utils/misc'
  * @param chainId
  * @param order
  */
-async function _getOrderPrice(chainId: ChainId, order: Order, apiStatus: GpQuoteStatus) {
+async function _getOrderPrice(chainId: ChainId, order: Order, apiStatus: GpPriceStrategy) {
   let amount, baseToken, quoteToken
 
   if (order.kind === 'sell') {
@@ -60,7 +60,7 @@ export function UnfillableOrdersUpdater(): null {
   const pending = usePendingOrders({ chainId })
   const setIsOrderUnfillable = useSetIsOrderUnfillable()
   // check which GP Quote API to use (NEW/LEGACY)
-  const gpApiStatus = useCheckGpQuoteStatus()
+  const gpApiStatus = useGetGpPriceStrategy()
 
   // Ref, so we don't rerun useEffect
   const pendingRef = useRef(pending)

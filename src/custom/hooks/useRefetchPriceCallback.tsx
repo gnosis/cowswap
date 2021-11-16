@@ -20,7 +20,7 @@ import { useQuoteDispatchers } from 'state/price/hooks'
 import { AddGpUnsupportedTokenParams } from 'state/lists/actions'
 import { QuoteError } from 'state/price/actions'
 import { onlyResolvesLast } from 'utils/async'
-import useCheckGpQuoteStatus from 'hooks/useGetGpApiStatus'
+import useGetGpPriceStrategy from '@src/custom/hooks/useGetGpPriceStrategy'
 
 interface HandleQuoteErrorParams {
   quoteData: QuoteInformationObject | FeeQuoteParams
@@ -116,7 +116,7 @@ export function useRefetchQuoteCallback() {
   const addUnsupportedToken = useAddGpUnsupportedToken()
   const removeGpUnsupportedToken = useRemoveGpUnsupportedToken()
   // check which GP Quote API to use (NEW/LEGACY)
-  const gpApiStatus = useCheckGpQuoteStatus()
+  const gpApiStatus = useGetGpPriceStrategy()
 
   registerOnWindow({
     getNewQuote,
