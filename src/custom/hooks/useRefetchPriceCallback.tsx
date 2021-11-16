@@ -20,7 +20,7 @@ import { useQuoteDispatchers } from 'state/price/hooks'
 import { AddGpUnsupportedTokenParams } from 'state/lists/actions'
 import { QuoteError } from 'state/price/actions'
 import { onlyResolvesLast } from 'utils/async'
-import useCheckGpQuoteStatus, { GpQuoteStatus } from 'hooks/useGetGpApiStatus'
+import useCheckGpQuoteStatus from 'hooks/useGetGpApiStatus'
 
 interface HandleQuoteErrorParams {
   quoteData: QuoteInformationObject | FeeQuoteParams
