@@ -295,20 +295,12 @@ function _mapNewToLegacyParams(params: FeeQuoteParams): QuoteQuery {
     partiallyFillable: false,
   }
 
-  const finalParams: QuoteQuery =
-    kind === OrderKind.SELL
-      ? {
-          kind: OrderKind.SELL,
-          sellAmountBeforeFee: amount,
-          ...baseParams,
-        }
-      : {
-          kind: OrderKind.BUY,
-          buyAmountAfterFee: amount,
-          ...baseParams,
-        }
-
-  return finalParams
+  const amountFiled = kind === OrderKind.SELL ? 'sellAmountBeforeFee' : 'buyAmountAfterFee'
+  return {
+    kind,
+    [amountFiled]: amount,
+    ...baseParams,
+  }
 }
 
 export async function getQuote(params: FeeQuoteParams) {
