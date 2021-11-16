@@ -1,3 +1,5 @@
+import CID from 'cids'
+import multihashes from 'multihashes'
 import { pinJSONToIPFS } from 'api/ipfs'
 
 interface Metadata {
@@ -48,5 +50,7 @@ export function generateAppDataDoc(metadata: MetadataDoc = {}): AppDataDoc {
 
 export async function uploadMetadataDocToIpfs(appDataDoc: AppDataDoc): Promise<string> {
   const { IpfsHash } = await pinJSONToIPFS(appDataDoc)
-  return IpfsHash
+  const { digest } = multihashes.decode(new CID(IpfsHash).multihash)
+  console.log(`0x${Buffer.from(digest).toString('hex')}`)
+  return `0x${Buffer.from(digest).toString('hex')}`
 }
