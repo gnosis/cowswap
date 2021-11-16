@@ -17,13 +17,13 @@ export default function useGetGpPriceStrategy(
   const [gpPriceStrategy, setGpPriceStrategy] = useState<GpPriceStrategy>(defaultApiToUse)
 
   useEffect(() => {
-    console.debug('[useGetQuoteCallback::GP API Status]::', gpPriceStrategy)
+    console.debug('[useGetGpPriceStrategy::GP Price Strategy]::', gpPriceStrategy)
 
     const checkStatus = () => {
       checkGpPriceStrategy()
         .then(setGpPriceStrategy)
         .catch((err: Error) => {
-          console.error('[useGetQuoteCallback::useEffect] Error getting GP quote status::', err)
+          console.error('[useGetGpPriceStrategy::useEffect] Error getting GP price strategy::', err)
           // Fallback to DEFAULT
           setGpPriceStrategy(DEFAULT_GP_PRICE_STRATEGY)
         })
@@ -32,7 +32,7 @@ export default function useGetGpPriceStrategy(
     // Create initial call on mount
     checkStatus()
 
-    // set interval for GP_PRICE_STRATEGY_INTERVAL_TIME (2 hours)
+    // set interval for GP_PRICE_STRATEGY_INTERVAL_TIME (30 min)
     const intervalId = setInterval(() => {
       checkStatus()
     }, GP_PRICE_STRATEGY_INTERVAL_TIME)
