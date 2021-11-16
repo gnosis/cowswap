@@ -123,6 +123,7 @@ export default function FeesUpdater(): null {
     OUTPUT: { currencyId: buyToken },
     independentField,
     typedValue: rawTypedValue,
+    recipient: receiver,
   } = useSwapState()
 
   // Debounce the typed value to not refetch the fee too often
@@ -170,6 +171,7 @@ export default function FeesUpdater(): null {
       toDecimals,
       kind,
       amount: amount.quotient.toString(),
+      receiver,
       userAddress: account,
       validTo,
     }
@@ -250,6 +252,7 @@ export default function FeesUpdater(): null {
     account,
     lastUnsupportedCheck,
     validTo,
+    receiver,
   ])
 
   return null

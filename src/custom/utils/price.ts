@@ -73,6 +73,7 @@ export type FeeQuoteParams = Pick<OrderMetaData, 'sellToken' | 'buyToken' | 'kin
   toDecimals: number
   chainId: ChainId
   userAddress?: string | null
+  receiver?: string | null
   validTo: number
 }
 
