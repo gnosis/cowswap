@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef } from 'react'
 import { useActiveWeb3React } from 'hooks/web3'
 
 import { useCancelledOrders, useFulfillOrdersBatch } from 'state/orders/hooks'
-import { ApiOrderStatus } from 'state/orders/utils'
+import { OrderTransitionStatus } from 'state/orders/utils'
 import { OrderFulfillmentData } from 'state/orders/actions'
 import { OPERATOR_API_POLL_INTERVAL } from 'state/orders/consts'
 
@@ -27,7 +27,7 @@ import { fetchOrderPopupData, OrderLogPopupMixData } from 'state/orders/updaters
  * period and say it's cancelled even though in some cases it might actually be filled.
  */
 export function CancelledOrdersUpdater(): null {
-  const { chainId } = useActiveWeb3React()
+  const { chainId, account } = useActiveWeb3React()
 
   const cancelled = useCancelledOrders({ chainId })
 
@@ -38,11 +38,17 @@ export function CancelledOrdersUpdater(): null {
   const fulfillOrdersBatch = useFulfillOrdersBatch()
 
   const updateOrders = useCallback(
-    async (chainId: ChainId) => {
-      // Filter orders created in the last 5 min, no further
-      const pending = cancelledRef.current.filter(
-        (order) => Date.now() - new Date(order.creationTime).getTime() < CANCELLED_ORDERS_PENDING_TIME
-      )
+    async (chainId: ChainId, account: string) => {
+      const lowerCaseAccount = account.toLowerCase()
+      const now = Date.now()
+      // Filter orders:
+      // - Owned by the current connected account
+      // - Created in the last 5 min, no further
+      const pending = cancelledRef.current.filter(({ owner, creationTime: creationTimeString }) => {
+        const creationTime = new Date(creationTimeString).getTime()
+
+        return owner.toLowerCase() === lowerCaseAccount && now - creationTime < CANCELLED_ORDERS_PENDING_TIME
+      })
 
       if (pending.length === 0) {
         return
@@ -55,12 +61,12 @@ export function CancelledOrdersUpdater(): null {
 
       // Group resolved promises by status
       // Only pick fulfilled
-      const { fulfilled } = unfilteredOrdersData.reduce<Record<ApiOrderStatus, OrderLogPopupMixData[]>>(
+      const { fulfilled } = unfilteredOrdersData.reduce<Record<OrderTransitionStatus, OrderLogPopupMixData[]>>(
         (acc, { status, popupData }) => {
           popupData && acc[status].push(popupData)
           return acc
         },
-        { fulfilled: [], expired: [], cancelled: [], unknown: [], pending: [] }
+        { fulfilled: [], presigned: [], expired: [], cancelled: [], unknown: [], pending: [] }
       )
 
       // Bach state update fulfilled orders, if any
@@ -74,14 +80,14 @@ export function CancelledOrdersUpdater(): null {
   )
 
   useEffect(() => {
-    if (!chainId) {
+    if (!chainId || !account) {
       return
     }
 
-    const interval = setInterval(() => updateOrders(chainId), OPERATOR_API_POLL_INTERVAL)
+    const interval = setInterval(() => updateOrders(chainId, account), OPERATOR_API_POLL_INTERVAL)
 
     return () => clearInterval(interval)
-  }, [chainId, updateOrders])
+  }, [account, chainId, updateOrders])
 
   return null
 }

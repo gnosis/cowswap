@@ -22,7 +22,7 @@ import gas from 'state/gas/reducer'
 import profile from 'state/profile/reducer'
 import { updateVersion } from 'state/global/actions'
 import affiliate from 'state/affiliate/reducer'
-import transactions from 'state/enhancedTransactions/reducer'
+import enhancedTransactions from 'state/enhancedTransactions/reducer'
 
 import { popupMiddleware, soundMiddleware } from './orders/middleware'
 import { DEFAULT_NETWORK_FOR_LISTS } from 'constants/lists'
@@ -44,7 +44,7 @@ const UNISWAP_REDUCERS = {
 
 const reducers = {
   ...UNISWAP_REDUCERS,
-  transactions,
+  transactions: enhancedTransactions, // replace transactions state by "enhancedTransactions"
   lists,
   orders,
   price,
