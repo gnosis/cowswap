@@ -191,10 +191,10 @@ function createActivityDescriptor(tx?: EnhancedTransactionDetails, order?: Order
     status = ActivityStatus.PENDING
   } else if (isPresignaturePending) {
     status = ActivityStatus.PRESIGNATURE_PENDING
-  } else if (isConfirmed) {
-    status = ActivityStatus.CONFIRMED
   } else if (isCancelled) {
     status = ActivityStatus.CANCELLED
+  } else if (isConfirmed) {
+    status = ActivityStatus.CONFIRMED
   } else {
     status = ActivityStatus.EXPIRED
   }
