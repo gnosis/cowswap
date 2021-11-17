@@ -10,6 +10,10 @@ import { calculateGasMargin } from 'utils/calculateGasMargin'
 import { useTokenContract } from 'hooks/useContract'
 import { useActiveWeb3React } from 'hooks/web3'
 import { useTokenAllowance } from 'hooks/useTokenAllowance'
+import { ethers } from 'ethers'
+
+// Use a 150K gas as a fallback if there's issue calculating the gas estimation (fixes some issues with some nodes failing to calculate gas costs for SC wallets)
+const APPROVE_GAS_LIMIT_DEFAULT = ethers.BigNumber.from('150000')
 
 export enum ApprovalState {
   UNKNOWN = 'UNKNOWN',
@@ -25,7 +29,7 @@ export function useApproveCallback(
   amountToApprove?: CurrencyAmount<Currency>,
   spender?: string
 ): [ApprovalState, () => Promise<void>] {
-  const { account } = useActiveWeb3React()
+  const { account, chainId } = useActiveWeb3React()
   const token = amountToApprove?.currency?.isToken ? amountToApprove.currency : undefined
   const currentAllowance = useTokenAllowance(token, account ?? undefined, spender)
   const pendingApproval = useHasPendingApproval(token?.address, spender)
@@ -54,6 +58,12 @@ export function useApproveCallback(
       console.error('approve was called unnecessarily')
       return
     }
+
+    if (!chainId) {
+      console.error('no chainId')
+      return
+    }
+
     if (!token) {
       console.error('no token')
       return
@@ -78,20 +88,28 @@ export function useApproveCallback(
     const estimatedGas = await tokenContract.estimateGas.approve(spender, MaxUint256).catch(() => {
       // general fallback for tokens who restrict approval amounts
       useExact = true
-      return tokenContract.estimateGas.approve(spender, amountToApprove.quotient.toString())
+      return tokenContract.estimateGas.approve(spender, amountToApprove.quotient.toString()).catch((error) => {
+        console.log(
+          '[useApproveCallbackMod] Error estimating gas for approval. Using default gas limit ' +
+            APPROVE_GAS_LIMIT_DEFAULT.toString(),
+          error
+        )
+        useExact = false
+        return APPROVE_GAS_LIMIT_DEFAULT
+      })
     })
 
-    openTransactionConfirmationModal(`Approve token ${amountToApprove.currency.symbol} for trading`)
+    openTransactionConfirmationModal(`Approving ${amountToApprove.currency.symbol} for trading`)
     return (
       tokenContract
         .approve(spender, useExact ? amountToApprove.quotient.toString() : MaxUint256, {
-          gasLimit: calculateGasMargin(estimatedGas),
+          gasLimit: calculateGasMargin(chainId, estimatedGas),
         })
         .then((response: TransactionResponse) => {
           addTransaction({
             hash: response.hash,
             summary: 'Approve ' + amountToApprove.currency.symbol,
-            approval: { tokenAddress: token.address, spender: spender },
+            approval: { tokenAddress: token.address, spender },
           })
         })
         // .catch((error: Error) => {
@@ -101,6 +119,7 @@ export function useApproveCallback(
         .finally(closeModals)
     )
   }, [
+    chainId,
     approvalState,
     token,
     tokenContract,

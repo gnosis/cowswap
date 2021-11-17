@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled from 'styled-components/macro'
 import * as CSS from 'csstype'
 
 // with font size convert to rems
@@ -20,4 +20,5 @@ export const Txt = styled.span<
   ${({ theme, fs }) => theme.mediaWidth.upToMedium`
     font-size: ${fs ? fs * 0.8 : 12}px;
   `}
+  min-height: 22px;
 `

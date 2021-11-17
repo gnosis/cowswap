@@ -114,7 +114,13 @@ export default createReducer(initialState, (builder) =>
         return
       }
       const allTxs = transactions[chainId] ?? {}
-      allTxs[newHash] = { ...allTxs[oldHash], hash: newHash, addedTime: new Date().getTime(), replacementType: type }
+      allTxs[newHash] = {
+        ...allTxs[oldHash],
+        hash: newHash,
+        transactionHash: newHash,
+        addedTime: new Date().getTime(),
+        replacementType: type,
+      }
       delete allTxs[oldHash]
     })
 

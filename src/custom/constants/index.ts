@@ -37,9 +37,8 @@ export const SUPPORTED_WALLETS = Object.keys(SUPPORTED_WALLETS_UNISWAP).reduce((
 }, {} as { [key: string]: WalletInfo })
 
 // Smart contract wallets are filtered out by default, no need to add them to this list
-export const UNSUPPORTED_WC_WALLETS = new Set(['DeFi Wallet', '1inch Wallet', 'Pillar Wallet', 'WallETH'])
+export const UNSUPPORTED_WC_WALLETS = new Set(['DeFi Wallet', '1inch Wallet', 'WallETH'])
 
-// TODO: When contracts are deployed, we can load this from the NPM package
 export const GP_SETTLEMENT_CONTRACT_ADDRESS: Partial<Record<number, string>> = {
   [ChainId.MAINNET]: GPv2Settlement[ChainId.MAINNET].address,
   [ChainId.RINKEBY]: GPv2Settlement[ChainId.RINKEBY].address,
@@ -57,9 +56,9 @@ export const NATIVE_CURRENCY_BUY_ADDRESS = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeee
 export const NATIVE_CURRENCY_BUY_TOKEN: { [chainId in ChainId | number]: Token } = {
   [ChainId.MAINNET]: new Token(ChainId.MAINNET, NATIVE_CURRENCY_BUY_ADDRESS, 18, 'ETH', 'Ether'),
   [ChainId.RINKEBY]: new Token(ChainId.RINKEBY, NATIVE_CURRENCY_BUY_ADDRESS, 18, 'ETH', 'Ether'),
-  [ChainId.ROPSTEN]: new Token(ChainId.ROPSTEN, NATIVE_CURRENCY_BUY_ADDRESS, 18, 'ETH', 'Ether'),
-  [ChainId.GOERLI]: new Token(ChainId.GOERLI, NATIVE_CURRENCY_BUY_ADDRESS, 18, 'ETH', 'Ether'),
-  [ChainId.KOVAN]: new Token(ChainId.KOVAN, NATIVE_CURRENCY_BUY_ADDRESS, 18, 'ETH', 'Ether'),
+  // [ChainId.ROPSTEN]: new Token(ChainId.ROPSTEN, NATIVE_CURRENCY_BUY_ADDRESS, 18, 'ETH', 'Ether'),
+  // [ChainId.GOERLI]: new Token(ChainId.GOERLI, NATIVE_CURRENCY_BUY_ADDRESS, 18, 'ETH', 'Ether'),
+  // [ChainId.KOVAN]: new Token(ChainId.KOVAN, NATIVE_CURRENCY_BUY_ADDRESS, 18, 'ETH', 'Ether'),
   [ChainId.XDAI]: new Token(ChainId.XDAI, NATIVE_CURRENCY_BUY_ADDRESS, 18, 'xDAI', 'xDAI'),
 }
 
@@ -82,17 +81,18 @@ export const CONTRACTS_CODE_LINK = 'https://github.com/gnosis/gp-v2-contracts'
 export const CODE_LINK = 'https://github.com/gnosis/gp-swap-ui'
 export const DISCORD_LINK = 'https://chat.cowswap.exchange'
 export const DUNE_DASHBOARD_LINK = 'https://duneanalytics.com/gnosis.protocol/Gnosis-Protocol-V2'
+export const TWITTER_LINK = 'https://twitter.com/mevprotection'
 
 // 30 minutes
 export const GAS_PRICE_UPDATE_THRESHOLD = 30 * 60 * 1000
 export const GAS_FEE_ENDPOINTS = {
   [ChainId.MAINNET]: 'https://safe-relay.gnosis.io/api/v1/gas-station/',
   // No ropsten = main
-  [ChainId.ROPSTEN]: 'https://safe-relay.gnosis.io/api/v1/gas-station/',
+  // [ChainId.ROPSTEN]: 'https://safe-relay.gnosis.io/api/v1/gas-station/',
   [ChainId.RINKEBY]: 'https://safe-relay.rinkeby.gnosis.io/api/v1/gas-station/',
-  [ChainId.GOERLI]: 'https://safe-relay.goerli.gnosis.io/api/v1/gas-station/',
+  // [ChainId.GOERLI]: 'https://safe-relay.goerli.gnosis.io/api/v1/gas-station/',
   // no kovan = main
-  [ChainId.KOVAN]: 'https://safe-relay.kovan.gnosis.io/api/v1/gas-station/',
+  // [ChainId.KOVAN]: 'https://safe-relay.kovan.gnosis.io/api/v1/gas-station/',
   // TODO: xdai? = main
   [ChainId.XDAI]: 'https://safe-relay.gnosis.io/api/v1/gas-station/',
 }

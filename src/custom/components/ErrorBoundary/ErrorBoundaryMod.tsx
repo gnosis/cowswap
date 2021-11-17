@@ -1,5 +1,5 @@
 import { Trans } from '@lingui/macro'
-import React, { ErrorInfo } from 'react'
+import { Component, ErrorInfo } from 'react'
 import store, { AppState } from 'state/index'
 import { ExternalLink, TYPE } from 'theme/index'
 import Page, { Title } from 'components/Page'
@@ -63,9 +63,9 @@ const HeaderWrapper = styled.div`
 
 export const LogoImage = styled.img.attrs((props) => ({
   src: props.theme.logo.src,
-  alt: props.theme.logo.alt,
-  width: props.theme.logo.width,
-  height: props.theme.logo.height,
+  // alt: props.theme.logo.alt,
+  // width: props.theme.logo.width,
+  // height: props.theme.logo.height,
 }))`
   object-fit: contain;
 
@@ -116,7 +116,7 @@ function truncate(value?: string): string | undefined {
   return value ? value.slice(0, 1000) : undefined
 }
 
-export default class ErrorBoundary extends React.Component<unknown, ErrorBoundaryState> {
+export default class ErrorBoundary extends Component<unknown, ErrorBoundaryState> {
   constructor(props: unknown) {
     super(props)
     this.state = { error: null }
@@ -169,7 +169,6 @@ export default class ErrorBoundary extends React.Component<unknown, ErrorBoundar
                     href={`https://github.com/gnosis/cowswap/issues/new?assignees=&labels=🐞 Bug,🔥 Critical&body=${encodedBody}&title=${encodeURIComponent(
                       `Crash report: \`${error.name}${error.message && `: ${truncate(error.message)}`}\``
                     )}`}
-                    target="_blank"
                   >
                     <TYPE.link fontSize={16}>
                       <Trans>Create an issue on GitHub</Trans>
@@ -178,7 +177,7 @@ export default class ErrorBoundary extends React.Component<unknown, ErrorBoundar
                   </ExternalLink>
                 </LinkWrapper>
                 <LinkWrapper>
-                  <ExternalLink id="get-support-on-discord" href="https://chat.cowswap.exchange/" target="_blank">
+                  <ExternalLink id="get-support-on-discord" href="https://chat.cowswap.exchange/">
                     <TYPE.link fontSize={16}>
                       <Trans>Get support on Discord</Trans>
                       <span>↗</span>

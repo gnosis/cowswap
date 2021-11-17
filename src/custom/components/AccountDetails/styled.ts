@@ -1,7 +1,6 @@
-import styled from 'styled-components'
+import styled from 'styled-components/macro'
 import { CopyIcon, TransactionStatusText } from 'components/Copy'
 import { LinkStyledButton } from 'theme'
-import { NetworkCard as NetworkCardUni } from 'components/Header/HeaderMod'
 import {
   WalletName,
   AccountSection as AccountSectionMod,
@@ -13,6 +12,7 @@ import {
   AccountControl,
   IconWrapper,
 } from './AccountDetailsMod'
+import { YellowCard } from 'components/Card'
 
 export const WalletActions = styled.div`
   display: flex;
@@ -37,7 +37,9 @@ export const Wrapper = styled.div`
   padding: 0;
   height: 100%;
 
-  ${({ theme }) => theme.mediaWidth.upToMedium`padding: 12px 0 0;`};
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+    padding: 12px 0 0;
+  `};
 
   ${WalletName},
   ${AddressLink},
@@ -128,23 +130,6 @@ export const WalletWrapper = styled.div`
   > div > img[alt='Gnosis Safe Multisig logo'] {
     ${({ theme }) => theme.util.invertImageForDarkMode};
   }
-`
-
-export const NetworkCard = styled(NetworkCardUni)`
-  background-color: ${({ theme }) => theme.networkCard.background};
-  color: ${({ theme }) => theme.networkCard.text};
-  padding: 6px 8px;
-  font-size: 13px;
-  margin: 0 8px 0 0;
-  letter-spacing: 0.7px;
-  width: auto;
-  min-width: initial;
-
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    flex-shrink: 0;
-    margin: 12px auto 0;
-    order: 1;
-  `};
 `
 
 export const UpperSection = styled(UpperSectionMod)`
@@ -250,4 +235,33 @@ export const LowerSection = styled.div`
       opacity: 1;
     }
   }
+`
+
+const NetworkCardUni = styled(YellowCard)`
+  border-radius: 12px;
+  padding: 8px 12px;
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    margin: 0;
+    margin-right: 0.5rem;
+    width: initial;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex-shrink: 1;
+  `};
+`
+
+export const NetworkCard = styled(NetworkCardUni)`
+  background-color: ${({ theme }) => theme.networkCard.background};
+  color: ${({ theme }) => theme.networkCard.text};
+  padding: 6px 8px;
+  font-size: 13px;
+  margin: 0 8px 0 0;
+  letter-spacing: 0.7px;
+  min-width: initial;
+  flex: 0 0 fit-content;
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    margin: 0 auto 12px;
+  `};
 `

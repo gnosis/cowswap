@@ -28,7 +28,7 @@ Please see the:
 - [Gnosis Protocol: Smart contracts](https://github.com/gnosis/gp-v2-contracts)
 - [Gnosis Protocol: Services](https://github.com/gnosis/gp-v2-services)
 
-## Development
+You can block an entire list of tokens by passing in a tokenlist like [here](./src/constants/lists.ts) or you can block specific tokens by adding them to [unsupported.tokenlist.json](./src/constants/tokenLists/unsupported.tokenlist.json).
 
 ### Install Dependencies
 
@@ -144,3 +144,13 @@ The API endpoint is configured using the environment variable ` {XDAI|RINKEBY|MA
 Wallet Connect allows to connect the app to any [Wallet Connect supported wallet](https://walletconnect.org/wallets).
 
 In order to do so, it uses a Websocket, that can be configured using: the env var `WALLET_CONNECT_BRIDGE`.
+
+## Sitemap
+
+The sitemap can be found in <./public/sitemap.xml>
+
+To update its content:
+
+1. Edit the list of pages in <./src/custom/sitemap.js>
+2. Run `yarn sitemap`
+3. Commit the changes to git

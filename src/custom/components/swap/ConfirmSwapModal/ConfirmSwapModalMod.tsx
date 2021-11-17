@@ -2,9 +2,10 @@ import { Trans } from '@lingui/macro'
 import { /* Currency,  */ Percent /* , TradeType */ } from '@uniswap/sdk-core'
 // import { Trade as V2Trade } from '@uniswap/v2-sdk'
 // import { Trade as V3Trade } from '@uniswap/v3-sdk'
-import React, { ReactNode, useCallback, useMemo } from 'react'
+import { ReactNode, useCallback, useMemo } from 'react'
 import TransactionConfirmationModal, {
   ConfirmationModalContent,
+  OperationType,
   TransactionErrorContent,
 } from 'components/TransactionConfirmationModal'
 import SwapModalFooter from 'components/swap/SwapModalFooter'
@@ -135,6 +136,7 @@ export default function ConfirmSwapModal({
       content={confirmationContent}
       pendingText={<PendingTextComponent trade={trade} /> /*pendingText*/}
       currencyToAdd={trade?.outputAmount.currency}
+      operationType={OperationType.ORDER_SIGN}
     />
   )
 }

@@ -1,16 +1,20 @@
-import styled from 'styled-components'
+import styled, { css } from 'styled-components/macro'
 import Page, { GdocsListStyle, Title } from 'components/Page'
 import * as CSS from 'csstype'
 import { transparentize } from 'polished'
 
+export const Container = styled.div`
+  max-width: 910px;
+  width: 100%;
+`
 export const Wrapper = styled(Page)`
   ${GdocsListStyle}
 
   max-width: 910px;
+  width: 100%;
   min-height: auto;
   padding-top: 16px;
   display: flex;
-  width: 100%;
   justify-content: flex-end;
   flex-direction: column;
   margin: 0;
@@ -35,13 +39,14 @@ export const ChildWrapper = styled.div`
   flex-grow: 1;
   justify-content: center;
   border-radius: 21px;
-  padding: 15px;
+  padding: 20px;
   ${({ theme }) => theme.neumorphism.boxShadow};
   background-color: ${({ theme }) => theme.bg7};
   ${({ theme }) => theme.mediaWidth.upToSmall`
     grid-column-start: 1;
     grid-column-end: 2;
     width: 100%;
+    padding: 14px;
   `}
   > .item {
     width: 100%;
@@ -62,9 +67,6 @@ export const GridWrap = styled.div<Partial<CSS.Properties & { horizontal?: boole
     > :nth-child(2) {
       grid-column-start: 1;
       grid-column-end: 2;
-    }
-    > :nth-child(4) {
-      display: none;
     }
   `};
 `
@@ -91,10 +93,15 @@ export const StyledTitle = styled(Title)`
     font-size: 24px;
   `}
 `
+
+export const StyledTime = styled.p`
+  margin: 0;
+`
+
 export const ItemTitle = styled.h3`
   display: flex;
   align-items: center;
-  margin: 0 0 34px 0;
+  margin: 0 0 16px 0;
   font-size: 18px;
   line-height: 1.21;
   color: ${({ theme }) => theme.text1};
@@ -110,11 +117,17 @@ export const FlexWrap = styled.div`
   align-items: center;
   flex-direction: row;
   justify-content: center;
+  > div {
+    width: auto;
+  }
   button {
     max-width: 180px;
   }
   ${({ theme }) => theme.mediaWidth.upToSmall`
     flex-wrap: wrap;
+    > div {
+      width: 50%;
+    }
     button {
       max-width: 100%;
     }
@@ -129,6 +142,7 @@ export const FlexCol = styled.div`
   justify-content: center;
   strong {
     font-size: 21px;
+    margin-top: 6px;
     ${({ theme }) => theme.mediaWidth.upToSmall`
     font-size: 14px;
   `}
@@ -136,5 +150,42 @@ export const FlexCol = styled.div`
   span:not([role='img']) {
     font-size: 14px;
     color: ${({ theme }) => theme.text6};
+    min-height: 32px;
+    text-align: center;
+    display: flex;
+    align-items: center;
   }
+`
+export const Loader = styled.div<{ isLoading: boolean }>`
+  ${({ theme, isLoading }) =>
+    isLoading &&
+    css`
+      position: relative;
+      display: inline-block;
+
+      overflow: hidden;
+      &::after {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        transform: translateX(-100%);
+        background-image: linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0) 0,
+          ${theme.shimmer1} 20%,
+          ${theme.shimmer2} 60%,
+          rgba(255, 255, 255, 0)
+        );
+        animation: shimmer 2s infinite;
+        content: '';
+      }
+
+      @keyframes shimmer {
+        100% {
+          transform: translateX(100%);
+        }
+      }
+    `}
 `

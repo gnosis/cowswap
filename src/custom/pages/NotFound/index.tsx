@@ -1,6 +1,5 @@
-import React from 'react'
 import { Link } from 'react-router-dom'
-import styled from 'styled-components'
+import styled from 'styled-components/macro'
 import Page, { Title, Content, GdocsListStyle } from 'components/Page'
 import { ButtonPrimary } from 'custom/components/Button'
 import cow404IMG from 'assets/cow-swap/cow-404.png'
@@ -32,7 +31,10 @@ const Container = styled.div`
   ${ButtonPrimary} {
     width: 196px;
     padding: 9px;
-    color: ${({ theme }) => theme.text2};
+    color: ${({ theme }) => theme.primaryText1};
+    &:hover {
+      ${({ theme }) => theme.buttonPrimary.background}
+    }
   }
   h2 {
     margin: 36px 0 32px;

@@ -2,13 +2,11 @@ import { Colors } from 'theme/styled'
 import { colors as colorsUniswap } from '@src/theme'
 import { ButtonSize } from 'theme'
 
-import { DefaultTheme, ThemeProvider as StyledComponentsThemeProvider, createGlobalStyle, css } from 'styled-components'
-import React, { useMemo } from 'react'
+import { createGlobalStyle, css } from 'styled-components/macro'
 
-import { theme as themeUniswap } from '@src/theme'
-import { useIsDarkMode } from 'state/user/hooks'
 import { transparentize } from 'polished'
-import { cowSwapBackground, cowSwapLogo } from './cowSwapAssets'
+import { cowSwapBackground, cowSwapLogo } from 'theme/cowSwapAssets'
+
 import Cursor1 from 'assets/cow-swap/cursor1.gif'
 import Cursor2 from 'assets/cow-swap/cursor2.gif'
 import Cursor3 from 'assets/cow-swap/cursor3.gif'
@@ -118,6 +116,7 @@ export function themeVariables(darkMode: boolean, colorsTheme: Colors) {
     },
     logo: {
       src: `data:image/svg+xml;base64,${cowSwapLogo(darkMode)}`,
+      srcIcon: `data:image/svg+xml;base64,${cowSwapLogo(darkMode, true)}`,
       alt: 'CowSwap Logo',
       width: '208px',
       height: '50px',
@@ -261,25 +260,6 @@ export function themeVariables(darkMode: boolean, colorsTheme: Colors) {
       background: darkMode ? colorsTheme.white : colorsTheme.bg2,
     },
   }
-}
-
-export function theme(darkmode: boolean): DefaultTheme {
-  const colorsTheme = colors(darkmode)
-  return {
-    ...themeUniswap(darkmode),
-    ...colorsTheme,
-
-    // Overide Theme
-    ...themeVariables(darkmode, colorsTheme),
-  }
-}
-
-export default function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const darkMode = useIsDarkMode()
-
-  const themeObject = useMemo(() => theme(darkMode), [darkMode])
-
-  return <StyledComponentsThemeProvider theme={themeObject}>{children}</StyledComponentsThemeProvider>
 }
 
 export const UniFixedGlobalStyle = css`
