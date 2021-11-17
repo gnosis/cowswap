@@ -129,7 +129,7 @@ export function useTokenLazy() {
     async (address: string): Promise<Token | null> => {
       console.debug(`[useTokenLazy::callback] callback called`, address, account, chainId)
 
-      if (!account || !chainId || !address) {
+      if (!account || !chainId || !address || !library) {
         return null
       }
 
