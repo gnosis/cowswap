@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 import { OrderKind } from '@gnosis.pm/gp-v2-contracts'
-import { Currency, CurrencyAmount, Percent } from '@uniswap/sdk-core'
+import { Currency, CurrencyAmount, Percent, TradeType } from '@uniswap/sdk-core'
 
-import { useTradeExactInWithFee, useTradeExactOutWithFee } from 'state/swap/extension'
-import { tryParseAmount, useSwapState } from 'state/swap/hooks'
+import { useTradeExactInWithFee } from 'state/swap/extension'
+import { useSwapState } from 'state/swap/hooks'
 import { QuoteInformationObject } from 'state/price/reducer'
 import { Field } from 'state/swap/actions'
 import TradeGp from 'state/swap/TradeGp'
@@ -38,28 +38,23 @@ export function useFiatValuePriceImpact(parsedAmounts: ParsedAmounts) {
 // calculates a new Quote and inverse swap values
 // TODO: maybe move this to a new file
 function useQuoteAndInverseSwap({
-  typedValue,
+  parsedAmount,
   outputCurrency,
   inputCurrency,
+  sellToken,
+  buyToken,
 }: {
-  typedValue?: string
+  parsedAmount?: CurrencyAmount<Currency>
   outputCurrency?: Currency
   inputCurrency?: Currency
+  sellToken?: string | null
+  buyToken?: string | null
 }) {
   const [quote, setQuote] = useState<QuoteInformationObject | undefined>()
 
   const { chainId: preChain } = useActiveWeb3React()
   const { account } = useWalletInfo()
 
-  const {
-    INPUT: { currencyId: sellToken },
-    OUTPUT: { currencyId: buyToken },
-    independentField,
-  } = useSwapState()
-
-  const isExactIn = independentField === Field.INPUT
-
-  const parsedAmount = tryParseAmount(typedValue, (isExactIn ? inputCurrency : outputCurrency) ?? undefined)
   const amount = parsedAmount?.quotient.toString()
   const fromDecimals = outputCurrency?.decimals ?? DEFAULT_DECIMALS
   const toDecimals = inputCurrency?.decimals ?? DEFAULT_DECIMALS
@@ -71,10 +66,10 @@ function useQuoteAndInverseSwap({
 
     const quoteParams = {
       amount,
-      // Invert these
-      sellToken: buyToken,
-      buyToken: sellToken,
-      kind: isExactIn ? OrderKind.SELL : OrderKind.BUY,
+      sellToken,
+      buyToken,
+      // B > A Trade is always a sell
+      kind: OrderKind.SELL,
       fromDecimals,
       toDecimals,
       // TODO: check
@@ -110,20 +105,18 @@ function useQuoteAndInverseSwap({
       .catch((err) => {
         console.error(err)
       })
-  }, [account, amount, buyToken, fromDecimals, isExactIn, preChain, sellToken, toDecimals, typedValue])
+  }, [account, amount, buyToken, fromDecimals, preChain, sellToken, toDecimals])
 
+  // ABA is always sell trades
+  // SELL >> SELL
+  // BUY >> SELL
   const bestTradeExactIn = useTradeExactInWithFee({
-    parsedAmount: isExactIn ? parsedAmount : undefined,
+    parsedAmount,
     outputCurrency,
     quote,
   })
-  const bestTradeExactOut = useTradeExactOutWithFee({
-    parsedAmount: isExactIn ? undefined : parsedAmount,
-    inputCurrency,
-    quote,
-  })
 
-  return isExactIn ? bestTradeExactIn : bestTradeExactOut
+  return bestTradeExactIn
 }
 
 interface AbaPriceImpactParams {
@@ -133,23 +126,41 @@ interface AbaPriceImpactParams {
 
 export function useAbaPriceImpact({ abTrade, fiatPriceImpact }: AbaPriceImpactParams) {
   const [abaPriceImpact, setAbaPriceImpact] = useState<Percent | undefined>(undefined)
-
+  const {
+    INPUT: { currencyId: sellToken },
+    OUTPUT: { currencyId: buyToken },
+  } = useSwapState()
+  const isExactIn = abTrade?.tradeType === TradeType.EXACT_INPUT
   // we calculate the trade going B > A
   // using the output values from the original A > B trade
   const baTrade = useQuoteAndInverseSwap({
     // the amount traded now is the A > B output amount without fees
     // TODO: is this the amount with or without fees?
-    typedValue: abTrade?.outputAmountWithoutFee?.toExact(),
+    parsedAmount: isExactIn ? abTrade?.outputAmount : abTrade?.inputAmount,
     inputCurrency: abTrade?.inputAmount.currency,
     outputCurrency: abTrade?.outputAmount.currency,
+    // on buy orders we dont inverse it
+    sellToken: isExactIn ? buyToken : sellToken,
+    buyToken: isExactIn ? sellToken : buyToken,
   })
 
   useEffect(() => {
     // we have no fiat price impact and there's a trade, we need to use ABA impact
     if (abTrade && baTrade && !fiatPriceImpact) {
+      isExactIn
+        ? console.debug(`
+        [usePriceImpact::INPUT/OUTPUT]
+        INITIAL INPUT:  ${abTrade.inputAmount.toExact()}
+        FINAL OUTPUT:   ${baTrade.outputAmount?.toExact()}
+      `)
+        : console.debug(`
+      [usePriceImpact::INPUT/OUTPUT]
+      INITIAL OUTPUT:  ${abTrade.outputAmount.toExact()}
+      FINAL OUTPUT:   ${baTrade.outputAmount?.toExact()}
+    `)
       setAbaPriceImpact(HARD_CODED_PRICE_IMPACT)
     }
-  }, [fiatPriceImpact, abTrade, baTrade])
+  }, [fiatPriceImpact, abTrade, baTrade, isExactIn])
 
   // TODO: remove - debugging
   useEffect(() => {
@@ -164,6 +175,7 @@ type PriceImpactParams = Omit<AbaPriceImpactParams, 'fiatPriceImpact'> & { parse
 
 export default function usePriceImpact({ abTrade, parsedAmounts }: PriceImpactParams) {
   const fiatPriceImpact = useFiatValuePriceImpact(parsedAmounts)
+  // TODO: this shouldnt be undefined, testing
   const abaPriceImpact = useAbaPriceImpact({ abTrade, fiatPriceImpact: undefined })
   // TODO: remove - debugging
   console.debug(`
@@ -173,5 +185,5 @@ export default function usePriceImpact({ abTrade, parsedAmounts }: PriceImpactPa
     FIAT: ${fiatPriceImpact?.toSignificant(2)}
     ABA:  ${abaPriceImpact?.toSignificant(2)}
 `)
-  return null || abaPriceImpact
+  return fiatPriceImpact || abaPriceImpact
 }
