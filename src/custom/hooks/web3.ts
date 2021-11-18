@@ -31,9 +31,22 @@ export function useEagerConnect() {
       // if there is no last saved provider set tried state to true
       if (!latestProvider) {
         // Try to auto-connect to the injected wallet
-        activate(injected, undefined, true).catch(() => {
-          setTried(true)
-        })
+        injected
+          .isAuthorized()
+          .then((isAuthorized) => {
+            console.log('[web3] Injected wallet: Is authorized ', isAuthorized)
+            if (isAuthorized) {
+              activate(injected, undefined, true).catch(() => {
+                setTried(true)
+              })
+            } else {
+              setTried(true)
+            }
+          })
+          .catch((error) => {
+            console.log('[web3] Injected wallet: Error checking if isAuthorized', error)
+            setTried(true)
+          })
       } else if (latestProvider === WalletProvider.INJECTED) {
         // check if the last saved provider is Metamask
         // check if the our application is authorized/connected with Metamask
