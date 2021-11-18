@@ -17,8 +17,9 @@ import {
   ButtonPrimary,
   // ButtonLight
 } from '../Button'
-import { AutoColumn, ColumnCenter } from 'components/Column'
 import Circle from 'assets/images/blue-loader.svg'
+import { AutoColumn, ColumnCenter } from 'components/Column'
+// import Circle from 'assets/images/blue-loader.svg'
 // import MetaMaskLogo from 'assets/images/metamask.png'
 import { useActiveWeb3React } from 'hooks/web3'
 // import useAddTokenToMetamask from 'hooks/useAddTokenToMetamask'
@@ -29,8 +30,14 @@ import Badge from 'components/Badge'
 import AnimatedConfirmation from 'components/TransactionConfirmationModal/AnimatedConfirmation'
 // MOD
 import { GpModal } from 'components/Modal'
-import { lighten } from 'polished'
-import { ConfirmationModalContentProps, TransactionSubmittedContent, GPModalHeader } from '.' // mod
+// import { lighten } from 'polished'
+import {
+  ConfirmationPendingContent,
+  ConfirmationModalContentProps,
+  TransactionSubmittedContent,
+  GPModalHeader,
+  OperationType,
+} from '.' // mod
 
 const Wrapper = styled.div`
   width: 100%;
@@ -61,45 +68,45 @@ const StyledLogo = styled.img`
   margin-left: 6px;
 `
 
-export function ConfirmationPendingContent({
-  onDismiss,
-  pendingText,
-  inline,
-}: {
-  onDismiss: () => void
-  pendingText: ReactNode
-  inline?: boolean // not in modal
-}) {
-  return (
-    <Wrapper>
-      <AutoColumn gap="md">
-        {!inline && (
-          <RowBetween>
-            <div />
-            <CloseIcon onClick={onDismiss} />
-          </RowBetween>
-        )}
-        <ConfirmedIcon inline={inline}>
-          <CustomLightSpinner src={Circle} alt="loader" size={inline ? '40px' : '90px'} />
-        </ConfirmedIcon>
-        <AutoColumn gap="12px" justify={'center'}>
-          <Text fontWeight={500} fontSize={20} textAlign="center">
-            <Trans>Waiting For Confirmation</Trans>
-          </Text>
-          <AutoColumn gap="12px" justify={'center'}>
-            {/* <Text fontWeight={400} fontSize={16} textAlign="center"> */}
-            <Text fontWeight={600} fontSize={14} color="" textAlign="center">
-              {pendingText}
-            </Text>
-          </AutoColumn>
-          <Text fontSize={12} color={lighten(0.2, '#565A69')} textAlign="center" marginBottom={12}>
-            <Trans>Confirm this transaction in your wallet</Trans>
-          </Text>
-        </AutoColumn>
-      </AutoColumn>
-    </Wrapper>
-  )
-}
+// export function ConfirmationPendingContent({
+//   onDismiss,
+//   pendingText,
+//   inline,
+// }: {
+//   onDismiss: () => void
+//   pendingText: ReactNode
+//   inline?: boolean // not in modal
+// }) {
+//   return (
+//     <Wrapper>
+//       <AutoColumn gap="md">
+//         {!inline && (
+//           <RowBetween>
+//             <div />
+//             <CloseIcon onClick={onDismiss} />
+//           </RowBetween>
+//         )}
+//         <ConfirmedIcon inline={inline}>
+//           <CustomLightSpinner src={Circle} alt="loader" size={inline ? '40px' : '90px'} />
+//         </ConfirmedIcon>
+//         <AutoColumn gap="12px" justify={'center'}>
+//           <Text fontWeight={500} fontSize={20} textAlign="center">
+//             <Trans>Waiting For Confirmation</Trans>
+//           </Text>
+//           <AutoColumn gap="12px" justify={'center'}>
+//             {/ * <Text fontWeight={400} fontSize={16} textAlign="center"> * /}
+//             <Text fontWeight={600} fontSize={14} color="" textAlign="center">
+//               {pendingText}
+//             </Text>
+//           </AutoColumn>
+//           <Text fontSize={12} color={lighten(0.2, '#565A69')} textAlign="center" marginBottom={12}>
+//             <Trans>Confirm this transaction in your wallet</Trans>
+//           </Text>
+//         </AutoColumn>
+//       </AutoColumn>
+//     </Wrapper>
+//   )
+// }
 
 /* export function TransactionSubmittedContent({
   onDismiss,
@@ -335,11 +342,12 @@ function L2Content({
 interface ConfirmationModalProps {
   isOpen: boolean
   onDismiss: () => void
-  hash: string | undefined
-  content: () => ReactNode
+  hash?: string
+  content?: () => ReactNode
   attemptingTxn: boolean
   pendingText: ReactNode
-  currencyToAdd?: Currency | undefined
+  currencyToAdd?: Currency
+  operationType: OperationType
 }
 
 export default function TransactionConfirmationModal({
@@ -350,6 +358,7 @@ export default function TransactionConfirmationModal({
   pendingText,
   content,
   currencyToAdd,
+  operationType,
 }: ConfirmationModalProps) {
   const { chainId } = useActiveWeb3React()
 
@@ -364,7 +373,12 @@ export default function TransactionConfirmationModal({
       {isL2 && (hash || attemptingTxn) ? (
         <L2Content chainId={chainId} hash={hash} onDismiss={onDismiss} pendingText={pendingText} />
       ) : attemptingTxn ? (
-        <ConfirmationPendingContent onDismiss={onDismiss} pendingText={pendingText} />
+        <ConfirmationPendingContent
+          chainId={chainId}
+          operationType={operationType}
+          onDismiss={onDismiss}
+          pendingText={pendingText}
+        />
       ) : hash ? (
         <TransactionSubmittedContent
           chainId={chainId}
@@ -373,7 +387,7 @@ export default function TransactionConfirmationModal({
           currencyToAdd={currencyToAdd}
         />
       ) : (
-        content()
+        content && content()
       )}
     </GpModal>
   )

@@ -13,7 +13,7 @@ export const {
   getProfileData,
   // functions that do not have a mock
   getOrderLink = realApi.getOrderLink,
-  sendSignedOrder = realApi.sendSignedOrder,
+  sendOrder = realApi.sendOrder,
   sendSignedOrderCancellation = realApi.sendSignedOrderCancellation,
   getPriceQuote = realApi.getPriceQuote,
   getFeeQuote = realApi.getFeeQuote,
