@@ -140,14 +140,6 @@ function addOrderToState(
   state[chainId][status] = { ...state[chainId][status], [id]: { order, id } }
 }
 
-function popOrder(state: OrdersState, chainId: ChainId, status: OrderStatus, id: string): OrderObject | undefined {
-  const orderObj = state?.[chainId]?.[status]?.[id]
-  if (orderObj) {
-    delete state?.[chainId]?.[status]?.[id]
-  }
-  return orderObj
-}
-
 const initialState: OrdersState = {}
 
 export default createReducer(initialState, (builder) =>
