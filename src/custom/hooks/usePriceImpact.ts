@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { OrderKind } from '@gnosis.pm/gp-v2-contracts'
 import { Currency, CurrencyAmount, Percent, TradeType } from '@uniswap/sdk-core'
 
@@ -37,18 +37,20 @@ export function useFiatValuePriceImpact(parsedAmounts: ParsedAmounts) {
 
 // calculates a new Quote and inverse swap values
 // TODO: maybe move this to a new file
-function useQuoteAndInverseSwap({
+function useQuoteAndSwap({
   parsedAmount,
   outputCurrency,
-  inputCurrency,
   sellToken,
   buyToken,
+  fromDecimals = DEFAULT_DECIMALS,
+  toDecimals = DEFAULT_DECIMALS,
 }: {
   parsedAmount?: CurrencyAmount<Currency>
   outputCurrency?: Currency
-  inputCurrency?: Currency
   sellToken?: string | null
   buyToken?: string | null
+  fromDecimals?: number
+  toDecimals?: number
 }) {
   const [quote, setQuote] = useState<QuoteInformationObject | undefined>()
 
@@ -56,10 +58,7 @@ function useQuoteAndInverseSwap({
   const { account } = useWalletInfo()
 
   const amount = parsedAmount?.quotient.toString()
-  const fromDecimals = outputCurrency?.decimals ?? DEFAULT_DECIMALS
-  const toDecimals = inputCurrency?.decimals ?? DEFAULT_DECIMALS
 
-  // uwc-debug
   useEffect(() => {
     const chainId = supportedChainId(preChain)
     if (!sellToken || !buyToken || !amount) return
@@ -124,8 +123,13 @@ interface AbaPriceImpactParams {
   fiatPriceImpact?: Percent
 }
 
+function _calculateAbaPriceImpact(abTrade: TradeGp, baTrade: TradeGp, isExactIn: boolean) {
+  console.debug('abTrade', abTrade, 'baTrade', baTrade, isExactIn)
+
+  return HARD_CODED_PRICE_IMPACT
+}
+
 export function useAbaPriceImpact({ abTrade, fiatPriceImpact }: AbaPriceImpactParams) {
-  const [abaPriceImpact, setAbaPriceImpact] = useState<Percent | undefined>(undefined)
   const {
     INPUT: { currencyId: sellToken },
     OUTPUT: { currencyId: buyToken },
@@ -133,42 +137,32 @@ export function useAbaPriceImpact({ abTrade, fiatPriceImpact }: AbaPriceImpactPa
   const isExactIn = abTrade?.tradeType === TradeType.EXACT_INPUT
   // we calculate the trade going B > A
   // using the output values from the original A > B trade
-  const baTrade = useQuoteAndInverseSwap({
+  const baTrade = useQuoteAndSwap({
     // the amount traded now is the A > B output amount without fees
     // TODO: is this the amount with or without fees?
     parsedAmount: isExactIn ? abTrade?.outputAmount : abTrade?.inputAmount,
-    inputCurrency: abTrade?.inputAmount.currency,
-    outputCurrency: abTrade?.outputAmount.currency,
+    // for the B > A SELL/SELL trade, the outputCurrency is the original input
+    // for the B > A BUY/SELL trade, the outputCurrency is the original output
+    outputCurrency: isExactIn ? abTrade?.inputAmount.currency : abTrade?.outputAmount.currency,
     // on buy orders we dont inverse it
     sellToken: isExactIn ? buyToken : sellToken,
     buyToken: isExactIn ? sellToken : buyToken,
+    fromDecimals: isExactIn ? abTrade?.outputAmount.currency.decimals : abTrade?.inputAmount.currency.decimals,
+    toDecimals: isExactIn ? abTrade?.inputAmount.currency.decimals : abTrade?.outputAmount.currency.decimals,
   })
+
+  // ref to not recalc useEffect
+  const abaPriceImpactRef = useRef<Percent | undefined>()
 
   useEffect(() => {
     // we have no fiat price impact and there's a trade, we need to use ABA impact
     if (abTrade && baTrade && !fiatPriceImpact) {
-      isExactIn
-        ? console.debug(`
-        [usePriceImpact::INPUT/OUTPUT]
-        INITIAL INPUT:  ${abTrade.inputAmount.toExact()}
-        FINAL OUTPUT:   ${baTrade.outputAmount?.toExact()}
-      `)
-        : console.debug(`
-      [usePriceImpact::INPUT/OUTPUT]
-      INITIAL OUTPUT:  ${abTrade.outputAmount.toExact()}
-      FINAL OUTPUT:   ${baTrade.outputAmount?.toExact()}
-    `)
-      setAbaPriceImpact(HARD_CODED_PRICE_IMPACT)
+      const abaPriceImpact = _calculateAbaPriceImpact(abTrade, baTrade, isExactIn)
+      abaPriceImpactRef.current = abaPriceImpact
     }
   }, [fiatPriceImpact, abTrade, baTrade, isExactIn])
 
-  // TODO: remove - debugging
-  useEffect(() => {
-    console.debug('[usePriceImpact] >> A > B TRADE', abTrade)
-    console.debug('[usePriceImpact] >> B > A TRADE', baTrade)
-  }, [abTrade, baTrade])
-
-  return abaPriceImpact
+  return abaPriceImpactRef.current
 }
 
 type PriceImpactParams = Omit<AbaPriceImpactParams, 'fiatPriceImpact'> & { parsedAmounts: ParsedAmounts }
@@ -177,13 +171,6 @@ export default function usePriceImpact({ abTrade, parsedAmounts }: PriceImpactPa
   const fiatPriceImpact = useFiatValuePriceImpact(parsedAmounts)
   // TODO: this shouldnt be undefined, testing
   const abaPriceImpact = useAbaPriceImpact({ abTrade, fiatPriceImpact: undefined })
-  // TODO: remove - debugging
-  console.debug(`
-  [usePriceImpact] >>
-    PRICE IMPACTS
-    =============
-    FIAT: ${fiatPriceImpact?.toSignificant(2)}
-    ABA:  ${abaPriceImpact?.toSignificant(2)}
-`)
+
   return fiatPriceImpact || abaPriceImpact
 }
