@@ -1,8 +1,7 @@
-import { useMemo, useEffect } from 'react'
 import AppMod from './AppMod'
 import styled from 'styled-components/macro'
 import { RedirectPathToSwapOnly, RedirectToSwap } from 'pages/Swap/redirects'
-import { Route, Switch, useLocation, useHistory } from 'react-router-dom'
+import { Route, Switch } from 'react-router-dom'
 import Swap from 'pages/Swap'
 import PrivacyPolicy from 'pages/PrivacyPolicy'
 import CookiePolicy from 'pages/CookiePolicy'
@@ -17,6 +16,7 @@ import * as Sentry from '@sentry/react'
 import { Integrations } from '@sentry/tracing'
 import { version } from '@src/../package.json'
 import { environmentName } from 'utils/environments'
+import { useFilterEmptyQueryParams } from '@src/custom/hooks/useFilterEmptyQueryParams'
 
 const SENTRY_DSN = process.env.REACT_APP_SENTRY_DSN
 const SENTRY_TRACES_SAMPLE_RATE = process.env.REACT_APP_SENTRY_TRACES_SAMPLE_RATE
@@ -60,34 +60,9 @@ function createRedirectExternal(url: string) {
   }
 }
 
-function useQueryParams() {
-  const { search } = useLocation()
-
-  return useMemo(() => new URLSearchParams(search), [search])
-}
-
-function useFilterQueryParams() {
-  const queryParams = useQueryParams()
-  const history = useHistory()
-
-  useEffect(() => {
-    const keysForDel: string[] = []
-    queryParams.forEach((value, key) => {
-      if (value === '') {
-        keysForDel.push(key)
-      }
-    })
-    keysForDel.forEach((key) => queryParams.delete(key))
-
-    history.replace({
-      search: queryParams.toString(),
-    })
-  }, [history, queryParams])
-}
-
 export default function App() {
-  // Deal with empty queryParams
-  useFilterQueryParams()
+  // Dealing with empty URL queryParameters
+  useFilterEmptyQueryParams()
 
   return (
     <Wrapper>
