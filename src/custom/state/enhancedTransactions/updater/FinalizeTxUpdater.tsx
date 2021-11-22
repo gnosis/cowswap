@@ -181,7 +181,7 @@ export default function Updater(): null {
 
   // Get, from the pending transaction, the ones that we should re-check
   const shouldCheckFilter = useMemo(() => {
-    if (!lastBlockNumber || !accountLowerCase) {
+    if (!lastBlockNumber) {
       return
     }
     return (tx: EnhancedTransactionDetails) =>
