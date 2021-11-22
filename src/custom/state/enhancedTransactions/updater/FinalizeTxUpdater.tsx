@@ -100,7 +100,7 @@ function finalizeEthereumTransaction(
 function checkEthereumTransactions(params: CheckEthereumTransactions): Cancel[] {
   const { transactions, chainId, lastBlockNumber, getReceipt, getSafeInfo, dispatch } = params
 
-  const promiseCancellations = transactions.map((transaction) => {
+  return transactions.map((transaction) => {
     const { hash, hashType, receipt } = transaction
 
     if (hashType === HashType.GNOSIS_SAFE_TX) {
@@ -165,8 +165,6 @@ function checkEthereumTransactions(params: CheckEthereumTransactions): Cancel[] 
       return cancel
     }
   })
-
-  return promiseCancellations
 }
 
 export default function Updater(): null {
