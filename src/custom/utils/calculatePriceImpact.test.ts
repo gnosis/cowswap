@@ -16,7 +16,7 @@ function _calculateAbaPriceImpact(initialValue: string, finalValue: string) {
 const WETH_MAINNET = new Token(ChainId.MAINNET, WETH[1].address, 18)
 const DAI_MAINNET = new Token(ChainId.MAINNET, '0x6b175474e89094c44da98b954eedeac495271d0f', 18)
 
-describe('ABA Price Impact', () => {
+describe('A > B > A Price Impact', () => {
   const AB_IN = parseUnits('1', WETH_MAINNET.decimals).toString()
   const AB_OUT = parseUnits('1000', DAI_MAINNET.decimals).toString()
 
@@ -24,7 +24,7 @@ describe('ABA Price Impact', () => {
   const abOut = CurrencyAmount.fromRawAmount(DAI_MAINNET, AB_OUT)
 
   describe('[SELL] WETH --> DAI', () => {
-    it('ABA SELL return proper price impact', () => {
+    it('A > B > A SELL return proper price impact', () => {
       // GIVEN a 1 WETH >> 1000 DAI AB Trade
       // GIVEN a 1000 DAI >> 0.5 WETH BA Trade
       const BA_OUT = parseUnits('0.5', WETH_MAINNET.decimals).toString()
@@ -38,7 +38,7 @@ describe('ABA Price Impact', () => {
   })
 
   describe('[BUY] DAI --> WETH', () => {
-    it('ABA BUY returns proper price impact', () => {
+    it('A > B > A BUY returns proper price impact', () => {
       // GIVEN a 1000 DAI >> 1 WETH BUY AB Trade
       // GIVEN a 1 WETH >> 800 WETH SELL BA Trade
       const BA_OUT = parseUnits('800', DAI_MAINNET.decimals).toString()

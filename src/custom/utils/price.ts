@@ -1,6 +1,7 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import BigNumberJs from 'bignumber.js'
 import * as Sentry from '@sentry/browser'
+import { Percent } from '@uniswap/sdk-core'
 
 import { getFeeQuote, getPriceQuote as getPriceQuoteGp, OrderMetaData } from 'api/gnosisProtocol'
 import GpQuoteError, { GpQuoteErrorCodes } from 'api/gnosisProtocol/errors/QuoteError'
@@ -293,4 +294,33 @@ export function getValidParams(params: PriceQuoteParams) {
   const quoteToken = toErc20Address(quoteTokenAux, chainId)
 
   return { ...params, baseToken, quoteToken }
+}
+
+export function calculateFallbackPriceImpact(initialValue: string, finalValue: string) {
+  const initialValueBn = new BigNumberJs(initialValue)
+  const finalValueBn = new BigNumberJs(finalValue)
+  // TODO: use correct formula
+  // ((IV - FV) / IV / 2) * 100
+  const [numerator, denominator] = initialValueBn.minus(finalValueBn).div(initialValueBn).div('2').toFraction()
+
+  console.debug(
+    '[calculateFallbackPriceImpact]::',
+    initialValueBn.toString(10),
+    finalValueBn.toString(10),
+    numerator.toString(10),
+    denominator.toString(10)
+  )
+
+  // we don't want denom zeroes
+  if (denominator.isZero()) return undefined
+
+  const priceImpactPercentage =
+    // Uni sdk hates negative numbers so we need to do this
+    numerator.isNegative() || denominator.isNegative()
+      ? new Percent(numerator.absoluteValue().toString(10), denominator.absoluteValue().toString(10)).multiply('-1')
+      : new Percent(numerator.toString(10), denominator.toString(10))
+
+  console.debug(`[useAbaPriceImpact]::${priceImpactPercentage.toSignificant(2)}%`)
+
+  return priceImpactPercentage
 }
