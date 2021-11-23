@@ -145,13 +145,7 @@ function _calculateAbaPriceImpact(initialValue: string, finalValue: string) {
       ? new Percent(numerator.absoluteValue().toString(10), denominator.absoluteValue().toString(10)).multiply('-1')
       : new Percent(numerator.toString(10), denominator.toString(10))
 
-  // TODO: remove
-  console.debug(`
-    INITIAL: ${initialValueBn.toString(10)}
-    FINAL: ${finalValueBn.toString(10)}
-    ==
-    PERCENT: ${priceImpactPercentage.toSignificant(2)}%
-  `)
+  console.debug(`[useAbaPriceImpact]::${priceImpactPercentage.toSignificant(2)}%`)
 
   return priceImpactPercentage
 }
@@ -212,9 +206,8 @@ export function useAbaPriceImpact({ abTrade, fiatPriceImpact }: AbaPriceImpactPa
 type PriceImpactParams = Omit<AbaPriceImpactParams, 'fiatPriceImpact'> & { parsedAmounts: ParsedAmounts }
 
 export default function usePriceImpact({ abTrade, parsedAmounts }: PriceImpactParams) {
-  /* const fiatPriceImpact =  */ useFiatValuePriceImpact(parsedAmounts)
-  // TODO: this shouldnt be undefined, testing
-  const abaPriceImpact = useAbaPriceImpact({ abTrade, fiatPriceImpact: undefined })
+  const fiatPriceImpact = useFiatValuePriceImpact(parsedAmounts)
+  const abaPriceImpact = useAbaPriceImpact({ abTrade, fiatPriceImpact })
 
-  return abaPriceImpact
+  return fiatPriceImpact || abaPriceImpact
 }
