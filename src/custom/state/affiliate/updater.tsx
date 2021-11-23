@@ -22,15 +22,22 @@ export function ReferralLinkUpdater() {
   return null
 }
 
-export function NotificationClosedUpdater() {
+const AFFILIATE_LS_KEY = 'redux_localstorage_simple_affiliate'
+
+// This handles cross tab state sync so the Affiliate banner is shown/hidden
+export function StorageUpdater() {
   const dispatch = useAppDispatch()
 
   const handler = useCallback(
     (e: StorageEvent) => {
-      if (e.key === 'redux_localstorage_simple_affiliate' && e.newValue) {
+      if (e.key === AFFILIATE_LS_KEY && e.newValue) {
         const parsed = JSON.parse(e.newValue) as AffiliateState
         for (const id in parsed.isNotificationClosed) {
           dispatch(dismissNotification(id))
+        }
+
+        if (parsed.referralAddress) {
+          dispatch(updateReferralAddress(parsed.referralAddress))
         }
       }
     },
@@ -50,7 +57,7 @@ export default function AffiliateUpdaters() {
   return (
     <>
       <ReferralLinkUpdater />
-      <NotificationClosedUpdater />
+      <StorageUpdater />
     </>
   )
 }
