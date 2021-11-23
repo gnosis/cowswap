@@ -1,4 +1,3 @@
-import WalletConnectProvider from '@walletconnect/web3-provider'
 import { WalletConnectConnector } from '@web3-react/walletconnect-connector'
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers'
@@ -63,7 +62,7 @@ function checkIsSupportedWallet(params: {
 }
 
 async function getWcPeerMetadata(connector: WalletConnectConnector): Promise<{ walletName?: string; icon?: string }> {
-  const provider = (await connector.getProvider()) as WalletConnectProvider
+  const provider = await connector.getProvider()
 
   const meta = provider.walletMeta
   if (meta) {
