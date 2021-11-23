@@ -206,18 +206,20 @@ export default function WalletModal({
     setWalletView(WALLET_VIEWS.PENDING)
 
     // if the connector is walletconnect and the user has already tried to connect, manually reset the connector
-    if (connector instanceof WalletConnectConnector && connector.walletConnectProvider?.wc?.uri) {
+    if (connector instanceof WalletConnectConnector) {
       connector.walletConnectProvider = undefined
     }
 
-    connector &&
+    if (connector) {
       activate(connector, undefined, true).catch((error) => {
+        console.log('error from this')
         if (error instanceof UnsupportedChainIdError) {
           activate(connector) // a little janky...can't use setError because the connector isn't set
         } else {
           setPendingError(true)
         }
       })
+    }
   }
 
   // close wallet modal if fortmatic modal is active
