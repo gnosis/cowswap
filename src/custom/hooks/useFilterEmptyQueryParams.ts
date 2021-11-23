@@ -1,27 +1,27 @@
-import { useMemo, useEffect } from 'react'
-import { useLocation, useHistory } from 'react-router-dom'
+import { useEffect } from 'react'
+import { useHistory } from 'react-router-dom'
+import qs from 'qs'
 
-function useQueryParams() {
-  const { search } = useLocation()
+import useParsedQueryString from '@src/hooks/useParsedQueryString'
 
-  return useMemo(() => new URLSearchParams(search), [search])
+/**
+ * When query parameter is empty will be filtered
+ *  example: ?referral=&paramFullfilled=123
+ *  result: {paramFullfilled: 123}
+ *
+ * @param queryParams The object to check
+ */
+function filterEmptyQueryValues(queryParams: { [s: string]: unknown }) {
+  return Object.fromEntries(Object.entries(queryParams).filter(([, v]) => v))
 }
 
 export function useFilterEmptyQueryParams() {
-  const queryParams = useQueryParams()
+  const queryParams = useParsedQueryString()
   const history = useHistory()
 
   useEffect(() => {
-    const keysForDel: string[] = []
-    queryParams.forEach((value, key) => {
-      if (value === '') {
-        keysForDel.push(key)
-      }
-    })
-    keysForDel.forEach((key) => queryParams.delete(key))
-
     history.replace({
-      search: queryParams.toString(),
+      search: qs.stringify(filterEmptyQueryValues(queryParams)),
     })
   }, [history, queryParams])
 }
