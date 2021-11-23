@@ -139,6 +139,9 @@ function _calculateAbaPriceImpact(initialValue: string, finalValue: string) {
   // ((IV - FV) / IV / 2) * 100
   const [numerator, denominator] = initialValueBn.minus(finalValueBn).div(initialValueBn).div('2').toFraction()
 
+  // we don't want zeroes
+  if (numerator.isZero() || denominator.isZero()) return undefined
+
   const priceImpactPercentage =
     // Uni sdk hates negative numbers so we need to do this
     numerator.isNegative() || denominator.isNegative()
