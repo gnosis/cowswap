@@ -14,6 +14,7 @@ import {
   SetQuoteErrorParams,
   setQuoteError,
   RefreshQuoteParams,
+  setQuoteLoading,
 } from './actions'
 import { QuoteInformationObject, QuotesMap } from './reducer'
 import { SupportedChainId as ChainId } from 'constants/chains'
@@ -22,6 +23,7 @@ type GetNewQuoteCallback = (params: GetQuoteParams) => void
 type RefreshQuoteCallback = (params: RefreshQuoteParams) => void
 type AddPriceCallback = (params: UpdateQuoteParams) => void
 type SetQuoteErrorCallback = (params: SetQuoteErrorParams) => void
+type SetQuoteLoadingCallback = (params: boolean) => void
 
 type QuoteParams = { chainId?: ChainId; token?: string | null }
 
@@ -98,11 +100,17 @@ export const useSetQuoteError = (): SetQuoteErrorCallback => {
   return useCallback((params: SetQuoteErrorParams) => dispatch(setQuoteError(params)), [dispatch])
 }
 
+export const useSetQuoteLoading = (): SetQuoteLoadingCallback => {
+  const dispatch = useDispatch<AppDispatch>()
+  return useCallback((params: boolean) => dispatch(setQuoteLoading(params)), [dispatch])
+}
+
 interface QuoteDispatchers {
   getNewQuote: GetNewQuoteCallback
   refreshQuote: RefreshQuoteCallback
   updateQuote: AddPriceCallback
   setQuoteError: SetQuoteErrorCallback
+  setQuoteLoading: SetQuoteLoadingCallback
 }
 
 export const useQuoteDispatchers = (): QuoteDispatchers => {
@@ -111,5 +119,6 @@ export const useQuoteDispatchers = (): QuoteDispatchers => {
     refreshQuote: useRefreshQuote(),
     updateQuote: useUpdateQuote(),
     setQuoteError: useSetQuoteError(),
+    setQuoteLoading: useSetQuoteLoading(),
   }
 }
