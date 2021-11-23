@@ -206,8 +206,10 @@ export function useAbaPriceImpact({ abTrade, fiatPriceImpact }: AbaPriceImpactPa
 type PriceImpactParams = Omit<AbaPriceImpactParams, 'fiatPriceImpact'> & { parsedAmounts: ParsedAmounts }
 
 export default function usePriceImpact({ abTrade, parsedAmounts }: PriceImpactParams) {
-  const fiatPriceImpact = useFiatValuePriceImpact(parsedAmounts)
-  const abaPriceImpact = useAbaPriceImpact({ abTrade, fiatPriceImpact })
+  /* const fiatPriceImpact =  */ useFiatValuePriceImpact(parsedAmounts)
+  // TODO: remove this - testing only - forces ABA
+  const abaPriceImpact = useAbaPriceImpact({ abTrade, fiatPriceImpact: undefined })
 
-  return fiatPriceImpact || abaPriceImpact
+  // TODO: remove this - testing only - forces ABA
+  return /* fiatPriceImpact ||  */ abaPriceImpact
 }
