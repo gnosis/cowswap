@@ -1,20 +1,16 @@
 import { ChainId, WETH } from '@uniswap/sdk'
-import { Currency, CurrencyAmount, Percent, Token } from '@uniswap/sdk-core'
+import { CurrencyAmount, Percent, Token } from '@uniswap/sdk-core'
+import BigNumber from 'bignumber.js'
 import { parseUnits } from 'ethers/lib/utils'
 
-function _calculateAbaPriceImpact(
-  abInputAmount: CurrencyAmount<Currency>,
-  abOutputAmount: CurrencyAmount<Currency>,
-  baOutputAmount: CurrencyAmount<Currency>,
-  isExactIn: boolean
-) {
-  const initialValue = isExactIn ? abInputAmount : abOutputAmount
-  const finalValue = baOutputAmount
+function _calculateAbaPriceImpact(initialValue: string, finalValue: string) {
+  const initialValueBn = new BigNumber(initialValue)
+  const finalValueBn = new BigNumber(finalValue)
   // TODO: use correct formula
   // ((IV - FV) / IV / 2) * 100
-  const rawVal = initialValue.subtract(finalValue).divide(initialValue).divide('2')
+  const [numerator, denominator] = initialValueBn.minus(finalValueBn).div(initialValueBn).div('2').toFraction()
 
-  return new Percent(rawVal.numerator, rawVal.denominator)
+  return new Percent(numerator.toString(), denominator.toString())
 }
 
 const WETH_MAINNET = new Token(ChainId.MAINNET, WETH[1].address, 18)
@@ -36,7 +32,7 @@ describe('ABA Price Impact', () => {
       // THEN we expect price impact to be 25
       // (1 - 0.5) / 1 / 2 * 100
       // BUY order = last param TRUE
-      const abaImpact = _calculateAbaPriceImpact(abIn, abOut, baOut, true)
+      const abaImpact = _calculateAbaPriceImpact(abIn.quotient.toString(), baOut.quotient.toString())
       expect(abaImpact.toSignificant(2)).toEqual('25')
     })
   })
@@ -50,7 +46,7 @@ describe('ABA Price Impact', () => {
       // THEN we expect price impact to be 25
       // (1000 - 800) / 1000 / 2 * 100 = 10
       // BUY order = last param FALSE
-      const abaImpact = _calculateAbaPriceImpact(abIn, abOut, baOut, false)
+      const abaImpact = _calculateAbaPriceImpact(abOut.quotient.toString(), baOut.quotient.toString())
       expect(abaImpact.toSignificant(2)).toEqual('10')
     })
   })
