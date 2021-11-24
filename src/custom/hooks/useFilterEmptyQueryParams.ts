@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import qs from 'qs'
 
-import useParsedQueryString from '@src/hooks/useParsedQueryString'
+import useParsedQueryString from 'hooks/useParsedQueryString'
 
 /**
  * When query parameter is empty will be filtered
