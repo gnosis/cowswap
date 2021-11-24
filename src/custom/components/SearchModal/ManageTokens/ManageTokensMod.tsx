@@ -46,6 +46,10 @@ export interface ManageTokensProps {
   ImportTokensRow: ({ theme, searchToken, setModalView, setImportToken }: ImportTokensRowProps) => JSX.Element
 }
 
+function checkIfSymbol(value: number | string) {
+  return typeof value === 'string' && value.length > 2 && value.length < 6 && /^[A-Z|0-9]*$/.test(value)
+}
+
 export default function ManageTokens({ setModalView, setImportToken, ImportTokensRow }: ManageTokensProps) {
   const { chainId } = useActiveWeb3React()
 
@@ -80,6 +84,8 @@ export default function ManageTokens({ setModalView, setImportToken, ImportToken
     const currentChainId = supportedChainId(chainId)
     return currentChainId ? CHAIN_INFO[currentChainId].label : ''
   }, [chainId])
+
+  const isSymbol = checkIfSymbol(searchQuery)
 
   const tokenList = useMemo(() => {
     return (
@@ -118,9 +124,14 @@ export default function ManageTokens({ setModalView, setImportToken, ImportToken
               onChange={handleInput}
             />
           </Row>
-          {searchQuery !== '' && !isAddressSearch && (
+          {searchQuery !== '' && !isAddressSearch && !isSymbol && (
             <TYPE.error error={true}>
               <Trans>Enter valid token address</Trans>
+            </TYPE.error>
+          )}
+          {searchQuery !== '' && !isAddressSearch && isSymbol && (
+            <TYPE.error error={true}>
+              <Trans>No tokens found with this symbol/name, try to search by their Ethereum address</Trans>
             </TYPE.error>
           )}
           {searchQuery !== '' && isAddressSearch && !searchToken && (
