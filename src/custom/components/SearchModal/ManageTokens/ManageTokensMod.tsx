@@ -15,6 +15,8 @@ import { useActiveWeb3React } from 'hooks/web3'
 // import ImportRow from 'components/SearchModal/ImportRow'
 import useTheme from 'hooks/useTheme'
 import { Trans } from '@lingui/macro'
+import { CHAIN_INFO } from 'constants/chains'
+import { supportedChainId } from 'utils/supportedChainId'
 
 import { CurrencyModalView } from 'components/SearchModal/CurrencySearchModal'
 import { ImportTokensRowProps } from '.' // mod
@@ -74,6 +76,11 @@ export default function ManageTokens({ setModalView, setImportToken, ImportToken
     }
   }, [removeToken, userAddedTokens, chainId])
 
+  const network = useMemo(() => {
+    const currentChainId = supportedChainId(chainId)
+    return currentChainId ? CHAIN_INFO[currentChainId].label : ''
+  }, [chainId])
+
   const tokenList = useMemo(() => {
     return (
       chainId &&
@@ -114,6 +121,11 @@ export default function ManageTokens({ setModalView, setImportToken, ImportToken
           {searchQuery !== '' && !isAddressSearch && (
             <TYPE.error error={true}>
               <Trans>Enter valid token address</Trans>
+            </TYPE.error>
+          )}
+          {searchQuery !== '' && isAddressSearch && !searchToken && (
+            <TYPE.error error={true}>
+              <Trans>No tokens found with this address {network ? `in ${network} network` : ''}</Trans>
             </TYPE.error>
           )}
           {searchToken && ( // MOD
