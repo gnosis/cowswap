@@ -45,7 +45,9 @@ const Wrapper = styled.div`
   }
 `
 
-export default function SwapModalHeader(props: Omit<SwapModalHeaderProps, 'HighFeeWarning' | 'LightCard'>) {
+export default function SwapModalHeader(
+  props: Omit<SwapModalHeaderProps, 'HighFeeWarning' | 'NoImpactWarning' | 'LightCard'>
+) {
   const { allowsOffchainSigning } = useWalletInfo()
   return (
     <Wrapper>
@@ -54,6 +56,7 @@ export default function SwapModalHeader(props: Omit<SwapModalHeaderProps, 'HighF
         allowsOffchainSigning={allowsOffchainSigning}
         LightCard={LightCard}
         HighFeeWarning={HighFeeWarning}
+        NoImpactWarning={NoImpactWarning}
       />
     </Wrapper>
   )

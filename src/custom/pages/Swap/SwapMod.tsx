@@ -111,6 +111,7 @@ export default function Swap({
   ArrowWrapperLoader,
   Price,
   HighFeeWarning,
+  NoImpactWarning,
   className,
   allowsOffchainSigning,
 }: SwapProps) {
@@ -766,6 +767,7 @@ export default function Swap({
             width="99%"
             padding="5px 15px"
           />
+          <NoImpactWarning width="99%" padding="5px 15px" />
           <BottomGrouping>
             {swapIsUnsupported ? (
               <ButtonPrimary disabled={true} buttonSize={ButtonSize.BIG}>
