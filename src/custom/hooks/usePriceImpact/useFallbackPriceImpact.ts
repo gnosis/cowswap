@@ -8,6 +8,41 @@ import { useIsQuoteLoading } from 'state/price/hooks'
 import useQuoteAndSwap from './useQuoteAndSwap'
 import { FallbackPriceImpactParams } from './commonTypes'
 import { calculateFallbackPriceImpact } from 'utils/price'
+import TradeGp from '@src/custom/state/swap/TradeGp'
+
+function _calculateSwapParams(
+  isExactIn: boolean,
+  { trade, sellToken, buyToken }: { trade?: TradeGp; sellToken?: string | null; buyToken?: string | null }
+) {
+  if (!trade) return undefined
+
+  if (isExactIn) {
+    return {
+      outputCurrency: trade.inputAmount.currency,
+      // on buy orders we dont inverse it
+      sellToken: buyToken,
+      buyToken: sellToken,
+      fromDecimals: trade.outputAmount.currency.decimals,
+      toDecimals: trade.inputAmount.currency.decimals,
+    }
+  } else {
+    return {
+      outputCurrency: trade.outputAmount.currency,
+      // on buy orders we dont inverse it
+      sellToken,
+      buyToken,
+      fromDecimals: trade.inputAmount.currency.decimals,
+      toDecimals: trade.outputAmount.currency.decimals,
+    }
+  }
+}
+
+function _calculateTradeAmount(trade: TradeGp | undefined, isExactIn: boolean, shouldCalculate: boolean) {
+  if (!shouldCalculate || !trade) return undefined
+  const amount = isExactIn ? trade.outputAmount : trade.inputAmount
+
+  return amount
+}
 
 export default function useFallbackPriceImpact({ abTrade, fiatPriceImpact }: FallbackPriceImpactParams) {
   const {
@@ -22,15 +57,8 @@ export default function useFallbackPriceImpact({ abTrade, fiatPriceImpact }: Fal
     // if priceImpact, give undefined and dont compute swap
     // the amount traded now is the A > B output amount without fees
     // TODO: is this the amount with or without fees?
-    parsedAmount: !fiatPriceImpact ? (isExactIn ? abTrade?.outputAmount : abTrade?.inputAmount) : undefined,
-    // for the B > A SELL/SELL trade, the outputCurrency is the original input
-    // for the B > A BUY/SELL trade, the outputCurrency is the original output
-    outputCurrency: isExactIn ? abTrade?.inputAmount.currency : abTrade?.outputAmount.currency,
-    // on buy orders we dont inverse it
-    sellToken: isExactIn ? buyToken : sellToken,
-    buyToken: isExactIn ? sellToken : buyToken,
-    fromDecimals: isExactIn ? abTrade?.outputAmount.currency.decimals : abTrade?.inputAmount.currency.decimals,
-    toDecimals: isExactIn ? abTrade?.inputAmount.currency.decimals : abTrade?.outputAmount.currency.decimals,
+    parsedAmount: _calculateTradeAmount(abTrade, isExactIn, !fiatPriceImpact),
+    ..._calculateSwapParams(isExactIn, { trade: abTrade, sellToken, buyToken }),
   })
 
   const [priceImpact, setPriceImpact] = useState<Percent | undefined>()
