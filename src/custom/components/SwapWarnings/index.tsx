@@ -25,7 +25,7 @@ const WarningCheckboxContainer = styled.div`
   align-items: center;
 `
 
-const HighFeeWarningContainer = styled(AuxInformationContainer).attrs((props) => ({
+const WarningContainer = styled(AuxInformationContainer).attrs((props) => ({
   ...props,
   hideInput: true,
 }))<HighFeeContainerProps>`
@@ -104,14 +104,33 @@ const HighFeeWarningMessage = ({ feePercentage }: { feePercentage?: Fraction }) 
   </div>
 )
 
-export type HighFeeWarningProps = {
+const NoImpactWarningMessage = () => (
+  <div>
+    <small>
+      We are unfortunately unable to calculate any price impact for this trade.
+      <br />
+      <br />
+      <u>
+        <strong>
+          We strongly recommend you compare this trade across other dexes and do your due dilligence before advancing
+          with this trade.
+        </strong>
+      </u>
+      <br />
+      <br />
+      You may still move forward with this swap but there is a substantial risk of losing funds.
+    </small>
+  </div>
+)
+
+export type WarningProps = {
   trade?: TradeGp
   acceptedStatus?: boolean
   className?: string
   acceptWarningCb?: () => void
 } & HighFeeContainerProps
 
-export const HighFeeWarning = (props: HighFeeWarningProps) => {
+export const HighFeeWarning = (props: WarningProps) => {
   const { acceptedStatus, acceptWarningCb, trade } = props
   const theme = useContext(ThemeContext)
 
@@ -124,7 +143,7 @@ export const HighFeeWarning = (props: HighFeeWarningProps) => {
   if (!isHighFee) return null
 
   return (
-    <HighFeeWarningContainer {...props} bgColour={bgColour} textColour={textColour}>
+    <WarningContainer {...props} bgColour={bgColour} textColour={textColour}>
       <div>
         <AlertTriangle size={18} />
         <div>Fees exceed {level}% of the swap amount!</div>{' '}
@@ -141,6 +160,30 @@ export const HighFeeWarning = (props: HighFeeWarningProps) => {
           </WarningCheckboxContainer>
         )}
       </div>
-    </HighFeeWarningContainer>
+    </WarningContainer>
+  )
+}
+
+export const NoImpactWarning = (props: WarningProps) => {
+  const { acceptedStatus, acceptWarningCb } = props
+  const theme = useContext(ThemeContext)
+
+  const [bgColour, textColour] = [HIGH_TIER_FEE.colour, darken(0.7, HIGH_TIER_FEE.colour)]
+
+  return (
+    <WarningContainer {...props} bgColour={bgColour} textColour={textColour}>
+      <div>
+        <AlertTriangle size={18} />
+        <div>Price impact unknown - trade carefully</div>{' '}
+        <MouseoverTooltipContent bgColor={theme.bg1} color={theme.text1} content={<NoImpactWarningMessage />}>
+          <ErrorStyledInfo />
+        </MouseoverTooltipContent>
+        {acceptWarningCb && (
+          <WarningCheckboxContainer>
+            <input type="checkbox" onChange={acceptWarningCb} checked={!!acceptedStatus} /> Swap anyway
+          </WarningCheckboxContainer>
+        )}
+      </div>
+    </WarningContainer>
   )
 }
