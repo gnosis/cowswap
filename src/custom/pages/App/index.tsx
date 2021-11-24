@@ -16,7 +16,7 @@ import * as Sentry from '@sentry/react'
 import { Integrations } from '@sentry/tracing'
 import { version } from '@src/../package.json'
 import { environmentName } from 'utils/environments'
-import { useFilterEmptyQueryParams } from 'custom/hooks/useFilterEmptyQueryParams'
+import { useFilterEmptyQueryParams } from 'hooks/useFilterEmptyQueryParams'
 
 const SENTRY_DSN = process.env.REACT_APP_SENTRY_DSN
 const SENTRY_TRACES_SAMPLE_RATE = process.env.REACT_APP_SENTRY_TRACES_SAMPLE_RATE
