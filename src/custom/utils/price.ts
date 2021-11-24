@@ -320,7 +320,7 @@ export function calculateFallbackPriceImpact(initialValue: string, finalValue: s
       ? new Percent(numerator.absoluteValue().toString(10), denominator.absoluteValue().toString(10)).multiply('-1')
       : new Percent(numerator.toString(10), denominator.toString(10))
 
-  console.debug(`[useAbaPriceImpact]::${priceImpactPercentage.toSignificant(2)}%`)
+  console.debug(`[calculateFallbackPriceImpact]::${priceImpactPercentage.toSignificant(2)}%`)
 
   return priceImpactPercentage
 }

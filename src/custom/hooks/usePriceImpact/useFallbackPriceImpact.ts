@@ -3,12 +3,13 @@ import { Percent } from '@uniswap/sdk-core'
 
 import { useSwapState } from 'state/swap/hooks'
 import { Field } from 'state/swap/actions'
-import { useIsQuoteLoading } from 'state/price/hooks'
+import { useGetQuoteAndStatus } from 'state/price/hooks'
 
 import useQuoteAndSwap from './useQuoteAndSwap'
 import { FallbackPriceImpactParams } from './commonTypes'
 import { calculateFallbackPriceImpact } from 'utils/price'
-import TradeGp from '@src/custom/state/swap/TradeGp'
+import TradeGp from 'state/swap/TradeGp'
+import { useActiveWeb3React } from 'hooks/web3'
 
 function _calculateSwapParams(
   isExactIn: boolean,
@@ -46,11 +47,13 @@ function _calculateTradeAmount(trade: TradeGp | undefined, isExactIn: boolean, s
 
 export default function useFallbackPriceImpact({ abTrade, fiatPriceImpact }: FallbackPriceImpactParams) {
   const {
+    typedValue,
     INPUT: { currencyId: sellToken },
     OUTPUT: { currencyId: buyToken },
     independentField,
   } = useSwapState()
   const isExactIn = independentField === Field.INPUT
+  const { chainId } = useActiveWeb3React()
   // we calculate the trade going B > A
   // using the output values from the original A > B trade
   const baTrade = useQuoteAndSwap({
@@ -63,8 +66,8 @@ export default function useFallbackPriceImpact({ abTrade, fiatPriceImpact }: Fal
 
   const [priceImpact, setPriceImpact] = useState<Percent | undefined>()
 
-  // we set price impact to undefined when loading
-  const quoteLoading = useIsQuoteLoading()
+  // we set price impact to undefined when loading a NEW quote only
+  const { isGettingNewQuote } = useGetQuoteAndStatus({ token: sellToken, chainId })
 
   // primitive values to use as dependencies
   const abIn = abTrade?.inputAmount.quotient.toString()
@@ -81,13 +84,14 @@ export default function useFallbackPriceImpact({ abTrade, fiatPriceImpact }: Fal
     }
   }, [abIn, abOut, baOut, isExactIn])
 
-  // quote loading so we null the aba impact
+  // on changes to typedValue, we hide impact
+  // quote loading so we hide impact
   // prevents lingering calculations and jumping impacts
   useEffect(() => {
-    if (quoteLoading) {
+    if (typedValue || isGettingNewQuote) {
       setPriceImpact(undefined)
     }
-  }, [quoteLoading])
+  }, [isGettingNewQuote, typedValue])
 
   return priceImpact
 }
