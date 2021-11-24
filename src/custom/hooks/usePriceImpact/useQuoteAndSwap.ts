@@ -17,6 +17,15 @@ import { SupportedChainId } from 'constants/chains'
 import { DEFAULT_DECIMALS } from 'constants/index'
 import { useQuoteDispatchers } from 'state/price/hooks'
 
+type QuoteAndSwapParams = {
+  parsedAmount?: CurrencyAmount<Currency>
+  outputCurrency?: Currency
+  sellToken?: string | null
+  buyToken?: string | null
+  fromDecimals?: number
+  toDecimals?: number
+}
+
 // calculates a new Quote and inverse swap values
 export default function useQuoteAndSwap({
   parsedAmount,
@@ -25,14 +34,7 @@ export default function useQuoteAndSwap({
   buyToken,
   fromDecimals = DEFAULT_DECIMALS,
   toDecimals = DEFAULT_DECIMALS,
-}: {
-  parsedAmount?: CurrencyAmount<Currency>
-  outputCurrency?: Currency
-  sellToken?: string | null
-  buyToken?: string | null
-  fromDecimals?: number
-  toDecimals?: number
-}) {
+}: QuoteAndSwapParams) {
   const { chainId: preChain } = useActiveWeb3React()
   const { account } = useWalletInfo()
 

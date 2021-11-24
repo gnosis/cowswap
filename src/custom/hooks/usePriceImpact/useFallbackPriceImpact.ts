@@ -11,10 +11,9 @@ import { calculateFallbackPriceImpact } from 'utils/price'
 import TradeGp from 'state/swap/TradeGp'
 import { useActiveWeb3React } from 'hooks/web3'
 
-function _calculateSwapParams(
-  isExactIn: boolean,
-  { trade, sellToken, buyToken }: { trade?: TradeGp; sellToken?: string | null; buyToken?: string | null }
-) {
+type SwapParams = { trade?: TradeGp; sellToken?: string | null; buyToken?: string | null }
+
+function _calculateSwapParams(isExactIn: boolean, { trade, sellToken, buyToken }: SwapParams) {
   if (!trade) return undefined
 
   if (isExactIn) {
