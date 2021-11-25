@@ -61,6 +61,7 @@ import {
   useDetectNativeToken,
   useIsFeeGreaterThanInput,
   useHighFeeWarning,
+  useUnknownImpactWarning,
 } from 'state/swap/hooks'
 import { useExpertModeManager, useUserSingleHopOnly } from 'state/user/hooks'
 import { /* HideSmall, */ LinkStyledButton, TYPE, ButtonSize } from 'theme'
@@ -259,6 +260,7 @@ export default function Swap({
   )
 
   const { feeWarningAccepted, setFeeWarningAccepted } = useHighFeeWarning(trade)
+  const { impactWarningAccepted, setImpactWarningAccepted } = useUnknownImpactWarning()
   // const fiatValueInput = useUSDCValue(parsedAmounts[Field.INPUT])
   // const fiatValueOutput = useUSDCValue(parsedAmounts[Field.OUTPUT])
   const fiatValueInput = useHigherUSDValue(parsedAmounts[Field.INPUT])
@@ -268,7 +270,7 @@ export default function Swap({
 
   const { onSwitchTokens, onCurrencySelection, onUserInput, onChangeRecipient } = useSwapActionHandlers()
   // const isValid = !swapInputError
-  const isValid = !swapInputError && feeWarningAccepted // mod
+  const isValid = !swapInputError && feeWarningAccepted && impactWarningAccepted // mod
   const dependentField: Field = independentField === Field.INPUT ? Field.OUTPUT : Field.INPUT
 
   const handleTypeInput = useCallback(
@@ -767,7 +769,12 @@ export default function Swap({
             width="99%"
             padding="5px 15px"
           />
-          <NoImpactWarning width="99%" padding="5px 15px" />
+          <NoImpactWarning
+            acceptedStatus={impactWarningAccepted}
+            acceptWarningCb={!isExpertMode && account ? () => setImpactWarningAccepted((state) => !state) : undefined}
+            width="99%"
+            padding="5px 15px"
+          />
           <BottomGrouping>
             {swapIsUnsupported ? (
               <ButtonPrimary disabled={true} buttonSize={ButtonSize.BIG}>
