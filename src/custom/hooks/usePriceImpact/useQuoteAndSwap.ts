@@ -10,38 +10,41 @@ import { useActiveWeb3React } from 'hooks/web3'
 
 import { getPromiseFulfilledValue, isPromiseFulfilled } from 'utils/misc'
 import { supportedChainId } from 'utils/supportedChainId'
-import { getBestQuote, QuoteResult } from 'utils/price'
+import { FeeQuoteParams, getBestQuote, QuoteResult } from 'utils/price'
 
 import { ZERO_ADDRESS } from 'constants/misc'
 import { SupportedChainId } from 'constants/chains'
 import { DEFAULT_DECIMALS } from 'constants/index'
-import { useQuoteDispatchers } from 'state/price/hooks'
+import { QuoteError } from 'state/price/actions'
 
-type QuoteAndSwapParams = {
-  parsedAmount?: CurrencyAmount<Currency>
-  outputCurrency?: Currency
+type ExactInSwapParams = {
+  parsedAmount: CurrencyAmount<Currency> | undefined
+  outputCurrency: Currency | undefined
+  quote: QuoteInformationObject | undefined
+}
+
+type GetQuoteParams = {
+  amountAtoms: string | undefined
   sellToken?: string | null
   buyToken?: string | null
   fromDecimals?: number
   toDecimals?: number
 }
 
-// calculates a new Quote and inverse swap values
-export default function useQuoteAndSwap({
-  parsedAmount,
-  outputCurrency,
-  sellToken,
-  buyToken,
-  fromDecimals = DEFAULT_DECIMALS,
-  toDecimals = DEFAULT_DECIMALS,
-}: QuoteAndSwapParams) {
+type FeeQuoteParamsWithError = FeeQuoteParams & { error?: QuoteError }
+
+export function useCalculateQuote(params: GetQuoteParams) {
+  const {
+    amountAtoms: amount,
+    sellToken,
+    buyToken,
+    fromDecimals = DEFAULT_DECIMALS,
+    toDecimals = DEFAULT_DECIMALS,
+  } = params
   const { chainId: preChain } = useActiveWeb3React()
   const { account } = useWalletInfo()
 
-  const [quote, setLocalQuote] = useState<QuoteInformationObject | undefined>()
-  const { setQuoteLoading } = useQuoteDispatchers()
-
-  const amount = parsedAmount?.quotient.toString()
+  const [quote, setLocalQuote] = useState<QuoteInformationObject | FeeQuoteParamsWithError | undefined>()
 
   useEffect(() => {
     const chainId = supportedChainId(preChain)
@@ -60,10 +63,7 @@ export default function useQuoteAndSwap({
       userAddress: account || ZERO_ADDRESS,
       chainId: chainId || SupportedChainId.MAINNET,
     }
-
-    // set the quote loading indicator
-    setQuoteLoading(true)
-
+    let quoteData: QuoteInformationObject | FeeQuoteParams = quoteParams
     getBestQuote({
       quoteParams,
       fetchFee: true,
@@ -72,7 +72,7 @@ export default function useQuoteAndSwap({
       .then((quoteResp) => {
         const [price, fee] = quoteResp as QuoteResult
 
-        const quoteData: QuoteInformationObject = {
+        quoteData = {
           ...quoteParams,
           fee: getPromiseFulfilledValue(fee, undefined),
           price: getPromiseFulfilledValue(price, undefined),
@@ -93,15 +93,16 @@ export default function useQuoteAndSwap({
       })
       .catch((err) => {
         console.error('[usePriceImpact] Error getting new quote:', err)
+        const quoteError = { ...quoteData, error: err } as FeeQuoteParamsWithError
+        setLocalQuote(quoteError)
       })
-      .finally(() => {
-        setQuoteLoading(false)
-      })
-  }, [amount, account, preChain, buyToken, sellToken, toDecimals, fromDecimals, setQuoteLoading])
+  }, [amount, account, preChain, buyToken, sellToken, toDecimals, fromDecimals])
 
-  // ABA is always sell trades
-  // SELL >> SELL
-  // BUY >> SELL
+  return quote
+}
+
+// calculates a new Quote and inverse swap values
+export default function useExactInSwap({ quote, outputCurrency, parsedAmount }: ExactInSwapParams) {
   const bestTradeExactIn = useTradeExactInWithFee({
     parsedAmount,
     outputCurrency,
