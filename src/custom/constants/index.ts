@@ -25,6 +25,7 @@ export const LONG_LOAD_THRESHOLD = 2000
 
 export const APP_DATA_HASH = getAppDataHash()
 export const PRODUCTION_URL = 'cowswap.exchange'
+export const BARN_URL = `barn.${PRODUCTION_URL}`
 
 const DISABLED_WALLETS = /^(?:WALLET_LINK|COINBASE_LINK|FORTMATIC|Portis)$/i
 
@@ -107,3 +108,6 @@ export const SOLVER_ADDRESS = '0xa6ddbd0de6b310819b49f680f65871bee85f517e'
 
 export const MAXIMUM_ORDERS_TO_DISPLAY = 10
 export const AMOUNT_OF_ORDERS_TO_FETCH = 100
+
+// last wallet provider key used in local storage
+export const STORAGE_KEY_LAST_PROVIDER = 'lastProvider'
