@@ -5,14 +5,15 @@ import { Token } from '@uniswap/sdk-core'
 
 import { useActiveWeb3React } from 'hooks/web3'
 import { useAddOrUpdateOrders } from 'state/orders/hooks'
-import { getOrders, OrderMetaData } from 'api/gnosisProtocol/api'
+import { OrderMetaData } from 'api/gnosisProtocol/api'
 import { useAllTokens } from 'hooks/Tokens'
 import { Order, OrderStatus } from 'state/orders/actions'
-import { AMOUNT_OF_ORDERS_TO_FETCH, NATIVE_CURRENCY_BUY_ADDRESS, NATIVE_CURRENCY_BUY_TOKEN } from 'constants/index'
+import { NATIVE_CURRENCY_BUY_ADDRESS, NATIVE_CURRENCY_BUY_TOKEN } from 'constants/index'
 import { ChainId } from 'state/lists/actions'
 import { classifyOrder, OrderTransitionStatus } from 'state/orders/utils'
 import { computeOrderSummary } from 'state/orders/updaters/utils'
 import { useTokenLazy } from 'hooks/useTokenLazy'
+import { useApiOrders } from 'api/gnosisProtocol/hooks'
 
 function getTokenFromMapping(
   address: string,
@@ -128,6 +129,7 @@ export function ApiOrdersUpdater(): null {
   const tokensAreLoaded = useMemo(() => Object.keys(allTokens).length > 0, [allTokens])
   const addOrUpdateOrders = useAddOrUpdateOrders()
   const getToken = useTokenLazy()
+  const apiOrders = useApiOrders(account)
 
   // Using a ref to store allTokens to avoid re-fetching when new tokens are added
   // but still use the latest whenever the callback is invoked
@@ -138,23 +140,26 @@ export function ApiOrdersUpdater(): null {
   const updateOrders = useCallback(
     async (chainId: ChainId, account: string): Promise<void> => {
       const tokens = allTokensRef.current
-      console.log(
+      console.debug(
         `ApiOrdersUpdater:: updating orders. Network ${chainId}, account ${account}, loaded tokens count ${
           Object.keys(tokens).length
         }`
       )
       try {
-        // Fetch latest orders from API
-        const apiOrders = await getOrders(chainId, account, AMOUNT_OF_ORDERS_TO_FETCH)
-
-        if (apiOrders.length === 0) {
+        if (!apiOrders?.length) {
           return
         }
 
         const tokensToFetch = getMissingTokensAddresses(apiOrders, tokens, chainId)
+        console.debug(`ApiOrdersUpdater::will try to fetch ${tokensToFetch.length} tokens`)
 
         // Fetch them from the chain
         const fetchedTokens = await fetchTokens(tokensToFetch, getToken)
+        console.debug(
+          `ApiOrdersUpdater::fetched ${Object.keys(fetchedTokens).filter(Boolean).length} out of ${
+            tokensToFetch.length
+          } tokens`
+        )
 
         // Merge fetched tokens with what's currently loaded
         const reallyAllTokens = { ...tokens, ...fetchedTokens }
@@ -162,6 +167,7 @@ export function ApiOrdersUpdater(): null {
         // Build store order objects, for all orders which we found both input/output tokens
         // Don't add order for those we didn't
         const orders = filterOrders(apiOrders, reallyAllTokens, chainId)
+        console.debug(`ApiOrdersUpdater::will add/update ${orders.length} out of ${apiOrders.length}`)
 
         // Add orders to redux state
         orders.length && addOrUpdateOrders({ orders, chainId })
@@ -169,7 +175,7 @@ export function ApiOrdersUpdater(): null {
         console.error(`ApiOrdersUpdater::Failed to fetch orders`, e)
       }
     },
-    [addOrUpdateOrders, getToken]
+    [addOrUpdateOrders, apiOrders, getToken]
   )
 
   useEffect(() => {

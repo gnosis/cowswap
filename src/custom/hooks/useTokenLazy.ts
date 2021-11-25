@@ -33,18 +33,13 @@ export interface GetTokenInfoParams {
 async function _getTokenContract(params: GetTokenInfoParams): Promise<Erc20> {
   const { address, account, chainId, library } = params
 
-  const tokenContract = contractsCache[address] || getTokenContract(address, undefined, library, account, chainId)
-
-  return tokenContract
+  return contractsCache[address] || getTokenContract(address, undefined, library, account, chainId)
 }
 
 async function _getTokenByte32Contract(params: GetTokenInfoParams): Promise<Contract> {
   const { address, account, chainId, library } = params
 
-  const tokenContract =
-    bytes32ContractsCache[address] || getBytes32TokenContract(address, undefined, library, account, chainId)
-
-  return tokenContract
+  return bytes32ContractsCache[address] || getBytes32TokenContract(address, undefined, library, account, chainId)
 }
 
 async function _getTokenInfo(params: GetTokenInfoParams): Promise<TokenInfo | null> {
