@@ -311,9 +311,6 @@ export function calculateFallbackPriceImpact(initialValue: string, finalValue: s
     denominator.toString(10)
   )
 
-  // we don't want denom zeroes
-  if (denominator.isZero()) return undefined
-
   const priceImpactPercentage =
     // Uni sdk hates negative numbers so we need to do this
     numerator.isNegative() || denominator.isNegative()
