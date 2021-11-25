@@ -111,14 +111,11 @@ const NoImpactWarningMessage = () => (
       <br />
       <br />
       <u>
-        <strong>
-          We strongly recommend you compare this trade across other dexes and do your due dilligence before advancing
-          with this trade.
-        </strong>
+        <strong>We strongly advise you to do your due diligence before advancing.</strong>
       </u>
       <br />
       <br />
-      You may still move forward with this swap but there is a substantial risk of losing funds.
+      You may still move forward with this order but there is a potentially high risk of executing an unfavorable trade.
     </small>
   </div>
 )
