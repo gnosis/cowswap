@@ -34,7 +34,7 @@ const WarningContainer = styled(AuxInformationContainer).attrs((props) => ({
 
   padding: ${({ padding = '5px 12px' }) => padding};
   width: ${({ width = '100%' }) => width};
-  border-radius: ${({ theme }) => theme.buttonPrimary.borderRadius};
+  border-radius: 7px;
   margin: ${({ margin = '0 auto 12px auto' }) => margin};
 
   > div {
@@ -104,7 +104,7 @@ const HighFeeWarningMessage = ({ feePercentage }: { feePercentage?: Fraction }) 
   </div>
 )
 
-const NoImpactWarningMessage = () => (
+const NoImpactWarningMessage = (
   <div>
     <small>
       We are unfortunately unable to calculate any price impact for this trade.
@@ -171,8 +171,10 @@ export const NoImpactWarning = (props: WarningProps) => {
     <WarningContainer {...props} bgColour={bgColour} textColour={textColour}>
       <div>
         <AlertTriangle size={18} />
-        <div>Price impact unknown - trade carefully</div>{' '}
-        <MouseoverTooltipContent bgColor={theme.bg1} color={theme.text1} content={<NoImpactWarningMessage />}>
+        <div>
+          Price impact <u>unknown</u> - trade carefully
+        </div>{' '}
+        <MouseoverTooltipContent bgColor={theme.bg1} color={theme.text1} content={NoImpactWarningMessage}>
           <ErrorStyledInfo />
         </MouseoverTooltipContent>
         {acceptWarningCb && (
