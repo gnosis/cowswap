@@ -263,7 +263,7 @@ export default function Swap({
   const fiatValueInput = useHigherUSDValue(parsedAmounts[Field.INPUT])
   const fiatValueOutput = useHigherUSDValue(parsedAmounts[Field.OUTPUT])
 
-  const priceImpact = usePriceImpact({ abTrade: v2Trade, parsedAmounts })
+  const { priceImpact } = usePriceImpact({ abTrade: v2Trade, parsedAmounts })
 
   const { onSwitchTokens, onCurrencySelection, onUserInput, onChangeRecipient } = useSwapActionHandlers()
   // const isValid = !swapInputError
