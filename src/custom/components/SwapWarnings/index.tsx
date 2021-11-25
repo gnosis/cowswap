@@ -4,10 +4,11 @@ import styled, { ThemeContext } from 'styled-components/macro'
 import { Fraction } from '@uniswap/sdk-core'
 import { MouseoverTooltipContent } from 'components/Tooltip'
 import { StyledInfo } from 'pages/Swap/styleds'
-import { useHighFeeWarning } from 'state/swap/hooks'
+import { useHighFeeWarning, useSwapState } from 'state/swap/hooks'
 import TradeGp from 'state/swap/TradeGp'
 import { AuxInformationContainer } from '../CurrencyInputPanel'
 import { darken } from 'polished'
+import useDebounceWithForceUpdate from '@src/custom/hooks/useDebounceWithForceUpdate'
 
 interface HighFeeContainerProps {
   padding?: string
@@ -125,6 +126,7 @@ export type WarningProps = {
   acceptedStatus?: boolean
   className?: string
   acceptWarningCb?: () => void
+  hide?: boolean
 } & HighFeeContainerProps
 
 export const HighFeeWarning = (props: WarningProps) => {
@@ -162,10 +164,14 @@ export const HighFeeWarning = (props: WarningProps) => {
 }
 
 export const NoImpactWarning = (props: WarningProps) => {
-  const { acceptedStatus, acceptWarningCb } = props
+  const { acceptedStatus, acceptWarningCb, hide, trade } = props
   const theme = useContext(ThemeContext)
-
+  // TODO: change this - probably not the best way to do this..
+  // TODO: should likely make a global flag indiciating ABA impact loading
+  const debouncedHide = useDebounceWithForceUpdate(hide, 2000, trade)
   const [bgColour, textColour] = [HIGH_TIER_FEE.colour, darken(0.7, HIGH_TIER_FEE.colour)]
+
+  if (!!debouncedHide) return null
 
   return (
     <WarningContainer {...props} bgColour={bgColour} textColour={textColour}>

@@ -770,6 +770,8 @@ export default function Swap({
             padding="5px 15px"
           />
           <NoImpactWarning
+            trade={trade}
+            hide={!trade || !!priceImpact}
             acceptedStatus={impactWarningAccepted}
             acceptWarningCb={!isExpertMode && account ? () => setImpactWarningAccepted((state) => !state) : undefined}
             width="99%"
