@@ -37,6 +37,7 @@ export function FiatValue({
             text={
               formatSmart(fiatValue, FIAT_PRECISION, {
                 thousandSeparator: true,
+                isLocaleAware: true,
               }) /* fiatValue?.toSignificant(6, { groupSeparator: ',' }) */
             }
           />
