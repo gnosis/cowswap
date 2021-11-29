@@ -1,7 +1,7 @@
 import { createReducer, PayloadAction } from '@reduxjs/toolkit'
 import { SupportedChainId as ChainId } from 'constants/chains'
 import { OrderKind } from '@gnosis.pm/gp-v2-contracts'
-import { updateQuote, setQuoteError, getNewQuote, refreshQuote, setQuoteLoading, QuoteError } from './actions'
+import { updateQuote, setQuoteError, getNewQuote, refreshQuote, QuoteError } from './actions'
 import { Writable } from 'custom/types'
 import { PrefillStateRequired } from '../orders/reducer'
 import { FeeInformation, FeeQuoteParams, PriceInformation } from 'utils/price'
@@ -148,11 +148,5 @@ export default createReducer(initialState, (builder) =>
 
       // Stop the loader
       state.loading = false
-    })
-    /**
-     * Signal only loading
-     */
-    .addCase(setQuoteLoading, (state, action) => {
-      state.loading = action.payload
     })
 )
