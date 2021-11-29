@@ -45,11 +45,14 @@ export function useCalculateQuote(params: GetQuoteParams) {
   const { account } = useWalletInfo()
 
   const [quote, setLocalQuote] = useState<QuoteInformationObject | FeeQuoteParamsWithError | undefined>()
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     const chainId = supportedChainId(preChain)
     // bail out early - amount here is undefined if usd price impact is valid
     if (!sellToken || !buyToken || !amount) return
+
+    setLoading(true)
 
     const quoteParams = {
       amount,
@@ -96,9 +99,10 @@ export function useCalculateQuote(params: GetQuoteParams) {
         const quoteError = { ...quoteData, error: err } as FeeQuoteParamsWithError
         setLocalQuote(quoteError)
       })
+      .finally(() => setLoading(false))
   }, [amount, account, preChain, buyToken, sellToken, toDecimals, fromDecimals])
 
-  return quote
+  return { quote, loading, setLoading }
 }
 
 // calculates a new Quote and inverse swap values

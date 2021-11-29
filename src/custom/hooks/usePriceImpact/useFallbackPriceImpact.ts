@@ -25,13 +25,15 @@ function _calculateSwapParams(isExactIn: boolean, { trade, sellToken, buyToken }
   if (isExactIn) {
     return {
       outputCurrency: trade.inputAmount.currency,
-      // on buy orders we dont inverse it
+      // Run inverse (B > A) sell trade
       sellToken: buyToken,
       buyToken: sellToken,
       fromDecimals: trade.outputAmount.currency.decimals,
       toDecimals: trade.inputAmount.currency.decimals,
     }
   } else {
+    // First trade was a buy order
+    // we need to use the same order but make a sell order
     return {
       outputCurrency: trade.outputAmount.currency,
       // on buy orders we dont inverse it
@@ -43,16 +45,13 @@ function _calculateSwapParams(isExactIn: boolean, { trade, sellToken, buyToken }
   }
 }
 
-function _calculateTradeAmount(trade: TradeGp | undefined, isExactIn: boolean, shouldCalculate: boolean) {
+function _calculateParsedAmount(trade: TradeGp | undefined, isExactIn: boolean, shouldCalculate: boolean) {
   if (!shouldCalculate || !trade) return undefined
+  // First trade was a sell order, we need to make a new sell order using the
+  // first trade's output amount
   const amount = isExactIn ? trade.outputAmount : trade.inputAmount
 
   return amount
-}
-
-const EMPTY_STATE = {
-  impact: undefined,
-  error: undefined,
 }
 
 export default function useFallbackPriceImpact({ abTrade, fiatPriceImpact }: FallbackPriceImpactParams) {
@@ -71,13 +70,13 @@ export default function useFallbackPriceImpact({ abTrade, fiatPriceImpact }: Fal
   // Calculate the necessary params to get the inverse trade impact
   const { parsedAmount, outputCurrency, ...swapQuoteParams } = useMemo(
     () => ({
-      parsedAmount: _calculateTradeAmount(abTrade, isExactIn, shouldCalculate),
+      parsedAmount: _calculateParsedAmount(abTrade, isExactIn, shouldCalculate),
       ..._calculateSwapParams(isExactIn, { trade: abTrade, sellToken, buyToken }),
     }),
     [abTrade, buyToken, sellToken, shouldCalculate, isExactIn]
   )
 
-  const quote = useCalculateQuote({
+  const { quote, loading: loading } = useCalculateQuote({
     amountAtoms: parsedAmount?.quotient.toString(),
     ...swapQuoteParams,
   })
@@ -85,7 +84,7 @@ export default function useFallbackPriceImpact({ abTrade, fiatPriceImpact }: Fal
   // we calculate the trade going B > A
   // using the output values from the original A > B trade
   const baTrade = useExactInSwap({
-    // if priceImpact, give undefined and dont compute swap
+    // if impact, give undefined and dont compute swap
     // the amount traded now is the A > B output amount without fees
     // TODO: is this the amount with or without fees?
     quote: _isQuoteValid(quote) ? quote : undefined,
@@ -93,10 +92,8 @@ export default function useFallbackPriceImpact({ abTrade, fiatPriceImpact }: Fal
     outputCurrency,
   })
 
-  const [priceImpact, setPriceImpact] = useState<{
-    impact: Percent | undefined
-    error: QuoteError | undefined
-  }>(EMPTY_STATE)
+  const [impact, setImpact] = useState<Percent | undefined>()
+  const [error, setError] = useState<QuoteError | undefined>()
 
   // we set price impact to undefined when loading a NEW quote only
   const { isGettingNewQuote } = useGetQuoteAndStatus({ token: sellToken, chainId })
@@ -110,23 +107,28 @@ export default function useFallbackPriceImpact({ abTrade, fiatPriceImpact }: Fal
   useEffect(() => {
     // we have no fiat price impact and there's a trade, we need to use ABA impact
     if (quoteError) {
-      setPriceImpact({ impact: undefined, error: quoteError })
-    } else if (abIn && abOut && baOut) {
+      setImpact(undefined)
+      setError(quoteError)
+    } else if (!loading && abIn && abOut && baOut) {
       const impact = calculateFallbackPriceImpact(isExactIn ? abIn : abOut, baOut)
-      setPriceImpact({ impact, error: undefined })
+      setImpact(impact)
+      setError(undefined)
     } else {
-      setPriceImpact(EMPTY_STATE)
+      // reset all
+      setImpact(undefined)
+      setError(undefined)
     }
-  }, [abIn, abOut, baOut, quoteError, isExactIn])
+  }, [abIn, abOut, baOut, quoteError, isExactIn, loading])
 
   // on changes to typedValue, we hide impact
   // quote loading so we hide impact
   // prevents lingering calculations and jumping impacts
   useEffect(() => {
     if (typedValue || isGettingNewQuote) {
-      setPriceImpact(EMPTY_STATE)
+      setImpact(undefined)
+      setError(undefined)
     }
   }, [isGettingNewQuote, typedValue])
 
-  return priceImpact
+  return { impact, error, loading }
 }

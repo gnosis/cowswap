@@ -7,10 +7,14 @@ type PriceImpactParams = Omit<FallbackPriceImpactParams, 'fiatPriceImpact'> & { 
 export default function usePriceImpact({ abTrade, parsedAmounts }: PriceImpactParams) {
   /* const fiatPriceImpact =  */ useFiatValuePriceImpact(parsedAmounts)
   // TODO: remove this - testing only - forces fallback price impact
-  const { impact: fallbackPriceImpact, error } = useFallbackPriceImpact({ abTrade, fiatPriceImpact: undefined })
+  const {
+    impact: fallbackPriceImpact,
+    error,
+    loading,
+  } = useFallbackPriceImpact({ abTrade, fiatPriceImpact: undefined })
 
   const priceImpact = /* fiatPriceImpact ||  */ fallbackPriceImpact
 
   // TODO: remove this - testing only - forces fallback
-  return { priceImpact, error }
+  return { priceImpact, error, loading }
 }
