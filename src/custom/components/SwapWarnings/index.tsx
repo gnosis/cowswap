@@ -108,7 +108,7 @@ const HighFeeWarningMessage = ({ feePercentage }: { feePercentage?: Fraction }) 
 const NoImpactWarningMessage = (
   <div>
     <small>
-      We are unfortunately unable to calculate any price impact for this trade.
+      We are unfortunately unable to calculate any price impact for this order.
       <br />
       <br />
       <u>
@@ -116,7 +116,7 @@ const NoImpactWarningMessage = (
       </u>
       <br />
       <br />
-      You may still move forward with this order but there is a potentially high risk of executing an unfavorable trade.
+      You may still move forward with this order but make sure the receive amounts are what you expect.
     </small>
   </div>
 )
