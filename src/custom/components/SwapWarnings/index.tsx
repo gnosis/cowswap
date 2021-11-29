@@ -178,7 +178,7 @@ export const NoImpactWarning = (props: WarningProps) => {
       <div>
         <AlertTriangle size={18} />
         <div>
-          Price impact <u>unknown</u> - trade carefully
+          Price impact <strong>unknown</strong> - trade carefully
         </div>{' '}
         <MouseoverTooltipContent bgColor={theme.bg1} color={theme.text1} content={NoImpactWarningMessage}>
           <ErrorStyledInfo />
