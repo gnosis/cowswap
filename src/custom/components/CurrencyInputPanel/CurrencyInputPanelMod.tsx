@@ -25,6 +25,7 @@ import { WithClassName } from 'types'
 import { formatMax, formatSmart } from 'utils/format'
 import { AMOUNT_PRECISION } from 'constants/index'
 import { AuxInformationContainer } from '.' // mod
+import Loader from 'components/Loader'
 
 export const InputPanel = styled.div<{ hideInput?: boolean }>`
   ${({ theme }) => theme.flexColumnNoWrap}
@@ -159,6 +160,7 @@ export interface CurrencyInputPanelProps extends WithClassName {
   otherCurrency?: Currency | null
   fiatValue?: CurrencyAmount<Token> | null
   priceImpact?: Percent
+  priceImpactLoading?: boolean
   id: string
   showCommonBases?: boolean
   showCurrencyAmount?: boolean
@@ -183,6 +185,7 @@ export default function CurrencyInputPanel({
   renderBalance,
   fiatValue,
   priceImpact,
+  priceImpactLoading,
   hideBalance = false,
   pair = null, // used for double token logo
   hideInput = false,
@@ -304,7 +307,7 @@ export default function CurrencyInputPanel({
                 ) : (
                   <span />
                 )}
-                <FiatValue fiatValue={fiatValue} priceImpact={priceImpact} />
+                {priceImpactLoading ? <Loader /> : <FiatValue fiatValue={fiatValue} priceImpact={priceImpact} />}
               </RowBetween>
             </FiatRow>
           )}
