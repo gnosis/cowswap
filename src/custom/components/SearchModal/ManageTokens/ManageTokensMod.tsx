@@ -15,11 +15,10 @@ import { useActiveWeb3React } from 'hooks/web3'
 // import ImportRow from 'components/SearchModal/ImportRow'
 import useTheme from 'hooks/useTheme'
 import { Trans } from '@lingui/macro'
-import { CHAIN_INFO } from 'constants/chains'
-import { supportedChainId } from 'utils/supportedChainId'
 
 import { CurrencyModalView } from 'components/SearchModal/CurrencySearchModal'
 import { ImportTokensRowProps } from '.' // mod
+import useNetworkName from 'hooks/useNetworkName'
 
 const Wrapper = styled.div`
   width: 100%;
@@ -46,15 +45,13 @@ export interface ManageTokensProps {
   ImportTokensRow: ({ theme, searchToken, setModalView, setImportToken }: ImportTokensRowProps) => JSX.Element
 }
 
-function checkIfSymbol(value: number | string) {
-  return typeof value === 'string' && value.length > 2 && value.length < 6 && /^[A-Z|0-9]*$/.test(value)
-}
-
 export default function ManageTokens({ setModalView, setImportToken, ImportTokensRow }: ManageTokensProps) {
   const { chainId } = useActiveWeb3React()
 
   const [searchQuery, setSearchQuery] = useState<string>('')
   const theme = useTheme()
+
+  const network = useNetworkName()
 
   // manage focus on modal show
   const inputRef = useRef<HTMLInputElement>()
@@ -79,13 +76,6 @@ export default function ManageTokens({ setModalView, setImportToken, ImportToken
       })
     }
   }, [removeToken, userAddedTokens, chainId])
-
-  const network = useMemo(() => {
-    const currentChainId = supportedChainId(chainId)
-    return currentChainId ? CHAIN_INFO[currentChainId].label : ''
-  }, [chainId])
-
-  const isSymbol = checkIfSymbol(searchQuery)
 
   const tokenList = useMemo(() => {
     return (
@@ -124,19 +114,14 @@ export default function ManageTokens({ setModalView, setImportToken, ImportToken
               onChange={handleInput}
             />
           </Row>
-          {searchQuery !== '' && !isAddressSearch && !isSymbol && (
+          {searchQuery !== '' && !isAddressSearch && (
             <TYPE.error error={true}>
               <Trans>Enter valid token address</Trans>
             </TYPE.error>
           )}
-          {searchQuery !== '' && !isAddressSearch && isSymbol && (
-            <TYPE.error error={true}>
-              <Trans>No tokens found with this symbol/name, try to search by their Ethereum address</Trans>
-            </TYPE.error>
-          )}
           {searchQuery !== '' && isAddressSearch && !searchToken && (
             <TYPE.error error={true}>
-              <Trans>No tokens found with this address {network ? `in ${network} network` : ''}</Trans>
+              <Trans>No tokens found with this address in {network} network</Trans>
             </TYPE.error>
           )}
           {searchToken && ( // MOD
