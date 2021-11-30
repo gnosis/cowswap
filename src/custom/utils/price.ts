@@ -1,7 +1,7 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import BigNumberJs from 'bignumber.js'
 import * as Sentry from '@sentry/browser'
-import { Percent } from '@uniswap/sdk-core'
+import { Percent, TradeType } from '@uniswap/sdk-core'
 
 import { getFeeQuote, getPriceQuote as getPriceQuoteGp, OrderMetaData } from 'api/gnosisProtocol'
 import GpQuoteError, { GpQuoteErrorCodes } from 'api/gnosisProtocol/errors/QuoteError'
@@ -19,6 +19,7 @@ import { OptimalRate } from 'paraswap-core'
 import { OrderKind } from '@gnosis.pm/gp-v2-contracts'
 import { ChainId } from 'state/lists/actions'
 import { toErc20Address } from 'utils/tokens'
+import { ONE_BIG_NUMBER } from '@gnosis.pm/dex-js'
 
 const FEE_EXCEEDS_FROM_ERROR = new GpQuoteError({
   errorType: GpQuoteErrorCodes.FeeExceedsFrom,
@@ -296,28 +297,79 @@ export function getValidParams(params: PriceQuoteParams) {
   return { ...params, baseToken, quoteToken }
 }
 
-export function calculateFallbackPriceImpact(initialValue: string, finalValue: string) {
+function _isWithinRange(numerator: BigNumberJs, denominator: BigNumberJs) {
+  // e.g 5 > 2 = true ==> within [0,1] range
+  // e.g 2 > 5 = false
+  return denominator.isGreaterThan(numerator)
+}
+
+// *** SELL ***
+// ------------------
+// Pab = abOut/abIn
+// Pba = baOut/baIn[abOut]
+// S = 1 - sqrt( Pab*Pba )
+// OR
+// S = 1 + sqrt( Pab*Pba )
+// -------------------------------------------
+// EXAMPLE
+// -------------------------------------------
+// 100A > 80B // 80B >> 56A
+// --> 80/100 = 0.8
+// --> 56/80 = 0.7
+// -------------------------------------------
+// SIDE 1 - SELL
+// -------------------------------------------
+// S = 1 - sqrt( 0.8*0.7 ) = 0.2516685226 --> 25%, valid cause is a number between 0 and 1
+// -------------------------------------------
+// SIDE 2 - SELL
+// -------------------------------------------
+// e.g
+// S = 1 + sqrt( 0.8*0.7 ) = 1.7483314774 --> Discarded, out of the range [0, 1]
+
+// *** BUY ***
+// ------------------
+// Pab = abIn/abOut
+// Pba = baOut/baIn[abIn]
+// S = 1 - sqrt( Pab*Pba )
+// OR
+// S = 1 + sqrt( Pab*Pba )
+// -------------------------------------------
+// EXAMPLE [BUY]
+// -------------------------------------------
+// 2970B > 122A // 122A >> 2400B
+// --> 2970/122 = 24.34
+// --> 2400/122 = 19.67
+// -------------------------------------------
+// SIDE 1 - BUY
+// -------------------------------------------
+// S = 1 - sqrt( 24.34/19.67 ) = 0.2516685226 --> -0.109 --> -10.9%, valid cause is a number between 0 and 1
+// -------------------------------------------
+// SIDE 2 - BUY
+// -------------------------------------------
+// e.g
+// S = 1 + sqrt( 24.41/19.84 ) = 2.109 --> Discarded, out of the range [0, 1]
+export function calculateAbaPriceImpact(
+  abTradeType: TradeType,
+  initialValue: string,
+  middleValue: string,
+  finalValue: string
+) {
   const initialValueBn = new BigNumberJs(initialValue)
+  const middleValueBn = new BigNumberJs(middleValue)
   const finalValueBn = new BigNumberJs(finalValue)
-  // TODO: use correct formula
-  // ((IV - FV) / IV / 2) * 100
-  const [numerator, denominator] = initialValueBn.minus(finalValueBn).div(initialValueBn).div('2').toFraction()
 
-  console.debug(
-    '[calculateFallbackPriceImpact]::',
-    initialValueBn.toString(10),
-    finalValueBn.toString(10),
-    numerator.toString(10),
-    denominator.toString(10)
-  )
+  const Pab = middleValueBn.div(initialValueBn)
+  const Pba = finalValueBn.div(middleValueBn)
+  // sqrt( Pab * Pba ) for EXACT IN
+  // sqrt( Pab / Pba ) for EXACT OUT
+  const mathsType = abTradeType === TradeType.EXACT_INPUT ? 'times' : 'div'
+  const Psqrt = Pab[mathsType](Pba).sqrt()
 
-  const priceImpactPercentage =
-    // Uni sdk hates negative numbers so we need to do this
-    numerator.isNegative() || denominator.isNegative()
-      ? new Percent(numerator.absoluteValue().toString(10), denominator.absoluteValue().toString(10)).multiply('-1')
-      : new Percent(numerator.toString(10), denominator.toString(10))
+  const [numerator1, denominator1] = ONE_BIG_NUMBER.minus(Psqrt).toFraction()
+  const [numerator2, denominator2] = ONE_BIG_NUMBER.plus(Psqrt).toFraction()
 
-  console.debug(`[calculateFallbackPriceImpact]::${priceImpactPercentage.toSignificant(2)}%`)
-
-  return priceImpactPercentage
+  // is response within [0,1] range?
+  return _isWithinRange(numerator1, denominator1)
+    ? new Percent(numerator1.toString(10), denominator1.toString(10))
+    : new Percent(numerator2.toString(10), denominator2.toString(10))
 }
