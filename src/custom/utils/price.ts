@@ -328,11 +328,11 @@ function _isWithinRange(numerator: BigNumberJs, denominator: BigNumberJs) {
 
 // *** BUY ***
 // ------------------
-// Pab = abIn/abOut
+// Pab = abOut/abIn
 // Pba = baOut/baIn[abIn]
-// S = 1 - sqrt( Pab*Pba )
+// S = 1 - sqrt( Pab/Pba )
 // OR
-// S = 1 + sqrt( Pab*Pba )
+// S = 1 + sqrt( Pab/Pba )
 // -------------------------------------------
 // EXAMPLE [BUY]
 // -------------------------------------------
@@ -348,22 +348,44 @@ function _isWithinRange(numerator: BigNumberJs, denominator: BigNumberJs) {
 // -------------------------------------------
 // e.g
 // S = 1 + sqrt( 24.41/19.84 ) = 2.109 --> Discarded, out of the range [0, 1]
-export function calculateAbaPriceImpact(
-  abTradeType: TradeType,
-  initialValue: string,
-  middleValue: string,
+interface FallbackPriceImpactParams {
+  abTradeType: TradeType
+  initialValue: string
+  middleValue: string
   finalValue: string
-) {
-  const initialValueBn = new BigNumberJs(initialValue)
-  const middleValueBn = new BigNumberJs(middleValue)
-  const finalValueBn = new BigNumberJs(finalValue)
+}
 
-  const Pab = middleValueBn.div(initialValueBn)
-  const Pba = finalValueBn.div(middleValueBn)
-  // sqrt( Pab * Pba ) for EXACT IN
-  // sqrt( Pab / Pba ) for EXACT OUT
-  const mathsType = abTradeType === TradeType.EXACT_INPUT ? 'times' : 'div'
-  const Psqrt = Pab[mathsType](Pba).sqrt()
+export function calculateFallbackPriceImpact({
+  abTradeType,
+  initialValue,
+  middleValue,
+  finalValue,
+}: FallbackPriceImpactParams) {
+  let Psqrt: BigNumberJs
+
+  if (abTradeType === TradeType.EXACT_INPUT) {
+    const initialValueBn = new BigNumberJs(initialValue)
+    const middleValueBn = new BigNumberJs(middleValue)
+    const finalValueBn = new BigNumberJs(finalValue)
+
+    const Pab = middleValueBn.div(initialValueBn)
+    const Pba = finalValueBn.div(middleValueBn)
+
+    Psqrt = Pab.times(Pba).sqrt()
+  } else {
+    // Pab = abOut/abIn
+    // Pba = baOut/baIn[abIn]
+    const initialValueBn = new BigNumberJs(initialValue)
+    const middleValueBn = new BigNumberJs(middleValue)
+    const finalValueBn = new BigNumberJs(finalValue)
+
+    // 2900/122
+    const Pab = initialValueBn.div(middleValueBn)
+    // 2400/122
+    const Pba = finalValueBn.div(middleValueBn)
+
+    Psqrt = Pab.div(Pba).sqrt()
+  }
 
   const [numerator1, denominator1] = ONE_BIG_NUMBER.minus(Psqrt).toFraction()
   const [numerator2, denominator2] = ONE_BIG_NUMBER.plus(Psqrt).toFraction()

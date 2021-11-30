@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Percent } from '@uniswap/sdk-core'
+import { Percent, TradeType } from '@uniswap/sdk-core'
 
 import { useSwapState } from 'state/swap/hooks'
 import { Field } from 'state/swap/actions'
@@ -99,6 +99,7 @@ export default function useFallbackPriceImpact({ abTrade, fiatPriceImpact }: Fal
   const { isGettingNewQuote } = useGetQuoteAndStatus({ token: sellToken, chainId })
 
   // primitive values to use as dependencies
+  // const tradeType = abTrade?.tradeType
   const abIn = abTrade?.inputAmount.quotient.toString()
   const abOut = abTrade?.outputAmount.quotient.toString()
   const baOut = baTrade?.outputAmount.quotient.toString()
@@ -110,7 +111,16 @@ export default function useFallbackPriceImpact({ abTrade, fiatPriceImpact }: Fal
       setImpact(undefined)
       setError(quoteError)
     } else if (!loading && abIn && abOut && baOut) {
-      const impact = calculateFallbackPriceImpact(isExactIn ? abIn : abOut, baOut)
+      const params = {
+        abTradeType: isExactIn ? TradeType.EXACT_INPUT : TradeType.EXACT_OUTPUT,
+        // IV
+        initialValue: isExactIn ? abIn : abOut,
+        // MV
+        middleValue: isExactIn ? abOut : abIn,
+        // FV
+        finalValue: baOut,
+      }
+      const impact = calculateFallbackPriceImpact(params)
       setImpact(impact)
       setError(undefined)
     } else {

@@ -1,7 +1,7 @@
 import { ChainId, WETH } from '@uniswap/sdk'
 import { CurrencyAmount, Token, TradeType } from '@uniswap/sdk-core'
 import { parseUnits } from 'ethers/lib/utils'
-import { calculateAbaPriceImpact } from './price'
+import { calculateFallbackPriceImpact } from './price'
 
 const WETH_MAINNET = new Token(ChainId.MAINNET, WETH[1].address, 18)
 const DAI_MAINNET = new Token(ChainId.MAINNET, '0x6b175474e89094c44da98b954eedeac495271d0f', 18)
@@ -26,7 +26,12 @@ describe('A > B > A Price Impact', () => {
 
       // THEN we expect price impact to be 25
       // S = 1 - sqrt( 0.8*0.7 ) = 0.2516685226 --> 25%, valid cause is a number between 0 and 1
-      const abaImpact = calculateAbaPriceImpact(TradeType.EXACT_INPUT, initialValue, middleValue, finalValue)
+      const abaImpact = calculateFallbackPriceImpact({
+        abTradeType: TradeType.EXACT_INPUT,
+        initialValue,
+        middleValue,
+        finalValue,
+      })
       expect(abaImpact.toSignificant(2)).toEqual('25')
     })
   })
@@ -49,9 +54,14 @@ describe('A > B > A Price Impact', () => {
       const middleValue = abIn.quotient.toString()
       const finalValue = baOut.quotient.toString()
 
-      // THEN we expect price impact to be -10.9
-      const abaImpact = calculateAbaPriceImpact(TradeType.EXACT_OUTPUT, initialValue, middleValue, finalValue)
-      expect(abaImpact.toSignificant(2)).toEqual('-10.9')
+      // THEN we expect price impact to be -11
+      const abaImpact = calculateFallbackPriceImpact({
+        abTradeType: TradeType.EXACT_OUTPUT,
+        initialValue,
+        middleValue,
+        finalValue,
+      })
+      expect(abaImpact.toSignificant(2)).toEqual('-11')
     })
   })
 })
