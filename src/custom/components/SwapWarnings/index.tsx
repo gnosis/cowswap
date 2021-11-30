@@ -169,7 +169,7 @@ export const NoImpactWarning = (props: WarningProps) => {
   // TODO: change this - probably not the best way to do this..
   // TODO: should likely make a global flag indiciating ABA impact loading
   const debouncedHide = useDebounceWithForceUpdate(hide, 2000, trade)
-  const [bgColour, textColour] = [HIGH_TIER_FEE.colour, darken(0.7, HIGH_TIER_FEE.colour)]
+  const [bgColour, textColour] = [LOW_TIER_FEE.colour, darken(0.7, HIGH_TIER_FEE.colour)]
 
   if (!!debouncedHide) return null
 

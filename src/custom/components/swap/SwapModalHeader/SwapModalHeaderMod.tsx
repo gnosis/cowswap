@@ -291,7 +291,7 @@ SwapModalHeaderProps) {
         </AutoColumn>
       ) : null}
       {/* High Fee Warning */}
-      <HighFeeWarning trade={trade} margin="0" />
+      <HighFeeWarning trade={trade} />
       {/* No Impact Warning */}
       <NoImpactWarning margin="0" />
     </AutoColumn>
