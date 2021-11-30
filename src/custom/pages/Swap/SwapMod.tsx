@@ -637,7 +637,7 @@ export default function Swap({
                 showMaxButton={false}
                 hideBalance={false}
                 fiatValue={fiatValueOutput ?? undefined}
-                priceImpact={priceImpact}
+                priceImpact={onWrap ? undefined : priceImpact}
                 priceImpactLoading={priceImpactLoading}
                 currency={currencies[Field.OUTPUT]}
                 onCurrencySelect={handleOutputSelect}
@@ -776,7 +776,7 @@ export default function Swap({
           />
           <NoImpactWarning
             trade={trade}
-            hide={!trade || !priceImpactError || priceImpactLoading}
+            hide={!trade || !!onWrap || !priceImpactError || priceImpactLoading}
             acceptedStatus={impactWarningAccepted}
             acceptWarningCb={!isExpertMode && account ? () => setImpactWarningAccepted((state) => !state) : undefined}
             width="99%"
