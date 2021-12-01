@@ -234,9 +234,7 @@ export function CurrencySearch({
       ) : (
         <Column style={{ padding: '20px', height: '100%' }}>
           <TYPE.main color={theme.text3} textAlign="center" mb="20px">
-            <Trans>No tokens found with this symbol/name.</Trans>
-            <br />
-            <Trans>Try to search by their {network} address.</Trans>
+            <Trans>Enter valid token address</Trans>
           </TYPE.main>
         </Column>
       )}
