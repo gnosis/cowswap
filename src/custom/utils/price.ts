@@ -300,7 +300,7 @@ export function getValidParams(params: PriceQuoteParams) {
 function _isWithinRange(numerator: BigNumberJs, denominator: BigNumberJs) {
   // e.g 5 > 2 = true ==> within [0,1] range
   // e.g 2 > 5 = false
-  return denominator.isGreaterThan(numerator)
+  return denominator.abs().isGreaterThan(numerator.abs())
 }
 
 // *** SELL ***
@@ -362,26 +362,17 @@ export function calculateFallbackPriceImpact({
   finalValue,
 }: FallbackPriceImpactParams) {
   let Psqrt: BigNumberJs
+  const initialValueBn = new BigNumberJs(initialValue)
+  const middleValueBn = new BigNumberJs(middleValue)
+  const finalValueBn = new BigNumberJs(finalValue)
 
   if (abTradeType === TradeType.EXACT_INPUT) {
-    const initialValueBn = new BigNumberJs(initialValue)
-    const middleValueBn = new BigNumberJs(middleValue)
-    const finalValueBn = new BigNumberJs(finalValue)
-
     const Pab = middleValueBn.div(initialValueBn)
     const Pba = finalValueBn.div(middleValueBn)
 
     Psqrt = Pab.times(Pba).sqrt()
   } else {
-    // Pab = abOut/abIn
-    // Pba = baOut/baIn[abIn]
-    const initialValueBn = new BigNumberJs(initialValue)
-    const middleValueBn = new BigNumberJs(middleValue)
-    const finalValueBn = new BigNumberJs(finalValue)
-
-    // 2900/122
     const Pab = initialValueBn.div(middleValueBn)
-    // 2400/122
     const Pba = finalValueBn.div(middleValueBn)
 
     Psqrt = Pab.div(Pba).sqrt()
@@ -390,7 +381,7 @@ export function calculateFallbackPriceImpact({
   const [numerator1, denominator1] = ONE_BIG_NUMBER.minus(Psqrt).toFraction()
   const [numerator2, denominator2] = ONE_BIG_NUMBER.plus(Psqrt).toFraction()
 
-  // is response within [0,1] range?
+  // is response within +/-[0,1] range?
   return _isWithinRange(numerator1, denominator1)
     ? new Percent(numerator1.toString(10), denominator1.toString(10))
     : new Percent(numerator2.toString(10), denominator2.toString(10))
