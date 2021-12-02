@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { OrderKind } from '@gnosis.pm/gp-v2-contracts'
 import { Currency, CurrencyAmount } from '@uniswap/sdk-core'
 
-import { useTradeExactInWithFee } from 'state/swap/extension'
+import { useTradeExactInWithFee, useTradeExactOutWithFee } from 'state/swap/extension'
 import { QuoteInformationObject } from 'state/price/reducer'
 
 import { useWalletInfo } from 'hooks/useWalletInfo'
@@ -23,12 +23,17 @@ type ExactInSwapParams = {
   quote: QuoteInformationObject | undefined
 }
 
+type ExactOutSwapParams = Omit<ExactInSwapParams, 'outputCurrency'> & {
+  inputCurrency: Currency | undefined
+}
+
 type GetQuoteParams = {
   amountAtoms: string | undefined
   sellToken?: string | null
   buyToken?: string | null
   fromDecimals?: number
   toDecimals?: number
+  kind: OrderKind
 }
 
 type FeeQuoteParamsWithError = FeeQuoteParams & { error?: QuoteError }
@@ -40,6 +45,7 @@ export function useCalculateQuote(params: GetQuoteParams) {
     buyToken,
     fromDecimals = DEFAULT_DECIMALS,
     toDecimals = DEFAULT_DECIMALS,
+    kind,
   } = params
   const { chainId: preChain } = useActiveWeb3React()
   const { account } = useWalletInfo()
@@ -58,8 +64,7 @@ export function useCalculateQuote(params: GetQuoteParams) {
       amount,
       sellToken,
       buyToken,
-      // B > A Trade is always a sell
-      kind: OrderKind.SELL,
+      kind,
       fromDecimals,
       toDecimals,
       // TODO: check
@@ -100,13 +105,13 @@ export function useCalculateQuote(params: GetQuoteParams) {
         setLocalQuote(quoteError)
       })
       .finally(() => setLoading(false))
-  }, [amount, account, preChain, buyToken, sellToken, toDecimals, fromDecimals])
+  }, [amount, account, preChain, buyToken, sellToken, toDecimals, fromDecimals, kind])
 
   return { quote, loading, setLoading }
 }
 
 // calculates a new Quote and inverse swap values
-export default function useExactInSwap({ quote, outputCurrency, parsedAmount }: ExactInSwapParams) {
+export function useExactInSwap({ quote, outputCurrency, parsedAmount }: ExactInSwapParams) {
   const bestTradeExactIn = useTradeExactInWithFee({
     parsedAmount,
     outputCurrency,
@@ -114,4 +119,14 @@ export default function useExactInSwap({ quote, outputCurrency, parsedAmount }: 
   })
 
   return bestTradeExactIn
+}
+
+export function useExactOutSwap({ quote, inputCurrency, parsedAmount }: ExactOutSwapParams) {
+  const bestTradeExactOut = useTradeExactOutWithFee({
+    parsedAmount,
+    inputCurrency,
+    quote,
+  })
+
+  return bestTradeExactOut
 }
