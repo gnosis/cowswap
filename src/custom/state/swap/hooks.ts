@@ -39,6 +39,7 @@ import { WETH9_EXTENDED as WETH, GpEther as ETHER } from 'constants/tokens'
 
 import { BAD_RECIPIENT_ADDRESSES } from 'state/swap/hooks'
 import { useIsExpertMode, useUserSlippageToleranceWithDefault } from '@src/state/user/hooks'
+import { PriceImpact } from 'hooks/usePriceImpact'
 
 export * from '@src/state/swap/hooks'
 
@@ -160,7 +161,26 @@ function _computeFeeWarningAcceptedState({
   }
 }
 
-export function useUnknownImpactWarning() {
+function _computeUnknownPriceImpactAcceptedState({
+  impactWarningAccepted,
+  priceImpactParams,
+  isExpertMode,
+}: {
+  impactWarningAccepted: boolean
+  priceImpactParams?: PriceImpact
+  isExpertMode: boolean
+}) {
+  if (isExpertMode || impactWarningAccepted) return true
+  else {
+    if (priceImpactParams?.error) {
+      return impactWarningAccepted
+    }
+  }
+
+  return true
+}
+
+export function useUnknownImpactWarning(priceImpactParams?: PriceImpact) {
   const isExpertMode = useIsExpertMode()
   const { INPUT, OUTPUT, independentField } = useSwapState()
 
@@ -172,7 +192,11 @@ export function useUnknownImpactWarning() {
   }, [INPUT.currencyId, OUTPUT.currencyId, independentField])
 
   return {
-    impactWarningAccepted: isExpertMode || impactWarningAccepted,
+    impactWarningAccepted: _computeUnknownPriceImpactAcceptedState({
+      priceImpactParams,
+      impactWarningAccepted,
+      isExpertMode,
+    }),
     setImpactWarningAccepted,
   }
 }

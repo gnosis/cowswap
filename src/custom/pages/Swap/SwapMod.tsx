@@ -259,18 +259,15 @@ export default function Swap({
     [independentField, parsedAmount, showWrap, trade]
   )
 
+  const priceImpactParams = usePriceImpact({ abTrade: v2Trade, parsedAmounts })
+  const { priceImpact, error: priceImpactError, loading: priceImpactLoading } = priceImpactParams
+
   const { feeWarningAccepted, setFeeWarningAccepted } = useHighFeeWarning(trade)
-  const { impactWarningAccepted, setImpactWarningAccepted } = useUnknownImpactWarning()
+  const { impactWarningAccepted, setImpactWarningAccepted } = useUnknownImpactWarning(priceImpactParams)
   // const fiatValueInput = useUSDCValue(parsedAmounts[Field.INPUT])
   // const fiatValueOutput = useUSDCValue(parsedAmounts[Field.OUTPUT])
   const fiatValueInput = useHigherUSDValue(parsedAmounts[Field.INPUT])
   const fiatValueOutput = useHigherUSDValue(parsedAmounts[Field.OUTPUT])
-
-  const {
-    priceImpact,
-    error: priceImpactError,
-    loading: priceImpactLoading,
-  } = usePriceImpact({ abTrade: v2Trade, parsedAmounts })
 
   const { onSwitchTokens, onCurrencySelection, onUserInput, onChangeRecipient } = useSwapActionHandlers()
   // const isValid = !swapInputError
