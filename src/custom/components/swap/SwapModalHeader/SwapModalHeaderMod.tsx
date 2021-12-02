@@ -33,7 +33,7 @@ import FeeInformationTooltip from '../FeeInformationTooltip'
 import { LightCardType } from '.'
 import { transparentize } from 'polished'
 import { Price } from 'pages/Swap'
-import { HighFeeWarningProps } from 'components/HighFeeWarning'
+import { WarningProps } from 'components/SwapWarnings'
 
 export const ArrowWrapper = styled.div`
   padding: 4px;
@@ -62,7 +62,8 @@ export interface SwapModalHeaderProps {
   priceImpactWithoutFee?: Percent
   onAcceptChanges: () => void
   LightCard: LightCardType
-  HighFeeWarning: React.FC<HighFeeWarningProps>
+  HighFeeWarning: React.FC<WarningProps>
+  NoImpactWarning: React.FC<WarningProps>
   allowsOffchainSigning: boolean
 }
 
@@ -74,6 +75,7 @@ export default function SwapModalHeader({
   onAcceptChanges,
   LightCard,
   HighFeeWarning,
+  NoImpactWarning,
   allowsOffchainSigning,
 }: /* 
 {
@@ -289,7 +291,9 @@ SwapModalHeaderProps) {
         </AutoColumn>
       ) : null}
       {/* High Fee Warning */}
-      <HighFeeWarning trade={trade} margin="0" />
+      <HighFeeWarning trade={trade} />
+      {/* No Impact Warning */}
+      <NoImpactWarning margin="0" />
     </AutoColumn>
   )
 }

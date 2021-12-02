@@ -160,6 +160,23 @@ function _computeFeeWarningAcceptedState({
   }
 }
 
+export function useUnknownImpactWarning() {
+  const isExpertMode = useIsExpertMode()
+  const { INPUT, OUTPUT, independentField } = useSwapState()
+
+  const [impactWarningAccepted, setImpactWarningAccepted] = useState<boolean>(false)
+
+  // reset the state when users change swap params
+  useEffect(() => {
+    setImpactWarningAccepted(false)
+  }, [INPUT.currencyId, OUTPUT.currencyId, independentField])
+
+  return {
+    impactWarningAccepted: isExpertMode || impactWarningAccepted,
+    setImpactWarningAccepted,
+  }
+}
+
 /**
  * useHighFeeWarning
  * @description checks whether fee vs trade inputAmount = high fee warning

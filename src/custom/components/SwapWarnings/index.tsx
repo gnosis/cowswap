@@ -8,6 +8,7 @@ import { useHighFeeWarning } from 'state/swap/hooks'
 import TradeGp from 'state/swap/TradeGp'
 import { AuxInformationContainer } from '../CurrencyInputPanel'
 import { darken } from 'polished'
+import useDebounceWithForceUpdate from '@src/custom/hooks/useDebounceWithForceUpdate'
 
 interface HighFeeContainerProps {
   padding?: string
@@ -25,7 +26,7 @@ const WarningCheckboxContainer = styled.div`
   align-items: center;
 `
 
-const HighFeeWarningContainer = styled(AuxInformationContainer).attrs((props) => ({
+const WarningContainer = styled(AuxInformationContainer).attrs((props) => ({
   ...props,
   hideInput: true,
 }))<HighFeeContainerProps>`
@@ -34,7 +35,7 @@ const HighFeeWarningContainer = styled(AuxInformationContainer).attrs((props) =>
 
   padding: ${({ padding = '5px 12px' }) => padding};
   width: ${({ width = '100%' }) => width};
-  border-radius: ${({ theme }) => theme.buttonPrimary.borderRadius};
+  border-radius: 7px;
   margin: ${({ margin = '0 auto 12px auto' }) => margin};
 
   > div {
@@ -104,14 +105,31 @@ const HighFeeWarningMessage = ({ feePercentage }: { feePercentage?: Fraction }) 
   </div>
 )
 
-export type HighFeeWarningProps = {
+const NoImpactWarningMessage = (
+  <div>
+    <small>
+      We are unfortunately unable to calculate any price impact for this order.
+      <br />
+      <br />
+      <u>
+        <strong>We strongly advise you to do your due diligence before advancing.</strong>
+      </u>
+      <br />
+      <br />
+      You may still move forward with this order but make sure the receive amounts are what you expect.
+    </small>
+  </div>
+)
+
+export type WarningProps = {
   trade?: TradeGp
   acceptedStatus?: boolean
   className?: string
   acceptWarningCb?: () => void
+  hide?: boolean
 } & HighFeeContainerProps
 
-export const HighFeeWarning = (props: HighFeeWarningProps) => {
+export const HighFeeWarning = (props: WarningProps) => {
   const { acceptedStatus, acceptWarningCb, trade } = props
   const theme = useContext(ThemeContext)
 
@@ -124,7 +142,7 @@ export const HighFeeWarning = (props: HighFeeWarningProps) => {
   if (!isHighFee) return null
 
   return (
-    <HighFeeWarningContainer {...props} bgColour={bgColour} textColour={textColour}>
+    <WarningContainer {...props} bgColour={bgColour} textColour={textColour}>
       <div>
         <AlertTriangle size={18} />
         <div>Fees exceed {level}% of the swap amount!</div>{' '}
@@ -141,6 +159,36 @@ export const HighFeeWarning = (props: HighFeeWarningProps) => {
           </WarningCheckboxContainer>
         )}
       </div>
-    </HighFeeWarningContainer>
+    </WarningContainer>
+  )
+}
+
+export const NoImpactWarning = (props: WarningProps) => {
+  const { acceptedStatus, acceptWarningCb, hide, trade } = props
+  const theme = useContext(ThemeContext)
+  // TODO: change this - probably not the best way to do this..
+  // TODO: should likely make a global flag indiciating ABA impact loading
+  const debouncedHide = useDebounceWithForceUpdate(hide, 2000, trade)
+  const [bgColour, textColour] = [LOW_TIER_FEE.colour, darken(0.7, HIGH_TIER_FEE.colour)]
+
+  if (!!debouncedHide) return null
+
+  return (
+    <WarningContainer {...props} bgColour={bgColour} textColour={textColour}>
+      <div>
+        <AlertTriangle size={18} />
+        <div>
+          Price impact <strong>unknown</strong> - trade carefully
+        </div>{' '}
+        <MouseoverTooltipContent bgColor={theme.bg1} color={theme.text1} content={NoImpactWarningMessage}>
+          <ErrorStyledInfo />
+        </MouseoverTooltipContent>
+        {acceptWarningCb && (
+          <WarningCheckboxContainer>
+            <input type="checkbox" onChange={acceptWarningCb} checked={!!acceptedStatus} /> Swap anyway
+          </WarningCheckboxContainer>
+        )}
+      </div>
+    </WarningContainer>
   )
 }

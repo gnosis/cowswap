@@ -61,6 +61,7 @@ import {
   useDetectNativeToken,
   useIsFeeGreaterThanInput,
   useHighFeeWarning,
+  useUnknownImpactWarning,
 } from 'state/swap/hooks'
 import { useExpertModeManager, useUserSingleHopOnly } from 'state/user/hooks'
 import { /* HideSmall, */ LinkStyledButton, TYPE, ButtonSize } from 'theme'
@@ -111,6 +112,7 @@ export default function Swap({
   ArrowWrapperLoader,
   Price,
   HighFeeWarning,
+  NoImpactWarning,
   className,
   allowsOffchainSigning,
 }: SwapProps) {
@@ -258,16 +260,21 @@ export default function Swap({
   )
 
   const { feeWarningAccepted, setFeeWarningAccepted } = useHighFeeWarning(trade)
+  const { impactWarningAccepted, setImpactWarningAccepted } = useUnknownImpactWarning()
   // const fiatValueInput = useUSDCValue(parsedAmounts[Field.INPUT])
   // const fiatValueOutput = useUSDCValue(parsedAmounts[Field.OUTPUT])
   const fiatValueInput = useHigherUSDValue(parsedAmounts[Field.INPUT])
   const fiatValueOutput = useHigherUSDValue(parsedAmounts[Field.OUTPUT])
 
-  const { priceImpact } = usePriceImpact({ abTrade: v2Trade, parsedAmounts })
+  const {
+    priceImpact,
+    error: priceImpactError,
+    loading: priceImpactLoading,
+  } = usePriceImpact({ abTrade: v2Trade, parsedAmounts })
 
   const { onSwitchTokens, onCurrencySelection, onUserInput, onChangeRecipient } = useSwapActionHandlers()
   // const isValid = !swapInputError
-  const isValid = !swapInputError && feeWarningAccepted // mod
+  const isValid = !swapInputError && feeWarningAccepted && impactWarningAccepted // mod
   const dependentField: Field = independentField === Field.INPUT ? Field.OUTPUT : Field.INPUT
 
   const handleTypeInput = useCallback(
@@ -630,7 +637,8 @@ export default function Swap({
                 showMaxButton={false}
                 hideBalance={false}
                 fiatValue={fiatValueOutput ?? undefined}
-                priceImpact={priceImpact}
+                priceImpact={onWrap ? undefined : priceImpact}
+                priceImpactLoading={priceImpactLoading}
                 currency={currencies[Field.OUTPUT]}
                 onCurrencySelect={handleOutputSelect}
                 otherCurrency={currencies[Field.INPUT]}
@@ -763,6 +771,14 @@ export default function Swap({
             trade={trade}
             acceptedStatus={feeWarningAccepted}
             acceptWarningCb={!isExpertMode && account ? () => setFeeWarningAccepted((state) => !state) : undefined}
+            width="99%"
+            padding="5px 15px"
+          />
+          <NoImpactWarning
+            trade={trade}
+            hide={!trade || !!onWrap || !priceImpactError || priceImpactLoading}
+            acceptedStatus={impactWarningAccepted}
+            acceptWarningCb={!isExpertMode && account ? () => setImpactWarningAccepted((state) => !state) : undefined}
             width="99%"
             padding="5px 15px"
           />
