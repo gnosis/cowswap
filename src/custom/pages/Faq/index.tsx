@@ -257,8 +257,8 @@ export default function Faq() {
           </p>
 
           <p>
-            Additionally, depending on the composition of the orders that are submitted and are valid for a given batch, the
-            existence of CoWs may significantly reduce the amount that has to be exchanged via external MEV-prone
+            Additionally, depending on the composition of the orders that are submitted and are valid for a given batch,
+            the existence of CoWs may significantly reduce the amount that has to be exchanged via external MEV-prone
             protocols, such as Uniswap.
           </p>
 
@@ -317,8 +317,8 @@ export default function Faq() {
           <h2 id="protocol">Protocol</h2>
           <h3 id="does-cowswap-have-a-token">Does CowSwap have a token?</h3>
           <p>
-            There is currently no CowSwap specific token, however, the community has expressed its desire to
-            participate in this exciting project. That is why there is an ongoing discussion in the{' '}
+            There is currently no CowSwap specific token, however, the community has expressed its desire to participate
+            in this exciting project. That is why there is an ongoing discussion in the{' '}
             <ExternalLink href="https://forum.gnosis.io/c/gnosis-protocol">Forum</ExternalLink> and{' '}
             <ExternalLink href="https://chat.cowswap.exchange">Discord</ExternalLink> about the possibility of creating
             one, so make sure your voice is heard!
@@ -410,8 +410,8 @@ export default function Faq() {
 
           <h3 id="what-is-presign">What is pre-sign?</h3>
           <p>
-            It is an alternative way of signing orders offered by the protocol, that is especially interesting for
-            smart contract integrations and Smart Contract wallets. See{' '}
+            It is an alternative way of signing orders offered by the protocol, that is especially interesting for smart
+            contract integrations and Smart Contract wallets. See{' '}
             <LinkScrollable href={'#smart-contract-support'}>Smart Contract support</LinkScrollable> for more
             information.
           </p>
@@ -419,9 +419,9 @@ export default function Faq() {
           <p>
             In GPv2, instead of using a central operator or a constant function market maker to determine trade
             settlements, the protocol uses a party called a &quot;solver&quot;, who is the party in charge of providing
-            the settlement solution to the batch auctions. Solvers compete against each other to submit the best possible
-            batch settlement solution. Each time a solver submits a successful batch settlement solution, the protocol
-            rewards them with tokens, meaning that the protocol rewards solvers for solving the batch auction
+            the settlement solution to the batch auctions. Solvers compete against each other to submit the best
+            possible batch settlement solution. Each time a solver submits a successful batch settlement solution, the
+            protocol rewards them with tokens, meaning that the protocol rewards solvers for solving the batch auction
             optimization problem. By meeting certain requirements, anyone can become a solver:
           </p>
           <ol>
@@ -612,8 +612,8 @@ export default function Faq() {
           <p>
             For the trade itself you do not need to hold ETH. Although, in order to be able to trade on CowSwap, you
             first need to approve your funds for spending on the dapp<small>*</small>. For that action, you need ETH to
-            pay for gas fees. Once you have done this, ETH is no longer required as CowSwap charges the fee from the sell
-            token.
+            pay for gas fees. Once you have done this, ETH is no longer required as CowSwap charges the fee from the
+            sell token.
           </p>
 
           <p>
@@ -647,15 +647,17 @@ export default function Faq() {
             </li>
           </ol>
           <p>
-            This workflow applies for normal Ethereum accounts (EOA). For smart contracts, instead of signing a
-            meta-tx you would need to do a <LinkScrollable href={'#what-is-presign'}>pre-sign</LinkScrollable>.
+            This workflow applies for normal Ethereum accounts (EOA). For smart contracts, instead of signing a meta-tx
+            you would need to do a <LinkScrollable href={'#what-is-presign'}>pre-sign</LinkScrollable>.
           </p>
 
           <h3 id="can-i-cancel-an-order">Can I cancel an order?</h3>
 
           <p>Yes! You can request to cancel any order while it is still pending.</p>
           <p>Cancellations, like orders, are free and require no gas to be paid.</p>
-          <p>Keep in mind that even though the request to cancel an order succeeds, the order might still be executed.</p>
+          <p>
+            Keep in mind that even though the request to cancel an order succeeds, the order might still be executed.
+          </p>
           <p>
             That is because when the offline order cancellation is received, a settlement solution may have already been
             prepared by one of the solvers and sent to the Ethereum network.
@@ -808,12 +810,13 @@ export default function Faq() {
           </p>
 
           <p>
-            We now briefly explain CowSwap’s positive network effect. CowSwap&apos;s name comes from the economic phenomenon
-            &quot;Coincidence of Wants&quot;, where users&apos; orders can be matched with each other to obtain better
-            prices. When the protocol finds a CoW, trades are directly settled among traders, which allows saving on slippage, gas,
-            and LP fees. The network effect of CoWs increases alongside with the number of traders using the protocol&#59;
-            the more users we have sending orders to the protocol, the better the prices and gas savings the protocol is
-            able to offer. Our new CoW-filiate program is aiming to increase this positive network effect.
+            We now briefly explain CowSwap’s positive network effect. CowSwap&apos;s name comes from the economic
+            phenomenon &quot;Coincidence of Wants&quot;, where users&apos; orders can be matched with each other to
+            obtain better prices. When the protocol finds a CoW, trades are directly settled among traders, which allows
+            saving on slippage, gas, and LP fees. The network effect of CoWs increases alongside with the number of
+            traders using the protocol&#59; the more users we have sending orders to the protocol, the better the prices
+            and gas savings the protocol is able to offer. Our new CoW-filiate program is aiming to increase this
+            positive network effect.
           </p>
 
           <h3 id="who-can-share-the-referral-link">Who can share the referral link?</h3>
