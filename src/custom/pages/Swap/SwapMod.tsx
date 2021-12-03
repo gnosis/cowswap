@@ -545,6 +545,7 @@ export default function Swap({
             txHash={txHash}
             recipient={recipient}
             allowedSlippage={allowedSlippage}
+            priceImpact={priceImpact}
             onConfirm={handleSwap}
             swapErrorMessage={swapErrorMessage}
             onDismiss={handleConfirmDismiss}

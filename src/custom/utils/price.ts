@@ -299,25 +299,18 @@ export function getValidParams(params: PriceQuoteParams) {
 export function calculateFallbackPriceImpact(initialValue: string, finalValue: string) {
   const initialValueBn = new BigNumberJs(initialValue)
   const finalValueBn = new BigNumberJs(finalValue)
-  // TODO: use correct formula
-  // ((IV - FV) / IV / 2) * 100
-  const [numerator, denominator] = initialValueBn.minus(finalValueBn).div(initialValueBn).div('2').toFraction()
+  // ((finalValue - initialValue) / initialValue / 2) * 100
+  const output = finalValueBn.minus(initialValueBn).div(initialValueBn).div('2')
+  const [numerator, denominator] = output.toFraction()
 
-  console.debug(
-    '[calculateFallbackPriceImpact]::',
-    initialValueBn.toString(10),
-    finalValueBn.toString(10),
-    numerator.toString(10),
-    denominator.toString(10)
-  )
+  const isPositive = numerator.isNegative() === denominator.isNegative()
 
-  const priceImpactPercentage =
-    // Uni sdk hates negative numbers so we need to do this
-    numerator.isNegative() || denominator.isNegative()
-      ? new Percent(numerator.absoluteValue().toString(10), denominator.absoluteValue().toString(10)).multiply('-1')
-      : new Percent(numerator.toString(10), denominator.toString(10))
+  const percentage = new Percent(numerator.abs().toString(10), denominator.abs().toString(10))
+  // UI shows NEGATIVE impact as a POSITIVE effect, so we need to swap the sign here
+  // see FiatValue: line 38
+  const impact = isPositive ? percentage.multiply('-1') : percentage
 
-  console.debug(`[calculateFallbackPriceImpact]::${priceImpactPercentage.toSignificant(2)}%`)
+  console.debug(`[calculateFallbackPriceImpact]::${impact.toSignificant(2)}%`)
 
-  return priceImpactPercentage
+  return impact
 }
