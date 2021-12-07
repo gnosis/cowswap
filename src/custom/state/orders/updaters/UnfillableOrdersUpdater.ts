@@ -42,7 +42,7 @@ async function _getOrderPrice(chainId: ChainId, order: Order, strategy: GpPriceS
     quoteToken,
     fromDecimals: order.inputToken.decimals,
     toDecimals: order.outputToken.decimals,
-    validTo: Date.now() / 1000 + 3000,
+    validTo: Math.ceil(Date.now() / 1000 + 3000),
   }
 
   try {
