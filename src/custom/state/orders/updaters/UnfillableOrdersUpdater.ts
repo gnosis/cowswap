@@ -10,7 +10,7 @@ import { SupportedChainId as ChainId } from 'constants/chains'
 
 import { getBestQuote, PriceInformation } from 'utils/price'
 import { isOrderUnfillable } from 'state/orders/utils'
-import useGetGpPriceStrategy, { GpPriceStrategy } from '@src/custom/hooks/useGetGpPriceStrategy'
+import useGetGpPriceStrategy, { GpPriceStrategy } from 'hooks/useGetGpPriceStrategy'
 import { getPromiseFulfilledValue } from 'utils/misc'
 
 /**
@@ -19,7 +19,7 @@ import { getPromiseFulfilledValue } from 'utils/misc'
  * @param chainId
  * @param order
  */
-async function _getOrderPrice(chainId: ChainId, order: Order, apiStatus: GpPriceStrategy) {
+async function _getOrderPrice(chainId: ChainId, order: Order, strategy: GpPriceStrategy) {
   let amount, baseToken, quoteToken
 
   if (order.kind === 'sell') {
@@ -46,7 +46,7 @@ async function _getOrderPrice(chainId: ChainId, order: Order, apiStatus: GpPrice
   }
 
   try {
-    return getBestQuote({ apiStatus, quoteParams, fetchFee: false, isPriceRefresh: false })
+    return getBestQuote({ strategy, quoteParams, fetchFee: false, isPriceRefresh: false })
   } catch (e) {
     return null
   }
@@ -60,7 +60,7 @@ export function UnfillableOrdersUpdater(): null {
   const pending = usePendingOrders({ chainId })
   const setIsOrderUnfillable = useSetIsOrderUnfillable()
   // check which GP Quote API to use (NEW/LEGACY)
-  const gpApiStatus = useGetGpPriceStrategy()
+  const strategy = useGetGpPriceStrategy()
 
   // Ref, so we don't rerun useEffect
   const pendingRef = useRef(pending)
@@ -101,7 +101,7 @@ export function UnfillableOrdersUpdater(): null {
       }
 
       pending.forEach((order, index) =>
-        _getOrderPrice(chainId, order, gpApiStatus).then((quote) => {
+        _getOrderPrice(chainId, order, strategy).then((quote) => {
           if (quote) {
             const [promisedPrice] = quote
             const price = getPromiseFulfilledValue(promisedPrice, null)
@@ -117,7 +117,7 @@ export function UnfillableOrdersUpdater(): null {
       isUpdating.current = false
       console.debug(`[UnfillableOrdersUpdater] Checked canceled orders in ${Date.now() - startTime}ms`)
     }
-  }, [account, chainId, gpApiStatus, updateIsUnfillableFlag])
+  }, [account, chainId, strategy, updateIsUnfillableFlag])
 
   useEffect(() => {
     updatePending()

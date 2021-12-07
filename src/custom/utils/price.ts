@@ -19,7 +19,7 @@ import { OptimalRate } from 'paraswap-core'
 import { GetQuoteResponse, OrderKind } from '@gnosis.pm/gp-v2-contracts'
 import { ChainId } from 'state/lists/actions'
 import { toErc20Address } from 'utils/tokens'
-import { GpPriceStrategy } from '@src/custom/hooks/useGetGpPriceStrategy'
+import { GpPriceStrategy } from 'hooks/useGetGpPriceStrategy'
 
 const FEE_EXCEEDS_FROM_ERROR = new GpQuoteError({
   errorType: GpQuoteErrorCodes.FeeExceedsFrom,
@@ -28,6 +28,7 @@ const FEE_EXCEEDS_FROM_ERROR = new GpQuoteError({
 
 export interface QuoteParams {
   quoteParams: FeeQuoteParams
+  strategy: GpPriceStrategy
   fetchFee: boolean
   previousFee?: FeeInformation
   isPriceRefresh: boolean
@@ -275,7 +276,11 @@ export async function getFullQuote({ quoteParams }: { quoteParams: FeeQuoteParam
  * (LEGACY) Will be overwritten in the near future
  *  Return the best quote considering all price feeds. The quote contains information about the price and fee
  */
-export async function getBestQuoteLegacy({ quoteParams, fetchFee, previousFee }: QuoteParams): Promise<QuoteResult> {
+export async function getBestQuoteLegacy({
+  quoteParams,
+  fetchFee,
+  previousFee,
+}: Omit<QuoteParams, 'strategy'>): Promise<QuoteResult> {
   const { sellToken, buyToken, fromDecimals, toDecimals, amount, kind, chainId, userAddress, validTo } = quoteParams
   const { baseToken, quoteToken } = getCanonicalMarket({ sellToken, buyToken, kind })
   // Get a new fee quote (if required)
@@ -327,19 +332,17 @@ export async function getBestQuote({
   quoteParams,
   fetchFee,
   previousFee,
-  apiStatus,
-}: QuoteParams & {
-  apiStatus: GpPriceStrategy
-}): Promise<QuoteResult> {
-  if (apiStatus === 'COWSWAP') {
+  strategy,
+}: QuoteParams): Promise<QuoteResult> {
+  if (strategy === 'COWSWAP') {
     return getFullQuote({ quoteParams }).catch((err) => {
       console.error(
-        '[PRICE::API] getBestQuote - error in COWSWAP full quote endpoint, reason: <',
+        '[PRICE::API] getBestQuote - error using COWSWAP price strategy, reason: <',
         err,
         '> - trying back up price sources...'
       )
       // ATTEMPT LEGACY CALL
-      return getBestQuote({ apiStatus: 'LEGACY', quoteParams, fetchFee, previousFee, isPriceRefresh: false })
+      return getBestQuote({ strategy: 'LEGACY', quoteParams, fetchFee, previousFee, isPriceRefresh: false })
     })
   } else {
     return getBestQuoteLegacy({ quoteParams, fetchFee, previousFee, isPriceRefresh: false })

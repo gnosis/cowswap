@@ -115,8 +115,8 @@ export function useRefetchQuoteCallback() {
   const { getNewQuote, refreshQuote, updateQuote, setQuoteError } = useQuoteDispatchers()
   const addUnsupportedToken = useAddGpUnsupportedToken()
   const removeGpUnsupportedToken = useRemoveGpUnsupportedToken()
-  // check which GP Quote API to use (NEW/LEGACY)
-  const gpApiStatus = useGetGpPriceStrategy()
+  // check which price strategy to use (COWSWAP/LEGACY)
+  const priceStrategy = useGetGpPriceStrategy()
 
   registerOnWindow({
     getNewQuote,
@@ -128,7 +128,7 @@ export function useRefetchQuoteCallback() {
   })
 
   return useCallback(
-    async (params: QuoteParams) => {
+    async (params: Omit<QuoteParams, 'strategy'>) => {
       const { quoteParams, isPriceRefresh } = params
       let quoteData: FeeQuoteParams | QuoteInformationObject = quoteParams
 
@@ -145,7 +145,7 @@ export function useRefetchQuoteCallback() {
 
         // Get the quote
         // price can be null if fee > price
-        const { cancelled, data } = await getBestQuoteResolveOnlyLastCall({ ...params, apiStatus: gpApiStatus })
+        const { cancelled, data } = await getBestQuoteResolveOnlyLastCall({ ...params, strategy: priceStrategy })
         if (cancelled) {
           // Cancellation can happen if a new request is made, then any ongoing query is canceled
           console.debug('[useRefetchPriceCallback] Canceled get quote price for', params)
@@ -207,7 +207,7 @@ export function useRefetchQuoteCallback() {
       }
     },
     [
-      gpApiStatus,
+      priceStrategy,
       isUnsupportedTokenGp,
       updateQuote,
       refreshQuote,

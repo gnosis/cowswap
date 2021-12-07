@@ -13,9 +13,9 @@ export async function checkGpPriceStrategy(): Promise<GpPriceStrategy> {
 const GP_PRICE_STRATEGY_INTERVAL_TIME = ms`30 minutes`
 
 export default function useGetGpPriceStrategy(
-  defaultApiToUse: GpPriceStrategy = DEFAULT_GP_PRICE_STRATEGY
+  defaultStrategy: GpPriceStrategy = DEFAULT_GP_PRICE_STRATEGY
 ): GpPriceStrategy {
-  const [gpPriceStrategy, setGpPriceStrategy] = useState<GpPriceStrategy>(defaultApiToUse)
+  const [gpPriceStrategy, setGpPriceStrategy] = useState<GpPriceStrategy>(defaultStrategy)
 
   useEffect(() => {
     console.debug('[useGetGpPriceStrategy::GP Price Strategy]::', gpPriceStrategy)
