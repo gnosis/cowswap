@@ -9,6 +9,7 @@ import { calculateFallbackPriceImpact, FeeQuoteParams } from 'utils/price'
 import TradeGp from 'state/swap/TradeGp'
 import { QuoteInformationObject } from 'state/price/reducer'
 import { QuoteError } from 'state/price/actions'
+import { useOrderValidTo } from 'state/user/hooks'
 
 type SwapParams = { abTrade?: TradeGp; sellToken?: string | null; buyToken?: string | null }
 
@@ -45,6 +46,7 @@ export default function useFallbackPriceImpact({ abTrade, isWrapping }: Fallback
     INPUT: { currencyId: sellToken },
     OUTPUT: { currencyId: buyToken },
   } = useSwapState()
+  const validTo = useOrderValidTo()
 
   const [loading, setLoading] = useState(false)
 
@@ -61,10 +63,12 @@ export default function useFallbackPriceImpact({ abTrade, isWrapping }: Fallback
   // Calculate the necessary params to get the inverse trade impact
   const { parsedAmount, outputCurrency, ...swapQuoteParams } = useMemo(
     () => ({
+      parsedAmount: _getBaTradeParsedAmount(abTrade, shouldCalculate),
+      validTo,
       ..._getBaTradeParams({ abTrade, sellToken, buyToken }),
       parsedAmount: _getBaTradeParsedAmount(abTrade, shouldCalculate),
     }),
-    [abTrade, buyToken, sellToken, shouldCalculate]
+    [abTrade, buyToken, sellToken, shouldCalculate, validTo]
   )
 
   const { quote } = useCalculateQuote({
