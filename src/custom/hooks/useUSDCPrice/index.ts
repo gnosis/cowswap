@@ -39,7 +39,7 @@ export default function useUSDCPrice(currency?: Currency) {
   const [error, setError] = useState<Error | null>(null)
 
   const { chainId, account } = useActiveWeb3React()
-  const validTo = useOrderValidTo()
+  const { validTo } = useOrderValidTo()
   const blockNumber = useBlockNumber()
 
   const amountOut = chainId ? STABLECOIN_AMOUNT_OUT[chainId] : undefined

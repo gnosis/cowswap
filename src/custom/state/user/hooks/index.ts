@@ -11,7 +11,7 @@ export function useURLWarningToggle(): () => void {
   return useCallback(() => dispatch(toggleURLWarning()), [dispatch])
 }
 
-export function useOrderValidTo(): number {
+export function useOrderValidTo() {
   const [deadline] = useUserTransactionTTL()
-  return useMemo(() => calculateValidTo(deadline), [deadline])
+  return useMemo(() => ({ validTo: calculateValidTo(deadline), deadline }), [deadline])
 }
