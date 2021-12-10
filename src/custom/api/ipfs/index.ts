@@ -1,8 +1,35 @@
-import pinataSDK, { PinataPinResponse } from '@pinata/sdk'
 import { PINATA_API_KEY, PINATA_SECRET_API_KEY } from 'constants/ipfs'
 
-const pinata = pinataSDK(PINATA_API_KEY, PINATA_SECRET_API_KEY)
+export async function pinJSONToIPFS(file: any): Promise<any> {
+  const pinataUrl = `https://api.pinata.cloud/pinning/pinJSONToIPFS`
 
-export async function pinJSONToIPFS(file: any): Promise<PinataPinResponse> {
-  return pinata.pinJSONToIPFS(file, { pinataMetadata: { name: 'appData-affiliate' } })
+  const headers = new Headers({
+    'Content-Type': 'application/json',
+    pinata_api_key: PINATA_API_KEY,
+    pinata_secret_api_key: PINATA_SECRET_API_KEY,
+  })
+
+  const body = JSON.stringify({
+    pinataContent: file,
+    pinataMetadata: { name: 'appData-affiliate' },
+  })
+  const request = new Request(pinataUrl, {
+    method: 'POST',
+    headers,
+    body,
+  })
+
+  try {
+    const response = await fetch(request)
+    const data = await response.json()
+
+    if (response.status !== 200) {
+      throw new Error(data.error.details || data.error)
+    }
+
+    return data
+  } catch (error) {
+    console.log('Failed to pin JSON to IPFS on pinata api', error)
+    return error
+  }
 }

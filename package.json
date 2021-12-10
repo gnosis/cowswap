@@ -196,7 +196,6 @@
     "@gnosis.pm/dex-js": "^0.13.0",
     "@gnosis.pm/gp-v2-contracts": "^1.0.2",
     "@gnosis.pm/safe-service-client": "^0.1.1",
-    "@pinata/sdk": "^1.1.23",
     "@sentry/react": "^6.11.0",
     "@sentry/tracing": "^6.11.0",
     "@uniswap/default-token-list": "^2.0.0",
