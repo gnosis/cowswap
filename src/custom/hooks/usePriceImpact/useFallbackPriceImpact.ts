@@ -9,8 +9,8 @@ import { calculateFallbackPriceImpact, FeeQuoteParams } from 'utils/price'
 import TradeGp from 'state/swap/TradeGp'
 import { QuoteInformationObject } from 'state/price/reducer'
 import { QuoteError } from 'state/price/actions'
-import { useOrderValidTo } from 'state/user/hooks'
-import { getAdjustedValidTo } from 'state/price/updater'
+import { useQuote } from 'state/price/hooks'
+import { useActiveWeb3React } from 'hooks/web3'
 
 type SwapParams = { abTrade?: TradeGp; sellToken?: string | null; buyToken?: string | null }
 
@@ -47,7 +47,9 @@ export default function useFallbackPriceImpact({ abTrade, isWrapping }: Fallback
     INPUT: { currencyId: sellToken },
     OUTPUT: { currencyId: buyToken },
   } = useSwapState()
-  const { validTo, deadline } = useOrderValidTo()
+
+  const { chainId } = useActiveWeb3React()
+  const lastQuote = useQuote({ token: sellToken, chainId })
 
   const [loading, setLoading] = useState(false)
 
@@ -64,12 +66,11 @@ export default function useFallbackPriceImpact({ abTrade, isWrapping }: Fallback
   // Calculate the necessary params to get the inverse trade impact
   const { parsedAmount, outputCurrency, ...swapQuoteParams } = useMemo(
     () => ({
-      parsedAmount: _getBaTradeParsedAmount(abTrade, shouldCalculate),
-      validTo: getAdjustedValidTo(validTo, deadline),
       ..._getBaTradeParams({ abTrade, sellToken, buyToken }),
       parsedAmount: _getBaTradeParsedAmount(abTrade, shouldCalculate),
+      validTo: lastQuote?.validTo,
     }),
-    [abTrade, buyToken, deadline, sellToken, shouldCalculate, validTo]
+    [abTrade, buyToken, lastQuote?.validTo, sellToken, shouldCalculate]
   )
 
   const { quote } = useCalculateQuote({

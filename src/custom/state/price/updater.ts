@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { DEFAULT_DECIMALS } from 'custom/constants'
 
 import { UnsupportedToken } from 'api/gnosisProtocol'
-import { FeeQuoteParams } from 'utils/price'
+import { FeeQuoteParams as FeeQuoteParamsFull } from 'utils/price'
 import { OrderKind } from '@gnosis.pm/gp-v2-contracts'
 
 import { useSwapState, tryParseAmount } from 'state/swap/hooks'
@@ -24,9 +24,10 @@ import { useOrderValidTo } from 'state/user/hooks'
 const DEBOUNCE_TIME = 350
 const REFETCH_CHECK_INTERVAL = 10000 // Every 10s
 const RENEW_FEE_QUOTES_BEFORE_EXPIRATION_TIME = 30000 // Will renew the quote if there's less than 30 seconds left for the quote to expire
-const RENEW_VALIDTO_QUOTES_BEFORE_EXPIRATION_TIME = 1800000
 const WAITING_TIME_BETWEEN_EQUAL_REQUESTS = 5000 // Prevents from sending the same request to often (max, every 5s)
 const UNSUPPORTED_TOKEN_REFETCH_CHECK_INTERVAL = 10 * 60 * 1000 // if unsupported token was added > 10min ago, re-try
+
+type FeeQuoteParams = Omit<FeeQuoteParamsFull, 'validTo'>
 
 /**
  * Returns if the quote has been recently checked
@@ -115,22 +116,6 @@ function unsupportedTokenNeedsRecheck(
   return shouldUpdate
 }
 
-export function getAdjustedValidTo(validTo: number, deadline: number) {
-  const now = Math.floor(Date.now() / 1000)
-  const validToAsDate = new Date(validTo * 1000).toISOString()
-  const validToAdjusted = isExpiringSoon(validToAsDate, RENEW_VALIDTO_QUOTES_BEFORE_EXPIRATION_TIME)
-    ? now + deadline
-    : validTo
-  console.log(
-    '🚀 ~ file: updater.ts ~ line 120 ~ _getAdjustedValidTo ~ validToAdjusted',
-    validToAsDate,
-    validToAdjusted,
-    isExpiringSoon(validToAsDate, RENEW_VALIDTO_QUOTES_BEFORE_EXPIRATION_TIME)
-  )
-
-  return validToAdjusted
-}
-
 export default function FeesUpdater(): null {
   const [lastUnsupportedCheck, setLastUnsupportedCheck] = useState<null | number>(null)
   const { chainId, account } = useActiveWeb3React()
@@ -160,7 +145,7 @@ export default function FeesUpdater(): null {
 
   const windowVisible = useIsWindowVisible()
   const isOnline = useIsOnline()
-  const { validTo, deadline } = useOrderValidTo()
+  const { validTo } = useOrderValidTo()
 
   // Update if any parameter is changing
   useEffect(() => {
@@ -191,7 +176,7 @@ export default function FeesUpdater(): null {
       amount: amount.quotient.toString(),
       receiver,
       userAddress: account,
-      validTo: getAdjustedValidTo(validTo, deadline),
+      validTo,
     }
 
     // Don't refetch if offline.
@@ -269,9 +254,8 @@ export default function FeesUpdater(): null {
     setQuoteError,
     account,
     lastUnsupportedCheck,
-    validTo,
     receiver,
-    deadline,
+    validTo,
   ])
 
   return null

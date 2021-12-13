@@ -14,10 +14,10 @@ import { FeeQuoteParams, getBestQuote, QuoteResult } from 'utils/price'
 
 import { ZERO_ADDRESS } from 'constants/misc'
 import { SupportedChainId } from 'constants/chains'
-import { DEFAULT_DECIMALS } from 'constants/index'
+import { DEFAULT_DECIMALS, DEFAULT_GP_PRICE_STRATEGY } from 'constants/index'
 import { QuoteError } from 'state/price/actions'
 import { isWrappingTrade } from 'state/swap/utils'
-import useGetGpPriceStrategy, { DEFAULT_GP_PRICE_STRATEGY } from '../useGetGpPriceStrategy'
+import useGetGpPriceStrategy from '../useGetGpPriceStrategy'
 
 type WithLoading = { loading: boolean; setLoading: (state: boolean) => void }
 
@@ -33,7 +33,7 @@ type GetQuoteParams = {
   buyToken?: string | null
   fromDecimals?: number
   toDecimals?: number
-  validTo: number
+  validTo?: number
 } & WithLoading
 
 type FeeQuoteParamsWithError = FeeQuoteParams & { error?: QuoteError }
@@ -58,7 +58,7 @@ export function useCalculateQuote(params: GetQuoteParams) {
   useEffect(() => {
     const chainId = supportedChainId(preChain)
     // bail out early - amount here is undefined if usd price impact is valid
-    if (!sellToken || !buyToken || !amount) return
+    if (!sellToken || !buyToken || !amount || !validTo) return
 
     setLoading(true)
 

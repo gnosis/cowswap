@@ -20,12 +20,18 @@ import { useQuoteDispatchers } from 'state/price/hooks'
 import { AddGpUnsupportedTokenParams } from 'state/lists/actions'
 import { QuoteError } from 'state/price/actions'
 import { onlyResolvesLast } from 'utils/async'
-import useGetGpPriceStrategy from '@src/custom/hooks/useGetGpPriceStrategy'
+import useGetGpPriceStrategy from 'hooks/useGetGpPriceStrategy'
+import { calculateValidTo } from 'hooks/useSwapCallback'
+import { useUserTransactionTTL } from 'state/user/hooks'
 
 interface HandleQuoteErrorParams {
   quoteData: QuoteInformationObject | FeeQuoteParams
   error: unknown
   addUnsupportedToken: (params: AddGpUnsupportedTokenParams) => void
+}
+
+interface QuoteParamsForFetching extends Omit<QuoteParams, 'quoteParams' | 'strategy'> {
+  quoteParams: Omit<FeeQuoteParams, 'validTo'>
 }
 
 export function handleQuoteError({ quoteData, error, addUnsupportedToken }: HandleQuoteErrorParams): QuoteError {
@@ -117,6 +123,7 @@ export function useRefetchQuoteCallback() {
   const removeGpUnsupportedToken = useRemoveGpUnsupportedToken()
   // check which price strategy to use (COWSWAP/LEGACY)
   const priceStrategy = useGetGpPriceStrategy()
+  const [deadline] = useUserTransactionTTL()
 
   registerOnWindow({
     getNewQuote,
@@ -128,7 +135,15 @@ export function useRefetchQuoteCallback() {
   })
 
   return useCallback(
-    async (params: Omit<QuoteParams, 'strategy'>) => {
+    async (preParams: QuoteParamsForFetching) => {
+      // construct params with validTo
+      const params = {
+        ...preParams,
+        quoteParams: {
+          ...preParams.quoteParams,
+          validTo: calculateValidTo(deadline),
+        },
+      }
       const { quoteParams, isPriceRefresh } = params
       let quoteData: FeeQuoteParams | QuoteInformationObject = quoteParams
 
@@ -207,6 +222,7 @@ export function useRefetchQuoteCallback() {
       }
     },
     [
+      deadline,
       priceStrategy,
       isUnsupportedTokenGp,
       updateQuote,
