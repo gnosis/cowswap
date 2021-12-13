@@ -24,5 +24,5 @@ export default function usePriceImpact({ abTrade, parsedAmounts, isWrapping }: P
 
   const priceImpact = fiatPriceImpact || fallbackPriceImpact
 
-  return { priceImpact, error, loading }
+  return { priceImpact, error: fiatPriceImpact ? undefined : error, loading }
 }
