@@ -22,7 +22,7 @@ import { FeeQuoteParams, PriceInformation, PriceQuoteParams, SimpleGetQuoteRespo
 import { DEFAULT_NETWORK_FOR_LISTS } from 'constants/lists'
 import { GAS_FEE_ENDPOINTS } from 'constants/index'
 import * as Sentry from '@sentry/browser'
-import { ZERO_ADDRESS } from '@src/constants/misc'
+import { ZERO_ADDRESS } from 'constants/misc'
 import { getAppDataHash } from 'constants/appDataHash'
 
 function getGnosisProtocolUrl(): Partial<Record<ChainId, string>> {

@@ -1,7 +1,6 @@
 import ms from 'ms.macro'
 import { useState, useEffect } from 'react'
-
-export const DEFAULT_GP_PRICE_STRATEGY = 'LEGACY'
+import { DEFAULT_GP_PRICE_STRATEGY } from 'constants/index'
 
 export type GpPriceStrategy = 'COWSWAP' | 'LEGACY'
 // TODO: use actual API call
@@ -20,7 +19,7 @@ export default function useGetGpPriceStrategy(
   useEffect(() => {
     console.debug('[useGetGpPriceStrategy::GP Price Strategy]::', gpPriceStrategy)
 
-    const checkStatus = () => {
+    const getStrategy = () => {
       checkGpPriceStrategy()
         .then(setGpPriceStrategy)
         .catch((err: Error) => {
@@ -31,11 +30,11 @@ export default function useGetGpPriceStrategy(
     }
 
     // Create initial call on mount
-    checkStatus()
+    getStrategy()
 
     // set interval for GP_PRICE_STRATEGY_INTERVAL_TIME (30 min)
     const intervalId = setInterval(() => {
-      checkStatus()
+      getStrategy()
     }, GP_PRICE_STRATEGY_INTERVAL_TIME)
 
     return () => clearInterval(intervalId)

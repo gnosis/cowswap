@@ -54,7 +54,7 @@ export type SimpleGetQuoteResponse = Pick<GetQuoteResponse, 'from'> & {
     validTo: string
     feeAmount: string
   }
-  expirationDate: string
+  expiration: string
 }
 
 export class PriceQuoteError extends Error {
@@ -258,7 +258,7 @@ export async function getBestPrice(params: PriceQuoteParams, options?: GetBestPr
  */
 export async function getFullQuote({ quoteParams }: { quoteParams: FeeQuoteParams }): Promise<QuoteResult> {
   const { kind } = quoteParams
-  const { quote, expirationDate } = await getQuote(quoteParams)
+  const { quote, expiration: expirationDate } = await getQuote(quoteParams)
 
   const price = {
     amount: kind === OrderKind.SELL ? quote.buyAmount : quote.sellAmount,
@@ -286,7 +286,7 @@ export async function getBestQuoteLegacy({
   // Get a new fee quote (if required)
   const feePromise =
     fetchFee || !previousFee
-      ? getQuote(quoteParams).then((resp) => ({ amount: resp.quote.feeAmount, expirationDate: resp.expirationDate }))
+      ? getQuote(quoteParams).then((resp) => ({ amount: resp.quote.feeAmount, expirationDate: resp.expiration }))
       : Promise.resolve(previousFee)
 
   // Get a new price quote
