@@ -49,11 +49,13 @@ export default function useFallbackPriceImpact({ abTrade, isWrapping }: Fallback
   const [loading, setLoading] = useState(false)
 
   // Should we even calc this? Check if fiatPriceImpact exists OR user is wrapping token
-  const shouldCalculate = Boolean(abTrade && !isWrapping)
+  const shouldCalculate = !!abTrade && !isWrapping
 
   // to bail out early
   useEffect(() => {
-    !shouldCalculate && setLoading(false)
+    if (!shouldCalculate) {
+      setLoading(false)
+    }
   }, [shouldCalculate])
 
   // Calculate the necessary params to get the inverse trade impact

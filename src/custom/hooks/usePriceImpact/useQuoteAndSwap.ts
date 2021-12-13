@@ -18,7 +18,7 @@ import { DEFAULT_DECIMALS } from 'constants/index'
 import { QuoteError } from 'state/price/actions'
 import { isWrappingTrade } from 'state/swap/utils'
 
-type WithLoading = { loading: boolean; setLoading: React.Dispatch<React.SetStateAction<boolean>> }
+type WithLoading = { loading: boolean; setLoading: (state: boolean) => void }
 
 type ExactInSwapParams = {
   parsedAmount: CurrencyAmount<Currency> | undefined
