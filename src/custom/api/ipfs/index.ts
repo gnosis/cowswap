@@ -1,7 +1,13 @@
-import { PINATA_API_KEY, PINATA_SECRET_API_KEY } from 'constants/ipfs'
+import { PINATA_API_KEY, PINATA_SECRET_API_KEY, PINATA_API_URL } from 'constants/ipfs'
 
-export async function pinJSONToIPFS(file: any): Promise<any> {
-  const pinataUrl = `https://api.pinata.cloud/pinning/pinJSONToIPFS`
+type PinataPinResponse = {
+  IpfsHash: string
+  PinSize: number
+  Timestamp: string
+}
+
+export async function pinJSONToIPFS(file: any): Promise<PinataPinResponse> {
+  const pinataUrl = `${PINATA_API_URL}/pinning/pinJSONToIPFS`
 
   const headers = new Headers({
     'Content-Type': 'application/json',
@@ -13,6 +19,7 @@ export async function pinJSONToIPFS(file: any): Promise<any> {
     pinataContent: file,
     pinataMetadata: { name: 'appData-affiliate' },
   })
+
   const request = new Request(pinataUrl, {
     method: 'POST',
     headers,
