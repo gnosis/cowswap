@@ -42,7 +42,7 @@ async function _getOrderPrice(chainId: ChainId, order: Order, strategy: GpPriceS
     quoteToken,
     fromDecimals: order.inputToken.decimals,
     toDecimals: order.outputToken.decimals,
-    validTo: Math.ceil(Date.now() / 1000 + 3000),
+    validTo: order.validTo as number,
   }
 
   try {
@@ -110,6 +110,8 @@ export function UnfillableOrdersUpdater(): null {
               price ? price.amount : 'no :('
             )
             price?.amount && updateIsUnfillableFlag(chainId, order, price)
+          } else {
+            console.debug('[UnfillableOrdersUpdater::updateUnfillable] No price quote for', order.id.slice(0, 8))
           }
         })
       )
