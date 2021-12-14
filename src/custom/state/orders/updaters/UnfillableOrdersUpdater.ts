@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef } from 'react'
+import { timestamp } from '@gnosis.pm/gp-v2-contracts'
 
 import { useActiveWeb3React } from 'hooks/web3'
 
@@ -42,7 +43,7 @@ async function _getOrderPrice(chainId: ChainId, order: Order, strategy: GpPriceS
     quoteToken,
     fromDecimals: order.inputToken.decimals,
     toDecimals: order.outputToken.decimals,
-    validTo: order.validTo as number,
+    validTo: timestamp(order.validTo),
   }
 
   try {
