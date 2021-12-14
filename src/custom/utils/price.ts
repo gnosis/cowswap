@@ -335,16 +335,20 @@ export async function getBestQuote({
   strategy,
 }: QuoteParams): Promise<QuoteResult> {
   if (strategy === 'COWSWAP') {
+    console.debug('[GP PRICE::API] getBestQuote - Attempting best quote retrieval using COWSWAP strategy, hang tight.')
+
     return getFullQuote({ quoteParams }).catch((err) => {
       console.error(
-        '[PRICE::API] getBestQuote - error using COWSWAP price strategy, reason: <',
+        '[GP PRICE::API] getBestQuote - error using COWSWAP price strategy, reason: [',
         err,
-        '> - trying back up price sources...'
+        '] - trying back up price sources...'
       )
       // ATTEMPT LEGACY CALL
       return getBestQuote({ strategy: 'LEGACY', quoteParams, fetchFee, previousFee, isPriceRefresh: false })
     })
   } else {
+    console.debug('[GP PRICE::API] getBestQuote - Attempting best quote retrieval using LEGACY strategy, hang tight.')
+
     return getBestQuoteLegacy({ quoteParams, fetchFee, previousFee, isPriceRefresh: false })
   }
 }
