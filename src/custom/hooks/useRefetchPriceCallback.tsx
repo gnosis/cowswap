@@ -110,7 +110,7 @@ export function handleQuoteError({ quoteData, error, addUnsupportedToken }: Hand
   }
 }
 
-const getBestQuoteResolveOnlyLastCall = onlyResolvesLast<QuoteResult>(getBestQuote)
+export const getBestQuoteResolveOnlyLastCall = onlyResolvesLast<QuoteResult>(getBestQuote)
 
 /**
  * @returns callback that fetches a new quote and update the state
