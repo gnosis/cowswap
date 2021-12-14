@@ -1,6 +1,7 @@
 import ms from 'ms.macro'
 import { useState, useEffect } from 'react'
 import { DEFAULT_GP_PRICE_STRATEGY } from 'constants/index'
+import { registerOnWindow } from '../utils/misc'
 
 export type GpPriceStrategy = 'COWSWAP' | 'LEGACY'
 // TODO: use actual API call
@@ -11,10 +12,8 @@ export async function checkGpPriceStrategy(): Promise<GpPriceStrategy> {
 // arbitrary, could be more/less
 const GP_PRICE_STRATEGY_INTERVAL_TIME = ms`30 minutes`
 
-export default function useGetGpPriceStrategy(
-  defaultStrategy: GpPriceStrategy = DEFAULT_GP_PRICE_STRATEGY
-): GpPriceStrategy {
-  const [gpPriceStrategy, setGpPriceStrategy] = useState<GpPriceStrategy>(defaultStrategy)
+export default function useGetGpPriceStrategy(): GpPriceStrategy {
+  const [gpPriceStrategy, setGpPriceStrategy] = useState<GpPriceStrategy>(DEFAULT_GP_PRICE_STRATEGY)
 
   useEffect(() => {
     console.debug('[useGetGpPriceStrategy::GP Price Strategy]::', gpPriceStrategy)
@@ -32,7 +31,6 @@ export default function useGetGpPriceStrategy(
     // Create initial call on mount
     getStrategy()
 
-    // set interval for GP_PRICE_STRATEGY_INTERVAL_TIME (30 min)
     const intervalId = setInterval(() => {
       getStrategy()
     }, GP_PRICE_STRATEGY_INTERVAL_TIME)
@@ -40,5 +38,12 @@ export default function useGetGpPriceStrategy(
     return () => clearInterval(intervalId)
   }, [gpPriceStrategy])
 
-  return gpPriceStrategy
+  // TODO: REMOVE
+  return process.env.NODE_ENV !== 'production' ? (window as any).GP_STRATEGY : gpPriceStrategy
 }
+
+/* TESTING ONLY! */
+;(window as any).GP_STRATEGY = DEFAULT_GP_PRICE_STRATEGY
+registerOnWindow({
+  setStrategy: (strat: GpPriceStrategy) => ((window as any).GP_STRATEGY = strat),
+})
