@@ -10,14 +10,15 @@ import { useActiveWeb3React } from 'hooks/web3'
 
 import { getPromiseFulfilledValue, isPromiseFulfilled } from 'utils/misc'
 import { supportedChainId } from 'utils/supportedChainId'
-import { FeeQuoteParams, getBestQuote, QuoteResult } from 'utils/price'
+import { FeeQuoteParams, QuoteResult } from 'utils/price'
 
 import { ZERO_ADDRESS } from 'constants/misc'
 import { SupportedChainId } from 'constants/chains'
-import { DEFAULT_DECIMALS, DEFAULT_GP_PRICE_STRATEGY } from 'constants/index'
+import { DEFAULT_DECIMALS } from 'constants/index'
 import { QuoteError } from 'state/price/actions'
 import { isWrappingTrade } from 'state/swap/utils'
 import useGetGpPriceStrategy from '../useGetGpPriceStrategy'
+import { getBestQuoteResolveOnlyLastCall as getBestQuote } from 'hooks/useRefetchPriceCallback'
 
 type WithLoading = { loading: boolean; setLoading: (state: boolean) => void }
 
@@ -51,7 +52,7 @@ export function useCalculateQuote(params: GetQuoteParams) {
   } = params
   const { chainId: preChain } = useActiveWeb3React()
   const { account } = useWalletInfo()
-  const strategy = useGetGpPriceStrategy(DEFAULT_GP_PRICE_STRATEGY)
+  const strategy = useGetGpPriceStrategy()
 
   const [quote, setLocalQuote] = useState<QuoteInformationObject | FeeQuoteParamsWithError | undefined>()
 
@@ -82,8 +83,10 @@ export function useCalculateQuote(params: GetQuoteParams) {
       fetchFee: true,
       isPriceRefresh: false,
     })
-      .then((quoteResp) => {
-        const [price, fee] = quoteResp as QuoteResult
+      .then(({ cancelled, data }) => {
+        if (cancelled) return
+
+        const [price, fee] = data as QuoteResult
 
         quoteData = {
           ...quoteParams,
