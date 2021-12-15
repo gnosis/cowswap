@@ -123,7 +123,7 @@ describe('Fee: Complex fetch and persist fee', () => {
     }
 
     // only override Date functions (default is to override all time based functions)
-    cy.stubResponse({ url: FEE_QUERY, alias: 'feeRequest', body: LATER_FEE })
+    cy.stubResponse({ method: 'POST', url: FEE_QUERY, alias: 'feeRequest', body: LATER_FEE })
 
     // GIVEN: user visits app, selects 0.1 WETH as sell, DAI as buy
     // and goes AFK
@@ -164,6 +164,7 @@ describe('Fee: simple checks it exists', () => {
   it('Fetch fee when selecting both tokens', () => {
     // Stub responses from fee endpoint
     cy.stubResponse({
+      method: 'POST',
       url: FEE_QUERY,
       alias: 'feeRequest',
       body: QUOTE_RESP,
