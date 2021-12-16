@@ -254,10 +254,10 @@ export default function Header() {
                   <TYPE.white padding="0 2px">
                     {claimTxn && !claimTxn?.receipt ? (
                       <Dots>
-                        <Trans>Claiming UNI</Trans>
+                        <Trans>Claiming vCOW</Trans>
                       </Dots>
                     ) : (
-                      <Trans>Claim UNI</Trans>
+                      <Trans>Claim vCOW</Trans>
                     )}
                   </TYPE.white>
                 </UNIAmount>
