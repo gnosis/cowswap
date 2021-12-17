@@ -1,12 +1,12 @@
 import JSBI from 'jsbi'
 import { CurrencyAmount, Token } from '@uniswap/sdk-core'
 import { TransactionResponse } from '@ethersproject/providers'
-import { useEffect, useState } from 'react'
+// import { useEffect, useState } from 'react'
 import { UNI } from 'constants/tokens'
 import { useActiveWeb3React } from 'hooks/web3'
 import { useMerkleDistributorContract } from 'hooks/useContract'
 import { calculateGasMargin } from 'utils/calculateGasMargin'
-import { useSingleCallResult } from 'state/multicall/hooks'
+// import { useSingleCallResult } from 'state/multicall/hooks'
 import { isAddress } from 'utils/index'
 import { useTransactionAdder } from 'state/enhancedTransactions/hooks'
 import { UserClaims } from '.'
@@ -57,7 +57,7 @@ function fetchClaimsFile(key: string): Promise<{ [address: string]: UserClaims }
 const FETCH_CLAIM_PROMISES: { [key: string]: Promise<UserClaims> } = {}
 
 // returns the claim for the given address, or null if not valid
-function fetchClaims(account: string): Promise<UserClaims> {
+export function fetchClaims(account: string): Promise<UserClaims> {
   const formatted = isAddress(account)
   if (!formatted) return Promise.reject(new Error('Invalid address'))
 
