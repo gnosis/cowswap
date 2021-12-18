@@ -444,6 +444,8 @@ export default function Swap({
     singleHopOnly,
   ])
 
+  console.log('recipient', recipient)
+
   // errors
   const [showInverted, setShowInverted] = useState<boolean>(false)
 

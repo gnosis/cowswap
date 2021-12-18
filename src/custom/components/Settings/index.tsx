@@ -112,6 +112,7 @@ const Settings = styled(SettingsMod)`
 export interface SettingsButtonProps {
   toggleSettings: () => void
   expertMode: boolean
+  recipientMode: boolean
 }
 
 export interface SettingsTabProp extends WithClassName {
@@ -119,7 +120,8 @@ export interface SettingsTabProp extends WithClassName {
   placeholderSlippage: Percent
 }
 
-function SettingsButton({ toggleSettings, expertMode }: SettingsButtonProps) {
+function SettingsButton({ toggleSettings, expertMode, recipientMode }: SettingsButtonProps) {
+  console.log('mode: ', 'recipient: ', recipientMode, 'expert: ', expertMode)
   return (
     <StyledMenuButton onClick={toggleSettings} id="open-settings-dialog-button">
       <b>Settings</b>
@@ -128,6 +130,13 @@ function SettingsButton({ toggleSettings, expertMode }: SettingsButtonProps) {
         <EmojiWrapper>
           <span role="img" aria-label="Expert Mode Turned On">
             🥋
+          </span>
+        </EmojiWrapper>
+      ) : null}
+      {recipientMode ? (
+        <EmojiWrapper>
+          <span role="img" aria-label="Recipient Mode Turned On">
+            💼
           </span>
         </EmojiWrapper>
       ) : null}
