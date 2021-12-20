@@ -161,7 +161,7 @@ export const TwitterLink = styled(StyledMenuButton)`
   }
 `
 
-export const LogoImage = styled.div`
+export const LogoImage = styled.div<{ darkMode: boolean }>`
   width: 190px;
   height: 48px;
   background: ${({ theme }) => `url(${theme.logo.src}) no-repeat center/contain`};
@@ -169,7 +169,9 @@ export const LogoImage = styled.div`
   position: relative;
 
   // Winter edition
-  &::before {
+  ${({ darkMode }) =>
+    darkMode &&
+    `&::before {
     content: '';
     display: block;
     position: absolute;
@@ -178,7 +180,7 @@ export const LogoImage = styled.div`
     height: 50px;
     width: 40px;
     background: url(${SantaHat}) no-repeat center/contain;
-  }
+  }`}
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
     width: 160px;
@@ -246,7 +248,7 @@ export default function Header() {
         <HeaderRow marginRight="0">
           <Title href=".">
             <UniIcon>
-              <LogoImage />
+              <LogoImage darkMode={darkMode} />
             </UniIcon>
           </Title>
           <HeaderLinks>
@@ -282,7 +284,7 @@ export default function Header() {
       </HeaderModWrapper>
 
       {/* // mod */}
-      <Snowfall snowflakeCount={100} />
+      {darkMode && <Snowfall snowflakeCount={100} />}
     </Wrapper>
   )
 }
