@@ -80,7 +80,6 @@ export default function useUSDCPrice(currency?: Currency) {
   }, [currency, stablecoin, v2USDCTrade, v3USDCTrade.trade]) 
   */
 
-  // uwc-debug
   useEffect(() => {
     const isSupportedChain = supportedChainId(chainId)
     if (!isQuoteLoading || !isSupportedChain || !sellTokenAddress || !sellTokenDecimals) return
