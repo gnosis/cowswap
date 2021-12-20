@@ -2,7 +2,7 @@ import { L1ChainInfo } from '@src/constants/chains'
 // import EthereumLogo from 'assets/images/ethereum-logo.png'
 import EthereumLogo from 'assets/cow-swap/network-mainnet-logo.svg' // mod
 import RinkebyLogo from 'assets/cow-swap/network-rinkeby-logo.svg' // mod
-import xDaiLogo from 'assets/cow-swap/network-xdai-logo.svg' // mod
+import GnosisLogo from 'assets/cow-swap/network-gnosis-logo.svg' // mod
 export * from '@src/constants/chains'
 
 export enum SupportedChainId {
@@ -59,7 +59,7 @@ export const CHAIN_INFO: ChainInfo = {
     infoLink: '',
     label: 'xDai',
     // logoUrl: EthereumLogo,
-    logoUrl: xDaiLogo, // mod
+    logoUrl: GnosisLogo, // mod
   },
   /* [SupportedChainId.ROPSTEN]: {
     docs: 'https://docs.uniswap.org/',
@@ -105,7 +105,7 @@ export const NETWORK_LABELS: { [chainId in SupportedChainId | number]: string } 
   // [SupportedChainId.GOERLI]: 'Görli',
   // [SupportedChainId.KOVAN]: 'Kovan',
   // [SupportedChainId.XDAI]: 'XDai',
-  [SupportedChainId.XDAI]: 'xDai', // mod
+  [SupportedChainId.XDAI]: 'Gnosis Chain', // mod
   //   [SupportedChainId.ARBITRUM_KOVAN]: 'kArbitrum',
   //   [SupportedChainId.ARBITRUM_ONE]: 'Arbitrum One',
 }
