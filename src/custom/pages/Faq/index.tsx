@@ -187,8 +187,8 @@ export default function Faq() {
             pool/path offers the best price. It is thus essentially acting as a DexAggregator of the DexAggregators.
           </p>
           <p>
-            In addition to that, before finding the best price for a trade from available on-chain liquidity, CoW Protocol
-             first seeks a coincidence of wants within the existing batch to offer an even better price than any
+            In addition to that, before finding the best price for a trade from available on-chain liquidity, CoW
+            Protocol first seeks a coincidence of wants within the existing batch to offer an even better price than any
             pool can.
           </p>
 
@@ -357,9 +357,9 @@ export default function Faq() {
           <p>CowSwap can connect to all on-chain liquidity.</p>
           <p>
             When CowSwap does not have enough CoWs (Coincidence of Wants) among the orders available for a batch, it
-            taps other AMMs’ liquidity to be able to settle the traders’ orders. CoW Protocol can be connected to
-            any on-chain liquidity sources and can therefore enjoy the benefits of concentrating the fragmented
-            liquidity across decentralized finance.
+            taps other AMMs’ liquidity to be able to settle the traders’ orders. CoW Protocol can be connected to any
+            on-chain liquidity sources and can therefore enjoy the benefits of concentrating the fragmented liquidity
+            across decentralized finance.
           </p>
           <h3 id="how-is-cowswap-able-to-offer-better-prices-than-aggregators-themselves">
             How is CowSwap able to offer better prices?
@@ -430,9 +430,9 @@ export default function Faq() {
               amounts are pending to be defined by the CowDAO.
             </li>
             <li>
-              Once the tokens have been staked (locked up), CowDAO must vote to approve or reject
-              the Ethereum address that will identify the solver. If the vote is successful, the solver Ethereum address
-              will be included in the allowlist (verification) solvers contract.
+              Once the tokens have been staked (locked up), CowDAO must vote to approve or reject the Ethereum address
+              that will identify the solver. If the vote is successful, the solver Ethereum address will be included in
+              the allowlist (verification) solvers contract.
             </li>
             <li>
               Additionally, a solver must have the technical knowledge to create the appropriate batch settlement
@@ -691,9 +691,9 @@ export default function Faq() {
             >
               Smart Contract Architecture
             </ExternalLink>
-            ). In order to allow that to happen, the trader must first approve the CoW Protocol Vault Relayer contract to spend
-            tokens on their behalf. The smart contract logic ensures that no token can be spent without deliberately
-            signing an order for it.
+            ). In order to allow that to happen, the trader must first approve the CoW Protocol Vault Relayer contract
+            to spend tokens on their behalf. The smart contract logic ensures that no token can be spent without
+            deliberately signing an order for it.
           </p>
 
           <h3 id="why-do-i-sign-a-message-instead-of-sending-a-transaction-to-place-an-order">
