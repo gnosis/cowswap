@@ -57,7 +57,7 @@ export const CHAIN_INFO: ChainInfo = {
     docs: 'https://docs.uniswap.org/',
     explorer: 'https://gnosis-protocol.io/xdai',
     infoLink: '',
-    label: 'xDai',
+    label: 'Gnosis Chain',
     // logoUrl: EthereumLogo,
     logoUrl: GnosisLogo, // mod
   },
