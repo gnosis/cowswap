@@ -2,7 +2,7 @@ import { L1ChainInfo } from '@src/constants/chains'
 // import EthereumLogo from 'assets/images/ethereum-logo.png'
 import EthereumLogo from 'assets/cow-swap/network-mainnet-logo.svg' // mod
 import RinkebyLogo from 'assets/cow-swap/network-rinkeby-logo.svg' // mod
-import GnosisLogo from 'assets/cow-swap/network-gnosis-logo.svg' // mod
+import GnosisChainLogo from 'assets/cow-swap/network-gnosis-chain-logo.svg' // mod
 export * from '@src/constants/chains'
 
 export enum SupportedChainId {
@@ -59,7 +59,7 @@ export const CHAIN_INFO: ChainInfo = {
     infoLink: '',
     label: 'Gnosis Chain',
     // logoUrl: EthereumLogo,
-    logoUrl: GnosisLogo, // mod
+    logoUrl: GnosisChainLogo, // mod
   },
   /* [SupportedChainId.ROPSTEN]: {
     docs: 'https://docs.uniswap.org/',
