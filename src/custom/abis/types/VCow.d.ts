@@ -11,7 +11,6 @@ import {
   PopulatedTransaction,
   BaseContract,
   ContractTransaction,
-  Overrides,
   PayableOverrides,
   CallOverrides,
 } from "ethers";
@@ -22,60 +21,12 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
 interface VCowInterface extends ethers.utils.Interface {
   functions: {
-    "VESTING_PERIOD_IN_SECONDS()": FunctionFragment;
-    "allowance(address,address)": FunctionFragment;
-    "approve(address,uint256)": FunctionFragment;
-    "balanceOf(address)": FunctionFragment;
     "claim(uint256,uint8,address,uint256,uint256,bytes32[])": FunctionFragment;
     "claimMany(uint256[],uint8[],address[],uint256[],uint256[],bytes32[][],uint256[])": FunctionFragment;
-    "communityFundsTarget()": FunctionFragment;
-    "cowToken()": FunctionFragment;
-    "cumulativeVestedBalance(address)": FunctionFragment;
-    "decimals()": FunctionFragment;
-    "deploymentTimestamp()": FunctionFragment;
-    "fullAllocation(address)": FunctionFragment;
-    "getStorageAt(uint256,uint256)": FunctionFragment;
-    "gnoPrice()": FunctionFragment;
-    "gnoToken()": FunctionFragment;
-    "instantlySwappableBalance(address)": FunctionFragment;
-    "investorFundsTarget()": FunctionFragment;
-    "isCancelable(address)": FunctionFragment;
     "isClaimed(uint256)": FunctionFragment;
     "merkleRoot()": FunctionFragment;
-    "name()": FunctionFragment;
-    "newlyVestedBalance(address)": FunctionFragment;
-    "simulateDelegatecall(address,bytes)": FunctionFragment;
-    "simulateDelegatecallInternal(address,bytes)": FunctionFragment;
-    "stopClaim(address)": FunctionFragment;
-    "swap(uint256)": FunctionFragment;
-    "swapAll()": FunctionFragment;
-    "swappableBalanceOf(address)": FunctionFragment;
-    "symbol()": FunctionFragment;
-    "teamController()": FunctionFragment;
-    "totalSupply()": FunctionFragment;
-    "transfer(address,uint256)": FunctionFragment;
-    "transferFrom(address,address,uint256)": FunctionFragment;
-    "usdcPrice()": FunctionFragment;
-    "usdcToken()": FunctionFragment;
-    "vestedAllocation(address)": FunctionFragment;
-    "vestingStart()": FunctionFragment;
-    "wethPrice()": FunctionFragment;
-    "wethToken()": FunctionFragment;
   };
 
-  encodeFunctionData(
-    functionFragment: "VESTING_PERIOD_IN_SECONDS",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "allowance",
-    values: [string, string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "approve",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(functionFragment: "balanceOf", values: [string]): string;
   encodeFunctionData(
     functionFragment: "claim",
     values: [
@@ -100,42 +51,6 @@ interface VCowInterface extends ethers.utils.Interface {
     ]
   ): string;
   encodeFunctionData(
-    functionFragment: "communityFundsTarget",
-    values?: undefined
-  ): string;
-  encodeFunctionData(functionFragment: "cowToken", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "cumulativeVestedBalance",
-    values: [string]
-  ): string;
-  encodeFunctionData(functionFragment: "decimals", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "deploymentTimestamp",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "fullAllocation",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getStorageAt",
-    values: [BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(functionFragment: "gnoPrice", values?: undefined): string;
-  encodeFunctionData(functionFragment: "gnoToken", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "instantlySwappableBalance",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "investorFundsTarget",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "isCancelable",
-    values: [string]
-  ): string;
-  encodeFunctionData(
     functionFragment: "isClaimed",
     values: [BigNumberish]
   ): string;
@@ -143,174 +58,18 @@ interface VCowInterface extends ethers.utils.Interface {
     functionFragment: "merkleRoot",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "name", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "newlyVestedBalance",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "simulateDelegatecall",
-    values: [string, BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "simulateDelegatecallInternal",
-    values: [string, BytesLike]
-  ): string;
-  encodeFunctionData(functionFragment: "stopClaim", values: [string]): string;
-  encodeFunctionData(functionFragment: "swap", values: [BigNumberish]): string;
-  encodeFunctionData(functionFragment: "swapAll", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "swappableBalanceOf",
-    values: [string]
-  ): string;
-  encodeFunctionData(functionFragment: "symbol", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "teamController",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "totalSupply",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "transfer",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "transferFrom",
-    values: [string, string, BigNumberish]
-  ): string;
-  encodeFunctionData(functionFragment: "usdcPrice", values?: undefined): string;
-  encodeFunctionData(functionFragment: "usdcToken", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "vestedAllocation",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "vestingStart",
-    values?: undefined
-  ): string;
-  encodeFunctionData(functionFragment: "wethPrice", values?: undefined): string;
-  encodeFunctionData(functionFragment: "wethToken", values?: undefined): string;
 
-  decodeFunctionResult(
-    functionFragment: "VESTING_PERIOD_IN_SECONDS",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "allowance", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "claim", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "claimMany", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "communityFundsTarget",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "cowToken", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "cumulativeVestedBalance",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "decimals", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "deploymentTimestamp",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "fullAllocation",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getStorageAt",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "gnoPrice", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "gnoToken", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "instantlySwappableBalance",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "investorFundsTarget",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "isCancelable",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "isClaimed", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "merkleRoot", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "newlyVestedBalance",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "simulateDelegatecall",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "simulateDelegatecallInternal",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "stopClaim", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "swap", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "swapAll", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "swappableBalanceOf",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "symbol", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "teamController",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "totalSupply",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "transfer", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "transferFrom",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "usdcPrice", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "usdcToken", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "vestedAllocation",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "vestingStart",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "wethPrice", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "wethToken", data: BytesLike): Result;
 
   events: {
-    "Approval(address,address,uint256)": EventFragment;
     "Claimed(uint256,uint8,address,uint256,uint256)": EventFragment;
-    "Transfer(address,address,uint256)": EventFragment;
-    "Vested(address,uint256)": EventFragment;
-    "VestingAdded(address,uint256,bool)": EventFragment;
-    "VestingStopped(address,address,uint256)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Claimed"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Vested"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "VestingAdded"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "VestingStopped"): EventFragment;
 }
-
-export type ApprovalEvent = TypedEvent<
-  [string, string, BigNumber] & {
-    owner: string;
-    spender: string;
-    value: BigNumber;
-  }
->;
 
 export type ClaimedEvent = TypedEvent<
   [BigNumber, number, string, BigNumber, BigNumber] & {
@@ -319,30 +78,6 @@ export type ClaimedEvent = TypedEvent<
     claimant: string;
     claimableAmount: BigNumber;
     claimedAmount: BigNumber;
-  }
->;
-
-export type TransferEvent = TypedEvent<
-  [string, string, BigNumber] & { from: string; to: string; value: BigNumber }
->;
-
-export type VestedEvent = TypedEvent<
-  [string, BigNumber] & { user: string; amount: BigNumber }
->;
-
-export type VestingAddedEvent = TypedEvent<
-  [string, BigNumber, boolean] & {
-    user: string;
-    amount: BigNumber;
-    isCancelable: boolean;
-  }
->;
-
-export type VestingStoppedEvent = TypedEvent<
-  [string, string, BigNumber] & {
-    user: string;
-    freedVestingBeneficiary: string;
-    amount: BigNumber;
   }
 >;
 
@@ -390,22 +125,6 @@ export class VCow extends BaseContract {
   interface: VCowInterface;
 
   functions: {
-    VESTING_PERIOD_IN_SECONDS(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    allowance(
-      arg0: string,
-      arg1: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    approve(
-      arg0: string,
-      arg1: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    balanceOf(user: string, overrides?: CallOverrides): Promise<[BigNumber]>;
-
     claim(
       index: BigNumberish,
       claimType: BigNumberish,
@@ -427,138 +146,13 @@ export class VCow extends BaseContract {
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    communityFundsTarget(overrides?: CallOverrides): Promise<[string]>;
-
-    cowToken(overrides?: CallOverrides): Promise<[string]>;
-
-    cumulativeVestedBalance(
-      user: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    decimals(overrides?: CallOverrides): Promise<[number]>;
-
-    deploymentTimestamp(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    fullAllocation(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    getStorageAt(
-      offset: BigNumberish,
-      length: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    gnoPrice(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    gnoToken(overrides?: CallOverrides): Promise<[string]>;
-
-    instantlySwappableBalance(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    investorFundsTarget(overrides?: CallOverrides): Promise<[string]>;
-
-    isCancelable(arg0: string, overrides?: CallOverrides): Promise<[boolean]>;
-
     isClaimed(
       index: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
     merkleRoot(overrides?: CallOverrides): Promise<[string]>;
-
-    name(overrides?: CallOverrides): Promise<[string]>;
-
-    newlyVestedBalance(
-      user: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    simulateDelegatecall(
-      targetContract: string,
-      calldataPayload: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    simulateDelegatecallInternal(
-      targetContract: string,
-      calldataPayload: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    stopClaim(
-      user: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    swap(
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    swapAll(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    swappableBalanceOf(
-      user: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    symbol(overrides?: CallOverrides): Promise<[string]>;
-
-    teamController(overrides?: CallOverrides): Promise<[string]>;
-
-    totalSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    transfer(
-      arg0: string,
-      arg1: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    transferFrom(
-      arg0: string,
-      arg1: string,
-      arg2: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    usdcPrice(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    usdcToken(overrides?: CallOverrides): Promise<[string]>;
-
-    vestedAllocation(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    vestingStart(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    wethPrice(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    wethToken(overrides?: CallOverrides): Promise<[string]>;
   };
-
-  VESTING_PERIOD_IN_SECONDS(overrides?: CallOverrides): Promise<BigNumber>;
-
-  allowance(
-    arg0: string,
-    arg1: string,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  approve(
-    arg0: string,
-    arg1: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  balanceOf(user: string, overrides?: CallOverrides): Promise<BigNumber>;
 
   claim(
     index: BigNumberish,
@@ -581,130 +175,11 @@ export class VCow extends BaseContract {
     overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  communityFundsTarget(overrides?: CallOverrides): Promise<string>;
-
-  cowToken(overrides?: CallOverrides): Promise<string>;
-
-  cumulativeVestedBalance(
-    user: string,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  decimals(overrides?: CallOverrides): Promise<number>;
-
-  deploymentTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
-
-  fullAllocation(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-  getStorageAt(
-    offset: BigNumberish,
-    length: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<string>;
-
-  gnoPrice(overrides?: CallOverrides): Promise<BigNumber>;
-
-  gnoToken(overrides?: CallOverrides): Promise<string>;
-
-  instantlySwappableBalance(
-    arg0: string,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  investorFundsTarget(overrides?: CallOverrides): Promise<string>;
-
-  isCancelable(arg0: string, overrides?: CallOverrides): Promise<boolean>;
-
   isClaimed(index: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
 
   merkleRoot(overrides?: CallOverrides): Promise<string>;
 
-  name(overrides?: CallOverrides): Promise<string>;
-
-  newlyVestedBalance(
-    user: string,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  simulateDelegatecall(
-    targetContract: string,
-    calldataPayload: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  simulateDelegatecallInternal(
-    targetContract: string,
-    calldataPayload: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  stopClaim(
-    user: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  swap(
-    amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  swapAll(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  swappableBalanceOf(
-    user: string,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  symbol(overrides?: CallOverrides): Promise<string>;
-
-  teamController(overrides?: CallOverrides): Promise<string>;
-
-  totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
-
-  transfer(
-    arg0: string,
-    arg1: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  transferFrom(
-    arg0: string,
-    arg1: string,
-    arg2: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  usdcPrice(overrides?: CallOverrides): Promise<BigNumber>;
-
-  usdcToken(overrides?: CallOverrides): Promise<string>;
-
-  vestedAllocation(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-  vestingStart(overrides?: CallOverrides): Promise<BigNumber>;
-
-  wethPrice(overrides?: CallOverrides): Promise<BigNumber>;
-
-  wethToken(overrides?: CallOverrides): Promise<string>;
-
   callStatic: {
-    VESTING_PERIOD_IN_SECONDS(overrides?: CallOverrides): Promise<BigNumber>;
-
-    allowance(
-      arg0: string,
-      arg1: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    approve(
-      arg0: string,
-      arg1: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    balanceOf(user: string, overrides?: CallOverrides): Promise<BigNumber>;
-
     claim(
       index: BigNumberish,
       claimType: BigNumberish,
@@ -726,128 +201,12 @@ export class VCow extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    communityFundsTarget(overrides?: CallOverrides): Promise<string>;
-
-    cowToken(overrides?: CallOverrides): Promise<string>;
-
-    cumulativeVestedBalance(
-      user: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    decimals(overrides?: CallOverrides): Promise<number>;
-
-    deploymentTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
-
-    fullAllocation(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-    getStorageAt(
-      offset: BigNumberish,
-      length: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    gnoPrice(overrides?: CallOverrides): Promise<BigNumber>;
-
-    gnoToken(overrides?: CallOverrides): Promise<string>;
-
-    instantlySwappableBalance(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    investorFundsTarget(overrides?: CallOverrides): Promise<string>;
-
-    isCancelable(arg0: string, overrides?: CallOverrides): Promise<boolean>;
-
     isClaimed(index: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
 
     merkleRoot(overrides?: CallOverrides): Promise<string>;
-
-    name(overrides?: CallOverrides): Promise<string>;
-
-    newlyVestedBalance(
-      user: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    simulateDelegatecall(
-      targetContract: string,
-      calldataPayload: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    simulateDelegatecallInternal(
-      targetContract: string,
-      calldataPayload: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    stopClaim(user: string, overrides?: CallOverrides): Promise<void>;
-
-    swap(amount: BigNumberish, overrides?: CallOverrides): Promise<void>;
-
-    swapAll(overrides?: CallOverrides): Promise<BigNumber>;
-
-    swappableBalanceOf(
-      user: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    symbol(overrides?: CallOverrides): Promise<string>;
-
-    teamController(overrides?: CallOverrides): Promise<string>;
-
-    totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
-
-    transfer(
-      arg0: string,
-      arg1: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    transferFrom(
-      arg0: string,
-      arg1: string,
-      arg2: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    usdcPrice(overrides?: CallOverrides): Promise<BigNumber>;
-
-    usdcToken(overrides?: CallOverrides): Promise<string>;
-
-    vestedAllocation(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    vestingStart(overrides?: CallOverrides): Promise<BigNumber>;
-
-    wethPrice(overrides?: CallOverrides): Promise<BigNumber>;
-
-    wethToken(overrides?: CallOverrides): Promise<string>;
   };
 
   filters: {
-    "Approval(address,address,uint256)"(
-      owner?: string | null,
-      spender?: string | null,
-      value?: null
-    ): TypedEventFilter<
-      [string, string, BigNumber],
-      { owner: string; spender: string; value: BigNumber }
-    >;
-
-    Approval(
-      owner?: string | null,
-      spender?: string | null,
-      value?: null
-    ): TypedEventFilter<
-      [string, string, BigNumber],
-      { owner: string; spender: string; value: BigNumber }
-    >;
-
     "Claimed(uint256,uint8,address,uint256,uint256)"(
       index?: null,
       claimType?: null,
@@ -881,95 +240,9 @@ export class VCow extends BaseContract {
         claimedAmount: BigNumber;
       }
     >;
-
-    "Transfer(address,address,uint256)"(
-      from?: string | null,
-      to?: string | null,
-      value?: null
-    ): TypedEventFilter<
-      [string, string, BigNumber],
-      { from: string; to: string; value: BigNumber }
-    >;
-
-    Transfer(
-      from?: string | null,
-      to?: string | null,
-      value?: null
-    ): TypedEventFilter<
-      [string, string, BigNumber],
-      { from: string; to: string; value: BigNumber }
-    >;
-
-    "Vested(address,uint256)"(
-      user?: string | null,
-      amount?: null
-    ): TypedEventFilter<
-      [string, BigNumber],
-      { user: string; amount: BigNumber }
-    >;
-
-    Vested(
-      user?: string | null,
-      amount?: null
-    ): TypedEventFilter<
-      [string, BigNumber],
-      { user: string; amount: BigNumber }
-    >;
-
-    "VestingAdded(address,uint256,bool)"(
-      user?: string | null,
-      amount?: null,
-      isCancelable?: null
-    ): TypedEventFilter<
-      [string, BigNumber, boolean],
-      { user: string; amount: BigNumber; isCancelable: boolean }
-    >;
-
-    VestingAdded(
-      user?: string | null,
-      amount?: null,
-      isCancelable?: null
-    ): TypedEventFilter<
-      [string, BigNumber, boolean],
-      { user: string; amount: BigNumber; isCancelable: boolean }
-    >;
-
-    "VestingStopped(address,address,uint256)"(
-      user?: string | null,
-      freedVestingBeneficiary?: null,
-      amount?: null
-    ): TypedEventFilter<
-      [string, string, BigNumber],
-      { user: string; freedVestingBeneficiary: string; amount: BigNumber }
-    >;
-
-    VestingStopped(
-      user?: string | null,
-      freedVestingBeneficiary?: null,
-      amount?: null
-    ): TypedEventFilter<
-      [string, string, BigNumber],
-      { user: string; freedVestingBeneficiary: string; amount: BigNumber }
-    >;
   };
 
   estimateGas: {
-    VESTING_PERIOD_IN_SECONDS(overrides?: CallOverrides): Promise<BigNumber>;
-
-    allowance(
-      arg0: string,
-      arg1: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    approve(
-      arg0: string,
-      arg1: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    balanceOf(user: string, overrides?: CallOverrides): Promise<BigNumber>;
-
     claim(
       index: BigNumberish,
       claimType: BigNumberish,
@@ -990,40 +263,6 @@ export class VCow extends BaseContract {
       sentEth: BigNumberish[],
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
-
-    communityFundsTarget(overrides?: CallOverrides): Promise<BigNumber>;
-
-    cowToken(overrides?: CallOverrides): Promise<BigNumber>;
-
-    cumulativeVestedBalance(
-      user: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    decimals(overrides?: CallOverrides): Promise<BigNumber>;
-
-    deploymentTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
-
-    fullAllocation(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-    getStorageAt(
-      offset: BigNumberish,
-      length: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    gnoPrice(overrides?: CallOverrides): Promise<BigNumber>;
-
-    gnoToken(overrides?: CallOverrides): Promise<BigNumber>;
-
-    instantlySwappableBalance(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    investorFundsTarget(overrides?: CallOverrides): Promise<BigNumber>;
-
-    isCancelable(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     isClaimed(
       index: BigNumberish,
@@ -1031,102 +270,9 @@ export class VCow extends BaseContract {
     ): Promise<BigNumber>;
 
     merkleRoot(overrides?: CallOverrides): Promise<BigNumber>;
-
-    name(overrides?: CallOverrides): Promise<BigNumber>;
-
-    newlyVestedBalance(
-      user: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    simulateDelegatecall(
-      targetContract: string,
-      calldataPayload: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    simulateDelegatecallInternal(
-      targetContract: string,
-      calldataPayload: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    stopClaim(
-      user: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    swap(
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    swapAll(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    swappableBalanceOf(
-      user: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    symbol(overrides?: CallOverrides): Promise<BigNumber>;
-
-    teamController(overrides?: CallOverrides): Promise<BigNumber>;
-
-    totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
-
-    transfer(
-      arg0: string,
-      arg1: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    transferFrom(
-      arg0: string,
-      arg1: string,
-      arg2: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    usdcPrice(overrides?: CallOverrides): Promise<BigNumber>;
-
-    usdcToken(overrides?: CallOverrides): Promise<BigNumber>;
-
-    vestedAllocation(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    vestingStart(overrides?: CallOverrides): Promise<BigNumber>;
-
-    wethPrice(overrides?: CallOverrides): Promise<BigNumber>;
-
-    wethToken(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    VESTING_PERIOD_IN_SECONDS(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    allowance(
-      arg0: string,
-      arg1: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    approve(
-      arg0: string,
-      arg1: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    balanceOf(
-      user: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     claim(
       index: BigNumberish,
       claimType: BigNumberish,
@@ -1146,52 +292,6 @@ export class VCow extends BaseContract {
       merkleProofs: BytesLike[][],
       sentEth: BigNumberish[],
       overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    communityFundsTarget(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    cowToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    cumulativeVestedBalance(
-      user: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    decimals(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    deploymentTimestamp(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    fullAllocation(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getStorageAt(
-      offset: BigNumberish,
-      length: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    gnoPrice(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    gnoToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    instantlySwappableBalance(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    investorFundsTarget(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    isCancelable(
-      arg0: string,
-      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     isClaimed(
@@ -1200,77 +300,5 @@ export class VCow extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     merkleRoot(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    newlyVestedBalance(
-      user: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    simulateDelegatecall(
-      targetContract: string,
-      calldataPayload: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    simulateDelegatecallInternal(
-      targetContract: string,
-      calldataPayload: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    stopClaim(
-      user: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    swap(
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    swapAll(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    swappableBalanceOf(
-      user: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    symbol(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    teamController(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    totalSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    transfer(
-      arg0: string,
-      arg1: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    transferFrom(
-      arg0: string,
-      arg1: string,
-      arg2: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    usdcPrice(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    usdcToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    vestedAllocation(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    vestingStart(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    wethPrice(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    wethToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }
