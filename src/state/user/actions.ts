@@ -20,6 +20,8 @@ export const updateArbitrumAlphaAcknowledged = createAction<{ arbitrumAlphaAckno
 )
 export const updateUserDarkMode = createAction<{ userDarkMode: boolean }>('user/updateUserDarkMode')
 export const updateUserExpertMode = createAction<{ userExpertMode: boolean }>('user/updateUserExpertMode')
+export const updateRecipientToggleVisible =
+  createAction<{ recipientToggleVisible: boolean }>('user/recipientToggleVisible')
 export const updateUserLocale = createAction<{ userLocale: SupportedLocale }>('user/updateUserLocale')
 export const updateUserSingleHopOnly = createAction<{ userSingleHopOnly: boolean }>('user/updateUserSingleHopOnly')
 export const updateHideClosedPositions = createAction<{ userHideClosedPositions: boolean }>('user/hideClosedPositions')

@@ -7,7 +7,7 @@ import styled, { ThemeContext } from 'styled-components/macro'
 import { useOnClickOutside } from 'hooks/useOnClickOutside'
 import { ApplicationModal } from 'state/application/actions'
 import { useModalOpen, useToggleSettingsMenu } from 'state/application/hooks'
-import { useExpertModeManager /* , useUserSingleHopOnly */ } from 'state/user/hooks'
+import { useExpertModeManager /* , useUserSingleHopOnly */, useRecipientToggleManager } from 'state/user/hooks'
 import { TYPE } from 'theme'
 import { ButtonError } from 'components/Button'
 import { AutoColumn } from 'components/Column'
@@ -122,7 +122,7 @@ export default function SettingsTab({ className, placeholderSlippage, SettingsBu
   const theme = useContext(ThemeContext)
 
   const [expertMode, toggleExpertMode] = useExpertModeManager()
-  const [showRecipient, setShowRecipient] = useState(false)
+  const [recipientToggleVisible, toggleRecipientVisibility] = useRecipientToggleManager()
 
   // const [singleHopOnly, setSingleHopOnly] = useUserSingleHopOnly()
 
@@ -240,8 +240,8 @@ export default function SettingsTab({ className, placeholderSlippage, SettingsBu
               </RowFixed>
               <Toggle
                 id="toggle-recipient-mode-button"
-                isActive={showRecipient}
-                toggle={() => setShowRecipient((showRecipient) => !showRecipient)}
+                isActive={recipientToggleVisible}
+                toggle={toggleRecipientVisibility}
               />
             </RowBetween>
             {/* <RowBetween>

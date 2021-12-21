@@ -20,6 +20,7 @@ import {
   SerializedToken,
   updateArbitrumAlphaAcknowledged,
   updateHideClosedPositions,
+  updateRecipientToggleVisible,
   updateUserDarkMode,
   updateUserDeadline,
   updateUserExpertMode,
@@ -102,6 +103,21 @@ export function useExpertModeManager(): [boolean, () => void] {
   }, [expertMode, dispatch])
 
   return [expertMode, toggleSetExpertMode]
+}
+
+export function useIsRecipientToggleVisible(): boolean {
+  return useAppSelector((state) => state.user.recipientToggleVisible)
+}
+
+export function useRecipientToggleManager(): [boolean, () => void] {
+  const dispatch = useAppDispatch()
+  const recipientToggleVisible = useIsRecipientToggleVisible()
+
+  const toggleRecipientVisibility = useCallback(() => {
+    dispatch(updateRecipientToggleVisible({ recipientToggleVisible: !recipientToggleVisible }))
+  }, [recipientToggleVisible, dispatch])
+
+  return [recipientToggleVisible, toggleRecipientVisibility]
 }
 
 export function useUserSingleHopOnly(): [boolean, (newSingleHopOnly: boolean) => void] {
