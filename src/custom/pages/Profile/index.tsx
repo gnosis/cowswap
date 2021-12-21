@@ -1,6 +1,5 @@
 import { Txt } from 'assets/styles/styled'
 import {
-  FlexCol,
   FlexWrap,
   Wrapper,
   Container,
@@ -12,11 +11,12 @@ import {
   ItemTitle,
   ChildWrapper,
   Loader,
-  ExtLink,
+  ExtLink as ExternalLink,
+  FlexRow,
 } from 'pages/Profile/styled'
 import { useActiveWeb3React } from 'hooks/web3'
 import Copy from 'components/Copy/CopyMod'
-import { HelpCircle, RefreshCcw } from 'react-feather'
+import { ArrowUpRight, HelpCircle, RefreshCcw } from 'react-feather'
 import Web3Status from 'components/Web3Status'
 import useReferralLink from 'hooks/useReferralLink'
 import useFetchProfile from 'hooks/useFetchProfile'
@@ -28,6 +28,7 @@ import NotificationBanner from 'components/NotificationBanner'
 import { SupportedChainId as ChainId } from 'constants/chains'
 import AffiliateStatusCheck from 'components/AffiliateStatusCheck'
 import { useHasOrders } from 'api/gnosisProtocol/hooks'
+import { shortenAddress } from '@src/utils'
 
 export default function Profile() {
   const referralLink = useReferralLink()
@@ -58,36 +59,55 @@ export default function Profile() {
       <Wrapper>
         <GridWrap>
           <CardHead>
-            <StyledTitle>Profile overview</StyledTitle>
-            {account && (
-              <Loader isLoading={isLoading}>
-                <StyledContainer>
-                  <Txt>
-                    <RefreshCcw size={16} />
-                    &nbsp;&nbsp;
-                    <Txt secondary>
-                      Last updated
-                      <MouseoverTooltipContent content="Data is updated on the background periodically.">
-                        <HelpCircle size={14} />
-                      </MouseoverTooltipContent>
-                      :&nbsp;
+            <FlexWrap col>
+              <StyledTitle>Profile overview</StyledTitle>
+              {account && (
+                <Loader isLoading={isLoading}>
+                  <StyledContainer>
+                    <Txt>
+                      <RefreshCcw size={16} />
+                      &nbsp;&nbsp;
+                      <Txt fs={14} secondary>
+                        Last updated
+                        <MouseoverTooltipContent content="Data is updated on the background periodically.">
+                          <HelpCircle size={14} />
+                        </MouseoverTooltipContent>
+                        :&nbsp;
+                      </Txt>
+                      {!lastUpdated ? (
+                        '-'
+                      ) : (
+                        <MouseoverTooltipContent content={<TimeFormatted date={profileData?.lastUpdated} />}>
+                          <strong>{lastUpdated}</strong>
+                        </MouseoverTooltipContent>
+                      )}
                     </Txt>
-                    {!lastUpdated ? (
-                      '-'
-                    ) : (
-                      <MouseoverTooltipContent content={<TimeFormatted date={profileData?.lastUpdated} />}>
-                        <strong>{lastUpdated}</strong>
-                      </MouseoverTooltipContent>
-                    )}
+                  </StyledContainer>
+                </Loader>
+              )}
+            </FlexWrap>
+            <FlexWrap col yAlign={'flex-end'}>
+              {account && (
+                <FlexRow>
+                  <Txt fs={14}>
+                    Reffered by:&nbsp;<strong>{shortenAddress(account)}</strong>
                   </Txt>
-                  {hasOrders && (
-                    <ExtLink href={getExplorerAddressLink(chainId || 1, account)}>
-                      <Txt secondary>View all orders ↗</Txt>
-                    </ExtLink>
-                  )}
-                </StyledContainer>
-              </Loader>
-            )}
+                  <span style={{ display: 'inline-block', verticalAlign: 'middle', marginLeft: 8 }}>
+                    <Copy toCopy={account} />
+                  </span>
+                </FlexRow>
+              )}
+              <FlexWrap yAlign={'center'}>
+                {hasOrders && account && (
+                  <ExternalLink href={getExplorerAddressLink(chainId || 1, account)}>
+                    <Txt fs={14}>View all orders </Txt>
+                    <span style={{ lineHeight: 1, verticalAlign: 'middle', marginLeft: 8 }}>
+                      <ArrowUpRight width={'16px'} height={'16px'} />
+                    </span>
+                  </ExternalLink>
+                )}
+              </FlexWrap>
+            </FlexWrap>
           </CardHead>
           {renderNotificationMessages}
           <ChildWrapper>
@@ -118,26 +138,28 @@ export default function Profile() {
                   <HelpCircle size={14} />
                 </MouseoverTooltipContent>
               </ItemTitle>
-              <FlexWrap className="item">
-                <FlexCol>
+              <FlexWrap xAlign={'center'} className="item">
+                <FlexWrap col yAlign={'center'}>
                   <span role="img" aria-label="farmer">
                     🧑‍🌾
                   </span>
                   <Loader isLoading={isLoading}>
-                    <strong>{formatInt(profileData?.totalTrades)}</strong>
+                    <Txt fs={21}>
+                      <strong>{formatInt(profileData?.totalTrades)}</strong>
+                    </Txt>
                   </Loader>
                   <Loader isLoading={isLoading}>
-                    <span>
+                    <Txt secondary>
                       Total trades
                       {isTradesTooltipVisible && (
                         <MouseoverTooltipContent content="You may see more trades here than what you see in the activity list. To understand why, check out the FAQ.">
                           <HelpCircle size={14} />
                         </MouseoverTooltipContent>
                       )}
-                    </span>
+                    </Txt>
                   </Loader>
-                </FlexCol>
-                <FlexCol>
+                </FlexWrap>
+                <FlexWrap col yAlign={'center'}>
                   <span role="img" aria-label="moneybag">
                     💰
                   </span>
@@ -147,7 +169,7 @@ export default function Profile() {
                   <Loader isLoading={isLoading}>
                     <span>Total traded volume</span>
                   </Loader>
-                </FlexCol>
+                </FlexWrap>
               </FlexWrap>
             </ChildWrapper>
             <ChildWrapper>
@@ -158,7 +180,7 @@ export default function Profile() {
                 </MouseoverTooltipContent>
               </ItemTitle>
               <FlexWrap className="item">
-                <FlexCol>
+                <FlexWrap yAlign={'center'} col>
                   <span role="img" aria-label="handshake">
                     🤝
                   </span>
@@ -168,8 +190,8 @@ export default function Profile() {
                   <Loader isLoading={isLoading}>
                     <span>Total referrals</span>
                   </Loader>
-                </FlexCol>
-                <FlexCol>
+                </FlexWrap>
+                <FlexWrap yAlign={'center'} col>
                   <span role="img" aria-label="wingedmoney">
                     💸
                   </span>
@@ -179,7 +201,7 @@ export default function Profile() {
                   <Loader isLoading={isLoading}>
                     <span>Referrals volume</span>
                   </Loader>
-                </FlexCol>
+                </FlexWrap>
               </FlexWrap>
             </ChildWrapper>
           </GridWrap>

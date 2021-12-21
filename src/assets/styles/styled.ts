@@ -2,7 +2,7 @@ import styled from 'styled-components/macro'
 import * as CSS from 'csstype'
 
 // with font size convert to rems
-export const Txt = styled.span<
+export const Txt = styled.div<
   Partial<
     CSS.Properties & {
       fs?: number

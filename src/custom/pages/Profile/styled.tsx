@@ -34,6 +34,8 @@ export const Wrapper = styled(Page)`
 `
 
 export const ExtLink = styled(ExternalLink)`
+  color: ${({ theme }) => theme.text1};
+  font-weight: 300;
   &:hover,
   &:focus {
     color: ${({ theme }) => theme.text1};
@@ -82,7 +84,11 @@ export const GridWrap = styled.div<Partial<CSS.Properties & { horizontal?: boole
 export const CardHead = styled.div`
   display: flex;
   flex-grow: 1;
-  flex-direction: column;
+  flex-wrap: wrap;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    flex-direction: column;
+    flex-wrap: nowrap;
+  `}
 `
 
 export const StyledTitle = styled(Title)`
@@ -114,27 +120,30 @@ export const ItemTitle = styled.h3`
   `}
 `
 
-export const FlexWrap = styled.div`
+export const FlexRow = styled.div`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+`
+
+export const FlexWrap = styled.div<Partial<CSS.Properties & { xAlign?: string; yAlign?: string; col?: boolean }>>`
   display: flex;
   flex-grow: 1;
-  align-items: center;
-  flex-direction: row;
-  justify-content: center;
-  > div {
-    width: auto;
-  }
-  button {
-    max-width: 180px;
-  }
+  flex-direction: ${(props) => (props.col ? 'column' : 'row')};
+  flex-wrap: ${(props) => (props.col ? 'nowrap' : 'wrap')};
+  ${(props) => props.xAlign && `justify-content: ${props.xAlign};`}
+  ${(props) => props.yAlign && `align-items: ${props.yAlign};`}
   ${({ theme }) => theme.mediaWidth.upToSmall`
-    flex-wrap: wrap;
-    > div {
-      width: 50%;
-    }
+    flex-direction: column;
+    flex-wrap:  nowrap;
+    align-items: center;
     button {
       max-width: 100%;
     }
   `}
+  button {
+    max-width: 180px;
+  }
 `
 
 export const StyledContainer = styled.div`
@@ -149,28 +158,6 @@ export const StyledContainer = styled.div`
   `}
 `
 
-export const FlexCol = styled.div`
-  display: flex;
-  flex-grow: 1;
-  align-items: center;
-  flex-direction: column;
-  justify-content: center;
-  strong {
-    font-size: 21px;
-    margin-top: 6px;
-    ${({ theme }) => theme.mediaWidth.upToSmall`
-    font-size: 14px;
-  `}
-  }
-  span:not([role='img']) {
-    font-size: 14px;
-    color: ${({ theme }) => theme.text6};
-    min-height: 32px;
-    text-align: center;
-    display: flex;
-    align-items: center;
-  }
-`
 export const Loader = styled.div<{ isLoading: boolean }>`
   display: flex;
   flex: 1;
