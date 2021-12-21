@@ -63,7 +63,7 @@ import {
   useHighFeeWarning,
   useUnknownImpactWarning,
 } from 'state/swap/hooks'
-import { useExpertModeManager, useUserSingleHopOnly } from 'state/user/hooks'
+import { useExpertModeManager, useRecipientToggleManager, useUserSingleHopOnly } from 'state/user/hooks'
 import { /* HideSmall, */ LinkStyledButton, TYPE, ButtonSize } from 'theme'
 // import { computeFiatValuePriceImpact } from 'utils/computeFiatValuePriceImpact'
 // import { getTradeVersion } from 'utils/getTradeVersion'
@@ -168,6 +168,8 @@ export default function Swap({
 
   // for expert mode
   const [isExpertMode] = useExpertModeManager()
+
+  const [recipientToggleVisible] = useRecipientToggleManager()
 
   // get version from the url
   // const toggledVersion = useToggledVersion()
@@ -444,8 +446,6 @@ export default function Swap({
     singleHopOnly,
   ])
 
-  console.log('recipient', recipient)
-
   // errors
   const [showInverted, setShowInverted] = useState<boolean>(false)
 
@@ -541,7 +541,7 @@ export default function Swap({
       <AffiliateStatusCheck />
       <StyledAppBody className={className}>
         <SwapHeader allowedSlippage={allowedSlippage} />
-        <Wrapper id="swap-page" className={isExpertMode ? 'expertMode' : ''}>
+        <Wrapper id="swap-page" className={isExpertMode || recipientToggleVisible ? 'expertMode' : ''}>
           <ConfirmSwapModal
             isOpen={showConfirm}
             trade={trade}
@@ -603,13 +603,16 @@ export default function Swap({
               </ArrowWrapper>
               */}
               {/* GP ARROW SWITCHER */}
-              <AutoColumn justify="space-between" style={{ margin: `${isExpertMode ? 10 : 3}px 0` }}>
+              <AutoColumn
+                justify="space-between"
+                style={{ margin: `${isExpertMode || recipientToggleVisible ? 10 : 3}px 0` }}
+              >
                 <AutoRow
-                  justify={isExpertMode ? 'space-between' : 'center'}
+                  justify={isExpertMode || recipientToggleVisible ? 'space-between' : 'center'}
                   // style={{ padding: '0 1rem' }}
                 >
                   <ArrowWrapperLoader onSwitchTokens={onSwitchTokens} setApprovalSubmitted={setApprovalSubmitted} />
-                  {recipient === null && !showWrap && isExpertMode ? (
+                  {recipient === null && !showWrap && (isExpertMode || recipientToggleVisible) ? (
                     <LinkStyledButton id="add-recipient-button" onClick={() => onChangeRecipient('')}>
                       <Trans>+ Add a send (optional)</Trans>
                     </LinkStyledButton>

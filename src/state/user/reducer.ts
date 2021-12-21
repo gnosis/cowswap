@@ -18,6 +18,7 @@ import {
   updateHideClosedPositions,
   updateUserLocale,
   updateArbitrumAlphaAcknowledged,
+  updateRecipientToggleVisible,
 } from './actions'
 import { SupportedLocale } from 'constants/locales'
 
@@ -35,6 +36,8 @@ export interface UserState {
   userLocale: SupportedLocale | null
 
   userExpertMode: boolean
+
+  recipientToggleVisible: boolean
 
   userSingleHopOnly: boolean // only allow swaps on direct pairs
 
@@ -74,6 +77,7 @@ export const initialState: UserState = {
   userDarkMode: null,
   matchesDarkMode: false,
   userExpertMode: false,
+  recipientToggleVisible: false,
   userLocale: null,
   userSingleHopOnly: false,
   userHideClosedPositions: false,
@@ -134,6 +138,10 @@ export default createReducer(initialState, (builder) =>
     })
     .addCase(updateUserExpertMode, (state, action) => {
       state.userExpertMode = action.payload.userExpertMode
+      state.timestamp = currentTimestamp()
+    })
+    .addCase(updateRecipientToggleVisible, (state, action) => {
+      state.recipientToggleVisible = action.payload.recipientToggleVisible
       state.timestamp = currentTimestamp()
     })
     .addCase(updateUserLocale, (state, action) => {

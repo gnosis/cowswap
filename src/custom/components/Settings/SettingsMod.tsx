@@ -7,7 +7,7 @@ import styled, { ThemeContext } from 'styled-components/macro'
 import { useOnClickOutside } from 'hooks/useOnClickOutside'
 import { ApplicationModal } from 'state/application/actions'
 import { useModalOpen, useToggleSettingsMenu } from 'state/application/hooks'
-import { useExpertModeManager /* , useUserSingleHopOnly */ } from 'state/user/hooks'
+import { useExpertModeManager /* , useUserSingleHopOnly */, useRecipientToggleManager } from 'state/user/hooks'
 import { TYPE } from 'theme'
 import { ButtonError } from 'components/Button'
 import { AutoColumn } from 'components/Column'
@@ -122,8 +122,7 @@ export default function SettingsTab({ className, placeholderSlippage, SettingsBu
   const theme = useContext(ThemeContext)
 
   const [expertMode, toggleExpertMode] = useExpertModeManager()
-  const [recipientMode, toggleRecipientMode] = useState(false)
-  const [modeToConfirm, setModeToConfirm] = useState(0)
+  const [recipientToggleVisible, toggleRecipientVisibility] = useRecipientToggleManager()
 
   // const [singleHopOnly, setSingleHopOnly] = useUserSingleHopOnly()
 
@@ -132,8 +131,6 @@ export default function SettingsTab({ className, placeholderSlippage, SettingsBu
 
   useOnClickOutside(node, open ? toggle : undefined)
 
-  const mods = ['', 'Expert', 'Recipicent']
-  console.log('settings mods:', modeToConfirm, mods[modeToConfirm], 'expert:', expertMode, 'recipient:', recipientMode)
   return (
     // https://github.com/DefinitelyTyped/DefinitelyTyped/issues/30451
     <StyledMenu ref={node as any} className={className}>
@@ -151,8 +148,8 @@ export default function SettingsTab({ className, placeholderSlippage, SettingsBu
             <AutoColumn gap="lg" style={{ padding: '0 2rem' }}>
               <Text fontWeight={500} fontSize={20}>
                 <Trans>
-                  {mods[modeToConfirm]} mode turns off the confirm transaction prompt and allows high slippage trades
-                  that often result in bad rates and lost funds.
+                  Expert mode turns off the confirm transaction prompt and allows high slippage trades that often result
+                  in bad rates and lost funds.
                 </Trans>
               </Text>
               <Text fontWeight={600} fontSize={20}>
@@ -164,21 +161,20 @@ export default function SettingsTab({ className, placeholderSlippage, SettingsBu
                 onClick={() => {
                   const confirmWord = t`confirm`
                   if (window.prompt(t`Please type the word "${confirmWord}" to enable expert mode.`) === confirmWord) {
-                    modeToConfirm === 1 && toggleExpertMode()
-                    modeToConfirm === 2 && toggleRecipientMode(true)
+                    toggleExpertMode()
                     setShowConfirmation(false)
                   }
                 }}
               >
                 <Text fontSize={20} fontWeight={500} id="confirm-expert-mode">
-                  <Trans>Turn On {mods[modeToConfirm]} Mode</Trans>
+                  <Trans>Turn On Expert Mode</Trans>
                 </Text>
               </ButtonError>
             </AutoColumn>
           </AutoColumn>
         </ModalContentWrapper>
       </Modal>
-      <SettingsButton expertMode={expertMode} recipientMode={recipientMode} toggleSettings={toggle} />
+      <SettingsButton expertMode={expertMode} toggleSettings={toggle} />
       {/* <StyledMenuButton onClick={toggle} id="open-settings-dialog-button">
         <StyledMenuIcon />
         {expertMode ? (
@@ -219,12 +215,10 @@ export default function SettingsTab({ className, placeholderSlippage, SettingsBu
                   expertMode
                     ? () => {
                         toggleExpertMode()
-                        setModeToConfirm(0)
                         setShowConfirmation(false)
                       }
                     : () => {
                         toggle()
-                        setModeToConfirm(1)
                         setShowConfirmation(true)
                       }
                 }
@@ -234,7 +228,7 @@ export default function SettingsTab({ className, placeholderSlippage, SettingsBu
             <RowBetween>
               <RowFixed>
                 <TYPE.black fontWeight={400} fontSize={14} color={theme.text2}>
-                  <Trans>Toggle Recipient Mode</Trans>
+                  <Trans>Toggle Recipient</Trans>
                 </TYPE.black>
                 <QuestionHelper
                   bgColor={theme.bg3}
@@ -246,20 +240,8 @@ export default function SettingsTab({ className, placeholderSlippage, SettingsBu
               </RowFixed>
               <Toggle
                 id="toggle-recipient-mode-button"
-                isActive={recipientMode}
-                toggle={
-                  recipientMode
-                    ? () => {
-                        toggleRecipientMode(!recipientMode)
-                        setModeToConfirm(0)
-                        setShowConfirmation(false)
-                      }
-                    : () => {
-                        toggle()
-                        setModeToConfirm(2)
-                        setShowConfirmation(true)
-                      }
-                }
+                isActive={recipientToggleVisible}
+                toggle={toggleRecipientVisibility}
               />
             </RowBetween>
             {/* <RowBetween>
