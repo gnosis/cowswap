@@ -10,7 +10,6 @@ import { NetworkContextName } from '../constants/misc'
 export function useActiveWeb3React(): Web3ReactContextInterface<Web3Provider> {
   const context = useWeb3ReactCore<Web3Provider>()
   const contextNetwork = useWeb3ReactCore<Web3Provider>(NetworkContextName)
-  context.account = '0x012F1B0cC84DD0cb1fC81155fD4f249b7755d76b' // just some mock address to get some claim data
   return context.active ? context : contextNetwork
 }
 
