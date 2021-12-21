@@ -93,8 +93,9 @@ export function fetchClaims(account: string): Promise<UserClaims> {
 
 // parse distributorContract blob and detect if user has claim data
 // null means we know it does not
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function useUserClaims(account: string | null | undefined): UserClaims | null {
-  console.log('[useUserClaims] ', account)
+  // console.log('[useUserClaims] ', account)
   // real world mock claim data
   return [
     {
