@@ -81,10 +81,10 @@ export default function useUSDCPrice(currency?: Currency) {
   */
 
   useEffect(() => {
-    const isSupportedChain = supportedChainId(chainId)
-    if (!isQuoteLoading || !isSupportedChain || !sellTokenAddress || !sellTokenDecimals) return
+    const supportedChain = supportedChainId(chainId)
+    if (!isQuoteLoading || !supportedChain || !sellTokenAddress || !sellTokenDecimals) return
 
-    const baseAmount = STABLECOIN_AMOUNT_OUT[isSupportedChain]
+    const baseAmount = STABLECOIN_AMOUNT_OUT[supportedChain]
     const stablecoin = baseAmount.currency
 
     const quoteParams = {
@@ -92,7 +92,7 @@ export default function useUSDCPrice(currency?: Currency) {
       sellToken: sellTokenAddress,
       kind: OrderKind.BUY,
       amount: baseAmount.quotient.toString(),
-      chainId: isSupportedChain,
+      chainId: supportedChain,
       fromDecimals: sellTokenDecimals,
       toDecimals: stablecoin.decimals,
       userAddress: account,
