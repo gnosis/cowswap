@@ -5,7 +5,7 @@ import { CurrencyAmount, Token } from '@uniswap/sdk-core'
 import { useUserClaims } from 'state/claim/hooks/hooksMod'
 import { useVCowContract } from 'hooks/useContract'
 import { useSingleContractMultipleData } from 'state/multicall/hooks'
-import { useActiveWeb3React } from '@src/hooks/web3'
+import { useActiveWeb3React } from 'hooks/web3'
 import { V_COW } from 'constants/tokens'
 
 export * from './hooksMod'
