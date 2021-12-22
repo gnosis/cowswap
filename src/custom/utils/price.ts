@@ -20,7 +20,7 @@ import { GetQuoteResponse, OrderKind } from '@gnosis.pm/gp-v2-contracts'
 import { ChainId } from 'state/lists/actions'
 import { toErc20Address } from 'utils/tokens'
 import { GpPriceStrategy } from 'hooks/useGetGpPriceStrategy'
-import { MAX_VALID_TO_EPOCH } from '../hooks/useSwapCallback'
+import { MAX_VALID_TO_EPOCH } from 'hooks/useSwapCallback'
 
 const FEE_EXCEEDS_FROM_ERROR = new GpQuoteError({
   errorType: GpQuoteErrorCodes.FeeExceedsFrom,
