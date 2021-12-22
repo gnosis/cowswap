@@ -55,3 +55,27 @@ export const V_COW: Record<number, Token> = {
     'Virtual CowSwap Token'
   ),
 }
+
+export const GNO: Record<number, Token> = {
+  [SupportedChainId.MAINNET]: new Token(
+    SupportedChainId.MAINNET,
+    '0x6810e776880c02933d47db1b9fc05908e5386b96',
+    18,
+    'GNO',
+    'Gnosis'
+  ),
+  [SupportedChainId.XDAI]: new Token(
+    SupportedChainId.XDAI,
+    '0x9c58bacc331c9aa871afd802db6379a98e80cedb',
+    18,
+    'GNO',
+    'Gnosis'
+  ),
+  [SupportedChainId.RINKEBY]: new Token(
+    SupportedChainId.RINKEBY,
+    '0xd0dab4e640d95e9e8a47545598c33e31bdb53c7c',
+    18,
+    'GNO',
+    'Gnosis'
+  ),
+}
