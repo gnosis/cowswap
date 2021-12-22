@@ -339,7 +339,7 @@ export async function getBestQuote({
     console.debug('[GP PRICE::API] getBestQuote - Attempting best quote retrieval using COWSWAP strategy, hang tight.')
 
     return getFullQuote({ quoteParams }).catch((err) => {
-      console.error(
+      console.warn(
         '[GP PRICE::API] getBestQuote - error using COWSWAP price strategy, reason: [',
         err,
         '] - trying back up price sources...'
