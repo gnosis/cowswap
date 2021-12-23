@@ -19,7 +19,8 @@ import HeaderMod, {
   StyledMenuButton,
   HeaderFrame,
   UNIAmount,
-  UNIWrapper,
+  // UNIWrapper,
+  UNIWrapperLink,
 } from './HeaderMod'
 import Menu from 'components/Menu'
 import { Moon, Sun } from 'react-feather'
@@ -37,7 +38,7 @@ import { supportedChainId } from 'utils/supportedChainId'
 import { formatSmart } from 'utils/format'
 import NetworkCard, { NetworkInfo } from './NetworkCard'
 import SVG from 'react-inlinesvg'
-import { useModalOpen, useShowClaimPopup, useToggleSelfClaimModal } from 'state/application/hooks'
+import { useModalOpen /*, useToggleSelfClaimModal */ } from 'state/application/hooks'
 import { useUserHasAvailableClaim } from 'state/claim/hooks'
 import { useUserHasSubmittedClaim } from 'state/transactions/hooks'
 
@@ -208,11 +209,10 @@ export default function Header() {
   const nativeToken = chainId && (CHAIN_CURRENCY_LABELS[chainId] || 'ETH')
   const [darkMode, toggleDarkMode] = useDarkModeManager()
 
-  const toggleClaimModal = useToggleSelfClaimModal()
+  // const toggleClaimModal = useToggleSelfClaimModal()
   const availableClaim: boolean = useUserHasAvailableClaim(account)
   const { claimTxn } = useUserHasSubmittedClaim(account ?? undefined)
   const [showUniBalanceModal, setShowUniBalanceModal] = useState(false)
-  const showClaimPopup = useShowClaimPopup()
 
   const [isOrdersPanelOpen, setIsOrdersPanelOpen] = useState<boolean>(false)
   const closeOrdersPanel = () => setIsOrdersPanelOpen(false)
@@ -248,22 +248,20 @@ export default function Header() {
         <HeaderControls>
           <NetworkCard />
           <HeaderElement>
-            {availableClaim && !showClaimPopup && (
-              <UNIWrapper onClick={toggleClaimModal}>
-                <UNIAmount active={!!account && !availableClaim} style={{ pointerEvents: 'auto' }}>
-                  <TYPE.white padding="0 2px">
-                    {claimTxn && !claimTxn?.receipt ? (
-                      <Dots>
-                        <Trans>Claiming vCOW</Trans>
-                      </Dots>
-                    ) : (
-                      <Trans>Claim vCOW</Trans>
-                    )}
-                  </TYPE.white>
-                </UNIAmount>
-                <CardNoise />
-              </UNIWrapper>
-            )}
+            <UNIWrapperLink to="/claim">
+              <UNIAmount active={!!account && !availableClaim} style={{ pointerEvents: 'auto' }}>
+                <TYPE.white padding="0 2px">
+                  {claimTxn && !claimTxn?.receipt ? (
+                    <Dots>
+                      <Trans>Claiming vCOW</Trans>
+                    </Dots>
+                  ) : (
+                    <Trans>Claim vCOW</Trans>
+                  )}
+                </TYPE.white>
+              </UNIAmount>
+              <CardNoise />
+            </UNIWrapperLink>
             <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
               {account && userEthBalance && (
                 <BalanceText style={{ flexShrink: 0, userSelect: 'none' }} pl="0.75rem" pr="0.5rem" fontWeight={500}>

@@ -144,6 +144,21 @@ export const UNIWrapper = styled.span`
   }
 `
 
+export const UNIWrapperLink = styled(NavLink)`
+  width: fit-content;
+  position: relative;
+  cursor: pointer;
+  text-decoration: none;
+
+  :hover {
+    opacity: 0.8;
+  }
+
+  :active {
+    opacity: 0.9;
+  }
+`
+
 export const HideSmall = styled.span`
   ${({ theme }) => theme.mediaWidth.upToSmall`
     display: none;
