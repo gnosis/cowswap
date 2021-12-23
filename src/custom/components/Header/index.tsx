@@ -3,8 +3,8 @@ import { useState, useEffect } from 'react'
 import { SupportedChainId as ChainId } from 'constants/chains'
 import { Dots } from 'components/swap/styleds'
 import Web3Status from 'components/Web3Status'
-import { CardNoise } from 'components/earn/styled'
-import { ExternalLink, TYPE } from 'theme'
+import { ExternalLink } from 'theme'
+import { useHistory } from 'react-router-dom'
 
 import HeaderMod, {
   Title,
@@ -18,9 +18,8 @@ import HeaderMod, {
   StyledNavLink as StyledNavLinkUni,
   StyledMenuButton,
   HeaderFrame,
-  UNIAmount,
-  // UNIWrapper,
-  UNIWrapperLink,
+  UNIAmount as UNIAmountMod,
+  UNIWrapper,
 } from './HeaderMod'
 import Menu from 'components/Menu'
 import { Moon, Sun } from 'react-feather'
@@ -38,13 +37,18 @@ import { supportedChainId } from 'utils/supportedChainId'
 import { formatSmart } from 'utils/format'
 import NetworkCard, { NetworkInfo } from './NetworkCard'
 import SVG from 'react-inlinesvg'
-import { useModalOpen /*, useToggleSelfClaimModal */ } from 'state/application/hooks'
+import {
+  useModalOpen,
+  // useShowClaimPopup,
+  // useToggleSelfClaimModal
+} from 'state/application/hooks'
 import { useUserHasAvailableClaim } from 'state/claim/hooks'
 import { useUserHasSubmittedClaim } from 'state/transactions/hooks'
 
 import Modal from 'components/Modal'
-import ClaimModal from 'components/claim/ClaimModal'
+// import ClaimModal from 'components/claim/ClaimModal'
 import UniBalanceContent from 'components/Header/UniBalanceContent'
+import CowProtocolLogo from 'components/CowProtocolLogo'
 
 export const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
   [ChainId.RINKEBY]: 'Rinkeby',
@@ -201,6 +205,15 @@ const UniIcon = styled.div`
   }
 `
 
+const VCowAmount = styled(UNIAmountMod)`
+  ${({ theme }) => theme.cowToken.background};
+  ${({ theme }) => theme.cowToken.boxShadow};
+  color: white;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+`
+
 export default function Header() {
   const { account, chainId: connectedChainId } = useActiveWeb3React()
   const chainId = supportedChainId(connectedChainId)
@@ -219,6 +232,9 @@ export default function Header() {
   const openOrdersPanel = () => setIsOrdersPanelOpen(true)
   const isMenuOpen = useModalOpen(ApplicationModal.MENU)
 
+  const history = useHistory()
+  const handleOnClickClaim = () => history.push('/claim')
+
   // Toggle the 'noScroll' class on body, whenever the orders panel or flyout menu is open.
   // This removes the inner scrollbar on the page body, to prevent showing double scrollbars.
   useEffect(() => {
@@ -231,7 +247,6 @@ export default function Header() {
     <Wrapper>
       <HeaderModWrapper>
         <HeaderRow marginRight="0">
-          <ClaimModal />
           <Modal isOpen={showUniBalanceModal} onDismiss={() => setShowUniBalanceModal(false)}>
             <UniBalanceContent setShowUniBalanceModal={setShowUniBalanceModal} />
           </Modal>
@@ -248,20 +263,20 @@ export default function Header() {
         <HeaderControls>
           <NetworkCard />
           <HeaderElement>
-            <UNIWrapperLink to="/claim">
-              <UNIAmount active={!!account && !availableClaim} style={{ pointerEvents: 'auto' }}>
-                <TYPE.white padding="0 2px">
-                  {claimTxn && !claimTxn?.receipt ? (
-                    <Dots>
-                      <Trans>Claiming vCOW</Trans>
-                    </Dots>
-                  ) : (
+            <UNIWrapper onClick={handleOnClickClaim}>
+              <VCowAmount active={!!account && !availableClaim} style={{ pointerEvents: 'auto' }}>
+                {claimTxn && !claimTxn?.receipt ? (
+                  <Dots>
+                    <Trans>Claiming vCOW...</Trans>
+                  </Dots>
+                ) : (
+                  <>
+                    <CowProtocolLogo />
                     <Trans>Claim vCOW</Trans>
-                  )}
-                </TYPE.white>
-              </UNIAmount>
-              <CardNoise />
-            </UNIWrapperLink>
+                  </>
+                )}
+              </VCowAmount>
+            </UNIWrapper>
             <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
               {account && userEthBalance && (
                 <BalanceText style={{ flexShrink: 0, userSelect: 'none' }} pl="0.75rem" pr="0.5rem" fontWeight={500}>
