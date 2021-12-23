@@ -43,6 +43,10 @@ export const Label = styled.a<Partial<CSS.Properties & { position: any }>>`
   font-weight: bold;
   text-decoration: underline;
 
+  &:first-child {
+    transform: none;
+  }
+
   &:hover {
     text-decoration: none;
   }
