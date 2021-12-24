@@ -3,6 +3,8 @@ import JSBI from 'jsbi'
 import { CurrencyAmount, Token } from '@uniswap/sdk-core'
 import { TransactionResponse } from '@ethersproject/providers'
 
+import { VCow as VCowType } from 'abis/types'
+
 import { useVCowContract } from 'hooks/useContract'
 import { useActiveWeb3React } from 'hooks/web3'
 import { useSingleContractMultipleData } from 'state/multicall/hooks'
@@ -149,7 +151,7 @@ export function useClaimCallback(account: string | null | undefined): {
         throw new Error("Not initialized, can't claim")
       }
 
-      const { args, totalClaimedAmount, value } = _getClaimManyArgs({ claimInput, claims, account, connectedAccount })
+      const { args, totalClaimedAmount } = _getClaimManyArgs({ claimInput, claims, account, connectedAccount })
 
       if (!args) {
         throw new Error('There were no valid claims selected')
@@ -157,22 +159,23 @@ export function useClaimCallback(account: string | null | undefined): {
 
       const vCowAmount = CurrencyAmount.fromRawAmount(vCowToken, totalClaimedAmount)
 
-      return vCowContract.estimateGas['claimMany'](...args, { value }).then((estimatedGas) =>
-        vCowContract
-          .claimMany(...args, {
-            from: connectedAccount,
-            gasLimit: calculateGasMargin(chainId, estimatedGas),
-            value,
+      return vCowContract.estimateGas['claimMany'](...args).then((estimatedGas) => {
+        // Last item in the array contains the call overrides
+        args[args.length - 1] = {
+          ...args[args.length - 1], // add back whatever is already there
+          from: connectedAccount, // add the `from` as the connected account
+          gasLimit: calculateGasMargin(chainId, estimatedGas), // add the estimated gas limit
+        }
+
+        return vCowContract.claimMany(...args).then((response: TransactionResponse) => {
+          addTransaction({
+            hash: response.hash,
+            summary: `Claimed ${formatSmart(vCowAmount)} vCOW`,
+            claim: { recipient: account },
           })
-          .then((response: TransactionResponse) => {
-            addTransaction({
-              hash: response.hash,
-              summary: `Claimed ${formatSmart(vCowAmount)} vCOW`,
-              claim: { recipient: account },
-            })
-            return response.hash
-          })
-      )
+          return response.hash
+        })
+      })
     },
     [account, addTransaction, chainId, claims, connectedAccount, vCowContract, vCowToken]
   )
@@ -187,11 +190,19 @@ type GetClaimManyArgsParams = {
   connectedAccount: string
 }
 
-function _getClaimManyArgs({ claimInput, claims, account, connectedAccount }: GetClaimManyArgsParams): {
-  args: [number[], ClaimType[], string[], string[], string[], string[][], string[]] | undefined
+type ClaimManyFnArgs = Parameters<VCowType['claimMany']>
+
+type GetClaimManyArgsResult = {
+  args: ClaimManyFnArgs | undefined
   totalClaimedAmount: JSBI
-  value: string | undefined
-} {
+}
+
+function _getClaimManyArgs({
+  claimInput,
+  claims,
+  account,
+  connectedAccount,
+}: GetClaimManyArgsParams): GetClaimManyArgsResult {
   const indices: number[] = []
   const claimTypes: ClaimType[] = []
   const claimants: string[] = []
@@ -238,13 +249,15 @@ function _getClaimManyArgs({ claimInput, claims, account, connectedAccount }: Ge
     }
   })
 
+  const value = totalValue.toString() === '0' ? undefined : totalValue.toString()
+  const args: GetClaimManyArgsResult['args'] =
+    indices.length > 0
+      ? [indices, claimTypes, claimants, claimableAmounts, claimedAmounts, merkleProofs, sendEth, { value }]
+      : undefined
+
   return {
-    args:
-      indices.length > 0
-        ? [indices, claimTypes, claimants, claimableAmounts, claimedAmounts, merkleProofs, sendEth]
-        : undefined,
+    args,
     totalClaimedAmount,
-    value: totalValue.toString() === '0' ? undefined : totalValue.toString(),
   }
 }
 
