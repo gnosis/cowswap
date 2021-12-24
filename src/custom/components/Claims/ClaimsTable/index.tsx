@@ -23,7 +23,7 @@ export const ClaimsTable = () => {
             <b>
               supercow.eth <span>(Connected account)</span>
             </b>
-            <i>0x00000000000000001</i>
+            <i>{account}</i>
           </span>
         </ClaimAccount>
         <table>
