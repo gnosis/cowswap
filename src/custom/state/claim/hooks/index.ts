@@ -197,19 +197,24 @@ type GetClaimManyArgsResult = {
   totalClaimedAmount: JSBI
 }
 
+/**
+ * Prepares the list of args to be passed to vCow.claimMany function
+ */
 function _getClaimManyArgs({
   claimInput,
   claims,
   account,
   connectedAccount,
 }: GetClaimManyArgsParams): GetClaimManyArgsResult {
-  const indices: number[] = []
-  const claimTypes: ClaimType[] = []
-  const claimants: string[] = []
-  const claimableAmounts: string[] = []
-  const claimedAmounts: string[] = []
-  const merkleProofs: string[][] = []
-  const sendEth: string[] = []
+  // Arrays are named according to contract parameters
+  // For more info, check https://github.com/gnosis/gp-v2-token/blob/main/src/contracts/mixins/MerkleDistributor.sol#L123
+  const indices: ClaimManyFnArgs[0] = []
+  const claimTypes: ClaimManyFnArgs[1] = []
+  const claimants: ClaimManyFnArgs[2] = []
+  const claimableAmounts: ClaimManyFnArgs[3] = []
+  const claimedAmounts: ClaimManyFnArgs[4] = []
+  const merkleProofs: ClaimManyFnArgs[5] = []
+  const sendEth: ClaimManyFnArgs[6] = []
 
   let totalClaimedAmount = JSBI.BigInt('0')
   let totalValue = JSBI.BigInt('0')
