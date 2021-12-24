@@ -1,15 +1,15 @@
 // import JSBI from 'jsbi'
-import { CurrencyAmount, Token } from '@uniswap/sdk-core'
-import { TransactionResponse } from '@ethersproject/providers'
+// import { CurrencyAmount, Token } from '@uniswap/sdk-core'
+// import { TransactionResponse } from '@ethersproject/providers'
 // import { useEffect, useState } from 'react'
 // import { UNI } from 'constants/tokens'
-import { useActiveWeb3React } from 'hooks/web3'
-import { useMerkleDistributorContract } from 'hooks/useContract'
-import { calculateGasMargin } from 'utils/calculateGasMargin'
+// import { useActiveWeb3React } from 'hooks/web3'
+// import { useMerkleDistributorContract } from 'hooks/useContract'
+// import { calculateGasMargin } from 'utils/calculateGasMargin'
 // import { useSingleCallResult } from 'state/multicall/hooks'
 import { isAddress } from 'utils/index'
-import { useTransactionAdder } from 'state/enhancedTransactions/hooks'
-import { UserClaims, useUserUnclaimedAmount } from '.'
+// import { useTransactionAdder } from 'state/enhancedTransactions/hooks'
+import { ClaimType, UserClaims } from '.'
 // import { useSingleCallResult } from '@src/state/multicall/hooks'
 export { useUserClaimData } from '@src/state/claim/hooks'
 
@@ -181,40 +181,35 @@ export function useUserClaims(account: string | null | undefined): UserClaims | 
 //   return CurrencyAmount.fromRawAmount(uni, JSBI.BigInt(userClaimData.amount))
 // }
 
-export function useClaimCallback(account: string | null | undefined): {
-  claimCallback: () => Promise<string>
-} {
-  // get claim data for this account
-  const { library, chainId } = useActiveWeb3React()
-  const claimData = useUserClaims(account)
-
-  // used for popup summary
-  const unclaimedAmount: CurrencyAmount<Token> | undefined = useUserUnclaimedAmount(account)
-  const addTransaction = useTransactionAdder()
-  const distributorContract = useMerkleDistributorContract()
-
-  const claimCallback = async function () {
-    if (!claimData || !account || !library || !chainId || !distributorContract) return
-
-    // const args = [claimData.index, account, claimData.amount, claimData.proof]
-
-    // TODO: Reduce Claimings into a bunch of arrays with all the claimings
-    // const args = claimData.reduce(...)
-    const args: string[] = []
-
-    return distributorContract.estimateGas['claim'](...args, {}).then((estimatedGasLimit) => {
-      return distributorContract
-        .claim(...args, { value: null, gasLimit: calculateGasMargin(chainId, estimatedGasLimit) })
-        .then((response: TransactionResponse) => {
-          addTransaction({
-            hash: response.hash,
-            summary: `Claimed ${unclaimedAmount?.toSignificant(4)} CoW`,
-            claim: { recipient: account },
-          })
-          return response.hash
-        })
-    })
-  }
-
-  return { claimCallback }
-}
+// export function useClaimCallback(account: string | null | undefined): {
+//   claimCallback: () => Promise<string>
+// } {
+//   // get claim data for this account
+//   const { library, chainId } = useActiveWeb3React()
+//   const claimData = useUserClaimData(account)
+//
+//   // used for popup summary
+//   const unclaimedAmount: CurrencyAmount<Token> | undefined = useUserUnclaimedAmount(account)
+//   const addTransaction = useTransactionAdder()
+//   const distributorContract = useMerkleDistributorContract()
+//
+//   const claimCallback = async function () {
+//     if (!claimData || !account || !library || !chainId || !distributorContract) return
+//
+//     const args = [claimData.index, account, claimData.amount, claimData.proof]
+//
+//     return distributorContract.estimateGas['claim'](...args, {}).then((estimatedGasLimit) => {
+//       return distributorContract
+//         .claim(...args, { value: null, gasLimit: calculateGasMargin(chainId, estimatedGasLimit) })
+//         .then((response: TransactionResponse) => {
+//           addTransaction(response, {
+//             summary: `Claimed ${unclaimedAmount?.toSignificant(4)} UNI`,
+//             claim: { recipient: account },
+//           })
+//           return response.hash
+//         })
+//     })
+//   }
+//
+//   return { claimCallback }
+// }
