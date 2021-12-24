@@ -271,16 +271,17 @@ type GetClaimedAmountParams = Pick<GetClaimManyArgsParams, 'account' | 'connecte
   input: ClaimInput
 }
 
+/**
+ * Gets the allowed claimed amount based on claim type and whether claiming account === connectedAccount
+ * Rules are same as the contract to prevent reverts
+ */
 function _getClaimedAmount({ claim, input, account, connectedAccount }: GetClaimedAmountParams): string {
   if (
-    // claiming a paid claim on behalf of someone else?
-    (account !== connectedAccount && claim.type in PAID_CLAIM_TYPES) ||
-    // claiming a free claim?
-    claim.type in FREE_CLAIM_TYPES ||
-    // did not pass in input.amount?
-    !input.amount ||
-    // trying to send more than what's available?
-    JSBI.greaterThan(JSBI.BigInt(input.amount), JSBI.BigInt(claim.amount))
+    _isClaimForOther(account, connectedAccount, claim) ||
+    _isFreeClaim(claim) ||
+    _hasNoInputOrInputIsGreaterThanClaimAmount(input, claim) ||
+    // had to duplicate this check because I can't get TS to understand input.amount is not undefined in the else clause
+    !input.amount
   ) {
     // use full amount
     return claim.amount
@@ -288,4 +289,29 @@ function _getClaimedAmount({ claim, input, account, connectedAccount }: GetClaim
     // use partial amount
     return input.amount
   }
+}
+
+/**
+ * Claim 100% when claiming investment for someone else
+ */
+function _isClaimForOther(account: string, connectedAccount: string, claim: UserClaimData) {
+  return account !== connectedAccount && claim.type in PAID_CLAIM_TYPES
+}
+
+/**
+ * Claim 100% when it's a free claim
+ */
+function _isFreeClaim(claim: UserClaimData) {
+  return claim.type in FREE_CLAIM_TYPES
+}
+
+/**
+ * Claim 100% when input is not set
+ * Claim 100% when input > amount
+ */
+function _hasNoInputOrInputIsGreaterThanClaimAmount(
+  input: ClaimInput,
+  claim: UserClaimData
+): input is Required<ClaimInput> {
+  return !input.amount || JSBI.greaterThan(JSBI.BigInt(input.amount), JSBI.BigInt(claim.amount))
 }
