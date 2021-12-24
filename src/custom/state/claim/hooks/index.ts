@@ -17,7 +17,7 @@ import { useUserClaims } from 'state/claim/hooks/hooksMod'
 
 export * from './hooksMod'
 
-export enum ClaimType {
+export const enum ClaimType {
   Airdrop, // free, no vesting, can be available on both mainnet and gchain
   GnoOption, // paid, with vesting, must use GNO, can be available on both mainnet and gchain
   UserOption, // paid, with vesting, must use Native currency, can be available on both mainnet and gchain
