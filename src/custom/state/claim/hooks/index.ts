@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import JSBI from 'jsbi'
 import { CurrencyAmount, Token } from '@uniswap/sdk-core'
 import { TransactionResponse } from '@ethersproject/providers'
@@ -15,7 +15,7 @@ import { V_COW } from 'constants/tokens'
 import { formatSmart } from 'utils/format'
 import { calculateGasMargin } from 'utils/calculateGasMargin'
 
-import { useUserClaims } from 'state/claim/hooks/hooksMod'
+import { fetchClaims } from 'state/claim/hooks/hooksMod'
 
 export * from './hooksMod'
 
@@ -136,6 +136,46 @@ export function useUserUnclaimedAmount(account: string | null | undefined): Curr
   }, JSBI.BigInt('0'))
 
   return CurrencyAmount.fromRawAmount(vCow, JSBI.BigInt(totalAmount))
+}
+
+/**
+ * Gets user claims from claim repo
+ * Stores fetched claims in local state
+ *
+ * @param account
+ */
+export function useUserClaims(account: Account): UserClaims | null {
+  const { chainId } = useActiveWeb3React()
+  const [claimInfo, setClaimInfo] = useState<{ [account: string]: UserClaims | null }>({})
+
+  // We'll have claims on multiple networks
+  const claimKey = chainId && account && `${chainId}:${account}`
+
+  useEffect(() => {
+    if (!claimKey) {
+      return
+    }
+
+    fetchClaims(account)
+      .then((accountClaimInfo) =>
+        setClaimInfo((claimInfo) => {
+          return {
+            ...claimInfo,
+            [claimKey]: accountClaimInfo,
+          }
+        })
+      )
+      .catch(() => {
+        setClaimInfo((claimInfo) => {
+          return {
+            ...claimInfo,
+            [claimKey]: null,
+          }
+        })
+      })
+  }, [account, chainId, claimKey])
+
+  return claimKey ? claimInfo[claimKey] : null
 }
 
 /**
