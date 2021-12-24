@@ -10,16 +10,17 @@ import { V_COW } from 'constants/tokens'
 
 export * from './hooksMod'
 
-export type ClaimType =
-  | 'Airdrop' // free, no vesting, can be available on both mainnet and gchain
-  | 'Team' // free, with vesting, only on mainnet
-  | 'Advisor' // free, with vesting, only on mainnet
-  | 'GnoOption' // paid, with vesting, must use GNO, can be available on both mainnet and gchain
-  | 'UserOption' // paid, with vesting, must use Native currency, can be available on both mainnet and gchain
-  | 'Investor' // paid, with vesting, must use USDC, only on mainnet
+export enum ClaimType {
+  Airdrop, // free, no vesting, can be available on both mainnet and gchain
+  GnoOption, // paid, with vesting, must use GNO, can be available on both mainnet and gchain
+  UserOption, // paid, with vesting, must use Native currency, can be available on both mainnet and gchain
+  Investor, // paid, with vesting, must use USDC, only on mainnet
+  Team, // free, with vesting, only on mainnet
+  Advisor, // free, with vesting, only on mainnet
+}
 
-export const FREE_CLAIM_TYPES: ClaimType[] = ['Airdrop', 'Team', 'Advisor']
-export const PAID_CLAIM_TYPES: ClaimType[] = ['GnoOption', 'UserOption', 'Investor']
+export const FREE_CLAIM_TYPES: ClaimType[] = [ClaimType.Airdrop, ClaimType.Team, ClaimType.Advisor]
+export const PAID_CLAIM_TYPES: ClaimType[] = [ClaimType.GnoOption, ClaimType.UserOption, ClaimType.Investor]
 
 export interface UserClaimData {
   index: number
