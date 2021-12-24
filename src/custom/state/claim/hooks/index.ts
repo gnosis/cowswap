@@ -46,7 +46,7 @@ export function useUserAvailableClaims(account: Account): UserClaims {
 
   const results = useSingleContractMultipleData(contract, 'isClaimed', claimIndexes)
 
-  console.log(`useUserAvailableClaims::re-render`, userClaims, claimIndexes, results)
+  // console.log(`useUserAvailableClaims::re-render`, userClaims, claimIndexes, results)
 
   return useMemo(() => {
     if (!userClaims || userClaims.length === 0) {

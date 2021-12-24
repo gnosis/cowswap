@@ -9,7 +9,7 @@ export const PageWrapper = styled.div`
   background: linear-gradient(315deg, #000000 0%, #000000 55%, #202020 100%);
   color: white;
   border-radius: 24px;
-  padding: 32px;
+  padding: 24px;
 
   > button {
     background: rgb(237, 104, 52);
@@ -49,7 +49,7 @@ export const ClaimSummary = styled.div`
 `
 
 export const IntroDescription = styled.div`
-  display: block;
+  display: flex;
   width: 100%;
   margin: 0 0 24px;
 `
@@ -250,12 +250,12 @@ export const EligibleBanner = styled.div`
   margin: 0 auto 16px;
 `
 
-export const TopTitle = styled.div<{ titleOnly: boolean }>`
+export const TopWrapper = styled.div`
   width: 100%;
   display: flex;
   align-items: center;
-  justify-content: ${({ titleOnly }) => (!titleOnly ? 'center' : 'flex-start')};
-  padding: ${({ titleOnly }) => (!titleOnly ? '30px 0' : '0')};
+  justify-content: center;
+  padding: 30px 0;
 `
 
 export const InputField = styled.div`
