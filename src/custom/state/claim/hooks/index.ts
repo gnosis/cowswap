@@ -19,6 +19,9 @@ import { useUserClaims } from 'state/claim/hooks/hooksMod'
 
 export * from './hooksMod'
 
+// TODO: replace with real repo when known
+export const CLAIMS_REPO = 'https://raw.githubusercontent.com/gnosis/cow-mrkl-drop-data-chunks/final/chunks/'
+
 export const enum ClaimType {
   Airdrop, // free, no vesting, can be available on both mainnet and gchain
   GnoOption, // paid, with vesting, must use GNO, can be available on both mainnet and gchain
@@ -26,6 +29,19 @@ export const enum ClaimType {
   Investor, // paid, with vesting, must use USDC, only on mainnet
   Team, // free, with vesting, only on mainnet
   Advisor, // free, with vesting, only on mainnet
+}
+
+// TODO: find a way (if possible) to get this from the ClaimType enum
+type RepoClaimType = 'Airdrop' | 'GnoOption' | 'UserOption' | 'Investor' | 'Team' | 'Advisor'
+
+// TODO: also, is there a smarter way of doing this?
+export const REVERSE_CLAIM_TYPE_MAPPING: Record<RepoClaimType, ClaimType> = {
+  Airdrop: ClaimType.Airdrop,
+  GnoOption: ClaimType.GnoOption,
+  UserOption: ClaimType.UserOption,
+  Investor: ClaimType.Investor,
+  Team: ClaimType.Team,
+  Advisor: ClaimType.Advisor,
 }
 
 export const FREE_CLAIM_TYPES: ClaimType[] = [ClaimType.Airdrop, ClaimType.Team, ClaimType.Advisor]
@@ -36,6 +52,10 @@ export interface UserClaimData {
   amount: string
   proof: string[]
   type: ClaimType
+}
+
+export type RepoClaimData = Omit<UserClaimData, 'type'> & {
+  type: RepoClaimType
 }
 
 export interface ClaimInput {
@@ -53,6 +73,7 @@ export interface ClaimInput {
 type Account = string | null | undefined
 
 export type UserClaims = UserClaimData[]
+export type RepoClaims = RepoClaimData[]
 
 /**
  * Gets an array of available claim
