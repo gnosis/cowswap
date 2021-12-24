@@ -9,7 +9,7 @@
 // import { useSingleCallResult } from 'state/multicall/hooks'
 import { isAddress } from 'utils/index'
 // import { useTransactionAdder } from 'state/enhancedTransactions/hooks'
-import { ClaimType, UserClaims } from '.'
+import { CLAIMS_REPO, ClaimType, RepoClaims, UserClaims } from '.'
 // import { useSingleCallResult } from '@src/state/multicall/hooks'
 export { useUserClaimData } from '@src/state/claim/hooks'
 
@@ -30,9 +30,7 @@ let FETCH_CLAIM_MAPPING_PROMISE: Promise<ClaimAddressMapping> | null = null
 function fetchClaimsMapping(): Promise<ClaimAddressMapping> {
   return (
     FETCH_CLAIM_MAPPING_PROMISE ??
-    (FETCH_CLAIM_MAPPING_PROMISE = fetch(
-      `https://raw.githubusercontent.com/gnosis/cow-mrkl-drop-data-chunks/final/chunks/mapping.json`
-    )
+    (FETCH_CLAIM_MAPPING_PROMISE = fetch(`${CLAIMS_REPO}mapping.json`) // mod
       .then((res) => res.json())
       .catch((error) => {
         console.error('Failed to get claims mapping', error)
@@ -45,9 +43,7 @@ const FETCH_CLAIM_FILE_PROMISES: { [startingAddress: string]: Promise<{ [address
 function fetchClaimsFile(key: string): Promise<{ [address: string]: UserClaims }> {
   return (
     FETCH_CLAIM_FILE_PROMISES[key] ??
-    (FETCH_CLAIM_FILE_PROMISES[key] = fetch(
-      `https://raw.githubusercontent.com/gnosis/cow-mrkl-drop-data-chunks/final/chunks/${key}.json`
-    )
+    (FETCH_CLAIM_FILE_PROMISES[key] = fetch(`${CLAIMS_REPO}${key}.json`) // mod
       .then((res) => res.json())
       .catch((error) => {
         console.error(`Failed to get claim file mapping for starting address ${key}`, error)
