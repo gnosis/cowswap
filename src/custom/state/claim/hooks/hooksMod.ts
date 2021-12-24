@@ -10,6 +10,7 @@
 import { isAddress } from 'utils/index'
 // import { useTransactionAdder } from 'state/enhancedTransactions/hooks'
 import { CLAIMS_REPO, ClaimType, RepoClaims, UserClaims } from '.'
+import { transformRepoClaimsToUserClaims } from 'state/claim/hooks/utils'
 // import { useSingleCallResult } from '@src/state/multicall/hooks'
 export { useUserClaimData } from '@src/state/claim/hooks'
 
@@ -39,8 +40,8 @@ function fetchClaimsMapping(): Promise<ClaimAddressMapping> {
   )
 }
 
-const FETCH_CLAIM_FILE_PROMISES: { [startingAddress: string]: Promise<{ [address: string]: UserClaims }> } = {}
-function fetchClaimsFile(key: string): Promise<{ [address: string]: UserClaims }> {
+const FETCH_CLAIM_FILE_PROMISES: { [startingAddress: string]: Promise<{ [address: string]: RepoClaims }> } = {} // mod
+function fetchClaimsFile(key: string): Promise<{ [address: string]: RepoClaims }> {
   return (
     FETCH_CLAIM_FILE_PROMISES[key] ??
     (FETCH_CLAIM_FILE_PROMISES[key] = fetch(`${CLAIMS_REPO}${key}.json`) // mod
@@ -79,7 +80,7 @@ export function fetchClaims(account: string): Promise<UserClaims> {
       })
       .then(fetchClaimsFile)
       .then((result) => {
-        if (result[formatted]) return result[formatted]
+        if (result[formatted]) return transformRepoClaimsToUserClaims(result[formatted]) // mod
         throw new Error(`Claim for ${formatted} was not found in claim file!`)
       })
       .catch((error) => {
