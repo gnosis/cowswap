@@ -54,7 +54,7 @@ export function typeToCurrencyMapper(type: ClaimType, chainId: number | undefine
     UserOption: '',
   }
 
-  if (chainId === SupportedChainId.MAINNET) {
+  if ([SupportedChainId.MAINNET, SupportedChainId.RINKEBY].includes(chainId)) {
     map.UserOption = 'ETH'
   }
 
@@ -63,4 +63,8 @@ export function typeToCurrencyMapper(type: ClaimType, chainId: number | undefine
   }
 
   return map[type]
+}
+
+export function isFreeClaim(type: ClaimType): boolean {
+  return FREE_CLAIM_TYPES.includes(type)
 }

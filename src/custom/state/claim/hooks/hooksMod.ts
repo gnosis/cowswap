@@ -129,6 +129,51 @@ export function useUserClaims(account: string | null | undefined): UserClaims | 
       type: 'GnoOption',
       amount: '3925000000000000000000',
     },
+    {
+      proof: [
+        '0x9ee4da15b49ddee8590aba5a89c4f137c3574920df8a44a52e6b88e420d068c7',
+        '0xbc4e08f8cbd18bdc713aa11f6cb5f5b3ea4d5ddccdaed57118d45899c83aa8ff',
+        '0x47591e84986f34a393c100f30219f4ba72c941053a598a1091644f9ee2920065',
+        '0x3cbbad2cfe9bdb3dd08d7f31edf23a0e7b33386d28ef5adeb3601289315e4a69',
+        '0xa168e9a8fd611fc5a6b83d06677a0a9fee5cc1b554a5dc3f5ed2485463901447',
+        '0xb27279799e2cfd94f9296ab300661ab7b938882420878f87b1fb0dc0d0d4ac35',
+        '0x82c926e522b6eeca8139d31cfb200b1af4e4c02e0992d25125fe7ec8c8e15feb',
+        '0xac5661c776a0808e457967488a00e26d4ccf3e50426fc83a143d9150ae4f058a',
+      ],
+      index: 11,
+      type: 'Team',
+      amount: '5925000000000000000000',
+    },
+    {
+      proof: [
+        '0x9ee4da15b49ddee8590aba5a89c4f137c3574920df8a44a52e6b88e420d068c7',
+        '0xbc4e08f8cbd18bdc713aa11f6cb5f5b3ea4d5ddccdaed57118d45899c83aa8ff',
+        '0x47591e84986f34a393c100f30219f4ba72c941053a598a1091644f9ee2920065',
+        '0x3cbbad2cfe9bdb3dd08d7f31edf23a0e7b33386d28ef5adeb3601289315e4a69',
+        '0xa168e9a8fd611fc5a6b83d06677a0a9fee5cc1b554a5dc3f5ed2485463901447',
+        '0xb27279799e2cfd94f9296ab300661ab7b938882420878f87b1fb0dc0d0d4ac35',
+        '0x82c926e522b6eeca8139d31cfb200b1af4e4c02e0992d25125fe7ec8c8e15feb',
+        '0xac5661c776a0808e457967488a00e26d4ccf3e50426fc83a143d9150ae4f058a',
+      ],
+      index: 99,
+      type: 'Investor',
+      amount: '5925000000000000000000',
+    },
+    {
+      proof: [
+        '0x9ee4da15b49ddee8590aba5a89c4f137c3574920df8a44a52e6b88e420d068c7',
+        '0xbc4e08f8cbd18bdc713aa11f6cb5f5b3ea4d5ddccdaed57118d45899c83aa8ff',
+        '0x47591e84986f34a393c100f30219f4ba72c941053a598a1091644f9ee2920065',
+        '0x3cbbad2cfe9bdb3dd08d7f31edf23a0e7b33386d28ef5adeb3601289315e4a69',
+        '0xa168e9a8fd611fc5a6b83d06677a0a9fee5cc1b554a5dc3f5ed2485463901447',
+        '0xb27279799e2cfd94f9296ab300661ab7b938882420878f87b1fb0dc0d0d4ac35',
+        '0x82c926e522b6eeca8139d31cfb200b1af4e4c02e0992d25125fe7ec8c8e15feb',
+        '0xac5661c776a0808e457967488a00e26d4ccf3e50426fc83a143d9150ae4f058a',
+      ],
+      index: 21,
+      type: 'UserOption',
+      amount: '7925000000000000000000',
+    },
   ]
 
   // const { chainId } = useActiveWeb3React()
