@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react'
 import { Trans } from '@lingui/macro'
 import { useActiveWeb3React } from 'hooks/web3'
-import { useUserAvailableClaims, useUserUnclaimedAmount, FREE_CLAIM_TYPES } from 'state/claim/hooks'
+import { useUserAvailableClaims, useUserUnclaimedAmount, FREE_CLAIM_TYPES, ClaimType } from 'state/claim/hooks'
 import { parseClaimAmount } from 'state/claim/hooks/utils'
 import { ButtonPrimary, ButtonSecondary } from 'components/Button'
 import { isAddress } from 'ethers/lib/utils'
@@ -231,7 +231,7 @@ export default function Claim() {
                       </td>
                       <td>{isFree ? '-' : `16.66 vCoW per ${currency}`}</td>
                       <td>{isFree ? <span className="green">Free!</span> : `2,500.04 ${currency}`}</td>
-                      <td>{type === 'Airdrop' ? 'No' : '4 years (linear)'}</td>
+                      <td>{type === ClaimType.Airdrop ? 'No' : '4 years (linear)'}</td>
                       <td>28 days, 10h, 50m</td>
                     </tr>
                   )

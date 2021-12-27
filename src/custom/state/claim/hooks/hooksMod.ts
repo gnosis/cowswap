@@ -205,9 +205,9 @@ export function useUserClaims(account: string | null | undefined): UserClaims | 
             '0x82c926e522b6eeca8139d31cfb200b1af4e4c02e0992d25125fe7ec8c8e15feb',
             '0xac5661c776a0808e457967488a00e26d4ccf3e50426fc83a143d9150ae4f058a',
           ],
-          index: 2,
+          index: 139,
           type: 'GnoOption',
-          amount: '1925000000000000000000',
+          amount: '3925000000000000000000',
         },
       ],
     }
