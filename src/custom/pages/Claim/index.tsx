@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState, useEffect, useMemo } from 'react'
 import { Trans } from '@lingui/macro'
 import { useActiveWeb3React } from 'hooks/web3'
