@@ -42,7 +42,7 @@ export function useUserAvailableClaims(account: Account): UserClaims {
   const contract = useVCowContract()
 
   // build list of parameters, with the claim index
-  const claimIndexes = userClaims?.map(({ index }) => [index]) || []
+  const claimIndexes = useMemo(() => userClaims?.map(({ index }) => [index]) || [], [userClaims])
 
   const results = useSingleContractMultipleData(contract, 'isClaimed', claimIndexes)
 

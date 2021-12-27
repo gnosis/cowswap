@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components/macro'
 import { CheckCircle, Frown } from 'react-feather'
 import { Icon } from 'components/CowProtocolLogo'
-import { ButtonPrimary, ButtonSecondary } from 'components/Button'
+import { ButtonPrimary, ButtonSecondary, ButtonLight } from 'components/Button'
 
 export const PageWrapper = styled.div`
   --color-tl: #141722;
@@ -126,6 +126,11 @@ export const ClaimSummary = styled.div`
   > div {
     margin: 0 0 0 24px;
   }
+`
+
+export const ClaimSummaryTitle = styled.h1`
+  font-size: 1.6rem;
+  margin-left: 15px;
 `
 
 export const IntroDescription = styled.div`
@@ -532,4 +537,19 @@ export const Steps = styled.div<{ step: number | 0 }>`
   > li:nth-of-type(${({ step }) => step}) {
     background: grey;
   }
+`
+
+export const WalletButton = styled(ButtonLight)`
+  box-shadow: none;
+  border: none;
+
+  :focus,
+  :hover,
+  :active {
+    box-shadow: none;
+  }
+`
+
+export const InputErrorText = styled.div`
+  margin: 0 0 24px;
 `

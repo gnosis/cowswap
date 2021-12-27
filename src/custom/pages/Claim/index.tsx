@@ -1,26 +1,74 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { Trans } from '@lingui/macro'
 import { useActiveWeb3React } from 'hooks/web3'
-import { useUserAvailableClaims, FREE_CLAIM_TYPES } from 'state/claim/hooks'
-import CowProtocolLogo from 'components/CowProtocolLogo'
+import { useUserAvailableClaims, useUserUnclaimedAmount, FREE_CLAIM_TYPES } from 'state/claim/hooks'
 import { parseClaimAmount } from 'state/claim/hooks/utils'
-import { ExternalLink } from 'theme'
-import { ClaimTable, ClaimBreakdown, CheckAddress, PageWrapper, InputField } from 'pages/Claim/styled'
-import { typeToCurrencyMapper, isFreeClaim, getFreeClaims } from 'state/claim/hooks/utils'
+import { ButtonPrimary, ButtonSecondary } from 'components/Button'
+import { isAddress } from 'ethers/lib/utils'
+import {
+  ClaimTable,
+  ClaimBreakdown,
+  CheckAddress,
+  PageWrapper,
+  InputField,
+  WalletButton,
+  FooterNavButtons,
+  EligibleBanner,
+  CheckIcon,
+  TopNav,
+  ClaimAccount,
+  ClaimSummary,
+  ClaimTotal,
+  ClaimSummaryTitle,
+  InputErrorText,
+} from 'pages/Claim/styled'
+import { typeToCurrencyMapper, isFreeClaim, getFreeClaims, hasPaidClaim } from 'state/claim/hooks/utils'
+import { useWalletModalToggle } from 'state/application/hooks'
+import CowProtocolLogo from 'components/CowProtocolLogo'
+import { TYPE } from 'theme'
 
 export default function Claim() {
   const { account, chainId } = useActiveWeb3React()
 
-  const [inputAddress, setInputAddress] = useState<string | null | undefined>('')
-  const [activeAddress, setActiveAddress] = useState<string | null | undefined>('')
+  // account
+  const [inputAddress, setInputAddress] = useState<string>('')
+  const [activeClaimAccount, setActiveClaimAccount] = useState<string>('')
+
+  // check address
+  const [checkOpen, setCheckOpen] = useState<boolean>(false)
+  const [isInputAddressValid, setIsInputAddressValid] = useState<boolean>(false)
+
+  // claiming
+  const [claimConfirmed, setClaimConfirmed] = useState<boolean>(false)
+  const [claimAttempting, setClaimAttempting] = useState<boolean>(false)
+  const [claimSubmitted, setClaimSubmitted] = useState<boolean>(false)
+
+  // investment
+  const [isInvestFlowActive, setIsInvestFlowActive] = useState<boolean>(false)
+
+  // should be updated
+  const dummyIdenticon =
+    'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAAAXNSR0IArs4c6QAAA4ZJREFUeF7t3b1xFUEQReF5Jpj4BCC5CoIgiIFoSEAOyoEsZJEAPiaYojAxtWerWlvzye/96T5zb8/MW83t8enuZQ3+fb2/Dd59/tZffoymf90AMAsBACjAKIEUYDT9a1EACjCKIAUYTT8FWGYBZgHDY3D29noAPcAogXqA0fTrAfQAVgItBU+KEAuYzP5iASyABbCASRFiAZPZfwsW8PB8P7sUNVyA3W9/A8DeCABg7/ovAABAD7AzAxRg5+qvxQI2rz8AAGAdYGsG9ABbl18PsHn5AQAAS8F7M6AH2Lv+poGb1x8AAIjrAPXDhm8//6QafP74LsXX4Onnr19W5R4AALMAA4ACJBGjACl9a7GA+LPm6QTG+gNAD6AHSIOIArRZjCZQE5gGoCYwpU8TmP/LFQtgAWkMWgls31aygIQfC2ABw3sZZgFmAUnDWEBKHwtgAbtbQBxAGaB6/+n46uH1+bMF1Aeoewn1/tPxAIi7idMFrPcHAAAqQymeBaT09WAKQAE6ReEKFCAk74xQCkABzuDo8DUowOHUnRNIASjAOSQdvAoFOJi4s8IoAAU4i6VD16EAh9J2XhAFoADn0XTgShTgQNLODKEAFOBMnl59rawA09u50yPo6u8PgFePmf8DADAs4RTg4t8FxAE4fuoYBaAAleEUXxVQD5DSP3/wIwCGTx9nASwgakgLpwAUIBGkB0jp0wOMf9lTJTDW//LvTwEiAZpATWBEqIVXBaQALf8s4OoSGOsPAAC8VIZSfLaAx6e70TeoL3B1AKef/waANADzbiQA4kredAKvrmAUoAkABYj5u3wCKUAk4OoJvPrzs4DNAQYAAKwDFAZYQMneWprA4c00FrA5wAAAgB6gMKAHKNnTA4xvJ7OAzQEGAABaD1CPfYv5X1c/NWz6/bMCAKCdHQyAmAEK0A6epAARwKsrIAAAoAksDFCAeGxaSf6/WD2AHqAylOIpAAVIANXgqoCawFgBCkABIkItnAJc/PTwVv7eBLOAWAEWwAIiQi2cBbCARBALSOlb6/IW8PB8n/4/QP06tybw16f3sYQt/MP33+kCVcLrbxLH/0cQANpSLgAoQFIgCpDStxYLiJ82sQAWkMagJvDiR8ZQAApAAUIGzALMAgI+a5kFpPSZBeSPG/UAeoA0Bs0CzAISQDXYQpCFoMSQzaD4gxIWwALSCKzBV7eAv6T9ww6D8p2HAAAAAElFTkSuQmCC'
+  const activeClaimAccountENS = 'TestAccount.eth'
+
+  // toggle wallet when disconnected
+  const toggleWalletModal = useWalletModalToggle()
 
   // get user claim data
-  const userClaimData = useUserAvailableClaims(activeAddress)
-  const sortedClaimData = userClaimData.sort(
-    (a, b) => +FREE_CLAIM_TYPES.includes(b.type) - +FREE_CLAIM_TYPES.includes(a.type)
+  const userClaimData = useUserAvailableClaims(activeClaimAccount)
+  const sortedClaimData = useMemo(
+    () => userClaimData.sort((a, b) => +FREE_CLAIM_TYPES.includes(b.type) - +FREE_CLAIM_TYPES.includes(a.type)),
+    [userClaimData]
   )
 
-  const [selected, setSelected] = useState<number[]>(getFreeClaims(userClaimData).map(({ index }) => index))
+  // get total unclaimed ammount
+  const unclaimedAmount = useUserUnclaimedAmount(activeClaimAccount)
+
+  const hasClaims = useMemo(() => userClaimData.length, [userClaimData])
+  const isAirdropOnly = useMemo(() => !hasPaidClaim(userClaimData), [userClaimData])
+
+  // handle table select change
+  const [selected, setSelected] = useState<number[]>([])
 
   const handleSelect = (event: React.ChangeEvent<HTMLInputElement>, index: number) => {
     const checked = event.target.checked
@@ -36,15 +84,108 @@ export default function Claim() {
     setSelected(checked ? all : free)
   }
 
-  useEffect(() => {
-    if (!activeAddress && account) {
-      setActiveAddress(account)
+  // handle change account
+  const handleChangeAccount = () => {
+    setActiveClaimAccount('')
+    setCheckOpen(true)
+  }
+
+  // check claim
+  const handleCheckClaim = () => {
+    setActiveClaimAccount(inputAddress)
+    setInputAddress('')
+  }
+
+  // handle submit claim
+  const handleSubmitClaim = () => {
+    if (isAirdropOnly) {
+      console.log('claiming for', selected)
+    } else {
+      console.log('starting investment flow', selected)
+      setIsInvestFlowActive(true)
     }
-  }, [account, activeAddress])
+  }
+
+  // on account change
+  useEffect(() => {
+    setActiveClaimAccount(account || '')
+  }, [account])
+
+  // I guess just for initial load
+  useEffect(() => {
+    if (!activeClaimAccount && account && !checkOpen) {
+      setActiveClaimAccount(account)
+    }
+  }, [activeClaimAccount, account, checkOpen])
+
+  // if wallet is disconnected
+  useEffect(() => {
+    if (!account && !checkOpen) {
+      setActiveClaimAccount('')
+    }
+  }, [account, checkOpen])
+
+  // handle address input
+  useEffect(() => {
+    setIsInputAddressValid(isAddress(inputAddress))
+  }, [inputAddress])
+
+  // set default selected options in state
+  useEffect(() => {
+    if (userClaimData.length) {
+      setSelected(getFreeClaims(userClaimData).map(({ index }) => index))
+    }
+  }, [userClaimData])
 
   return (
     <PageWrapper>
-      {!!userClaimData.length && (
+      {(!claimAttempting || !claimConfirmed || !claimSubmitted) &&
+        !!activeClaimAccount &&
+        !!hasClaims &&
+        !isInvestFlowActive && (
+          <EligibleBanner>
+            <CheckIcon />
+            <Trans>This account is eligible for vCOW token claims!</Trans>
+          </EligibleBanner>
+        )}
+
+      {!!activeClaimAccount && (
+        <TopNav>
+          <ClaimAccount hasENS={!!activeClaimAccountENS}>
+            <div>
+              <img src={dummyIdenticon} alt={activeClaimAccount} />
+              <span>
+                <p>{activeClaimAccountENS}</p>
+                <p>{activeClaimAccount}</p>
+              </span>
+            </div>
+            <ButtonSecondary onClick={handleChangeAccount}>Change account</ButtonSecondary>
+          </ClaimAccount>
+        </TopNav>
+      )}
+
+      {(!claimAttempting || !claimConfirmed || !claimSubmitted) && (
+        <ClaimSummary>
+          <CowProtocolLogo size={75} />
+          {!activeClaimAccount && !hasClaims && (!claimAttempting || !claimConfirmed) && (
+            <ClaimSummaryTitle>
+              <Trans>
+                Claim <b>vCOW</b> token
+              </Trans>
+            </ClaimSummaryTitle>
+          )}
+          {activeClaimAccount && (
+            <div>
+              <ClaimTotal>
+                <b>Total available to claim</b>
+                <p>{unclaimedAmount?.toFixed(0, { groupSeparator: ',' }) || 0} vCOW</p>
+              </ClaimTotal>
+            </div>
+          )}
+        </ClaimSummary>
+      )}
+
+      {!!hasClaims && (
         <ClaimBreakdown>
           <h2>vCOW claim breakdown</h2>
           <ClaimTable>
@@ -101,14 +242,16 @@ export default function Claim() {
         </ClaimBreakdown>
       )}
 
-      {!activeAddress && (
+      {(!activeClaimAccount || !hasClaims) && (
         <CheckAddress>
-          <p>
-            Enter an address to check for any eligible vCOW claims{' '}
-            <ExternalLink href="#">
-              <Trans>or connect a wallet</Trans>
-            </ExternalLink>
-          </p>
+          <p>Enter an address to check for any eligible vCOW claims</p>
+          {!account && (
+            <p>
+              <WalletButton onClick={toggleWalletModal}>
+                <Trans>Connect Wallet</Trans>
+              </WalletButton>
+            </p>
+          )}
           <InputField>
             <b>Input address</b>
             <input
@@ -117,9 +260,30 @@ export default function Claim() {
               onChange={(e) => setInputAddress(e.currentTarget.value)}
             />
           </InputField>
-          {/* {!isInputAddressValid && 'Incorrect address'} */}
+          {!!inputAddress && !isInputAddressValid && (
+            <InputErrorText>
+              <TYPE.error error={true}>
+                <Trans>Enter valid token address</Trans>
+              </TYPE.error>
+            </InputErrorText>
+          )}
         </CheckAddress>
       )}
+
+      <FooterNavButtons>
+        {/* General claim vCOW button  (no invest) */}
+        {!!activeClaimAccount && !!hasClaims && !claimConfirmed && !isInvestFlowActive && (
+          <ButtonPrimary onClick={handleSubmitClaim}>
+            <Trans>Claim vCOW</Trans>
+          </ButtonPrimary>
+        )}
+        {/* Check for claims button */}
+        {(!activeClaimAccount || !hasClaims) && (
+          <ButtonPrimary disabled={!isInputAddressValid} type="text" onClick={handleCheckClaim}>
+            <Trans>Check claimable vCOW</Trans>
+          </ButtonPrimary>
+        )}
+      </FooterNavButtons>
     </PageWrapper>
   )
 }
