@@ -2,31 +2,50 @@
 import { useState, useEffect, useMemo } from 'react'
 import { Trans } from '@lingui/macro'
 import { useActiveWeb3React } from 'hooks/web3'
+import { ExternalLink, CustomLightSpinner } from 'theme'
 import { useUserAvailableClaims, useUserUnclaimedAmount, FREE_CLAIM_TYPES, ClaimType } from 'state/claim/hooks'
 import { parseClaimAmount } from 'state/claim/hooks/utils'
 import { ButtonPrimary, ButtonSecondary } from 'components/Button'
 import { isAddress } from 'ethers/lib/utils'
+import Circle from 'assets/images/blue-loader.svg'
 import {
-  ClaimTable,
-  ClaimBreakdown,
-  CheckAddress,
   PageWrapper,
-  InputField,
-  WalletButton,
-  FooterNavButtons,
-  EligibleBanner,
+  ConfirmOrLoadingWrapper,
+  ConfirmedIcon,
+  AttemptFooter,
   CheckIcon,
-  TopNav,
-  ClaimAccount,
   ClaimSummary,
   ClaimTotal,
+  IntroDescription,
+  ClaimTable,
+  ClaimAccount,
+  EligibleBanner,
+  InputField,
+  InputError,
+  CheckAddress,
+  ClaimBreakdown,
+  FooterNavButtons,
+  TopNav,
+  InvestFlow,
+  InvestContent,
+  InvestTokenGroup,
+  InvestInput,
+  InvestAvailableBar,
+  InvestSummary,
+  InvestFlowValidation,
+  InvestTokenSubtotal,
+  StepIndicator,
+  Steps,
+  TokenLogo,
   ClaimSummaryTitle,
   InputErrorText,
+  WalletButton,
 } from 'pages/Claim/styled'
 import { typeToCurrencyMapper, isFreeClaim, getFreeClaims, hasPaidClaim } from 'state/claim/hooks/utils'
 import { useWalletModalToggle } from 'state/application/hooks'
 import CowProtocolLogo from 'components/CowProtocolLogo'
 import { TYPE } from 'theme'
+import Confetti from 'components/Confetti'
 
 export default function Claim() {
   const { account, chainId } = useActiveWeb3React()
@@ -103,7 +122,7 @@ export default function Claim() {
       console.log('claiming for', selected)
     } else {
       console.log('starting investment flow', selected)
-      setIsInvestFlowActive(true)
+      // setIsInvestFlowActive(true)
     }
   }
 
@@ -111,13 +130,6 @@ export default function Claim() {
   useEffect(() => {
     setActiveClaimAccount(account || '')
   }, [account])
-
-  // I guess just for initial load
-  useEffect(() => {
-    if (!activeClaimAccount && account && !checkOpen) {
-      setActiveClaimAccount(account)
-    }
-  }, [activeClaimAccount, account, checkOpen])
 
   // if wallet is disconnected
   useEffect(() => {
@@ -140,6 +152,25 @@ export default function Claim() {
 
   return (
     <PageWrapper>
+      {/* If claim is confirmed > trigger confetti effect */}
+      <Confetti start={claimConfirmed} />
+      {/* START -- Top nav buttons */}
+      {!!activeClaimAccount && (
+        <TopNav>
+          <ClaimAccount>
+            <div>
+              <img src={dummyIdenticon} alt={activeClaimAccount} />
+              <p>{activeClaimAccountENS ? activeClaimAccountENS : activeClaimAccount}</p>
+            </div>
+            <ButtonSecondary disabled={claimAttempting} onClick={handleChangeAccount}>
+              Change account
+            </ButtonSecondary>
+          </ClaimAccount>
+        </TopNav>
+      )}
+      {/* END -- Top nav buttons */}
+
+      {/* START - Show general title OR total to claim (user has airdrop or airdrop+investment) --------------------------- */}
       {(!claimAttempting || !claimConfirmed || !claimSubmitted) &&
         !!activeClaimAccount &&
         !!hasClaims &&
@@ -149,26 +180,10 @@ export default function Claim() {
             <Trans>This account is eligible for vCOW token claims!</Trans>
           </EligibleBanner>
         )}
-
-      {!!activeClaimAccount && (
-        <TopNav>
-          <ClaimAccount hasENS={!!activeClaimAccountENS}>
-            <div>
-              <img src={dummyIdenticon} alt={activeClaimAccount} />
-              <span>
-                <p>{activeClaimAccountENS}</p>
-                <p>{activeClaimAccount}</p>
-              </span>
-            </div>
-            <ButtonSecondary onClick={handleChangeAccount}>Change account</ButtonSecondary>
-          </ClaimAccount>
-        </TopNav>
-      )}
-
-      {(!claimAttempting || !claimConfirmed || !claimSubmitted) && (
+      {(!claimAttempting || !claimConfirmed || !claimSubmitted) && !isInvestFlowActive && (
         <ClaimSummary>
-          <CowProtocolLogo size={75} />
-          {!activeClaimAccount && !hasClaims && (!claimAttempting || !claimConfirmed) && (
+          <CowProtocolLogo size={100} />
+          {!activeClaimAccount && !hasClaims && (
             <ClaimSummaryTitle>
               <Trans>
                 Claim <b>vCOW</b> token
@@ -185,74 +200,20 @@ export default function Claim() {
           )}
         </ClaimSummary>
       )}
+      {/* END - Show total to claim (user has airdrop or airdrop+investment) --------------------------- */}
 
-      {!!hasClaims && (
-        <ClaimBreakdown>
-          <h2>vCOW claim breakdown</h2>
-          <ClaimTable>
-            <table>
-              <thead>
-                <tr>
-                  <th>
-                    <label className="checkAll">
-                      <input onChange={handleSelectAll} type="checkbox" name="check" />
-                    </label>
-                  </th>
-                  <th>Type of Claim</th>
-                  <th>Amount</th>
-                  <th>Price</th>
-                  <th>Cost</th>
-                  <th>Vesting</th>
-                  <th>Ends in</th>
-                </tr>
-              </thead>
-              <tbody>
-                {sortedClaimData.map(({ index, type, amount }) => {
-                  const isFree = isFreeClaim(type)
-                  const currency = typeToCurrencyMapper(type, chainId)
-
-                  return (
-                    <tr key={index}>
-                      <td>
-                        {' '}
-                        <label className="checkAll">
-                          <input
-                            onChange={(event) => handleSelect(event, index)}
-                            type="checkbox"
-                            name="check"
-                            checked={isFree || selected.includes(index)}
-                            disabled={isFree}
-                          />
-                        </label>
-                      </td>
-                      <td>{isFree ? type : `Buy vCOW with ${currency}`}</td>
-                      <td width="150px">
-                        <CowProtocolLogo size={16} />{' '}
-                        {parseClaimAmount(amount, chainId)?.toFixed(0, { groupSeparator: ',' })} vCOW
-                      </td>
-                      <td>{isFree ? '-' : `16.66 vCoW per ${currency}`}</td>
-                      <td>{isFree ? <span className="green">Free!</span> : `2,500.04 ${currency}`}</td>
-                      <td>{type === ClaimType.Airdrop ? 'No' : '4 years (linear)'}</td>
-                      <td>28 days, 10h, 50m</td>
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </table>
-          </ClaimTable>
-        </ClaimBreakdown>
-      )}
-
-      {(!activeClaimAccount || !hasClaims) && (
+      {/* START - Get address/ENS (user not connected yet or opted for checking 'another' account) */}
+      {!activeClaimAccount && !claimConfirmed && (
         <CheckAddress>
-          <p>Enter an address to check for any eligible vCOW claims</p>
-          {!account && (
-            <p>
-              <WalletButton onClick={toggleWalletModal}>
-                <Trans>Connect Wallet</Trans>
-              </WalletButton>
-            </p>
-          )}
+          <p>
+            Enter an address to check for any eligible vCOW claims. <br />
+            <i>Note: It is possible to claim for an account, using any wallet/account.</i>
+            {!account && (
+              <ButtonSecondary onClick={toggleWalletModal}>
+                <Trans>or connect a wallet</Trans>
+              </ButtonSecondary>
+            )}
+          </p>
           <InputField>
             <b>Input address</b>
             <input
@@ -270,10 +231,158 @@ export default function Claim() {
           )}
         </CheckAddress>
       )}
+      {/* END - Get address/ENS (user not connected yet or opted for checking 'another' account) */}
+
+      {/* START -- IS Airdrop only (simple)  ----------------------------------------------------- */}
+      {!!activeClaimAccount && !!hasClaims && !!isAirdropOnly && !claimAttempting && !claimConfirmed && (
+        <IntroDescription>
+          <p>
+            <Trans>
+              Thank you for being a supporter of CowSwap and the CoW protocol. As an important member of the CowSwap
+              Community you may claim vCOW to be used for voting and governance. You can claim your tokens until{' '}
+              <i>[XX-XX-XXXX - XX:XX GMT]</i>
+              <ExternalLink href="https://cow.fi/">Read more about vCOW</ExternalLink>
+            </Trans>
+          </p>
+        </IntroDescription>
+      )}
+      {/* END -- IS Airdrop only (simple)  ---------------------------------------- */}
+
+      {/* START -- NO CLAIMS  ----------------------------------------------------- */}
+      {!!activeClaimAccount && !hasClaims && !claimAttempting && !claimConfirmed && (
+        <IntroDescription>
+          <Trans>
+            Unfortunately this account is not eligible for any vCOW claims.{' '}
+            <ButtonSecondary onClick={() => setActiveClaimAccount('')}>Try another account</ButtonSecondary> or
+            <ExternalLink href="https://cow.fi/">read more about vCOW</ExternalLink>
+          </Trans>
+        </IntroDescription>
+      )}
+      {/* END ---- NO CLAIMS  ----------------------------------------------------- */}
+
+      {/* START - Try claiming or inform succesfull claim  ---------------------- */}
+      {activeClaimAccount && (claimAttempting || claimConfirmed) && (
+        <ConfirmOrLoadingWrapper activeBG={true}>
+          <ConfirmedIcon>
+            {!claimConfirmed ? (
+              <CustomLightSpinner src={Circle} alt="loader" size={'90px'} />
+            ) : (
+              <CowProtocolLogo size={100} />
+            )}
+          </ConfirmedIcon>
+          <h3>{claimConfirmed ? 'Claimed!' : 'Claiming'}</h3>
+          {!claimConfirmed && (
+            <p>
+              <Trans>{unclaimedAmount?.toFixed(0, { groupSeparator: ',' }) || 0} vCOW</Trans>
+            </p>
+          )}
+
+          {claimConfirmed && (
+            <>
+              <Trans>
+                <h3>You have successfully claimed</h3>
+              </Trans>
+              <Trans>
+                <p>[CLAIMED AMOUNT] vCOW</p>
+              </Trans>
+              <Trans>
+                <span role="img" aria-label="party-hat">
+                  🎉🐮{' '}
+                </span>
+                Welcome to the COWmunnity! :){' '}
+                <span role="img" aria-label="party-hat">
+                  🐄🎉
+                </span>
+              </Trans>
+            </>
+          )}
+          {claimAttempting && !claimSubmitted && (
+            <AttemptFooter>
+              <p>
+                <Trans>Confirm this transaction in your wallet</Trans>
+              </p>
+            </AttemptFooter>
+          )}
+          {claimAttempting && claimSubmitted && !claimConfirmed && chainId && (
+            // && claimTxn?.hash
+            <ExternalLink
+              // href={getExplorerLink(chainId, claimTxn?.hash, ExplorerDataType.TRANSACTION)}
+              href="#"
+              style={{ zIndex: 99 }}
+            >
+              <Trans>View transaction on Explorer</Trans>
+            </ExternalLink>
+          )}
+        </ConfirmOrLoadingWrapper>
+      )}
+      {/* END -- Try claiming or inform succesfull claim  ----------------------------------------------------- */}
+
+      {/* START -- IS Airdrop + investing (advanced)  ----------------------------------------------------- */}
+      {!!activeClaimAccount &&
+        !isAirdropOnly &&
+        !!hasClaims &&
+        !isInvestFlowActive &&
+        !(claimAttempting || claimConfirmed) && (
+          <ClaimBreakdown>
+            <h2>vCOW claim breakdown</h2>
+            <ClaimTable>
+              <table>
+                <thead>
+                  <tr>
+                    <th>
+                      <label className="checkAll">
+                        <input onChange={handleSelectAll} type="checkbox" name="check" />
+                      </label>
+                    </th>
+                    <th>Type of Claim</th>
+                    <th>Amount</th>
+                    <th>Price</th>
+                    <th>Cost</th>
+                    <th>Vesting</th>
+                    <th>Ends in</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {sortedClaimData.map(({ index, type, amount }) => {
+                    const isFree = isFreeClaim(type)
+                    const currency = typeToCurrencyMapper(type, chainId)
+
+                    return (
+                      <tr key={index}>
+                        <td>
+                          {' '}
+                          <label className="checkAll">
+                            <input
+                              onChange={(event) => handleSelect(event, index)}
+                              type="checkbox"
+                              name="check"
+                              checked={isFree || selected.includes(index)}
+                              disabled={isFree}
+                            />
+                          </label>
+                        </td>
+                        <td>{isFree ? type : `Buy vCOW with ${currency?.symbol}`}</td>
+                        <td width="150px">
+                          <CowProtocolLogo size={16} />{' '}
+                          {parseClaimAmount(amount, chainId)?.toFixed(0, { groupSeparator: ',' })} vCOW
+                        </td>
+                        <td>{isFree ? '-' : `16.66 vCoW per ${currency?.symbol}`}</td>
+                        <td>{isFree ? <span className="green">Free!</span> : `2,500.04 ${currency?.symbol}`}</td>
+                        <td>{type === ClaimType.Airdrop ? 'No' : '4 years (linear)'}</td>
+                        <td>28 days, 10h, 50m</td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            </ClaimTable>
+          </ClaimBreakdown>
+        )}
+      {/* END -- IS Airdrop + investing (advanced)  ----------------------------------------------------- */}
 
       <FooterNavButtons>
         {/* General claim vCOW button  (no invest) */}
-        {!!activeClaimAccount && !!hasClaims && !claimConfirmed && !isInvestFlowActive && (
+        {!!activeClaimAccount && !!hasClaims && !isInvestFlowActive && !claimAttempting && !claimConfirmed && (
           <ButtonPrimary onClick={handleSubmitClaim}>
             <Trans>Claim vCOW</Trans>
           </ButtonPrimary>
