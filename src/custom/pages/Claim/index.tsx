@@ -4,7 +4,6 @@ import { Trans } from '@lingui/macro'
 import { useActiveWeb3React } from 'hooks/web3'
 import { ExternalLink, CustomLightSpinner } from 'theme'
 import { useUserAvailableClaims, useUserUnclaimedAmount, FREE_CLAIM_TYPES, ClaimType } from 'state/claim/hooks'
-import { parseClaimAmount } from 'state/claim/hooks/utils'
 import { ButtonPrimary, ButtonSecondary } from 'components/Button'
 import { isAddress } from 'ethers/lib/utils'
 import Circle from 'assets/images/blue-loader.svg'
@@ -41,7 +40,14 @@ import {
   InputErrorText,
   WalletButton,
 } from 'pages/Claim/styled'
-import { typeToCurrencyMapper, isFreeClaim, getFreeClaims, hasPaidClaim } from 'state/claim/hooks/utils'
+import {
+  getTypeToCurrencyMap,
+  getTypeToPriceMap,
+  isFreeClaim,
+  getFreeClaims,
+  hasPaidClaim,
+  parseClaimAmount,
+} from 'state/claim/hooks/utils'
 import { useWalletModalToggle } from 'state/application/hooks'
 import CowProtocolLogo from 'components/CowProtocolLogo'
 import { TYPE } from 'theme'
@@ -89,6 +95,10 @@ export default function Claim() {
 
   // handle table select change
   const [selected, setSelected] = useState<number[]>([])
+
+  // claim type to currency and price map
+  const typeToCurrencyMap = useMemo(() => getTypeToCurrencyMap(chainId), [chainId])
+  const typeToPriceMap = useMemo(() => getTypeToPriceMap(), [])
 
   const handleSelect = (event: React.ChangeEvent<HTMLInputElement>, index: number) => {
     const checked = event.target.checked
@@ -345,7 +355,10 @@ export default function Claim() {
                 <tbody>
                   {sortedClaimData.map(({ index, type, amount }) => {
                     const isFree = isFreeClaim(type)
-                    const currency = typeToCurrencyMapper(type, chainId)
+                    const currency = typeToCurrencyMap[type] || ''
+                    const vCowPrice = typeToPriceMap[type]
+                    const parsedAmount = parseClaimAmount(amount, chainId)
+                    const cost = vCowPrice * Number(parsedAmount?.toSignificant(6))
 
                     return (
                       <tr key={index}>
@@ -361,13 +374,12 @@ export default function Claim() {
                             />
                           </label>
                         </td>
-                        <td>{isFree ? type : `Buy vCOW with ${currency?.symbol}`}</td>
+                        <td>{isFree ? type : `Buy vCOW with ${currency}`}</td>
                         <td width="150px">
-                          <CowProtocolLogo size={16} />{' '}
-                          {parseClaimAmount(amount, chainId)?.toFixed(0, { groupSeparator: ',' })} vCOW
+                          <CowProtocolLogo size={16} /> {parsedAmount?.toFixed(0, { groupSeparator: ',' })} vCOW
                         </td>
-                        <td>{isFree ? '-' : `16.66 vCoW per ${currency?.symbol}`}</td>
-                        <td>{isFree ? <span className="green">Free!</span> : `2,500.04 ${currency?.symbol}`}</td>
+                        <td>{isFree ? '-' : `${vCowPrice} vCoW per ${currency}`}</td>
+                        <td>{isFree ? <span className="green">Free!</span> : `${cost} ${currency}`}</td>
                         <td>{type === ClaimType.Airdrop ? 'No' : '4 years (linear)'}</td>
                         <td>28 days, 10h, 50m</td>
                       </tr>
