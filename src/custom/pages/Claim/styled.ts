@@ -399,13 +399,6 @@ export const InputField = styled.div`
     color: rgba(151, 151, 151, 0.4);
   }
 
-  > b {
-    display: block;
-    margin: 0 0 12px;
-    font-weight: normal;
-    color: #979797;
-  }
-
   > div {
     display: flex;
     width: 100%;
@@ -419,6 +412,18 @@ export const InputField = styled.div`
     font-size: 22px;
     font-weight: 600;
     color: white;
+  }
+`
+
+export const InputFieldTitle = styled.div`
+  display: flex;
+  align-items: center;
+  margin: 0 0 12px;
+  font-weight: normal;
+  color: #979797;
+
+  > b {
+    margin-right: 10px;
   }
 `
 

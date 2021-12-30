@@ -1,11 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useCallback, Fragment } from 'react'
 import { Trans } from '@lingui/macro'
 import { useActiveWeb3React } from 'hooks/web3'
 import { ExternalLink, CustomLightSpinner } from 'theme'
 import { useUserAvailableClaims, useUserUnclaimedAmount, FREE_CLAIM_TYPES, ClaimType } from 'state/claim/hooks'
 import { ButtonPrimary, ButtonSecondary } from 'components/Button'
-import { isAddress } from 'ethers/lib/utils'
 import Circle from 'assets/images/blue-loader.svg'
 import {
   PageWrapper,
@@ -39,6 +38,7 @@ import {
   ClaimSummaryTitle,
   InputErrorText,
   WalletButton,
+  InputFieldTitle,
 } from 'pages/Claim/styled'
 import {
   getTypeToCurrencyMap,
@@ -50,19 +50,33 @@ import {
 } from 'state/claim/hooks/utils'
 import { useWalletModalToggle } from 'state/application/hooks'
 import CowProtocolLogo from 'components/CowProtocolLogo'
-import { TYPE } from 'theme'
 import Confetti from 'components/Confetti'
+import { shortenAddress } from 'utils'
+import { isAddress } from 'web3-utils'
+import useENS from 'hooks/useENS'
+import { TYPE } from 'theme'
 
 export default function Claim() {
   const { account, chainId } = useActiveWeb3React()
 
-  // account
+  // address/ens address
   const [inputAddress, setInputAddress] = useState<string>('')
+
+  const { loading, address: resolvedAddress, name: resolvedENS } = useENS(inputAddress)
+  const isInputAddressValid = useMemo(() => isAddress(resolvedAddress || ''), [resolvedAddress])
+
+  // Show input error
+  const showInputError = useMemo(
+    () => Boolean(inputAddress.length > 0 && !loading && !resolvedAddress),
+    [resolvedAddress, inputAddress, loading]
+  )
+
+  // account
   const [activeClaimAccount, setActiveClaimAccount] = useState<string>('')
+  const [activeClaimAccountENS, setActiveClaimAccountENS] = useState<string>('')
 
   // check address
   const [checkOpen, setCheckOpen] = useState<boolean>(false)
-  const [isInputAddressValid, setIsInputAddressValid] = useState<boolean>(false)
 
   // claiming
   const [claimConfirmed, setClaimConfirmed] = useState<boolean>(false)
@@ -75,7 +89,6 @@ export default function Claim() {
   // should be updated
   const dummyIdenticon =
     'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAAAXNSR0IArs4c6QAAA4ZJREFUeF7t3b1xFUEQReF5Jpj4BCC5CoIgiIFoSEAOyoEsZJEAPiaYojAxtWerWlvzye/96T5zb8/MW83t8enuZQ3+fb2/Dd59/tZffoymf90AMAsBACjAKIEUYDT9a1EACjCKIAUYTT8FWGYBZgHDY3D29noAPcAogXqA0fTrAfQAVgItBU+KEAuYzP5iASyABbCASRFiAZPZfwsW8PB8P7sUNVyA3W9/A8DeCABg7/ovAABAD7AzAxRg5+qvxQI2rz8AAGAdYGsG9ABbl18PsHn5AQAAS8F7M6AH2Lv+poGb1x8AAIjrAPXDhm8//6QafP74LsXX4Onnr19W5R4AALMAA4ACJBGjACl9a7GA+LPm6QTG+gNAD6AHSIOIArRZjCZQE5gGoCYwpU8TmP/LFQtgAWkMWgls31aygIQfC2ABw3sZZgFmAUnDWEBKHwtgAbtbQBxAGaB6/+n46uH1+bMF1Aeoewn1/tPxAIi7idMFrPcHAAAqQymeBaT09WAKQAE6ReEKFCAk74xQCkABzuDo8DUowOHUnRNIASjAOSQdvAoFOJi4s8IoAAU4i6VD16EAh9J2XhAFoADn0XTgShTgQNLODKEAFOBMnl59rawA09u50yPo6u8PgFePmf8DADAs4RTg4t8FxAE4fuoYBaAAleEUXxVQD5DSP3/wIwCGTx9nASwgakgLpwAUIBGkB0jp0wOMf9lTJTDW//LvTwEiAZpATWBEqIVXBaQALf8s4OoSGOsPAAC8VIZSfLaAx6e70TeoL3B1AKef/waANADzbiQA4kredAKvrmAUoAkABYj5u3wCKUAk4OoJvPrzs4DNAQYAAKwDFAZYQMneWprA4c00FrA5wAAAgB6gMKAHKNnTA4xvJ7OAzQEGAABaD1CPfYv5X1c/NWz6/bMCAKCdHQyAmAEK0A6epAARwKsrIAAAoAksDFCAeGxaSf6/WD2AHqAylOIpAAVIANXgqoCawFgBCkABIkItnAJc/PTwVv7eBLOAWAEWwAIiQi2cBbCARBALSOlb6/IW8PB8n/4/QP06tybw16f3sYQt/MP33+kCVcLrbxLH/0cQANpSLgAoQFIgCpDStxYLiJ82sQAWkMagJvDiR8ZQAApAAUIGzALMAgI+a5kFpPSZBeSPG/UAeoA0Bs0CzAISQDXYQpCFoMSQzaD4gxIWwALSCKzBV7eAv6T9ww6D8p2HAAAAAElFTkSuQmCC'
-  const activeClaimAccountENS = 'TestAccount.eth'
 
   // toggle wallet when disconnected
   const toggleWalletModal = useWalletModalToggle()
@@ -114,6 +127,12 @@ export default function Claim() {
     setSelected(checked ? all : free)
   }
 
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const input = event.target.value
+    const withoutSpaces = input.replace(/\s+/g, '')
+    setInputAddress(withoutSpaces)
+  }
+
   // handle change account
   const handleChangeAccount = () => {
     setActiveClaimAccount('')
@@ -122,7 +141,8 @@ export default function Claim() {
 
   // check claim
   const handleCheckClaim = () => {
-    setActiveClaimAccount(inputAddress)
+    setActiveClaimAccount(resolvedAddress || '')
+    setActiveClaimAccountENS(resolvedENS || '')
     setInputAddress('')
   }
 
@@ -148,11 +168,6 @@ export default function Claim() {
     }
   }, [account, checkOpen])
 
-  // handle address input
-  useEffect(() => {
-    setIsInputAddressValid(isAddress(inputAddress))
-  }, [inputAddress])
-
   // set default selected options in state
   useEffect(() => {
     if (userClaimData.length) {
@@ -170,7 +185,7 @@ export default function Claim() {
           <ClaimAccount>
             <div>
               <img src={dummyIdenticon} alt={activeClaimAccount} />
-              <p>{activeClaimAccountENS ? activeClaimAccountENS : activeClaimAccount}</p>
+              <p>{activeClaimAccountENS ? activeClaimAccountENS : shortenAddress(activeClaimAccount)}</p>
             </div>
             <ButtonSecondary disabled={claimAttempting} onClick={handleChangeAccount}>
               Change account
@@ -224,18 +239,19 @@ export default function Claim() {
               </ButtonSecondary>
             )}
           </p>
+
           <InputField>
-            <b>Input address</b>
-            <input
-              placeholder="Address or ENS name"
-              value={inputAddress || ''}
-              onChange={(e) => setInputAddress(e.currentTarget.value)}
-            />
+            <InputFieldTitle>
+              <b>Input address</b>
+              {loading && <CustomLightSpinner src={Circle} alt="loader" size={'10px'} />}
+            </InputFieldTitle>
+            <input placeholder="Address or ENS name" value={inputAddress} onChange={handleInputChange} />
           </InputField>
-          {!!inputAddress && !isInputAddressValid && (
+
+          {showInputError && (
             <InputErrorText>
               <TYPE.error error={true}>
-                <Trans>Enter valid token address</Trans>
+                <Trans>Enter valid token address or ENS</Trans>
               </TYPE.error>
             </InputErrorText>
           )}
