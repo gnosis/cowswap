@@ -60,7 +60,7 @@ export function transformRepoClaimsToUserClaims(repoClaims: RepoClaims): UserCla
  *
  */
 export function parseClaimAmount(value: string, chainId: number | undefined): CurrencyAmount<Token> | undefined {
-  const vCow = chainId ? V_COW[chainId] : undefined
+  const vCow = chainId ? V_COW[chainId || 4] : undefined
   if (!vCow || !value) return undefined
   return CurrencyAmount.fromRawAmount(vCow, value)
 }

@@ -739,3 +739,8 @@ export const WalletButton = styled(ButtonLight)`
 export const InputErrorText = styled.div`
   margin: 0 0 24px;
 `
+
+export const ClaimAccountButtons = styled.div`
+  display: flex;
+  flex-direction: column;
+`
