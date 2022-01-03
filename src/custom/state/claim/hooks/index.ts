@@ -31,8 +31,7 @@ export const enum ClaimType {
   Advisor, // free, with vesting, only on mainnet
 }
 
-// TODO: find a way (if possible) to get this from the ClaimType enum
-type RepoClaimType = 'Airdrop' | 'GnoOption' | 'UserOption' | 'Investor' | 'Team' | 'Advisor'
+type RepoClaimType = keyof typeof ClaimType
 
 // TODO: also, is there a smarter way of doing this?
 export const REVERSE_CLAIM_TYPE_MAPPING: Record<RepoClaimType, ClaimType> = {
