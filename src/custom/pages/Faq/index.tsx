@@ -415,7 +415,7 @@ export default function Faq() {
             <LinkScrollable href={'#smart-contract-support'}>Smart Contract support</LinkScrollable> for more
             information.
           </p>
-          <h3 id="what-are-gnosis-protocol-v2-solvers">What are CoW Protocol's Solvers?</h3>
+          <h3 id="what-are-gnosis-protocol-v2-solvers">What are CoW Protocol&apos;s Solvers?</h3>
           <p>
             In CoW Protocol, instead of using a central operator or a constant function market maker to determine trade
             settlements, the protocol uses a party called a &quot;solver&quot;, who is the party in charge of providing
