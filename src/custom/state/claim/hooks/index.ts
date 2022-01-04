@@ -22,16 +22,26 @@ export * from './hooksMod'
 // TODO: replace with real repo when known
 export const CLAIMS_REPO = 'https://raw.githubusercontent.com/gnosis/cow-mrkl-drop-data-chunks/final/chunks/'
 
-export enum ClaimType {
-  Airdrop, // free, no vesting, can be available on both mainnet and gchain
-  GnoOption, // paid, with vesting, must use GNO, can be available on both mainnet and gchain
-  UserOption, // paid, with vesting, must use Native currency, can be available on both mainnet and gchain
-  Investor, // paid, with vesting, must use USDC, only on mainnet
-  Team, // free, with vesting, only on mainnet
-  Advisor, // free, with vesting, only on mainnet
+export const enum ClaimType {
+  Airdrop = 'Airdrop', // free, no vesting, can be available on both mainnet and gchain
+  GnoOption = 'GnoOption', // paid, with vesting, must use GNO, can be available on both mainnet and gchain
+  UserOption = 'UserOption', // paid, with vesting, must use Native currency, can be available on both mainnet and gchain
+  Investor = 'Investor', // paid, with vesting, must use USDC, only on mainnet
+  Team = 'Team', // free, with vesting, only on mainnet
+  Advisor = 'Advisor', // free, with vesting, only on mainnet
 }
 
 type RepoClaimType = keyof typeof ClaimType
+
+// TODO: also, is there a smarter way of doing this?
+export const REVERSE_CLAIM_TYPE_MAPPING: Record<RepoClaimType, ClaimType> = {
+  Airdrop: ClaimType.Airdrop,
+  GnoOption: ClaimType.GnoOption,
+  UserOption: ClaimType.UserOption,
+  Investor: ClaimType.Investor,
+  Team: ClaimType.Team,
+  Advisor: ClaimType.Advisor,
+}
 
 export const FREE_CLAIM_TYPES: ClaimType[] = [ClaimType.Airdrop, ClaimType.Team, ClaimType.Advisor]
 export const PAID_CLAIM_TYPES: ClaimType[] = [ClaimType.GnoOption, ClaimType.UserOption, ClaimType.Investor]
@@ -74,11 +84,13 @@ export function useUserAvailableClaims(account: Account): UserClaims {
   const contract = useVCowContract()
 
   // build list of parameters, with the claim index
-  const claimIndexes = userClaims?.map(({ index }) => [index]) || []
+  const claimIndexes = useMemo(() => userClaims?.map(({ index }) => [index]) || [], [userClaims])
 
+  // just a note, this line returns an empty array on Mainet but works on Rinkeby
+  // So not sure if this is in plan to be implemented or it doesn't work currently
   const results = useSingleContractMultipleData(contract, 'isClaimed', claimIndexes)
 
-  console.log(`useUserAvailableClaims::re-render`, userClaims, claimIndexes, results)
+  // console.log(`useUserAvailableClaims::re-render`, userClaims, claimIndexes, results)
 
   return useMemo(() => {
     if (!userClaims || userClaims.length === 0) {

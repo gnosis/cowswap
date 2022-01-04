@@ -9,7 +9,7 @@
 // import { useSingleCallResult } from 'state/multicall/hooks'
 import { isAddress } from 'utils/index'
 // import { useTransactionAdder } from 'state/enhancedTransactions/hooks'
-import { CLAIMS_REPO, RepoClaims, UserClaims } from '.'
+import { RepoClaims, UserClaims } from '.'
 import { transformRepoClaimsToUserClaims } from 'state/claim/hooks/utils'
 // import { useSingleCallResult } from '@src/state/multicall/hooks'
 export { useUserClaimData } from '@src/state/claim/hooks'
