@@ -1,9 +1,9 @@
 import styled from 'styled-components/macro'
 import CowProtocolIcon from 'assets/cow-swap/cowprotocol.svg'
 
-const Icon = styled.span<Props>`
-  background: linear-gradient(70.89deg, #292a30 10.71%, #101015 33%, #0e0501 88.54%);
-  box-shadow: inset 1px 0px 1px -1px hsla(0, 0%, 100%, 0.4);
+export const Icon = styled.span<Props>`
+  ${({ theme }) => theme.cowToken.background};
+  ${({ theme }) => theme.cowToken.boxShadow};
   height: ${({ size }) => (size ? `${size}px` : '24px')};
   width: ${({ size }) => (size ? `${size}px` : '24px')};
   display: inline-block;
