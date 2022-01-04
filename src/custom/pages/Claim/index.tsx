@@ -53,6 +53,7 @@ import {
   hasPaidClaim,
   parseClaimAmount,
   getIndexes,
+  getPaidClaims,
 } from 'state/claim/hooks/utils'
 import { useWalletModalToggle } from 'state/application/hooks'
 import CowProtocolLogo from 'components/CowProtocolLogo'
@@ -116,6 +117,7 @@ export default function Claim() {
 
   // handle table select change
   const [selected, setSelected] = useState<number[]>([])
+  const [selectedAll, setSelectedAll] = useState<boolean>(false)
 
   // claim type to currency and price map
   const typeToCurrencyMap = useMemo(() => getTypeToCurrencyMap(chainId), [chainId])
@@ -129,13 +131,17 @@ export default function Claim() {
     const output = [...selected]
     checked ? output.push(index) : output.splice(output.indexOf(index), 1)
     setSelected(output)
+
+    if (!checked) {
+      setSelectedAll(false)
+    }
   }
 
   const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
     const checked = event.target.checked
-    const all = getIndexes(userClaimData)
-    const free = getIndexes(getFreeClaims(userClaimData))
-    setSelected(checked ? all : free)
+    const paid = getIndexes(getPaidClaims(userClaimData))
+    setSelected(checked ? paid : [])
+    setSelectedAll(checked)
   }
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -188,7 +194,9 @@ export default function Claim() {
           setClaimAttempting(false)
         })
     } else {
-      const inputData = [...getIndexes(freeClaims), ...selected]
+      const inputData = [...getIndexes(freeClaims), ...selected].map((idx: number) => {
+        return userClaimData.find(({ index }) => idx === index)
+      })
       console.log('starting investment flow', inputData)
       setIsInvestFlowActive(true)
     }
@@ -407,7 +415,7 @@ export default function Claim() {
                   <tr>
                     <th>
                       <label className="checkAll">
-                        <input onChange={handleSelectAll} type="checkbox" name="check" />
+                        <input checked={selectedAll} onChange={handleSelectAll} type="checkbox" name="check" />
                       </label>
                     </th>
                     <th>Type of Claim</th>
