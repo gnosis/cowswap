@@ -24,12 +24,14 @@ export function useTransactionAdder(): TransactionAdder {
     (addTransactionParams: AddTransactionHookParams) => {
       if (!account || !chainId) return
 
-      const { hash, summary, approval, presign, safeTransaction } = addTransactionParams
+      const { hash, summary, data, approval, presign, safeTransaction } = addTransactionParams
       const hashType = isGnosisSafeWallet ? HashType.GNOSIS_SAFE_TX : HashType.ETHEREUM_TX
       if (!hash) {
         throw Error('No transaction hash found')
       }
-      dispatch(addTransaction({ hash, hashType, from: account, chainId, approval, summary, presign, safeTransaction }))
+      dispatch(
+        addTransaction({ hash, hashType, from: account, chainId, approval, summary, data, presign, safeTransaction })
+      )
     },
     [dispatch, chainId, account, isGnosisSafeWallet]
   )
