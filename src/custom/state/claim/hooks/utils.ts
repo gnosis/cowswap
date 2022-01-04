@@ -121,3 +121,12 @@ export function getTypeToPriceMap(): TypeToPriceMapper {
 export function isFreeClaim(type: ClaimType): boolean {
   return FREE_CLAIM_TYPES.includes(type)
 }
+
+/**
+ * Helper function to return an array of indexes from claim data
+ *
+ * @param type
+ */
+export function getIndexes(data: UserClaims): number[] {
+  return data.map(({ index }) => index)
+}

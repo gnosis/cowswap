@@ -54,6 +54,7 @@ import {
   getFreeClaims,
   hasPaidClaim,
   parseClaimAmount,
+  getIndexes,
 } from 'state/claim/hooks/utils'
 import { useWalletModalToggle } from 'state/application/hooks'
 import CowProtocolLogo from 'components/CowProtocolLogo'
@@ -134,8 +135,8 @@ export default function Claim() {
 
   const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
     const checked = event.target.checked
-    const all = userClaimData.map(({ index }) => index)
-    const free = getFreeClaims(userClaimData).map(({ index }) => index)
+    const all = getIndexes(userClaimData)
+    const free = getIndexes(getFreeClaims(userClaimData))
     setSelected(checked ? all : free)
   }
 
@@ -148,6 +149,7 @@ export default function Claim() {
   // handle change account
   const handleChangeAccount = () => {
     setActiveClaimAccount('')
+    setSelected([])
     setClaimSubmitted(false)
     setClaimConfirmed(false)
     setIsSearchUsed(true)
@@ -165,12 +167,17 @@ export default function Claim() {
     // just to be sure
     if (!activeClaimAccount) return
 
-    if (isAirdropOnly) {
-      console.log(`Trying to claim!!!`, unclaimedAmount?.toFixed(0, { groupSeparator: ',' }), claimConfirmed)
+    const freeClaims = getFreeClaims(userClaimData)
+
+    // check if there are any selected (paid) claims
+    if (!selected.length) {
+      const inputData = freeClaims.map(({ index }) => ({ index }))
+
+      console.log('starting claiming with', inputData)
 
       setClaimAttempting(true)
 
-      claimCallback(userClaimData.map(({ index }) => ({ index })))
+      claimCallback(inputData)
         .then((res) => {
           // this is not right currently
           setClaimSubmitted(true)
@@ -183,7 +190,8 @@ export default function Claim() {
           setClaimAttempting(false)
         })
     } else {
-      console.log('starting investment flow', selected)
+      const inputData = [...getIndexes(freeClaims), ...selected]
+      console.log('starting investment flow', inputData)
       setIsInvestFlowActive(true)
     }
   }
@@ -207,13 +215,6 @@ export default function Claim() {
       setIsInvestFlowStep(0)
     }
   }, [account, isSearchUsed])
-
-  // set default selected options in state
-  useEffect(() => {
-    if (userClaimData.length) {
-      setSelected(getFreeClaims(userClaimData).map(({ index }) => index))
-    }
-  }, [userClaimData])
 
   return (
     <PageWrapper>
