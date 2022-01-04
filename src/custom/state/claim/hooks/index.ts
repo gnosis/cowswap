@@ -18,7 +18,7 @@ import { isAddress } from 'utils'
 
 import { getClaimKey, getClaimsRepoPath, transformRepoClaimsToUserClaims } from 'state/claim/hooks/utils'
 
-export * from './hooksMod'
+export { useUserClaimData } from '@src/state/claim/hooks'
 
 const CLAIMS_REPO_BRANCH = 'main'
 export const CLAIMS_REPO = `https://raw.githubusercontent.com/gnosis/cow-merkle-drop/${CLAIMS_REPO_BRANCH}/`
