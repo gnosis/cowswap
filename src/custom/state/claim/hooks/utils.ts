@@ -1,4 +1,11 @@
-import { ClaimType, FREE_CLAIM_TYPES, PAID_CLAIM_TYPES, RepoClaims, UserClaims } from 'state/claim/hooks/index'
+import {
+  CLAIMS_REPO,
+  ClaimType,
+  FREE_CLAIM_TYPES,
+  PAID_CLAIM_TYPES,
+  RepoClaims,
+  UserClaims,
+} from 'state/claim/hooks/index'
 
 /**
  * Helper function to check whether any claim is an investment option
@@ -27,3 +34,25 @@ export function hasFreeClaim(claims: UserClaims | null): boolean {
 export function transformRepoClaimsToUserClaims(repoClaims: RepoClaims): UserClaims {
   return repoClaims.map((claim) => ({ ...claim, type: ClaimType[claim.type] }))
 }
+
+/**
+ * Helper function to get the repo path for the corresponding network id
+ * Throws when passed an unknown network id
+ */
+export function getClaimsRepoPath(id: number): string {
+  return `${CLAIMS_REPO}${_repoNetworkIdMapping(id)}/`
+}
+
+function _repoNetworkIdMapping(id: number): string {
+  switch (id) {
+    case 1:
+      return 'mainnet'
+    case 4:
+      return 'rinkeby'
+    case 100:
+      return 'gnosis-chain'
+    default:
+      throw new Error('Network not supported')
+  }
+}
+
