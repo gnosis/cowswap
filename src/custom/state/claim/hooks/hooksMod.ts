@@ -7,10 +7,8 @@
 // import { useMerkleDistributorContract } from 'hooks/useContract'
 // import { calculateGasMargin } from 'utils/calculateGasMargin'
 // import { useSingleCallResult } from 'state/multicall/hooks'
-import { isAddress } from 'utils/index'
+// import { isAddress } from 'utils/index'
 // import { useTransactionAdder } from 'state/enhancedTransactions/hooks'
-import { CLAIMS_REPO, RepoClaims, UserClaims } from '.'
-import { transformRepoClaimsToUserClaims } from 'state/claim/hooks/utils'
 // import { useSingleCallResult } from '@src/state/multicall/hooks'
 export { useUserClaimData } from '@src/state/claim/hooks'
 
@@ -25,71 +23,73 @@ export { useUserClaimData } from '@src/state/claim/hooks'
 //   }
 // }
 
-type LastAddress = string
-type ClaimAddressMapping = { [firstAddress: string]: LastAddress }
-let FETCH_CLAIM_MAPPING_PROMISE: Promise<ClaimAddressMapping> | null = null
-function fetchClaimsMapping(): Promise<ClaimAddressMapping> {
-  return (
-    FETCH_CLAIM_MAPPING_PROMISE ??
-    (FETCH_CLAIM_MAPPING_PROMISE = fetch(`${CLAIMS_REPO}mapping.json`) // mod
-      .then((res) => res.json())
-      .catch((error) => {
-        console.error('Failed to get claims mapping', error)
-        FETCH_CLAIM_MAPPING_PROMISE = null
-      }))
-  )
-}
-
-const FETCH_CLAIM_FILE_PROMISES: { [startingAddress: string]: Promise<{ [address: string]: RepoClaims }> } = {} // mod
-function fetchClaimsFile(key: string): Promise<{ [address: string]: RepoClaims }> {
-  console.log(`fetching key`, key)
-  return (
-    FETCH_CLAIM_FILE_PROMISES[key] ??
-    (FETCH_CLAIM_FILE_PROMISES[key] = fetch(`${CLAIMS_REPO}${key}.json`) // mod
-      .then((res) => res.json())
-      .catch((error) => {
-        console.error(`Failed to get claim file mapping for starting address ${key}`, error)
-        delete FETCH_CLAIM_FILE_PROMISES[key]
-      }))
-  )
-}
-
-const FETCH_CLAIM_PROMISES: { [key: string]: Promise<UserClaims> } = {}
-
-// returns the claim for the given address, or null if not valid
-export function fetchClaims(account: string): Promise<UserClaims> {
-  const formatted = isAddress(account)
-  if (!formatted) return Promise.reject(new Error('Invalid address'))
-
-  return (
-    FETCH_CLAIM_PROMISES[account] ??
-    (FETCH_CLAIM_PROMISES[account] = fetchClaimsMapping()
-      .then((mapping) => {
-        const sorted = Object.keys(mapping).sort((a, b) => (a.toLowerCase() < b.toLowerCase() ? -1 : 1))
-
-        for (const startingAddress of sorted) {
-          const lastAddress = mapping[startingAddress]
-          if (startingAddress.toLowerCase() <= formatted.toLowerCase()) {
-            if (formatted.toLowerCase() <= lastAddress.toLowerCase()) {
-              return startingAddress
-            }
-          } else {
-            throw new Error(`Claim for ${formatted} was not found in partial search`)
-          }
-        }
-        throw new Error(`Claim for ${formatted} was not found after searching all mappings`)
-      })
-      .then(fetchClaimsFile)
-      .then((result) => {
-        if (result[formatted]) return transformRepoClaimsToUserClaims(result[formatted]) // mod
-        throw new Error(`Claim for ${formatted} was not found in claim file!`)
-      })
-      .catch((error) => {
-        console.debug('Claim fetch failed', error)
-        throw error
-      }))
-  )
-}
+// type LastAddress = string
+// type ClaimAddressMapping = { [firstAddress: string]: LastAddress }
+// let FETCH_CLAIM_MAPPING_PROMISE: Promise<ClaimAddressMapping> | null = null
+// function fetchClaimMapping(): Promise<ClaimAddressMapping> {
+//   return (
+//     FETCH_CLAIM_MAPPING_PROMISE ??
+//     (FETCH_CLAIM_MAPPING_PROMISE = fetch(
+//       `https://raw.githubusercontent.com/Uniswap/mrkl-drop-data-chunks/final/chunks/mapping.json`
+//     )
+//       .then((res) => res.json())
+//       .catch((error) => {
+//         console.error('Failed to get claims mapping', error)
+//         FETCH_CLAIM_MAPPING_PROMISE = null
+//       }))
+//   )
+// }
+//
+// const FETCH_CLAIM_FILE_PROMISES: { [startingAddress: string]: Promise<{ [address: string]: UserClaimData }> } = {}
+// function fetchClaimFile(key: string): Promise<{ [address: string]: UserClaimData }> {
+//   return (
+//     FETCH_CLAIM_FILE_PROMISES[key] ??
+//     (FETCH_CLAIM_FILE_PROMISES[key] = fetch(
+//       `https://raw.githubusercontent.com/Uniswap/mrkl-drop-data-chunks/final/chunks/${key}.json`
+//     )
+//       .then((res) => res.json())
+//       .catch((error) => {
+//         console.error(`Failed to get claim file mapping for starting address ${key}`, error)
+//         delete FETCH_CLAIM_FILE_PROMISES[key]
+//       }))
+//   )
+// }
+//
+// const FETCH_CLAIM_PROMISES: { [key: string]: Promise<UserClaimData> } = {}
+// // returns the claim for the given address, or null if not valid
+// function fetchClaim(account: string): Promise<UserClaimData> {
+//   const formatted = isAddress(account)
+//   if (!formatted) return Promise.reject(new Error('Invalid address'))
+//
+//   return (
+//     FETCH_CLAIM_PROMISES[account] ??
+//     (FETCH_CLAIM_PROMISES[account] = fetchClaimMapping()
+//       .then((mapping) => {
+//         const sorted = Object.keys(mapping).sort((a, b) => (a.toLowerCase() < b.toLowerCase() ? -1 : 1))
+//
+//         for (const startingAddress of sorted) {
+//           const lastAddress = mapping[startingAddress]
+//           if (startingAddress.toLowerCase() <= formatted.toLowerCase()) {
+//             if (formatted.toLowerCase() <= lastAddress.toLowerCase()) {
+//               return startingAddress
+//             }
+//           } else {
+//             throw new Error(`Claim for ${formatted} was not found in partial search`)
+//           }
+//         }
+//         throw new Error(`Claim for ${formatted} was not found after searching all mappings`)
+//       })
+//       .then(fetchClaimFile)
+//       .then((result) => {
+//         if (result[formatted]) return result[formatted]
+//         throw new Error(`Claim for ${formatted} was not found in claim file!`)
+//       })
+//       .catch((error) => {
+//         console.debug('Claim fetch failed', error)
+//         throw error
+//       }))
+//   )
+// }
 
 // parse distributorContract blob and detect if user has claim data
 // null means we know it does not
