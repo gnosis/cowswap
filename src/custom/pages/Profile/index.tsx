@@ -29,9 +29,11 @@ import { SupportedChainId as ChainId } from 'constants/chains'
 import AffiliateStatusCheck from 'components/AffiliateStatusCheck'
 import { useHasOrders } from 'api/gnosisProtocol/hooks'
 import { shortenAddress } from '@src/utils'
+import { useReferralAddress } from 'state/affiliate/hooks'
 
 export default function Profile() {
   const referralLink = useReferralLink()
+  const refAddress = useReferralAddress()
   const { account, chainId } = useActiveWeb3React()
   const { profileData, isLoading, error } = useFetchProfile()
   const lastUpdated = useTimeAgo(profileData?.lastUpdated)
@@ -52,8 +54,6 @@ export default function Profile() {
       )}
     </>
   )
-
-  console.log('hasOrders', referralLink, account)
 
   return (
     <Container>
@@ -89,13 +89,13 @@ export default function Profile() {
               )}
             </FlexWrap>
             <FlexWrap col yAlign={'flex-end'}>
-              {account && (
+              {account && refAddress && (
                 <FlexRow>
                   <Txt fs={14}>
-                    Reffered by:&nbsp;<strong>{shortenAddress(account)}</strong>
+                    Referred by:&nbsp;<strong>{shortenAddress(refAddress.value)}</strong>
                   </Txt>
                   <span style={{ display: 'inline-block', verticalAlign: 'middle', marginLeft: 8 }}>
-                    <Copy toCopy={account} />
+                    <Copy toCopy={refAddress.value} />
                   </span>
                 </FlexRow>
               )}
