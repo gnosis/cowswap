@@ -32,12 +32,38 @@ export const Wrapper = styled(Page)`
     `}
   }
 `
+export const ProfileWrapper = styled(Wrapper)`
+  margin: 0 0 16px 0;
+  padding: 16px 24px;
+`
 
 export const ExtLink = styled(ExternalLink)`
   &:hover,
   &:focus {
     color: ${({ theme }) => theme.text1};
   }
+`
+
+export const VCOWBalance = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex-grow: 1;
+  width: 250px;
+  justify-content: center;
+  border-radius: 16px;
+  padding: 8px;
+  background: linear-gradient(315deg, #000000 0%, #000000 55%, #202020 100%);
+  /* background-color: ${({ theme }) => theme.bg5}; */
+  span {
+    color: white !important;
+  }
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    grid-column-start: 1;
+    grid-column-end: 2;
+    width: 100%;
+    padding: 14px;
+  `}
 `
 
 export const ChildWrapper = styled.div`

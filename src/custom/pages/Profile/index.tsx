@@ -13,6 +13,8 @@ import {
   ChildWrapper,
   Loader,
   ExtLink,
+  VCOWBalance,
+  ProfileWrapper,
 } from 'pages/Profile/styled'
 import { useActiveWeb3React } from 'hooks/web3'
 import Copy from 'components/Copy/CopyMod'
@@ -28,6 +30,7 @@ import NotificationBanner from 'components/NotificationBanner'
 import { SupportedChainId as ChainId } from 'constants/chains'
 import AffiliateStatusCheck from 'components/AffiliateStatusCheck'
 import { useHasOrders } from 'api/gnosisProtocol/hooks'
+import CowProtocolLogo from '@src/custom/components/CowProtocolLogo'
 
 export default function Profile() {
   const referralLink = useReferralLink()
@@ -54,11 +57,27 @@ export default function Profile() {
 
   return (
     <Container>
+      <ProfileWrapper>
+        <GridWrap horizontal>
+          <CardHead>
+            <StyledTitle>Profile</StyledTitle>
+          </CardHead>
+          <VCOWBalance>
+            <CowProtocolLogo size={46} />
+            <FlexCol>
+              <Txt fs={12}>BALANCE</Txt>
+              <Txt fs={16}>
+                <strong>102,02 vCOW</strong>
+              </Txt>
+            </FlexCol>
+          </VCOWBalance>
+        </GridWrap>
+      </ProfileWrapper>
       {chainId && chainId === ChainId.MAINNET && <AffiliateStatusCheck />}
       <Wrapper>
         <GridWrap>
           <CardHead>
-            <StyledTitle>Profile overview</StyledTitle>
+            <StyledTitle>Affiliate Program</StyledTitle>
             {account && (
               <Loader isLoading={isLoading}>
                 <StyledContainer>
