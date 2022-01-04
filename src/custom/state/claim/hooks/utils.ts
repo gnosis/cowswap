@@ -56,3 +56,9 @@ function _repoNetworkIdMapping(id: number): string {
   }
 }
 
+/**
+ * Helper function to get the claim key based on account and chainId
+ */
+export function getClaimKey(account: string, chainId: number): string {
+  return `${chainId}:${account}`
+}
