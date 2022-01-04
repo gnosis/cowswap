@@ -53,6 +53,8 @@ export default function Profile() {
     </>
   )
 
+  console.log('hasOrders', referralLink, account)
+
   return (
     <Container>
       {chainId && chainId === ChainId.MAINNET && <AffiliateStatusCheck />}
@@ -97,8 +99,8 @@ export default function Profile() {
                   </span>
                 </FlexRow>
               )}
-              <FlexWrap yAlign={'center'}>
-                {hasOrders && account && (
+              <FlexWrap yAlign={'flex-end'}>
+                {referralLink && hasOrders && account && (
                   <ExternalLink href={getExplorerAddressLink(chainId || 1, account)}>
                     <Txt fs={14}>View all orders </Txt>
                     <span style={{ lineHeight: 1, verticalAlign: 'middle', marginLeft: 8 }}>
@@ -167,7 +169,7 @@ export default function Profile() {
                     <strong>{formatDecimal(profileData?.tradeVolumeUsd)}</strong>
                   </Loader>
                   <Loader isLoading={isLoading}>
-                    <span>Total traded volume</span>
+                    <Txt secondary>Total traded volume</Txt>
                   </Loader>
                 </FlexWrap>
               </FlexWrap>
@@ -188,7 +190,7 @@ export default function Profile() {
                     <strong>{formatInt(profileData?.totalReferrals)}</strong>
                   </Loader>
                   <Loader isLoading={isLoading}>
-                    <span>Total referrals</span>
+                    <Txt secondary>Total referrals</Txt>
                   </Loader>
                 </FlexWrap>
                 <FlexWrap yAlign={'center'} col>
@@ -199,7 +201,7 @@ export default function Profile() {
                     <strong>{formatDecimal(profileData?.referralVolumeUsd)}</strong>
                   </Loader>
                   <Loader isLoading={isLoading}>
-                    <span>Referrals volume</span>
+                    <Txt secondary>Referrals volume</Txt>
                   </Loader>
                 </FlexWrap>
               </FlexWrap>

@@ -60,6 +60,7 @@ export const ChildWrapper = styled.div`
   `}
   > .item {
     width: 100%;
+    flex-direction: row;
   }
 `
 
