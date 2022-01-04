@@ -19,8 +19,8 @@ import { fetchClaims } from 'state/claim/hooks/hooksMod'
 
 export * from './hooksMod'
 
-// TODO: replace with real repo when known
-export const CLAIMS_REPO = 'https://raw.githubusercontent.com/gnosis/cow-mrkl-drop-data-chunks/final/chunks/'
+const CLAIMS_REPO_BRANCH = 'main'
+export const CLAIMS_REPO = `https://raw.githubusercontent.com/gnosis/cow-merkle-drop/${CLAIMS_REPO_BRANCH}/`
 
 export enum ClaimType {
   Airdrop, // free, no vesting, can be available on both mainnet and gchain
