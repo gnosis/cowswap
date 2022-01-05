@@ -39,9 +39,9 @@ function getGnosisProtocolUrl(): Partial<Record<ChainId, string>> {
 
   // Production, staging, ens, ...
   return {
-    [ChainId.MAINNET]: process.env.REACT_APP_API_URL_PROD_MAINNET || 'https://api.cow.fi/mainnet',
-    [ChainId.RINKEBY]: process.env.REACT_APP_API_URL_PROD_RINKEBY || 'https://api.cow.fi/rinkeby',
-    [ChainId.XDAI]: process.env.REACT_APP_API_URL_PROD_XDAI || 'https://api.cow.fi/xdai',
+    [ChainId.MAINNET]: process.env.REACT_APP_API_URL_PROD_MAINNET || 'https://api.cow.fi/mainnet/api',
+    [ChainId.RINKEBY]: process.env.REACT_APP_API_URL_PROD_RINKEBY || 'https://api.cow.fi/rinkeby/api',
+    [ChainId.XDAI]: process.env.REACT_APP_API_URL_PROD_XDAI || 'https://api.cow.fi/xdai/api',
   }
 }
 
