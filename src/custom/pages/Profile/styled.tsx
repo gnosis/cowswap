@@ -32,38 +32,12 @@ export const Wrapper = styled(Page)`
     `}
   }
 `
-export const ProfileWrapper = styled(Wrapper)`
-  margin: 0 0 16px 0;
-  padding: 16px 24px;
-`
 
 export const ExtLink = styled(ExternalLink)`
   &:hover,
   &:focus {
     color: ${({ theme }) => theme.text1};
   }
-`
-
-export const VCOWBalance = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  flex-grow: 1;
-  width: 250px;
-  justify-content: center;
-  border-radius: 16px;
-  padding: 8px;
-  background: linear-gradient(315deg, #000000 0%, #000000 55%, #202020 100%);
-  /* background-color: ${({ theme }) => theme.bg5}; */
-  span {
-    color: white !important;
-  }
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    grid-column-start: 1;
-    grid-column-end: 2;
-    width: 100%;
-    padding: 14px;
-  `}
 `
 
 export const ChildWrapper = styled.div`
@@ -103,11 +77,6 @@ export const GridWrap = styled.div<Partial<CSS.Properties & { horizontal?: boole
       grid-column-end: 2;
     }
   `};
-`
-
-export const ProfileGridWrap = styled(GridWrap)`
-  grid-template-columns: 1fr auto;
-  justify-content: space-between;
 `
 
 export const CardHead = styled.div`
@@ -196,12 +165,13 @@ export const FlexCol = styled.div`
   span:not([role='img']) {
     font-size: 14px;
     color: ${({ theme }) => theme.text6};
-    min-height: 32px;
     text-align: center;
     display: flex;
     align-items: center;
+    padding: 8px 0 0 0;
   }
 `
+
 export const Loader = styled.div<{ isLoading: boolean }>`
   display: flex;
   flex: 1;
@@ -236,4 +206,53 @@ export const Loader = styled.div<{ isLoading: boolean }>`
         }
       }
     `}
+`
+
+export const ProfileWrapper = styled(Wrapper)`
+  margin: 0 0 16px 0;
+  padding: 16px 24px;
+`
+
+export const ProfileFlexCol = styled.div`
+  display: flex;
+  flex-grow: 1;
+  align-items: flex-start;
+  flex-direction: column;
+
+  span {
+    padding: 0 8px;
+    color: white;
+  }
+`
+export const ProfileGridWrap = styled(GridWrap)`
+  grid-template-columns: 1fr auto;
+  justify-content: space-between;
+  align-items: center;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    > :first-child,
+    > :nth-child(2) {
+      grid-column-start: auto;
+      grid-column-end: auto;
+    }
+  `};
+  ${({ theme }) => theme.mediaWidth.upToVerySmall`
+    > :first-child,
+    > :nth-child(2) {
+      grid-column-start: 1;
+      grid-column-end: 1;
+    }
+  `};
+`
+
+export const VCOWBalance = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex-grow: 1;
+  min-width: 215px;
+  height: 56px;
+  justify-content: center;
+  border-radius: 12px;
+  padding: 8px;
+  background: linear-gradient(315deg, #000000 0%, #000000 55%, #202020 100%);
 `

@@ -16,6 +16,7 @@ import {
   VCOWBalance,
   ProfileWrapper,
   ProfileGridWrap,
+  ProfileFlexCol,
 } from 'pages/Profile/styled'
 import { useActiveWeb3React } from 'hooks/web3'
 import Copy from 'components/Copy/CopyMod'
@@ -65,12 +66,12 @@ export default function Profile() {
           </CardHead>
           <VCOWBalance>
             <CowProtocolLogo size={46} />
-            <FlexCol>
-              <Txt fs={12}>BALANCE</Txt>
-              <Txt fs={16}>
+            <ProfileFlexCol>
+              <Txt fs={14}>Balance</Txt>
+              <Txt fs={18}>
                 <strong>102,02 vCOW</strong>
               </Txt>
-            </FlexCol>
+            </ProfileFlexCol>
           </VCOWBalance>
         </ProfileGridWrap>
       </ProfileWrapper>
