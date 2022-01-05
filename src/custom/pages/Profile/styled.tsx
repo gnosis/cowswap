@@ -105,6 +105,11 @@ export const GridWrap = styled.div<Partial<CSS.Properties & { horizontal?: boole
   `};
 `
 
+export const ProfileGridWrap = styled(GridWrap)`
+  grid-template-columns: 1fr auto;
+  justify-content: space-between;
+`
+
 export const CardHead = styled.div`
   display: flex;
   flex-grow: 1;

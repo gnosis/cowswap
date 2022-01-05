@@ -15,6 +15,7 @@ import {
   ExtLink,
   VCOWBalance,
   ProfileWrapper,
+  ProfileGridWrap,
 } from 'pages/Profile/styled'
 import { useActiveWeb3React } from 'hooks/web3'
 import Copy from 'components/Copy/CopyMod'
@@ -58,7 +59,7 @@ export default function Profile() {
   return (
     <Container>
       <ProfileWrapper>
-        <GridWrap horizontal>
+        <ProfileGridWrap horizontal>
           <CardHead>
             <StyledTitle>Profile</StyledTitle>
           </CardHead>
@@ -71,7 +72,7 @@ export default function Profile() {
               </Txt>
             </FlexCol>
           </VCOWBalance>
-        </GridWrap>
+        </ProfileGridWrap>
       </ProfileWrapper>
       {chainId && chainId === ChainId.MAINNET && <AffiliateStatusCheck />}
       <Wrapper>
