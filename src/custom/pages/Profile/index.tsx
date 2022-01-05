@@ -28,8 +28,8 @@ import NotificationBanner from 'components/NotificationBanner'
 import { SupportedChainId as ChainId } from 'constants/chains'
 import AffiliateStatusCheck from 'components/AffiliateStatusCheck'
 import { useHasOrders } from 'api/gnosisProtocol/hooks'
-import { shortenAddress } from '@src/utils'
 import { useReferralAddress } from 'state/affiliate/hooks'
+import { shortenAddress } from 'utils'
 
 export default function Profile() {
   const referralLink = useReferralLink()
