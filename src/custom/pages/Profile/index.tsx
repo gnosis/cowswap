@@ -186,7 +186,7 @@ export default function Profile() {
           </GridWrap>
           {!account && <Web3Status openOrdersPanel={() => console.log('TODO')} />}
         </GridWrap>
-        <ProgressBar value={33} />
+        <ProgressBar value={25} />
       </Wrapper>
     </Container>
   )

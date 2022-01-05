@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ProgressBarWrap, ProgressContainer, Progress, Label, Txt, FlexWrap } from './styled'
+import { ProgressBarWrap, ProgressContainer, Progress, Label, FlexWrap } from './styled'
 
 interface progressBarProps {
   value: number
@@ -42,7 +42,6 @@ export function ProgressBar({ value }: progressBarProps) {
           <Progress value={progressVal} />
         </ProgressContainer>
       </ProgressBarWrap>
-      <Txt>{progressVal}%</Txt>
     </FlexWrap>
   )
 }

@@ -1,7 +1,6 @@
 import styled from 'styled-components/macro'
 import * as CSS from 'csstype'
 import { FlexWrap as FlexWrapMod } from 'pages/Profile/styled'
-import { Txt as TxtMod } from 'assets/styles/styled'
 
 export const FlexWrap = styled(FlexWrapMod)`
   max-width: 100%;
@@ -15,16 +14,16 @@ export const ProgressBarWrap = styled(FlexWrapMod)`
 `
 
 export const ProgressContainer = styled.div`
-  background-color: transparent;
-  height: 30px;
+  background-color: ${({ theme }) => theme.primary1};
+  height: 16px;
   width: 100% !important;
-  border: 1px solid ${({ theme }) => theme.cardBorder};
   position: relative;
   overflow: hidden;
+  border-radius: 10px;
 `
 
 export const Progress = styled.div<Partial<CSS.Properties & { value: number }>>`
-  background-image: linear-gradient(to right, #d3e501, #d29145, #ce01b9);
+  background-color: ${({ theme }) => theme.primary1};
   width: 100%;
   max-width: ${(props) => props.value}%;
   position: absolute;
@@ -37,23 +36,19 @@ export const Progress = styled.div<Partial<CSS.Properties & { value: number }>>`
 export const Label = styled.a<Partial<CSS.Properties & { position: any }>>`
   cursor: pointer;
   position: absolute;
+  color: ${({ theme }) => theme.text1};
   top: 10px;
   left: ${(props) => props.position}%;
   transform: translateX(-50%);
   font-weight: bold;
   text-decoration: underline;
 
-  &:first-child {
+  &:first-child,
+  &:last-child {
     transform: none;
   }
 
   &:hover {
     text-decoration: none;
   }
-`
-
-export const Txt = styled(TxtMod)`
-  font-size: 20px;
-  font-weight: bold;
-  margin-left: 15px;
 `
