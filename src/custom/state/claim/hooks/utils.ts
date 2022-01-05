@@ -13,7 +13,7 @@ import {
  * @param claims
  */
 export function hasPaidClaim(claims: UserClaims | null): boolean {
-  return claims?.some((claim) => PAID_CLAIM_TYPES.includes(claim.type)) || false
+  return Boolean(claims?.some((claim) => PAID_CLAIM_TYPES.includes(claim.type)))
 }
 
 /**
@@ -22,7 +22,7 @@ export function hasPaidClaim(claims: UserClaims | null): boolean {
  * @param claims
  */
 export function hasFreeClaim(claims: UserClaims | null): boolean {
-  return claims?.some((claim) => FREE_CLAIM_TYPES.includes(claim.type)) || false
+  return Boolean(claims?.some((claim) => FREE_CLAIM_TYPES.includes(claim.type)))
 }
 
 /**
