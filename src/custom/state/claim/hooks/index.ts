@@ -509,7 +509,7 @@ function fetchClaimsMapping(chainId: number): Promise<ClaimAddressMapping> {
     (FETCH_CLAIM_MAPPING_PROMISES[chainId] = fetch(`${getClaimsRepoPath(chainId)}mapping.json`)
       .then((res) => res.json())
       .catch((error) => {
-        console.error('Failed to get claims mapping', error)
+        console.error(`Failed to get claims mapping for chain ${chainId}`, error)
         FETCH_CLAIM_MAPPING_PROMISES[chainId] = null
       }))
   )
@@ -527,7 +527,7 @@ function fetchClaimsFile(address: string, chainId: number): Promise<{ [address: 
     (FETCH_CLAIM_FILE_PROMISES[key] = fetch(`${getClaimsRepoPath(chainId)}chunks/${address}.json`) // mod
       .then((res) => res.json())
       .catch((error) => {
-        console.error(`Failed to get claim file mapping for starting address ${address}`, error)
+        console.error(`Failed to get claim file mapping on chain ${chainId} for starting address ${address}`, error)
         delete FETCH_CLAIM_FILE_PROMISES[key]
       }))
   )
@@ -543,7 +543,7 @@ function fetchClaims(account: string, chainId: number): Promise<UserClaims> {
   const formatted = isAddress(account)
   if (!formatted) return Promise.reject(new Error('Invalid address'))
 
-  const claimKey = getClaimKey(account, chainId)
+  const claimKey = getClaimKey(formatted, chainId)
 
   return (
     FETCH_CLAIM_PROMISES[claimKey] ??
@@ -558,18 +558,18 @@ function fetchClaims(account: string, chainId: number): Promise<UserClaims> {
               return startingAddress
             }
           } else {
-            throw new Error(`Claim for ${formatted} was not found in partial search`)
+            throw new Error(`Claim for ${claimKey} was not found in partial search`)
           }
         }
-        throw new Error(`Claim for ${formatted} was not found after searching all mappings`)
+        throw new Error(`Claim for ${claimKey} was not found after searching all mappings`)
       })
       .then((address) => fetchClaimsFile(address, chainId))
       .then((result) => {
         if (result[formatted]) return transformRepoClaimsToUserClaims(result[formatted]) // mod
-        throw new Error(`Claim for ${formatted} was not found in claim file!`)
+        throw new Error(`Claim for ${claimKey} was not found in claim file!`)
       })
       .catch((error) => {
-        console.debug('Claim fetch failed', error)
+        console.debug(`Claim fetch failed for ${claimKey}`, error)
         throw error
       }))
   )
