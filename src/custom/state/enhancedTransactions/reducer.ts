@@ -66,7 +66,7 @@ export default createReducer(initialState, (builder) =>
       addTransaction,
       (
         transactions,
-        { payload: { chainId, from, hash, hashType, approval, summary, presign, safeTransaction, data } }
+        { payload: { chainId, from, hash, hashType, approval, summary, presign, safeTransaction, claim, data } }
       ) => {
         if (transactions[chainId]?.[hash]) {
           console.warn('[state::enhancedTransactions] Attempted to add existing transaction', hash)
@@ -87,6 +87,7 @@ export default createReducer(initialState, (builder) =>
           approval,
           presign,
           safeTransaction,
+          claim,
         }
         transactions[chainId] = txs
       }
