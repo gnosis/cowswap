@@ -129,7 +129,7 @@ export function isFreeClaim(type: ClaimType): boolean {
  *
  * @param type
  */
-export function getIndexes(data: UserClaims): number[] {
+export function getIndexes(data: RepoClaims | UserClaims): number[] {
   return data.map(({ index }) => index)
 }
 
