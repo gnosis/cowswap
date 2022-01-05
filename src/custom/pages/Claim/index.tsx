@@ -56,6 +56,7 @@ import ClaimAddress from './ClaimAddress'
 import CanUserClaimMessage from './CanUserClaimMessage'
 import { useClaimDispatchers, useClaimState } from 'state/claim/hooks'
 import { ClaimStatus } from 'state/claim/actions'
+import { useAllClaimingTransactionIndices } from 'state/enhancedTransactions/hooks'
 
 export default function Claim() {
   const { account, chainId } = useActiveWeb3React()
@@ -234,6 +235,8 @@ export default function Claim() {
     // setActiveClaimAccount and other dispatch fns are only here for TS. They are safe references.
   }, [account, isSearchUsed, setActiveClaimAccount, setInvestFlowStep, setIsInvestFlowActive])
 
+  const indices = useAllClaimingTransactionIndices()
+
   return (
     <PageWrapper>
       {/* If claim is confirmed > trigger confetti effect */}
@@ -335,22 +338,32 @@ export default function Claim() {
                     const vCowPrice = typeToPriceMap[type]
                     const parsedAmount = parseClaimAmount(amount, chainId)
                     const cost = vCowPrice * Number(parsedAmount?.toSignificant(6))
+                    const isPendingClaim = indices.has(index)
 
                     return (
-                      <tr key={index}>
+                      <tr
+                        key={index}
+                        style={{ cursor: isPendingClaim ? 'pointer' : 'initial' }}
+                        onClick={isPendingClaim ? () => alert('opening activity panel') : undefined}
+                      >
                         <td>
                           {' '}
-                          <label className="checkAll">
-                            <input
-                              onChange={(event) => handleSelect(event, index)}
-                              type="checkbox"
-                              name="check"
-                              checked={isFree || selected.includes(index)}
-                              disabled={isFree}
-                            />
-                          </label>
+                          {/* User has on going pending claiming transactions? Show the loader */}
+                          {isPendingClaim ? (
+                            <CustomLightSpinner src={Circle} alt="loader" size="20px" color="lightgreen" />
+                          ) : (
+                            <label className="checkAll">
+                              <input
+                                onChange={(event) => handleSelect(event, index)}
+                                type="checkbox"
+                                name="check"
+                                checked={isFree || selected.includes(index)}
+                                disabled={isFree}
+                              />
+                            </label>
+                          )}
                         </td>
-                        <td>{isFree ? type : `Buy vCOW with ${currency}`}</td>
+                        <td>{isFree ? ClaimType[type] : `Buy vCOW with ${currency}`}</td>
                         <td width="150px">
                           <CowProtocolLogo size={16} /> {parsedAmount?.toFixed(0, { groupSeparator: ',' })} vCOW
                         </td>
