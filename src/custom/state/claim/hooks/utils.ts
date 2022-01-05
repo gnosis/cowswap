@@ -1,3 +1,6 @@
+import { CurrencyAmount, Token } from '@uniswap/sdk-core'
+import { SupportedChainId } from 'constants/chains'
+import { V_COW } from 'constants/tokens'
 import {
   CLAIMS_REPO,
   ClaimType,
