@@ -19,6 +19,7 @@ import { calculateGasMargin } from 'utils/calculateGasMargin'
 import { isAddress } from 'utils'
 
 import { getClaimKey, getClaimsRepoPath, transformRepoClaimsToUserClaims } from 'state/claim/hooks/utils'
+import { SupportedChainId } from 'constants/chains'
 
 export { useUserClaimData } from '@src/state/claim/hooks'
 
@@ -26,7 +27,13 @@ const CLAIMS_REPO_BRANCH = 'main'
 export const CLAIMS_REPO = `https://raw.githubusercontent.com/gnosis/cow-merkle-drop/${CLAIMS_REPO_BRANCH}/`
 
 // TODO: these values came from the test contract, might be different on real deployment
-export const WETH_PRICE = '37500000000000' // '0.0000375' WETH (18 decimals) per vCOW, in wei
+// Network variable price
+export const NATIVE_TOKEN_PRICE = {
+  [SupportedChainId.MAINNET]: '37500000000000', // '0.0000375' WETH (18 decimals) per vCOW, in wei
+  [SupportedChainId.RINKEBY]: '37500000000000', // assuming Rinkeby has same price as Mainnet
+  [SupportedChainId.XDAI]: '150000000000000000', // TODO: wild guess, wxDAI is same price as USDC
+}
+// Same on all networks. Actually, likely available only on Mainnet (and Rinkeby)
 export const GNO_PRICE = '375000000000000' // '0.000375' GNO (18 decimals) per vCOW, in atoms
 export const USDC_PRICE = '150000' // '0.15' USDC (6 decimals) per vCOW, in atoms
 
@@ -264,6 +271,7 @@ export function useClaimCallback(account: string | null | undefined): {
       }
 
       const { args, totalClaimedAmount } = _getClaimManyArgs({ claimInput, claims, account, connectedAccount })
+      const { args, totalClaimedAmount } = _getClaimManyArgs({ claimInput, claims, account, connectedAccount, chainId })
 
       if (!args) {
         throw new Error('There were no valid claims selected')
@@ -300,6 +308,7 @@ type GetClaimManyArgsParams = {
   claims: UserClaims
   account: string
   connectedAccount: string
+  chainId: SupportedChainId
 }
 
 type ClaimManyFnArgs = Parameters<VCowType['claimMany']>
@@ -317,6 +326,7 @@ function _getClaimManyArgs({
   claims,
   account,
   connectedAccount,
+  chainId,
 }: GetClaimManyArgsParams): GetClaimManyArgsResult {
   // Arrays are named according to contract parameters
   // For more info, check https://github.com/gnosis/gp-v2-token/blob/main/src/contracts/mixins/MerkleDistributor.sol#L123
@@ -356,7 +366,7 @@ function _getClaimManyArgs({
 
       merkleProofs.push(claim.proof)
       // only used on UserOption
-      const value = _getClaimValue(claim, claimedAmount)
+      const value = _getClaimValue(claim, claimedAmount, chainId)
       sendEth.push(value) // TODO: verify ETH balance < input.amount ?
 
       // sum of claimedAmounts for the toast notification
@@ -438,12 +448,14 @@ function _hasNoInputOrInputIsGreaterThanClaimAmount(
  * vCowAmount * wethPrice / 10^18
  * See https://github.com/gnosis/gp-v2-token/blob/main/src/contracts/mixins/Claiming.sol#L314-L320
  */
-function _getClaimValue(claim: UserClaimData, vCowAmount: string): string {
+function _getClaimValue(claim: UserClaimData, vCowAmount: string, chainId: SupportedChainId): string {
   if (claim.type !== ClaimType.UserOption) {
     return '0'
   }
 
-  const claimValueInAtoms = JSBI.multiply(JSBI.BigInt(vCowAmount), JSBI.BigInt(WETH_PRICE))
+  const price = NATIVE_TOKEN_PRICE[chainId]
+
+  const claimValueInAtoms = JSBI.multiply(JSBI.BigInt(vCowAmount), JSBI.BigInt(price))
 
   return parseUnits(claimValueInAtoms.toString(), 18).toString()
 }
