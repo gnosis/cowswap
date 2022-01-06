@@ -90,7 +90,7 @@ export default function Claim() {
   const [claimConfirmed, setClaimConfirmed] = useState<boolean>(false)
   const [claimAttempting, setClaimAttempting] = useState<boolean>(false)
   const [claimSubmitted, setClaimSubmitted] = useState<boolean>(false)
-  const [claimedAmmount, setClaimedAmmount] = useState<number>(0)
+  const [claimedAmount, setClaimedAmount] = useState<number>(0)
 
   // investment
   const [isInvestFlowActive, setIsInvestFlowActive] = useState<boolean>(false)
@@ -364,7 +364,7 @@ export default function Claim() {
                 <h3>You have successfully claimed</h3>
               </Trans>
               <Trans>
-                <p>{claimedAmmount} vCOW</p>
+                <p>{claimedAmount} vCOW</p>
               </Trans>
               <Trans>
                 <span role="img" aria-label="party-hat">
