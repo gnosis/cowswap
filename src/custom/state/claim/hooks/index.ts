@@ -33,6 +33,8 @@ const ONE_WEEK = 7 * 24 * 60 * 60 * 1000 // in ms
 const TWO_WEEKS = 2 * ONE_WEEK // in ms
 const SIX_WEEKS = 6 * ONE_WEEK // in ms
 
+const TEN_TO_EIGHTEENTH_POWER = JSBI.exponentiate(JSBI.BigInt('10'), JSBI.BigInt('18'))
+
 export enum ClaimType {
   Airdrop, // free, no vesting, can be available on both mainnet and gchain
   GnoOption, // paid, with vesting, must use GNO, can be available on both mainnet and gchain
@@ -354,8 +356,8 @@ function _getClaimManyArgs({
       claimedAmounts.push(claimedAmount)
 
       merkleProofs.push(claim.proof)
-      // only used on UserOption, equal to claimedAmount
-      const value = claim.type === ClaimType.UserOption ? claimedAmount : '0'
+      // only used on UserOption
+      const value = _getClaimValue(claim, claimedAmount)
       sendEth.push(value) // TODO: verify ETH balance < input.amount ?
 
       // sum of claimedAmounts for the toast notification
@@ -425,6 +427,26 @@ function _hasNoInputOrInputIsGreaterThanClaimAmount(
   claim: UserClaimData
 ): input is Required<ClaimInput> {
   return !input.amount || JSBI.greaterThan(JSBI.BigInt(input.amount), JSBI.BigInt(claim.amount))
+}
+
+/**
+ * Calculates native value based on claim vCowAmount and type
+ *
+ * Value will only be != '0' if claim type is UserOption
+ * Assumes the checks were done previously regarding which amounts are allowed
+ *
+ * The calculation is done based on the formula:
+ * vCowAmount * wethPrice / 10^18
+ * See https://github.com/gnosis/gp-v2-token/blob/main/src/contracts/mixins/Claiming.sol#L314-L320
+ */
+function _getClaimValue(claim: UserClaimData, vCowAmount: string): string {
+  if (claim.type !== ClaimType.UserOption) {
+    return '0'
+  }
+  return JSBI.divide(
+    JSBI.multiply(JSBI.BigInt(vCowAmount), JSBI.BigInt(WETH_PRICE)),
+    TEN_TO_EIGHTEENTH_POWER
+  ).toString()
 }
 
 type LastAddress = string
