@@ -27,6 +27,12 @@ export const CLAIMS_REPO = `https://raw.githubusercontent.com/gnosis/cow-merkle-
 export const WETH_PRICE = '37500000000000' // '0.0000375' WETH (18 decimals) per vCOW
 export const GNO_PRICE = '375000000000000' // '0.000375' GNO (18 decimals) per vCOW
 export const USDC_PRICE = '150000' // '0.15' USDC (6 decimals) per vCOW
+
+// Constants regarding investment time windows
+const ONE_WEEK = 7 * 24 * 60 * 60 * 1000 // in ms
+const TWO_WEEKS = 2 * ONE_WEEK // in ms
+const SIX_WEEKS = 6 * ONE_WEEK // in ms
+
 export enum ClaimType {
   Airdrop, // free, no vesting, can be available on both mainnet and gchain
   GnoOption, // paid, with vesting, must use GNO, can be available on both mainnet and gchain
@@ -196,6 +202,30 @@ function useDeploymentTimestamp(): number | null {
   }, [chainId, vCowContract])
 
   return timestamp
+}
+
+/**
+ * Returns whether vCOW contract is still open for investments
+ * Null when not applicable
+ *
+ * That is, there has been less than 2 weeks since it was deployed
+ */
+export function useInvestmentStillAvailable(): boolean | null {
+  const deploymentTimestamp = useDeploymentTimestamp()
+
+  return deploymentTimestamp ? deploymentTimestamp + TWO_WEEKS > Date.now() : null
+}
+
+/**
+ * Returns whether vCOW contract is still open for airdrops
+ * Null when not applicable
+ *
+ * That is, there has been less than 6 weeks since it was deployed
+ */
+export function useAirdropStillAvailable(): boolean | null {
+  const deploymentTimestamp = useDeploymentTimestamp()
+
+  return deploymentTimestamp ? deploymentTimestamp + SIX_WEEKS > Date.now() : null
 }
 
 /**
