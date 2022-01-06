@@ -239,9 +239,6 @@ export default function Claim() {
     // setActiveClaimAccount and other dispatch fns are only here for TS. They are safe references.
   }, [account, isSearchUsed, setActiveClaimAccount, setInvestFlowStep, setIsInvestFlowActive])
 
-  const indices = useAllClaimingTransactionIndices()
-  console.log('🚀 ~ file: index.tsx ~ line 229 ~ Claim ~ indices', indices)
-
   return (
     <PageWrapper>
       {/* If claim is confirmed > trigger confetti effect */}
