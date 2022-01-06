@@ -24,9 +24,9 @@ const CLAIMS_REPO_BRANCH = 'main'
 export const CLAIMS_REPO = `https://raw.githubusercontent.com/gnosis/cow-merkle-drop/${CLAIMS_REPO_BRANCH}/`
 
 // TODO: these values came from the test contract, might be different on real deployment
-export const WETH_PRICE = '37500000000000' // '0.0000375' WETH (18 decimals) per vCOW
-export const GNO_PRICE = '375000000000000' // '0.000375' GNO (18 decimals) per vCOW
-export const USDC_PRICE = '150000' // '0.15' USDC (6 decimals) per vCOW
+export const WETH_PRICE = '37500000000000' // '0.0000375' WETH (18 decimals) per vCOW, in wei
+export const GNO_PRICE = '375000000000000' // '0.000375' GNO (18 decimals) per vCOW, in atoms
+export const USDC_PRICE = '150000' // '0.15' USDC (6 decimals) per vCOW, in atoms
 
 // Constants regarding investment time windows
 const ONE_WEEK = 7 * 24 * 60 * 60 * 1000 // in ms
