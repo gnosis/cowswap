@@ -211,10 +211,10 @@ function useDeploymentTimestamp(): number | null {
  *
  * That is, there has been less than 2 weeks since it was deployed
  */
-export function useInvestmentStillAvailable(): boolean | null {
+export function useInvestmentStillAvailable(): boolean {
   const deploymentTimestamp = useDeploymentTimestamp()
 
-  return deploymentTimestamp ? deploymentTimestamp + TWO_WEEKS > Date.now() : null
+  return Boolean(deploymentTimestamp && deploymentTimestamp + TWO_WEEKS > Date.now())
 }
 
 /**
@@ -223,10 +223,10 @@ export function useInvestmentStillAvailable(): boolean | null {
  *
  * That is, there has been less than 6 weeks since it was deployed
  */
-export function useAirdropStillAvailable(): boolean | null {
+export function useAirdropStillAvailable(): boolean {
   const deploymentTimestamp = useDeploymentTimestamp()
 
-  return deploymentTimestamp ? deploymentTimestamp + SIX_WEEKS > Date.now() : null
+  return Boolean(deploymentTimestamp && deploymentTimestamp + SIX_WEEKS > Date.now())
 }
 
 /**
