@@ -113,7 +113,7 @@ export default function Claim() {
   // get total unclaimed ammount
   const unclaimedAmount = useUserUnclaimedAmount(activeClaimAccount)
 
-  const hasClaims = useMemo(() => userClaimData.length, [userClaimData])
+  const hasClaims = useMemo(() => userClaimData.length > 0, [userClaimData])
   const isAirdropOnly = useMemo(() => !hasPaidClaim(userClaimData), [userClaimData])
 
   // handle table select change
