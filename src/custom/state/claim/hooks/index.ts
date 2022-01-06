@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import JSBI from 'jsbi'
+import ms from 'ms.macro'
 import { CurrencyAmount, Token } from '@uniswap/sdk-core'
 import { TransactionResponse } from '@ethersproject/providers'
 
@@ -29,9 +30,8 @@ export const GNO_PRICE = '375000000000000' // '0.000375' GNO (18 decimals) per v
 export const USDC_PRICE = '150000' // '0.15' USDC (6 decimals) per vCOW, in atoms
 
 // Constants regarding investment time windows
-const ONE_WEEK = 7 * 24 * 60 * 60 * 1000 // in ms
-const TWO_WEEKS = 2 * ONE_WEEK // in ms
-const SIX_WEEKS = 6 * ONE_WEEK // in ms
+const TWO_WEEKS = ms`2 weeks`
+const SIX_WEEKS = ms`6 weeks`
 
 const TEN_TO_EIGHTEENTH_POWER = JSBI.exponentiate(JSBI.BigInt('10'), JSBI.BigInt('18'))
 
