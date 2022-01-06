@@ -1,6 +1,7 @@
 import styled from 'styled-components/macro'
 import * as CSS from 'csstype'
 import { FlexWrap as FlexWrapMod } from 'pages/Profile/styled'
+import { transparentize } from 'polished'
 
 export const FlexWrap = styled(FlexWrapMod)`
   max-width: 100%;
@@ -14,7 +15,7 @@ export const ProgressBarWrap = styled(FlexWrapMod)`
 `
 
 export const ProgressContainer = styled.div`
-  background-color: ${({ theme }) => theme.primary1};
+  background-color: ${({ theme }) => transparentize(0.61, theme.text1)};
   height: 16px;
   width: 100% !important;
   position: relative;
@@ -43,9 +44,11 @@ export const Label = styled.a<Partial<CSS.Properties & { position: any }>>`
   font-weight: bold;
   text-decoration: underline;
 
-  &:first-child,
-  &:last-child {
+  &:first-child {
     transform: none;
+  }
+  &:nth-last-child(2) {
+    transform: translateX(-100%);
   }
 
   &:hover {
