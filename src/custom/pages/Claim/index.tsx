@@ -337,9 +337,9 @@ export default function Claim() {
                   {sortedClaimData.map(({ index, type, amount }) => {
                     const isFree = isFreeClaim(type)
                     const currency = typeToCurrencyMap[type] || ''
-                    const vCowPrice = typeToPriceMap[type]
+                    const vCowPrice = typeToPriceMap.get(type)
                     const parsedAmount = parseClaimAmount(amount, chainId)
-                    const cost = vCowPrice * Number(parsedAmount?.toSignificant(6))
+                    const cost = vCowPrice && vCowPrice * Number(parsedAmount?.toSignificant(6))
                     const isPendingClaim = indicesSet.has(index)
 
                     return (
@@ -369,7 +369,7 @@ export default function Claim() {
                         <td width="150px">
                           <CowProtocolLogo size={16} /> {parsedAmount?.toFixed(0, { groupSeparator: ',' })} vCOW
                         </td>
-                        <td>{isFree ? '-' : `${vCowPrice} vCoW per ${currency}`}</td>
+                        <td>{isFree || !vCowPrice ? '-' : `${vCowPrice} vCoW per ${currency}`}</td>
                         <td>{isFree ? <span className="green">Free!</span> : `${cost} ${currency}`}</td>
                         <td>{type === ClaimType.Airdrop ? 'No' : '4 years (linear)'}</td>
                         <td>28 days, 10h, 50m</td>
