@@ -237,6 +237,30 @@ export function useAirdropStillAvailable(): boolean {
 }
 
 /**
+ * Helper function that checks whether selected investment options are still available
+ *
+ * Throws when claims are no longer possible
+ */
+function _validateClaimable(
+  claims: UserClaims,
+  input: ClaimInput[],
+  isInvestmentStillAvailable: boolean,
+  isAirdropStillAvailable: boolean
+): void {
+  if (!isAirdropStillAvailable) {
+    throw new Error(`Contract no longer accepts claims`)
+  }
+
+  input.forEach(({ index }) => {
+    const claim = claims.find((claim) => claim.index === index)
+
+    if (claim && !isInvestmentStillAvailable && PAID_CLAIM_TYPES.includes(claim.type)) {
+      throw new Error(`Contract no longer accepts investment type claims`)
+    }
+  })
+}
+
+/**
  * Hook that returns the claimCallback
  *
  * Different from the original version, the returned callback takes as input a list of ClaimInputs,
@@ -251,6 +275,9 @@ export function useClaimCallback(account: string | null | undefined): {
   const { chainId, account: connectedAccount } = useActiveWeb3React()
   const claims = useUserAvailableClaims(account)
   const vCowContract = useVCowContract()
+
+  const isInvestmentStillAvailable = useInvestmentStillAvailable()
+  const isAirdropStillAvailable = useAirdropStillAvailable()
 
   // used for popup summary
   const addTransaction = useTransactionAdder()
@@ -270,7 +297,8 @@ export function useClaimCallback(account: string | null | undefined): {
         throw new Error("Not initialized, can't claim")
       }
 
-      const { args, totalClaimedAmount } = _getClaimManyArgs({ claimInput, claims, account, connectedAccount })
+      _validateClaimable(claims, claimInput, isInvestmentStillAvailable, isAirdropStillAvailable)
+
       const { args, totalClaimedAmount } = _getClaimManyArgs({ claimInput, claims, account, connectedAccount, chainId })
 
       if (!args) {
