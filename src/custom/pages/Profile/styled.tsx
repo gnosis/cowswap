@@ -221,7 +221,6 @@ export const ProfileFlexCol = styled.div`
 
   span {
     padding: 0 8px;
-    color: white;
   }
 `
 export const ProfileGridWrap = styled(GridWrap)`
@@ -254,5 +253,5 @@ export const VCOWBalance = styled.div`
   justify-content: center;
   border-radius: 12px;
   padding: 8px;
-  background: linear-gradient(315deg, #000000 0%, #000000 55%, #202020 100%);
+  background-color: ${({ theme }) => theme.bg4};
 `
