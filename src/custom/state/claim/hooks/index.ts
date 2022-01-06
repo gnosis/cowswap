@@ -325,7 +325,17 @@ export function useClaimCallback(account: string | null | undefined): {
         })
       })
     },
-    [account, addTransaction, chainId, claims, connectedAccount, vCowContract, vCowToken]
+    [
+      account,
+      addTransaction,
+      chainId,
+      claims,
+      connectedAccount,
+      isAirdropStillAvailable,
+      isInvestmentStillAvailable,
+      vCowContract,
+      vCowToken,
+    ]
   )
 
   return { claimCallback }
