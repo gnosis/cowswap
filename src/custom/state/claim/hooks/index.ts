@@ -23,7 +23,7 @@ export { useUserClaimData } from '@src/state/claim/hooks'
 const CLAIMS_REPO_BRANCH = 'main'
 export const CLAIMS_REPO = `https://raw.githubusercontent.com/gnosis/cow-merkle-drop/${CLAIMS_REPO_BRANCH}/`
 
-export const enum ClaimType {
+export enum ClaimType {
   Airdrop, // free, no vesting, can be available on both mainnet and gchain
   GnoOption, // paid, with vesting, must use GNO, can be available on both mainnet and gchain
   UserOption, // paid, with vesting, must use Native currency, can be available on both mainnet and gchain
@@ -33,16 +33,6 @@ export const enum ClaimType {
 }
 
 type RepoClaimType = keyof typeof ClaimType
-
-// TODO: also, is there a smarter way of doing this?
-export const REVERSE_CLAIM_TYPE_MAPPING: Record<RepoClaimType, ClaimType> = {
-  Airdrop: ClaimType.Airdrop,
-  GnoOption: ClaimType.GnoOption,
-  UserOption: ClaimType.UserOption,
-  Investor: ClaimType.Investor,
-  Team: ClaimType.Team,
-  Advisor: ClaimType.Advisor,
-}
 
 export const FREE_CLAIM_TYPES: ClaimType[] = [ClaimType.Airdrop, ClaimType.Team, ClaimType.Advisor]
 export const PAID_CLAIM_TYPES: ClaimType[] = [ClaimType.GnoOption, ClaimType.UserOption, ClaimType.Investor]
