@@ -9,7 +9,6 @@ import {
   RepoClaims,
   UserClaims,
 } from 'state/claim/hooks/index'
-import { SupportedChainId } from 'constants/chains'
 
 /**
  * Helper function to check whether any claim is an investment option
