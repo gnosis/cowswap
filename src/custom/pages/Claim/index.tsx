@@ -32,6 +32,7 @@ import {
   StepIndicator,
   Steps,
   TokenLogo,
+  ClaimRow,
 } from 'pages/Claim/styled'
 import EligibleBanner from './EligibleBanner'
 import {
@@ -117,6 +118,9 @@ export default function Claim() {
 
   const hasClaims = useMemo(() => userClaimData.length > 0, [userClaimData])
   const isAirdropOnly = useMemo(() => !hasPaidClaim(userClaimData), [userClaimData])
+
+  // get current pending claims set in activities
+  const indicesSet = useAllClaimingTransactionIndices()
 
   // claim type to currency and price map
   const typeToCurrencyMap = useMemo(() => getTypeToCurrencyMap(chainId), [chainId])
@@ -235,8 +239,6 @@ export default function Claim() {
     // setActiveClaimAccount and other dispatch fns are only here for TS. They are safe references.
   }, [account, isSearchUsed, setActiveClaimAccount, setInvestFlowStep, setIsInvestFlowActive])
 
-  const indices = useAllClaimingTransactionIndices()
-
   return (
     <PageWrapper>
       {/* If claim is confirmed > trigger confetti effect */}
@@ -338,19 +340,19 @@ export default function Claim() {
                     const vCowPrice = typeToPriceMap[type]
                     const parsedAmount = parseClaimAmount(amount, chainId)
                     const cost = vCowPrice * Number(parsedAmount?.toSignificant(6))
-                    const isPendingClaim = indices.has(index)
+                    const isPendingClaim = indicesSet.has(index)
 
                     return (
-                      <tr
+                      <ClaimRow
                         key={index}
-                        style={{ cursor: isPendingClaim ? 'pointer' : 'initial' }}
-                        onClick={isPendingClaim ? () => alert('opening activity panel') : undefined}
+                        isPending={isPendingClaim}
+                        onClick={isPendingClaim ? () => console.log('Claim::Opening Orders panel') : undefined}
                       >
                         <td>
                           {' '}
                           {/* User has on going pending claiming transactions? Show the loader */}
                           {isPendingClaim ? (
-                            <CustomLightSpinner src={Circle} alt="loader" size="20px" color="lightgreen" />
+                            <CustomLightSpinner src={Circle} title="Claiming in progress..." alt="loader" size="20px" />
                           ) : (
                             <label className="checkAll">
                               <input
@@ -371,7 +373,7 @@ export default function Claim() {
                         <td>{isFree ? <span className="green">Free!</span> : `${cost} ${currency}`}</td>
                         <td>{type === ClaimType.Airdrop ? 'No' : '4 years (linear)'}</td>
                         <td>28 days, 10h, 50m</td>
-                      </tr>
+                      </ClaimRow>
                     )
                   })}
                 </tbody>
