@@ -175,6 +175,30 @@ export function useUserClaims(account: Account): UserClaims | null {
 }
 
 /**
+ * Fetches from contract the deployment timestamp in ms
+ *
+ * Returns null if in there's no network or vCowContract doesn't exist
+ */
+function useDeploymentTimestamp(): number | null {
+  const { chainId } = useActiveWeb3React()
+  const vCowContract = useVCowContract()
+  const [timestamp, setTimestamp] = useState<number | null>(null)
+
+  useEffect(() => {
+    if (!chainId || !vCowContract) {
+      return
+    }
+
+    vCowContract.deploymentTimestamp().then((ts) => {
+      console.log(`Deployment timestamp in seconds: ${ts.toString()}`)
+      setTimestamp(ts.mul('1000').toNumber())
+    })
+  }, [chainId, vCowContract])
+
+  return timestamp
+}
+
+/**
  * Hook that returns the claimCallback
  *
  * Different from the original version, the returned callback takes as input a list of ClaimInputs,
