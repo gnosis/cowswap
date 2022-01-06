@@ -32,8 +32,8 @@ import NotificationBanner from 'components/NotificationBanner'
 import { SupportedChainId as ChainId } from 'constants/chains'
 import AffiliateStatusCheck from 'components/AffiliateStatusCheck'
 import { useHasOrders } from 'api/gnosisProtocol/hooks'
-import CowProtocolLogo from '@src/custom/components/CowProtocolLogo'
-import { Title } from '@src/custom/components/Page'
+import CowProtocolLogo from 'components/CowProtocolLogo'
+import { Title } from 'components/Page'
 
 export default function Profile() {
   const referralLink = useReferralLink()
