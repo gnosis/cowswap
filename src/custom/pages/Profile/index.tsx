@@ -1,3 +1,6 @@
+import { useHistory } from 'react-router-dom'
+import { Trans } from '@lingui/macro'
+
 import { Txt } from 'assets/styles/styled'
 import {
   FlexCol,
@@ -36,6 +39,9 @@ import { Title } from 'components/Page'
 import { useTokenBalance } from 'state/wallet/hooks'
 import { V_COW } from 'constants/tokens'
 import { AMOUNT_PRECISION } from 'constants/index'
+import { useUserUnclaimedAmount } from 'state/claim/hooks'
+import { UNIWrapper } from 'components/Header/HeaderMod'
+import { VCowButton } from 'components/Header'
 
 export default function Profile() {
   const referralLink = useReferralLink()
@@ -46,6 +52,10 @@ export default function Profile() {
   const hasOrders = useHasOrders(account)
 
   const vCowBalance = useTokenBalance(account || undefined, chainId ? V_COW[chainId] : undefined)
+  const availableClaim = useUserUnclaimedAmount(account)
+
+  const history = useHistory()
+  const handleOnClickClaim = () => history.push('/claim')
 
   const renderNotificationMessages = (
     <>
@@ -65,10 +75,24 @@ export default function Profile() {
   return (
     <Container>
       <ProfileWrapper>
-        <ProfileGridWrap horizontal>
+        {/* TODO: please fix this horrible thing I did */}
+        <ProfileGridWrap horizontal style={{ display: 'flex' }}>
           <CardHead>
             <Title>Profile</Title>
           </CardHead>
+          {availableClaim?.greaterThan('0') && (
+            <VCOWBalance>
+              You have {formatSmart(availableClaim)} vCOW unclaimed
+              <UNIWrapper onClick={handleOnClickClaim}>
+                <VCowButton active>
+                  <>
+                    <CowProtocolLogo />
+                    <Trans>Claim</Trans>
+                  </>
+                </VCowButton>
+              </UNIWrapper>
+            </VCOWBalance>
+          )}
           {vCowBalance && (
             <VCOWBalance>
               <CowProtocolLogo size={46} />
