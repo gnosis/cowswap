@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components/macro'
-import Page, { GdocsListStyle, Title } from 'components/Page'
+import Page, { GdocsListStyle } from 'components/Page'
 import * as CSS from 'csstype'
 import { transparentize } from 'polished'
 import { ExternalLink } from 'theme'
