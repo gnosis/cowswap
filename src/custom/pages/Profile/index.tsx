@@ -28,6 +28,7 @@ import NotificationBanner from 'components/NotificationBanner'
 import { SupportedChainId as ChainId } from 'constants/chains'
 import AffiliateStatusCheck from 'components/AffiliateStatusCheck'
 import { useHasOrders } from 'api/gnosisProtocol/hooks'
+import { ProgressBar } from 'components/ProgressBar'
 
 export default function Profile() {
   const referralLink = useReferralLink()
@@ -185,6 +186,7 @@ export default function Profile() {
           </GridWrap>
           {!account && <Web3Status openOrdersPanel={() => console.log('TODO')} />}
         </GridWrap>
+        <ProgressBar value={25} />
       </Wrapper>
     </Container>
   )
