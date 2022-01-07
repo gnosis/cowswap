@@ -86,14 +86,34 @@ export type RepoClaims = RepoClaimData[]
 /**
  * Gets an array of available claim
  *
+ * By default, it'll filter out claims that are no longer available when the time window is closed
+ * It's possible to ignore the time window and return all unclaimed claims
+ *
  * @param account
+ * @param ignoreTimeWindow
  */
-export function useUserAvailableClaims(account: Account): UserClaims {
+export function useUserAvailableClaims(account: Account, ignoreTimeWindow = false): UserClaims {
   const userClaims = useUserClaims(account)
   const contract = useVCowContract()
 
+  const isInvestmentStillAvailable = useInvestmentStillAvailable()
+  const isAirdropStillAvailable = useAirdropStillAvailable()
+
   // build list of parameters, with the claim index
-  const claimIndexes = useMemo(() => userClaims?.map(({ index }) => [index]) || [], [userClaims])
+  const claimIndexes = useMemo(() => {
+    // exit early if airdrop window is already closed or userClaims is not set
+    if ((!isAirdropStillAvailable && !ignoreTimeWindow) || !userClaims) {
+      return []
+    }
+
+    return (
+      userClaims
+        // Filter out PAID claims if investment window is closed
+        .filter(({ type }) => ignoreTimeWindow || isInvestmentStillAvailable || !PAID_CLAIM_TYPES.includes(type))
+        // Map into a list of indices [[index], [index]...]
+        .map(({ index }) => [index]) || []
+    )
+  }, [ignoreTimeWindow, isAirdropStillAvailable, isInvestmentStillAvailable, userClaims])
 
   // just a note, this line returns an empty array on Mainet but works on Rinkeby
   // So not sure if this is in plan to be implemented or it doesn't work currently
