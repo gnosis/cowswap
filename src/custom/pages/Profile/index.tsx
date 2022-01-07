@@ -23,7 +23,7 @@ import { HelpCircle, RefreshCcw } from 'react-feather'
 import Web3Status from 'components/Web3Status'
 import useReferralLink from 'hooks/useReferralLink'
 import useFetchProfile from 'hooks/useFetchProfile'
-import { formatSmart, numberFormatter } from 'utils/format'
+import { formatMax, formatSmart, numberFormatter } from 'utils/format'
 import { getExplorerAddressLink } from 'utils/explorer'
 import useTimeAgo from 'hooks/useTimeAgo'
 import { MouseoverTooltipContent } from 'components/Tooltip'
@@ -74,7 +74,7 @@ export default function Profile() {
               <CowProtocolLogo size={46} />
               <ProfileFlexCol>
                 <Txt fs={14}>Balance</Txt>
-                <Txt fs={18}>
+                <Txt fs={18} title={`${formatMax(vCowBalance)} vCOW`}>
                   <strong>{formatSmart(vCowBalance, AMOUNT_PRECISION)} vCOW</strong>
                 </Txt>
               </ProfileFlexCol>
