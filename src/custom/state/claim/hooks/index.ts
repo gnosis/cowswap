@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import JSBI from 'jsbi'
+import ms from 'ms.macro'
 import { CurrencyAmount, Token } from '@uniswap/sdk-core'
 import { TransactionResponse } from '@ethersproject/providers'
+import { parseUnits } from '@ethersproject/units'
 
 import { VCow as VCowType } from 'abis/types'
 
@@ -14,13 +16,30 @@ import { V_COW } from 'constants/tokens'
 
 import { formatSmart } from 'utils/format'
 import { calculateGasMargin } from 'utils/calculateGasMargin'
+import { isAddress } from 'utils'
 
-import { fetchClaims } from 'state/claim/hooks/hooksMod'
+import { getClaimKey, getClaimsRepoPath, transformRepoClaimsToUserClaims } from 'state/claim/hooks/utils'
+import { SupportedChainId } from 'constants/chains'
 
-export * from './hooksMod'
+export { useUserClaimData } from '@src/state/claim/hooks'
 
-// TODO: replace with real repo when known
-export const CLAIMS_REPO = 'https://raw.githubusercontent.com/gnosis/cow-mrkl-drop-data-chunks/final/chunks/'
+const CLAIMS_REPO_BRANCH = 'main'
+export const CLAIMS_REPO = `https://raw.githubusercontent.com/gnosis/cow-merkle-drop/${CLAIMS_REPO_BRANCH}/`
+
+// TODO: these values came from the test contract, might be different on real deployment
+// Network variable price
+export const NATIVE_TOKEN_PRICE = {
+  [SupportedChainId.MAINNET]: '37500000000000', // '0.0000375' WETH (18 decimals) per vCOW, in wei
+  [SupportedChainId.RINKEBY]: '37500000000000', // assuming Rinkeby has same price as Mainnet
+  [SupportedChainId.XDAI]: '150000000000000000', // TODO: wild guess, wxDAI is same price as USDC
+}
+// Same on all networks. Actually, likely available only on Mainnet (and Rinkeby)
+export const GNO_PRICE = '375000000000000' // '0.000375' GNO (18 decimals) per vCOW, in atoms
+export const USDC_PRICE = '150000' // '0.15' USDC (6 decimals) per vCOW, in atoms
+
+// Constants regarding investment time windows
+const TWO_WEEKS = ms`2 weeks`
+const SIX_WEEKS = ms`6 weeks`
 
 export enum ClaimType {
   Airdrop, // free, no vesting, can be available on both mainnet and gchain
@@ -74,11 +93,11 @@ export function useUserAvailableClaims(account: Account): UserClaims {
   const contract = useVCowContract()
 
   // build list of parameters, with the claim index
-  const claimIndexes = userClaims?.map(({ index }) => [index]) || []
+  const claimIndexes = useMemo(() => userClaims?.map(({ index }) => [index]) || [], [userClaims])
 
+  // just a note, this line returns an empty array on Mainet but works on Rinkeby
+  // So not sure if this is in plan to be implemented or it doesn't work currently
   const results = useSingleContractMultipleData(contract, 'isClaimed', claimIndexes)
-
-  console.log(`useUserAvailableClaims::re-render`, userClaims, claimIndexes, results)
 
   return useMemo(() => {
     if (!userClaims || userClaims.length === 0) {
@@ -145,7 +164,7 @@ export function useUserClaims(account: Account): UserClaims | null {
       return
     }
 
-    fetchClaims(account)
+    fetchClaims(account, chainId)
       .then((accountClaimInfo) =>
         setClaimInfo((claimInfo) => {
           return {
@@ -168,6 +187,78 @@ export function useUserClaims(account: Account): UserClaims | null {
 }
 
 /**
+ * Fetches from contract the deployment timestamp in ms
+ *
+ * Returns null if in there's no network or vCowContract doesn't exist
+ */
+function useDeploymentTimestamp(): number | null {
+  const { chainId } = useActiveWeb3React()
+  const vCowContract = useVCowContract()
+  const [timestamp, setTimestamp] = useState<number | null>(null)
+
+  useEffect(() => {
+    if (!chainId || !vCowContract) {
+      return
+    }
+
+    vCowContract.deploymentTimestamp().then((ts) => {
+      console.log(`Deployment timestamp in seconds: ${ts.toString()}`)
+      setTimestamp(ts.mul('1000').toNumber())
+    })
+  }, [chainId, vCowContract])
+
+  return timestamp
+}
+
+/**
+ * Returns whether vCOW contract is still open for investments
+ * Null when not applicable
+ *
+ * That is, there has been less than 2 weeks since it was deployed
+ */
+export function useInvestmentStillAvailable(): boolean {
+  const deploymentTimestamp = useDeploymentTimestamp()
+
+  return Boolean(deploymentTimestamp && deploymentTimestamp + TWO_WEEKS > Date.now())
+}
+
+/**
+ * Returns whether vCOW contract is still open for airdrops
+ * Null when not applicable
+ *
+ * That is, there has been less than 6 weeks since it was deployed
+ */
+export function useAirdropStillAvailable(): boolean {
+  const deploymentTimestamp = useDeploymentTimestamp()
+
+  return Boolean(deploymentTimestamp && deploymentTimestamp + SIX_WEEKS > Date.now())
+}
+
+/**
+ * Helper function that checks whether selected investment options are still available
+ *
+ * Throws when claims are no longer possible
+ */
+function _validateClaimable(
+  claims: UserClaims,
+  input: ClaimInput[],
+  isInvestmentStillAvailable: boolean,
+  isAirdropStillAvailable: boolean
+): void {
+  if (!isAirdropStillAvailable) {
+    throw new Error(`Contract no longer accepts claims`)
+  }
+
+  input.forEach(({ index }) => {
+    const claim = claims.find((claim) => claim.index === index)
+
+    if (claim && !isInvestmentStillAvailable && PAID_CLAIM_TYPES.includes(claim.type)) {
+      throw new Error(`Contract no longer accepts investment type claims`)
+    }
+  })
+}
+
+/**
  * Hook that returns the claimCallback
  *
  * Different from the original version, the returned callback takes as input a list of ClaimInputs,
@@ -182,6 +273,9 @@ export function useClaimCallback(account: string | null | undefined): {
   const { chainId, account: connectedAccount } = useActiveWeb3React()
   const claims = useUserAvailableClaims(account)
   const vCowContract = useVCowContract()
+
+  const isInvestmentStillAvailable = useInvestmentStillAvailable()
+  const isAirdropStillAvailable = useAirdropStillAvailable()
 
   // used for popup summary
   const addTransaction = useTransactionAdder()
@@ -201,7 +295,9 @@ export function useClaimCallback(account: string | null | undefined): {
         throw new Error("Not initialized, can't claim")
       }
 
-      const { args, totalClaimedAmount } = _getClaimManyArgs({ claimInput, claims, account, connectedAccount })
+      _validateClaimable(claims, claimInput, isInvestmentStillAvailable, isAirdropStillAvailable)
+
+      const { args, totalClaimedAmount } = _getClaimManyArgs({ claimInput, claims, account, connectedAccount, chainId })
 
       if (!args) {
         throw new Error('There were no valid claims selected')
@@ -227,7 +323,17 @@ export function useClaimCallback(account: string | null | undefined): {
         })
       })
     },
-    [account, addTransaction, chainId, claims, connectedAccount, vCowContract, vCowToken]
+    [
+      account,
+      addTransaction,
+      chainId,
+      claims,
+      connectedAccount,
+      isAirdropStillAvailable,
+      isInvestmentStillAvailable,
+      vCowContract,
+      vCowToken,
+    ]
   )
 
   return { claimCallback }
@@ -238,6 +344,7 @@ type GetClaimManyArgsParams = {
   claims: UserClaims
   account: string
   connectedAccount: string
+  chainId: SupportedChainId
 }
 
 type ClaimManyFnArgs = Parameters<VCowType['claimMany']>
@@ -255,6 +362,7 @@ function _getClaimManyArgs({
   claims,
   account,
   connectedAccount,
+  chainId,
 }: GetClaimManyArgsParams): GetClaimManyArgsResult {
   // Arrays are named according to contract parameters
   // For more info, check https://github.com/gnosis/gp-v2-token/blob/main/src/contracts/mixins/MerkleDistributor.sol#L123
@@ -293,8 +401,8 @@ function _getClaimManyArgs({
       claimedAmounts.push(claimedAmount)
 
       merkleProofs.push(claim.proof)
-      // only used on UserOption, equal to claimedAmount
-      const value = claim.type === ClaimType.UserOption ? claimedAmount : '0'
+      // only used on UserOption
+      const value = _getClaimValue(claim, claimedAmount, chainId)
       sendEth.push(value) // TODO: verify ETH balance < input.amount ?
 
       // sum of claimedAmounts for the toast notification
@@ -364,4 +472,105 @@ function _hasNoInputOrInputIsGreaterThanClaimAmount(
   claim: UserClaimData
 ): input is Required<ClaimInput> {
   return !input.amount || JSBI.greaterThan(JSBI.BigInt(input.amount), JSBI.BigInt(claim.amount))
+}
+
+/**
+ * Calculates native value based on claim vCowAmount and type
+ *
+ * Value will only be != '0' if claim type is UserOption
+ * Assumes the checks were done previously regarding which amounts are allowed
+ *
+ * The calculation is done based on the formula:
+ * vCowAmount * wethPrice / 10^18
+ * See https://github.com/gnosis/gp-v2-token/blob/main/src/contracts/mixins/Claiming.sol#L314-L320
+ */
+function _getClaimValue(claim: UserClaimData, vCowAmount: string, chainId: SupportedChainId): string {
+  if (claim.type !== ClaimType.UserOption) {
+    return '0'
+  }
+
+  const price = NATIVE_TOKEN_PRICE[chainId]
+
+  const claimValueInAtoms = JSBI.multiply(JSBI.BigInt(vCowAmount), JSBI.BigInt(price))
+
+  return parseUnits(claimValueInAtoms.toString(), 18).toString()
+}
+
+type LastAddress = string
+type ClaimAddressMapping = { [firstAddress: string]: LastAddress }
+const FETCH_CLAIM_MAPPING_PROMISES: Record<number, Promise<ClaimAddressMapping> | null> = {}
+
+/**
+ * Customized fetchClaimMapping function
+ */
+function fetchClaimsMapping(chainId: number): Promise<ClaimAddressMapping> {
+  return (
+    FETCH_CLAIM_MAPPING_PROMISES[chainId] ??
+    (FETCH_CLAIM_MAPPING_PROMISES[chainId] = fetch(`${getClaimsRepoPath(chainId)}mapping.json`)
+      .then((res) => res.json())
+      .catch((error) => {
+        console.error(`Failed to get claims mapping for chain ${chainId}`, error)
+        FETCH_CLAIM_MAPPING_PROMISES[chainId] = null
+      }))
+  )
+}
+
+const FETCH_CLAIM_FILE_PROMISES: { [startingAddress: string]: Promise<{ [address: string]: RepoClaims }> } = {}
+
+/**
+ * Customized fetchClaimFile function
+ */
+function fetchClaimsFile(address: string, chainId: number): Promise<{ [address: string]: RepoClaims }> {
+  const key = getClaimKey(address, chainId)
+  return (
+    FETCH_CLAIM_FILE_PROMISES[key] ??
+    (FETCH_CLAIM_FILE_PROMISES[key] = fetch(`${getClaimsRepoPath(chainId)}chunks/${address}.json`) // mod
+      .then((res) => res.json())
+      .catch((error) => {
+        console.error(`Failed to get claim file mapping on chain ${chainId} for starting address ${address}`, error)
+        delete FETCH_CLAIM_FILE_PROMISES[key]
+      }))
+  )
+}
+
+const FETCH_CLAIM_PROMISES: { [key: string]: Promise<UserClaims> } = {}
+
+/**
+ * Customized fetchClaim function
+ * Returns the claim for the given address, or null if not valid
+ */
+function fetchClaims(account: string, chainId: number): Promise<UserClaims> {
+  const formatted = isAddress(account)
+  if (!formatted) return Promise.reject(new Error('Invalid address'))
+
+  const claimKey = getClaimKey(formatted, chainId)
+
+  return (
+    FETCH_CLAIM_PROMISES[claimKey] ??
+    (FETCH_CLAIM_PROMISES[claimKey] = fetchClaimsMapping(chainId)
+      .then((mapping) => {
+        const sorted = Object.keys(mapping).sort((a, b) => (a.toLowerCase() < b.toLowerCase() ? -1 : 1))
+
+        for (const startingAddress of sorted) {
+          const lastAddress = mapping[startingAddress]
+          if (startingAddress.toLowerCase() <= formatted.toLowerCase()) {
+            if (formatted.toLowerCase() <= lastAddress.toLowerCase()) {
+              return startingAddress
+            }
+          } else {
+            throw new Error(`Claim for ${claimKey} was not found in partial search`)
+          }
+        }
+        throw new Error(`Claim for ${claimKey} was not found after searching all mappings`)
+      })
+      .then((address) => fetchClaimsFile(address, chainId))
+      .then((result) => {
+        if (result[formatted]) return transformRepoClaimsToUserClaims(result[formatted]) // mod
+        throw new Error(`Claim for ${claimKey} was not found in claim file!`)
+      })
+      .catch((error) => {
+        console.debug(`Claim fetch failed for ${claimKey}`, error)
+        throw error
+      }))
+  )
 }

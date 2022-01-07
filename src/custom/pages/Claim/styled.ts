@@ -130,6 +130,11 @@ export const ClaimSummary = styled.div`
   }
 `
 
+export const ClaimSummaryTitle = styled.h1`
+  font-size: 1.6rem;
+  margin-left: 15px;
+`
+
 export const IntroDescription = styled.div`
   display: block;
   width: 100%;
@@ -261,6 +266,9 @@ export const ConfirmOrLoadingWrapper = styled.div<{ activeBG: boolean }>`
   padding: 24px;
   color: white;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   background: linear-gradient(315deg, #000000 0%, #000000 55%, #202020 100%);
   /* background: ${({ activeBG }) =>
     activeBG &&
@@ -414,6 +422,21 @@ export const InputField = styled.div`
 
 export const InputError = styled.div`
   color: red;
+`
+
+export const InputErrorText = styled.div`
+  margin: 0 0 24px;
+`
+
+export const InputFieldTitle = styled.div`
+  display: flex;
+  align-items: center;
+  margin: 0 0 12px;
+  font-weight: normal;
+  color: #979797;
+  > b {
+    margin-right: 10px;
+  }
 `
 
 export const CheckAddress = styled.div`
@@ -708,4 +731,9 @@ export const InvestTokenSubtotal = styled.div`
   color: white;
   border-radius: var(--border-radius);
   font-size: 21px;
+`
+
+export const ClaimAccountButtons = styled.div`
+  display: flex;
+  flex-direction: column;
 `
