@@ -83,16 +83,18 @@ type Account = string | null | undefined
 export type UserClaims = UserClaimData[]
 export type RepoClaims = RepoClaimData[]
 
+type ClassifiedUserClaims = {
+  available: UserClaims
+  expired: UserClaims
+  claimed: UserClaims
+}
+
 /**
- * Gets an array of available claim
- *
- * By default, it'll filter out claims that are no longer available when the time window is closed
- * It's possible to ignore the time window and return all unclaimed claims
+ * Gets all user claims, classified
  *
  * @param account
- * @param ignoreTimeWindow
  */
-export function useUserAvailableClaims(account: Account, ignoreTimeWindow = false): UserClaims {
+export function useClassifiedUserClaims(account: Account): ClassifiedUserClaims {
   const userClaims = useUserClaims(account)
   const contract = useVCowContract()
 
@@ -100,42 +102,51 @@ export function useUserAvailableClaims(account: Account, ignoreTimeWindow = fals
   const isAirdropStillAvailable = useAirdropStillAvailable()
 
   // build list of parameters, with the claim index
-  const claimIndexes = useMemo(() => {
-    // exit early if airdrop window is already closed or userClaims is not set
-    if ((!isAirdropStillAvailable && !ignoreTimeWindow) || !userClaims) {
-      return []
-    }
+  // we check for all claims because expired now might have been claimed before
+  const claimIndexes = useMemo(() => userClaims?.map(({ index }) => [index]) || [], [userClaims])
 
-    return (
-      userClaims
-        // Filter out PAID claims if investment window is closed
-        .filter(({ type }) => ignoreTimeWindow || isInvestmentStillAvailable || !PAID_CLAIM_TYPES.includes(type))
-        // Map into a list of indices [[index], [index]...]
-        .map(({ index }) => [index]) || []
-    )
-  }, [ignoreTimeWindow, isAirdropStillAvailable, isInvestmentStillAvailable, userClaims])
-
-  // just a note, this line returns an empty array on Mainet but works on Rinkeby
-  // So not sure if this is in plan to be implemented or it doesn't work currently
   const results = useSingleContractMultipleData(contract, 'isClaimed', claimIndexes)
 
   return useMemo(() => {
+    const available: UserClaims = []
+    const expired: UserClaims = []
+    const claimed: UserClaims = []
+
     if (!userClaims || userClaims.length === 0) {
-      // user has no claims
-      return []
+      return { available, expired, claimed }
     }
 
-    return results.reduce<UserClaims>((acc, result, index) => {
+    results.forEach((result, index) => {
+      const claim = userClaims[index]
+
       if (
         result.valid && // result is valid
         !result.loading && // result is not loading
-        result.result?.[0] === false // result is false, meaning not claimed
+        result.result?.[0] === true // result true means claimed
       ) {
-        acc.push(userClaims[index]) // get the claim not yet claimed
+        claimed.push(claim)
+      } else if (!isAirdropStillAvailable || (!isInvestmentStillAvailable && PAID_CLAIM_TYPES.includes(claim.type))) {
+        expired.push(claim)
+      } else {
+        available.push(claim)
       }
-      return acc
-    }, [])
-  }, [results, userClaims])
+    })
+
+    return { available, expired, claimed }
+  }, [isAirdropStillAvailable, isInvestmentStillAvailable, results, userClaims])
+}
+
+/**
+ * Gets an array of available claims
+ *
+ * Syntactic sugar on top of `useClassifiedUserClaims`
+ *
+ * @param account
+ */
+export function useUserAvailableClaims(account: Account): UserClaims {
+  const { available } = useClassifiedUserClaims(account)
+
+  return available
 }
 
 /**
