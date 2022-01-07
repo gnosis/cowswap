@@ -85,18 +85,6 @@ export const CardHead = styled.div`
   flex-direction: column;
 `
 
-export const StyledTitle = styled(Title)`
-  display: flex;
-  justify-content: flex-start;
-  margin: 0;
-  line-height: 1.21;
-  font-size: 26px;
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    justify-content: center;
-    font-size: 24px;
-  `}
-`
-
 export const StyledTime = styled.p`
   margin: 0;
 `

@@ -6,7 +6,6 @@ import {
   Container,
   GridWrap,
   CardHead,
-  StyledTitle,
   StyledContainer,
   StyledTime,
   ItemTitle,
@@ -80,7 +79,7 @@ export default function Profile() {
       <Wrapper>
         <GridWrap>
           <CardHead>
-            <StyledTitle>Affiliate Program</StyledTitle>
+            <Title>Affiliate Program</Title>
             {account && (
               <Loader isLoading={isLoading}>
                 <StyledContainer>
