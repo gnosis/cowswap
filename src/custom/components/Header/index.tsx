@@ -205,7 +205,7 @@ const UniIcon = styled.div`
   }
 `
 
-const VCowAmount = styled(UNIAmountMod)`
+export const VCowButton = styled(UNIAmountMod)`
   ${({ theme }) => theme.cowToken.background};
   ${({ theme }) => theme.cowToken.boxShadow};
   color: white;
@@ -265,7 +265,7 @@ export default function Header() {
           <NetworkCard />
           <HeaderElement>
             <UNIWrapper onClick={handleOnClickClaim}>
-              <VCowAmount active={!!account} style={{ pointerEvents: 'auto' }}>
+              <VCowButton active={!!account} style={{ pointerEvents: 'auto' }}>
                 {claimTxn && !claimTxn?.receipt ? (
                   <Dots>
                     <Trans>Claiming vCOW...</Trans>
@@ -276,7 +276,7 @@ export default function Header() {
                     <Trans>vCOW</Trans>
                   </>
                 )}
-              </VCowAmount>
+              </VCowButton>
             </UNIWrapper>
             <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
               {account && userEthBalance && (
