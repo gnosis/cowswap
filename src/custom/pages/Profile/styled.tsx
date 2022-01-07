@@ -253,5 +253,6 @@ export const VCOWBalance = styled.div`
   justify-content: center;
   border-radius: 12px;
   padding: 8px;
-  background-color: ${({ theme }) => theme.bg4};
+  ${({ theme }) => theme.neumorphism.boxShadow};
+  background-color: ${({ theme }) => theme.bg7};
 `
