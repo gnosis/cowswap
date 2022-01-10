@@ -1,43 +1,5 @@
 import { createAction } from '@reduxjs/toolkit'
 
-export const enum ActionTypes {
-  // accounts/address
-  setInputAddress = 'setInputAddress',
-  setActiveClaimAccount = 'setActiveClaimAccount',
-  setActiveClaimAccountENS = 'setActiveClaimAccountENS',
-  // claiming
-  setClaimConfirmed = 'setClaimConfirmed',
-  setClaimAttempting = 'setClaimAttempting',
-  setClaimSubmitted = 'setClaimSubmitted',
-  setClaimedAmount = 'setClaimedAmount',
-  // investment
-  setIsInvestFlowActive = 'setIsInvestFlowActive',
-  setInvestFlowStep = 'setInvestFlowStep',
-  // search
-  setIsSearchUsed = 'setIsSearchUsed',
-  // selected claim rows (table/UI)
-  setSelected = 'setSelected',
-  setSelectedAll = 'setSelectedAll',
-}
-
-export type Action =
-  | {
-      type: ActionTypes.setInputAddress | ActionTypes.setActiveClaimAccount | ActionTypes.setActiveClaimAccountENS
-      payload: string
-    }
-  | {
-      type:
-        | ActionTypes.setIsSearchUsed
-        | ActionTypes.setClaimConfirmed
-        | ActionTypes.setClaimAttempting
-        | ActionTypes.setClaimSubmitted
-        | ActionTypes.setIsInvestFlowActive
-        | ActionTypes.setSelectedAll
-      payload: boolean
-    }
-  | { type: ActionTypes.setClaimedAmount | ActionTypes.setInvestFlowStep; payload: number }
-  | { type: ActionTypes.setSelected; payload: number[] }
-
 export type ClaimActions = {
   // account
   setInputAddress: (payload: string) => void
@@ -59,24 +21,23 @@ export type ClaimActions = {
 }
 
 // accounts
-// export const setInputAddress = (payload: string): Action => ({ type: ActionTypes.setInputAddress, payload })
-export const setInputAddress = createAction<string>(ActionTypes.setInputAddress)
-export const setActiveClaimAccount = createAction<string>(ActionTypes.setActiveClaimAccount)
-export const setActiveClaimAccountENS = createAction<string>(ActionTypes.setActiveClaimAccountENS)
+export const setInputAddress = createAction<string>('claim/setInputAddress')
+export const setActiveClaimAccount = createAction<string>('claim/setActiveClaimAccount')
+export const setActiveClaimAccountENS = createAction<string>('claim/setActiveClaimAccountENS')
 
 // search
-export const setIsSearchUsed = createAction<string>(ActionTypes.setIsSearchUsed)
+export const setIsSearchUsed = createAction<boolean>('claim/setIsSearchUsed')
 
 // claiming
-export const setClaimConfirmed = createAction<boolean>(ActionTypes.setClaimConfirmed)
-export const setClaimAttempting = createAction<boolean>(ActionTypes.setClaimAttempting)
-export const setClaimSubmitted = createAction<boolean>(ActionTypes.setClaimSubmitted)
-export const setClaimedAmount = createAction<number>(ActionTypes.setClaimedAmount)
+export const setClaimConfirmed = createAction<boolean>('claim/setClaimConfirmed')
+export const setClaimAttempting = createAction<boolean>('claim/setClaimAttempting')
+export const setClaimSubmitted = createAction<boolean>('claim/setClaimSubmitted')
+export const setClaimedAmount = createAction<number>('claim/setClaimedAmount')
 
 // investing
-export const setIsInvestFlowActive = createAction<boolean>(ActionTypes.setIsInvestFlowActive)
-export const setInvestFlowStep = createAction<number>(ActionTypes.setInvestFlowStep)
+export const setIsInvestFlowActive = createAction<boolean>('claim/setIsInvestFlowActive')
+export const setInvestFlowStep = createAction<number>('claim/setInvestFlowStep')
 
 // claim row selection
-export const setSelected = createAction<number[]>(ActionTypes.setSelected)
-export const setSelectedAll = createAction<boolean>(ActionTypes.setSelectedAll)
+export const setSelected = createAction<number[]>('claim/setSelected')
+export const setSelectedAll = createAction<boolean>('claim/setSelectedAll')

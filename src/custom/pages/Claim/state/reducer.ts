@@ -1,4 +1,18 @@
-import { Action, ActionTypes } from './actions'
+import { createReducer } from '@reduxjs/toolkit'
+import {
+  setActiveClaimAccount,
+  setActiveClaimAccountENS,
+  setClaimAttempting,
+  setClaimConfirmed,
+  setClaimedAmount,
+  setClaimSubmitted,
+  setInputAddress,
+  setInvestFlowStep,
+  setIsInvestFlowActive,
+  setIsSearchUsed,
+  setSelected,
+  setSelectedAll,
+} from './actions'
 
 export const initialState: ClaimState = {
   // address/ENS address
@@ -42,33 +56,42 @@ export type ClaimState = {
   selectedAll: boolean
 }
 
-export default function reducer(state: ClaimState, action: Action): ClaimState {
-  switch (action.type) {
-    case ActionTypes.setInputAddress:
-      return { ...state, inputAddress: action.payload }
-    case ActionTypes.setActiveClaimAccount:
-      return { ...state, activeClaimAccount: action.payload }
-    case ActionTypes.setActiveClaimAccountENS:
-      return { ...state, activeClaimAccountENS: action.payload }
-    case ActionTypes.setIsSearchUsed:
-      return { ...state, isSearchUsed: action.payload }
-    case ActionTypes.setClaimConfirmed:
-      return { ...state, claimConfirmed: action.payload }
-    case ActionTypes.setClaimAttempting:
-      return { ...state, claimAttempting: action.payload }
-    case ActionTypes.setClaimSubmitted:
-      return { ...state, claimSubmitted: action.payload }
-    case ActionTypes.setClaimedAmount:
-      return { ...state, claimedAmount: action.payload }
-    case ActionTypes.setIsInvestFlowActive:
-      return { ...state, isInvestFlowActive: action.payload }
-    case ActionTypes.setInvestFlowStep:
-      return { ...state, investFlowStep: action.payload }
-    case ActionTypes.setSelected:
-      return { ...state, selected: [...state.selected, ...action.payload] }
-    case ActionTypes.setSelectedAll:
-      return { ...state, selectedAll: action.payload }
-    default:
-      throw new Error('[Claim::Reducer] No action detected. Check your action dispatcher.')
-  }
-}
+export default createReducer(initialState, (builder) =>
+  builder
+    .addCase(setInputAddress, (state, { payload }) => {
+      state.inputAddress = payload
+    })
+    .addCase(setActiveClaimAccount, (state, { payload }) => {
+      state.activeClaimAccount = payload
+    })
+    .addCase(setActiveClaimAccountENS, (state, { payload }) => {
+      state.activeClaimAccountENS = payload
+    })
+    .addCase(setIsSearchUsed, (state, { payload }) => {
+      state.isSearchUsed = payload
+    })
+    .addCase(setClaimConfirmed, (state, { payload }) => {
+      state.claimConfirmed = payload
+    })
+    .addCase(setClaimAttempting, (state, { payload }) => {
+      state.claimAttempting = payload
+    })
+    .addCase(setClaimSubmitted, (state, { payload }) => {
+      state.claimSubmitted = payload
+    })
+    .addCase(setClaimedAmount, (state, { payload }) => {
+      state.claimedAmount = payload
+    })
+    .addCase(setIsInvestFlowActive, (state, { payload }) => {
+      state.isInvestFlowActive = payload
+    })
+    .addCase(setInvestFlowStep, (state, { payload }) => {
+      state.investFlowStep = payload
+    })
+    .addCase(setSelected, (state, { payload }) => {
+      state.selected = payload
+    })
+    .addCase(setSelectedAll, (state, { payload }) => {
+      state.selectedAll = payload
+    })
+)
