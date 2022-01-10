@@ -33,6 +33,7 @@ import AffiliateStatusCheck from 'components/AffiliateStatusCheck'
 import { useHasOrders } from 'api/gnosisProtocol/hooks'
 import CowProtocolLogo from 'components/CowProtocolLogo'
 import { Title } from 'components/Page'
+import VCOWdropdown from './VCOWdropdown'
 
 export default function Profile() {
   const referralLink = useReferralLink()
@@ -73,6 +74,7 @@ export default function Profile() {
               </Txt>
             </ProfileFlexCol>
           </VCOWBalance>
+          <VCOWdropdown />
         </ProfileGridWrap>
       </ProfileWrapper>
       {chainId && chainId === ChainId.MAINNET && <AffiliateStatusCheck />}
