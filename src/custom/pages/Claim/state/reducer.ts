@@ -1,4 +1,4 @@
-import { Action } from './actions'
+import { Action, ActionTypes } from './actions'
 
 export const initialState: ClaimState = {
   // address/ENS address
@@ -44,29 +44,29 @@ export type ClaimState = {
 
 export default function reducer(state: ClaimState, action: Action): ClaimState {
   switch (action.type) {
-    case 'setInputAddress':
+    case ActionTypes.setInputAddress:
       return { ...state, inputAddress: action.payload }
-    case 'setActiveClaimAccount':
+    case ActionTypes.setActiveClaimAccount:
       return { ...state, activeClaimAccount: action.payload }
-    case 'setActiveClaimAccountENS':
+    case ActionTypes.setActiveClaimAccountENS:
       return { ...state, activeClaimAccountENS: action.payload }
-    case 'setIsSearchUsed':
+    case ActionTypes.setIsSearchUsed:
       return { ...state, isSearchUsed: action.payload }
-    case 'setClaimConfirmed':
+    case ActionTypes.setClaimConfirmed:
       return { ...state, claimConfirmed: action.payload }
-    case 'setClaimAttempting':
+    case ActionTypes.setClaimAttempting:
       return { ...state, claimAttempting: action.payload }
-    case 'setClaimSubmitted':
+    case ActionTypes.setClaimSubmitted:
       return { ...state, claimSubmitted: action.payload }
-    case 'setClaimedAmount':
+    case ActionTypes.setClaimedAmount:
       return { ...state, claimedAmount: action.payload }
-    case 'setIsInvestFlowActive':
+    case ActionTypes.setIsInvestFlowActive:
       return { ...state, isInvestFlowActive: action.payload }
-    case 'setInvestFlowStep':
+    case ActionTypes.setInvestFlowStep:
       return { ...state, investFlowStep: action.payload }
-    case 'setSelected':
+    case ActionTypes.setSelected:
       return { ...state, selected: [...state.selected, ...action.payload] }
-    case 'setSelectedAll':
+    case ActionTypes.setSelectedAll:
       return { ...state, selectedAll: action.payload }
     default:
       throw new Error('[Claim::Reducer] No action detected. Check your action dispatcher.')
