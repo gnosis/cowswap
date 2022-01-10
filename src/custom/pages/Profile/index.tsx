@@ -6,13 +6,16 @@ import {
   Container,
   GridWrap,
   CardHead,
-  StyledTitle,
   StyledContainer,
   StyledTime,
   ItemTitle,
   ChildWrapper,
   Loader,
   ExtLink,
+  VCOWBalance,
+  ProfileWrapper,
+  ProfileGridWrap,
+  ProfileFlexCol,
 } from 'pages/Profile/styled'
 import { useActiveWeb3React } from 'hooks/web3'
 import Copy from 'components/Copy/CopyMod'
@@ -28,7 +31,10 @@ import NotificationBanner from 'components/NotificationBanner'
 import { SupportedChainId as ChainId } from 'constants/chains'
 import AffiliateStatusCheck from 'components/AffiliateStatusCheck'
 import { useHasOrders } from 'api/gnosisProtocol/hooks'
+import CowProtocolLogo from 'components/CowProtocolLogo'
+import { Title } from 'components/Page'
 import { ProgressBar } from 'components/ProgressBar'
+import { useState } from 'react'
 
 export default function Profile() {
   const referralLink = useReferralLink()
@@ -37,6 +43,7 @@ export default function Profile() {
   const lastUpdated = useTimeAgo(profileData?.lastUpdated)
   const isTradesTooltipVisible = account && chainId == 1 && !!profileData?.totalTrades
   const hasOrders = useHasOrders(account)
+  const [percentage, setPercentage] = useState(0)
 
   const renderNotificationMessages = (
     <>
@@ -55,11 +62,27 @@ export default function Profile() {
 
   return (
     <Container>
+      <ProfileWrapper>
+        <ProfileGridWrap horizontal>
+          <CardHead>
+            <Title>Profile</Title>
+          </CardHead>
+          <VCOWBalance>
+            <CowProtocolLogo size={46} />
+            <ProfileFlexCol>
+              <Txt fs={14}>Balance</Txt>
+              <Txt fs={18}>
+                <strong>102,02 vCOW</strong>
+              </Txt>
+            </ProfileFlexCol>
+          </VCOWBalance>
+        </ProfileGridWrap>
+      </ProfileWrapper>
       {chainId && chainId === ChainId.MAINNET && <AffiliateStatusCheck />}
       <Wrapper>
         <GridWrap>
           <CardHead>
-            <StyledTitle>Profile overview</StyledTitle>
+            <Title>Affiliate Program</Title>
             {account && (
               <Loader isLoading={isLoading}>
                 <StyledContainer>
@@ -186,7 +209,7 @@ export default function Profile() {
           </GridWrap>
           {!account && <Web3Status openOrdersPanel={() => console.log('TODO')} />}
         </GridWrap>
-        <ProgressBar value={25} />
+        <ProgressBar onPercentageClick={() => setPercentage(111)} percentage={percentage} />
       </Wrapper>
     </Container>
   )

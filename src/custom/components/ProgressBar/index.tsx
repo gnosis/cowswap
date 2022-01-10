@@ -1,13 +1,12 @@
-import { useState } from 'react'
 import { ProgressBarWrap, ProgressContainer, Progress, Label, FlexWrap, HiddenRange, ProgressVal } from './styled'
 
 interface progressBarProps {
-  value: number
+  percentage: number // between 0 - 100
+  onPercentageClick: (percentage: number) => void
 }
 
-export function ProgressBar({ value }: progressBarProps) {
-  const [progressVal, setProgressVal] = useState(value)
-  const progressVals = [
+export function ProgressBar({ percentage, onPercentageClick }: progressBarProps) {
+  const statPercentages = [
     {
       value: 0,
       label: '0%',
@@ -29,27 +28,33 @@ export function ProgressBar({ value }: progressBarProps) {
       label: '100%',
     },
   ]
-  const minVal = progressVals[0].value
-  const maxVal = progressVals[progressVals.length - 1].value
+  const minVal = statPercentages[0].value
+  const maxVal = statPercentages[statPercentages.length - 1].value
+
+  if (percentage > 100) {
+    percentage = 100
+  } else {
+    percentage = 0
+  }
 
   return (
     <FlexWrap>
       <ProgressBarWrap>
-        {progressVals.map((item, index) => (
-          <Label position={item.value} onClick={() => setProgressVal(item.value)} key={`${item.value}-${index}`}>
+        {statPercentages.map((item, index) => (
+          <Label position={item.value} onClick={() => onPercentageClick(item.value)} key={`${item.value}-${index}`}>
             {item.label}
           </Label>
         ))}
         <ProgressContainer>
           <HiddenRange
-            onChange={(e) => setProgressVal(parseFloat(e.target.value))}
+            onChange={(e) => onPercentageClick(parseFloat(e.target.value))}
             min={minVal}
             max={maxVal}
-            value={progressVal}
+            value={percentage}
             type="range"
           />
-          <Progress value={progressVal} />
-          <ProgressVal>{progressVal}%</ProgressVal>
+          <Progress percentage={percentage} />
+          <ProgressVal>{percentage}%</ProgressVal>
         </ProgressContainer>
       </ProgressBarWrap>
     </FlexWrap>

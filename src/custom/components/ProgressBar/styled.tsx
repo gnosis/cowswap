@@ -16,7 +16,7 @@ export const ProgressBarWrap = styled(FlexWrapMod)`
 
 export const ProgressContainer = styled.div`
   background-color: ${({ theme }) => transparentize(0.61, theme.text1)};
-  height: 16px;
+  height: 24px;
   width: 100% !important;
   position: relative;
   overflow: hidden;
@@ -31,10 +31,10 @@ export const HiddenRange = styled.input`
   opacity: 0;
 `
 
-export const Progress = styled.div<Partial<CSS.Properties & { value: number }>>`
+export const Progress = styled.div<Partial<CSS.Properties & { percentage: number }>>`
   background-color: ${({ theme }) => theme.primary1};
   width: 100%;
-  max-width: ${(props) => props.value}%;
+  max-width: ${(props) => props.percentage}%;
   position: absolute;
   top: 0;
   left: 0;
@@ -49,12 +49,14 @@ export const ProgressVal = styled.span`
   top: 50%;
   left: 50%;
   transform: translateX(-50%) translateY(-50%);
-  font-size: 12px;
+  font-weight: bold;
+  font-size: 16px;
 `
 
 export const Label = styled.a<Partial<CSS.Properties & { position: any }>>`
   cursor: pointer;
   position: absolute;
+  font-size: 12px;
   color: ${({ theme }) => theme.text1};
   top: 10px;
   left: ${(props) => props.position}%;
