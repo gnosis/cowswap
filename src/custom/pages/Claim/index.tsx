@@ -25,7 +25,6 @@ import {
   IntroDescription,
   ClaimTable,
   ClaimAccount,
-  EligibleBanner,
   InputField,
   CheckAddress,
   ClaimBreakdown,
@@ -47,6 +46,7 @@ import {
   InputFieldTitle,
   ClaimAccountButtons,
 } from 'pages/Claim/styled'
+import EligibleBanner from './EligibleBanner'
 import {
   getTypeToCurrencyMap,
   getTypeToPriceMap,
@@ -277,7 +277,6 @@ export default function Claim() {
   return (
     <ClaimContext.Provider value={{ state, dispatchers }}>
       <PageWrapper>
-        <TestComponent />
         {/* If claim is confirmed > trigger confetti effect */}
         <Confetti start={claimConfirmed} />
         {/* START -- Top nav buttons */}
@@ -306,17 +305,8 @@ export default function Claim() {
         {/* END -- Top nav buttons */}
 
         {/* START - Show general title OR total to claim (user has airdrop or airdrop+investment) --------------------------- */}
-        {!claimAttempting &&
-          !claimConfirmed &&
-          !claimSubmitted &&
-          !!activeClaimAccount &&
-          !!hasClaims &&
-          !isInvestFlowActive && (
-            <EligibleBanner>
-              <CheckIcon />
-              <Trans>This account is eligible for vCOW token claims!</Trans>
-            </EligibleBanner>
-          )}
+        <EligibleBanner hasClaims={hasClaims} />
+
         {!claimAttempting && !claimConfirmed && !claimSubmitted && !isInvestFlowActive && (
           <ClaimSummary>
             <CowProtocolLogo size={100} />
