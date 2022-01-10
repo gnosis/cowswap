@@ -1,3 +1,5 @@
+import { createAction } from '@reduxjs/toolkit'
+
 export const enum ActionTypes {
   // accounts/address
   setInputAddress = 'setInputAddress',
@@ -57,29 +59,24 @@ export type ClaimActions = {
 }
 
 // accounts
-export const setInputAddress = (payload: string): Action => ({ type: ActionTypes.setInputAddress, payload })
-export const setActiveClaimAccount = (payload: string): Action => ({ type: ActionTypes.setActiveClaimAccount, payload })
-export const setActiveClaimAccountENS = (payload: string): Action => ({
-  type: ActionTypes.setActiveClaimAccountENS,
-  payload,
-})
+// export const setInputAddress = (payload: string): Action => ({ type: ActionTypes.setInputAddress, payload })
+export const setInputAddress = createAction<string>(ActionTypes.setInputAddress)
+export const setActiveClaimAccount = createAction<string>(ActionTypes.setActiveClaimAccount)
+export const setActiveClaimAccountENS = createAction<string>(ActionTypes.setActiveClaimAccountENS)
 
 // search
-export const setIsSearchUsed = (payload: boolean): Action => ({ type: ActionTypes.setIsSearchUsed, payload })
+export const setIsSearchUsed = createAction<string>(ActionTypes.setIsSearchUsed)
 
 // claiming
-export const setClaimConfirmed = (payload: boolean): Action => ({ type: ActionTypes.setClaimConfirmed, payload })
-export const setClaimAttempting = (payload: boolean): Action => ({ type: ActionTypes.setClaimAttempting, payload })
-export const setClaimSubmitted = (payload: boolean): Action => ({ type: ActionTypes.setClaimSubmitted, payload })
-export const setClaimedAmount = (payload: number): Action => ({ type: ActionTypes.setClaimedAmount, payload })
+export const setClaimConfirmed = createAction<boolean>(ActionTypes.setClaimConfirmed)
+export const setClaimAttempting = createAction<boolean>(ActionTypes.setClaimAttempting)
+export const setClaimSubmitted = createAction<boolean>(ActionTypes.setClaimSubmitted)
+export const setClaimedAmount = createAction<number>(ActionTypes.setClaimedAmount)
 
 // investing
-export const setIsInvestFlowActive = (payload: boolean): Action => ({
-  type: ActionTypes.setIsInvestFlowActive,
-  payload,
-})
-export const setInvestFlowStep = (payload: number): Action => ({ type: ActionTypes.setInvestFlowStep, payload })
+export const setIsInvestFlowActive = createAction<boolean>(ActionTypes.setIsInvestFlowActive)
+export const setInvestFlowStep = createAction<number>(ActionTypes.setInvestFlowStep)
 
 // claim row selection
-export const setSelected = (payload: number[]): Action => ({ type: ActionTypes.setSelected, payload })
-export const setSelectedAll = (payload: boolean): Action => ({ type: ActionTypes.setSelectedAll, payload })
+export const setSelected = createAction<number[]>(ActionTypes.setSelected)
+export const setSelectedAll = createAction<boolean>(ActionTypes.setSelectedAll)
