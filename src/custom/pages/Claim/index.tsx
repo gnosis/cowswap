@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { useEffect, useMemo, useContext } from 'react'
+import { useEffect, useMemo } from 'react'
 import { Trans } from '@lingui/macro'
 import { useActiveWeb3React } from 'hooks/web3'
 import { ExternalLink, CustomLightSpinner } from 'theme'
@@ -19,7 +18,6 @@ import {
   ConfirmOrLoadingWrapper,
   ConfirmedIcon,
   AttemptFooter,
-  CheckIcon,
   ClaimSummary,
   ClaimTotal,
   IntroDescription,
@@ -65,21 +63,7 @@ import { isAddress } from 'web3-utils'
 import useENS from 'hooks/useENS'
 import { TYPE } from 'theme'
 import { formatSmart } from 'utils/format'
-import useClaimState, { useClaimReducer, ClaimContext } from './state'
-
-function TestComponent() {
-  const { state, dispatchers } = useClaimState()
-  const handleChangeInputAddress = (e: any) => dispatchers?.setInputAddress(e.target.value)
-
-  return (
-    <div>
-      <p>Input Address: {state.inputAddress}</p>
-      <p>
-        <input onChange={handleChangeInputAddress} />
-      </p>
-    </div>
-  )
-}
+import { useClaimReducer, ClaimContext } from './state'
 
 export default function Claim() {
   const { account, chainId } = useActiveWeb3React()
@@ -224,8 +208,8 @@ export default function Claim() {
       setClaimAttempting(true)
 
       claimCallback(inputData)
-        .then((res) => {
-          // this is not right currently
+        // this is not right currently
+        .then((/* res */) => {
           setClaimSubmitted(true)
           setClaimConfirmed(true)
         })
