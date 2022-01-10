@@ -23,8 +23,9 @@ import { SupportedChainId } from 'constants/chains'
 import { registerOnWindow } from 'utils/misc'
 import mockData, { MOCK_INDICES } from './mocks/claimData'
 import { getIndexes } from './utils'
+import { useAllClaimingTransactionIndices } from 'state/enhancedTransactions/hooks'
 
-export { useUserClaimData } from '@src/state/claim/hooks'
+export { useUserClaimData, useUserUnclaimedAmount } from '@src/state/claim/hooks'
 
 import { AppDispatch } from 'state'
 import { useSelector, useDispatch } from 'react-redux'
@@ -191,16 +192,19 @@ export function useUserHasAvailableClaim(account: Account): boolean {
   return availableClaims.length > 0
 }
 
-export function useUserUnclaimedAmount(account: string | null | undefined): CurrencyAmount<Token> | undefined {
+export function useUserUnclaimedCurrentAmount(account: string | null | undefined): CurrencyAmount<Token> | undefined {
   const { chainId } = useActiveWeb3React()
   const claims = useUserAvailableClaims(account)
+  const pendingIndices = useAllClaimingTransactionIndices()
 
   const vCow = chainId ? V_COW[chainId] : undefined
   if (!vCow) return undefined
   if (!claims || claims.length === 0) {
     return CurrencyAmount.fromRawAmount(vCow, JSBI.BigInt(0))
   }
-  const totalAmount = claims.reduce((acc, claim) => {
+
+  const relevant = claims.filter(({ index }) => !pendingIndices.has(index))
+  const totalAmount = relevant.reduce((acc, claim) => {
     return JSBI.add(acc, JSBI.BigInt(claim.amount))
   }, JSBI.BigInt('0'))
 
