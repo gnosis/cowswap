@@ -1,4 +1,5 @@
 import { createAction } from '@reduxjs/toolkit'
+import { CurrencyAmount, Token } from '@uniswap/sdk-core'
 
 export enum ClaimStatus {
   DEFAULT = 'DEFAULT',
@@ -16,7 +17,7 @@ export type ClaimActions = {
   setIsSearchUsed: (payload: boolean) => void
   // claiming
   setClaimStatus: (payload: ClaimStatus) => void
-  setClaimedAmount: (payload: number) => void
+  setClaimedAmount: (payload: CurrencyAmount<Token> | null) => void
   // investing
   setIsInvestFlowActive: (payload: boolean) => void
   setInvestFlowStep: (payload: number) => void
@@ -34,7 +35,7 @@ export const setActiveClaimAccountENS = createAction<string>('claim/setActiveCla
 export const setIsSearchUsed = createAction<boolean>('claim/setIsSearchUsed')
 
 // claiming
-export const setClaimedAmount = createAction<number>('claim/setClaimedAmount')
+export const setClaimedAmount = createAction<CurrencyAmount<Token> | null>('claim/setClaimedAmount')
 export const setClaimStatus = createAction<ClaimStatus>('claim/setClaimStatus')
 
 // investing

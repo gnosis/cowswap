@@ -322,6 +322,7 @@ export function useClaimCallback(account: string | null | undefined): {
   const { chainId, account: connectedAccount } = useActiveWeb3React()
   const claims = useUserAvailableClaims(account)
   const vCowContract = useVCowContract()
+  const { setClaimedAmount } = useClaimDispatchers()
 
   const isInvestmentStillAvailable = useInvestmentStillAvailable()
   const isAirdropStillAvailable = useAirdropStillAvailable()
@@ -354,6 +355,8 @@ export function useClaimCallback(account: string | null | undefined): {
 
       const vCowAmount = CurrencyAmount.fromRawAmount(vCowToken, totalClaimedAmount)
 
+      setClaimedAmount(vCowAmount)
+
       return vCowContract.estimateGas['claimMany'](...args).then((estimatedGas) => {
         // Last item in the array contains the call overrides
         args[args.length - 1] = {
@@ -382,6 +385,7 @@ export function useClaimCallback(account: string | null | undefined): {
       isInvestmentStillAvailable,
       vCowContract,
       vCowToken,
+      setClaimedAmount,
     ]
   )
 
@@ -637,7 +641,7 @@ export function useClaimDispatchers() {
       setIsSearchUsed: (payload: boolean) => dispatch(setIsSearchUsed(payload)),
       // claiming
       setClaimStatus: (payload: ClaimStatus) => dispatch(setClaimStatus(payload)),
-      setClaimedAmount: (payload: number) => dispatch(setClaimedAmount(payload)),
+      setClaimedAmount: (payload: CurrencyAmount<Token> | null) => dispatch(setClaimedAmount(payload)),
       // investing
       setIsInvestFlowActive: (payload: boolean) => dispatch(setIsInvestFlowActive(payload)),
       setInvestFlowStep: (payload: number) => dispatch(setInvestFlowStep(payload)),

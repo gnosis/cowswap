@@ -9,6 +9,7 @@ import {
   useClaimCallback,
   useInvestmentStillAvailable,
   useAirdropStillAvailable,
+  ClaimInput,
 } from 'state/claim/hooks'
 import { ButtonPrimary, ButtonSecondary } from 'components/Button'
 import {
@@ -162,14 +163,34 @@ export default function Claim() {
 
     const freeClaims = getFreeClaims(userClaimData)
 
+    let inputData = null
+
     // check if there are any selected (paid) claims
     if (!selected.length) {
-      const inputData = freeClaims.map(({ index }) => ({ index }))
+      inputData = freeClaims.map(({ index }) => ({ index }))
 
       console.log('starting claiming with', inputData)
+    } else {
+      const inputIndices = [...getIndexes(freeClaims), ...selected]
+      inputData = inputIndices.reduce<ClaimInput[]>((acc, idx: number) => {
+        const claim = userClaimData.find(({ index }) => index === idx)
 
-      setClaimStatus(ClaimStatus.ATTEMPTING)
+        if (claim) {
+          acc.push({
+            amount: claim.amount,
+            index: claim.index,
+          })
+        }
 
+        return acc
+      }, [])
+
+      console.log('starting investment flow', inputData)
+    }
+
+    setClaimStatus(ClaimStatus.ATTEMPTING)
+
+    if (inputData) {
       claimCallback(inputData)
         // this is not right currently
         .then((/* res */) => {
@@ -180,14 +201,9 @@ export default function Claim() {
           setClaimStatus(ClaimStatus.DEFAULT)
           console.log(error)
         })
-    } else {
-      const inputData = [...getIndexes(freeClaims), ...selected].map((idx: number) => {
-        return userClaimData.find(({ index }) => idx === index)
-      })
-      console.log('starting investment flow', inputData)
-      setIsInvestFlowActive(true)
     }
   }
+
   console.log(
     `Claim/index::`,
     `[unclaimedAmount ${unclaimedAmount?.toFixed(2)}]`,

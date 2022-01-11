@@ -1,4 +1,5 @@
 import { createReducer } from '@reduxjs/toolkit'
+import { CurrencyAmount, Token } from '@uniswap/sdk-core'
 import {
   setActiveClaimAccount,
   setActiveClaimAccountENS,
@@ -23,7 +24,7 @@ export const initialState: ClaimState = {
   isSearchUsed: false,
   // claiming
   claimStatus: ClaimStatus.DEFAULT,
-  claimedAmount: 0,
+  claimedAmount: null,
   // investment
   isInvestFlowActive: false,
   investFlowStep: 0,
@@ -42,7 +43,7 @@ export type ClaimState = {
   isSearchUsed: boolean
   // claiming
   claimStatus: ClaimStatus
-  claimedAmount: number
+  claimedAmount: CurrencyAmount<Token> | null
   // investment
   isInvestFlowActive: boolean
   investFlowStep: number
