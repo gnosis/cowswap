@@ -4,8 +4,6 @@ import { useActiveWeb3React } from 'hooks/web3'
 import {
   useUserAvailableClaims,
   useUserUnclaimedAmount,
-  FREE_CLAIM_TYPES,
-  ClaimType,
   useClaimCallback,
   useInvestmentStillAvailable,
   useAirdropStillAvailable,
@@ -14,8 +12,6 @@ import {
 import { ButtonPrimary, ButtonSecondary } from 'components/Button'
 import {
   PageWrapper,
-  ClaimTable,
-  ClaimBreakdown,
   FooterNavButtons,
   InvestFlow,
   InvestContent,
@@ -30,16 +26,7 @@ import {
   TokenLogo,
 } from 'pages/Claim/styled'
 import EligibleBanner from './EligibleBanner'
-import {
-  getTypeToCurrencyMap,
-  getTypeToPriceMap,
-  isFreeClaim,
-  getFreeClaims,
-  hasPaidClaim,
-  parseClaimAmount,
-  getIndexes,
-  getPaidClaims,
-} from 'state/claim/hooks/utils'
+import { getFreeClaims, hasPaidClaim, getIndexes, getPaidClaims } from 'state/claim/hooks/utils'
 import { useWalletModalToggle } from 'state/application/hooks'
 import CowProtocolLogo from 'components/CowProtocolLogo'
 import Confetti from 'components/Confetti'
@@ -52,9 +39,10 @@ import CanUserClaimMessage from './CanUserClaimMessage'
 import { useClaimDispatchers, useClaimState } from 'state/claim/hooks'
 import { ClaimStatus } from 'state/claim/actions'
 import ClaimingStatus from './ClaimingStatus'
+import ClaimsTable from './ClaimsTable'
 
 export default function Claim() {
-  const { account, chainId } = useActiveWeb3React()
+  const { account } = useActiveWeb3React()
   // Maintains state, updates Context Provider below
   // useClaimReducer should only be used here, in nested components use "useClaimState"
 
@@ -72,7 +60,6 @@ export default function Claim() {
     investFlowStep,
     // table select change
     selected,
-    selectedAll,
   } = useClaimState()
 
   const {
@@ -101,20 +88,12 @@ export default function Claim() {
 
   // get user claim data
   const userClaimData = useUserAvailableClaims(activeClaimAccount)
-  const sortedClaimData = useMemo(
-    () => userClaimData.sort((a, b) => +FREE_CLAIM_TYPES.includes(b.type) - +FREE_CLAIM_TYPES.includes(a.type)),
-    [userClaimData]
-  )
 
   // get total unclaimed ammount
   const unclaimedAmount = useUserUnclaimedAmount(activeClaimAccount)
 
   const hasClaims = useMemo(() => userClaimData.length > 0, [userClaimData])
   const isAirdropOnly = useMemo(() => !hasPaidClaim(userClaimData), [userClaimData])
-
-  // claim type to currency and price map
-  const typeToCurrencyMap = useMemo(() => getTypeToCurrencyMap(chainId), [chainId])
-  const typeToPriceMap = useMemo(() => getTypeToPriceMap(), [])
 
   // checks regarding investment time window
   const isInvestmentStillAvailable = useInvestmentStillAvailable()
@@ -256,71 +235,14 @@ export default function Claim() {
       <CanUserClaimMessage hasClaims={hasClaims} isAirdropOnly={isAirdropOnly} />
       {/* Try claiming or inform succesfull claim */}
       <ClaimingStatus />
-
-      {/* START -- IS Airdrop + investing (advanced)  ----------------------------------------------------- */}
-      {!!activeClaimAccount &&
-        !isAirdropOnly &&
-        !!hasClaims &&
-        !isInvestFlowActive &&
-        claimStatus === ClaimStatus.DEFAULT && (
-          <ClaimBreakdown>
-            <h2>vCOW claim breakdown</h2>
-            <ClaimTable>
-              <table>
-                <thead>
-                  <tr>
-                    <th>
-                      <label className="checkAll">
-                        <input checked={selectedAll} onChange={handleSelectAll} type="checkbox" name="check" />
-                      </label>
-                    </th>
-                    <th>Type of Claim</th>
-                    <th>Amount</th>
-                    <th>Price</th>
-                    <th>Cost</th>
-                    <th>Vesting</th>
-                    <th>Ends in</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {sortedClaimData.map(({ index, type, amount }) => {
-                    const isFree = isFreeClaim(type)
-                    const currency = typeToCurrencyMap[type] || ''
-                    const vCowPrice = typeToPriceMap[type]
-                    const parsedAmount = parseClaimAmount(amount, chainId)
-                    const cost = vCowPrice * Number(parsedAmount?.toSignificant(6))
-
-                    return (
-                      <tr key={index}>
-                        <td>
-                          {' '}
-                          <label className="checkAll">
-                            <input
-                              onChange={(event) => handleSelect(event, index)}
-                              type="checkbox"
-                              name="check"
-                              checked={isFree || selected.includes(index)}
-                              disabled={isFree}
-                            />
-                          </label>
-                        </td>
-                        <td>{isFree ? type : `Buy vCOW with ${currency}`}</td>
-                        <td width="150px">
-                          <CowProtocolLogo size={16} /> {parsedAmount?.toFixed(0, { groupSeparator: ',' })} vCOW
-                        </td>
-                        <td>{isFree ? '-' : `${vCowPrice} vCoW per ${currency}`}</td>
-                        <td>{isFree ? <span className="green">Free!</span> : `${cost} ${currency}`}</td>
-                        <td>{type === ClaimType.Airdrop ? 'No' : '4 years (linear)'}</td>
-                        <td>28 days, 10h, 50m</td>
-                      </tr>
-                    )
-                  })}
-                </tbody>
-              </table>
-            </ClaimTable>
-          </ClaimBreakdown>
-        )}
-      {/* END -- IS Airdrop + investing (advanced)  ----------------------------------------------------- */}
+      {/* IS Airdrop + investing (advanced) */}
+      <ClaimsTable
+        isAirdropOnly={isAirdropOnly}
+        userClaimData={userClaimData}
+        handleSelect={handleSelect}
+        handleSelectAll={handleSelectAll}
+        hasClaims={hasClaims}
+      />
 
       {/* START -- Investing vCOW flow (advanced) ----------------------------------------------------- */}
       {!!activeClaimAccount &&
