@@ -1,19 +1,17 @@
 import { Trans } from '@lingui/macro'
 import { ButtonSecondary } from 'components/Button'
 import { ExternalLink } from 'theme'
-import useClaimState from './state'
 import { IntroDescription } from './styled'
 import { ClaimCommonTypes } from './types'
+import { useClaimDispatchers, useClaimState } from 'state/claim/hooks'
 
 type ClaimIntroductionProps = Pick<ClaimCommonTypes, 'hasClaims'> & {
   isAirdropOnly: boolean
 }
 
 export default function CanUserClaimMessage({ hasClaims, isAirdropOnly }: ClaimIntroductionProps) {
-  const {
-    state: { activeClaimAccount, claimAttempting, claimConfirmed },
-    dispatchers,
-  } = useClaimState()
+  const { activeClaimAccount, claimAttempting, claimConfirmed } = useClaimState()
+  const { setActiveClaimAccount } = useClaimDispatchers()
 
   const canClaim = !claimAttempting && !claimConfirmed && hasClaims && isAirdropOnly
 
@@ -38,7 +36,7 @@ export default function CanUserClaimMessage({ hasClaims, isAirdropOnly }: ClaimI
       <IntroDescription>
         <Trans>
           Unfortunately this account is not eligible for any vCOW claims.{' '}
-          <ButtonSecondary onClick={() => dispatchers?.setActiveClaimAccount('')} padding="0">
+          <ButtonSecondary onClick={() => setActiveClaimAccount('')} padding="0">
             Try another account
           </ButtonSecondary>{' '}
           or <ExternalLink href="https://cow.fi/">read more about vCOW</ExternalLink>

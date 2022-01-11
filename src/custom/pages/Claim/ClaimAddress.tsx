@@ -4,19 +4,17 @@ import { ButtonSecondary } from 'components/Button'
 import Circle from 'assets/images/blue-loader.svg'
 import { CustomLightSpinner, TYPE } from 'theme'
 import { CheckAddress, InputField, InputFieldTitle, InputErrorText } from './styled'
-import useClaimState from './state'
 import { ClaimCommonTypes } from './types'
 import useENS from 'hooks/useENS'
+import { useClaimDispatchers, useClaimState } from 'state/claim/hooks'
 
 type ClaimAddressProps = Pick<ClaimCommonTypes, 'account'> & {
   toggleWalletModal: () => void
 }
 
 export default function ClaimAddress({ account, toggleWalletModal }: ClaimAddressProps) {
-  const {
-    state: { activeClaimAccount, claimConfirmed, inputAddress },
-    dispatchers,
-  } = useClaimState()
+  const { activeClaimAccount, claimConfirmed, inputAddress } = useClaimState()
+  const { setInputAddress } = useClaimDispatchers()
 
   const { loading, address: resolvedAddress } = useENS(inputAddress)
 
@@ -30,7 +28,7 @@ export default function ClaimAddress({ account, toggleWalletModal }: ClaimAddres
     const input = event.target.value
     const withoutSpaces = input.replace(/\s+/g, '')
 
-    dispatchers?.setInputAddress(withoutSpaces)
+    setInputAddress(withoutSpaces)
   }
 
   if (activeClaimAccount || claimConfirmed) return null

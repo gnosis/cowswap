@@ -1,7 +1,7 @@
 import { Trans } from '@lingui/macro'
 import CowProtocolLogo from 'components/CowProtocolLogo'
 import { formatSmart } from 'utils/format'
-import useClaimState from './state'
+import { useClaimState } from 'state/claim/hooks'
 import { ClaimSummary as ClaimSummaryWrapper, ClaimSummaryTitle, ClaimTotal } from './styled'
 import { ClaimCommonTypes } from './types'
 
@@ -10,9 +10,7 @@ type ClaimSummaryProps = Pick<ClaimCommonTypes, 'hasClaims'> & {
 }
 
 export default function ClaimSummary({ hasClaims, unclaimedAmount }: ClaimSummaryProps) {
-  const {
-    state: { activeClaimAccount, claimAttempting, claimConfirmed, claimSubmitted, isInvestFlowActive },
-  } = useClaimState()
+  const { activeClaimAccount, claimAttempting, claimConfirmed, claimSubmitted, isInvestFlowActive } = useClaimState()
 
   const hasClaimSummary = !claimAttempting && !claimConfirmed && !claimSubmitted && !isInvestFlowActive
 

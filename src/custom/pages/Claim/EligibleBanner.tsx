@@ -1,11 +1,9 @@
 import { Trans } from '@lingui/macro'
-import useClaimState from './state'
+import { useClaimState } from 'state/claim/hooks'
 import { CheckIcon, EligibleBanner as EligibleBannerWrapper } from './styled'
 
 export default function EligibleBanner({ hasClaims }: { hasClaims: boolean }) {
-  const {
-    state: { claimAttempting, claimConfirmed, claimSubmitted, activeClaimAccount, isInvestFlowActive },
-  } = useClaimState()
+  const { claimAttempting, claimConfirmed, claimSubmitted, activeClaimAccount, isInvestFlowActive } = useClaimState()
 
   const isEligible =
     !claimAttempting && !claimConfirmed && !claimSubmitted && !!activeClaimAccount && !isInvestFlowActive && hasClaims
