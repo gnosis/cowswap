@@ -1,7 +1,6 @@
 import { useEffect, useMemo } from 'react'
 import { Trans } from '@lingui/macro'
 import { useActiveWeb3React } from 'hooks/web3'
-import { ExternalLink, CustomLightSpinner } from 'theme'
 import {
   useUserAvailableClaims,
   useUserUnclaimedAmount,
@@ -12,12 +11,8 @@ import {
   useAirdropStillAvailable,
 } from 'state/claim/hooks'
 import { ButtonPrimary, ButtonSecondary } from 'components/Button'
-import Circle from 'assets/images/blue-loader.svg'
 import {
   PageWrapper,
-  ConfirmOrLoadingWrapper,
-  ConfirmedIcon,
-  AttemptFooter,
   ClaimTable,
   ClaimBreakdown,
   FooterNavButtons,
@@ -49,13 +44,13 @@ import CowProtocolLogo from 'components/CowProtocolLogo'
 import Confetti from 'components/Confetti'
 import { isAddress } from 'web3-utils'
 import useENS from 'hooks/useENS'
-import { formatSmart } from 'utils/format'
 import ClaimNav from './ClaimNav'
 import ClaimSummary from './ClaimSummary'
 import ClaimAddress from './ClaimAddress'
 import CanUserClaimMessage from './CanUserClaimMessage'
 import { useClaimDispatchers, useClaimState } from 'state/claim/hooks'
 import { ClaimStatus } from 'state/claim/actions'
+import ClaimingStatus from './ClaimingStatus'
 
 export default function Claim() {
   const { account, chainId } = useActiveWeb3React()
@@ -71,7 +66,6 @@ export default function Claim() {
     isSearchUsed,
     // claiming
     claimStatus,
-    claimedAmount,
     // investment
     isInvestFlowActive,
     investFlowStep,
@@ -124,11 +118,6 @@ export default function Claim() {
   // checks regarding investment time window
   const isInvestmentStillAvailable = useInvestmentStillAvailable()
   const isAirdropStillAvailable = useAirdropStillAvailable()
-
-  // claim status
-  const isConfirmed = useMemo(() => claimStatus === ClaimStatus.CONFIRMED, [claimStatus])
-  const isAttempting = useMemo(() => claimStatus === ClaimStatus.ATTEMPTING, [claimStatus])
-  const isSubmitted = useMemo(() => claimStatus === ClaimStatus.SUBMITTED, [claimStatus])
 
   // claim callback
   const { claimCallback } = useClaimCallback(activeClaimAccount)
@@ -249,59 +238,8 @@ export default function Claim() {
       <ClaimAddress account={account} toggleWalletModal={toggleWalletModal} />
       {/* Is Airdrop only (simple) - does user have claims? Show messages dependent on claim state */}
       <CanUserClaimMessage hasClaims={hasClaims} isAirdropOnly={isAirdropOnly} />
-
-      {/* START - Try claiming or inform succesfull claim  ---------------------- */}
-      {activeClaimAccount && (isAttempting || isConfirmed) && (
-        <ConfirmOrLoadingWrapper activeBG={true}>
-          <ConfirmedIcon>
-            {!isConfirmed ? (
-              <CustomLightSpinner src={Circle} alt="loader" size={'90px'} />
-            ) : (
-              <CowProtocolLogo size={100} />
-            )}
-          </ConfirmedIcon>
-          <h3>{isConfirmed ? 'Claimed!' : 'Claiming'}</h3>
-          {!isConfirmed && <Trans>{formatSmart(unclaimedAmount)} vCOW</Trans>}
-
-          {isConfirmed && (
-            <>
-              <Trans>
-                <h3>You have successfully claimed</h3>
-              </Trans>
-              <Trans>
-                <p>{claimedAmount} vCOW</p>
-              </Trans>
-              <Trans>
-                <span role="img" aria-label="party-hat">
-                  🎉🐮{' '}
-                </span>
-                Welcome to the COWmunnity! :){' '}
-                <span role="img" aria-label="party-hat">
-                  🐄🎉
-                </span>
-              </Trans>
-            </>
-          )}
-          {isAttempting && (
-            <AttemptFooter>
-              <p>
-                <Trans>Confirm this transaction in your wallet</Trans>
-              </p>
-            </AttemptFooter>
-          )}
-          {isSubmitted && chainId && (
-            // && claimTxn?.hash
-            <ExternalLink
-              // href={getExplorerLink(chainId, claimTxn?.hash, ExplorerDataType.TRANSACTION)}
-              href="#"
-              style={{ zIndex: 99 }}
-            >
-              <Trans>View transaction on Explorer</Trans>
-            </ExternalLink>
-          )}
-        </ConfirmOrLoadingWrapper>
-      )}
-      {/* END -- Try claiming or inform succesfull claim  ----------------------------------------------------- */}
+      {/* Try claiming or inform succesfull claim */}
+      <ClaimingStatus />
 
       {/* START -- IS Airdrop + investing (advanced)  ----------------------------------------------------- */}
       {!!activeClaimAccount &&
