@@ -75,7 +75,11 @@ export default function Profile() {
               <ProfileFlexCol>
                 <Txt fs={14}>Balance</Txt>
                 <Txt fs={18} title={`${formatMax(vCowBalance)} vCOW`}>
-                  <strong>{formatSmart(vCowBalance, AMOUNT_PRECISION) || '0'} vCOW</strong>
+                  <strong>
+                    {formatSmart(vCowBalance, AMOUNT_PRECISION, { thousandSeparator: true, isLocaleAware: true }) ||
+                      '0'}{' '}
+                    vCOW
+                  </strong>
                 </Txt>
               </ProfileFlexCol>
             </VCOWBalance>
