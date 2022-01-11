@@ -32,14 +32,13 @@ import {
   setActiveClaimAccount,
   setActiveClaimAccountENS,
   setIsSearchUsed,
-  setClaimConfirmed,
-  setClaimAttempting,
-  setClaimSubmitted,
+  setClaimStatus,
   setClaimedAmount,
   setIsInvestFlowActive,
   setInvestFlowStep,
   setSelected,
   setSelectedAll,
+  ClaimStatus,
 } from '../actions'
 
 const CLAIMS_REPO_BRANCH = 'main'
@@ -637,9 +636,7 @@ export function useClaimDispatchers() {
       // search
       setIsSearchUsed: (payload: boolean) => dispatch(setIsSearchUsed(payload)),
       // claiming
-      setClaimConfirmed: (payload: boolean) => dispatch(setClaimConfirmed(payload)),
-      setClaimAttempting: (payload: boolean) => dispatch(setClaimAttempting(payload)),
-      setClaimSubmitted: (payload: boolean) => dispatch(setClaimSubmitted(payload)),
+      setClaimStatus: (payload: ClaimStatus) => dispatch(setClaimStatus(payload)),
       setClaimedAmount: (payload: number) => dispatch(setClaimedAmount(payload)),
       // investing
       setIsInvestFlowActive: (payload: boolean) => dispatch(setIsInvestFlowActive(payload)),

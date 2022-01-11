@@ -7,13 +7,14 @@ import { CheckAddress, InputField, InputFieldTitle, InputErrorText } from './sty
 import { ClaimCommonTypes } from './types'
 import useENS from 'hooks/useENS'
 import { useClaimDispatchers, useClaimState } from 'state/claim/hooks'
+import { ClaimStatus } from 'state/claim/actions'
 
 type ClaimAddressProps = Pick<ClaimCommonTypes, 'account'> & {
   toggleWalletModal: () => void
 }
 
 export default function ClaimAddress({ account, toggleWalletModal }: ClaimAddressProps) {
-  const { activeClaimAccount, claimConfirmed, inputAddress } = useClaimState()
+  const { activeClaimAccount, claimStatus, inputAddress } = useClaimState()
   const { setInputAddress } = useClaimDispatchers()
 
   const { loading, address: resolvedAddress } = useENS(inputAddress)
@@ -31,7 +32,7 @@ export default function ClaimAddress({ account, toggleWalletModal }: ClaimAddres
     setInputAddress(withoutSpaces)
   }
 
-  if (activeClaimAccount || claimConfirmed) return null
+  if (activeClaimAccount || claimStatus === ClaimStatus.CONFIRMED) return null
 
   return (
     <CheckAddress>
