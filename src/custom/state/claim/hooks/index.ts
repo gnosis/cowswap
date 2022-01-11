@@ -18,7 +18,7 @@ import { formatSmart } from 'utils/format'
 import { calculateGasMargin } from 'utils/calculateGasMargin'
 import { isAddress } from 'utils'
 
-import { getClaimKey, getClaimsRepoPath, transformRepoClaimsToUserClaims } from 'state/claim/hooks/utils'
+import { getClaimKey, getClaimsRepoPath, isFreeClaim, transformRepoClaimsToUserClaims } from 'state/claim/hooks/utils'
 import { SupportedChainId } from 'constants/chains'
 
 export { useUserClaimData } from '@src/state/claim/hooks'
@@ -26,6 +26,7 @@ export { useUserClaimData } from '@src/state/claim/hooks'
 import { AppDispatch } from 'state'
 import { useSelector, useDispatch } from 'react-redux'
 import { AppState } from 'state'
+import { parseClaimAmount, mapTypeToCurrency, mapTypeToPrice } from 'state/claim/hooks/utils'
 
 import {
   setInputAddress,
@@ -40,6 +41,7 @@ import {
   setSelectedAll,
   ClaimStatus,
 } from '../actions'
+import { ParsedUserClaim } from '@src/custom/pages/Claim/types'
 
 const CLAIMS_REPO_BRANCH = 'main'
 export const CLAIMS_REPO = `https://raw.githubusercontent.com/gnosis/cow-merkle-drop/${CLAIMS_REPO_BRANCH}/`
@@ -655,4 +657,39 @@ export function useClaimDispatchers() {
 
 export function useClaimState() {
   return useSelector((state: AppState) => state.claim)
+}
+
+/**
+ * Gets an array of available claims parsed and sorted for the UI
+ *
+ * Syntactic sugar on top of `userUserAvailableClaims`
+ *
+ * @param account
+ */
+export function useUserAvailableParsedClaims(account: Account): ParsedUserClaim[] {
+  const { available } = useClassifiedUserClaims(account)
+  const { chainId } = useActiveWeb3React()
+
+  const checkType = useCallback((type) => Number(FREE_CLAIM_TYPES.includes(type)), [])
+
+  const sorted = useMemo(() => available.sort((a, b) => checkType(b.type) - checkType(a.type)), [available, checkType])
+
+  const parsed = useMemo(() => {
+    return sorted.map((claim: UserClaimData) => {
+      const parsedAmount = parseClaimAmount(claim.amount, chainId)
+      const price = mapTypeToPrice(claim.type)
+      const cost = price * Number(parsedAmount?.toSignificant(2))
+
+      return {
+        ...claim,
+        parsedAmount: formatSmart(parsedAmount),
+        isFree: isFreeClaim(claim.type),
+        currency: mapTypeToCurrency(claim.type, chainId),
+        price,
+        cost,
+      } as ParsedUserClaim
+    })
+  }, [chainId, sorted])
+
+  return parsed
 }

@@ -1,3 +1,4 @@
+import { UserClaimData } from '@src/custom/state/claim/hooks'
 import { CurrencyAmount, Token } from '@uniswap/sdk-core'
 import { SyntheticEvent } from 'react'
 
@@ -6,4 +7,12 @@ export type ClaimCommonTypes = {
   hasClaims: boolean
   tokenCurrencyAmount: CurrencyAmount<Token>
   handleChangeAccount: (e: SyntheticEvent<HTMLButtonElement>) => void
+}
+
+export type ParsedUserClaim = UserClaimData & {
+  parsedAmount: string
+  isFree: boolean
+  currency: string
+  price: number
+  cost: number
 }

@@ -2,7 +2,7 @@ import { useEffect, useMemo } from 'react'
 import { Trans } from '@lingui/macro'
 import { useActiveWeb3React } from 'hooks/web3'
 import {
-  useUserAvailableClaims,
+  useUserAvailableParsedClaims,
   useUserUnclaimedAmount,
   useClaimCallback,
   useInvestmentStillAvailable,
@@ -87,7 +87,7 @@ export default function Claim() {
   const toggleWalletModal = useWalletModalToggle()
 
   // get user claim data
-  const userClaimData = useUserAvailableClaims(activeClaimAccount)
+  const userClaimData = useUserAvailableParsedClaims(activeClaimAccount)
 
   // get total unclaimed ammount
   const unclaimedAmount = useUserUnclaimedAmount(activeClaimAccount)

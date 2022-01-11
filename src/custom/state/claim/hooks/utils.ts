@@ -61,9 +61,13 @@ export function getFreeClaims(claims: UserClaims): UserClaims {
  *
  */
 export function parseClaimAmount(value: string, chainId: number | undefined): CurrencyAmount<Token> | undefined {
-  const vCow = chainId ? V_COW[chainId || 4] : undefined
-  if (!vCow || !value) return undefined
-  return CurrencyAmount.fromRawAmount(vCow, value)
+  const vCowToken = chainId ? V_COW[chainId] : undefined
+
+  if (!vCowToken || !value) {
+    return undefined
+  }
+
+  return CurrencyAmount.fromRawAmount(vCowToken, value)
 }
 
 export type TypeToCurrencyMapper = {
@@ -75,8 +79,8 @@ export type TypeToCurrencyMapper = {
  *
  * @param chainId
  */
-export function getTypeToCurrencyMap(chainId: number | undefined): TypeToCurrencyMapper {
-  if (!chainId) return {}
+export function mapTypeToCurrency(type: ClaimType, chainId: number | undefined): string {
+  if (!chainId) return ''
 
   const map: TypeToCurrencyMapper = {
     [ClaimType.GnoOption]: 'GNO',
@@ -92,7 +96,7 @@ export function getTypeToCurrencyMap(chainId: number | undefined): TypeToCurrenc
     map[ClaimType.UserOption] = 'XDAI'
   }
 
-  return map
+  return map[type]
 }
 
 export type TypeToPriceMapper = {
@@ -104,7 +108,7 @@ export type TypeToPriceMapper = {
  *
  * @param type
  */
-export function getTypeToPriceMap(): TypeToPriceMapper {
+export function mapTypeToPrice(type: ClaimType): number {
   // Hardcoded values
   const map: TypeToPriceMapper = {
     [ClaimType.GnoOption]: 16.66,
@@ -112,7 +116,7 @@ export function getTypeToPriceMap(): TypeToPriceMapper {
     [ClaimType.UserOption]: 36.66,
   }
 
-  return map
+  return map[type]
 }
 
 /**
