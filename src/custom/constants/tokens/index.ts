@@ -24,7 +24,6 @@ export const ADDRESS_IMAGE_OVERRIDE = {
   [USDC_XDAI.address]: getTrustImage(USDC.address),
   // [USDT_XDAI.address]: getTrustImage(USDT.address),
   [WBTC_XDAI.address]: getTrustImage(WBTC.address),
-  [WXDAI.address]:
-    'https://raw.githubusercontent.com/1Hive/default-token-list/master/src/assets/xdai/0xe91d153e0b41518a2ce8dd3d7944fa863463a97d/logo.png',
+  [WXDAI.address]: 'assets/images/wxdai.png',
   [WETH_XDAI.address]: getTrustImage(WETH_ADDRESS_MAINNET),
 }
