@@ -74,11 +74,7 @@ const MAX_GNO_UINT256 = CurrencyAmount.fromRawAmount(GNO[SupportedChainId.RINKEB
 const GNO_CLAIM_APPROVE_MESSAGE = 'Approving GNO for investing in vCOW'
 
 export default function Claim() {
-  const { chainId } = useActiveWeb3React()
-  // TODO: remove
-  const account = '0x97EC4fcD5F78cA6f6E4E1EAC6c0Ec8421bA518B7'
-  // Maintains state, updates Context Provider below
-  // useClaimReducer should only be used here, in nested components use "useClaimState"
+  const { account, chainId } = useActiveWeb3React()
 
   const {
     // address/ENS address
