@@ -4,7 +4,7 @@ import { useActiveWeb3React } from 'hooks/web3'
 import { ExternalLink, CustomLightSpinner } from 'theme'
 import {
   useUserAvailableClaims,
-  useUserUnclaimedCurrentAmount,
+  useUserUnclaimedAmount,
   FREE_CLAIM_TYPES,
   ClaimType,
   useClaimCallback,
@@ -114,7 +114,7 @@ export default function Claim() {
   )
 
   // get total unclaimed ammount
-  const unclaimedAmount = useUserUnclaimedCurrentAmount(activeClaimAccount)
+  const unclaimedAmount = useUserUnclaimedAmount(activeClaimAccount)
 
   const hasClaims = useMemo(() => userClaimData.length > 0, [userClaimData])
   const isAirdropOnly = useMemo(() => !hasPaidClaim(userClaimData), [userClaimData])
