@@ -265,7 +265,7 @@ function useDeploymentTimestamp(): number | null {
 export function useInvestmentDeadline(): number | null {
   const deploymentTimestamp = useDeploymentTimestamp()
 
-  return deploymentTimestamp ? deploymentTimestamp + TWO_WEEKS : null
+  return deploymentTimestamp && deploymentTimestamp + TWO_WEEKS
 }
 
 /**
@@ -284,7 +284,7 @@ export function useInvestmentStillAvailable(): boolean {
 export function useAirdropDeadline(): number | null {
   const deploymentTimestamp = useDeploymentTimestamp()
 
-  return deploymentTimestamp ? deploymentTimestamp + SIX_WEEKS : null
+  return deploymentTimestamp && deploymentTimestamp + SIX_WEEKS
 }
 
 /**
