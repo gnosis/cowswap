@@ -1,4 +1,4 @@
-import { CurrencyAmount, Token } from '@uniswap/sdk-core'
+import { Currency, CurrencyAmount, Price, Token } from '@uniswap/sdk-core'
 import { SupportedChainId } from 'constants/chains'
 import { V_COW } from 'constants/tokens'
 import {
@@ -6,9 +6,12 @@ import {
   ClaimType,
   ClaimTypePriceMap,
   FREE_CLAIM_TYPES,
+  GNO_PRICE,
+  NATIVE_TOKEN_PRICE,
   PAID_CLAIM_TYPES,
   RepoClaims,
   TypeToPriceMapper,
+  USDC_PRICE,
   UserClaims,
 } from 'state/claim/hooks/index'
 
@@ -150,4 +153,26 @@ function _repoNetworkIdMapping(id: SupportedChainId): string {
  */
 export function getClaimKey(account: string, chainId: number): string {
   return `${chainId}:${account}`
+}
+
+export type PaidClaimTypeToPriceMap = {
+  [type in ClaimType]: Price<Currency, Currency> | undefined
+}
+
+/**
+ * Helper function to get vCow price based on claim type and chainId
+ *
+ * @param type
+ */
+export function mapTypeToPrice(type: ClaimType, chainId: SupportedChainId) {
+  const map: PaidClaimTypeToPriceMap = {
+    [ClaimType.Advisor]: undefined, // free
+    [ClaimType.Airdrop]: undefined, // free
+    [ClaimType.Team]: undefined, // free
+    [ClaimType.GnoOption]: GNO_PRICE,
+    [ClaimType.Investor]: USDC_PRICE,
+    [ClaimType.UserOption]: NATIVE_TOKEN_PRICE[chainId],
+  }
+
+  return map[type]
 }
