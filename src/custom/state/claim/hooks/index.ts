@@ -87,7 +87,7 @@ export const NATIVE_TOKEN_PRICE: { [chain in SupportedChainId]: Price<Currency, 
 // '0.000375' GNO (18 decimals) per vCOW, in atoms
 export const GNO_PRICE = new Price({
   baseAmount: ONE_VCOW,
-  quoteAmount: CurrencyAmount.fromRawAmount(GNO[SupportedChainId.MAINNET], '37500000000000000'),
+  quoteAmount: CurrencyAmount.fromRawAmount(GNO[SupportedChainId.MAINNET], '375000000000000'),
 }).invert()
 
 // '0.15' USDC (6 decimals) per vCOW, in atoms
