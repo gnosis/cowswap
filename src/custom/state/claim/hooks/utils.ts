@@ -15,6 +15,7 @@ import {
   GNO_SYMBOL,
   USDC_SYMBOL,
 } from 'state/claim/hooks/index'
+import { USDC, GNO } from 'constants/tokens'
 
 /**
  * Helper function to check whether any claim is an investment option
@@ -66,14 +67,33 @@ export function getFreeClaims(claims: UserClaims): UserClaims {
  * Helper function to transform claim data amount to CurrencyAmount
  *
  */
-export function parseClaimAmount(value: string, chainId: number | undefined): CurrencyAmount<Token> | undefined {
-  const vCowToken = chainId ? V_COW[chainId] : undefined
+export function parseClaimAmount(
+  value: string,
+  chainId: number | undefined,
+  type?: ClaimType
+): CurrencyAmount<Token> | undefined {
+  if (!chainId) return undefined
 
-  if (!vCowToken || !value) {
+  let token = V_COW[chainId]
+
+  if (type) {
+    switch (type) {
+      case ClaimType.GnoOption:
+        token = GNO[chainId]
+        break
+      case ClaimType.Investor:
+        token = USDC
+        break
+      default:
+        break
+    }
+  }
+
+  if (!token || !value) {
     return undefined
   }
 
-  return CurrencyAmount.fromRawAmount(vCowToken, value)
+  return CurrencyAmount.fromRawAmount(token, value)
 }
 
 export type TypeToCurrencyMapper = {
@@ -118,7 +138,7 @@ export function mapTypeToPrice(
     [ClaimType.UserOption]: NATIVE_TOKEN_PRICE[chainId],
   }
 
-  return parseClaimAmount(map[type], chainId)
+  return parseClaimAmount(map[type], chainId, type)
 }
 
 /**

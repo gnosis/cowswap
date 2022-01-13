@@ -689,7 +689,14 @@ export function useUserAvailableParsedClaims(account: Account): UserClaimDataDet
       const currencyAmount = parseClaimAmount(claim.amount, chainId)
       const price = mapTypeToPrice(claim.type, chainId)
       const currency = mapTypeToCurrency(claim.type, chainId)
-      const cost = price && currencyAmount && Number(formatSmart(price)) * Number(formatSmart(currencyAmount))
+
+      let cost = undefined
+      const n = claim.type === ClaimType.Investor ? 6 : 18
+      const divider = JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(n))
+
+      if (price && currencyAmount) {
+        cost = currencyAmount.multiply(price).divide(divider)
+      }
 
       return {
         ...claim,

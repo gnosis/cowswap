@@ -48,7 +48,7 @@ const ClaimsTableRow = ({
         <CowProtocolLogo size={16} /> {formatSmart(currencyAmount) || 0} vCOW
       </td>
       <td>{isFree || !price ? '-' : `${formatSmart(price) || 0} vCoW per ${currency}`}</td>
-      <td>{isFree ? <span className="green">Free!</span> : `${cost || 0} ${currency}`}</td>
+      <td>{isFree ? <span className="green">Free!</span> : `${formatSmart(cost) || 0} ${currency}`}</td>
       <td>{type === ClaimType.Airdrop ? 'No' : '4 years (linear)'}</td>
       <td>28 days, 10h, 50m</td>
     </tr>
