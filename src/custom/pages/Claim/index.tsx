@@ -34,14 +34,11 @@ import useTransactionConfirmationModal from 'hooks/useTransactionConfirmationMod
 
 import { GNO } from 'constants/tokens'
 import { CurrencyAmount, MaxUint256 } from '@uniswap/sdk-core'
-import { SupportedChainId } from 'constants/chains'
 
-// Max approve amount
-const MAX_GNO_UINT256 = CurrencyAmount.fromRawAmount(GNO[SupportedChainId.RINKEBY], MaxUint256)
 const GNO_CLAIM_APPROVE_MESSAGE = 'Approving GNO for investing in vCOW'
 
 export default function Claim() {
-  const { account } = useActiveWeb3React()
+  const { account, chainId } = useActiveWeb3React()
 
   const {
     // address/ENS address
@@ -208,8 +205,9 @@ export default function Claim() {
   const [approveState, approveCallback] = useApproveCallbackFromClaim(
     () => openModal(GNO_CLAIM_APPROVE_MESSAGE, OperationType.APPROVE_TOKEN),
     closeModal,
+    // TODO: this will break switching to Mainnet as GNO is not set to work outside rinkeby right now
     // approve max unit256 amount
-    MAX_GNO_UINT256
+    chainId && GNO[chainId] ? CurrencyAmount.fromRawAmount(GNO[chainId], MaxUint256) : undefined
   )
 
   return (
