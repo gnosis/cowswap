@@ -59,18 +59,19 @@ import { useClaimDispatchers, useClaimState } from 'state/claim/hooks'
 import { ClaimStatus } from 'state/claim/actions'
 import { useAllClaimingTransactionIndices } from 'state/enhancedTransactions/hooks'
 
-import { useApproveCallbackFromClaim } from 'hooks/useApproveCallback'
+import { ApprovalState, useApproveCallbackFromClaim } from 'hooks/useApproveCallback'
 import { OperationType } from 'components/TransactionConfirmationModal'
-import { tryParseAmount } from 'state/swap/hooks'
 import useTransactionConfirmationModal from 'hooks/useTransactionConfirmationModal'
-import useRemainingAllowanceToApprove from 'hooks/useRemainingAllowanceToApprove'
 
-import { V_COW_CONTRACT_ADDRESS } from 'constants/index'
 import { GNO } from 'constants/tokens'
 import { CurrencyAmount, MaxUint256 } from '@uniswap/sdk-core'
 import { SupportedChainId } from 'constants/chains'
+import { CheckCircle } from 'react-feather'
+import Row from 'components/Row'
 
+// Max approve amount
 const MAX_GNO_UINT256 = CurrencyAmount.fromRawAmount(GNO[SupportedChainId.RINKEBY], MaxUint256)
+const GNO_CLAIM_APPROVE_MESSAGE = 'Approving GNO for investing in vCOW'
 
 export default function Claim() {
   const { chainId } = useActiveWeb3React()
@@ -259,21 +260,11 @@ export default function Claim() {
     OperationType.APPROVE_TOKEN
   )
 
-  // TODO: get actual amount
-  const amountToApprove = tryParseAmount('2500', chainId ? GNO[chainId] : undefined)
-  const GNO_CLAIM_APPROVE_MESSAGE = 'Approving GNO for investing in vCOW'
-
-  // get users allowance, and remaining allowance (currentAllowance - amountToInvest)
-  // remainingAllowanceToApprove = undefined if user has never approved OR does not have enough allowance to cover amount proposed
-  const { allowance, needsApproval } = useRemainingAllowanceToApprove({
-    amountToApprove,
-    spender: chainId ? V_COW_CONTRACT_ADDRESS[chainId] : undefined,
-  })
-
-  const [, approveCallback] = useApproveCallbackFromClaim(
+  const [approveState, approveCallback] = useApproveCallbackFromClaim(
     () => openModal(GNO_CLAIM_APPROVE_MESSAGE, OperationType.APPROVE_TOKEN),
     closeModal,
-    needsApproval ? MAX_GNO_UINT256 : undefined
+    // approve max unit256 amount
+    MAX_GNO_UINT256
   )
 
   const handleApproveGno = () => approveCallback()
@@ -468,8 +459,18 @@ export default function Claim() {
                       </span>
                       <span>
                         <b>Token approval</b>
-                        <i>{needsApproval ? 'GNO not approved' : `Current GNO allowance: ${allowance?.toExact()}`}</i>
-                        {needsApproval && <button onClick={handleApproveGno}>Approve GNO</button>}
+                        <i>
+                          {approveState === ApprovalState.NOT_APPROVED ? (
+                            'GNO not approved'
+                          ) : (
+                            <Row>
+                              GNO approved <CheckCircle color="lightgreen" style={{ marginLeft: 5 }} />
+                            </Row>
+                          )}
+                        </i>
+                        {approveState === ApprovalState.NOT_APPROVED && (
+                          <button onClick={handleApproveGno}>Approve GNO</button>
+                        )}
                       </span>
                       <span>
                         <b>Max. investment available</b> <i>2,500.04 GNO</i>
@@ -515,7 +516,11 @@ export default function Claim() {
                       </span>
                       <span>
                         <b>Token approval</b>
-                        <i>Not needed for ETH!</i>
+                        <i>
+                          <Row>
+                            Not required for ETH! <CheckCircle color="lightgreen" style={{ marginLeft: 5 }} />
+                          </Row>
+                        </i>
                       </span>
                       <span>
                         <b>Max. investment available</b> <i>2,500.04 ETH</i>
