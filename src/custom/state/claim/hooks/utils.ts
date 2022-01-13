@@ -164,15 +164,15 @@ export type PaidClaimTypeToPriceMap = {
  *
  * @param type
  */
-export function mapTypeToTokenAndAmount(type: ClaimType, chainId: SupportedChainId) {
-  const map: PaidClaimTypeToPriceMap = {
-    [ClaimType.Advisor]: undefined, // free
-    [ClaimType.Airdrop]: undefined, // free
-    [ClaimType.Team]: undefined, // free
-    [ClaimType.GnoOption]: { token: GNO[chainId], amount: GNO_PRICE },
-    [ClaimType.Investor]: { token: USDC, amount: USDC_PRICE },
-    [ClaimType.UserOption]: { token: WETH9_EXTENDED[chainId], amount: NATIVE_TOKEN_PRICE[chainId] },
+export function claimTypeToTokenAmount(type: ClaimType, chainId: SupportedChainId) {
+  switch (type) {
+    case ClaimType.GnoOption:
+      return { token: GNO[chainId], amount: GNO_PRICE }
+    case ClaimType.Investor:
+      return { token: USDC, amount: USDC_PRICE }
+    case ClaimType.UserOption:
+      return { token: WETH9_EXTENDED[chainId], amount: NATIVE_TOKEN_PRICE[chainId] }
+    default:
+      return undefined
   }
-
-  return map[type]
 }

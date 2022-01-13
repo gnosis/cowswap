@@ -22,7 +22,7 @@ import {
   getClaimKey,
   getClaimsRepoPath,
   isFreeClaim,
-  mapTypeToTokenAndAmount,
+  claimTypeToTokenAmount,
   transformRepoClaimsToUserClaims,
 } from 'state/claim/hooks/utils'
 import { SupportedChainId } from 'constants/chains'
@@ -757,7 +757,7 @@ export function useUserEnhancedClaimData(account: Account): EnhancedUserClaimDat
     if (!chainId) return []
 
     return sorted.reduce<EnhancedUserClaimData[]>((acc, claim) => {
-      const tokenAndAmount = mapTypeToTokenAndAmount(claim.type, chainId)
+      const tokenAndAmount = claimTypeToTokenAmount(claim.type, chainId)
 
       if (!tokenAndAmount) return acc
 
