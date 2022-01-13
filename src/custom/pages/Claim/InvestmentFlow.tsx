@@ -16,18 +16,35 @@ import { useClaimState } from 'state/claim/hooks'
 import { ClaimCommonTypes } from './types'
 import { ClaimStatus } from 'state/claim/actions'
 import { useActiveWeb3React } from 'hooks/web3'
+import { ApprovalState } from 'hooks/useApproveCallback'
+import { CheckCircle } from 'react-feather'
+import Row from 'components/Row'
 
 type InvestmentFlowProps = Pick<ClaimCommonTypes, 'hasClaims'> & {
   isAirdropOnly: boolean
+  approveState: ApprovalState
+  approveCallback: () => void
 }
 
-export default function InvestmentFlow({ hasClaims, isAirdropOnly }: InvestmentFlowProps) {
+export default function InvestmentFlow({
+  hasClaims,
+  isAirdropOnly,
+  approveState,
+  approveCallback,
+}: InvestmentFlowProps) {
   const { account } = useActiveWeb3React()
 
   const { activeClaimAccount, claimStatus, isInvestFlowActive, investFlowStep } = useClaimState()
 
-  if (!activeClaimAccount || !hasClaims || !isInvestFlowActive) return null
-  if (claimStatus !== ClaimStatus.DEFAULT || isAirdropOnly) return null
+  if (
+    !activeClaimAccount || // no connected account
+    !hasClaims || // no claims
+    !isInvestFlowActive || // not on correct step (account change in mid step)
+    claimStatus !== ClaimStatus.DEFAULT || // not in default claim state
+    isAirdropOnly // is only for airdrop
+  ) {
+    return null
+  }
 
   return (
     <InvestFlow>
@@ -68,8 +85,18 @@ export default function InvestmentFlow({ hasClaims, isAirdropOnly }: InvestmentF
                 </span>
                 <span>
                   <b>Token approval</b>
-                  <i>GNO not approved</i>
-                  <button>Approve GNO</button>
+                  <i>
+                    {approveState === ApprovalState.NOT_APPROVED ? (
+                      'GNO not approved'
+                    ) : (
+                      <Row>
+                        GNO approved <CheckCircle color="lightgreen" style={{ marginLeft: 5 }} />
+                      </Row>
+                    )}
+                  </i>
+                  {approveState === ApprovalState.NOT_APPROVED && (
+                    <button onClick={approveCallback}>Approve GNO</button>
+                  )}
                 </span>
                 <span>
                   <b>Max. investment available</b> <i>2,500.04 GNO</i>
@@ -115,7 +142,11 @@ export default function InvestmentFlow({ hasClaims, isAirdropOnly }: InvestmentF
                 </span>
                 <span>
                   <b>Token approval</b>
-                  <i>Not needed for ETH!</i>
+                  <i>
+                    <Row>
+                      Not required for ETH! <CheckCircle color="lightgreen" style={{ marginLeft: 5 }} />
+                    </Row>
+                  </i>
                 </span>
                 <span>
                   <b>Max. investment available</b> <i>2,500.04 ETH</i>

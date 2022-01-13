@@ -247,7 +247,12 @@ export default function Claim() {
         hasClaims={hasClaims}
       />
       {/* Investing vCOW flow (advanced) */}
-      <InvestmentFlow isAirdropOnly={isAirdropOnly} hasClaims={hasClaims} />
+      <InvestmentFlow
+        isAirdropOnly={isAirdropOnly}
+        hasClaims={hasClaims}
+        approveCallback={approveCallback}
+        approveState={approveState}
+      />
 
       <FooterNavButtons>
         {/* General claim vCOW button  (no invest) */}
