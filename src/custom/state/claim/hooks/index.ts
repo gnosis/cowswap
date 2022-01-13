@@ -260,12 +260,23 @@ function useDeploymentTimestamp(): number | null {
 }
 
 /**
+ * Returns the timestamp of when the investment window closes
+ */
+export function useInvestmentDeadline(): number | null {
+  const deploymentTimestamp = useDeploymentTimestamp()
+
+  return deploymentTimestamp ? deploymentTimestamp + TWO_WEEKS : null
+}
+
+/**
  * Returns whether vCOW contract is still open for investments
- * Null when not applicable
- *
  * That is, there has been less than 2 weeks since it was deployed
  */
 export function useInvestmentStillAvailable(): boolean {
+  const investmentDeadline = useInvestmentDeadline()
+
+  return Boolean(investmentDeadline && investmentDeadline > Date.now())
+}
   const deploymentTimestamp = useDeploymentTimestamp()
 
   return Boolean(deploymentTimestamp && deploymentTimestamp + TWO_WEEKS > Date.now())
