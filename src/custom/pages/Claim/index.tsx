@@ -8,6 +8,7 @@ import {
   useClaimCallback,
   useInvestmentStillAvailable,
   useAirdropStillAvailable,
+  UserClaims,
 } from 'state/claim/hooks'
 import { ButtonPrimary, ButtonSecondary } from 'components/Button'
 import { PageWrapper, FooterNavButtons } from 'pages/Claim/styled'
@@ -157,11 +158,33 @@ export default function Claim() {
           console.log(error)
         })
     } else {
-      const inputData = [...getIndexes(freeClaims), ...selected].map((idx: number) => {
-        return userClaimData.find(({ index }) => idx === index)
-      })
+      const inputData = [...getIndexes(freeClaims), ...selected].reduce<UserClaims>((acc, idx) => {
+        const claim = userClaimData.find(({ index }) => idx === index)
+        // filter out potentially invalid claims
+        if (claim) {
+          acc.push(claim)
+        }
+        return acc
+      }, [])
       console.log('starting investment flow', inputData)
       setIsInvestFlowActive(true)
+
+      // TODO: this whole logic might be wrong, I'm not really checking it right now
+      setClaimStatus(ClaimStatus.ATTEMPTING)
+
+      // TODO: sort of duplicate, can be refactored later
+      // TODO: for now just for testing the claim
+      claimCallback(inputData)
+        .then((hash) => {
+          // `hash` is the hash of the claim tx. We might want to show that to the user or something like that
+          console.info(`Claim executed with the hash ${hash}`)
+          setInvestFlowStep(3) // TODO: this was the action define before. should we still call it here?
+          setClaimStatus(ClaimStatus.SUBMITTED)
+        })
+        .catch((error) => {
+          setClaimStatus(ClaimStatus.DEFAULT)
+          console.log(error)
+        })
     }
   }
   console.log(
