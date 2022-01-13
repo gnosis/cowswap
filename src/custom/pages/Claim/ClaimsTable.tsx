@@ -24,6 +24,7 @@ const ClaimsTableRow = ({
   index,
   type,
   isFree,
+  claimAmount,
   currencyAmount,
   price,
   cost,
@@ -46,7 +47,7 @@ const ClaimsTableRow = ({
       </td>
       <td>{isFree ? ClaimType[type] : `Buy vCOW with ${currencyAmount?.currency?.symbol}`}</td>
       <td width="150px">
-        <CowProtocolLogo size={16} /> {formatSmart(currencyAmount) || 0} vCOW
+        <CowProtocolLogo size={16} /> {formatSmart(claimAmount) || 0} vCOW
       </td>
       <td>{isFree || !price ? '-' : `${formatSmart(price) || 0} vCoW per ${currencyAmount?.currency?.symbol}`}</td>
       <td>

@@ -775,6 +775,7 @@ export function useUserEnhancedClaimData(account: Account): EnhancedUserClaimDat
 
       // get the currency amount using the price base currency (remember price was inverted) and claim amount
       const currencyAmount = CurrencyAmount.fromRawAmount(price.baseCurrency.wrapped, claim.amount)
+      const claimAmount = CurrencyAmount.fromRawAmount(ONE_VCOW.currency, claim.amount)
 
       // e.g 1000 vCow / 20 GNO = 50 GNO cost
       const cost = currencyAmount.divide(price)
@@ -783,6 +784,7 @@ export function useUserEnhancedClaimData(account: Account): EnhancedUserClaimDat
         ...claim,
         isFree: isFreeClaim(claim.type),
         currencyAmount,
+        claimAmount,
         price,
         cost,
       })
