@@ -18,7 +18,7 @@ Please read these Terms carefully before using our Platform. By using our Platfo
     version 2 (the “**Protocol**”). The provision of the Platform and
     the Protocol is based solely on our independent actions.
 
-**2. WE PROVIDE A PLATFORM TO INTERACTING WITH THE GNOSIS PROTOCOL**
+**2. WE PROVIDE A PLATFORM TO INTERACTING WITH THE COW PROTOCOL**
 
 1.  We provide a graphical user interface (the “**Platform**”) to
     facilitate you interacting with the Protocol.
