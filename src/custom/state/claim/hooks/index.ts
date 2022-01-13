@@ -436,7 +436,7 @@ export function useClaimCallback(account: string | null | undefined): {
 
       const vCowAmount = CurrencyAmount.fromRawAmount(vCowToken, totalClaimedAmount)
 
-      return vCowContract.estimateGas['claimMany'](...args).then((estimatedGas) => {
+      return vCowContract.estimateGas.claimMany(...args).then((estimatedGas) => {
         // Last item in the array contains the call overrides
         const extendedArgs = _extendFinalArg(args, {
           from: connectedAccount, // add the `from` as the connected account
