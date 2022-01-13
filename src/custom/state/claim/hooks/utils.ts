@@ -1,6 +1,6 @@
-import { Currency, CurrencyAmount, Price, Token } from '@uniswap/sdk-core'
+import { CurrencyAmount, Token } from '@uniswap/sdk-core'
 import { SupportedChainId } from 'constants/chains'
-import { V_COW } from 'constants/tokens'
+import { GNO, USDC, V_COW, WETH9_EXTENDED } from 'constants/tokens'
 import {
   CLAIMS_REPO,
   ClaimType,
@@ -156,7 +156,7 @@ export function getClaimKey(account: string, chainId: number): string {
 }
 
 export type PaidClaimTypeToPriceMap = {
-  [type in ClaimType]: Price<Currency, Currency> | undefined
+  [type in ClaimType]: { token: Token; amount: string } | undefined
 }
 
 /**
@@ -164,14 +164,14 @@ export type PaidClaimTypeToPriceMap = {
  *
  * @param type
  */
-export function mapTypeToPrice(type: ClaimType, chainId: SupportedChainId) {
+export function mapTypeToTokenAndAmount(type: ClaimType, chainId: SupportedChainId) {
   const map: PaidClaimTypeToPriceMap = {
     [ClaimType.Advisor]: undefined, // free
     [ClaimType.Airdrop]: undefined, // free
     [ClaimType.Team]: undefined, // free
-    [ClaimType.GnoOption]: GNO_PRICE,
-    [ClaimType.Investor]: USDC_PRICE,
-    [ClaimType.UserOption]: NATIVE_TOKEN_PRICE[chainId],
+    [ClaimType.GnoOption]: { token: GNO[chainId], amount: GNO_PRICE },
+    [ClaimType.Investor]: { token: USDC, amount: USDC_PRICE },
+    [ClaimType.UserOption]: { token: WETH9_EXTENDED[chainId], amount: NATIVE_TOKEN_PRICE[chainId] },
   }
 
   return map[type]

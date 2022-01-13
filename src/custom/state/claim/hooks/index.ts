@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import JSBI from 'jsbi'
 import ms from 'ms.macro'
-import { Currency, CurrencyAmount, Price, Token } from '@uniswap/sdk-core'
+import { CurrencyAmount, Price, Token } from '@uniswap/sdk-core'
 import { TransactionResponse } from '@ethersproject/providers'
 import { parseUnits } from '@ethersproject/units'
 
@@ -12,7 +12,7 @@ import { useActiveWeb3React } from 'hooks/web3'
 import { useSingleContractMultipleData } from 'state/multicall/hooks'
 import { useTransactionAdder } from 'state/enhancedTransactions/hooks'
 
-import { GNO, USDC, V_COW, WETH9_EXTENDED } from 'constants/tokens'
+import { V_COW } from 'constants/tokens'
 
 import { formatSmart } from 'utils/format'
 import { calculateGasMargin } from 'utils/calculateGasMargin'
@@ -22,7 +22,7 @@ import {
   getClaimKey,
   getClaimsRepoPath,
   isFreeClaim,
-  mapTypeToPrice,
+  mapTypeToTokenAndAmount,
   transformRepoClaimsToUserClaims,
 } from 'state/claim/hooks/utils'
 import { SupportedChainId } from 'constants/chains'
@@ -62,39 +62,16 @@ const ONE_VCOW = CurrencyAmount.fromRawAmount(
   parseUnits('1', V_COW[SupportedChainId.RINKEBY].decimals).toString()
 )
 // TODO: these values came from the test contract, might be different on real deployment
-// TODO: check the invert call here, probably not necessary when we get actual numbers
-// Inverted price because using VCOW as base
 // Network variable price
-export const NATIVE_TOKEN_PRICE: { [chain in SupportedChainId]: Price<Currency, Currency> } = {
-  // '0.0000375' WETH (18 decimals) per vCOW, in wei
-  [SupportedChainId.MAINNET]: new Price({
-    baseAmount: ONE_VCOW,
-    quoteAmount: CurrencyAmount.fromRawAmount(WETH9_EXTENDED[SupportedChainId.MAINNET], '37500000000000'),
-  }).invert(),
-  // assuming Rinkeby has same price as Mainnet
-  [SupportedChainId.RINKEBY]: new Price({
-    baseAmount: ONE_VCOW,
-    quoteAmount: CurrencyAmount.fromRawAmount(WETH9_EXTENDED[SupportedChainId.RINKEBY], '37500000000000'),
-  }).invert(),
-  // TODO: wild guess, wxDAI is same price as USDC
-  [SupportedChainId.XDAI]: new Price({
-    baseAmount: ONE_VCOW,
-    quoteAmount: CurrencyAmount.fromRawAmount(WETH9_EXTENDED[SupportedChainId.XDAI], '150000000000000000'),
-  }).invert(),
+export const NATIVE_TOKEN_PRICE: { [chain in SupportedChainId]: string } = {
+  [SupportedChainId.MAINNET]: '37500000000000', // '0.0000375' WETH (18 decimals) per vCOW, in wei
+  [SupportedChainId.RINKEBY]: '37500000000000', // assuming Rinkeby has same price as Mainnet
+  [SupportedChainId.XDAI]: '150000000000000000', // TODO: wild guess, wxDAI is same price as USDC
 }
 
 // Same on all networks. Actually, likely available only on Mainnet (and Rinkeby)
-// '0.000375' GNO (18 decimals) per vCOW, in atoms
-export const GNO_PRICE = new Price({
-  baseAmount: ONE_VCOW,
-  quoteAmount: CurrencyAmount.fromRawAmount(GNO[SupportedChainId.MAINNET], '375000000000000'),
-}).invert()
-
-// '0.15' USDC (6 decimals) per vCOW, in atoms
-export const USDC_PRICE = new Price({
-  baseAmount: ONE_VCOW,
-  quoteAmount: CurrencyAmount.fromRawAmount(USDC, '150000'),
-}).invert()
+export const GNO_PRICE = '375000000000000' // '0.000375' GNO (18 decimals) per vCOW, in atoms
+export const USDC_PRICE = '150000' // '0.15' USDC (6 decimals) per vCOW, in atoms
 
 // Symbols of native tokens so we can use this in the UI
 export const NATIVE_TOKEN_SYMBOL: { [chain in SupportedChainId]: string } = {
@@ -787,8 +764,14 @@ export function useUserEnhancedClaimData(account: Account): EnhancedUserClaimDat
     if (!chainId) return []
 
     return sorted.reduce<EnhancedUserClaimData[]>((acc, claim) => {
-      const price = mapTypeToPrice(claim.type, chainId)
-      if (!price) return acc
+      const tokenAndAmount = mapTypeToTokenAndAmount(claim.type, chainId)
+
+      if (!tokenAndAmount) return acc
+
+      const price = new Price({
+        baseAmount: ONE_VCOW,
+        quoteAmount: CurrencyAmount.fromRawAmount(tokenAndAmount.token, tokenAndAmount.amount),
+      }).invert()
 
       // get the currency amount using the price base currency (remember price was inverted) and claim amount
       const currencyAmount = CurrencyAmount.fromRawAmount(price.baseCurrency.wrapped, claim.amount)
