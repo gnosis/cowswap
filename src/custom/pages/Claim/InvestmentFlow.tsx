@@ -1,9 +1,9 @@
+import { useState, useEffect } from 'react'
 import {
   InvestFlow,
   InvestContent,
   InvestTokenGroup,
   InvestInput,
-  InvestAvailableBar,
   InvestSummary,
   InvestFlowValidation,
   InvestTokenSubtotal,
@@ -13,18 +13,136 @@ import {
 } from 'pages/Claim/styled'
 import CowProtocolLogo from 'components/CowProtocolLogo'
 import { useClaimState } from 'state/claim/hooks'
-import { ClaimCommonTypes } from './types'
+import { ClaimCommonTypes, UserClaimDataDetails } from './types'
 import { ClaimStatus } from 'state/claim/actions'
 import { useActiveWeb3React } from 'hooks/web3'
+import { formatSmart } from 'utils/format'
+import { CurrencyAmount, Token } from '@uniswap/sdk-core'
+import styled from 'styled-components/macro'
+
+const RangeSteps = styled.div`
+  display: flex;
+  align-items: center;
+  width: 100%;
+  justify-content: space-between;
+`
+
+const RangeStep = styled.button`
+  background: none;
+  border: none;
+  font-size: 0.8rem;
+  cursor: pointer;
+  color: blue;
+  padding: 0;
+`
+
+type InvestOptionProps = UserClaimDataDetails & {
+  percent?: number
+  value?: CurrencyAmount<Token>
+}
 
 type InvestmentFlowProps = Pick<ClaimCommonTypes, 'hasClaims'> & {
   isAirdropOnly: boolean
+  userClaimData: InvestOptionProps[]
 }
 
-export default function InvestmentFlow({ hasClaims, isAirdropOnly }: InvestmentFlowProps) {
-  const { account } = useActiveWeb3React()
+const InvestOption = ({ currency, price, currencyAmount, percent }: InvestOptionProps) => {
+  const handlePercentChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(event.target.value)
+  }
 
-  const { activeClaimAccount, claimStatus, isInvestFlowActive, investFlowStep } = useClaimState()
+  const handleStepChange = (value: number) => {
+    console.log(value)
+  }
+
+  return (
+    <InvestTokenGroup>
+      <div>
+        <span>
+          <TokenLogo symbol={currency} size={72} />
+          <CowProtocolLogo size={72} />
+        </span>
+        <h3>Buy vCOW with {currency}</h3>
+      </div>
+
+      <span>
+        <InvestSummary>
+          <span>
+            <b>Price</b>{' '}
+            <i>
+              {formatSmart(price)} vCoW per {currency}
+            </i>
+          </span>
+          <span>
+            <b>Token approval</b>
+            <i>{currency} not approved</i>
+            <button>Approve {currency}</button>
+          </span>
+          <span>
+            <b>Max. investment available</b>{' '}
+            <i>
+              {formatSmart(currencyAmount)} {currency}
+            </i>
+          </span>
+          <span>
+            <b>Available investment used</b>
+
+            <div>
+              <RangeSteps>
+                {[0, 25, 50, 75, 100].map((step: number) => (
+                  <RangeStep onClick={() => handleStepChange(step)} key={step}>
+                    {step}%
+                  </RangeStep>
+                ))}
+              </RangeSteps>
+
+              <input
+                style={{ width: '100%' }}
+                onChange={handlePercentChange}
+                type="range"
+                min="0"
+                max="100"
+                value={percent}
+              />
+            </div>
+          </span>
+        </InvestSummary>
+        <InvestInput>
+          <div>
+            <span>
+              <b>Balance:</b> <i>10,583.34 {currency}</i>
+              {/* Button should use the max possible amount the user can invest, considering their balance + max investment allowed */}
+              <button>Invest max. possible</button>
+            </span>
+            <label>
+              <b>{currency}</b>
+              <input max={formatSmart(currencyAmount)} style={{ width: '100%' }} type="number" />
+            </label>
+            <i>Receive: 32,432.54 vCOW</i>
+            {/* Insufficient balance validation error */}
+            <small>
+              Insufficient balance to invest. Adjust the amount or go back to remove this investment option.
+            </small>
+          </div>
+        </InvestInput>
+      </span>
+    </InvestTokenGroup>
+  )
+}
+
+export default function InvestmentFlow({ hasClaims, isAirdropOnly, userClaimData }: InvestmentFlowProps) {
+  const { account } = useActiveWeb3React()
+  const { activeClaimAccount, claimStatus, isInvestFlowActive, investFlowStep, selected } = useClaimState()
+
+  const [investData, setInvestData] = useState<UserClaimDataDetails[]>([])
+
+  useEffect(() => {
+    if (userClaimData) {
+      const filtered = userClaimData.filter(({ index }) => selected.includes(index))
+      const mapped = filtered.map((claim) => ({ ...claim, percent: 100, value: claim.currencyAmount }))
+      setInvestData(mapped)
+    }
+  }, [selected, userClaimData])
 
   if (!activeClaimAccount || !hasClaims || !isInvestFlowActive) return null
   if (claimStatus !== ClaimStatus.DEFAULT || isAirdropOnly) return null
@@ -52,98 +170,10 @@ export default function InvestmentFlow({ hasClaims, isAirdropOnly }: InvestmentF
             Your account can participate in the investment of vCOW. Each investment opportunity will allow you to invest
             up to a predefined maximum amount of tokens{' '}
           </p>
-          <InvestTokenGroup>
-            <div>
-              <span>
-                <TokenLogo symbol={'GNO'} size={72} />
-                <CowProtocolLogo size={72} />
-              </span>
-              <h3>Buy vCOW with GNO</h3>
-            </div>
 
-            <span>
-              <InvestSummary>
-                <span>
-                  <b>Price</b> <i>16.66 vCoW per GNO</i>
-                </span>
-                <span>
-                  <b>Token approval</b>
-                  <i>GNO not approved</i>
-                  <button>Approve GNO</button>
-                </span>
-                <span>
-                  <b>Max. investment available</b> <i>2,500.04 GNO</i>
-                </span>
-                <span>
-                  <b>Available investment used</b> <InvestAvailableBar percentage={50} />
-                </span>
-              </InvestSummary>
-              <InvestInput>
-                <div>
-                  <span>
-                    <b>Balance:</b> <i>10,583.34 GNO</i>
-                    {/* Button should use the max possible amount the user can invest, considering their balance + max investment allowed */}
-                    <button>Invest max. possible</button>
-                  </span>
-                  <label>
-                    <b>GNO</b>
-                    <input placeholder="0" />
-                  </label>
-                  <i>Receive: 32,432.54 vCOW</i>
-                  {/* Insufficient balance validation error */}
-                  <small>
-                    Insufficient balance to invest. Adjust the amount or go back to remove this investment option.
-                  </small>
-                </div>
-              </InvestInput>
-            </span>
-          </InvestTokenGroup>
-
-          <InvestTokenGroup>
-            <div>
-              <span>
-                <TokenLogo symbol={'ETH'} size={72} />
-                <CowProtocolLogo size={72} />
-              </span>
-              <h3>Buy vCOW with ETH</h3>
-            </div>
-
-            <span>
-              <InvestSummary>
-                <span>
-                  <b>Price</b> <i>16.66 vCoW per ETH</i>
-                </span>
-                <span>
-                  <b>Token approval</b>
-                  <i>Not needed for ETH!</i>
-                </span>
-                <span>
-                  <b>Max. investment available</b> <i>2,500.04 ETH</i>
-                </span>
-                <span>
-                  <b>Available investment used</b> <InvestAvailableBar percentage={50} />
-                </span>
-              </InvestSummary>
-              <InvestInput>
-                <div>
-                  <span>
-                    <b>Balance:</b> <i>10,583.34 ETH</i>
-                    {/* Button should use the max possible amount the user can invest, considering their balance + max investment allowed */}
-                    <button>Invest max. possible</button>
-                  </span>
-                  <label>
-                    <b>ETH</b>
-                    <input placeholder="0" />
-                  </label>
-                  <i>Receive: 32,432.54 vCOW</i>
-                  {/* Insufficient balance validation error */}
-                  <small>
-                    Insufficient balance to invest. Adjust the amount or go back to remove this investment option.
-                  </small>
-                </div>
-              </InvestInput>
-            </span>
-          </InvestTokenGroup>
+          {investData.map((claim) => (
+            <InvestOption key={claim.index} {...claim} />
+          ))}
 
           <InvestTokenSubtotal>
             {activeClaimAccount} will receive: 4,054,671.28 vCOW based on investment(s)

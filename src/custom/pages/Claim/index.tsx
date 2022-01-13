@@ -155,22 +155,6 @@ export default function Claim() {
 
       handleClaiming(inputData)
     } else {
-      const inputIndices = [...getIndexes(freeClaims), ...selected]
-      const inputData = inputIndices.reduce<ClaimInput[]>((acc, idx: number) => {
-        const claim = userClaimData.find(({ index }) => index === idx)
-
-        if (claim) {
-          acc.push({
-            amount: claim.amount,
-            index: claim.index,
-          })
-        }
-
-        return acc
-      }, [])
-
-      console.log('Starting investment flow', inputData)
-
       setIsInvestFlowActive(true)
     }
   }
@@ -236,7 +220,7 @@ export default function Claim() {
         hasClaims={hasClaims}
       />
       {/* Investing vCOW flow (advanced) */}
-      <InvestmentFlow isAirdropOnly={isAirdropOnly} hasClaims={hasClaims} />
+      <InvestmentFlow isAirdropOnly={isAirdropOnly} hasClaims={hasClaims} userClaimData={userClaimData} />
 
       <FooterNavButtons>
         {/* General claim vCOW button  (no invest) */}
