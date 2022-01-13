@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react'
+import { CurrencyAmount, Token } from '@uniswap/sdk-core'
 import {
   InvestFlow,
   InvestContent,
@@ -13,28 +15,47 @@ import {
 } from 'pages/Claim/styled'
 import CowProtocolLogo from 'components/CowProtocolLogo'
 import { useClaimState } from 'state/claim/hooks'
-import { ClaimCommonTypes } from './types'
+import { ClaimCommonTypes, EnhancedUserClaimData } from '../types'
 import { ClaimStatus } from 'state/claim/actions'
 import { useActiveWeb3React } from 'hooks/web3'
 import { ApprovalState } from 'hooks/useApproveCallback'
 import { CheckCircle } from 'react-feather'
 import Row from 'components/Row'
+import InvestOption from './InvestOption'
 
 type InvestmentFlowProps = Pick<ClaimCommonTypes, 'hasClaims'> & {
   isAirdropOnly: boolean
+  userClaimData: EnhancedUserClaimData[]
   approveState: ApprovalState
   approveCallback: () => void
 }
 
+export type InvestOptionProps = EnhancedUserClaimData &
+  Pick<InvestmentFlowProps, 'approveCallback' | 'approveState'> & {
+    percent?: number
+    value?: CurrencyAmount<Token>
+  }
+
 export default function InvestmentFlow({
   hasClaims,
   isAirdropOnly,
+  userClaimData,
   approveState,
   approveCallback,
 }: InvestmentFlowProps) {
   const { account } = useActiveWeb3React()
 
-  const { activeClaimAccount, claimStatus, isInvestFlowActive, investFlowStep } = useClaimState()
+  const { activeClaimAccount, claimStatus, isInvestFlowActive, investFlowStep, selected } = useClaimState()
+
+  const [investData, setInvestData] = useState<EnhancedUserClaimData[]>([])
+
+  useEffect(() => {
+    if (userClaimData) {
+      const filtered = userClaimData.filter(({ index }) => selected.includes(index))
+      const mapped = filtered.map((claim) => ({ ...claim, percent: 100, value: claim.currencyAmount }))
+      setInvestData(mapped)
+    }
+  }, [selected, userClaimData])
 
   if (
     !activeClaimAccount || // no connected account
@@ -61,6 +82,26 @@ export default function InvestmentFlow({
           <li>Submit and confirm the transaction to claim vCOW</li>
         </Steps>
       </StepIndicator>
+
+      {/* Invest flow: Step 1 > Set allowances and investment amounts */}
+      {investFlowStep === 1 ? (
+        <InvestContent>
+          <p>
+            Your account can participate in the investment of vCOW. Each investment opportunity will allow you to invest
+            up to a predefined maximum amount of tokens{' '}
+          </p>
+
+          {investData.map((claim) => (
+            <InvestOption key={claim.index} approveState={approveState} approveCallback={approveCallback} {...claim} />
+          ))}
+
+          <InvestTokenSubtotal>
+            {activeClaimAccount} will receive: 4,054,671.28 vCOW based on investment(s)
+          </InvestTokenSubtotal>
+
+          <InvestFlowValidation>Approve all investment tokens before continuing</InvestFlowValidation>
+        </InvestContent>
+      ) : null}
 
       {/* Invest flow: Step 1 > Set allowances and investment amounts */}
       {investFlowStep === 1 ? (

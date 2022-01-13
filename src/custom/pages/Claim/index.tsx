@@ -23,7 +23,7 @@ import ClaimAddress from './ClaimAddress'
 import CanUserClaimMessage from './CanUserClaimMessage'
 import ClaimingStatus from './ClaimingStatus'
 import ClaimsTable from './ClaimsTable'
-import InvestmentFlow from './InvestmentFlow'
+import InvestmentFlow from './Investment'
 
 import { useClaimDispatchers, useClaimState } from 'state/claim/hooks'
 import { ClaimStatus } from 'state/claim/actions'
@@ -242,6 +242,7 @@ export default function Claim() {
       <InvestmentFlow
         isAirdropOnly={isAirdropOnly}
         hasClaims={hasClaims}
+        userClaimData={userClaimData}
         approveCallback={approveCallback}
         approveState={approveState}
       />
