@@ -2,7 +2,7 @@ import { useEffect, useMemo } from 'react'
 import { Trans } from '@lingui/macro'
 import { useActiveWeb3React } from 'hooks/web3'
 import {
-  useUserAvailableClaims,
+  useUserEnhancedClaimData,
   useUserUnclaimedAmount,
   useClaimCallback,
   useInvestmentStillAvailable,
@@ -84,7 +84,7 @@ export default function Claim() {
   const toggleWalletModal = useWalletModalToggle()
 
   // get user claim data
-  const userClaimData = useUserAvailableClaims(activeClaimAccount)
+  const userClaimData = useUserEnhancedClaimData(activeClaimAccount)
 
   // get total unclaimed ammount
   const unclaimedAmount = useUserUnclaimedAmount(activeClaimAccount)
@@ -92,15 +92,9 @@ export default function Claim() {
   const hasClaims = useMemo(() => userClaimData.length > 0, [userClaimData])
   const isAirdropOnly = useMemo(() => !hasPaidClaim(userClaimData), [userClaimData])
 
-  // get current pending claims set in activities
-
-  // claim type to currency and price map
-
   // checks regarding investment time window
   const isInvestmentStillAvailable = useInvestmentStillAvailable()
   const isAirdropStillAvailable = useAirdropStillAvailable()
-
-  // claim status
 
   // claim callback
   const { claimCallback } = useClaimCallback(activeClaimAccount)
