@@ -59,8 +59,23 @@ import { useClaimDispatchers, useClaimState } from 'state/claim/hooks'
 import { ClaimStatus } from 'state/claim/actions'
 import { useAllClaimingTransactionIndices } from 'state/enhancedTransactions/hooks'
 
+import { useApproveCallbackFromClaim } from 'hooks/useApproveCallback'
+import { OperationType } from 'components/TransactionConfirmationModal'
+import { tryParseAmount } from 'state/swap/hooks'
+import useTransactionConfirmationModal from 'hooks/useTransactionConfirmationModal'
+import useRemainingAllowanceToApprove from 'hooks/useRemainingAllowanceToApprove'
+
+import { V_COW_CONTRACT_ADDRESS } from 'constants/index'
+import { GNO } from 'constants/tokens'
+import { CurrencyAmount, MaxUint256 } from '@uniswap/sdk-core'
+import { SupportedChainId } from 'constants/chains'
+
+const MAX_GNO_UINT256 = CurrencyAmount.fromRawAmount(GNO[SupportedChainId.RINKEBY], MaxUint256)
+
 export default function Claim() {
-  const { account, chainId } = useActiveWeb3React()
+  const { chainId } = useActiveWeb3React()
+  // TODO: remove
+  const account = '0x97EC4fcD5F78cA6f6E4E1EAC6c0Ec8421bA518B7'
   // Maintains state, updates Context Provider below
   // useClaimReducer should only be used here, in nested components use "useClaimState"
 
@@ -239,8 +254,34 @@ export default function Claim() {
     // setActiveClaimAccount and other dispatch fns are only here for TS. They are safe references.
   }, [account, isSearchUsed, setActiveClaimAccount, setInvestFlowStep, setIsInvestFlowActive])
 
+  // Transaction confirmation modal
+  const { TransactionConfirmationModal, openModal, closeModal } = useTransactionConfirmationModal(
+    OperationType.APPROVE_TOKEN
+  )
+
+  // TODO: get actual amount
+  const amountToApprove = tryParseAmount('2500', chainId ? GNO[chainId] : undefined)
+  const GNO_CLAIM_APPROVE_MESSAGE = 'Approving GNO for investing in vCOW'
+
+  // get users allowance, and remaining allowance (currentAllowance - amountToInvest)
+  // remainingAllowanceToApprove = undefined if user has never approved OR does not have enough allowance to cover amount proposed
+  const { allowance, needsApproval } = useRemainingAllowanceToApprove({
+    amountToApprove,
+    spender: chainId ? V_COW_CONTRACT_ADDRESS[chainId] : undefined,
+  })
+
+  const [, approveCallback] = useApproveCallbackFromClaim(
+    () => openModal(GNO_CLAIM_APPROVE_MESSAGE, OperationType.APPROVE_TOKEN),
+    closeModal,
+    needsApproval ? MAX_GNO_UINT256 : undefined
+  )
+
+  const handleApproveGno = () => approveCallback()
+
   return (
     <PageWrapper>
+      {/* Approve confirmation modal */}
+      <TransactionConfirmationModal />
       {/* If claim is confirmed > trigger confetti effect */}
       <Confetti start={claimStatus === ClaimStatus.CONFIRMED} />
 
@@ -427,8 +468,8 @@ export default function Claim() {
                       </span>
                       <span>
                         <b>Token approval</b>
-                        <i>GNO not approved</i>
-                        <button>Approve GNO</button>
+                        <i>{needsApproval ? 'GNO not approved' : `Current GNO allowance: ${allowance?.toExact()}`}</i>
+                        {needsApproval && <button onClick={handleApproveGno}>Approve GNO</button>}
                       </span>
                       <span>
                         <b>Max. investment available</b> <i>2,500.04 GNO</i>
