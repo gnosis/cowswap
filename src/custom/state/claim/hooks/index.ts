@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import JSBI from 'jsbi'
 import ms from 'ms.macro'
-import { CurrencyAmount, Token } from '@uniswap/sdk-core'
+import { Currency, CurrencyAmount, Price, Token } from '@uniswap/sdk-core'
 import { TransactionResponse } from '@ethersproject/providers'
 import { parseUnits } from '@ethersproject/units'
 
@@ -12,13 +12,19 @@ import { useActiveWeb3React } from 'hooks/web3'
 import { useSingleContractMultipleData } from 'state/multicall/hooks'
 import { useTransactionAdder } from 'state/enhancedTransactions/hooks'
 
-import { V_COW } from 'constants/tokens'
+import { GNO, USDC, V_COW, WETH9_EXTENDED } from 'constants/tokens'
 
 import { formatSmart } from 'utils/format'
 import { calculateGasMargin } from 'utils/calculateGasMargin'
 import { isAddress } from 'utils'
 
-import { getClaimKey, getClaimsRepoPath, transformRepoClaimsToUserClaims } from 'state/claim/hooks/utils'
+import {
+  getClaimKey,
+  getClaimsRepoPath,
+  isFreeClaim,
+  mapTypeToPrice,
+  transformRepoClaimsToUserClaims,
+} from 'state/claim/hooks/utils'
 import { SupportedChainId } from 'constants/chains'
 import { registerOnWindow } from 'utils/misc'
 import mockData, { MOCK_INDICES } from './mocks/claimData'
@@ -44,20 +50,61 @@ import {
   setSelectedAll,
   ClaimStatus,
 } from '../actions'
+import { EnhancedUserClaimData } from 'pages/Claim/types'
+import { supportedChainId } from 'utils/supportedChainId'
 
 const CLAIMS_REPO_BRANCH = 'main'
 export const CLAIMS_REPO = `https://raw.githubusercontent.com/gnosis/cow-merkle-drop/${CLAIMS_REPO_BRANCH}/`
 
+// Base amount = 1 VCOW
+const ONE_VCOW = CurrencyAmount.fromRawAmount(
+  V_COW[SupportedChainId.RINKEBY],
+  parseUnits('1', V_COW[SupportedChainId.RINKEBY].decimals).toString()
+)
 // TODO: these values came from the test contract, might be different on real deployment
+// TODO: check the invert call here, probably not necessary when we get actual numbers
+// Inverted price because using VCOW as base
 // Network variable price
-export const NATIVE_TOKEN_PRICE = {
-  [SupportedChainId.MAINNET]: '37500000000000', // '0.0000375' WETH (18 decimals) per vCOW, in wei
-  [SupportedChainId.RINKEBY]: '37500000000000', // assuming Rinkeby has same price as Mainnet
-  [SupportedChainId.XDAI]: '150000000000000000', // TODO: wild guess, wxDAI is same price as USDC
+export const NATIVE_TOKEN_PRICE: { [chain in SupportedChainId]: Price<Currency, Currency> } = {
+  // '0.0000375' WETH (18 decimals) per vCOW, in wei
+  [SupportedChainId.MAINNET]: new Price({
+    baseAmount: ONE_VCOW,
+    quoteAmount: CurrencyAmount.fromRawAmount(WETH9_EXTENDED[SupportedChainId.MAINNET], '37500000000000'),
+  }).invert(),
+  // assuming Rinkeby has same price as Mainnet
+  [SupportedChainId.RINKEBY]: new Price({
+    baseAmount: ONE_VCOW,
+    quoteAmount: CurrencyAmount.fromRawAmount(WETH9_EXTENDED[SupportedChainId.RINKEBY], '37500000000000'),
+  }).invert(),
+  // TODO: wild guess, wxDAI is same price as USDC
+  [SupportedChainId.XDAI]: new Price({
+    baseAmount: ONE_VCOW,
+    quoteAmount: CurrencyAmount.fromRawAmount(WETH9_EXTENDED[SupportedChainId.XDAI], '150000000000000000'),
+  }).invert(),
 }
+
 // Same on all networks. Actually, likely available only on Mainnet (and Rinkeby)
-export const GNO_PRICE = '375000000000000' // '0.000375' GNO (18 decimals) per vCOW, in atoms
-export const USDC_PRICE = '150000' // '0.15' USDC (6 decimals) per vCOW, in atoms
+// '0.000375' GNO (18 decimals) per vCOW, in atoms
+export const GNO_PRICE = new Price({
+  baseAmount: ONE_VCOW,
+  quoteAmount: CurrencyAmount.fromRawAmount(GNO[SupportedChainId.MAINNET], '37500000000000000'),
+}).invert()
+
+// '0.15' USDC (6 decimals) per vCOW, in atoms
+export const USDC_PRICE = new Price({
+  baseAmount: ONE_VCOW,
+  quoteAmount: CurrencyAmount.fromRawAmount(USDC, '150000'),
+}).invert()
+
+// Symbols of native tokens so we can use this in the UI
+export const NATIVE_TOKEN_SYMBOL: { [chain in SupportedChainId]: string } = {
+  [SupportedChainId.MAINNET]: 'ETH',
+  [SupportedChainId.RINKEBY]: 'ETH',
+  [SupportedChainId.XDAI]: 'XDAI',
+}
+
+export const GNO_SYMBOL = 'GNO'
+export const USDC_SYMBOL = 'USDC'
 
 // Constants regarding investment time windows
 const TWO_WEEKS = ms`2 weeks`
@@ -384,6 +431,19 @@ export function useClaimCallback(account: string | null | undefined): {
     },
   })
 
+  /**
+   * Extend the Payable optional param
+   */
+  function _extendFinalArg(args: ClaimManyFnArgs, extendedArg: Record<any, any>) {
+    const lastArg = args.pop()
+    args.push({
+      ...lastArg, // add back whatever is already there
+      ...extendedArg,
+    })
+
+    return args
+  }
+
   const claimCallback = useCallback(
     async function (claimInput: ClaimInput[]) {
       if (
@@ -681,8 +741,8 @@ function fetchClaims(account: string, chainId: number): Promise<UserClaims> {
 export function useClaimDispatchers() {
   const dispatch = useDispatch<AppDispatch>()
 
-  return useMemo(() => {
-    const dispatchers = {
+  return useMemo(
+    () => ({
       // account
       setInputAddress: (payload: string) => dispatch(setInputAddress(payload)),
       setActiveClaimAccount: (payload: string) => dispatch(setActiveClaimAccount(payload)),
@@ -698,9 +758,9 @@ export function useClaimDispatchers() {
       // claim row selection
       setSelected: (payload: number[]) => dispatch(setSelected(payload)),
       setSelectedAll: (payload: boolean) => dispatch(setSelectedAll(payload)),
-    }
-    return dispatchers
-  }, [dispatch])
+    }),
+    [dispatch]
+  )
 }
 
 export function useClaimState() {
@@ -708,14 +768,43 @@ export function useClaimState() {
 }
 
 /**
- * Extend the Payable optional param
+ * Gets an array of available claims parsed and sorted for the UI
+ *
+ * Syntactic sugar on top of `useUserClaims`
+ *
+ * @param account
  */
-function _extendFinalArg(args: ClaimManyFnArgs, extendedArg: Record<any, any>) {
-  const lastArg = args.pop()
-  args.push({
-    ...lastArg, // add back whatever is already there
-    ...extendedArg,
-  })
+export function useUserEnhancedClaimData(account: Account): EnhancedUserClaimData[] {
+  const { available } = useClassifiedUserClaims(account)
+  const { chainId: preCheckChainId } = useActiveWeb3React()
 
-  return args
+  const checkType = useCallback((type) => Number(FREE_CLAIM_TYPES.includes(type)), [])
+
+  const sorted = useMemo(() => available.sort((a, b) => checkType(b.type) - checkType(a.type)), [available, checkType])
+
+  return useMemo(() => {
+    const chainId = supportedChainId(preCheckChainId)
+    if (!chainId) return []
+
+    return sorted.reduce<EnhancedUserClaimData[]>((acc, claim) => {
+      const price = mapTypeToPrice(claim.type, chainId)
+      if (!price) return acc
+
+      // get the currency amount using the price base currency (remember price was inverted) and claim amount
+      const currencyAmount = CurrencyAmount.fromRawAmount(price.baseCurrency.wrapped, claim.amount)
+
+      // e.g 1000 vCow / 20 GNO = 50 GNO cost
+      const cost = currencyAmount.divide(price)
+
+      acc.push({
+        ...claim,
+        isFree: isFreeClaim(claim.type),
+        currencyAmount,
+        price,
+        cost,
+      })
+
+      return acc
+    }, [])
+  }, [preCheckChainId, sorted])
 }
