@@ -1,6 +1,7 @@
 import { Middleware, isAnyOf } from '@reduxjs/toolkit'
 import { AppState } from 'state'
 import { finalizeTransaction } from '../enhancedTransactions/actions'
+import { setClaimStatus, ClaimStatus } from './actions'
 
 const isFinalizeTransaction = isAnyOf(finalizeTransaction)
 
@@ -9,13 +10,12 @@ export const claimMinedMiddleware: Middleware<Record<string, unknown>, AppState>
   const result = next(action)
 
   if (isFinalizeTransaction(action)) {
-    const { chainId, hash, receipt, safeTransaction } = action.payload
+    const { chainId, hash } = action.payload
     const transaction = store.getState().transactions[chainId][hash]
 
-    console.log('[stat:claim:middleware] Transaction finalized', transaction, receipt, safeTransaction)
     if (transaction.claim) {
-      // TODO: Update state
-      console.log('[stat:claim:middleware] It is a CLAIM transaction')
+      console.log('[stat:claim:middleware] Claim transaction finalized', transaction.hash, transaction.claim)
+      store.dispatch(setClaimStatus(ClaimStatus.CONFIRMED))
     }
   }
 
