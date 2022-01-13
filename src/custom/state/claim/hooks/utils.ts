@@ -8,6 +8,12 @@ import {
   PAID_CLAIM_TYPES,
   RepoClaims,
   UserClaims,
+  NATIVE_TOKEN_PRICE,
+  GNO_PRICE,
+  USDC_PRICE,
+  NATIVE_TOKEN_SYMBOL,
+  GNO_SYMBOL,
+  USDC_SYMBOL,
 } from 'state/claim/hooks/index'
 
 /**
@@ -79,28 +85,20 @@ export type TypeToCurrencyMapper = {
  *
  * @param chainId
  */
-export function mapTypeToCurrency(type: ClaimType, chainId: number | undefined): string {
-  if (!chainId) return ''
+export function mapTypeToCurrency(type: ClaimType, chainId: SupportedChainId | undefined): string | undefined {
+  if (!chainId) return undefined
 
   const map: TypeToCurrencyMapper = {
-    [ClaimType.GnoOption]: 'GNO',
-    [ClaimType.Investor]: 'USDC',
-    [ClaimType.UserOption]: '',
-  }
-
-  if ([SupportedChainId.MAINNET, SupportedChainId.RINKEBY].includes(chainId)) {
-    map[ClaimType.UserOption] = 'ETH'
-  }
-
-  if (chainId === SupportedChainId.XDAI) {
-    map[ClaimType.UserOption] = 'XDAI'
+    [ClaimType.GnoOption]: GNO_SYMBOL,
+    [ClaimType.Investor]: USDC_SYMBOL,
+    [ClaimType.UserOption]: NATIVE_TOKEN_SYMBOL[chainId],
   }
 
   return map[type]
 }
 
 export type TypeToPriceMapper = {
-  [key: string]: number
+  [key: string]: string
 }
 
 /**
@@ -108,15 +106,19 @@ export type TypeToPriceMapper = {
  *
  * @param type
  */
-export function mapTypeToPrice(type: ClaimType): number {
-  // Hardcoded values
+export function mapTypeToPrice(
+  type: ClaimType,
+  chainId: SupportedChainId | undefined
+): CurrencyAmount<Token> | undefined {
+  if (!chainId) return undefined
+
   const map: TypeToPriceMapper = {
-    [ClaimType.GnoOption]: 16.66,
-    [ClaimType.Investor]: 26.66,
-    [ClaimType.UserOption]: 36.66,
+    [ClaimType.GnoOption]: GNO_PRICE,
+    [ClaimType.Investor]: USDC_PRICE,
+    [ClaimType.UserOption]: NATIVE_TOKEN_PRICE[chainId],
   }
 
-  return map[type]
+  return parseClaimAmount(map[type], chainId)
 }
 
 /**

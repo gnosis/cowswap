@@ -9,10 +9,12 @@ export type ClaimCommonTypes = {
   handleChangeAccount: (e: SyntheticEvent<HTMLButtonElement>) => void
 }
 
-export type ParsedUserClaim = UserClaimData & {
-  parsedAmount: string
+// Structure that the claim data will be inside our claim page component
+// We add some additional properties that we need in UI and keep the UI clean
+export type UserClaimDataDetails = UserClaimData & {
+  currencyAmount: CurrencyAmount<Token> | undefined
+  price: CurrencyAmount<Token> | undefined
+  cost: CurrencyAmount<Token> | undefined
   isFree: boolean
   currency: string
-  price: number
-  cost: number
 }

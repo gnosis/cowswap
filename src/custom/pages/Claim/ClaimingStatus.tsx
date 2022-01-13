@@ -1,4 +1,3 @@
-import { useMemo } from 'react'
 import { Trans } from '@lingui/macro'
 import { ConfirmOrLoadingWrapper, ConfirmedIcon, AttemptFooter } from 'pages/Claim/styled'
 import { ExternalLink, CustomLightSpinner } from 'theme'
@@ -14,9 +13,9 @@ export default function ClaimingStatus() {
   const { activeClaimAccount, claimStatus, claimedAmount } = useClaimState()
 
   // claim status
-  const isConfirmed = useMemo(() => claimStatus === ClaimStatus.CONFIRMED, [claimStatus])
-  const isAttempting = useMemo(() => claimStatus === ClaimStatus.ATTEMPTING, [claimStatus])
-  const isSubmitted = useMemo(() => claimStatus === ClaimStatus.SUBMITTED, [claimStatus])
+  const isConfirmed = claimStatus === ClaimStatus.CONFIRMED
+  const isAttempting = claimStatus === ClaimStatus.ATTEMPTING
+  const isSubmitted = claimStatus === ClaimStatus.SUBMITTED
 
   if (!activeClaimAccount || claimStatus === ClaimStatus.DEFAULT) return null
 
@@ -26,7 +25,7 @@ export default function ClaimingStatus() {
         {!isConfirmed ? <CustomLightSpinner src={Circle} alt="loader" size={'90px'} /> : <CowProtocolLogo size={100} />}
       </ConfirmedIcon>
       <h3>{isConfirmed ? 'Claimed!' : 'Claiming'}</h3>
-      {!isConfirmed && <Trans>{formatSmart(claimedAmount)} vCOW</Trans>}
+      {!isConfirmed && <Trans>{formatSmart(claimedAmount) || 0} vCOW</Trans>}
 
       {isConfirmed && (
         <>
@@ -34,7 +33,7 @@ export default function ClaimingStatus() {
             <h3>You have successfully claimed</h3>
           </Trans>
           <Trans>
-            <p>{formatSmart(claimedAmount)} vCOW</p>
+            <p>{formatSmart(claimedAmount) || 0} vCOW</p>
           </Trans>
           <Trans>
             <span role="img" aria-label="party-hat">

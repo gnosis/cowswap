@@ -41,7 +41,7 @@ import {
   setSelectedAll,
   ClaimStatus,
 } from '../actions'
-import { ParsedUserClaim } from '@src/custom/pages/Claim/types'
+import { UserClaimDataDetails } from 'pages/Claim/types'
 
 const CLAIMS_REPO_BRANCH = 'main'
 export const CLAIMS_REPO = `https://raw.githubusercontent.com/gnosis/cow-merkle-drop/${CLAIMS_REPO_BRANCH}/`
@@ -56,6 +56,16 @@ export const NATIVE_TOKEN_PRICE = {
 // Same on all networks. Actually, likely available only on Mainnet (and Rinkeby)
 export const GNO_PRICE = '375000000000000' // '0.000375' GNO (18 decimals) per vCOW, in atoms
 export const USDC_PRICE = '150000' // '0.15' USDC (6 decimals) per vCOW, in atoms
+
+// Symbols of native tokens so we can use this in the UI
+export const NATIVE_TOKEN_SYMBOL = {
+  [SupportedChainId.MAINNET]: 'ETH',
+  [SupportedChainId.RINKEBY]: 'ETH',
+  [SupportedChainId.XDAI]: 'XDAI',
+}
+
+export const GNO_SYMBOL = 'GNO'
+export const USDC_SYMBOL = 'USDC'
 
 // Constants regarding investment time windows
 const TWO_WEEKS = ms`2 weeks`
@@ -662,11 +672,11 @@ export function useClaimState() {
 /**
  * Gets an array of available claims parsed and sorted for the UI
  *
- * Syntactic sugar on top of `userUserAvailableClaims`
+ * Syntactic sugar on top of `useUserClaims`
  *
  * @param account
  */
-export function useUserAvailableParsedClaims(account: Account): ParsedUserClaim[] {
+export function useUserAvailableParsedClaims(account: Account): UserClaimDataDetails[] {
   const { available } = useClassifiedUserClaims(account)
   const { chainId } = useActiveWeb3React()
 
@@ -676,18 +686,19 @@ export function useUserAvailableParsedClaims(account: Account): ParsedUserClaim[
 
   const parsed = useMemo(() => {
     return sorted.map((claim: UserClaimData) => {
-      const parsedAmount = parseClaimAmount(claim.amount, chainId)
-      const price = mapTypeToPrice(claim.type)
-      const cost = price * Number(parsedAmount?.toSignificant(2))
+      const currencyAmount = parseClaimAmount(claim.amount, chainId)
+      const price = mapTypeToPrice(claim.type, chainId)
+      const currency = mapTypeToCurrency(claim.type, chainId)
+      const cost = price && currencyAmount && Number(formatSmart(price)) * Number(formatSmart(currencyAmount))
 
       return {
         ...claim,
-        parsedAmount: formatSmart(parsedAmount),
         isFree: isFreeClaim(claim.type),
-        currency: mapTypeToCurrency(claim.type, chainId),
+        currency,
+        currencyAmount,
         price,
         cost,
-      } as ParsedUserClaim
+      } as UserClaimDataDetails
     })
   }, [chainId, sorted])
 

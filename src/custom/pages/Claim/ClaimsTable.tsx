@@ -2,17 +2,18 @@ import { ClaimType, useClaimState } from 'state/claim/hooks'
 import { ClaimTable, ClaimBreakdown } from 'pages/Claim/styled'
 import CowProtocolLogo from 'components/CowProtocolLogo'
 import { ClaimStatus } from 'state/claim/actions'
-import { ParsedUserClaim } from './types'
+import { UserClaimDataDetails } from './types'
+import { formatSmart } from 'utils/format'
 
 type ClaimsTableProps = {
   handleSelectAll: (event: React.ChangeEvent<HTMLInputElement>) => void
   handleSelect: (event: React.ChangeEvent<HTMLInputElement>, index: number) => void
-  userClaimData: ParsedUserClaim[]
+  userClaimData: UserClaimDataDetails[]
   isAirdropOnly: boolean
   hasClaims: boolean
 }
 
-type ClaimsTableRowProps = ParsedUserClaim &
+type ClaimsTableRowProps = UserClaimDataDetails &
   Pick<ClaimsTableProps, 'handleSelect'> & {
     selected: number[]
   }
@@ -21,7 +22,7 @@ const ClaimsTableRow = ({
   index,
   type,
   isFree,
-  parsedAmount,
+  currencyAmount,
   currency,
   price,
   cost,
@@ -44,10 +45,10 @@ const ClaimsTableRow = ({
       </td>
       <td>{isFree ? ClaimType[type] : `Buy vCOW with ${currency}`}</td>
       <td width="150px">
-        <CowProtocolLogo size={16} /> {parsedAmount} vCOW
+        <CowProtocolLogo size={16} /> {formatSmart(currencyAmount) || 0} vCOW
       </td>
-      <td>{isFree || !price ? '-' : `${price} vCoW per ${currency}`}</td>
-      <td>{isFree ? <span className="green">Free!</span> : `${cost} ${currency}`}</td>
+      <td>{isFree || !price ? '-' : `${formatSmart(price) || 0} vCoW per ${currency}`}</td>
+      <td>{isFree ? <span className="green">Free!</span> : `${cost || 0} ${currency}`}</td>
       <td>{type === ClaimType.Airdrop ? 'No' : '4 years (linear)'}</td>
       <td>28 days, 10h, 50m</td>
     </tr>
