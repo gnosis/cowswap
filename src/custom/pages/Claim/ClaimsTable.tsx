@@ -4,28 +4,27 @@ import CowProtocolLogo from 'components/CowProtocolLogo'
 import { ClaimStatus } from 'state/claim/actions'
 // import { UserClaimDataDetails } from './types' TODO: fix in another PR
 import { formatSmart } from 'utils/format'
+import { EnhancedUserClaimData } from './types'
 
 type ClaimsTableProps = {
   handleSelectAll: (event: React.ChangeEvent<HTMLInputElement>) => void
   handleSelect: (event: React.ChangeEvent<HTMLInputElement>, index: number) => void
-  // TODO: fix in other pr
-  userClaimData: any // UserClaimDataDetails[]
+  userClaimData: EnhancedUserClaimData[]
   isAirdropOnly: boolean
   hasClaims: boolean
 }
 
 // TODO: fix in other pr
-type ClaimsTableRowProps = any /* UserClaimDataDetails &
+type ClaimsTableRowProps = EnhancedUserClaimData &
   Pick<ClaimsTableProps, 'handleSelect'> & {
     selected: number[]
-  } */
+  }
 
 const ClaimsTableRow = ({
   index,
   type,
   isFree,
   currencyAmount,
-  currency,
   price,
   cost,
   handleSelect,
@@ -45,12 +44,18 @@ const ClaimsTableRow = ({
           />
         </label>
       </td>
-      <td>{isFree ? ClaimType[type] : `Buy vCOW with ${currency}`}</td>
+      <td>{isFree ? ClaimType[type] : `Buy vCOW with ${currencyAmount?.currency?.symbol}`}</td>
       <td width="150px">
         <CowProtocolLogo size={16} /> {formatSmart(currencyAmount) || 0} vCOW
       </td>
-      <td>{isFree || !price ? '-' : `${formatSmart(price) || 0} vCoW per ${currency}`}</td>
-      <td>{isFree ? <span className="green">Free!</span> : `${formatSmart(cost) || 0} ${currency}`}</td>
+      <td>{isFree || !price ? '-' : `${formatSmart(price) || 0} vCoW per ${currencyAmount?.currency?.symbol}`}</td>
+      <td>
+        {isFree ? (
+          <span className="green">Free!</span>
+        ) : (
+          `${formatSmart(cost) || 0} ${currencyAmount?.currency?.symbol}`
+        )}
+      </td>
       <td>{type === ClaimType.Airdrop ? 'No' : '4 years (linear)'}</td>
       <td>28 days, 10h, 50m</td>
     </tr>
@@ -66,8 +71,10 @@ export default function ClaimsTable({
 }: ClaimsTableProps) {
   const { selectedAll, selected, activeClaimAccount, claimStatus, isInvestFlowActive } = useClaimState()
 
-  if (isAirdropOnly || !hasClaims || !activeClaimAccount) return null
-  if (claimStatus !== ClaimStatus.DEFAULT || isInvestFlowActive) return null
+  const hideTable =
+    isAirdropOnly || !hasClaims || !activeClaimAccount || claimStatus !== ClaimStatus.DEFAULT || isInvestFlowActive
+
+  if (hideTable) return null
 
   return (
     <ClaimBreakdown>
@@ -90,8 +97,7 @@ export default function ClaimsTable({
             </tr>
           </thead>
           <tbody>
-            {/* TODO: fix in other pr */}
-            {userClaimData.map((claim: any) => (
+            {userClaimData.map((claim: EnhancedUserClaimData) => (
               <ClaimsTableRow key={claim.index} {...claim} selected={selected} handleSelect={handleSelect} />
             ))}
           </tbody>
