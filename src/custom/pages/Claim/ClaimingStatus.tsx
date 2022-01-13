@@ -6,11 +6,11 @@ import { useClaimState } from 'state/claim/hooks'
 import { useActiveWeb3React } from 'hooks/web3'
 import CowProtocolLogo from 'components/CowProtocolLogo'
 import Circle from 'assets/images/blue-loader.svg'
-import { formatSmart } from 'utils/format'
+// import { formatSmart } from 'utils/format'
 
 export default function ClaimingStatus() {
   const { chainId } = useActiveWeb3React()
-  const { activeClaimAccount, claimStatus, claimedAmount } = useClaimState()
+  const { activeClaimAccount, claimStatus /* , claimedAmount */ } = useClaimState()
 
   // claim status
   const isConfirmed = claimStatus === ClaimStatus.CONFIRMED
@@ -25,7 +25,8 @@ export default function ClaimingStatus() {
         {!isConfirmed ? <CustomLightSpinner src={Circle} alt="loader" size={'90px'} /> : <CowProtocolLogo size={100} />}
       </ConfirmedIcon>
       <h3>{isConfirmed ? 'Claimed!' : 'Claiming'}</h3>
-      {!isConfirmed && <Trans>{formatSmart(claimedAmount) || 0} vCOW</Trans>}
+      {/* TODO: fix this in new pr */}
+      {!isConfirmed && <Trans>{/* formatSmart(claimedAmount) || 0 */} vCOW</Trans>}
 
       {isConfirmed && (
         <>
@@ -33,7 +34,8 @@ export default function ClaimingStatus() {
             <h3>You have successfully claimed</h3>
           </Trans>
           <Trans>
-            <p>{formatSmart(claimedAmount) || 0} vCOW</p>
+            {/* TODO: fix this in new pr */}
+            <p>{/* formatSmart(claimedAmount) || 0 */} vCOW</p>
           </Trans>
           <Trans>
             <span role="img" aria-label="party-hat">

@@ -2,21 +2,23 @@ import { ClaimType, useClaimState } from 'state/claim/hooks'
 import { ClaimTable, ClaimBreakdown } from 'pages/Claim/styled'
 import CowProtocolLogo from 'components/CowProtocolLogo'
 import { ClaimStatus } from 'state/claim/actions'
-import { UserClaimDataDetails } from './types'
+// import { UserClaimDataDetails } from './types' TODO: fix in another PR
 import { formatSmart } from 'utils/format'
 
 type ClaimsTableProps = {
   handleSelectAll: (event: React.ChangeEvent<HTMLInputElement>) => void
   handleSelect: (event: React.ChangeEvent<HTMLInputElement>, index: number) => void
-  userClaimData: UserClaimDataDetails[]
+  // TODO: fix in other pr
+  userClaimData: any // UserClaimDataDetails[]
   isAirdropOnly: boolean
   hasClaims: boolean
 }
 
-type ClaimsTableRowProps = UserClaimDataDetails &
+// TODO: fix in other pr
+type ClaimsTableRowProps = any /* UserClaimDataDetails &
   Pick<ClaimsTableProps, 'handleSelect'> & {
     selected: number[]
-  }
+  } */
 
 const ClaimsTableRow = ({
   index,
@@ -88,7 +90,8 @@ export default function ClaimsTable({
             </tr>
           </thead>
           <tbody>
-            {userClaimData.map((claim) => (
+            {/* TODO: fix in other pr */}
+            {userClaimData.map((claim: any) => (
               <ClaimsTableRow key={claim.index} {...claim} selected={selected} handleSelect={handleSelect} />
             ))}
           </tbody>
