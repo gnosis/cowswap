@@ -3,7 +3,6 @@ import JSBI from 'jsbi'
 import ms from 'ms.macro'
 import { CurrencyAmount, Price, Token } from '@uniswap/sdk-core'
 import { TransactionResponse } from '@ethersproject/providers'
-import { parseUnits } from '@ethersproject/units'
 
 import { VCow as VCowType } from 'abis/types'
 
@@ -76,6 +75,9 @@ export const USDC_PRICE = '150000' // '0.15' USDC (6 decimals) per vCOW, in atom
 // Constants regarding investment time windows
 const TWO_WEEKS = ms`2 weeks`
 const SIX_WEEKS = ms`6 weeks`
+
+// For native token price calculation
+const DENOMINATOR = JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(18))
 
 export enum ClaimType {
   Airdrop, // free, no vesting, can be available on both mainnet and gchain
@@ -541,6 +543,7 @@ function _getClaimManyArgs({
   })
 
   const value = totalValue.toString() === '0' ? undefined : totalValue.toString()
+
   const args: GetClaimManyArgsResult['args'] =
     indices.length > 0
       ? [indices, claimTypes, claimants, claimableAmounts, claimedAmounts, merkleProofs, sendEth, { value }]
@@ -621,7 +624,7 @@ function _getClaimValue(claim: UserClaimData, vCowAmount: string, chainId: Suppo
 
   const claimValueInAtoms = JSBI.multiply(JSBI.BigInt(vCowAmount), JSBI.BigInt(price))
 
-  return parseUnits(claimValueInAtoms.toString(), 18).toString()
+  return JSBI.divide(claimValueInAtoms, DENOMINATOR).toString()
 }
 
 type LastAddress = string
