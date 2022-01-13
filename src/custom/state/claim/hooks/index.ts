@@ -73,13 +73,6 @@ export const NATIVE_TOKEN_PRICE: { [chain in SupportedChainId]: string } = {
 export const GNO_PRICE = '375000000000000' // '0.000375' GNO (18 decimals) per vCOW, in atoms
 export const USDC_PRICE = '150000' // '0.15' USDC (6 decimals) per vCOW, in atoms
 
-// Symbols of native tokens so we can use this in the UI
-export const NATIVE_TOKEN_SYMBOL: { [chain in SupportedChainId]: string } = {
-  [SupportedChainId.MAINNET]: 'ETH',
-  [SupportedChainId.RINKEBY]: 'ETH',
-  [SupportedChainId.XDAI]: 'XDAI',
-}
-
 export const GNO_SYMBOL = 'GNO'
 export const USDC_SYMBOL = 'USDC'
 
