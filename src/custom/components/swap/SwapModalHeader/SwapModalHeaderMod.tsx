@@ -280,7 +280,7 @@ SwapModalHeaderProps) {
         )}
       </AutoColumn>
       {recipient !== null ? (
-        <AutoColumn justify="flex-start" gap="sm" style={{ padding: '12px 0 0 0px' }}>
+        <AutoColumn justify="flex-start" gap="sm">
           <TYPE.main>
             <Trans>
               Output will be sent to{' '}
