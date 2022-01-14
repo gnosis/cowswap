@@ -745,9 +745,7 @@ export function useUserEnhancedClaimData(account: Account): EnhancedUserClaimDat
   const { available } = useClassifiedUserClaims(account)
   const { chainId: preCheckChainId } = useActiveWeb3React()
 
-  const checkType = useCallback((type) => Number(FREE_CLAIM_TYPES.includes(type)), [])
-
-  const sorted = useMemo(() => available.sort((a, b) => checkType(b.type) - checkType(a.type)), [available, checkType])
+  const sorted = useMemo(() => available.sort(_sortTypes), [available])
 
   return useMemo(() => {
     const chainId = supportedChainId(preCheckChainId)
@@ -782,4 +780,8 @@ export function useUserEnhancedClaimData(account: Account): EnhancedUserClaimDat
       return acc
     }, [])
   }, [preCheckChainId, sorted])
+}
+
+function _sortTypes(a: UserClaimData, b: UserClaimData): number {
+  return Number(isFreeClaim(a.type)) - Number(isFreeClaim(b.type))
 }
