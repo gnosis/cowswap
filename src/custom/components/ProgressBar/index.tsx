@@ -1,11 +1,11 @@
 import { ProgressBarWrap, ProgressContainer, Progress, Label, FlexWrap, HiddenRange, ProgressVal } from './styled'
 
-interface progressBarProps {
+interface ProgressBarProps {
   percentage: number // between 0 - 100
   onPercentageClick: (percentage: number) => void
 }
 
-export function ProgressBar({ percentage, onPercentageClick }: progressBarProps) {
+export function ProgressBar({ percentage, onPercentageClick }: ProgressBarProps) {
   const statPercentages = [
     {
       value: 0,
@@ -33,7 +33,7 @@ export function ProgressBar({ percentage, onPercentageClick }: progressBarProps)
 
   if (percentage > 100) {
     percentage = 100
-  } else {
+  } else if (percentage < 0) {
     percentage = 0
   }
 

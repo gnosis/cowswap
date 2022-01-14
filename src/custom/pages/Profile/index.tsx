@@ -220,7 +220,7 @@ export default function Profile() {
           </GridWrap>
           {!account && <Web3Status openOrdersPanel={() => console.log('TODO')} />}
         </GridWrap>
-        <ProgressBar onPercentageClick={() => setPercentage(111)} percentage={percentage} />
+        <ProgressBar onPercentageClick={setPercentage} percentage={percentage} />
       </Wrapper>
     </Container>
   )
