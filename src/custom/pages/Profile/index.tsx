@@ -23,7 +23,7 @@ import { HelpCircle, RefreshCcw } from 'react-feather'
 import Web3Status from 'components/Web3Status'
 import useReferralLink from 'hooks/useReferralLink'
 import useFetchProfile from 'hooks/useFetchProfile'
-import { numberFormatter } from 'utils/format'
+import { formatMax, formatSmart, numberFormatter } from 'utils/format'
 import { getExplorerAddressLink } from 'utils/explorer'
 import useTimeAgo from 'hooks/useTimeAgo'
 import { MouseoverTooltipContent } from 'components/Tooltip'
@@ -35,6 +35,9 @@ import CowProtocolLogo from 'components/CowProtocolLogo'
 import { Title } from 'components/Page'
 import { ProgressBar } from 'components/ProgressBar'
 import { useState } from 'react'
+import { useTokenBalance } from 'state/wallet/hooks'
+import { V_COW } from 'constants/tokens'
+import { AMOUNT_PRECISION } from 'constants/index'
 
 export default function Profile() {
   const referralLink = useReferralLink()
@@ -44,6 +47,8 @@ export default function Profile() {
   const isTradesTooltipVisible = account && chainId == 1 && !!profileData?.totalTrades
   const hasOrders = useHasOrders(account)
   const [percentage, setPercentage] = useState(0)
+
+  const vCowBalance = useTokenBalance(account || undefined, chainId ? V_COW[chainId] : undefined)
 
   const renderNotificationMessages = (
     <>
@@ -67,15 +72,21 @@ export default function Profile() {
           <CardHead>
             <Title>Profile</Title>
           </CardHead>
-          <VCOWBalance>
-            <CowProtocolLogo size={46} />
-            <ProfileFlexCol>
-              <Txt fs={14}>Balance</Txt>
-              <Txt fs={18}>
-                <strong>102,02 vCOW</strong>
-              </Txt>
-            </ProfileFlexCol>
-          </VCOWBalance>
+          {vCowBalance && (
+            <VCOWBalance>
+              <CowProtocolLogo size={46} />
+              <ProfileFlexCol>
+                <Txt fs={14}>Balance</Txt>
+                <Txt fs={18} title={`${formatMax(vCowBalance)} vCOW`}>
+                  <strong>
+                    {formatSmart(vCowBalance, AMOUNT_PRECISION, { thousandSeparator: true, isLocaleAware: true }) ||
+                      '0'}{' '}
+                    vCOW
+                  </strong>
+                </Txt>
+              </ProfileFlexCol>
+            </VCOWBalance>
+          )}
         </ProfileGridWrap>
       </ProfileWrapper>
       {chainId && chainId === ChainId.MAINNET && <AffiliateStatusCheck />}

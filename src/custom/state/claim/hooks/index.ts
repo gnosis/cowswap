@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import JSBI from 'jsbi'
 import ms from 'ms.macro'
-import { CurrencyAmount, Token } from '@uniswap/sdk-core'
+import { CurrencyAmount, Price, Token } from '@uniswap/sdk-core'
 import { TransactionResponse } from '@ethersproject/providers'
 import { parseUnits } from '@ethersproject/units'
 
@@ -18,21 +18,57 @@ import { formatSmart } from 'utils/format'
 import { calculateGasMargin } from 'utils/calculateGasMargin'
 import { isAddress } from 'utils'
 
-import { getClaimKey, getClaimsRepoPath, transformRepoClaimsToUserClaims } from 'state/claim/hooks/utils'
+import {
+  getClaimKey,
+  getClaimsRepoPath,
+  isFreeClaim,
+  claimTypeToTokenAmount,
+  transformRepoClaimsToUserClaims,
+} from 'state/claim/hooks/utils'
 import { SupportedChainId } from 'constants/chains'
+import { registerOnWindow } from 'utils/misc'
+import mockData, { MOCK_INDICES } from './mocks/claimData'
+import { getIndexes } from './utils'
+import { useAllClaimingTransactionIndices } from 'state/enhancedTransactions/hooks'
 
 export { useUserClaimData } from '@src/state/claim/hooks'
+
+import { AppDispatch } from 'state'
+import { useSelector, useDispatch } from 'react-redux'
+import { AppState } from 'state'
+
+import {
+  setInputAddress,
+  setActiveClaimAccount,
+  setActiveClaimAccountENS,
+  setIsSearchUsed,
+  setClaimStatus,
+  setClaimedAmount,
+  setIsInvestFlowActive,
+  setInvestFlowStep,
+  setSelected,
+  setSelectedAll,
+  ClaimStatus,
+} from '../actions'
+import { EnhancedUserClaimData } from 'pages/Claim/types'
+import { supportedChainId } from 'utils/supportedChainId'
 
 const CLAIMS_REPO_BRANCH = 'main'
 export const CLAIMS_REPO = `https://raw.githubusercontent.com/gnosis/cow-merkle-drop/${CLAIMS_REPO_BRANCH}/`
 
+// Base amount = 1 VCOW
+const ONE_VCOW = CurrencyAmount.fromRawAmount(
+  V_COW[SupportedChainId.RINKEBY],
+  parseUnits('1', V_COW[SupportedChainId.RINKEBY].decimals).toString()
+)
 // TODO: these values came from the test contract, might be different on real deployment
 // Network variable price
-export const NATIVE_TOKEN_PRICE = {
+export const NATIVE_TOKEN_PRICE: { [chain in SupportedChainId]: string } = {
   [SupportedChainId.MAINNET]: '37500000000000', // '0.0000375' WETH (18 decimals) per vCOW, in wei
   [SupportedChainId.RINKEBY]: '37500000000000', // assuming Rinkeby has same price as Mainnet
   [SupportedChainId.XDAI]: '150000000000000000', // TODO: wild guess, wxDAI is same price as USDC
 }
+
 // Same on all networks. Actually, likely available only on Mainnet (and Rinkeby)
 export const GNO_PRICE = '375000000000000' // '0.000375' GNO (18 decimals) per vCOW, in atoms
 export const USDC_PRICE = '150000' // '0.15' USDC (6 decimals) per vCOW, in atoms
@@ -49,6 +85,15 @@ export enum ClaimType {
   Team, // free, with vesting, only on mainnet
   Advisor, // free, with vesting, only on mainnet
 }
+
+export type TypeToPriceMapper = Map<ClaimType, number>
+
+// Hardcoded values
+export const ClaimTypePriceMap: TypeToPriceMapper = new Map([
+  [ClaimType.GnoOption, 16.66],
+  [ClaimType.Investor, 26.66],
+  [ClaimType.UserOption, 36.66],
+])
 
 type RepoClaimType = keyof typeof ClaimType
 
@@ -164,13 +209,18 @@ export function useUserHasAvailableClaim(account: Account): boolean {
 export function useUserUnclaimedAmount(account: string | null | undefined): CurrencyAmount<Token> | undefined {
   const { chainId } = useActiveWeb3React()
   const claims = useUserAvailableClaims(account)
+  const pendingIndices = useAllClaimingTransactionIndices()
 
   const vCow = chainId ? V_COW[chainId] : undefined
   if (!vCow) return undefined
   if (!claims || claims.length === 0) {
     return CurrencyAmount.fromRawAmount(vCow, JSBI.BigInt(0))
   }
+
   const totalAmount = claims.reduce((acc, claim) => {
+    // don't add pending
+    if (pendingIndices.has(claim.index)) return acc
+
     return JSBI.add(acc, JSBI.BigInt(claim.amount))
   }, JSBI.BigInt('0'))
 
@@ -217,6 +267,13 @@ export function useUserClaims(account: Account): UserClaims | null {
   return claimKey ? claimInfo[claimKey] : null
 }
 
+// TODO: remove
+const createMockTx = (data: number[]) => ({
+  hash: '0x' + Math.round(Math.random() * 10).toString() + 'AxAFjAhG89G89AfnLK3CCxAfnLKQffQ782G89AfnLK3CCxxx123FF',
+  summary: `Claimed ${Math.random() * 3337} vCOW`,
+  claim: { recipient: '0x97EC4fcD5F78cA6f6E4E1EAC6c0Ec8421bA518B7', indices: data },
+})
+
 /**
  * Fetches from contract the deployment timestamp in ms
  *
@@ -242,27 +299,41 @@ function useDeploymentTimestamp(): number | null {
 }
 
 /**
+ * Returns the timestamp of when the investment window closes
+ */
+export function useInvestmentDeadline(): number | null {
+  const deploymentTimestamp = useDeploymentTimestamp()
+
+  return deploymentTimestamp && deploymentTimestamp + TWO_WEEKS
+}
+
+/**
  * Returns whether vCOW contract is still open for investments
- * Null when not applicable
- *
  * That is, there has been less than 2 weeks since it was deployed
  */
 export function useInvestmentStillAvailable(): boolean {
+  const investmentDeadline = useInvestmentDeadline()
+
+  return Boolean(investmentDeadline && investmentDeadline > Date.now())
+}
+
+/**
+ * Returns the timestamp of when the airdrop window closes
+ */
+export function useAirdropDeadline(): number | null {
   const deploymentTimestamp = useDeploymentTimestamp()
 
-  return Boolean(deploymentTimestamp && deploymentTimestamp + TWO_WEEKS > Date.now())
+  return deploymentTimestamp && deploymentTimestamp + SIX_WEEKS
 }
 
 /**
  * Returns whether vCOW contract is still open for airdrops
- * Null when not applicable
- *
  * That is, there has been less than 6 weeks since it was deployed
  */
 export function useAirdropStillAvailable(): boolean {
-  const deploymentTimestamp = useDeploymentTimestamp()
+  const airdropDeadline = useAirdropDeadline()
 
-  return Boolean(deploymentTimestamp && deploymentTimestamp + SIX_WEEKS > Date.now())
+  return Boolean(airdropDeadline && airdropDeadline > Date.now())
 }
 
 /**
@@ -312,6 +383,33 @@ export function useClaimCallback(account: string | null | undefined): {
   const addTransaction = useTransactionAdder()
   const vCowToken = chainId ? V_COW[chainId] : undefined
 
+  // TODO: remove
+  registerOnWindow({
+    addMockClaimTransactions: (data?: number[]) => {
+      let finalData: number[] | undefined = data
+
+      if (!finalData) {
+        const mockDataIndices = connectedAccount ? getIndexes(mockData[connectedAccount] || []) : []
+        finalData = mockDataIndices?.length > 0 ? mockDataIndices : MOCK_INDICES
+      }
+
+      return addTransaction(createMockTx(finalData))
+    },
+  })
+
+  /**
+   * Extend the Payable optional param
+   */
+  function _extendFinalArg(args: ClaimManyFnArgs, extendedArg: Record<any, any>) {
+    const lastArg = args.pop()
+    args.push({
+      ...lastArg, // add back whatever is already there
+      ...extendedArg,
+    })
+
+    return args
+  }
+
   const claimCallback = useCallback(
     async function (claimInput: ClaimInput[]) {
       if (
@@ -338,17 +436,16 @@ export function useClaimCallback(account: string | null | undefined): {
 
       return vCowContract.estimateGas['claimMany'](...args).then((estimatedGas) => {
         // Last item in the array contains the call overrides
-        args[args.length - 1] = {
-          ...args[args.length - 1], // add back whatever is already there
+        const extendedArgs = _extendFinalArg(args, {
           from: connectedAccount, // add the `from` as the connected account
           gasLimit: calculateGasMargin(chainId, estimatedGas), // add the estimated gas limit
-        }
+        })
 
-        return vCowContract.claimMany(...args).then((response: TransactionResponse) => {
+        return vCowContract.claimMany(...extendedArgs).then((response: TransactionResponse) => {
           addTransaction({
             hash: response.hash,
             summary: `Claimed ${formatSmart(vCowAmount)} vCOW`,
-            claim: { recipient: account },
+            claim: { recipient: account, indices: args[0] as number[] },
           })
           return response.hash
         })
@@ -604,4 +701,85 @@ function fetchClaims(account: string, chainId: number): Promise<UserClaims> {
         throw error
       }))
   )
+}
+
+export function useClaimDispatchers() {
+  const dispatch = useDispatch<AppDispatch>()
+
+  return useMemo(
+    () => ({
+      // account
+      setInputAddress: (payload: string) => dispatch(setInputAddress(payload)),
+      setActiveClaimAccount: (payload: string) => dispatch(setActiveClaimAccount(payload)),
+      setActiveClaimAccountENS: (payload: string) => dispatch(setActiveClaimAccountENS(payload)),
+      // search
+      setIsSearchUsed: (payload: boolean) => dispatch(setIsSearchUsed(payload)),
+      // claiming
+      setClaimStatus: (payload: ClaimStatus) => dispatch(setClaimStatus(payload)),
+      setClaimedAmount: (payload: number) => dispatch(setClaimedAmount(payload)),
+      // investing
+      setIsInvestFlowActive: (payload: boolean) => dispatch(setIsInvestFlowActive(payload)),
+      setInvestFlowStep: (payload: number) => dispatch(setInvestFlowStep(payload)),
+      // claim row selection
+      setSelected: (payload: number[]) => dispatch(setSelected(payload)),
+      setSelectedAll: (payload: boolean) => dispatch(setSelectedAll(payload)),
+    }),
+    [dispatch]
+  )
+}
+
+export function useClaimState() {
+  return useSelector((state: AppState) => state.claim)
+}
+
+/**
+ * Gets an array of available claims parsed and sorted for the UI
+ *
+ * Syntactic sugar on top of `useUserClaims`
+ *
+ * @param account
+ */
+export function useUserEnhancedClaimData(account: Account): EnhancedUserClaimData[] {
+  const { available } = useClassifiedUserClaims(account)
+  const { chainId: preCheckChainId } = useActiveWeb3React()
+
+  const sorted = useMemo(() => available.sort(_sortTypes), [available])
+
+  return useMemo(() => {
+    const chainId = supportedChainId(preCheckChainId)
+    if (!chainId) return []
+
+    return sorted.reduce<EnhancedUserClaimData[]>((acc, claim) => {
+      const tokenAndAmount = claimTypeToTokenAmount(claim.type, chainId)
+
+      if (!tokenAndAmount) return acc
+
+      const price = new Price({
+        baseAmount: ONE_VCOW,
+        quoteAmount: CurrencyAmount.fromRawAmount(tokenAndAmount.token, tokenAndAmount.amount),
+      }).invert()
+
+      // get the currency amount using the price base currency (remember price was inverted) and claim amount
+      const currencyAmount = CurrencyAmount.fromRawAmount(price.baseCurrency, claim.amount)
+      const claimAmount = CurrencyAmount.fromRawAmount(ONE_VCOW.currency, claim.amount)
+
+      // e.g 1000 vCow / 20 GNO = 50 GNO cost
+      const cost = currencyAmount.divide(price)
+
+      acc.push({
+        ...claim,
+        isFree: isFreeClaim(claim.type),
+        currencyAmount,
+        claimAmount,
+        price,
+        cost,
+      })
+
+      return acc
+    }, [])
+  }, [preCheckChainId, sorted])
+}
+
+function _sortTypes(a: UserClaimData, b: UserClaimData): number {
+  return Number(isFreeClaim(a.type)) - Number(isFreeClaim(b.type))
 }
