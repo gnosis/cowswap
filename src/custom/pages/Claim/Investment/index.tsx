@@ -1,61 +1,69 @@
-import { useEffect, useState } from 'react'
-import { CurrencyAmount, Token } from '@uniswap/sdk-core'
+import { useEffect, useState, useCallback } from 'react'
 import {
   InvestFlow,
   InvestContent,
-  InvestTokenGroup,
-  InvestInput,
-  InvestAvailableBar,
-  InvestSummary,
   InvestFlowValidation,
   InvestTokenSubtotal,
   StepIndicator,
   Steps,
-  TokenLogo,
 } from 'pages/Claim/styled'
-import CowProtocolLogo from 'components/CowProtocolLogo'
-import { useClaimState } from 'state/claim/hooks'
+import { useClaimState, useUserEnhancedClaimData } from 'state/claim/hooks'
 import { ClaimCommonTypes, EnhancedUserClaimData } from '../types'
 import { ClaimStatus } from 'state/claim/actions'
 import { useActiveWeb3React } from 'hooks/web3'
 import { ApprovalState } from 'hooks/useApproveCallback'
-import { CheckCircle } from 'react-feather'
-import Row from 'components/Row'
 import InvestOption from './InvestOption'
 
 type InvestmentFlowProps = Pick<ClaimCommonTypes, 'hasClaims'> & {
   isAirdropOnly: boolean
-  userClaimData: EnhancedUserClaimData[]
   approveState: ApprovalState
   approveCallback: () => void
 }
 
-export type InvestOptionProps = EnhancedUserClaimData &
-  Pick<InvestmentFlowProps, 'approveCallback' | 'approveState'> & {
-    percent?: number
-    value?: CurrencyAmount<Token>
-  }
+export type InvestmentClaimProps = EnhancedUserClaimData & {
+  investedAmount: string
+}
+
+export type InvestOptionProps = Pick<InvestmentFlowProps, 'approveCallback' | 'approveState'> & {
+  claim: InvestmentClaimProps
+  updateInvestAmount: (idx: number, investAmount: string) => void
+}
 
 export default function InvestmentFlow({
   hasClaims,
   isAirdropOnly,
-  userClaimData,
   approveState,
   approveCallback,
 }: InvestmentFlowProps) {
   const { account } = useActiveWeb3React()
-
   const { activeClaimAccount, claimStatus, isInvestFlowActive, investFlowStep, selected } = useClaimState()
 
-  const [investData, setInvestData] = useState<EnhancedUserClaimData[]>([])
+  const claimData = useUserEnhancedClaimData(activeClaimAccount)
+
+  const [investData, setInvestData] = useState<InvestmentClaimProps[]>([])
 
   useEffect(() => {
-    if (userClaimData) {
-      const filtered = userClaimData.filter(({ index }) => selected.includes(index))
-      const mapped = filtered.map((claim) => ({ ...claim, percent: 100, value: claim.currencyAmount }))
-      setInvestData(mapped)
+    if (claimData) {
+      const data = claimData.reduce<InvestmentClaimProps[]>((acc, claim) => {
+        if (selected.includes(claim.index)) {
+          acc.push({ ...claim, investedAmount: '0' })
+        }
+
+        return acc
+      }, [])
+
+      setInvestData(data)
     }
-  }, [selected, userClaimData])
+  }, [selected, claimData])
+
+  const updateInvestAmount = useCallback(
+    (idx: number, investedAmount: string) => {
+      console.log(idx, investedAmount)
+      const update = investData.map((claim) => (claim.index === idx ? { ...claim, investedAmount } : claim))
+      setInvestData(update)
+    },
+    [investData]
+  )
 
   if (
     !activeClaimAccount || // no connected account
@@ -92,130 +100,14 @@ export default function InvestmentFlow({
           </p>
 
           {investData.map((claim) => (
-            <InvestOption key={claim.index} approveState={approveState} approveCallback={approveCallback} {...claim} />
+            <InvestOption
+              key={claim.index}
+              approveState={approveState}
+              approveCallback={approveCallback}
+              updateInvestAmount={updateInvestAmount}
+              claim={claim}
+            />
           ))}
-
-          <InvestTokenSubtotal>
-            {activeClaimAccount} will receive: 4,054,671.28 vCOW based on investment(s)
-          </InvestTokenSubtotal>
-
-          <InvestFlowValidation>Approve all investment tokens before continuing</InvestFlowValidation>
-        </InvestContent>
-      ) : null}
-
-      {/* Invest flow: Step 1 > Set allowances and investment amounts */}
-      {investFlowStep === 1 ? (
-        <InvestContent>
-          <p>
-            Your account can participate in the investment of vCOW. Each investment opportunity will allow you to invest
-            up to a predefined maximum amount of tokens{' '}
-          </p>
-          <InvestTokenGroup>
-            <div>
-              <span>
-                <TokenLogo symbol={'GNO'} size={72} />
-                <CowProtocolLogo size={72} />
-              </span>
-              <h3>Buy vCOW with GNO</h3>
-            </div>
-
-            <span>
-              <InvestSummary>
-                <span>
-                  <b>Price</b> <i>16.66 vCoW per GNO</i>
-                </span>
-                <span>
-                  <b>Token approval</b>
-                  <i>
-                    {approveState === ApprovalState.NOT_APPROVED ? (
-                      'GNO not approved'
-                    ) : (
-                      <Row>
-                        GNO approved <CheckCircle color="lightgreen" style={{ marginLeft: 5 }} />
-                      </Row>
-                    )}
-                  </i>
-                  {approveState === ApprovalState.NOT_APPROVED && (
-                    <button onClick={approveCallback}>Approve GNO</button>
-                  )}
-                </span>
-                <span>
-                  <b>Max. investment available</b> <i>2,500.04 GNO</i>
-                </span>
-                <span>
-                  <b>Available investment used</b> <InvestAvailableBar percentage={50} />
-                </span>
-              </InvestSummary>
-              <InvestInput>
-                <div>
-                  <span>
-                    <b>Balance:</b> <i>10,583.34 GNO</i>
-                    {/* Button should use the max possible amount the user can invest, considering their balance + max investment allowed */}
-                    <button>Invest max. possible</button>
-                  </span>
-                  <label>
-                    <b>GNO</b>
-                    <input placeholder="0" />
-                  </label>
-                  <i>Receive: 32,432.54 vCOW</i>
-                  {/* Insufficient balance validation error */}
-                  <small>
-                    Insufficient balance to invest. Adjust the amount or go back to remove this investment option.
-                  </small>
-                </div>
-              </InvestInput>
-            </span>
-          </InvestTokenGroup>
-
-          <InvestTokenGroup>
-            <div>
-              <span>
-                <TokenLogo symbol={'ETH'} size={72} />
-                <CowProtocolLogo size={72} />
-              </span>
-              <h3>Buy vCOW with ETH</h3>
-            </div>
-
-            <span>
-              <InvestSummary>
-                <span>
-                  <b>Price</b> <i>16.66 vCoW per ETH</i>
-                </span>
-                <span>
-                  <b>Token approval</b>
-                  <i>
-                    <Row>
-                      Not required for ETH! <CheckCircle color="lightgreen" style={{ marginLeft: 5 }} />
-                    </Row>
-                  </i>
-                </span>
-                <span>
-                  <b>Max. investment available</b> <i>2,500.04 ETH</i>
-                </span>
-                <span>
-                  <b>Available investment used</b> <InvestAvailableBar percentage={50} />
-                </span>
-              </InvestSummary>
-              <InvestInput>
-                <div>
-                  <span>
-                    <b>Balance:</b> <i>10,583.34 ETH</i>
-                    {/* Button should use the max possible amount the user can invest, considering their balance + max investment allowed */}
-                    <button>Invest max. possible</button>
-                  </span>
-                  <label>
-                    <b>ETH</b>
-                    <input placeholder="0" />
-                  </label>
-                  <i>Receive: 32,432.54 vCOW</i>
-                  {/* Insufficient balance validation error */}
-                  <small>
-                    Insufficient balance to invest. Adjust the amount or go back to remove this investment option.
-                  </small>
-                </div>
-              </InvestInput>
-            </span>
-          </InvestTokenGroup>
 
           <InvestTokenSubtotal>
             {activeClaimAccount} will receive: 4,054,671.28 vCOW based on investment(s)

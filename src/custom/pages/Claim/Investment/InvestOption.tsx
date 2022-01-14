@@ -1,5 +1,8 @@
+import { useCallback, useMemo } from 'react'
 import styled from 'styled-components/macro'
 import CowProtocolLogo from 'components/CowProtocolLogo'
+import { formatUnits, parseUnits } from '@ethersproject/units'
+import { CurrencyAmount } from '@uniswap/sdk-core'
 
 import { InvestTokenGroup, TokenLogo, InvestSummary, InvestInput } from '../styled'
 import { formatSmart } from 'utils/format'
@@ -7,6 +10,8 @@ import Row from 'components/Row'
 import { CheckCircle } from 'react-feather'
 import { InvestOptionProps } from '.'
 import { ApprovalState } from 'hooks/useApproveCallback'
+import { useCurrencyBalance } from 'state/wallet/hooks'
+import { useActiveWeb3React } from 'hooks/web3'
 
 const RangeSteps = styled.div`
   display: flex;
@@ -24,13 +29,15 @@ const RangeStep = styled.button`
   padding: 0;
 `
 
-export default function InvestOption({
-  approveState,
-  approveCallback,
-  price,
-  currencyAmount,
-  percent,
-}: InvestOptionProps) {
+export default function InvestOption({ approveState, approveCallback, updateInvestAmount, claim }: InvestOptionProps) {
+  const { currencyAmount, price, cost: maxCost, investedAmount } = claim
+
+  const { account } = useActiveWeb3React()
+
+  const token = currencyAmount?.currency
+
+  const balance = useCurrencyBalance(account || undefined, token)
+
   const handlePercentChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     console.log(event.target.value)
   }
@@ -38,6 +45,27 @@ export default function InvestOption({
   const handleStepChange = (value: number) => {
     console.log(value)
   }
+
+  const onMaxClick = useCallback(() => {
+    if (!maxCost || !balance) {
+      return
+    }
+
+    const amount = maxCost.greaterThan(balance) ? balance : maxCost
+    // store the value as a string to prevent unnecessary re-renders
+    const investAmount = formatUnits(amount.quotient.toString(), balance.currency.decimals)
+
+    updateInvestAmount(claim.index, investAmount)
+  }, [balance, claim.index, maxCost, updateInvestAmount])
+
+  const vCowAmount = useMemo(() => {
+    if (!token || !price) {
+      return
+    }
+
+    const investA = CurrencyAmount.fromRawAmount(token, parseUnits(investedAmount, token.decimals).toString())
+    return investA.multiply(price)
+  }, [investedAmount, price, token])
 
   return (
     <InvestTokenGroup>
@@ -76,7 +104,7 @@ export default function InvestOption({
           <span>
             <b>Max. investment available</b>{' '}
             <i>
-              {formatSmart(currencyAmount)} {currencyAmount?.currency?.symbol}
+              {formatSmart(maxCost) || '0'} {currencyAmount?.currency?.symbol}
             </i>
           </span>
           <span>
@@ -97,7 +125,7 @@ export default function InvestOption({
                 type="range"
                 min="0"
                 max="100"
-                value={percent}
+                value={0}
               />
             </div>
           </span>
@@ -105,15 +133,18 @@ export default function InvestOption({
         <InvestInput>
           <div>
             <span>
-              <b>Balance:</b> <i>10,583.34 {currencyAmount?.currency?.symbol}</i>
+              <b>Balance:</b>{' '}
+              <i>
+                {formatSmart(balance)} {currencyAmount?.currency?.symbol}
+              </i>
               {/* Button should use the max possible amount the user can invest, considering their balance + max investment allowed */}
-              <button>Invest max. possible</button>
+              <button onClick={onMaxClick}>Invest max. possible</button>
             </span>
             <label>
               <b>{currencyAmount?.currency?.symbol}</b>
-              <input max={formatSmart(currencyAmount)} style={{ width: '100%' }} type="number" />
+              <input disabled placeholder="0" value={investedAmount} max={formatSmart(currencyAmount)} />
             </label>
-            <i>Receive: 32,432.54 vCOW</i>
+            <i>Receive: {formatSmart(vCowAmount) || 0} vCOW</i>
             {/* Insufficient balance validation error */}
             <small>
               Insufficient balance to invest. Adjust the amount or go back to remove this investment option.
