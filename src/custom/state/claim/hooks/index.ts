@@ -781,5 +781,5 @@ export function useUserEnhancedClaimData(account: Account): EnhancedUserClaimDat
 }
 
 function _sortTypes(a: UserClaimData, b: UserClaimData): number {
-  return Number(isFreeClaim(a.type)) - Number(isFreeClaim(b.type))
+  return Number(isFreeClaim(b.type)) - Number(isFreeClaim(a.type))
 }
