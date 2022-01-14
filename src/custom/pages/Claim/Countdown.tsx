@@ -65,9 +65,9 @@ export function Countdown({ start, end }: Props) {
     <TYPE.black fontWeight={400}>
       {Number.isFinite(timeRemaining) && (
         <code>
-          {`${days}:${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds
+          {`${days} days, ${hours.toString().padStart(2, '0')}h, ${minutes.toString().padStart(2, '0')}m, ${seconds
             .toString()
-            .padStart(2, '0')}`}
+            .padStart(2, '0')}s`}
         </code>
       )}
     </TYPE.black>
