@@ -30,6 +30,7 @@ import {
   updateUserLocale,
   updateUserSlippageTolerance,
 } from './actions'
+import { useSwapActionHandlers } from '../swap/hooks'
 
 export function serializeToken(token: Token): SerializedToken {
   return {
@@ -114,9 +115,13 @@ export function useIsRecipientToggleVisible(): boolean {
 export function useRecipientToggleManager(): [boolean, () => void] {
   const dispatch = useAppDispatch()
   const recipientToggleVisible = useIsRecipientToggleVisible()
+  const { onChangeRecipient } = useSwapActionHandlers()
 
   const toggleRecipientVisibility = useCallback(() => {
     dispatch(updateRecipientToggleVisible({ recipientToggleVisible: !recipientToggleVisible }))
+    if (!recipientToggleVisible) {
+      onChangeRecipient(null)
+    }
   }, [recipientToggleVisible, dispatch])
 
   return [recipientToggleVisible, toggleRecipientVisibility]
