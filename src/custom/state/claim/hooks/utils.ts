@@ -1,8 +1,7 @@
 import { CurrencyAmount, Token } from '@uniswap/sdk-core'
 
 import { SupportedChainId } from 'constants/chains'
-import { GNO, GpEther, USDC, V_COW } from 'constants/tokens'
-import { USDC_RINKEBY } from 'utils/rinkeby/constants'
+import { GNO, GpEther, USDC_BY_CHAIN, V_COW } from 'constants/tokens'
 
 import {
   CLAIMS_REPO,
@@ -169,11 +168,8 @@ export function claimTypeToTokenAmount(type: ClaimType, chainId: SupportedChainI
   switch (type) {
     case ClaimType.GnoOption:
       return { token: GNO[chainId], amount: GNO_PRICE }
-    case ClaimType.Investor: {
-      if (chainId === SupportedChainId.MAINNET) return { token: USDC, amount: USDC_PRICE }
-      if (chainId === SupportedChainId.RINKEBY) return { token: USDC_RINKEBY, amount: USDC_PRICE }
-      return undefined
-    }
+    case ClaimType.Investor:
+      return { token: USDC_BY_CHAIN[chainId], amount: USDC_PRICE }
     case ClaimType.UserOption:
       return { token: GpEther.onChain(chainId), amount: NATIVE_TOKEN_PRICE[chainId] }
     default:
