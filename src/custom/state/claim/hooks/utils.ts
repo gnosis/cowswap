@@ -1,6 +1,9 @@
 import { CurrencyAmount, Token } from '@uniswap/sdk-core'
+
 import { SupportedChainId } from 'constants/chains'
 import { GNO, USDC, V_COW, WETH9_EXTENDED } from 'constants/tokens'
+import { USDC_RINKEBY } from 'utils/rinkeby/constants'
+
 import {
   CLAIMS_REPO,
   ClaimType,
@@ -161,15 +164,16 @@ export type PaidClaimTypeToPriceMap = {
 
 /**
  * Helper function to get vCow price based on claim type and chainId
- *
- * @param type
  */
 export function claimTypeToTokenAmount(type: ClaimType, chainId: SupportedChainId) {
   switch (type) {
     case ClaimType.GnoOption:
       return { token: GNO[chainId], amount: GNO_PRICE }
-    case ClaimType.Investor:
-      return { token: USDC, amount: USDC_PRICE }
+    case ClaimType.Investor: {
+      if (chainId === SupportedChainId.MAINNET) return { token: USDC, amount: USDC_PRICE }
+      if (chainId === SupportedChainId.RINKEBY) return { token: USDC_RINKEBY, amount: USDC_PRICE }
+      return undefined
+    }
     case ClaimType.UserOption:
       return { token: WETH9_EXTENDED[chainId], amount: NATIVE_TOKEN_PRICE[chainId] }
     default:
