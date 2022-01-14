@@ -1,17 +1,21 @@
-import {} from 'react'
-import styled, { css } from 'styled-components/macro'
+import { useCallback, useRef, useState } from 'react'
+import styled from 'styled-components/macro'
+import { useOnClickOutside } from 'hooks/useOnClickOutside'
 import { ChevronDown } from 'react-feather'
-// import { useOnClickOutside } from 'hooks/useOnClickOutside'
 
 export default function VCOWdropdown() {
   const [open, setOpen] = useState(false)
+  const toggle = useCallback(() => setOpen((open) => !open), [])
+  const node = useRef<HTMLDivElement>(null)
+  useOnClickOutside(node, open ? toggle : undefined)
+
   return (
-    <Wrapper>
+    <Wrapper ref={node}>
       <AddressInfo onClick={toggle}>
-        <span style={{ marginRight: '2px' }}>dropdown</span>
+        <span style={{ marginRight: '2px' }}>adss</span>
         <ChevronDown size={16} style={{ marginTop: '2px' }} strokeWidth={2.5} />
       </AddressInfo>
-      {open && <MenuFlyout>dd</MenuFlyout>}
+      {open && <MenuFlyout>sasdad</MenuFlyout>}
     </Wrapper>
   )
 }
