@@ -1,7 +1,7 @@
 import { CurrencyAmount, Token } from '@uniswap/sdk-core'
 
 import { SupportedChainId } from 'constants/chains'
-import { GNO, USDC, V_COW, WETH9_EXTENDED } from 'constants/tokens'
+import { GNO, GpEther, USDC, V_COW, WETH9_EXTENDED } from 'constants/tokens'
 import { USDC_RINKEBY } from 'utils/rinkeby/constants'
 
 import {
@@ -175,7 +175,7 @@ export function claimTypeToTokenAmount(type: ClaimType, chainId: SupportedChainI
       return undefined
     }
     case ClaimType.UserOption:
-      return { token: WETH9_EXTENDED[chainId], amount: NATIVE_TOKEN_PRICE[chainId] }
+      return { token: GpEther.onChain(chainId), amount: NATIVE_TOKEN_PRICE[chainId] }
     default:
       return undefined
   }
