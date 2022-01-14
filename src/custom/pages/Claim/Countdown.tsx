@@ -1,8 +1,6 @@
 // Sort of a mod of but not quite from src/pages/Earn/Countdown.tsx
 import { useEffect, useState } from 'react'
 
-import { TYPE } from 'theme'
-
 const MINUTE = 60
 const HOUR = MINUTE * 60
 const DAY = HOUR * 24
@@ -62,14 +60,8 @@ export function Countdown({ start, end }: Props) {
   }
 
   return (
-    <TYPE.black fontWeight={400}>
-      {Number.isFinite(timeRemaining) && (
-        <code>
-          {`${days} days, ${hours.toString().padStart(2, '0')}h, ${minutes.toString().padStart(2, '0')}m, ${seconds
-            .toString()
-            .padStart(2, '0')}s`}
-        </code>
-      )}
-    </TYPE.black>
+    <>{`${days} days, ${hours.toString().padStart(2, '0')}h, ${minutes.toString().padStart(2, '0')}m, ${seconds
+      .toString()
+      .padStart(2, '0')}s`}</>
   )
 }
