@@ -29,6 +29,8 @@ const RangeStep = styled.button`
   padding: 0;
 `
 
+const INVESTMENT_STEPS = [0, 25, 50, 75, 100]
+
 export default function InvestOption({ approveState, approveCallback, updateInvestAmount, claim }: InvestOptionProps) {
   const { currencyAmount, price, cost: maxCost, investedAmount } = claim
 
@@ -112,7 +114,7 @@ export default function InvestOption({ approveState, approveCallback, updateInve
 
             <div>
               <RangeSteps>
-                {[0, 25, 50, 75, 100].map((step: number) => (
+                {INVESTMENT_STEPS.map((step: number) => (
                   <RangeStep onClick={() => handleStepChange(step)} key={step}>
                     {step}%
                   </RangeStep>

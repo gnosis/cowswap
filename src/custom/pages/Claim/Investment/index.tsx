@@ -58,7 +58,6 @@ export default function InvestmentFlow({
 
   const updateInvestAmount = useCallback(
     (idx: number, investedAmount: string) => {
-      console.log(idx, investedAmount)
       const update = investData.map((claim) => (claim.index === idx ? { ...claim, investedAmount } : claim))
       setInvestData(update)
     },
@@ -109,6 +108,7 @@ export default function InvestmentFlow({
             />
           ))}
 
+          {/* TODO: Update this with real data */}
           <InvestTokenSubtotal>
             {activeClaimAccount} will receive: 4,054,671.28 vCOW based on investment(s)
           </InvestTokenSubtotal>
