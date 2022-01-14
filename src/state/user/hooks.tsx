@@ -122,7 +122,7 @@ export function useRecipientToggleManager(): [boolean, () => void] {
     if (!recipientToggleVisible) {
       onChangeRecipient(null)
     }
-  }, [recipientToggleVisible, dispatch])
+  }, [recipientToggleVisible, dispatch, onChangeRecipient])
 
   return [recipientToggleVisible, toggleRecipientVisibility]
 }
