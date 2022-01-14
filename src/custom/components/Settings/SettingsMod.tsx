@@ -264,7 +264,9 @@ export default function SettingsTab({ className, placeholderSlippage, SettingsBu
                 <QuestionHelper
                   bgColor={theme.bg3}
                   color={theme.text1}
-                  text={<Trans>Enables the add recipient button in the Swap screen</Trans>}
+                  text={
+                    <Trans>Allows you to choose a destination address for the swap other than the connected one.</Trans>
+                  }
                 />
               </RowFixed>
               <Toggle
