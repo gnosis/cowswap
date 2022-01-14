@@ -7,10 +7,12 @@ import {
   InvestSummary,
   InvestFlowValidation,
   InvestTokenSubtotal,
+  InputField,
   StepIndicator,
   Steps,
   TokenLogo,
 } from 'pages/Claim/styled'
+import { ButtonPrimary, ButtonSecondary } from 'components/Button'
 import CowProtocolLogo from 'components/CowProtocolLogo'
 import { useClaimState } from 'state/claim/hooks'
 import { ClaimCommonTypes } from './types'
@@ -71,21 +73,24 @@ export default function InvestmentFlow({
           </p>
           <InvestTokenGroup>
             <div>
+              <h3>Buy vCOW with GNO</h3>
               <span>
                 <TokenLogo symbol={'GNO'} size={72} />
                 <CowProtocolLogo size={72} />
               </span>
-              <h3>Buy vCOW with GNO</h3>
             </div>
 
             <span>
               <InvestSummary>
                 <span>
-                  <b>Price</b> <i>16.66 vCoW per GNO</i>
+                  <i>Price</i> <b>16.66 vCoW per GNO</b>
                 </span>
                 <span>
-                  <b>Token approval</b>
-                  <i>
+                  <i>Max. investment available</i> <b>2,500.04 GNO</b>
+                </span>
+                <span>
+                  <i>Token approval</i>
+                  <b>
                     {approveState === ApprovalState.NOT_APPROVED ? (
                       'GNO not approved'
                     ) : (
@@ -93,28 +98,27 @@ export default function InvestmentFlow({
                         GNO approved <CheckCircle color="lightgreen" style={{ marginLeft: 5 }} />
                       </Row>
                     )}
-                  </i>
+                  </b>
                   {approveState === ApprovalState.NOT_APPROVED && (
-                    <button onClick={approveCallback}>Approve GNO</button>
+                    <ButtonPrimary onClick={approveCallback}>Approve GNO</ButtonPrimary>
                   )}
                 </span>
                 <span>
-                  <b>Max. investment available</b> <i>2,500.04 GNO</i>
-                </span>
-                <span>
-                  <b>Available investment used</b> <InvestAvailableBar percentage={50} />
+                  <i>Available investment used</i> <InvestAvailableBar percentage={50} />
                 </span>
               </InvestSummary>
               <InvestInput>
                 <div>
-                  <span>
-                    <b>Balance:</b> <i>10,583.34 GNO</i>
-                    {/* Button should use the max possible amount the user can invest, considering their balance + max investment allowed */}
-                    <button>Invest max. possible</button>
-                  </span>
                   <label>
-                    <b>GNO</b>
-                    <input placeholder="0" />
+                    <InputField>
+                      <span>
+                        <i>Balance:</i> <b>10,583.34 GNO</b>
+                        {/* Button should use the max possible amount the user can invest, considering their balance + max investment allowed */}
+                        <ButtonSecondary>(invest max. possible)</ButtonSecondary>
+                      </span>
+                      <b>GNO</b>
+                      <input placeholder="0" />
+                    </InputField>
                   </label>
                   <i>Receive: 32,432.54 vCOW</i>
                   {/* Insufficient balance validation error */}
@@ -128,31 +132,31 @@ export default function InvestmentFlow({
 
           <InvestTokenGroup>
             <div>
+              <h3>Buy vCOW with ETH</h3>
               <span>
                 <TokenLogo symbol={'ETH'} size={72} />
                 <CowProtocolLogo size={72} />
               </span>
-              <h3>Buy vCOW with ETH</h3>
             </div>
 
             <span>
               <InvestSummary>
                 <span>
-                  <b>Price</b> <i>16.66 vCoW per ETH</i>
+                  <i>Price</i> <b>16.66 vCoW per ETH</b>
                 </span>
                 <span>
-                  <b>Token approval</b>
-                  <i>
+                  <i>Max. investment available</i> <b>2,500.04 ETH</b>
+                </span>
+                <span>
+                  <i>Token approval</i>
+                  <b>
                     <Row>
                       Not required for ETH! <CheckCircle color="lightgreen" style={{ marginLeft: 5 }} />
                     </Row>
-                  </i>
+                  </b>
                 </span>
                 <span>
-                  <b>Max. investment available</b> <i>2,500.04 ETH</i>
-                </span>
-                <span>
-                  <b>Available investment used</b> <InvestAvailableBar percentage={50} />
+                  <i>Available investment used</i> <InvestAvailableBar percentage={50} />
                 </span>
               </InvestSummary>
               <InvestInput>
@@ -160,11 +164,13 @@ export default function InvestmentFlow({
                   <span>
                     <b>Balance:</b> <i>10,583.34 ETH</i>
                     {/* Button should use the max possible amount the user can invest, considering their balance + max investment allowed */}
-                    <button>Invest max. possible</button>
+                    <ButtonSecondary>Invest max. possible</ButtonSecondary>
                   </span>
                   <label>
-                    <b>ETH</b>
-                    <input placeholder="0" />
+                    <InputField>
+                      <input placeholder="0" />
+                      <b>ETH</b>
+                    </InputField>
                   </label>
                   <i>Receive: 32,432.54 vCOW</i>
                   {/* Insufficient balance validation error */}
