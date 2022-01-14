@@ -1,7 +1,7 @@
 import { CurrencyAmount, Token } from '@uniswap/sdk-core'
 
 import { SupportedChainId } from 'constants/chains'
-import { GNO, GpEther, USDC, V_COW, WETH9_EXTENDED } from 'constants/tokens'
+import { GNO, GpEther, USDC, V_COW } from 'constants/tokens'
 import { USDC_RINKEBY } from 'utils/rinkeby/constants'
 
 import {
