@@ -12,13 +12,14 @@ import {
   TokenLogo,
 } from 'pages/Claim/styled'
 import CowProtocolLogo from 'components/CowProtocolLogo'
-import { useClaimState } from 'state/claim/hooks'
+import { useClaimState, useUserEnhancedClaimData } from 'state/claim/hooks'
 import { ClaimCommonTypes } from './types'
 import { ClaimStatus } from 'state/claim/actions'
 import { useActiveWeb3React } from 'hooks/web3'
 import { ApprovalState } from 'hooks/useApproveCallback'
 import { CheckCircle } from 'react-feather'
 import Row from 'components/Row'
+import { InvestmentTokenGroup } from 'pages/Claim/InvestmentTokenGroup'
 
 type InvestmentFlowProps = Pick<ClaimCommonTypes, 'hasClaims'> & {
   isAirdropOnly: boolean
@@ -35,6 +36,7 @@ export default function InvestmentFlow({
   const { account } = useActiveWeb3React()
 
   const { activeClaimAccount, claimStatus, isInvestFlowActive, investFlowStep } = useClaimState()
+  const claimData = useUserEnhancedClaimData(activeClaimAccount)
 
   if (
     !activeClaimAccount || // no connected account
@@ -69,62 +71,14 @@ export default function InvestmentFlow({
             Your account can participate in the investment of vCOW. Each investment opportunity will allow you to invest
             up to a predefined maximum amount of tokens{' '}
           </p>
-          <InvestTokenGroup>
-            <div>
-              <span>
-                <TokenLogo symbol={'GNO'} size={72} />
-                <CowProtocolLogo size={72} />
-              </span>
-              <h3>Buy vCOW with GNO</h3>
-            </div>
-
-            <span>
-              <InvestSummary>
-                <span>
-                  <b>Price</b> <i>16.66 vCoW per GNO</i>
-                </span>
-                <span>
-                  <b>Token approval</b>
-                  <i>
-                    {approveState === ApprovalState.NOT_APPROVED ? (
-                      'GNO not approved'
-                    ) : (
-                      <Row>
-                        GNO approved <CheckCircle color="lightgreen" style={{ marginLeft: 5 }} />
-                      </Row>
-                    )}
-                  </i>
-                  {approveState === ApprovalState.NOT_APPROVED && (
-                    <button onClick={approveCallback}>Approve GNO</button>
-                  )}
-                </span>
-                <span>
-                  <b>Max. investment available</b> <i>2,500.04 GNO</i>
-                </span>
-                <span>
-                  <b>Available investment used</b> <InvestAvailableBar percentage={50} />
-                </span>
-              </InvestSummary>
-              <InvestInput>
-                <div>
-                  <span>
-                    <b>Balance:</b> <i>10,583.34 GNO</i>
-                    {/* Button should use the max possible amount the user can invest, considering their balance + max investment allowed */}
-                    <button>Invest max. possible</button>
-                  </span>
-                  <label>
-                    <b>GNO</b>
-                    <input placeholder="0" />
-                  </label>
-                  <i>Receive: 32,432.54 vCOW</i>
-                  {/* Insufficient balance validation error */}
-                  <small>
-                    Insufficient balance to invest. Adjust the amount or go back to remove this investment option.
-                  </small>
-                </div>
-              </InvestInput>
-            </span>
-          </InvestTokenGroup>
+          {claimData.map((cd) => (
+            <InvestmentTokenGroup
+              key={cd.index}
+              claim={cd}
+              approveState={approveState}
+              approveCallback={approveCallback}
+            />
+          ))}
 
           <InvestTokenGroup>
             <div>
@@ -207,7 +161,7 @@ export default function InvestmentFlow({
           </p>
           <p>
             <b>Can I modify the invested amounts or invest partial amounts later?</b> No. Once you send the transaction,
-            you cannot increase or reduce the investment. Investment oportunities can only be exercised once.
+            you cannot increase or reduce the investment. Investment opportunities can only be exercised once.
           </p>
         </InvestContent>
       ) : null}
