@@ -5,7 +5,7 @@ import { setClaimStatus, ClaimStatus } from './actions'
 
 const isFinalizeTransaction = isAnyOf(finalizeTransaction)
 
-// On each Pending, Expired, Fulfilled order action a corresponding sound is dispatched
+// Watch for claim tx being finalized and triggers a change of status
 export const claimMinedMiddleware: Middleware<Record<string, unknown>, AppState> = (store) => (next) => (action) => {
   const result = next(action)
 
@@ -14,7 +14,7 @@ export const claimMinedMiddleware: Middleware<Record<string, unknown>, AppState>
     const transaction = store.getState().transactions[chainId][hash]
 
     if (transaction.claim) {
-      console.log('[stat:claim:middleware] Claim transaction finalized', transaction.hash, transaction.claim)
+      console.debug('[stat:claim:middleware] Claim transaction finalized', transaction.hash, transaction.claim)
       store.dispatch(setClaimStatus(ClaimStatus.CONFIRMED))
     }
   }
