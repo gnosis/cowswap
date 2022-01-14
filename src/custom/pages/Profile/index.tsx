@@ -12,10 +12,8 @@ import {
   ChildWrapper,
   Loader,
   ExtLink,
-  VCOWBalance,
   ProfileWrapper,
   ProfileGridWrap,
-  ProfileFlexCol,
 } from 'pages/Profile/styled'
 import { useActiveWeb3React } from 'hooks/web3'
 import Copy from 'components/Copy/CopyMod'
@@ -31,7 +29,6 @@ import NotificationBanner from 'components/NotificationBanner'
 import { SupportedChainId as ChainId } from 'constants/chains'
 import AffiliateStatusCheck from 'components/AffiliateStatusCheck'
 import { useHasOrders } from 'api/gnosisProtocol/hooks'
-import CowProtocolLogo from 'components/CowProtocolLogo'
 import { Title } from 'components/Page'
 import VCOWdropdown from './VCOWdropdown'
 
@@ -65,15 +62,6 @@ export default function Profile() {
           <CardHead>
             <Title>Profile</Title>
           </CardHead>
-          <VCOWBalance>
-            <CowProtocolLogo size={46} />
-            <ProfileFlexCol>
-              <Txt fs={14}>Balance</Txt>
-              <Txt fs={18}>
-                <strong>102,02 vCOW</strong>
-              </Txt>
-            </ProfileFlexCol>
-          </VCOWBalance>
           <VCOWdropdown />
         </ProfileGridWrap>
       </ProfileWrapper>

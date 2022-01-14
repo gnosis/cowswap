@@ -2,6 +2,9 @@ import { useCallback, useRef, useState } from 'react'
 import styled from 'styled-components/macro'
 import { useOnClickOutside } from 'hooks/useOnClickOutside'
 import { ChevronDown } from 'react-feather'
+import { Txt } from 'assets/styles/styled'
+import CowProtocolLogo from 'components/CowProtocolLogo'
+import { VCOWBalance, ProfileFlexCol } from 'pages/Profile/styled'
 
 export default function VCOWdropdown() {
   const [open, setOpen] = useState(false)
@@ -11,11 +14,21 @@ export default function VCOWdropdown() {
 
   return (
     <Wrapper ref={node}>
-      <AddressInfo onClick={toggle}>
-        <span style={{ marginRight: '2px' }}>adss</span>
+      <DropdownWrapper onClick={toggle}>
+        <span style={{ marginRight: '2px' }}>
+          <VCOWBalance>
+            <CowProtocolLogo size={46} />
+            <ProfileFlexCol>
+              <Txt fs={14}>Balance</Txt>
+              <Txt fs={18}>
+                <strong>102,02 vCOW</strong>
+              </Txt>
+            </ProfileFlexCol>
+          </VCOWBalance>
+        </span>
         <ChevronDown size={16} style={{ marginTop: '2px' }} strokeWidth={2.5} />
-      </AddressInfo>
-      {open && <MenuFlyout>sasdad</MenuFlyout>}
+      </DropdownWrapper>
+      {open && <MenuFlyout>TOTAL BALANCE</MenuFlyout>}
     </Wrapper>
   )
 }
@@ -48,10 +61,10 @@ const MenuFlyout = styled.span`
   flex-direction: column;
   font-size: 1rem;
   position: absolute;
-  left: 0;
-  top: 1.75rem;
+  right: 0;
+  top: 4.5rem;
   z-index: 100;
-  min-width: 350px;
+  min-width: 300px;
   ${({ theme }) => theme.mediaWidth.upToMedium`;
     min-width: 145px
   `};
@@ -77,9 +90,9 @@ const MenuFlyout = styled.span`
   }
 ` */
 
-export const AddressInfo = styled.button`
+export const DropdownWrapper = styled.button`
   align-items: center;
-  background-color: ${({ theme }) => theme.bg4};
+  /*  background-color: ${({ theme }) => theme.bg4}; */
   border-radius: 12px;
   border: 1px solid ${({ theme }) => theme.bg0};
   color: ${({ theme }) => theme.text1};
