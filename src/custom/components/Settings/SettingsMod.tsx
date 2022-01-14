@@ -245,6 +245,7 @@ export default function SettingsTab({ className, placeholderSlippage, SettingsBu
                   expertMode
                     ? () => {
                         toggleExpertMode()
+                        toggleRecipientVisibility()
                         setShowConfirmation(false)
                       }
                     : () => {
@@ -263,15 +264,13 @@ export default function SettingsTab({ className, placeholderSlippage, SettingsBu
                 <QuestionHelper
                   bgColor={theme.bg3}
                   color={theme.text1}
-                  text={
-                    <Trans>Allow high price impact trades and skip the confirm screen. Use at your own risk.</Trans>
-                  }
+                  text={<Trans>Enables the add recipient button in the Swap screen</Trans>}
                 />
               </RowFixed>
               <Toggle
                 id="toggle-recipient-mode-button"
-                isActive={recipientToggleVisible}
-                toggle={toggleRecipientVisibility}
+                isActive={recipientToggleVisible || expertMode}
+                toggle={() => (expertMode ? null : toggleRecipientVisibility())}
               />
             </RowBetween>
           </AutoColumn>
