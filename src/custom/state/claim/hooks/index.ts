@@ -73,9 +73,6 @@ export const NATIVE_TOKEN_PRICE: { [chain in SupportedChainId]: string } = {
 export const GNO_PRICE = '375000000000000' // '0.000375' GNO (18 decimals) per vCOW, in atoms
 export const USDC_PRICE = '150000' // '0.15' USDC (6 decimals) per vCOW, in atoms
 
-export const GNO_SYMBOL = 'GNO'
-export const USDC_SYMBOL = 'USDC'
-
 // Constants regarding investment time windows
 const TWO_WEEKS = ms`2 weeks`
 const SIX_WEEKS = ms`6 weeks`
@@ -274,8 +271,7 @@ export function useUserClaims(account: Account): UserClaims | null {
 const createMockTx = (data: number[]) => ({
   hash: '0x' + Math.round(Math.random() * 10).toString() + 'AxAFjAhG89G89AfnLK3CCxAfnLKQffQ782G89AfnLK3CCxxx123FF',
   summary: `Claimed ${Math.random() * 3337} vCOW`,
-  claim: { recipient: '0x97EC4fcD5F78cA6f6E4E1EAC6c0Ec8421bA518B7' },
-  data, // add the claim indices to state
+  claim: { recipient: '0x97EC4fcD5F78cA6f6E4E1EAC6c0Ec8421bA518B7', indices: data },
 })
 
 /**
@@ -449,8 +445,7 @@ export function useClaimCallback(account: string | null | undefined): {
           addTransaction({
             hash: response.hash,
             summary: `Claimed ${formatSmart(vCowAmount)} vCOW`,
-            claim: { recipient: account },
-            data: args[0], // add the claim indices to state
+            claim: { recipient: account, indices: args[0] as number[] },
           })
           return response.hash
         })
@@ -748,41 +743,42 @@ export function useUserEnhancedClaimData(account: Account): EnhancedUserClaimDat
   const { available } = useClassifiedUserClaims(account)
   const { chainId: preCheckChainId } = useActiveWeb3React()
 
-  const checkType = useCallback((type) => Number(FREE_CLAIM_TYPES.includes(type)), [])
-
-  const sorted = useMemo(() => available.sort((a, b) => checkType(b.type) - checkType(a.type)), [available, checkType])
+  const sorted = useMemo(() => available.sort(_sortTypes), [available])
 
   return useMemo(() => {
     const chainId = supportedChainId(preCheckChainId)
     if (!chainId) return []
 
-    return sorted.reduce<EnhancedUserClaimData[]>((acc, claim) => {
-      const tokenAndAmount = claimTypeToTokenAmount(claim.type, chainId)
-
-      if (!tokenAndAmount) return acc
-
-      const price = new Price({
-        baseAmount: ONE_VCOW,
-        quoteAmount: CurrencyAmount.fromRawAmount(tokenAndAmount.token, tokenAndAmount.amount),
-      }).invert()
-
-      // get the currency amount using the price base currency (remember price was inverted) and claim amount
-      const currencyAmount = CurrencyAmount.fromRawAmount(price.baseCurrency.wrapped, claim.amount)
+    return sorted.map<EnhancedUserClaimData>((claim) => {
       const claimAmount = CurrencyAmount.fromRawAmount(ONE_VCOW.currency, claim.amount)
 
-      // e.g 1000 vCow / 20 GNO = 50 GNO cost
-      const cost = currencyAmount.divide(price)
+      const tokenAndAmount = claimTypeToTokenAmount(claim.type, chainId)
 
-      acc.push({
+      const data: EnhancedUserClaimData = {
         ...claim,
         isFree: isFreeClaim(claim.type),
-        currencyAmount,
         claimAmount,
-        price,
-        cost,
-      })
+      }
 
-      return acc
-    }, [])
+      if (!tokenAndAmount) {
+        return data
+      } else {
+        data.price = new Price({
+          baseAmount: ONE_VCOW,
+          quoteAmount: CurrencyAmount.fromRawAmount(tokenAndAmount.token, tokenAndAmount.amount),
+        }).invert()
+        // get the currency amount using the price base currency (remember price was inverted) and claim amount
+        data.currencyAmount = CurrencyAmount.fromRawAmount(data.price.baseCurrency, claim.amount)
+
+        // e.g 1000 vCow / 20 GNO = 50 GNO cost
+        data.cost = data.currencyAmount.divide(data.price)
+
+        return data
+      }
+    })
   }, [preCheckChainId, sorted])
+}
+
+function _sortTypes(a: UserClaimData, b: UserClaimData): number {
+  return Number(isFreeClaim(b.type)) - Number(isFreeClaim(a.type))
 }
