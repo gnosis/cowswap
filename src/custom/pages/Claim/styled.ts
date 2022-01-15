@@ -474,7 +474,7 @@ export const ClaimTotal = styled.div`
 
   > p {
     margin: 0;
-    font-size: 24px;
+    font-size: 30px;
     font-weight: bold;
   }
 `
