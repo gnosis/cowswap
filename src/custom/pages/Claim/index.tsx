@@ -29,6 +29,7 @@ import useTransactionConfirmationModal from 'hooks/useTransactionConfirmationMod
 
 import { GNO, USDC_BY_CHAIN } from 'constants/tokens'
 import { isSupportedChain } from 'utils/supportedChainId'
+import useErrorMessage from 'hooks/useErrorMessage'
 
 const GNO_CLAIM_APPROVE_MESSAGE = 'Approving GNO for investing in vCOW'
 const USDC_CLAIM_APPROVE_MESSAGE = 'Approving USDC for investing in vCOW'
@@ -70,6 +71,7 @@ export default function Claim() {
     setSelectedAll,
   } = useClaimDispatchers()
 
+  // addresses
   const { address: resolvedAddress, name: resolvedENS } = useENS(inputAddress)
   const isInputAddressValid = useMemo(() => isAddress(resolvedAddress || ''), [resolvedAddress])
 
@@ -121,8 +123,13 @@ export default function Claim() {
     setInputAddress('')
   }
 
+  const { setError, ErrorMessage } = useErrorMessage()
+
   // handle submit claim
   const handleSubmitClaim = () => {
+    // Reset error handling
+    setError(undefined)
+
     // just to be sure
     if (!activeClaimAccount) return
 
@@ -145,6 +152,7 @@ export default function Claim() {
         .catch((error) => {
           setClaimStatus(ClaimStatus.DEFAULT)
           console.log(error)
+          setError(error?.message)
         })
     } else {
       const inputData = [...getIndexes(freeClaims), ...selected].map((idx: number) => {
@@ -300,6 +308,15 @@ export default function Claim() {
             </>
           )}
       </FooterNavButtons>
+      {/* Error messages */}
+      <ErrorMessage
+        $css="
+          margin: -2rem auto 0 auto;
+          padding: 2rem 1.25rem 0rem 1rem;
+          width: 95%;
+          z-index: 0;
+        "
+      />
     </PageWrapper>
   )
 }
