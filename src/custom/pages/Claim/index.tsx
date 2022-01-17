@@ -164,13 +164,15 @@ export default function Claim() {
 
   // on account change
   useEffect(() => {
-    if (!isSearchUsed && account) {
+    if (!account) {
+      setActiveClaimAccount('')
+    } else if (!isSearchUsed) {
       setActiveClaimAccount(account)
     }
 
-    if (!account) {
-      setActiveClaimAccount('')
-    }
+    // properly reset the user to the claims table and initial investment flow
+    setInvestFlowStep(0)
+    setIsInvestFlowActive(false)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account])
 
