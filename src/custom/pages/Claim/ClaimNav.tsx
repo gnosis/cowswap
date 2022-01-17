@@ -10,7 +10,7 @@ import Identicon from 'components/Identicon'
 type ClaimNavProps = Pick<ClaimCommonTypes, 'account' | 'handleChangeAccount'>
 
 export default function ClaimNav({ account, handleChangeAccount }: ClaimNavProps) {
-  const { activeClaimAccount, activeClaimAccountENS, claimStatus } = useClaimState()
+  const { activeClaimAccount, activeClaimAccountENS, claimStatus, investFlowStep } = useClaimState()
   const { setActiveClaimAccount } = useClaimDispatchers()
 
   const isAttempting = useMemo(() => claimStatus === ClaimStatus.ATTEMPTING, [claimStatus])
@@ -32,9 +32,11 @@ export default function ClaimNav({ account, handleChangeAccount }: ClaimNavProps
             </ButtonSecondary>
           )}
 
-          <ButtonSecondary disabled={isAttempting} onClick={handleChangeAccount}>
-            Change account
-          </ButtonSecondary>
+          {investFlowStep < 2 && (
+            <ButtonSecondary disabled={isAttempting} onClick={handleChangeAccount}>
+              Change account
+            </ButtonSecondary>
+          )}
         </ClaimAccountButtons>
       </ClaimAccount>
     </TopNav>
