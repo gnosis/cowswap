@@ -201,16 +201,6 @@ export const ProfileWrapper = styled(Wrapper)`
   padding: 16px 24px;
 `
 
-export const ProfileFlexCol = styled.div`
-  display: flex;
-  flex-grow: 1;
-  align-items: flex-start;
-  flex-direction: column;
-
-  span {
-    padding: 0 8px;
-  }
-`
 export const ProfileGridWrap = styled(GridWrap)`
   grid-template-columns: 1fr auto;
   justify-content: space-between;
@@ -229,18 +219,4 @@ export const ProfileGridWrap = styled(GridWrap)`
       grid-column-end: 1;
     }
   `};
-`
-
-export const VCOWBalance = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  flex-grow: 1;
-  min-width: 215px;
-  height: 56px;
-  justify-content: center;
-  border-radius: 12px;
-  padding: 8px;
-  ${({ theme }) => theme.neumorphism.boxShadow};
-  background-color: ${({ theme }) => theme.bg7};
 `

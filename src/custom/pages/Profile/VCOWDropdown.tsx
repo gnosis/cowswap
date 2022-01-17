@@ -2,11 +2,17 @@ import { useCallback, useRef, useState } from 'react'
 import styled from 'styled-components/macro'
 import { useOnClickOutside } from 'hooks/useOnClickOutside'
 import { ChevronDown } from 'react-feather'
+import { CurrencyAmount, Token } from '@uniswap/sdk-core'
 import { Txt } from 'assets/styles/styled'
 import CowProtocolLogo from 'components/CowProtocolLogo'
-import { VCOWBalance, ProfileFlexCol } from 'pages/Profile/styled'
+import { formatMax, formatSmart } from 'utils/format'
+import { AMOUNT_PRECISION } from '@src/custom/constants'
 
-export default function VCOWdropdown() {
+type VCOWDropdownProps = {
+  balance?: CurrencyAmount<Token>
+}
+
+export default function VCOWDropdown({ balance }: VCOWDropdownProps) {
   const [open, setOpen] = useState(false)
   const toggle = useCallback(() => setOpen((open) => !open), [])
   const node = useRef<HTMLDivElement>(null)
@@ -20,8 +26,10 @@ export default function VCOWdropdown() {
             <CowProtocolLogo size={46} />
             <ProfileFlexCol>
               <Txt fs={14}>Balance</Txt>
-              <Txt fs={18}>
-                <strong>102,02 vCOW</strong>
+              <Txt fs={18} title={`${formatMax(balance)} vCOW`}>
+                <strong>
+                  {formatSmart(balance, AMOUNT_PRECISION, { thousandSeparator: true, isLocaleAware: true }) ?? '0'} vCOW
+                </strong>
               </Txt>
             </ProfileFlexCol>
           </VCOWBalance>
@@ -109,5 +117,30 @@ export const DropdownWrapper = styled.button`
     cursor: pointer;
     outline: none;
     border: 1px solid ${({ theme }) => theme.bg3};
+  }
+`
+
+export const VCOWBalance = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex-grow: 1;
+  min-width: 215px;
+  height: 56px;
+  justify-content: center;
+  border-radius: 12px;
+  padding: 8px;
+  ${({ theme }) => theme.neumorphism.boxShadow};
+  background-color: ${({ theme }) => theme.bg7};
+`
+
+export const ProfileFlexCol = styled.div`
+  display: flex;
+  flex-grow: 1;
+  align-items: flex-start;
+  flex-direction: column;
+
+  span {
+    padding: 0 8px;
   }
 `
