@@ -112,17 +112,21 @@ export function useIsRecipientToggleVisible(): boolean {
   return useAppSelector((state) => state.user.recipientToggleVisible)
 }
 
-export function useRecipientToggleManager(): [boolean, () => void] {
+export function useRecipientToggleManager(): [boolean, (value?: boolean) => void] {
   const dispatch = useAppDispatch()
   const recipientToggleVisible = useIsRecipientToggleVisible()
   const { onChangeRecipient } = useSwapActionHandlers()
 
-  const toggleRecipientVisibility = useCallback(() => {
-    dispatch(updateRecipientToggleVisible({ recipientToggleVisible: !recipientToggleVisible }))
-    if (!recipientToggleVisible) {
-      onChangeRecipient(null)
-    }
-  }, [recipientToggleVisible, dispatch, onChangeRecipient])
+  const toggleRecipientVisibility = useCallback(
+    (value?: boolean) => {
+      const newRecipientToggleVisibilityValue = value ?? !recipientToggleVisible
+      dispatch(updateRecipientToggleVisible({ recipientToggleVisible: newRecipientToggleVisibilityValue }))
+      if (!newRecipientToggleVisibilityValue) {
+        onChangeRecipient(null)
+      }
+    },
+    [recipientToggleVisible, dispatch, onChangeRecipient]
+  )
 
   return [recipientToggleVisible, toggleRecipientVisibility]
 }

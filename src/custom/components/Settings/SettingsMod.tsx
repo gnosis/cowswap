@@ -245,11 +245,12 @@ export default function SettingsTab({ className, placeholderSlippage, SettingsBu
                   expertMode
                     ? () => {
                         toggleExpertMode()
-                        toggleRecipientVisibility()
+                        toggleRecipientVisibility(false)
                         setShowConfirmation(false)
                       }
                     : () => {
                         toggle()
+                        toggleRecipientVisibility(true)
                         setShowConfirmation(true)
                       }
                 }
