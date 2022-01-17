@@ -28,7 +28,7 @@ export default function ClaimNav({ account, handleChangeAccount }: ClaimNavProps
         <ClaimAccountButtons>
           {!!account && account !== activeClaimAccount && (
             <ButtonSecondary disabled={isAttempting} onClick={() => setActiveClaimAccount(account)}>
-              Your claims
+              Change account to connected wallet
             </ButtonSecondary>
           )}
 
