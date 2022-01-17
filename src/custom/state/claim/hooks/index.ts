@@ -623,9 +623,11 @@ function _getClaimValue(claim: UserClaimData, vCowAmount: string, chainId: Suppo
 
   const price = NATIVE_TOKEN_PRICE[chainId]
 
-  const claimValueInAtoms = JSBI.multiply(JSBI.BigInt(vCowAmount), JSBI.BigInt(price))
-
-  return JSBI.divide(claimValueInAtoms, DENOMINATOR).toString()
+  // Why InAtomsSquared? because we are multiplying vCowAmount (which is in atoms == * 10**18)
+  // by the price (which is also in atoms == * 10**18)
+  const claimValueInAtomsSquared = JSBI.multiply(JSBI.BigInt(vCowAmount), JSBI.BigInt(price))
+  // Then it's divided by 10**18 to return the value in the native currency atoms
+  return JSBI.divide(claimValueInAtomsSquared, DENOMINATOR).toString()
 }
 
 type LastAddress = string
