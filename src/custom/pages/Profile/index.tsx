@@ -32,6 +32,7 @@ import { useHasOrders } from 'api/gnosisProtocol/hooks'
 import { Title } from 'components/Page'
 import { useTokenBalance } from 'state/wallet/hooks'
 import { V_COW } from 'constants/tokens'
+import VCOWDropdown from './VCOWDropdown'
 
 export default function Profile() {
   const referralLink = useReferralLink()
