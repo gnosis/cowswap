@@ -1,12 +1,14 @@
 import styled from 'styled-components/macro'
 import { ClaimType, useClaimState } from 'state/claim/hooks'
-import { ClaimTable, ClaimBreakdown } from 'pages/Claim/styled'
+import { ClaimTable, ClaimBreakdown, TokenLogo } from 'pages/Claim/styled'
 import CowProtocolLogo from 'components/CowProtocolLogo'
 import { ClaimStatus } from 'state/claim/actions'
 // import { UserClaimDataDetails } from './types' TODO: fix in another PR
 import { formatSmart } from 'utils/format'
 import { EnhancedUserClaimData } from './types'
 import { useAllClaimingTransactionIndices } from 'state/enhancedTransactions/hooks'
+import { CustomLightSpinner } from 'theme'
+import Circle from 'assets/images/blue-loader.svg'
 
 type ClaimsTableProps = {
   handleSelectAll: (event: React.ChangeEvent<HTMLInputElement>) => void
@@ -54,19 +56,29 @@ const ClaimsTableRow = ({
       <td>
         {' '}
         <label className="checkAll">
-          <input
-            onChange={(event) => handleSelect(event, index)}
-            type="checkbox"
-            name="check"
-            checked={isFree || selected.includes(index)}
-            disabled={isFree}
-          />
+          {isPendingClaim ? (
+            <CustomLightSpinner src={Circle} title="Claiming in progress..." alt="loader" size="24px" />
+          ) : (
+            <input
+              onChange={(event) => handleSelect(event, index)}
+              type="checkbox"
+              name="check"
+              checked={isFree || selected.includes(index)}
+              disabled={isFree}
+            />
+          )}
         </label>
       </td>
-      <td>{isFree ? ClaimType[type] : `Buy vCOW with ${currencyAmount?.currency?.symbol}`}</td>
       <td>
-        <CowProtocolLogo size={16} /> {formatSmart(claimAmount) || 0} vCOW
+        {' '}
+        <TokenLogo symbol={`${currencyAmount?.currency?.symbol}`} size={32} />
+        <CowProtocolLogo size={32} />
+        <span>
+          <b>Buy vCOW</b>
+          <i>{isFree ? ClaimType[type] : `with ${currencyAmount?.currency?.symbol}`}</i>
+        </span>
       </td>
+      <td>{formatSmart(claimAmount) || 0} vCOW</td>
       <td>
         <span>
           Price:{' '}
@@ -90,8 +102,6 @@ const ClaimsTableRow = ({
           Ends in: <b>28 days, 10h, 50m</b>
         </span>
       </td>
-      <td>{type === ClaimType.Airdrop ? 'No' : '4 years (linear)'}</td>
-      <td>28 days, 10h, 50m</td>
     </ClaimTr>
   )
 }
