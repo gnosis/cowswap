@@ -672,8 +672,6 @@ export const ClaimBreakdown = styled.div`
     line-height: 1.6;
     font-weight: 300;
     margin: 0 0 24px;
-    text-align: center;
-  }
 `
 
 export const FooterNavButtons = styled.div`
