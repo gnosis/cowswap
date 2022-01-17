@@ -296,7 +296,7 @@ export const ClaimTable = styled.div`
     border-collapse: collapse;
     min-width: 100%;
     font-size: 16px;
-    grid-template-columns: min-content auto max-content auto;
+    grid-template-columns: min-content auto auto auto;
   }
 
   thead,
@@ -321,7 +321,7 @@ export const ClaimTable = styled.div`
     background: transparent;
     text-align: left;
     font-weight: normal;
-    font-size: 13px;
+    font-size: 15px;
     color: ${({ theme }) => theme.text1};
     position: relative;
   }
@@ -666,6 +666,12 @@ export const ClaimBreakdown = styled.div`
   display: flex;
   width: 100%;
   flex-flow: column wrap;
+
+  > h2 {
+    font-size: 28px;
+    font-weight: 500;
+    text-align: center;
+  }
 `
 
 export const FooterNavButtons = styled.div`
@@ -724,6 +730,12 @@ export const Demo = styled(ClaimTable)`
 export const InvestFlow = styled.div`
   display: flex;
   flex-flow: column wrap;
+
+  h1 {
+    font-size: 28px;
+    font-weight: 500;
+    text-align: center;
+  }
 `
 
 export const InvestContent = styled.div`
@@ -879,20 +891,20 @@ export const InvestSummary = styled.div`
   display: grid;
   grid-template-columns: auto auto;
   font-size: 15px;
-  gap: 12px;
+  gap: 16px 36px;
 
   > span {
     display: flex;
     flex-flow: column wrap;
     margin: 0 0 12px;
     color: ${({ theme }) => transparentize(0.1, theme.text1)};
+    gap: 3px;
   }
 
   > span > ${ButtonPrimary} {
-    margin: 12px 0;
+    margin: 12px 0 12px -9px;
     padding: 6px;
     font-size: 16px;
-    max-width: 154px;
   }
 
   > span > i {
