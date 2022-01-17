@@ -146,8 +146,7 @@ export function useClassifiedUserClaims(account: Account): ClassifiedUserClaims 
   const userClaims = useUserClaims(account)
   const contract = useVCowContract()
 
-  const isInvestmentStillAvailable = useInvestmentStillAvailable()
-  const isAirdropStillAvailable = useAirdropStillAvailable()
+  const { isInvestmentWindowOpen, isAirdropWindowOpen } = useClaimTimeInfo()
 
   // build list of parameters, with the claim index
   // we check for all claims because expired now might have been claimed before
@@ -173,7 +172,7 @@ export function useClassifiedUserClaims(account: Account): ClassifiedUserClaims 
         result.result?.[0] === true // result true means claimed
       ) {
         claimed.push(claim)
-      } else if (!isAirdropStillAvailable || (!isInvestmentStillAvailable && PAID_CLAIM_TYPES.includes(claim.type))) {
+      } else if (!isAirdropWindowOpen || (!isInvestmentWindowOpen && PAID_CLAIM_TYPES.includes(claim.type))) {
         expired.push(claim)
       } else {
         available.push(claim)
@@ -181,7 +180,7 @@ export function useClassifiedUserClaims(account: Account): ClassifiedUserClaims 
     })
 
     return { available, expired, claimed }
-  }, [isAirdropStillAvailable, isInvestmentStillAvailable, results, userClaims])
+  }, [isAirdropWindowOpen, isInvestmentWindowOpen, results, userClaims])
 }
 
 /**
@@ -378,8 +377,7 @@ export function useClaimCallback(account: string | null | undefined): {
   const claims = useUserAvailableClaims(account)
   const vCowContract = useVCowContract()
 
-  const isInvestmentStillAvailable = useInvestmentStillAvailable()
-  const isAirdropStillAvailable = useAirdropStillAvailable()
+  const { isInvestmentWindowOpen, isAirdropWindowOpen } = useClaimTimeInfo()
 
   // used for popup summary
   const addTransaction = useTransactionAdder()
@@ -426,7 +424,7 @@ export function useClaimCallback(account: string | null | undefined): {
         throw new Error("Not initialized, can't claim")
       }
 
-      _validateClaimable(claims, claimInput, isInvestmentStillAvailable, isAirdropStillAvailable)
+      _validateClaimable(claims, claimInput, isInvestmentWindowOpen, isAirdropWindowOpen)
 
       const { args, totalClaimedAmount } = _getClaimManyArgs({ claimInput, claims, account, connectedAccount, chainId })
 
@@ -459,8 +457,8 @@ export function useClaimCallback(account: string | null | undefined): {
       chainId,
       claims,
       connectedAccount,
-      isAirdropStillAvailable,
-      isInvestmentStillAvailable,
+      isAirdropWindowOpen,
+      isInvestmentWindowOpen,
       vCowContract,
       vCowToken,
     ]
