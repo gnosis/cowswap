@@ -30,9 +30,6 @@ import { SupportedChainId as ChainId } from 'constants/chains'
 import AffiliateStatusCheck from 'components/AffiliateStatusCheck'
 import { useHasOrders } from 'api/gnosisProtocol/hooks'
 import { Title } from 'components/Page'
-import VCOWDropdown from './VCOWDropdown'
-import { ProgressBar } from 'components/ProgressBar'
-import { useState } from 'react'
 import { useTokenBalance } from 'state/wallet/hooks'
 import { V_COW } from 'constants/tokens'
 
@@ -43,7 +40,6 @@ export default function Profile() {
   const lastUpdated = useTimeAgo(profileData?.lastUpdated)
   const isTradesTooltipVisible = account && chainId == 1 && !!profileData?.totalTrades
   const hasOrders = useHasOrders(account)
-  const [percentage, setPercentage] = useState(0)
 
   const vCowBalance = useTokenBalance(account || undefined, chainId ? V_COW[chainId] : undefined)
 
@@ -203,7 +199,6 @@ export default function Profile() {
           </GridWrap>
           {!account && <Web3Status openOrdersPanel={() => console.log('TODO')} />}
         </GridWrap>
-        <ProgressBar onPercentageClick={setPercentage} percentage={percentage} />
       </Wrapper>
     </Container>
   )
