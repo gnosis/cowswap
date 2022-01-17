@@ -55,13 +55,13 @@ export function Countdown({ start, end }: Props) {
   timeRemaining -= minutes * MINUTE
   const seconds = timeRemaining
 
-  if (!Number.isFinite(timeRemaining)) {
-    return null
-  }
-
   return (
-    <>{`${days} days, ${hours.toString().padStart(2, '0')}h, ${minutes.toString().padStart(2, '0')}m, ${seconds
-      .toString()
-      .padStart(2, '0')}s`}</>
+    <>
+      {Number.isFinite(timeRemaining)
+        ? `${days} days, ${hours.toString().padStart(2, '0')}h, ${minutes.toString().padStart(2, '0')}m, ${seconds
+            .toString()
+            .padStart(2, '0')}s`
+        : 'No longer claimable'}
+    </>
   )
 }
