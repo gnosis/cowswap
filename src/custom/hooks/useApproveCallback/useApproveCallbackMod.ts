@@ -1,19 +1,21 @@
 import { MaxUint256 } from '@ethersproject/constants'
 import { TransactionResponse } from '@ethersproject/providers'
-import { CurrencyAmount, Percent, Currency, TradeType } from '@uniswap/sdk-core'
+import { BigNumber } from '@ethersproject/bignumber'
+import { Currency, CurrencyAmount, Percent, TradeType } from '@uniswap/sdk-core'
 import { Trade as V2Trade } from '@uniswap/v2-sdk'
 import { Trade as V3Trade } from '@uniswap/v3-sdk'
 import { useCallback, useMemo } from 'react'
+
 import { SWAP_ROUTER_ADDRESSES, V2_ROUTER_ADDRESS } from 'constants/addresses'
-import { useTransactionAdder, useHasPendingApproval } from 'state/enhancedTransactions/hooks'
+import { useHasPendingApproval, useTransactionAdder } from 'state/enhancedTransactions/hooks'
 import { calculateGasMargin } from 'utils/calculateGasMargin'
 import { useTokenContract } from 'hooks/useContract'
-import { useActiveWeb3React } from 'hooks/web3'
 import { useTokenAllowance } from 'hooks/useTokenAllowance'
-import { ethers } from 'ethers'
+import { useActiveWeb3React } from 'hooks/web3'
+import { OptionalApproveCallbackParams } from '.'
 
 // Use a 150K gas as a fallback if there's issue calculating the gas estimation (fixes some issues with some nodes failing to calculate gas costs for SC wallets)
-const APPROVE_GAS_LIMIT_DEFAULT = ethers.BigNumber.from('150000')
+const APPROVE_GAS_LIMIT_DEFAULT = BigNumber.from('150000')
 
 export enum ApprovalState {
   UNKNOWN = 'UNKNOWN',
@@ -28,7 +30,7 @@ export function useApproveCallback(
   closeModals: () => void,
   amountToApprove?: CurrencyAmount<Currency>,
   spender?: string
-): [ApprovalState, () => Promise<void>] {
+): [ApprovalState, (optionalParams?: OptionalApproveCallbackParams) => Promise<void>] {
   const { account, chainId } = useActiveWeb3React()
   const token = amountToApprove?.currency?.isToken ? amountToApprove.currency : undefined
   const currentAllowance = useTokenAllowance(token, account ?? undefined, spender)
@@ -53,82 +55,84 @@ export function useApproveCallback(
   const tokenContract = useTokenContract(token?.address)
   const addTransaction = useTransactionAdder()
 
-  const approve = useCallback(async (): Promise<void> => {
-    if (approvalState !== ApprovalState.NOT_APPROVED) {
-      console.error('approve was called unnecessarily')
-      return
-    }
+  const approve = useCallback(
+    async (optionalParams?: OptionalApproveCallbackParams): Promise<void> => {
+      if (approvalState !== ApprovalState.NOT_APPROVED) {
+        console.error('approve was called unnecessarily')
+        return
+      }
+      if (!chainId) {
+        console.error('no chainId')
+        return
+      }
 
-    if (!chainId) {
-      console.error('no chainId')
-      return
-    }
+      if (!token) {
+        console.error('no token')
+        return
+      }
 
-    if (!token) {
-      console.error('no token')
-      return
-    }
+      if (!tokenContract) {
+        console.error('tokenContract is null')
+        return
+      }
 
-    if (!tokenContract) {
-      console.error('tokenContract is null')
-      return
-    }
+      if (!amountToApprove) {
+        console.error('missing amount to approve')
+        return
+      }
 
-    if (!amountToApprove) {
-      console.error('missing amount to approve')
-      return
-    }
+      if (!spender) {
+        console.error('no spender')
+        return
+      }
 
-    if (!spender) {
-      console.error('no spender')
-      return
-    }
-
-    let useExact = false
-    const estimatedGas = await tokenContract.estimateGas.approve(spender, MaxUint256).catch(() => {
-      // general fallback for tokens who restrict approval amounts
-      useExact = true
-      return tokenContract.estimateGas.approve(spender, amountToApprove.quotient.toString()).catch((error) => {
-        console.log(
-          '[useApproveCallbackMod] Error estimating gas for approval. Using default gas limit ' +
-            APPROVE_GAS_LIMIT_DEFAULT.toString(),
-          error
-        )
-        useExact = false
-        return APPROVE_GAS_LIMIT_DEFAULT
+      let useExact = false
+      const estimatedGas = await tokenContract.estimateGas.approve(spender, MaxUint256).catch(() => {
+        // general fallback for tokens who restrict approval amounts
+        useExact = true
+        return tokenContract.estimateGas.approve(spender, amountToApprove.quotient.toString()).catch((error) => {
+          console.log(
+            '[useApproveCallbackMod] Error estimating gas for approval. Using default gas limit ' +
+              APPROVE_GAS_LIMIT_DEFAULT.toString(),
+            error
+          )
+          useExact = false
+          return APPROVE_GAS_LIMIT_DEFAULT
+        })
       })
-    })
 
-    openTransactionConfirmationModal(`Approving ${amountToApprove.currency.symbol} for trading`)
-    return (
-      tokenContract
-        .approve(spender, useExact ? amountToApprove.quotient.toString() : MaxUint256, {
-          gasLimit: calculateGasMargin(chainId, estimatedGas),
-        })
-        .then((response: TransactionResponse) => {
-          addTransaction({
-            hash: response.hash,
-            summary: 'Approve ' + amountToApprove.currency.symbol,
-            approval: { tokenAddress: token.address, spender },
+      openTransactionConfirmationModal(`Approving ${amountToApprove.currency.symbol} for trading`)
+      return (
+        tokenContract
+          .approve(spender, useExact ? amountToApprove.quotient.toString() : MaxUint256, {
+            gasLimit: calculateGasMargin(chainId, estimatedGas),
           })
-        })
-        // .catch((error: Error) => {
-        //   console.debug('Failed to approve token', error)
-        //   throw error
-        // })
-        .finally(closeModals)
-    )
-  }, [
-    chainId,
-    approvalState,
-    token,
-    tokenContract,
-    amountToApprove,
-    spender,
-    addTransaction,
-    openTransactionConfirmationModal,
-    closeModals,
-  ])
+          .then((response: TransactionResponse) => {
+            addTransaction({
+              hash: response.hash,
+              summary: optionalParams?.transactionSummary || 'Approve ' + amountToApprove.currency.symbol,
+              approval: { tokenAddress: token.address, spender },
+            })
+          })
+          // .catch((error: Error) => {
+          //   console.debug('Failed to approve token', error)
+          //   throw error
+          // })
+          .finally(closeModals)
+      )
+    },
+    [
+      chainId,
+      approvalState,
+      token,
+      tokenContract,
+      amountToApprove,
+      spender,
+      addTransaction,
+      openTransactionConfirmationModal,
+      closeModals,
+    ]
+  )
 
   return [approvalState, approve]
 }

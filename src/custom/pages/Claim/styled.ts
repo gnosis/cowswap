@@ -2,6 +2,7 @@ import styled from 'styled-components/macro'
 import { CheckCircle, Frown } from 'react-feather'
 import { Icon } from 'components/CowProtocolLogo'
 import { ButtonPrimary, ButtonSecondary } from 'components/Button'
+import { transparentize, darken } from 'polished'
 
 export const PageWrapper = styled.div`
   --color-tl: #141722;
@@ -12,18 +13,169 @@ export const PageWrapper = styled.div`
   --color-container-bg2: rgb(255 255 255 / 12%);
   --color-container-bg3: rgb(255 255 255 / 25%);
   --border-radius: 56px;
-
+  --border-radius-small: 16px;
   display: flex;
   flex-flow: column wrap;
   max-width: 760px;
   width: 100%;
-  background: linear-gradient(315deg, #000000 0%, #000000 55%, #2a2a2a 100%);
-  color: white;
+  color: ${({ theme }) => theme.text1};
   border-radius: var(--border-radius);
   padding: 30px;
+  border: ${({ theme }) => theme.appBody.border};
+  box-shadow: ${({ theme }) => theme.appBody.boxShadow};
+  background: ${({ theme }) => theme.bg1};
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    border-radius: var(--border-radius-small);
+  `};
+
+  input[type='checkbox'],
+  input[type='radio'] {
+      --active: ${({ theme }) => theme.primary1};
+      --active-inner: ${({ theme }) => theme.black};
+      --focus: 2px rgba(39, 94, 254, .3);
+      --border: ${({ theme }) => theme.bg4};
+      --border-hover: ${({ theme }) => theme.primary1};
+      --background: ${({ theme }) => theme.bg5};
+      appearance: none;
+      height: 21px;
+      outline: none;
+      display: inline-block;
+      vertical-align: top;
+      position: relative;
+      margin: 0;
+      cursor: pointer;
+      border: 1px solid var(--bc, var(--border));
+      background: var(--b, var(--background));
+      transition: background .2s, border-color .2s, box-shadow .2s;
+
+      &:after {
+        content: '';
+        display: block;
+        left: 0;
+        top: 0;
+        position: absolute;
+        transition: transform var(.2s) var(--d-t-e, ease), opacity var(.2s);
+      }
+
+      &:checked {
+        --b: var(--active);
+        --bc: var(--active);
+        --d-t-e: cubic-bezier(.2, .85, .32, 1.2);
+      }
+
+      &:disabled {
+        cursor: not-allowed;
+        opacity: .7;
+
+        &:checked {
+        }
+
+        & + label {
+          cursor: not-allowed;
+        }
+      }
+
+      &:hover {
+        &:not(:checked) {
+          &:not(:disabled) {
+            --bc: var(--border-hover);
+          }
+        }
+      }
+
+      &:focus {
+        box-shadow: 0 0 0 var(--focus);
+      }
+
+      &:not(.switch) {
+        width: 21px;
+        &:after {
+          opacity: var(--o, 0);
+        }
+        &:checked {
+          --o: 1;
+        }
+      }
+
+      & + label {
+        font-size: 14px;
+        line-height: 21px;
+        display: inline-block;
+        vertical-align: top;
+        cursor: pointer;
+        margin-left: 4px;
+      }
+    }
+
+    input[type='checkbox'] {
+      &:not(.switch) {
+        border-radius: 7px;
+
+        &:after {
+          width: 5px;
+          height: 9px;
+          border: 2px solid var(--active-inner);
+          border-top: 0;
+          border-left: 0;
+          left: 7px;
+          top: 4px;
+          transform: rotate(var(--r, 20deg));
+        }
+        &:checked {
+          --r: 43deg;
+        }
+      }
+
+      &.switch {
+        width: 38px;
+        border-radius: 11px;
+
+        &:after {
+          left: 2px;
+          top: 2px;
+          border-radius: 50%;
+          width: 15px;
+          height: 15px;
+          background: var(--ab, var(--border));
+          transform: translateX(var(--x, 0));
+        }
+
+        &:checked {
+          --ab: var(--active-inner);
+          --x: 17px;
+        }
+
+        &:disabled {
+          &:not(:checked) {
+            &:after {
+              opacity: .6;
+            }
+          }
+        }
+      }
+    }
+    
+    input[type='radio'] {
+      border-radius: 50%;
+
+      &:after {
+        width: 19px;
+        height: 19px;
+        border-radius: 50%;
+        background: var(--active-inner);
+        opacity: 0;
+        transform: scale(var(--s, .7));
+      }
+
+      &:checked {
+        --s: .5;
+      }
+    }
+  }
 
   a {
-    color: var(--color-orange);
+    color: ${({ theme }) => theme.primary4};
   }
 
   p {
@@ -36,7 +188,7 @@ export const PageWrapper = styled.div`
   }
 
   p > i {
-    color: var(--color-orange);
+    color: ${({ theme }) => theme.primary1};
   }
 
   p > a {
@@ -45,10 +197,6 @@ export const PageWrapper = styled.div`
   }
 
   ${ButtonPrimary} {
-    background: var(--color-orange);
-    border: 0;
-    box-shadow: none;
-    color: black;
     border-radius: var(--border-radius);
     width: 100%;
     font-size: 21px;
@@ -58,16 +206,7 @@ export const PageWrapper = styled.div`
       margin: 0 auto 24px;
     `};
 
-    &:hover {
-      border: 0;
-      box-shadow: none;
-      transform: none;
-      background: rgb(247 127 80);
-      color: black;
-    }
-
     &[disabled] {
-      background: rgba(151, 151, 151, 0.6);
       cursor: not-allowed;
       pointer-events: all;
     }
@@ -75,7 +214,7 @@ export const PageWrapper = styled.div`
 
   ${ButtonSecondary} {
     background: 0;
-    color: var(--color-orange);
+    color: ${({ theme }) => theme.primary4};
     border: none;
 
     &:hover {
@@ -83,9 +222,19 @@ export const PageWrapper = styled.div`
       box-shadow: none;
       transform: none;
       background: 0;
-      color: inherit;
+      color: ${({ theme }) => theme.primary4};
+      text-decoration: underline;
     }
   }
+`
+
+export const TokenLogo = styled.div<{ symbol: string; size: number }>`
+  display: flex;
+  width: ${({ size }) => `${size}px`};
+  height: ${({ size }) => `${size}px`};
+  border-radius: ${({ size }) => `${size}px`};
+  /* background: ${({ symbol }) => `url(${symbol}.png) no-repeat center/contain`}; */
+  background: grey;
 `
 
 export const ClaimSummary = styled.div`
@@ -94,26 +243,13 @@ export const ClaimSummary = styled.div`
   align-items: center;
   justify-content: flex-start;
   padding: 8px;
+  background: ${({ theme }) => (theme.currencyInput?.background ? theme.currencyInput?.background : theme.bg1)};
+  border: ${({ theme }) =>
+    theme.currencyInput?.border ? theme.currencyInput?.border : `border: 1px solid ${theme.bg2}`};
   border-radius: var(--border-radius);
   margin: 0 auto 24px;
-  /* background: linear-gradient(315deg, #000000 0%, #000000 55%, #202020 100%); */
   position: relative;
-  color: #bbbbbb;
   overflow: hidden;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 0;
-    /* filter: blur(75px); */
-    /* background: conic-gradient(var(--color-tr) 25%, var(--color-tl) 0 28%, var(--color-tr) 0 30%, var(--color-tl) 0); */
-    background: var(--color-container-bg);
-    opacity: 1;
-  }
 
   h1,
   div {
@@ -135,13 +271,22 @@ export const ClaimSummaryTitle = styled.h1`
   margin-left: 15px;
 `
 
-export const IntroDescription = styled.div`
+export const IntroDescription = styled.div<{ center?: boolean }>`
   display: block;
   width: 100%;
   margin: 0 0 24px;
+  line-height: 1.6;
+
+  text-align: ${({ center }) => (center ? 'center' : 'initial')};
 
   > p {
     margin: 8px auto 24px;
+  }
+
+  > p > i {
+    color: ${({ theme }) => theme.text1};
+    font-weight: 600;
+    font-style: normal;
   }
 
   > button {
@@ -156,12 +301,16 @@ export const ClaimTable = styled.div`
   width: 100%;
   margin: 0 0 24px;
 
+  ${TokenLogo} {
+    margin: 0 -26px 0 0;
+  }
+
   table {
     display: grid;
     border-collapse: collapse;
     min-width: 100%;
-    font-size: 14px;
-    grid-template-columns: repeat(7, auto);
+    font-size: 16px;
+    grid-template-columns: min-content auto max-content auto;
   }
 
   thead,
@@ -176,13 +325,18 @@ export const ClaimTable = styled.div`
   }
 
   th {
+    &:first-child {
+      display: flex;
+      align-items: center;
+    }
+
     position: sticky;
     top: 0;
     background: transparent;
     text-align: left;
     font-weight: normal;
     font-size: 13px;
-    color: white;
+    color: ${({ theme }) => theme.text1};
     position: relative;
   }
 
@@ -191,15 +345,80 @@ export const ClaimTable = styled.div`
   }
 
   td {
-    padding-top: 10px;
-    padding-bottom: 10px;
-    color: white;
+    display: flex;
+    align-items: center;
+    color: ${({ theme }) => theme.text1};
     word-break: break-word;
+    background: ${({ theme }) => transparentize(0.7, theme.blueShade2)};
+  }
+
+  td > b {
+    font-weight: 300;
   }
 
   tr > td {
-    background: var(--color-container-bg);
     margin: 0 0 12px;
+  }
+
+  tr > td:nth-of-type(2) {
+    > span {
+      margin: 0 0 0 12px;
+      display: flex;
+      flex-flow: column wrap;
+    }
+
+    > span > i {
+      font-style: normal;
+      font-size: 15px;
+    }
+  }
+
+  /* 3rd row - amount */
+  tr > td:nth-of-type(3) {
+    font-size: 18px;
+    font-weight: 500;
+  }
+
+  tr > td:nth-of-type(4) {
+    font-size: 13px;
+    display: flex;
+    flex-flow: column wrap;
+    align-items: flex-start;
+    gap: 4px;
+
+    > span {
+      color: ${({ theme }) => transparentize(0.1, theme.text1)};
+      font-weight: 300;
+    }
+
+    > span > b {
+      font-weight: 500;
+      color: ${({ theme }) => theme.text1};
+    }
+  }
+
+  tr > td:first-of-type {
+    border-top-left-radius: 12px;
+    border-bottom-left-radius: 12px;
+  }
+
+  tr > td:last-of-type {
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px;
+  }
+`
+
+export const ClaimRow = styled.tr<{ isPending?: boolean }>`
+  > td {
+    background-color: ${({ isPending }) => (isPending ? '#221954' : 'rgb(255 255 255 / 6%)')};
+    cursor: ${({ isPending }) => (isPending ? 'pointer' : 'initial')};
+
+    &:first-child {
+      border-radius: 8px 0 0 8px;
+    }
+    &:last-child {
+      border-radius: 0 8px 8px 0;
+    }
   }
 `
 
@@ -235,7 +454,6 @@ export const ClaimAccount = styled.div`
   > div > p {
     margin: 0 0 0 10px;
     font-size: 18px;
-    color: white;
     font-weight: normal;
   }
 `
@@ -251,12 +469,12 @@ export const ClaimTotal = styled.div`
     font-size: 14px;
     font-weight: normal;
     margin: 0 0 2px;
+    opacity: 0.7;
   }
 
   > p {
     margin: 0;
-    font-size: 24px;
-    color: white;
+    font-size: 30px;
     font-weight: bold;
   }
 `
@@ -264,15 +482,13 @@ export const ClaimTotal = styled.div`
 export const ConfirmOrLoadingWrapper = styled.div<{ activeBG: boolean }>`
   width: 100%;
   padding: 24px;
-  color: white;
+  color: ${({ theme }) => theme.text1};
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: linear-gradient(315deg, #000000 0%, #000000 55%, #202020 100%);
-  /* background: ${({ activeBG }) =>
-    activeBG &&
-    'radial-gradient(76.02% 75.41% at 1.84% 0%, rgba(255, 0, 122, 0.2) 0%, rgba(33, 114, 229, 0.2) 100%), #FFFFFF;'}; */
+  font-size: 26px;
+  font-weight: 300;
 
   h3 {
     font-size: 26px;
@@ -280,7 +496,7 @@ export const ConfirmOrLoadingWrapper = styled.div<{ activeBG: boolean }>`
     line-height: 1.2;
     text-align: center;
     margin: 0 0 24px;
-    color: white;
+    color: ${({ theme }) => theme.text1};
   }
 `
 
@@ -292,6 +508,7 @@ export const AttemptFooter = styled.div`
 
   > p {
     font-size: 14px;
+    opacity: 0.7;
   }
 `
 
@@ -299,59 +516,18 @@ export const ConfirmedIcon = styled.div`
   padding: 60px 0;
 `
 
-// export const ContentWrapper = styled.div`
-//   background: linear-gradient(315deg, #000000 0%, #000000 55%, #202020 100%);
-//   padding: 32px;
-//   min-height: 500px;
-//   height: 100%;
-//   width: 100%;
-//   position: relative;
-//   color: #bbbbbb;
-
-//   ${({ theme }) => theme.mediaWidth.upToSmall`
-//     padding: 20px;
-//     min-height: initial;
-//   `};
-
-//   > button {
-//     background: var(--color-orange);
-//     border: 0;
-//     box-shadow: none;
-//     color: black;
-
-//     ${({ theme }) => theme.mediaWidth.upToSmall`
-//       margin: 0 auto 24px;
-//     `};
-
-//   }
-
-//   h3 {
-//     font-size: 26px;
-//     font-weight: 300;
-//     line-height: 1.2;
-//     text-align: center;
-//     margin: 0 0 24px;
-//     color: white;
-
-//     > b {
-//       font-weight: 600;
-//     }
-//   }
-
-// `
-
 export const CheckIcon = styled(CheckCircle)`
   height: 16px;
   width: 16px;
   margin-right: 6px;
-  stroke: var(--color-orange);
+  stroke: color: ${({ theme }) => theme.primary1};
 `
 
 export const NegativeIcon = styled(Frown)`
   height: 16px;
   width: 16px;
   margin-right: 6px;
-  stroke: var(--color-orange);
+  stroke: color: ${({ theme }) => theme.primary1};
 `
 
 export const EligibleBanner = styled.div`
@@ -362,25 +538,22 @@ export const EligibleBanner = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  background: rgba(237, 104, 52, 0.1);
-  color: var(--color-orange);
+  background: ${({ theme }) => transparentize(0.9, theme.attention)};
+  color: ${({ theme }) => theme.attention};
   text-align: center;
   margin: 0 auto 16px;
+  font-weight: 600;
 `
-
-// export const TopTitle = styled.div`
-//   width: 100%;
-//   display: flex;
-//   align-items: center;
-//   justify-content: flex-start;
-//   padding: 30px 0;
-// `
 
 export const InputField = styled.div`
   padding: 18px;
-  border-radius: 16px;
-  border: 1px solid rgba(151, 151, 151, 0.4);
-  background: rgba(151, 151, 151, 0.1);
+  padding-left: 36px;
+  border-radius: var(--border-radius);
+  border: ${({ theme }) => theme.currencyInput?.border};
+  color: ${({ theme }) => theme.text1};
+  display: flex;
+  flex-flow: row wrap;
+  background: ${({ theme }) => theme.currencyInput?.background};
   width: 100%;
   margin: 0 0 24px;
 
@@ -388,20 +561,41 @@ export const InputField = styled.div`
     background: transparent;
     border: 0;
     font-size: 24px;
-    color: white;
     outline: 0;
+    color: ${({ theme }) => theme.text1};
     width: 100%;
   }
 
   > input::placeholder {
-    color: rgba(151, 151, 151, 0.4);
+    color: inherit;
+    opacity: 0.7;
   }
 
   > b {
-    display: block;
+    display: flex;
     margin: 0 0 12px;
     font-weight: normal;
-    color: #979797;
+    align-items: center;
+    font-size: 18px;
+    font-weight: 500;
+    background-color: ${({ theme }) => theme.bg5};
+    color: ${({ theme }) => theme.white};
+    border-radius: 16px;
+    box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.075);
+    outline: none;
+    cursor: pointer;
+    user-select: none;
+    border: none;
+    height: 2.4rem;
+    width: auto;
+    flex: 0 1 auto;
+    padding: 0 8px;
+    justify-content: space-between;
+
+    :focus,
+    :hover {
+      background-color: ${({ theme }) => darken(0.05, theme.bg5)};
+    }
   }
 
   > div {
@@ -416,7 +610,22 @@ export const InputField = styled.div`
     padding: 0;
     font-size: 22px;
     font-weight: 600;
-    color: white;
+    color: ${({ theme }) => theme.text1};
+  }
+
+  > span {
+    display: flex;
+    flex: 1 1 100%;
+  }
+
+  > span > ${ButtonSecondary} {
+    display: inline-block;
+    font-size: 14px;
+    font-weight: 500;
+
+    &:hover {
+      text-decoration: underline;
+    }
   }
 `
 
@@ -433,7 +642,8 @@ export const InputFieldTitle = styled.div`
   align-items: center;
   margin: 0 0 12px;
   font-weight: normal;
-  color: #979797;
+  color: inherit;
+
   > b {
     margin-right: 10px;
   }
@@ -483,7 +693,7 @@ export const FooterNavButtons = styled.div`
     transition: color 0.2s ease-in-out;
 
     &:hover {
-      color: var(--color-orange);
+      color: ${({ theme }) => theme.primary1};
       text-decoration: underline;
     }
 
@@ -505,7 +715,7 @@ export const TopNav = styled.div`
 
   ${ButtonSecondary} {
     margin: 0;
-    color: var(--color-grey);
+    color: ${({ theme }) => theme.text1};
     font-size: 15px;
     width: auto;
   }
@@ -514,7 +724,7 @@ export const TopNav = styled.div`
 export const Demo = styled(ClaimTable)`
   background: #3e0c46;
   > table {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: min-content auto max-content auto;
   }
 
   > table tr td:first-of-type {
@@ -523,15 +733,6 @@ export const Demo = styled(ClaimTable)`
   > table tr td:last-of-type {
     font-weight: bold;
   }
-`
-
-export const DemoToggle = styled.button`
-  background: rgb(255 255 255 / 17%);
-  color: white;
-  border: 0;
-  margin: 0 0 16px;
-  font-size: 12px;
-  padding: 5px 0;
 `
 
 export const InvestFlow = styled.div`
@@ -568,24 +769,14 @@ export const Steps = styled.div<{ step: number | 0 }>`
   }
 `
 
-export const TokenLogo = styled.div<{ symbol: string; size: number }>`
-  display: flex;
-  width: ${({ size }) => `${size}px`};
-  height: ${({ size }) => `${size}px`};
-  border-radius: ${({ size }) => `${size}px`};
-  /* background: ${({ symbol }) => `url(${symbol}.png) no-repeat center/contain`}; */
-  background: grey;
-`
-
 export const InvestTokenGroup = styled.div`
   display: flex;
   flex-flow: row;
   width: 100%;
-  background: var(--color-container-bg);
-  border-radius: var(--border-radius);
   padding: 24px;
   margin: 0 0 24px;
-  border: 1px solid #3a3a3a;
+  border-radius: 12px;
+  background: ${({ theme }) => transparentize(0.7, theme.blueShade2)};
 
   > div {
     display: flex;
@@ -603,12 +794,14 @@ export const InvestTokenGroup = styled.div`
   }
 
   > div > h3 {
-    font-size: 14px;
+    font-size: 21px;
+    font-weight: 600;
+    margin: 0 0 18px;
   }
 
   ${TokenLogo},
   ${Icon} {
-    border: 4px solid black;
+    border: 4px solid ${({ theme }) => theme.blueShade2};
   }
 
   ${TokenLogo} {
@@ -654,8 +847,7 @@ export const InvestInput = styled.span`
   }
 
   > div > label > input {
-    background: black;
-    color: white;
+    color: ${({ theme }) => theme.text1};
     border: 1px solid grey;
     border-radius: 12px;
     padding: 12px 70px 12px 12px;
@@ -682,7 +874,7 @@ export const InvestAvailableBar = styled.div<{ percentage?: number }>`
   &::before {
     content: '';
     display: block;
-    background: var(--color-orange);
+    background: color: ${({ theme }) => theme.primary1};
     height: 100%;
     border-radius: 24px;
     width: ${({ percentage }) => (percentage ? `${percentage}%` : '0%')};
@@ -692,7 +884,7 @@ export const InvestAvailableBar = styled.div<{ percentage?: number }>`
     content: ${({ percentage }) => (percentage ? `'${percentage}%'` : '0%')};
     display: inline-block;
     font-size: 13px;
-    color: var(--color-orange);
+    color: ${({ theme }) => theme.primary1};
   }
 `
 
@@ -701,11 +893,29 @@ export const InvestSummary = styled.div`
   display: grid;
   grid-template-columns: auto auto;
   font-size: 15px;
+  gap: 12px;
 
   > span {
     display: flex;
     flex-flow: column wrap;
     margin: 0 0 12px;
+    color: ${({ theme }) => transparentize(0.1, theme.text1)};
+  }
+
+  > span > ${ButtonPrimary} {
+    margin: 12px 0;
+    padding: 6px;
+    font-size: 16px;
+    max-width: 154px;
+  }
+
+  > span > i {
+    font-style: normal;
+  }
+
+  > span > b {
+    font-weight: 600;
+    color: ${({ theme }) => theme.text1};
   }
 `
 
@@ -728,7 +938,7 @@ export const InvestTokenSubtotal = styled.div`
   padding: 56px;
   margin: 0 0 24px;
   background: var(--color-container-bg3);
-  color: white;
+  color: ${({ theme }) => theme.text1};
   border-radius: var(--border-radius);
   font-size: 21px;
 `

@@ -21,7 +21,7 @@ import { HelpCircle, RefreshCcw } from 'react-feather'
 import Web3Status from 'components/Web3Status'
 import useReferralLink from 'hooks/useReferralLink'
 import useFetchProfile from 'hooks/useFetchProfile'
-import { numberFormatter } from 'utils/format'
+import { formatMax, formatSmart, numberFormatter } from 'utils/format'
 import { getExplorerAddressLink } from 'utils/explorer'
 import useTimeAgo from 'hooks/useTimeAgo'
 import { MouseoverTooltipContent } from 'components/Tooltip'
@@ -31,6 +31,11 @@ import AffiliateStatusCheck from 'components/AffiliateStatusCheck'
 import { useHasOrders } from 'api/gnosisProtocol/hooks'
 import { Title } from 'components/Page'
 import VCOWdropdown from './VCOWdropdown'
+import { ProgressBar } from 'components/ProgressBar'
+import { useState } from 'react'
+import { useTokenBalance } from 'state/wallet/hooks'
+import { V_COW } from 'constants/tokens'
+import { AMOUNT_PRECISION } from 'constants/index'
 
 export default function Profile() {
   const referralLink = useReferralLink()
@@ -39,6 +44,9 @@ export default function Profile() {
   const lastUpdated = useTimeAgo(profileData?.lastUpdated)
   const isTradesTooltipVisible = account && chainId == 1 && !!profileData?.totalTrades
   const hasOrders = useHasOrders(account)
+  const [percentage, setPercentage] = useState(0)
+
+  const vCowBalance = useTokenBalance(account || undefined, chainId ? V_COW[chainId] : undefined)
 
   const renderNotificationMessages = (
     <>
@@ -63,6 +71,21 @@ export default function Profile() {
             <Title>Profile</Title>
           </CardHead>
           <VCOWdropdown />
+          {vCowBalance && (
+            <VCOWBalance>
+              <CowProtocolLogo size={46} />
+              <ProfileFlexCol>
+                <Txt fs={14}>Balance</Txt>
+                <Txt fs={18} title={`${formatMax(vCowBalance)} vCOW`}>
+                  <strong>
+                    {formatSmart(vCowBalance, AMOUNT_PRECISION, { thousandSeparator: true, isLocaleAware: true }) ||
+                      '0'}{' '}
+                    vCOW
+                  </strong>
+                </Txt>
+              </ProfileFlexCol>
+            </VCOWBalance>
+          )}
         </ProfileGridWrap>
       </ProfileWrapper>
       {chainId && chainId === ChainId.MAINNET && <AffiliateStatusCheck />}
@@ -196,6 +219,7 @@ export default function Profile() {
           </GridWrap>
           {!account && <Web3Status openOrdersPanel={() => console.log('TODO')} />}
         </GridWrap>
+        <ProgressBar onPercentageClick={setPercentage} percentage={percentage} />
       </Wrapper>
     </Container>
   )
