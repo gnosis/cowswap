@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { ErrorMessageProps, SwapCallbackError } from 'components/swap/styleds'
 import useTransactionErrorModal from './useTransactionErrorModal'
 
@@ -8,20 +8,24 @@ import useTransactionErrorModal from './useTransactionErrorModal'
  * @returns returns object: { error, setError, ErrorMessage } => error message, error message setter, and our ErrorMessage component
  */
 export function useErrorMessage() {
-  // Any async bc errors
   const [internalError, setError] = useState<string | undefined>()
-  const handleCloseError = () => setError(undefined)
 
-  return {
-    error: internalError,
-    handleSetError: setError,
-    ErrorMessage: ({
-      error = internalError,
-      showClose = false,
-      ...rest
-    }: Pick<ErrorMessageProps, 'error' | 'showClose' | '$css'>) =>
-      error ? <SwapCallbackError showClose={showClose} handleClose={handleCloseError} error={error} {...rest} /> : null,
-  }
+  return useMemo(() => {
+    const handleCloseError = () => setError(undefined)
+
+    return {
+      error: internalError,
+      handleSetError: setError,
+      ErrorMessage: ({
+        error = internalError,
+        showClose = false,
+        ...rest
+      }: Pick<ErrorMessageProps, 'error' | 'showClose' | '$css'>) =>
+        error ? (
+          <SwapCallbackError showClose={showClose} handleClose={handleCloseError} error={error} {...rest} />
+        ) : null,
+    }
+  }, [internalError])
 }
 
 export function useErrorModal() {
@@ -29,24 +33,25 @@ export function useErrorModal() {
   const [internalError, setError] = useState<string | undefined>()
   const { openModal, closeModal, TransactionErrorModal } = useTransactionErrorModal()
 
-  const handleCloseError = () => {
-    closeModal()
-    setError(undefined)
-  }
-  const handleSetError = (error: string | undefined) => {
-    // close any open modals
-    // closeModal()
-    // set the error and IF error, open modal
-    setError(error)
-    error && openModal()
-  }
+  return useMemo(() => {
+    const handleCloseError = () => {
+      closeModal()
+      setError(undefined)
+    }
+    const handleSetError = (error: string | undefined) => {
+      setError(error)
 
-  return {
-    error: internalError,
-    handleCloseError,
-    handleSetError,
-    ErrorModal: ({ message = internalError }: { message?: string }) => (
-      <TransactionErrorModal onDismiss={handleCloseError} message={message} />
-    ),
-  }
+      // IF error, open modal
+      error && openModal()
+    }
+
+    return {
+      error: internalError,
+      handleCloseError,
+      handleSetError,
+      ErrorModal: ({ message = internalError }: { message?: string }) => (
+        <TransactionErrorModal onDismiss={handleCloseError} message={message} />
+      ),
+    }
+  }, [TransactionErrorModal, closeModal, internalError, openModal])
 }
