@@ -2,7 +2,7 @@ import { useEffect, useMemo } from 'react'
 import { Trans } from '@lingui/macro'
 import { CurrencyAmount, MaxUint256 } from '@uniswap/sdk-core'
 import { useActiveWeb3React } from 'hooks/web3'
-import { useUserEnhancedClaimData, useUserUnclaimedAmount, useClaimCallback } from 'state/claim/hooks'
+import { useUserEnhancedClaimData, useUserUnclaimedAmount, useClaimCallback, ClaimInput } from 'state/claim/hooks'
 import { ButtonPrimary, ButtonSecondary } from 'components/Button'
 import { PageWrapper, FooterNavButtons } from 'pages/Claim/styled'
 import EligibleBanner from './EligibleBanner'
@@ -129,7 +129,7 @@ export default function Claim() {
 
     const freeClaims = getFreeClaims(userClaimData)
 
-    const sendTransaction = (inputData) => {
+    const sendTransaction = (inputData: ClaimInput[]) => {
       setClaimStatus(ClaimStatus.ATTEMPTING)
       claimCallback(inputData)
         // this is not right currently
