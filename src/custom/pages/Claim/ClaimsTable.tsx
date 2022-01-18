@@ -1,6 +1,4 @@
-import { ClaimType } from '@gnosis.pm/cow-token'
-
-import { useClaimState, useClaimTimeInfo } from 'state/claim/hooks'
+import { ClaimType, useClaimState, useClaimTimeInfo } from 'state/claim/hooks'
 import styled from 'styled-components/macro'
 import { ClaimTable, ClaimBreakdown, TokenLogo } from 'pages/Claim/styled'
 import CowProtocolLogo from 'components/CowProtocolLogo'

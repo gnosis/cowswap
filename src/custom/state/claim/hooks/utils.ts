@@ -1,4 +1,3 @@
-import { ClaimType } from '@gnosis.pm/cow-token'
 import { CurrencyAmount, Token } from '@uniswap/sdk-core'
 
 import { SupportedChainId } from 'constants/chains'
@@ -6,6 +5,7 @@ import { GNO, GpEther, USDC_BY_CHAIN, V_COW } from 'constants/tokens'
 
 import {
   CLAIMS_REPO,
+  ClaimType,
   ClaimTypePriceMap,
   FREE_CLAIM_TYPES,
   PAID_CLAIM_TYPES,
