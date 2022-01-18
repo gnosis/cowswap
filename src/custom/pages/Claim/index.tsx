@@ -155,6 +155,7 @@ export default function Claim() {
       inputData = selectedIndex.reduce<EnhancedUserClaimData[]>((acc, idx: number) => {
         const claim = userClaimData.find(({ index }) => idx === index)
         if (claim) {
+          // TODO: @nenadV91, here you can modify the amounts to use the partial investments
           acc.push(claim)
         }
         return acc
