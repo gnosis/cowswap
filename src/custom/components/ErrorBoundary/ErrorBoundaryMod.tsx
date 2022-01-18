@@ -12,6 +12,7 @@ import { MEDIA_WIDTHS } from '@src/theme'
 import CowError from 'assets/cow-swap/CowError.png'
 import { UniIcon, LogoImage } from '../Header'
 import { HeaderRow } from 'components/Header/HeaderMod'
+import Footer from 'components/Footer'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -76,6 +77,13 @@ const HeaderWrapper = styled.div`
     position: relative;
   }
 `
+const FooterWrapper = styled(HeaderWrapper)`
+  z-index: 1;
+  flex-grow: 1;
+  width: 100%;
+  position: relative;
+  top: auto;
+`
 
 const CodeBlockWrapper = styled.div`
   background: ${({ theme }) => theme.bg4};
@@ -129,6 +137,7 @@ export default class ErrorBoundary extends Component<unknown, ErrorBoundaryState
   }
 
   render() {
+    document.body.classList.remove('noScroll')
     const { error } = this.state
     if (error !== null) {
       const encodedBody = encodeURIComponent(issueBody(error))
@@ -184,6 +193,9 @@ export default class ErrorBoundary extends Component<unknown, ErrorBoundaryState
               </AutoRow>
             </AutoColumn>
           </Wrapper>
+          <FooterWrapper>
+            <Footer />
+          </FooterWrapper>
         </AppWrapper>
       )
     }
