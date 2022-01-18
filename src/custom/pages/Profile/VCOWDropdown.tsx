@@ -7,6 +7,7 @@ import { Txt } from 'assets/styles/styled'
 import CowProtocolLogo from 'components/CowProtocolLogo'
 import { formatMax, formatSmart } from 'utils/format'
 import { AMOUNT_PRECISION } from '@src/custom/constants'
+import { FlexWrap, FlexCol } from './styled'
 
 type VCOWDropdownProps = {
   balance?: CurrencyAmount<Token>
@@ -36,7 +37,22 @@ export default function VCOWDropdown({ balance }: VCOWDropdownProps) {
         </span>
         <ChevronDown size={16} style={{ marginTop: '2px' }} strokeWidth={2.5} />
       </DropdownWrapper>
-      {open && <MenuFlyout>TOTAL BALANCE</MenuFlyout>}
+      {open && (
+        <MenuFlyout>
+          <FlexWrap>
+            <FlexCol>
+              <Txt fs={16}>Voting Power</Txt>
+              <Txt fs={16}>Vesting</Txt>
+              <Txt fs={16}>Total</Txt>
+            </FlexCol>
+            <FlexCol>
+              <Txt fs={16}>000</Txt>
+              <Txt fs={16}>000</Txt>
+              <Txt fs={16}>000</Txt>
+            </FlexCol>
+          </FlexWrap>
+        </MenuFlyout>
+      )}
     </Wrapper>
   )
 }
@@ -71,12 +87,12 @@ const MenuFlyout = styled.span`
   right: 0;
   top: 4.5rem;
   z-index: 200;
-  min-width: 300px;
+  min-width: 247px;
 `
 
 export const DropdownWrapper = styled.button`
   align-items: center;
-  background-color: ${({ theme }) => theme.white};
+  background-color: ${({ theme }) => theme.bg4};
   border-radius: 12px;
   border: 1px solid ${({ theme }) => theme.bg0};
   color: ${({ theme }) => theme.text1};
@@ -105,7 +121,7 @@ export const VCOWBalance = styled.div`
   justify-content: center;
   border-radius: 12px;
   padding: 8px;
-  background-color: ${({ theme }) => theme.white};
+  background-color: ${({ theme }) => theme.bg4};
 `
 
 export const ProfileFlexCol = styled.div`
