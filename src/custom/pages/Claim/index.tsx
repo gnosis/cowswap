@@ -121,6 +121,7 @@ export default function Claim() {
     setInputAddress('')
   }
 
+  // TODO: useCallback
   // handle submit claim
   const handleSubmitClaim = () => {
     // just to be sure
@@ -154,6 +155,7 @@ export default function Claim() {
       setIsInvestFlowActive(true)
     }
   }
+  // TODO: remove?
   console.log(
     `Claim/index::`,
     `[unclaimedAmount ${unclaimedAmount?.toFixed(2)}]`,
@@ -162,8 +164,9 @@ export default function Claim() {
     `[isAirdropOnly ${isAirdropOnly}]`
   )
 
-  // on account change
+  // on account/activeAccount/non-connected account (if claiming for someone else) change
   useEffect(() => {
+    // disconnected wallet?
     if (!account) {
       setActiveClaimAccount('')
     } else if (!isSearchUsed) {
@@ -173,21 +176,15 @@ export default function Claim() {
     // properly reset the user to the claims table and initial investment flow
     setInvestFlowStep(0)
     setIsInvestFlowActive(false)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [account])
-
-  // if wallet is disconnected
-  useEffect(() => {
-    if (!account && !isSearchUsed) {
-      setActiveClaimAccount('')
-    }
-
-    if (!account) {
-      setIsInvestFlowActive(false)
-      setInvestFlowStep(0)
-    }
-    // setActiveClaimAccount and other dispatch fns are only here for TS. They are safe references.
-  }, [account, isSearchUsed, setActiveClaimAccount, setInvestFlowStep, setIsInvestFlowActive])
+  }, [
+    account,
+    activeClaimAccount,
+    resolvedAddress,
+    isSearchUsed,
+    setActiveClaimAccount,
+    setInvestFlowStep,
+    setIsInvestFlowActive,
+  ])
 
   // Transaction confirmation modal
   const { TransactionConfirmationModal, openModal, closeModal } = useTransactionConfirmationModal(
