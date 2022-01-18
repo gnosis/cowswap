@@ -10,6 +10,7 @@ import {
   setIsSearchUsed,
   setSelected,
   setSelectedAll,
+  resetClaimUi,
   ClaimStatus,
 } from './actions'
 
@@ -79,8 +80,21 @@ export default createReducer(initialState, (builder) =>
     })
     .addCase(setSelected, (state, { payload }) => {
       state.selected = payload
+
+      // toggle selected all if all indiv selected
+      if (state.selected.length === payload.length) {
+        state.selectedAll = true
+      } else {
+        state.selectedAll = false
+      }
     })
     .addCase(setSelectedAll, (state, { payload }) => {
       state.selectedAll = payload
+    })
+    .addCase(resetClaimUi, (state) => {
+      state.selected = initialState.selected
+      state.selectedAll = initialState.selectedAll
+      state.investFlowStep = initialState.investFlowStep
+      state.isInvestFlowActive = initialState.isInvestFlowActive
     })
 )

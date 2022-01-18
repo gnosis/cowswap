@@ -68,6 +68,8 @@ export default function Claim() {
     // claim row selection
     setSelected,
     setSelectedAll,
+    // reset claim ui
+    resetClaimUi,
   } = useClaimDispatchers()
 
   const { address: resolvedAddress, name: resolvedENS } = useENS(inputAddress)
@@ -174,17 +176,8 @@ export default function Claim() {
     }
 
     // properly reset the user to the claims table and initial investment flow
-    setInvestFlowStep(0)
-    setIsInvestFlowActive(false)
-  }, [
-    account,
-    activeClaimAccount,
-    resolvedAddress,
-    isSearchUsed,
-    setActiveClaimAccount,
-    setInvestFlowStep,
-    setIsInvestFlowActive,
-  ])
+    resetClaimUi()
+  }, [account, activeClaimAccount, resolvedAddress, isSearchUsed, setActiveClaimAccount, resetClaimUi])
 
   // Transaction confirmation modal
   const { TransactionConfirmationModal, openModal, closeModal } = useTransactionConfirmationModal(
