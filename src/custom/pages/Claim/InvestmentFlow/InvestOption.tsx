@@ -56,8 +56,6 @@ export default function InvestOption({ approveData, updateInvestAmount, claim }:
   }
 
   const onMaxClick = useCallback(() => {
-    // TODO: remove
-    handleSetError('Transaction rejected. User denied signature.')
     if (!maxCost || !balance) {
       return
     }
@@ -67,7 +65,7 @@ export default function InvestOption({ approveData, updateInvestAmount, claim }:
     const investAmount = formatUnits(amount.quotient.toString(), balance.currency.decimals)
 
     updateInvestAmount(claim.index, investAmount)
-  }, [balance, claim.index, maxCost, handleSetError, updateInvestAmount])
+  }, [balance, claim.index, maxCost, updateInvestAmount])
 
   // Cache approveData methods
   const approveCallback = approveData?.approveCallback
