@@ -6,8 +6,6 @@ import { TransactionResponse } from '@ethersproject/providers'
 import { parseUnits } from '@ethersproject/units'
 import { BigNumber } from '@ethersproject/bignumber'
 
-import { ClaimType } from '@gnosis.pm/cow-token'
-
 import { VCow as VCowType } from 'abis/types'
 
 import { useVCowContract } from 'hooks/useContract'
@@ -71,6 +69,15 @@ const AIRDROP_TIME = ms`6 weeks`
 
 // For native token price calculation
 const DENOMINATOR = JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(18))
+
+export enum ClaimType {
+  Airdrop, // free, no vesting, can be available on both mainnet and gchain
+  GnoOption, // paid, with vesting, must use GNO, can be available on both mainnet and gchain
+  UserOption, // paid, with vesting, must use Native currency, can be available on both mainnet and gchain
+  Investor, // paid, with vesting, must use USDC, only on mainnet
+  Team, // free, with vesting, only on mainnet
+  Advisor, // free, with vesting, only on mainnet
+}
 
 export type TypeToPriceMapper = Map<ClaimType, number>
 
