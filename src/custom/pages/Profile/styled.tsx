@@ -76,7 +76,10 @@ export const GridWrap = styled.div<Partial<CSS.Properties & { horizontal?: boole
       grid-column-start: 1;
       grid-column-end: 2;
     }
-  `};
+  `}
+  ${({ theme }) => theme.mediaWidth.upToVerySmall`
+      grid-row-gap: 0px;
+  `}
 `
 
 export const CardHead = styled.div`
@@ -197,9 +200,12 @@ export const Loader = styled.div<{ isLoading: boolean }>`
 `
 
 export const ProfileWrapper = styled(Wrapper)`
-  margin: 0 0 16px 0;
+  margin: 16px 0 16px 0;
   padding: 16px 24px;
   z-index: 2;
+  ${({ theme }) => theme.mediaWidth.upToVerySmall`
+    padding: 0 16px 16px;
+  `};
 `
 
 export const ProfileGridWrap = styled(GridWrap)`
