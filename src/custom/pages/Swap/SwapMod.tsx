@@ -89,7 +89,7 @@ import { ApplicationModal } from 'state/application/reducer'
 import TransactionConfirmationModal, { OperationType } from 'components/TransactionConfirmationModal'
 import AffiliateStatusCheck from 'components/AffiliateStatusCheck'
 import usePriceImpact from 'hooks/usePriceImpact'
-import useErrorMessage from 'hooks/useErrorMessage'
+import { useErrorMessage } from 'hooks/useErrorMessageAndModal'
 
 // MOD - exported in ./styleds to avoid circ dep
 // export const StyledInfo = styled(Info)`

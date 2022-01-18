@@ -16,7 +16,7 @@ import { useActiveWeb3React } from 'hooks/web3'
 import { ButtonConfirmed } from 'components/Button'
 import { ButtonSize } from 'theme'
 import Loader from 'components/Loader'
-import useErrorMessage from 'hooks/useErrorMessage'
+import { useErrorModal } from 'hooks/useErrorMessageAndModal'
 
 const RangeSteps = styled.div`
   display: flex;
@@ -45,7 +45,7 @@ export default function InvestOption({ approveData, updateInvestAmount, claim }:
 
   const balance = useCurrencyBalance(account || undefined, token)
 
-  const { setError, ErrorMessage } = useErrorMessage()
+  const { handleSetError, ErrorModal } = useErrorModal()
 
   const handlePercentChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     console.log(event.target.value)
@@ -56,8 +56,6 @@ export default function InvestOption({ approveData, updateInvestAmount, claim }:
   }
 
   const onMaxClick = useCallback(() => {
-    // TODO: remove
-    setError('Transaction rejected. User denied signature.')
     if (!maxCost || !balance) {
       return
     }
@@ -67,7 +65,7 @@ export default function InvestOption({ approveData, updateInvestAmount, claim }:
     const investAmount = formatUnits(amount.quotient.toString(), balance.currency.decimals)
 
     updateInvestAmount(claim.index, investAmount)
-  }, [balance, claim.index, maxCost, setError, updateInvestAmount])
+  }, [balance, claim.index, maxCost, updateInvestAmount])
 
   // Cache approveData methods
   const approveCallback = approveData?.approveCallback
@@ -75,7 +73,7 @@ export default function InvestOption({ approveData, updateInvestAmount, claim }:
   // Save "local" approving state (pre-BC) for rendering spinners etc
   const [approving, setApproving] = useState(false)
   const handleApprove = useCallback(async () => {
-    setError(undefined)
+    handleSetError(undefined)
     if (!approveCallback) return
 
     try {
@@ -84,11 +82,11 @@ export default function InvestOption({ approveData, updateInvestAmount, claim }:
       await approveCallback({ transactionSummary: `Approve ${token?.symbol || 'token'} for investing in vCOW` })
     } catch (error) {
       console.error('[InvestOption]: Issue approving.', error)
-      setError(error?.message)
+      handleSetError(error?.message)
     } finally {
       setApproving(false)
     }
-  }, [approveCallback, setError, token?.symbol])
+  }, [approveCallback, handleSetError, token?.symbol])
 
   const vCowAmount = useMemo(() => {
     if (!token || !price) {
@@ -187,15 +185,9 @@ export default function InvestOption({ approveData, updateInvestAmount, claim }:
             </div>
           </span>
         </InvestSummary>
-        {/* Error messages */}
-        <ErrorMessage
-          $css="
-            margin: 0 auto;
-            padding: 0 1.25rem;
-            z-index: 0;
-          "
-          showClose
-        />
+        {/* Error modal */}
+        <ErrorModal />
+        {/* Investment inputs */}
         <InvestInput>
           <div>
             <span>

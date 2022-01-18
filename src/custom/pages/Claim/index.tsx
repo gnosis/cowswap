@@ -29,7 +29,7 @@ import useTransactionConfirmationModal from 'hooks/useTransactionConfirmationMod
 
 import { GNO, USDC_BY_CHAIN } from 'constants/tokens'
 import { isSupportedChain } from 'utils/supportedChainId'
-import useErrorMessage from 'hooks/useErrorMessage'
+import { useErrorModal } from 'hooks/useErrorMessageAndModal'
 
 const GNO_CLAIM_APPROVE_MESSAGE = 'Approving GNO for investing in vCOW'
 const USDC_CLAIM_APPROVE_MESSAGE = 'Approving USDC for investing in vCOW'
@@ -123,12 +123,12 @@ export default function Claim() {
     setInputAddress('')
   }
 
-  const { setError, ErrorMessage } = useErrorMessage()
+  const { handleSetError, ErrorModal } = useErrorModal()
 
   // handle submit claim
   const handleSubmitClaim = () => {
     // Reset error handling
-    setError(undefined)
+    handleSetError(undefined)
 
     // just to be sure
     if (!activeClaimAccount) return
@@ -152,7 +152,7 @@ export default function Claim() {
         .catch((error) => {
           setClaimStatus(ClaimStatus.DEFAULT)
           console.log(error)
-          setError(error?.message)
+          handleSetError(error?.message)
         })
     } else {
       const inputData = [...getIndexes(freeClaims), ...selected].map((idx: number) => {
@@ -218,6 +218,8 @@ export default function Claim() {
     <PageWrapper>
       {/* Approve confirmation modal */}
       <TransactionConfirmationModal />
+      {/* Error modal */}
+      <ErrorModal />
       {/* If claim is confirmed > trigger confetti effect */}
       <Confetti start={claimStatus === ClaimStatus.CONFIRMED} />
 
@@ -308,15 +310,6 @@ export default function Claim() {
             </>
           )}
       </FooterNavButtons>
-      {/* Error messages */}
-      <ErrorMessage
-        $css="
-          margin: -2rem auto 0 auto;
-          padding: 2rem 1.25rem 0rem 1rem;
-          width: 95%;
-          z-index: 0;
-        "
-      />
     </PageWrapper>
   )
 }
