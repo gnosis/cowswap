@@ -63,17 +63,6 @@ const ONE_VCOW = CurrencyAmount.fromRawAmount(
   V_COW[SupportedChainId.RINKEBY],
   parseUnits('1', V_COW[SupportedChainId.RINKEBY].decimals).toString()
 )
-// TODO: these values came from the test contract, might be different on real deployment
-// Network variable price
-export const NATIVE_TOKEN_PRICE: { [chain in SupportedChainId]: string } = {
-  [SupportedChainId.MAINNET]: '37500000000000', // '0.0000375' WETH (18 decimals) per vCOW, in wei
-  [SupportedChainId.RINKEBY]: '37500000000000', // assuming Rinkeby has same price as Mainnet
-  [SupportedChainId.XDAI]: '150000000000000000', // TODO: wild guess, wxDAI is same price as USDC
-}
-
-// Same on all networks. Actually, likely available only on Mainnet (and Rinkeby)
-export const GNO_PRICE = '375000000000000' // '0.000375' GNO (18 decimals) per vCOW, in atoms
-export const USDC_PRICE = '150000' // '0.15' USDC (6 decimals) per vCOW, in atoms
 
 // Constants regarding investment time windows
 const INVESTMENT_TIME = ms`2 weeks`
@@ -416,6 +405,7 @@ export function useClaimCallback(account: string | null | undefined): {
   const { chainId, account: connectedAccount } = useActiveWeb3React()
   const claims = useUserAvailableClaims(account)
   const vCowContract = useVCowContract()
+  const nativeTokenPrice = useNativeTokenPrice()
 
   const { isInvestmentWindowOpen, isAirdropWindowOpen } = useClaimTimeInfo()
 
@@ -459,14 +449,21 @@ export function useClaimCallback(account: string | null | undefined): {
         !connectedAccount ||
         !chainId ||
         !vCowContract ||
-        !vCowToken
+        !vCowToken ||
+        !nativeTokenPrice
       ) {
         throw new Error("Not initialized, can't claim")
       }
 
       _validateClaimable(claims, claimInput, isInvestmentWindowOpen, isAirdropWindowOpen)
 
-      const { args, totalClaimedAmount } = _getClaimManyArgs({ claimInput, claims, account, connectedAccount, chainId })
+      const { args, totalClaimedAmount } = _getClaimManyArgs({
+        claimInput,
+        claims,
+        account,
+        connectedAccount,
+        nativeTokenPrice,
+      })
 
       if (!args) {
         throw new Error('There were no valid claims selected')
@@ -499,6 +496,7 @@ export function useClaimCallback(account: string | null | undefined): {
       connectedAccount,
       isAirdropWindowOpen,
       isInvestmentWindowOpen,
+      nativeTokenPrice,
       vCowContract,
       vCowToken,
     ]
@@ -512,7 +510,7 @@ type GetClaimManyArgsParams = {
   claims: UserClaims
   account: string
   connectedAccount: string
-  chainId: SupportedChainId
+  nativeTokenPrice: string
 }
 
 type ClaimManyFnArgs = Parameters<VCowType['claimMany']>
@@ -530,7 +528,7 @@ function _getClaimManyArgs({
   claims,
   account,
   connectedAccount,
-  chainId,
+  nativeTokenPrice,
 }: GetClaimManyArgsParams): GetClaimManyArgsResult {
   // Arrays are named according to contract parameters
   // For more info, check https://github.com/gnosis/gp-v2-token/blob/main/src/contracts/mixins/MerkleDistributor.sol#L123
@@ -570,7 +568,7 @@ function _getClaimManyArgs({
 
       merkleProofs.push(claim.proof)
       // only used on UserOption
-      const value = _getClaimValue(claim, claimedAmount, chainId)
+      const value = _getClaimValue(claim, claimedAmount, nativeTokenPrice)
       sendEth.push(value) // TODO: verify ETH balance < input.amount ?
 
       // sum of claimedAmounts for the toast notification
@@ -653,16 +651,14 @@ function _hasNoInputOrInputIsGreaterThanClaimAmount(
  * vCowAmount * wethPrice / 10^18
  * See https://github.com/gnosis/gp-v2-token/blob/main/src/contracts/mixins/Claiming.sol#L314-L320
  */
-function _getClaimValue(claim: UserClaimData, vCowAmount: string, chainId: SupportedChainId): string {
+function _getClaimValue(claim: UserClaimData, vCowAmount: string, nativeTokenPrice: string): string {
   if (claim.type !== ClaimType.UserOption) {
     return '0'
   }
 
-  const price = NATIVE_TOKEN_PRICE[chainId]
-
   // Why InAtomsSquared? because we are multiplying vCowAmount (which is in atoms == * 10**18)
   // by the price (which is also in atoms == * 10**18)
-  const claimValueInAtomsSquared = JSBI.multiply(JSBI.BigInt(vCowAmount), JSBI.BigInt(price))
+  const claimValueInAtomsSquared = JSBI.multiply(JSBI.BigInt(vCowAmount), JSBI.BigInt(nativeTokenPrice))
   // Then it's divided by 10**18 to return the value in the native currency atoms
   return JSBI.divide(claimValueInAtomsSquared, DENOMINATOR).toString()
 }
@@ -785,22 +781,25 @@ export function useClaimState() {
 export function useUserEnhancedClaimData(account: Account): EnhancedUserClaimData[] {
   const { available } = useClassifiedUserClaims(account)
   const { chainId: preCheckChainId } = useActiveWeb3React()
+  const native = useNativeTokenPrice()
+  const gno = useGnoPrice()
+  const usdc = useUsdcPrice()
 
   const sorted = useMemo(() => available.sort(_sortTypes), [available])
 
   return useMemo(() => {
     const chainId = supportedChainId(preCheckChainId)
-    if (!chainId) return []
+    if (!chainId || !native || !gno || !usdc) return []
 
-    return sorted.map((claim) => _enhanceClaimData(claim, chainId))
-  }, [preCheckChainId, sorted])
+    return sorted.map((claim) => _enhanceClaimData(claim, chainId, { native, gno, usdc }))
+  }, [gno, native, preCheckChainId, sorted, usdc])
 }
 
 function _sortTypes(a: UserClaimData, b: UserClaimData): number {
   return Number(isFreeClaim(b.type)) - Number(isFreeClaim(a.type))
 }
 
-function _enhanceClaimData(claim: UserClaimData, chainId: SupportedChainId): EnhancedUserClaimData {
+function _enhanceClaimData(claim: UserClaimData, chainId: SupportedChainId, prices: VCowPrices): EnhancedUserClaimData {
   const claimAmount = CurrencyAmount.fromRawAmount(ONE_VCOW.currency, claim.amount)
 
   const data: EnhancedUserClaimData = {
@@ -809,11 +808,11 @@ function _enhanceClaimData(claim: UserClaimData, chainId: SupportedChainId): Enh
     claimAmount,
   }
 
-  const tokenAndAmount = claimTypeToTokenAmount(claim.type, chainId)
+  const tokenAndAmount = claimTypeToTokenAmount(claim.type, chainId, prices)
 
   // Free claims will have tokenAndAmount === undefined
   // If it's not a free claim, store the price and calculate cost in investment token
-  if (tokenAndAmount) {
+  if (tokenAndAmount?.amount) {
     data.price = _getPrice(tokenAndAmount)
     // get the currency amount using the price base currency (remember price was inverted)
     data.currencyAmount = CurrencyAmount.fromRawAmount(data.price.baseCurrency, claim.amount)
