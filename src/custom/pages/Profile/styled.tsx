@@ -199,6 +199,7 @@ export const Loader = styled.div<{ isLoading: boolean }>`
 export const ProfileWrapper = styled(Wrapper)`
   margin: 0 0 16px 0;
   padding: 16px 24px;
+  z-index: 2;
 `
 
 export const ProfileGridWrap = styled(GridWrap)`
