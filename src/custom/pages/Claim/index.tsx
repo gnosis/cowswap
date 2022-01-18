@@ -157,14 +157,6 @@ export default function Claim() {
       setIsInvestFlowActive(true)
     }
   }
-  // TODO: remove?
-  console.log(
-    `Claim/index::`,
-    `[unclaimedAmount ${unclaimedAmount?.toFixed(2)}]`,
-    `[hasClaims ${hasClaims}]`,
-    `[activeClaimAccount ${activeClaimAccount}]`,
-    `[isAirdropOnly ${isAirdropOnly}]`
-  )
 
   // on account/activeAccount/non-connected account (if claiming for someone else) change
   useEffect(() => {
