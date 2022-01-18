@@ -160,7 +160,7 @@ export default function Claim() {
         return acc
       }, [])
 
-      console.log('Starting investment flow', inputData)
+      console.log('Starting Investment Flow', inputData)
       sendTransaction(inputData)
     } else {
       setIsInvestFlowActive(true)
