@@ -32,7 +32,11 @@ export default function ClaimNav({ account, handleChangeAccount }: ClaimNavProps
             </ButtonSecondary>
           )}
 
-          {investFlowStep < 2 && (
+          {/* Hide account changing action on:
+           * last investment step
+           * attempted claim in progress
+           */}
+          {(investFlowStep < 2 || !isAttempting) && (
             <ButtonSecondary disabled={isAttempting} onClick={handleChangeAccount}>
               Change account
             </ButtonSecondary>
