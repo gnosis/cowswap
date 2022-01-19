@@ -64,12 +64,12 @@ const Wrapper = styled.div`
     justify-self: end;
   `};
 
-  ${({ theme }) => theme.mediaWidth.upToSmall`
+  ${({ theme }) => theme.mediaWidth.upToVerySmall`
     margin: 0 0.5rem 0 0;
     width: initial;
     text-overflow: ellipsis;
     flex-shrink: 1;
-    justify-self: start;
+    justify-self: stretch;
   `};
 `
 
@@ -88,6 +88,9 @@ const MenuFlyout = styled.span`
   top: 4.5rem;
   z-index: 200;
   min-width: 247px;
+  ${({ theme }) => theme.mediaWidth.upToVerySmall`
+    min-width: 100%;
+  `};
 `
 
 export const DropdownWrapper = styled.button`
@@ -109,6 +112,10 @@ export const DropdownWrapper = styled.button`
     outline: none;
     border: 1px solid ${({ theme }) => theme.bg3};
   }
+  ${({ theme }) => theme.mediaWidth.upToVerySmall`
+    min-width: 100%;
+    justify-content: space-between;
+  `};
 `
 
 export const VCOWBalance = styled.div`
