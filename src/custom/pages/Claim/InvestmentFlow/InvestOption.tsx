@@ -122,14 +122,10 @@ export default function InvestOption({ approveData, claim, optionIndex }: Invest
     }
   }, [approveCallback, handleCloseError, handleSetError, token?.symbol])
 
-  const vCowAmount = useMemo(() => {
-    if (!token || !price || !investedAmount) {
-      return
-    }
-
-    const investA = CurrencyAmount.fromRawAmount(token, investedAmount)
-    return price.quote(investA)
-  }, [investedAmount, price, token])
+  const vCowAmount = useMemo(
+    () => calculateInvestmentAmounts(claim, investedAmount)?.vCowAmount,
+    [claim, investedAmount]
+  )
 
   // if its claiming for someone else we will set values to max
   // if there is not enough balance then we will set an error
