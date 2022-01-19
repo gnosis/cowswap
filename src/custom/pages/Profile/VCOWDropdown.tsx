@@ -100,7 +100,7 @@ const MenuFlyout = styled.span`
   `};
 `
 
-export const DropdownWrapper = styled.button`
+export const DropdownWrapper = styled.button<{ haveBalance?: boolean }>`
   align-items: center;
   background-color: ${({ theme }) => theme.bg4};
   border-radius: 12px;
@@ -115,9 +115,9 @@ export const DropdownWrapper = styled.button`
 
   :hover,
   :focus {
-    cursor: pointer;
+    cursor: ${({ haveBalance }) => (haveBalance ? 'pointer' : 'inherit')};
     outline: none;
-    border: 1px solid ${({ theme }) => theme.bg3};
+    border: ${({ haveBalance }) => (haveBalance ? '1px solid ${({ theme }) => theme.bg3}' : '1px solid transparent')};
   }
   ${({ theme }) => theme.mediaWidth.upToVerySmall`
     min-width: 100%;
