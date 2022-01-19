@@ -60,8 +60,7 @@ export default function InvestOption({ approveData, claim, optionIndex }: Invest
     updateInvestAmount({ index: optionIndex, amount })
     setTypedValue(formatSmart(value, decimals, { smallLimit: undefined }) || '')
 
-    const percentage = _calculatePercentage(balance, maxCost)
-    setPercentage(formatSmart(percentage, PERCENTAGE_PRECISION) || '0')
+    setPercentage(_calculatePercentage(balance, maxCost))
   }, [balance, decimals, maxCost, noBalance, optionIndex, updateInvestAmount])
 
   // on input field change handler
@@ -94,10 +93,8 @@ export default function InvestOption({ approveData, claim, optionIndex }: Invest
       // update redux state with new investAmount value
       updateInvestAmount({ index: optionIndex, amount: parsedAmount.quotient.toString() })
 
-      const percentage = _calculatePercentage(parsedAmount, maxCost)
-
       // update the local state with percentage value
-      setPercentage(formatSmart(percentage, PERCENTAGE_PRECISION) || '0')
+      setPercentage(_calculatePercentage(parsedAmount, maxCost))
     },
     [balance, maxCost, optionIndex, token, updateInvestAmount]
   )
@@ -260,12 +257,12 @@ export default function InvestOption({ approveData, claim, optionIndex }: Invest
 function _calculatePercentage<C1 extends Currency, C2 extends Currency>(
   numerator: CurrencyAmount<C1>,
   denominator: CurrencyAmount<C2>
-): Percent {
+): string {
   let percentage = denominator.equalTo(ZERO_PERCENT)
     ? ZERO_PERCENT
     : new Percent(numerator.quotient, denominator.quotient)
   if (percentage.greaterThan(ONE_HUNDRED_PERCENT)) {
     percentage = ONE_HUNDRED_PERCENT
   }
-  return percentage
+  return formatSmart(percentage, PERCENTAGE_PRECISION) || '0'
 }
