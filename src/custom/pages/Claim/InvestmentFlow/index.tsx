@@ -8,15 +8,14 @@ import {
   Steps,
   ClaimTable,
   AccountClaimSummary,
-  TokenLogo,
 } from 'pages/Claim/styled'
+import { InvestSummaryRow } from 'pages/Claim/InvestmentFlow/InvestSummaryRow'
 import { ClaimType, useClaimState, useUserEnhancedClaimData, useClaimDispatchers } from 'state/claim/hooks'
 import { ClaimCommonTypes, EnhancedUserClaimData } from '../types'
 import { ClaimStatus } from 'state/claim/actions'
 import { useActiveWeb3React } from 'hooks/web3'
 import { ApprovalState, OptionalApproveCallbackParams } from 'hooks/useApproveCallback'
 import InvestOption from './InvestOption'
-import CowProtocolLogo from 'components/CowProtocolLogo'
 
 export type InvestOptionProps = {
   claim: EnhancedUserClaimData
@@ -156,62 +155,9 @@ export default function InvestmentFlow({ hasClaims, isAirdropOnly, ...tokenAppro
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td>
-                    <b>Airdrop</b>
-                  </td>
-                  <td>
-                    <span>
-                      <b>Amount to receive:</b>
-                      <i>13,120.50 vCOW</i>
-                    </span>
-                  </td>
-
-                  <td>
-                    <span>
-                      <b>Cost:</b> <i>Free!</i>
-                    </span>
-                    <span>
-                      <b>Vesting:</b>
-                      <i>No</i>
-                    </span>
-                  </td>
-                </tr>
-
-                <tr>
-                  <td>
-                    {' '}
-                    <TokenLogo symbol="GNO" size={32} />
-                    <CowProtocolLogo size={32} />
-                    <span>
-                      <b>Buy vCOW</b>
-                      <i>with GNO</i>
-                    </span>
-                  </td>
-
-                  <td>
-                    <span>
-                      <b>Investment amount:</b> <i>1343 GNO (50% of available investing opportunity)</i>
-                    </span>
-                    <span>
-                      <b>Amount to receive:</b>
-                      <i>13,120.50 vCOW</i>
-                    </span>
-                  </td>
-
-                  <td>
-                    <span>
-                      <b>Price:</b> <i>2666.6666 vCoW per GNO</i>
-                    </span>
-                    <span>
-                      <b>Cost:</b> <i>0.783375 GNO</i>
-                    </span>
-                    <span>
-                      <b>Vesting:</b>
-                      <i>4 years (linear)</i>
-                    </span>
-                  </td>
-                </tr>
+                {freeClaims.concat(paidClaims).map((claim) => (
+                  <InvestSummaryRow claim={claim} key={claim.index} />
+                ))}
               </tbody>
             </table>
           </ClaimTable>
