@@ -11,11 +11,12 @@ import {
 } from 'pages/Claim/styled'
 import { InvestSummaryRow } from 'pages/Claim/InvestmentFlow/InvestSummaryRow'
 import { ClaimType, useClaimState, useUserEnhancedClaimData, useClaimDispatchers } from 'state/claim/hooks'
-import { ClaimCommonTypes, EnhancedUserClaimData } from '../types'
+import { ClaimCommonTypes, ClaimWithInvestmentData, EnhancedUserClaimData } from '../types'
 import { ClaimStatus } from 'state/claim/actions'
 import { useActiveWeb3React } from 'hooks/web3'
 import { ApprovalState, OptionalApproveCallbackParams } from 'hooks/useApproveCallback'
 import InvestOption from './InvestOption'
+import { calculateInvestmentAmounts } from 'state/claim/hooks/utils'
 
 export type InvestOptionProps = {
   claim: EnhancedUserClaimData
@@ -50,11 +51,13 @@ function _claimToTokenApproveData(claimType: ClaimType, tokenApproveData: TokenA
 
 export default function InvestmentFlow({ hasClaims, isAirdropOnly, ...tokenApproveData }: InvestmentFlowProps) {
   const { account } = useActiveWeb3React()
-  const { selected, activeClaimAccount, claimStatus, isInvestFlowActive, investFlowStep } = useClaimState()
+  const { selected, activeClaimAccount, claimStatus, isInvestFlowActive, investFlowStep, investFlowData } =
+    useClaimState()
   const { initInvestFlowData } = useClaimDispatchers()
   const claimData = useUserEnhancedClaimData(activeClaimAccount)
 
-  const [freeClaims, paidClaims] = useMemo(() => {
+  // filtering and splitting claims into free and selected paid claims
+  const [_freeClaims, _paidClaims] = useMemo(() => {
     const paid: EnhancedUserClaimData[] = []
     const free: EnhancedUserClaimData[] = []
 
@@ -68,6 +71,25 @@ export default function InvestmentFlow({ hasClaims, isAirdropOnly, ...tokenAppro
     return [free, paid]
   }, [claimData, selected])
 
+  // Adding investment data for free claims
+  const freeClaims = useMemo(
+    () => _freeClaims.map<ClaimWithInvestmentData>((claim) => ({ ...claim, ...calculateInvestmentAmounts(claim) })),
+    [_freeClaims]
+  )
+
+  // Adding investment data for paid claims
+  // It's separated from free claims because this depends on `investmentFlowData`, while free claims do not
+  const paidClaims = useMemo(
+    () =>
+      _paidClaims.map<ClaimWithInvestmentData>((claim) => {
+        const investmentAmount = investFlowData.find(({ index }) => index === claim.index)?.investedAmount
+
+        return { ...claim, ...calculateInvestmentAmounts(claim, investmentAmount) }
+      }),
+    [_paidClaims, investFlowData]
+  )
+
+  const allClaims = useMemo(() => freeClaims.concat(paidClaims), [freeClaims, paidClaims])
   useEffect(() => {
     initInvestFlowData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -155,7 +177,7 @@ export default function InvestmentFlow({ hasClaims, isAirdropOnly, ...tokenAppro
                 </tr>
               </thead>
               <tbody>
-                {freeClaims.concat(paidClaims).map((claim) => (
+                {allClaims.map((claim) => (
                   <InvestSummaryRow claim={claim} key={claim.index} />
                 ))}
               </tbody>
