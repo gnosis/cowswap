@@ -11,9 +11,10 @@ import { FlexWrap } from './styled'
 
 type VCOWDropdownProps = {
   balance?: CurrencyAmount<Token>
+  haveBalance?: boolean
 }
 
-export default function VCOWDropdown({ balance }: VCOWDropdownProps) {
+export default function VCOWDropdown({ balance, haveBalance }: VCOWDropdownProps) {
   const [open, setOpen] = useState(false)
   const toggle = useCallback(() => setOpen((open) => !open), [])
   const node = useRef<HTMLDivElement>(null)
@@ -35,28 +36,30 @@ export default function VCOWDropdown({ balance }: VCOWDropdownProps) {
             </ProfileFlexCol>
           </VCOWBalance>
         </span>
-        <ChevronDown size={16} style={{ marginTop: '2px' }} strokeWidth={2.5} />
+        {haveBalance && <ChevronDown size={16} style={{ marginTop: '2px' }} strokeWidth={2.5} />}
       </DropdownWrapper>
-      {open && (
-        <MenuFlyout>
-          <FlexWrap>
-            <ProfileFlexCol>
-              <Txt fs={16}>Voting Power</Txt>
-              <Txt fs={16}>Vesting</Txt>
-              <Txt fs={16}>
-                <strong>Total</strong>
-              </Txt>
-            </ProfileFlexCol>
-            <ProfileFlexCol>
-              <Txt fs={16}>000</Txt>
-              <Txt fs={16}>000</Txt>
-              <Txt fs={16}>
-                <strong>000</strong>
-              </Txt>
-            </ProfileFlexCol>
-          </FlexWrap>
-        </MenuFlyout>
-      )}
+
+      {open ||
+        (haveBalance && (
+          <MenuFlyout>
+            <FlexWrap>
+              <ProfileFlexCol>
+                <Txt fs={16}>Voting Power</Txt>
+                <Txt fs={16}>Vesting</Txt>
+                <Txt fs={16}>
+                  <strong>Total</strong>
+                </Txt>
+              </ProfileFlexCol>
+              <ProfileFlexCol>
+                <Txt fs={16}>000</Txt>
+                <Txt fs={16}>000</Txt>
+                <Txt fs={16}>
+                  <strong>000</strong>
+                </Txt>
+              </ProfileFlexCol>
+            </FlexWrap>
+          </MenuFlyout>
+        ))}
     </Wrapper>
   )
 }
