@@ -7,7 +7,7 @@ import { Txt } from 'assets/styles/styled'
 import CowProtocolLogo from 'components/CowProtocolLogo'
 import { formatMax, formatSmart } from 'utils/format'
 import { AMOUNT_PRECISION } from '@src/custom/constants'
-import { FlexWrap, FlexCol } from './styled'
+import { FlexWrap } from './styled'
 
 type VCOWDropdownProps = {
   balance?: CurrencyAmount<Token>
@@ -40,16 +40,20 @@ export default function VCOWDropdown({ balance }: VCOWDropdownProps) {
       {open && (
         <MenuFlyout>
           <FlexWrap>
-            <FlexCol>
+            <ProfileFlexCol>
               <Txt fs={16}>Voting Power</Txt>
               <Txt fs={16}>Vesting</Txt>
-              <Txt fs={16}>Total</Txt>
-            </FlexCol>
-            <FlexCol>
+              <Txt fs={16}>
+                <strong>Total</strong>
+              </Txt>
+            </ProfileFlexCol>
+            <ProfileFlexCol>
               <Txt fs={16}>000</Txt>
               <Txt fs={16}>000</Txt>
-              <Txt fs={16}>000</Txt>
-            </FlexCol>
+              <Txt fs={16}>
+                <strong>000</strong>
+              </Txt>
+            </ProfileFlexCol>
           </FlexWrap>
         </MenuFlyout>
       )}
