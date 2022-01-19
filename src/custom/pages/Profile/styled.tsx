@@ -77,9 +77,6 @@ export const GridWrap = styled.div<Partial<CSS.Properties & { horizontal?: boole
       grid-column-end: 2;
     }
   `}
-  ${({ theme }) => theme.mediaWidth.upToVerySmall`
-      grid-row-gap: 0px;
-  `}
 `
 
 export const CardHead = styled.div`
@@ -225,5 +222,6 @@ export const ProfileGridWrap = styled(GridWrap)`
       grid-column-start: 1;
       grid-column-end: 1;
     }
+    grid-row-gap: 0px;
   `};
 `
