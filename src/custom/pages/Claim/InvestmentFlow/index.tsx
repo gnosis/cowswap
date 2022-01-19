@@ -55,8 +55,18 @@ export default function InvestmentFlow({ hasClaims, isAirdropOnly, ...tokenAppro
   const { initInvestFlowData } = useClaimDispatchers()
   const claimData = useUserEnhancedClaimData(activeClaimAccount)
 
-  const selectedClaims = useMemo(() => {
-    return claimData.filter(({ index }) => selected.includes(index))
+  const [freeClaims, paidClaims] = useMemo(() => {
+    const paid: EnhancedUserClaimData[] = []
+    const free: EnhancedUserClaimData[] = []
+
+    claimData.forEach((claim) => {
+      if (claim.isFree) {
+        free.push(claim)
+      } else if (selected.includes(claim.index)) {
+        paid.push(claim)
+      }
+    })
+    return [free, paid]
   }, [claimData, selected])
 
   useEffect(() => {
@@ -98,7 +108,7 @@ export default function InvestmentFlow({ hasClaims, isAirdropOnly, ...tokenAppro
             up to a predefined maximum amount of tokens{' '}
           </p>
 
-          {selectedClaims.map((claim, index) => (
+          {paidClaims.map((claim, index) => (
             <InvestOption
               key={claim.index}
               optionIndex={index}
