@@ -1,17 +1,23 @@
 import { ClaimType } from 'state/claim/hooks'
+import { calculatePercentage } from 'state/claim/hooks/utils'
 import { TokenLogo } from 'pages/Claim/styled'
-import { EnhancedUserClaimData } from 'pages/Claim/types'
+import { ClaimWithInvestmentData } from 'pages/Claim/types'
 import CowProtocolLogo from 'components/CowProtocolLogo'
 import { formatSmart } from 'utils/format'
+import { AMOUNT_PRECISION } from 'constants/index'
 
-export type Props = { claim: EnhancedUserClaimData }
+export type Props = { claim: ClaimWithInvestmentData }
 
 export function InvestSummaryRow(props: Props): JSX.Element | null {
   const { claim } = props
 
-  const { isFree, type, price, claimAmount, currencyAmount } = claim
+  const { isFree, type, price, currencyAmount, vCowAmount, cost, investmentCost } = claim
 
   const symbol = isFree ? '' : (currencyAmount?.currency?.symbol as string)
+
+  const formattedCost =
+    formatSmart(investmentCost, AMOUNT_PRECISION, { thousandSeparator: true, isLocaleAware: true }) || '0'
+  const percentage = investmentCost && cost && calculatePercentage(investmentCost, cost)
 
   return (
     <tr>
@@ -33,14 +39,15 @@ export function InvestSummaryRow(props: Props): JSX.Element | null {
       <td>
         {!isFree && (
           <span>
-            {/* TODO: get investment amount and calculate percentage of maxCost */}
-            <b>Investment amount:</b> <i>1343 {symbol} (50% of available investing opportunity)</i>
+            <b>Investment amount:</b>{' '}
+            <i>
+              {formattedCost} {symbol} ({percentage}% of available investing opportunity)
+            </i>
           </span>
         )}
         <span>
           <b>Amount to receive:</b>
-          {/* TODO: claimAmount only for free claims, need to calculate for paid claims */}
-          <i>{formatSmart(claimAmount) || '0'} vCOW</i>
+          <i>{formatSmart(vCowAmount) || '0'} vCOW</i>
         </span>
       </td>
 
@@ -54,8 +61,7 @@ export function InvestSummaryRow(props: Props): JSX.Element | null {
           </span>
         )}
         <span>
-          {/* TODO: calculate proper cost */}
-          <b>Cost:</b> <i>{isFree ? 'Free!' : `${formatSmart(currencyAmount) || '0'} ${symbol}`}</i>
+          <b>Cost:</b> <i>{isFree ? 'Free!' : `${formattedCost} ${symbol}`}</i>
         </span>
         <span>
           <b>Vesting:</b>
