@@ -1,16 +1,24 @@
 import { Trans } from '@lingui/macro'
-import { ConfirmOrLoadingWrapper, ConfirmedIcon, AttemptFooter } from 'pages/Claim/styled'
-import { ExternalLink, CustomLightSpinner } from 'theme'
+import { ConfirmOrLoadingWrapper, ConfirmedIcon, AttemptFooter, CowSpinner } from 'pages/Claim/styled'
+import { ExternalLink } from 'theme'
 import { ClaimStatus } from 'state/claim/actions'
 import { useClaimState } from 'state/claim/hooks'
 import { useActiveWeb3React } from 'hooks/web3'
 import CowProtocolLogo from 'components/CowProtocolLogo'
-import Circle from 'assets/images/blue-loader.svg'
+import { ExplorerDataType, getExplorerLink } from 'utils/getExplorerLink'
+import { useAllClaimingTransactions } from 'state/enhancedTransactions/hooks'
+import { useMemo } from 'react'
 // import { formatSmart } from 'utils/format'
 
 export default function ClaimingStatus() {
   const { chainId } = useActiveWeb3React()
   const { activeClaimAccount, claimStatus /* , claimedAmount */ } = useClaimState()
+
+  const allClaimTxs = useAllClaimingTransactions()
+  const lastClaimTx = useMemo(() => {
+    const numClaims = allClaimTxs.length
+    return numClaims > 0 ? allClaimTxs[numClaims - 1] : undefined
+  }, [allClaimTxs])
 
   // claim status
   const isConfirmed = claimStatus === ClaimStatus.CONFIRMED
@@ -22,7 +30,13 @@ export default function ClaimingStatus() {
   return (
     <ConfirmOrLoadingWrapper activeBG={true}>
       <ConfirmedIcon>
-        {!isConfirmed ? <CustomLightSpinner src={Circle} alt="loader" size={'90px'} /> : <CowProtocolLogo size={100} />}
+        {!isConfirmed ? (
+          <CowSpinner>
+            <CowProtocolLogo />
+          </CowSpinner>
+        ) : (
+          <CowProtocolLogo size={100} />
+        )}
       </ConfirmedIcon>
       <h3>{isConfirmed ? 'Claimed!' : 'Claiming'}</h3>
       {/* TODO: fix this in new pr */}
@@ -55,11 +69,9 @@ export default function ClaimingStatus() {
           </p>
         </AttemptFooter>
       )}
-      {isSubmitted && chainId && (
-        // && claimTxn?.hash
+      {isSubmitted && chainId && lastClaimTx?.hash && (
         <ExternalLink
-          // href={getExplorerLink(chainId, claimTxn?.hash, ExplorerDataType.TRANSACTION)}
-          href="#"
+          href={getExplorerLink(chainId, lastClaimTx.hash, ExplorerDataType.TRANSACTION)}
           style={{ zIndex: 99, marginTop: '20px' }}
         >
           <Trans>View transaction on Explorer</Trans>

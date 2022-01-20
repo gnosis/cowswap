@@ -1,21 +1,24 @@
-import { CurrencyAmount, Token } from '@uniswap/sdk-core'
+import { Currency, CurrencyAmount, Percent, Token } from '@uniswap/sdk-core'
 
 import { SupportedChainId } from 'constants/chains'
 import { GNO, GpEther, USDC_BY_CHAIN, V_COW } from 'constants/tokens'
+import { ONE_HUNDRED_PERCENT, ZERO_PERCENT } from 'constants/misc'
+import { PERCENTAGE_PRECISION } from 'constants/index'
 
 import {
   CLAIMS_REPO,
   ClaimType,
   ClaimTypePriceMap,
   FREE_CLAIM_TYPES,
-  GNO_PRICE,
-  NATIVE_TOKEN_PRICE,
   PAID_CLAIM_TYPES,
   RepoClaims,
   TypeToPriceMapper,
-  USDC_PRICE,
   UserClaims,
+  VCowPrices,
 } from 'state/claim/hooks/index'
+
+import { formatSmart } from 'utils/format'
+import { EnhancedUserClaimData, InvestmentAmounts } from 'pages/Claim/types'
 
 /**
  * Helper function to check whether any claim is an investment option
@@ -164,15 +167,51 @@ export type PaidClaimTypeToPriceMap = {
 /**
  * Helper function to get vCow price based on claim type and chainId
  */
-export function claimTypeToTokenAmount(type: ClaimType, chainId: SupportedChainId) {
+export function claimTypeToTokenAmount(type: ClaimType, chainId: SupportedChainId, prices: VCowPrices) {
   switch (type) {
     case ClaimType.GnoOption:
-      return { token: GNO[chainId], amount: GNO_PRICE }
+      return { token: GNO[chainId], amount: prices.gno as string }
     case ClaimType.Investor:
-      return { token: USDC_BY_CHAIN[chainId], amount: USDC_PRICE }
+      return { token: USDC_BY_CHAIN[chainId], amount: prices.usdc as string }
     case ClaimType.UserOption:
-      return { token: GpEther.onChain(chainId), amount: NATIVE_TOKEN_PRICE[chainId] }
+      return { token: GpEther.onChain(chainId), amount: prices.native as string }
     default:
       return undefined
   }
+}
+
+/**
+ * Helper function to calculate and return the percentage between 2 CurrencyAmount instances
+ */
+export function calculatePercentage<C1 extends Currency, C2 extends Currency>(
+  numerator: CurrencyAmount<C1>,
+  denominator: CurrencyAmount<C2>
+): string {
+  let percentage = denominator.equalTo(ZERO_PERCENT)
+    ? ZERO_PERCENT
+    : new Percent(numerator.quotient, denominator.quotient)
+  if (percentage.greaterThan(ONE_HUNDRED_PERCENT)) {
+    percentage = ONE_HUNDRED_PERCENT
+  }
+  return formatSmart(percentage, PERCENTAGE_PRECISION) || '0'
+}
+
+/**
+ * Helper function that calculates vCowAmount (in vCOW) and investedAmount (in investing token)
+ */
+export function calculateInvestmentAmounts(
+  claim: Pick<EnhancedUserClaimData, 'isFree' | 'price' | 'currencyAmount' | 'claimAmount'>,
+  investedAmount?: string
+): InvestmentAmounts {
+  const { isFree, price, currencyAmount, claimAmount } = claim
+
+  if (isFree || !investedAmount) {
+    // default to 100% when no investment amount is set
+    return { vCowAmount: claimAmount, investmentCost: currencyAmount }
+  } else if (!currencyAmount || !price) {
+    return {}
+  }
+
+  const amount = CurrencyAmount.fromRawAmount(currencyAmount.currency, investedAmount)
+  return { vCowAmount: price.quote(amount), investmentCost: amount }
 }

@@ -4,6 +4,7 @@ import ms from 'ms.macro'
 import { CurrencyAmount, Price, Token } from '@uniswap/sdk-core'
 import { TransactionResponse } from '@ethersproject/providers'
 import { parseUnits } from '@ethersproject/units'
+import { BigNumber } from '@ethersproject/bignumber'
 
 import { VCow as VCowType } from 'abis/types'
 
@@ -12,7 +13,7 @@ import { useActiveWeb3React } from 'hooks/web3'
 import { useSingleContractMultipleData } from 'state/multicall/hooks'
 import { useTransactionAdder } from 'state/enhancedTransactions/hooks'
 
-import { V_COW } from 'constants/tokens'
+import { GpEther, V_COW } from 'constants/tokens'
 
 import { formatSmart } from 'utils/format'
 import { calculateGasMargin } from 'utils/calculateGasMargin'
@@ -46,9 +47,12 @@ import {
   setClaimedAmount,
   setIsInvestFlowActive,
   setInvestFlowStep,
+  initInvestFlowData,
+  updateInvestAmount,
   setSelected,
   setSelectedAll,
   ClaimStatus,
+  resetClaimUi,
 } from '../actions'
 import { EnhancedUserClaimData } from 'pages/Claim/types'
 import { supportedChainId } from 'utils/supportedChainId'
@@ -61,21 +65,10 @@ const ONE_VCOW = CurrencyAmount.fromRawAmount(
   V_COW[SupportedChainId.RINKEBY],
   parseUnits('1', V_COW[SupportedChainId.RINKEBY].decimals).toString()
 )
-// TODO: these values came from the test contract, might be different on real deployment
-// Network variable price
-export const NATIVE_TOKEN_PRICE: { [chain in SupportedChainId]: string } = {
-  [SupportedChainId.MAINNET]: '37500000000000', // '0.0000375' WETH (18 decimals) per vCOW, in wei
-  [SupportedChainId.RINKEBY]: '37500000000000', // assuming Rinkeby has same price as Mainnet
-  [SupportedChainId.XDAI]: '150000000000000000', // TODO: wild guess, wxDAI is same price as USDC
-}
-
-// Same on all networks. Actually, likely available only on Mainnet (and Rinkeby)
-export const GNO_PRICE = '375000000000000' // '0.000375' GNO (18 decimals) per vCOW, in atoms
-export const USDC_PRICE = '150000' // '0.15' USDC (6 decimals) per vCOW, in atoms
 
 // Constants regarding investment time windows
-const TWO_WEEKS = ms`2 weeks`
-const SIX_WEEKS = ms`6 weeks`
+const INVESTMENT_TIME = ms`2 weeks`
+const AIRDROP_TIME = ms`6 weeks`
 
 // For native token price calculation
 const DENOMINATOR = JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(18))
@@ -146,8 +139,7 @@ export function useClassifiedUserClaims(account: Account): ClassifiedUserClaims 
   const userClaims = useUserClaims(account)
   const contract = useVCowContract()
 
-  const isInvestmentStillAvailable = useInvestmentStillAvailable()
-  const isAirdropStillAvailable = useAirdropStillAvailable()
+  const { isInvestmentWindowOpen, isAirdropWindowOpen } = useClaimTimeInfo()
 
   // build list of parameters, with the claim index
   // we check for all claims because expired now might have been claimed before
@@ -173,7 +165,7 @@ export function useClassifiedUserClaims(account: Account): ClassifiedUserClaims 
         result.result?.[0] === true // result true means claimed
       ) {
         claimed.push(claim)
-      } else if (!isAirdropStillAvailable || (!isInvestmentStillAvailable && PAID_CLAIM_TYPES.includes(claim.type))) {
+      } else if (!isAirdropWindowOpen || (!isInvestmentWindowOpen && PAID_CLAIM_TYPES.includes(claim.type))) {
         expired.push(claim)
       } else {
         available.push(claim)
@@ -181,7 +173,7 @@ export function useClassifiedUserClaims(account: Account): ClassifiedUserClaims 
     })
 
     return { available, expired, claimed }
-  }, [isAirdropStillAvailable, isInvestmentStillAvailable, results, userClaims])
+  }, [isAirdropWindowOpen, isInvestmentWindowOpen, results, userClaims])
 }
 
 /**
@@ -301,42 +293,90 @@ function useDeploymentTimestamp(): number | null {
   return timestamp
 }
 
-/**
- * Returns the timestamp of when the investment window closes
- */
-export function useInvestmentDeadline(): number | null {
-  const deploymentTimestamp = useDeploymentTimestamp()
-
-  return deploymentTimestamp && deploymentTimestamp + TWO_WEEKS
+type ClaimTimeInfo = {
+  /**
+   * Time when contract was deployed, fetched from chain
+   */
+  deployment: number | null
+  /**
+   * Time when investment window will close (2 weeks after contract deployment)
+   */
+  investmentDeadline: number | null
+  /**
+   * Time when airdrop window will close (6 weeks after contract deployment)
+   */
+  airdropDeadline: number | null
+  /**
+   * Whether investment window is still open, based on local time
+   */
+  isInvestmentWindowOpen: boolean
+  /**
+   * Whether airdrop window is still open, based on local time
+   */
+  isAirdropWindowOpen: boolean
 }
 
 /**
- * Returns whether vCOW contract is still open for investments
- * That is, there has been less than 2 weeks since it was deployed
+ * Overall Claim time related properties
  */
-export function useInvestmentStillAvailable(): boolean {
-  const investmentDeadline = useInvestmentDeadline()
+export function useClaimTimeInfo(): ClaimTimeInfo {
+  const deployment = useDeploymentTimestamp()
+  const investmentDeadline = deployment && deployment + INVESTMENT_TIME
+  const airdropDeadline = deployment && deployment + AIRDROP_TIME
 
-  return Boolean(investmentDeadline && investmentDeadline > Date.now())
+  const isInvestmentWindowOpen = Boolean(investmentDeadline && investmentDeadline > Date.now())
+  const isAirdropWindowOpen = Boolean(airdropDeadline && airdropDeadline > Date.now())
+
+  return { deployment, investmentDeadline, airdropDeadline, isInvestmentWindowOpen, isAirdropWindowOpen }
 }
 
-/**
- * Returns the timestamp of when the airdrop window closes
- */
-export function useAirdropDeadline(): number | null {
-  const deploymentTimestamp = useDeploymentTimestamp()
-
-  return deploymentTimestamp && deploymentTimestamp + SIX_WEEKS
+export function useNativeTokenPrice(): string | null {
+  return _useVCowPriceForToken('nativeTokenPrice')
 }
 
-/**
- * Returns whether vCOW contract is still open for airdrops
- * That is, there has been less than 6 weeks since it was deployed
- */
-export function useAirdropStillAvailable(): boolean {
-  const airdropDeadline = useAirdropDeadline()
+export function useGnoPrice(): string | null {
+  return _useVCowPriceForToken('gnoPrice')
+}
 
-  return Boolean(airdropDeadline && airdropDeadline > Date.now())
+export function useUsdcPrice(): string | null {
+  return _useVCowPriceForToken('usdcPrice')
+}
+
+type VCowPriceFnNames = 'nativeTokenPrice' | 'gnoPrice' | 'usdcPrice'
+
+/**
+ * Generic hook for fetching contract value for the many prices
+ */
+function _useVCowPriceForToken(priceFnName: VCowPriceFnNames): string | null {
+  const { chainId } = useActiveWeb3React()
+  const vCowContract = useVCowContract()
+
+  const [price, setPrice] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (!chainId || !vCowContract) {
+      return
+    }
+    console.debug(`_useVCowPriceForToken::fetching price for `, priceFnName)
+
+    vCowContract[priceFnName]().then((price: BigNumber) => setPrice(price.toString()))
+  }, [chainId, priceFnName, vCowContract])
+
+  return price
+}
+
+export type VCowPrices = {
+  native: string | null
+  gno: string | null
+  usdc: string | null
+}
+
+export function useVCowPrices(): VCowPrices {
+  const native = useNativeTokenPrice()
+  const gno = useGnoPrice()
+  const usdc = useUsdcPrice()
+
+  return useMemo(() => ({ native, gno, usdc }), [gno, native, usdc])
 }
 
 /**
@@ -378,9 +418,9 @@ export function useClaimCallback(account: string | null | undefined): {
   const { chainId, account: connectedAccount } = useActiveWeb3React()
   const claims = useUserAvailableClaims(account)
   const vCowContract = useVCowContract()
+  const nativeTokenPrice = useNativeTokenPrice()
 
-  const isInvestmentStillAvailable = useInvestmentStillAvailable()
-  const isAirdropStillAvailable = useAirdropStillAvailable()
+  const { isInvestmentWindowOpen, isAirdropWindowOpen } = useClaimTimeInfo()
 
   // used for popup summary
   const addTransaction = useTransactionAdder()
@@ -422,14 +462,21 @@ export function useClaimCallback(account: string | null | undefined): {
         !connectedAccount ||
         !chainId ||
         !vCowContract ||
-        !vCowToken
+        !vCowToken ||
+        !nativeTokenPrice
       ) {
         throw new Error("Not initialized, can't claim")
       }
 
-      _validateClaimable(claims, claimInput, isInvestmentStillAvailable, isAirdropStillAvailable)
+      _validateClaimable(claims, claimInput, isInvestmentWindowOpen, isAirdropWindowOpen)
 
-      const { args, totalClaimedAmount } = _getClaimManyArgs({ claimInput, claims, account, connectedAccount, chainId })
+      const { args, totalClaimedAmount } = _getClaimManyArgs({
+        claimInput,
+        claims,
+        account,
+        connectedAccount,
+        nativeTokenPrice,
+      })
 
       if (!args) {
         throw new Error('There were no valid claims selected')
@@ -447,7 +494,7 @@ export function useClaimCallback(account: string | null | undefined): {
         return vCowContract.claimMany(...extendedArgs).then((response: TransactionResponse) => {
           addTransaction({
             hash: response.hash,
-            summary: `Claimed ${formatSmart(vCowAmount)} vCOW`,
+            summary: `Claim ${formatSmart(vCowAmount)} vCOW`,
             claim: { recipient: account, indices: args[0] as number[] },
           })
           return response.hash
@@ -460,8 +507,9 @@ export function useClaimCallback(account: string | null | undefined): {
       chainId,
       claims,
       connectedAccount,
-      isAirdropStillAvailable,
-      isInvestmentStillAvailable,
+      isAirdropWindowOpen,
+      isInvestmentWindowOpen,
+      nativeTokenPrice,
       vCowContract,
       vCowToken,
     ]
@@ -475,7 +523,7 @@ type GetClaimManyArgsParams = {
   claims: UserClaims
   account: string
   connectedAccount: string
-  chainId: SupportedChainId
+  nativeTokenPrice: string
 }
 
 type ClaimManyFnArgs = Parameters<VCowType['claimMany']>
@@ -493,7 +541,7 @@ function _getClaimManyArgs({
   claims,
   account,
   connectedAccount,
-  chainId,
+  nativeTokenPrice,
 }: GetClaimManyArgsParams): GetClaimManyArgsResult {
   // Arrays are named according to contract parameters
   // For more info, check https://github.com/gnosis/gp-v2-token/blob/main/src/contracts/mixins/MerkleDistributor.sol#L123
@@ -533,7 +581,7 @@ function _getClaimManyArgs({
 
       merkleProofs.push(claim.proof)
       // only used on UserOption
-      const value = _getClaimValue(claim, claimedAmount, chainId)
+      const value = _getClaimValue(claim, claimedAmount, nativeTokenPrice)
       sendEth.push(value) // TODO: verify ETH balance < input.amount ?
 
       // sum of claimedAmounts for the toast notification
@@ -616,16 +664,14 @@ function _hasNoInputOrInputIsGreaterThanClaimAmount(
  * vCowAmount * wethPrice / 10^18
  * See https://github.com/gnosis/gp-v2-token/blob/main/src/contracts/mixins/Claiming.sol#L314-L320
  */
-function _getClaimValue(claim: UserClaimData, vCowAmount: string, chainId: SupportedChainId): string {
+function _getClaimValue(claim: UserClaimData, vCowAmount: string, nativeTokenPrice: string): string {
   if (claim.type !== ClaimType.UserOption) {
     return '0'
   }
 
-  const price = NATIVE_TOKEN_PRICE[chainId]
-
   // Why InAtomsSquared? because we are multiplying vCowAmount (which is in atoms == * 10**18)
   // by the price (which is also in atoms == * 10**18)
-  const claimValueInAtomsSquared = JSBI.multiply(JSBI.BigInt(vCowAmount), JSBI.BigInt(price))
+  const claimValueInAtomsSquared = JSBI.multiply(JSBI.BigInt(vCowAmount), JSBI.BigInt(nativeTokenPrice))
   // Then it's divided by 10**18 to return the value in the native currency atoms
   return JSBI.divide(claimValueInAtomsSquared, DENOMINATOR).toString()
 }
@@ -726,9 +772,13 @@ export function useClaimDispatchers() {
       // investing
       setIsInvestFlowActive: (payload: boolean) => dispatch(setIsInvestFlowActive(payload)),
       setInvestFlowStep: (payload: number) => dispatch(setInvestFlowStep(payload)),
+      initInvestFlowData: () => dispatch(initInvestFlowData()),
+      updateInvestAmount: (payload: { index: number; amount: string }) => dispatch(updateInvestAmount(payload)),
       // claim row selection
       setSelected: (payload: number[]) => dispatch(setSelected(payload)),
       setSelectedAll: (payload: boolean) => dispatch(setSelectedAll(payload)),
+      // reset claim ui
+      resetClaimUi: () => dispatch(resetClaimUi()),
     }),
     [dispatch]
   )
@@ -748,43 +798,52 @@ export function useClaimState() {
 export function useUserEnhancedClaimData(account: Account): EnhancedUserClaimData[] {
   const { available } = useClassifiedUserClaims(account)
   const { chainId: preCheckChainId } = useActiveWeb3React()
+  const native = useNativeTokenPrice()
+  const gno = useGnoPrice()
+  const usdc = useUsdcPrice()
 
   const sorted = useMemo(() => available.sort(_sortTypes), [available])
 
   return useMemo(() => {
     const chainId = supportedChainId(preCheckChainId)
-    if (!chainId) return []
+    if (!chainId || !native || !gno || !usdc) return []
 
-    return sorted.map<EnhancedUserClaimData>((claim) => {
-      const claimAmount = CurrencyAmount.fromRawAmount(ONE_VCOW.currency, claim.amount)
-
-      const tokenAndAmount = claimTypeToTokenAmount(claim.type, chainId)
-
-      const data: EnhancedUserClaimData = {
-        ...claim,
-        isFree: isFreeClaim(claim.type),
-        claimAmount,
-      }
-
-      if (!tokenAndAmount) {
-        return data
-      } else {
-        data.price = new Price({
-          baseAmount: ONE_VCOW,
-          quoteAmount: CurrencyAmount.fromRawAmount(tokenAndAmount.token, tokenAndAmount.amount),
-        }).invert()
-        // get the currency amount using the price base currency (remember price was inverted) and claim amount
-        data.currencyAmount = CurrencyAmount.fromRawAmount(data.price.baseCurrency, claim.amount)
-
-        // e.g 1000 vCow / 20 GNO = 50 GNO cost
-        data.cost = data.currencyAmount.divide(data.price)
-
-        return data
-      }
-    })
-  }, [preCheckChainId, sorted])
+    return sorted.map((claim) => _enhanceClaimData(claim, chainId, { native, gno, usdc }))
+  }, [gno, native, preCheckChainId, sorted, usdc])
 }
 
 function _sortTypes(a: UserClaimData, b: UserClaimData): number {
   return Number(isFreeClaim(b.type)) - Number(isFreeClaim(a.type))
+}
+
+function _enhanceClaimData(claim: UserClaimData, chainId: SupportedChainId, prices: VCowPrices): EnhancedUserClaimData {
+  const claimAmount = CurrencyAmount.fromRawAmount(ONE_VCOW.currency, claim.amount)
+
+  const data: EnhancedUserClaimData = {
+    ...claim,
+    isFree: isFreeClaim(claim.type),
+    claimAmount,
+  }
+
+  const tokenAndAmount = claimTypeToTokenAmount(claim.type, chainId, prices)
+
+  // Free claims will have tokenAndAmount === undefined
+  // If it's not a free claim, store the price and calculate cost in investment token
+  if (tokenAndAmount?.amount) {
+    data.price = _getPrice(tokenAndAmount)
+    // get the currency amount using the price base currency (remember price was inverted)
+    data.currencyAmount = CurrencyAmount.fromRawAmount(data.price.baseCurrency, claim.amount)
+
+    // e.g 1000 vCow / 20 GNO = 50 GNO cost
+    data.cost = data.currencyAmount.divide(data.price)
+  }
+
+  return data
+}
+
+function _getPrice({ token, amount }: { amount: string; token: Token | GpEther }) {
+  return new Price({
+    baseAmount: ONE_VCOW,
+    quoteAmount: CurrencyAmount.fromRawAmount(token, amount),
+  }).invert()
 }

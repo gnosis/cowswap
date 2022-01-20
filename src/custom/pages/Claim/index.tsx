@@ -1,21 +1,13 @@
-import { useEffect, useMemo } from 'react'
-import { Trans } from '@lingui/macro'
+import { useCallback, useEffect, useMemo } from 'react'
 import { CurrencyAmount, MaxUint256 } from '@uniswap/sdk-core'
 import { useActiveWeb3React } from 'hooks/web3'
-import {
-  useUserEnhancedClaimData,
-  useUserUnclaimedAmount,
-  useClaimCallback,
-  useInvestmentStillAvailable,
-  useAirdropStillAvailable,
-} from 'state/claim/hooks'
-import { ButtonPrimary, ButtonSecondary } from 'components/Button'
-import { PageWrapper, FooterNavButtons } from 'pages/Claim/styled'
+import { useUserEnhancedClaimData, useUserUnclaimedAmount, useClaimCallback, ClaimInput } from 'state/claim/hooks'
+import { PageWrapper } from 'pages/Claim/styled'
 import EligibleBanner from './EligibleBanner'
-import { getFreeClaims, hasPaidClaim, getIndexes, getPaidClaims } from 'state/claim/hooks/utils'
+import { getFreeClaims, hasPaidClaim, getIndexes, hasFreeClaim } from 'state/claim/hooks/utils'
 import { useWalletModalToggle } from 'state/application/hooks'
 import Confetti from 'components/Confetti'
-import { isAddress } from 'web3-utils'
+
 import useENS from 'hooks/useENS'
 
 import ClaimNav from './ClaimNav'
@@ -35,6 +27,9 @@ import useTransactionConfirmationModal from 'hooks/useTransactionConfirmationMod
 
 import { GNO, USDC_BY_CHAIN } from 'constants/tokens'
 import { isSupportedChain } from 'utils/supportedChainId'
+import { useErrorModal } from 'hooks/useErrorMessageAndModal'
+import { EnhancedUserClaimData } from './types'
+import FooterNavButtons from './FooterNavButtons'
 
 const GNO_CLAIM_APPROVE_MESSAGE = 'Approving GNO for investing in vCOW'
 const USDC_CLAIM_APPROVE_MESSAGE = 'Approving USDC for investing in vCOW'
@@ -52,7 +47,6 @@ export default function Claim() {
     // claiming
     claimStatus,
     // investment
-    isInvestFlowActive,
     investFlowStep,
     // table select change
     selected,
@@ -70,17 +64,19 @@ export default function Claim() {
     // setClaimedAmount, // TODO: uncomment when used
     // investing
     setIsInvestFlowActive,
-    setInvestFlowStep,
     // claim row selection
     setSelected,
-    setSelectedAll,
+    // reset claim ui
+    resetClaimUi,
   } = useClaimDispatchers()
 
+  // addresses
   const { address: resolvedAddress, name: resolvedENS } = useENS(inputAddress)
-  const isInputAddressValid = useMemo(() => isAddress(resolvedAddress || ''), [resolvedAddress])
 
   // toggle wallet when disconnected
   const toggleWalletModal = useWalletModalToggle()
+  // error handling modals
+  const { handleCloseError, handleSetError, ErrorModal } = useErrorModal()
 
   // get user claim data
   const userClaimData = useUserEnhancedClaimData(activeClaimAccount)
@@ -90,31 +86,10 @@ export default function Claim() {
 
   const hasClaims = useMemo(() => userClaimData.length > 0, [userClaimData])
   const isAirdropOnly = useMemo(() => !hasPaidClaim(userClaimData), [userClaimData])
-
-  // checks regarding investment time window
-  const isInvestmentStillAvailable = useInvestmentStillAvailable()
-  const isAirdropStillAvailable = useAirdropStillAvailable()
+  const isPaidClaimsOnly = useMemo(() => hasPaidClaim(userClaimData) && !hasFreeClaim(userClaimData), [userClaimData])
 
   // claim callback
   const { claimCallback } = useClaimCallback(activeClaimAccount)
-
-  const handleSelect = (event: React.ChangeEvent<HTMLInputElement>, index: number) => {
-    const checked = event.target.checked
-    const output = [...selected]
-    checked ? output.push(index) : output.splice(output.indexOf(index), 1)
-    setSelected(output)
-
-    if (!checked) {
-      setSelectedAll(false)
-    }
-  }
-
-  const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const checked = event.target.checked
-    const paid = getIndexes(getPaidClaims(userClaimData))
-    setSelected(checked ? paid : [])
-    setSelectedAll(checked)
-  }
 
   // handle change account
   const handleChangeAccount = () => {
@@ -132,20 +107,17 @@ export default function Claim() {
   }
 
   // handle submit claim
-  const handleSubmitClaim = () => {
+  const handleSubmitClaim = useCallback(() => {
+    // Reset error handling
+    handleCloseError()
+
     // just to be sure
     if (!activeClaimAccount) return
 
     const freeClaims = getFreeClaims(userClaimData)
 
-    // check if there are any selected (paid) claims
-    if (!selected.length) {
-      const inputData = freeClaims.map(({ index }) => ({ index }))
-
-      console.log('starting claiming with', inputData)
-
+    const sendTransaction = (inputData: ClaimInput[]) => {
       setClaimStatus(ClaimStatus.ATTEMPTING)
-
       claimCallback(inputData)
         // this is not right currently
         .then((/* res */) => {
@@ -154,50 +126,58 @@ export default function Claim() {
         })
         .catch((error) => {
           setClaimStatus(ClaimStatus.DEFAULT)
-          console.log(error)
+          console.error('[Claim::index::handleSubmitClaim]::error', error)
+          handleSetError(error?.message)
         })
+    }
+
+    // check if there are any selected (paid) claims
+    let inputData
+    if (!selected.length) {
+      inputData = freeClaims.map(({ index }) => ({ index }))
+      console.log('Starting claiming with', inputData)
+      sendTransaction(inputData)
+    } else if (investFlowStep == 2) {
+      // Free claimings + selected investment oportunities
+      const selectedIndex = [...getIndexes(freeClaims), ...selected]
+      inputData = selectedIndex.reduce<EnhancedUserClaimData[]>((acc, idx: number) => {
+        const claim = userClaimData.find(({ index }) => idx === index)
+        if (claim) {
+          // TODO: @nenadV91, here you can modify the amounts to use the partial investments
+          acc.push(claim)
+        }
+        return acc
+      }, [])
+
+      console.log('Starting Investment Flow', inputData)
+      sendTransaction(inputData)
     } else {
-      const inputData = [...getIndexes(freeClaims), ...selected].map((idx: number) => {
-        return userClaimData.find(({ index }) => idx === index)
-      })
-      console.log('starting investment flow', inputData)
       setIsInvestFlowActive(true)
     }
-  }
-  console.log(
-    `Claim/index::`,
-    `[unclaimedAmount ${unclaimedAmount?.toFixed(2)}]`,
-    `[hasClaims ${hasClaims}]`,
-    `[activeClaimAccount ${activeClaimAccount}]`,
-    `[isAirdropOnly ${isAirdropOnly}]`,
-    `[isInvestmentStillAvailable ${isInvestmentStillAvailable}]`,
-    `[isAirdropStillAvailable ${isAirdropStillAvailable}]`
-  )
+  }, [
+    activeClaimAccount,
+    investFlowStep,
+    selected,
+    userClaimData,
+    claimCallback,
+    handleCloseError,
+    handleSetError,
+    setClaimStatus,
+    setIsInvestFlowActive,
+  ])
 
-  // on account change
+  // on account/activeAccount/non-connected account (if claiming for someone else) change
   useEffect(() => {
-    if (!isSearchUsed && account) {
+    // disconnected wallet?
+    if (!account) {
+      setActiveClaimAccount('')
+    } else if (!isSearchUsed) {
       setActiveClaimAccount(account)
     }
 
-    if (!account) {
-      setActiveClaimAccount('')
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [account])
-
-  // if wallet is disconnected
-  useEffect(() => {
-    if (!account && !isSearchUsed) {
-      setActiveClaimAccount('')
-    }
-
-    if (!account) {
-      setIsInvestFlowActive(false)
-      setInvestFlowStep(0)
-    }
-    // setActiveClaimAccount and other dispatch fns are only here for TS. They are safe references.
-  }, [account, isSearchUsed, setActiveClaimAccount, setInvestFlowStep, setIsInvestFlowActive])
+    // properly reset the user to the claims table and initial investment flow
+    resetClaimUi()
+  }, [account, activeClaimAccount, resolvedAddress, isSearchUsed, setActiveClaimAccount, resetClaimUi])
 
   // Transaction confirmation modal
   const { TransactionConfirmationModal, openModal, closeModal } = useTransactionConfirmationModal(
@@ -222,6 +202,8 @@ export default function Claim() {
     <PageWrapper>
       {/* Approve confirmation modal */}
       <TransactionConfirmationModal />
+      {/* Error modal */}
+      <ErrorModal />
       {/* If claim is confirmed > trigger confetti effect */}
       <Confetti start={claimStatus === ClaimStatus.CONFIRMED} />
 
@@ -239,13 +221,7 @@ export default function Claim() {
       {/* Try claiming or inform succesfull claim */}
       <ClaimingStatus />
       {/* IS Airdrop + investing (advanced) */}
-      <ClaimsTable
-        isAirdropOnly={isAirdropOnly}
-        userClaimData={userClaimData}
-        handleSelect={handleSelect}
-        handleSelectAll={handleSelectAll}
-        hasClaims={hasClaims}
-      />
+      <ClaimsTable isAirdropOnly={isAirdropOnly} hasClaims={hasClaims} />
       {/* Investing vCOW flow (advanced) */}
       <InvestmentFlow
         isAirdropOnly={isAirdropOnly}
@@ -260,58 +236,15 @@ export default function Claim() {
         }}
       />
 
-      <FooterNavButtons>
-        {/* General claim vCOW button  (no invest) */}
-        {!!activeClaimAccount && !!hasClaims && !isInvestFlowActive && claimStatus === ClaimStatus.DEFAULT ? (
-          account ? (
-            <ButtonPrimary onClick={handleSubmitClaim}>
-              <Trans>Claim vCOW</Trans>
-            </ButtonPrimary>
-          ) : (
-            <ButtonPrimary onClick={toggleWalletModal}>
-              <Trans>Connect a wallet</Trans>
-            </ButtonPrimary>
-          )
-        ) : null}
-
-        {/* Check for claims button */}
-        {(!activeClaimAccount || !hasClaims) && (
-          <ButtonPrimary disabled={!isInputAddressValid} type="text" onClick={handleCheckClaim}>
-            <Trans>Check claimable vCOW</Trans>
-          </ButtonPrimary>
-        )}
-
-        {/* Invest flow button */}
-        {!!activeClaimAccount &&
-          !!hasClaims &&
-          claimStatus === ClaimStatus.DEFAULT &&
-          !isAirdropOnly &&
-          !!isInvestFlowActive && (
-            <>
-              {investFlowStep === 0 ? (
-                <ButtonPrimary onClick={() => setInvestFlowStep(1)}>
-                  <Trans>Approve tokens</Trans>
-                </ButtonPrimary>
-              ) : investFlowStep === 1 ? (
-                <ButtonPrimary onClick={() => setInvestFlowStep(2)}>
-                  <Trans>Review</Trans>
-                </ButtonPrimary>
-              ) : (
-                <ButtonPrimary onClick={() => setInvestFlowStep(3)}>
-                  <Trans>Claim and invest vCOW</Trans>
-                </ButtonPrimary>
-              )}
-
-              <ButtonSecondary
-                onClick={() =>
-                  investFlowStep === 0 ? setIsInvestFlowActive(false) : setInvestFlowStep(investFlowStep - 1)
-                }
-              >
-                <Trans>Go back</Trans>
-              </ButtonSecondary>
-            </>
-          )}
-      </FooterNavButtons>
+      <FooterNavButtons
+        handleCheckClaim={handleCheckClaim}
+        handleSubmitClaim={handleSubmitClaim}
+        toggleWalletModal={toggleWalletModal}
+        isAirdropOnly={isAirdropOnly}
+        isPaidClaimsOnly={isPaidClaimsOnly}
+        hasClaims={hasClaims}
+        resolvedAddress={resolvedAddress}
+      />
     </PageWrapper>
   )
 }

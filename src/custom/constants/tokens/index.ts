@@ -3,6 +3,7 @@ import { WETH9, Token } from '@uniswap/sdk-core'
 import { DAI_RINKEBY, USDC_RINKEBY, USDT_RINKEBY, WBTC_RINKEBY } from 'utils/rinkeby/constants'
 import { DAI, USDC as USDC_MAINNET, USDT, WBTC } from '@src/constants/tokens'
 import { USDC_XDAI, /*USDT_XDAI,*/ WBTC_XDAI, WETH_XDAI, WXDAI } from 'utils/xdai/constants'
+import wxDaiLogo from 'assets/images/wxdai.png'
 import { SupportedChainId } from 'constants/chains'
 import { V_COW_CONTRACT_ADDRESS } from 'constants/index'
 
@@ -26,8 +27,7 @@ export const ADDRESS_IMAGE_OVERRIDE = {
   [USDC_XDAI.address]: getTrustImage(USDC_MAINNET.address),
   // [USDT_XDAI.address]: getTrustImage(USDT.address),
   [WBTC_XDAI.address]: getTrustImage(WBTC.address),
-  [WXDAI.address]:
-    'https://raw.githubusercontent.com/1Hive/default-token-list/master/src/assets/xdai/0xe91d153e0b41518a2ce8dd3d7944fa863463a97d/logo.png',
+  [WXDAI.address]: wxDaiLogo,
   [WETH_XDAI.address]: getTrustImage(WETH_ADDRESS_MAINNET),
 }
 

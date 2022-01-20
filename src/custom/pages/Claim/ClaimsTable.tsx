@@ -1,5 +1,5 @@
+import { ClaimType, useClaimDispatchers, useClaimState, useClaimTimeInfo } from 'state/claim/hooks'
 import styled from 'styled-components/macro'
-import { ClaimType, useClaimState } from 'state/claim/hooks'
 import { ClaimTable, ClaimBreakdown, TokenLogo } from 'pages/Claim/styled'
 import CowProtocolLogo from 'components/CowProtocolLogo'
 import { ClaimStatus } from 'state/claim/actions'
@@ -7,23 +7,27 @@ import { ClaimStatus } from 'state/claim/actions'
 import { formatSmart } from 'utils/format'
 import { EnhancedUserClaimData } from './types'
 import { useAllClaimingTransactionIndices } from 'state/enhancedTransactions/hooks'
+import { useUserEnhancedClaimData } from 'state/claim/hooks'
+
 import { CustomLightSpinner } from 'theme'
 import Circle from 'assets/images/blue-loader.svg'
+import { Countdown } from 'pages/Claim/Countdown'
+import { getPaidClaims, getIndexes } from 'state/claim/hooks/utils'
+import { useEffect } from 'react'
 
-type ClaimsTableProps = {
-  handleSelectAll: (event: React.ChangeEvent<HTMLInputElement>) => void
-  handleSelect: (event: React.ChangeEvent<HTMLInputElement>, index: number) => void
-  userClaimData: EnhancedUserClaimData[]
+export type ClaimsTableProps = {
   isAirdropOnly: boolean
   hasClaims: boolean
 }
 
 // TODO: fix in other pr
-type ClaimsTableRowProps = EnhancedUserClaimData &
-  Pick<ClaimsTableProps, 'handleSelect'> & {
-    selected: number[]
-    isPendingClaim: boolean
-  }
+type ClaimsTableRowProps = EnhancedUserClaimData & {
+  handleSelect: (event: React.ChangeEvent<HTMLInputElement>, index: number) => void
+  selected: number[]
+  start: number | null
+  end: number | null
+  isPendingClaim: boolean
+}
 
 const ClaimTr = styled.tr<{ isPending?: boolean }>`
   > td {
@@ -50,6 +54,8 @@ const ClaimsTableRow = ({
   cost,
   handleSelect,
   selected,
+  start,
+  end,
 }: ClaimsTableRowProps) => {
   return (
     <ClaimTr key={index} isPending={isPendingClaim}>
@@ -71,8 +77,8 @@ const ClaimsTableRow = ({
       </td>
       <td>
         {' '}
-        <TokenLogo symbol={`${currencyAmount?.currency?.symbol}`} size={32} />
-        <CowProtocolLogo size={32} />
+        {!isFree && <TokenLogo symbol={`${currencyAmount?.currency?.symbol}`} size={34} />}
+        <CowProtocolLogo size={34} />
         <span>
           <b>{isFree ? ClaimType[type] : 'Buy vCOW'}</b>
           {!isFree && <i>with {currencyAmount?.currency?.symbol}</i>}
@@ -80,10 +86,12 @@ const ClaimsTableRow = ({
       </td>
       <td>{formatSmart(claimAmount) || 0} vCOW</td>
       <td>
-        <span>
-          Price:{' '}
-          <b>{isFree || !price ? '-' : `${formatSmart(price) || 0} vCoW per ${currencyAmount?.currency?.symbol}`}</b>
-        </span>
+        {!isFree ||
+          (price && (
+            <span>
+              Price: <b>{`${formatSmart(price) || 0} vCoW per ${currencyAmount?.currency?.symbol}`}</b>
+            </span>
+          ))}
         <span>
           Cost:{' '}
           <b>
@@ -99,31 +107,56 @@ const ClaimsTableRow = ({
           Vesting: <b>{type === ClaimType.Airdrop ? 'No' : '4 years (linear)'}</b>
         </span>
         <span>
-          Ends in: <b>28 days, 10h, 50m</b>
+          Ends in: <b>{start && end && <Countdown start={start} end={end} />}</b>
         </span>
       </td>
     </ClaimTr>
   )
 }
 
-export default function ClaimsTable({
-  handleSelectAll,
-  handleSelect,
-  userClaimData,
-  isAirdropOnly,
-  hasClaims,
-}: ClaimsTableProps) {
+export default function ClaimsTable({ isAirdropOnly, hasClaims }: ClaimsTableProps) {
   const { selectedAll, selected, activeClaimAccount, claimStatus, isInvestFlowActive } = useClaimState()
+
+  const { setSelectedAll, setSelected } = useClaimDispatchers()
+
   const pendingClaimsSet = useAllClaimingTransactionIndices()
 
-  const hideTable =
-    isAirdropOnly || !hasClaims || !activeClaimAccount || claimStatus !== ClaimStatus.DEFAULT || isInvestFlowActive
+  const userClaimData = useUserEnhancedClaimData(activeClaimAccount)
 
-  if (hideTable) return null
+  const { deployment: start, investmentDeadline, airdropDeadline } = useClaimTimeInfo()
+
+  const handleSelect = (event: React.ChangeEvent<HTMLInputElement>, index: number) => {
+    const checked = event.target.checked
+    const output = [...selected]
+    checked ? output.push(index) : output.splice(output.indexOf(index), 1)
+    setSelected(output)
+  }
+
+  const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const checked = event.target.checked
+    const paid = getIndexes(getPaidClaims(userClaimData))
+    setSelected(checked ? paid : [])
+    setSelectedAll(checked)
+  }
+
+  const paidClaims = getPaidClaims(userClaimData)
+
+  useEffect(() => {
+    setSelectedAll(selected.length === paidClaims.length)
+  }, [paidClaims.length, selected.length, setSelectedAll])
+
+  const showTable =
+    !isAirdropOnly && hasClaims && activeClaimAccount && claimStatus === ClaimStatus.DEFAULT && !isInvestFlowActive
+
+  if (!showTable) return null
 
   return (
     <ClaimBreakdown>
-      <h2>vCOW claim breakdown</h2>
+      <p>
+        The table overview below represents your current vCow claiming opportunities. To move forward with one or all of
+        the options, simply select the row(s) you would like to engage with and move forward via the &apos;Claim
+        vCOW&apos; button.
+      </p>
       <ClaimTable>
         <table>
           <thead>
@@ -146,6 +179,8 @@ export default function ClaimsTable({
                 isPendingClaim={pendingClaimsSet.has(claim.index)}
                 selected={selected}
                 handleSelect={handleSelect}
+                start={start}
+                end={claim.isFree ? airdropDeadline : investmentDeadline}
               />
             ))}
           </tbody>
