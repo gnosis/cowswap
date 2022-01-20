@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import styled from 'styled-components/macro'
 import { useOnClickOutside } from 'hooks/useOnClickOutside'
 import { ChevronDown } from 'react-feather'
@@ -11,14 +11,15 @@ import { FlexWrap } from './styled'
 
 type VCOWDropdownProps = {
   balance?: CurrencyAmount<Token>
-  haveBalance?: boolean
 }
 
-export default function VCOWDropdown({ balance, haveBalance }: VCOWDropdownProps) {
+export default function VCOWDropdown({ balance }: VCOWDropdownProps) {
   const [open, setOpen] = useState(false)
   const toggle = useCallback(() => setOpen((open) => !open), [])
   const node = useRef<HTMLDivElement>(null)
   useOnClickOutside(node, open ? toggle : undefined)
+
+  const hasBalance = useMemo(() => balance?.greaterThan(0), [balance])
 
   return (
     <Wrapper ref={node}>
@@ -36,30 +37,29 @@ export default function VCOWDropdown({ balance, haveBalance }: VCOWDropdownProps
             </ProfileFlexCol>
           </VCOWBalance>
         </span>
-        {haveBalance && <ChevronDown size={16} style={{ marginTop: '2px' }} strokeWidth={2.5} />}
+        {hasBalance && <ChevronDown size={16} style={{ marginTop: '2px' }} strokeWidth={2.5} />}
       </DropdownWrapper>
 
-      {open ||
-        (haveBalance && (
-          <MenuFlyout>
-            <FlexWrap>
-              <ProfileFlexCol>
-                <Txt fs={16}>Voting Power</Txt>
-                <Txt fs={16}>Vesting</Txt>
-                <Txt fs={16}>
-                  <strong>Total</strong>
-                </Txt>
-              </ProfileFlexCol>
-              <ProfileFlexCol>
-                <Txt fs={16}>000</Txt>
-                <Txt fs={16}>000</Txt>
-                <Txt fs={16}>
-                  <strong>000</strong>
-                </Txt>
-              </ProfileFlexCol>
-            </FlexWrap>
-          </MenuFlyout>
-        ))}
+      {open && hasBalance && (
+        <MenuFlyout>
+          <FlexWrap>
+            <ProfileFlexCol>
+              <Txt fs={16}>Voting Power</Txt>
+              <Txt fs={16}>Vesting</Txt>
+              <Txt fs={16}>
+                <strong>Total</strong>
+              </Txt>
+            </ProfileFlexCol>
+            <ProfileFlexCol>
+              <Txt fs={16}>000</Txt>
+              <Txt fs={16}>000</Txt>
+              <Txt fs={16}>
+                <strong>000</strong>
+              </Txt>
+            </ProfileFlexCol>
+          </FlexWrap>
+        </MenuFlyout>
+      )}
     </Wrapper>
   )
 }
