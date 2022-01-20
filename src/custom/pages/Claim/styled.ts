@@ -522,7 +522,6 @@ export const EligibleBanner = styled.div`
   align-items: center;
   background: ${({ theme }) => transparentize(0.9, theme.attention)};
   color: ${({ theme }) => theme.attention};
-  text-align: center;
   margin: 0 auto 16px;
   font-weight: 600;
 
@@ -702,7 +701,6 @@ export const TopNav = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 100%;
   background: transparent;
   padding: 0;
   margin: 0 auto 24px;
