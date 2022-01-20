@@ -1033,6 +1033,7 @@ export const InvestAvailableBar = styled.div<{ percentage?: number }>`
     transition: width 0.3s ease-in-out;
     margin: 0;
     padding: 1px 4px 0 4px;
+    min-width: max-content;
     text-align: right;
   }
 `
