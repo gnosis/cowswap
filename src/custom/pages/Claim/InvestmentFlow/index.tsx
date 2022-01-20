@@ -57,7 +57,7 @@ export default function InvestmentFlow({ hasClaims, isAirdropOnly, ...tokenAppro
   const claimData = useUserEnhancedClaimData(activeClaimAccount)
 
   // filtering and splitting claims into free and selected paid claims
-  const [_freeClaims, _paidClaims] = useMemo(() => {
+  const [_freeClaims, _selectedClaims] = useMemo(() => {
     const paid: EnhancedUserClaimData[] = []
     const free: EnhancedUserClaimData[] = []
 
@@ -79,17 +79,17 @@ export default function InvestmentFlow({ hasClaims, isAirdropOnly, ...tokenAppro
 
   // Adding investment data for paid claims
   // It's separated from free claims because this depends on `investmentFlowData`, while free claims do not
-  const paidClaims = useMemo(
+  const selectedClaims = useMemo(
     () =>
-      _paidClaims.map<ClaimWithInvestmentData>((claim) => {
+      _selectedClaims.map<ClaimWithInvestmentData>((claim) => {
         const investmentAmount = investFlowData.find(({ index }) => index === claim.index)?.investedAmount
 
         return { ...claim, ...calculateInvestmentAmounts(claim, investmentAmount) }
       }),
-    [_paidClaims, investFlowData]
+    [_selectedClaims, investFlowData]
   )
 
-  const allClaims = useMemo(() => freeClaims.concat(paidClaims), [freeClaims, paidClaims])
+  const allClaims = useMemo(() => freeClaims.concat(selectedClaims), [freeClaims, selectedClaims])
   useEffect(() => {
     initInvestFlowData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -129,7 +129,7 @@ export default function InvestmentFlow({ hasClaims, isAirdropOnly, ...tokenAppro
             up to a predefined maximum amount of tokens{' '}
           </p>
 
-          {paidClaims.map((claim, index) => (
+          {selectedClaims.map((claim, index) => (
             <InvestOption
               key={claim.index}
               optionIndex={index}
