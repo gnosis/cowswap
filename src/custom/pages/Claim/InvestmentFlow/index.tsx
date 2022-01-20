@@ -136,7 +136,7 @@ export default function InvestmentFlow({ hasClaims, isAirdropOnly, ...tokenAppro
               <tbody>
                 <tr>
                   <td>
-                    <CowProtocolLogo size={32} />
+                    <CowProtocolLogo size={36} />
                     <span>
                       <b>Airdrop</b>
                     </span>
@@ -162,8 +162,8 @@ export default function InvestmentFlow({ hasClaims, isAirdropOnly, ...tokenAppro
                 <tr>
                   <td>
                     {' '}
-                    <TokenLogo symbol="GNO" size={32} />
-                    <CowProtocolLogo size={32} />
+                    <TokenLogo symbol="GNO" size={36} />
+                    <CowProtocolLogo size={36} />
                     <span>
                       <b>Buy vCOW</b>
                       <i>with GNO</i>
