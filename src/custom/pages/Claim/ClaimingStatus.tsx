@@ -40,7 +40,7 @@ export default function ClaimingStatus() {
       </ConfirmedIcon>
       <h3>{isConfirmed ? 'Claimed!' : 'Claiming'}</h3>
       {/* TODO: fix this in new pr */}
-      {!isConfirmed && <Trans>{/* formatSmartLocationAware(claimedAmount) || 0 */} vCOW</Trans>}
+      {!isConfirmed && <Trans>{/* formatSmartLocationAware(claimedAmount) || '0' */} vCOW</Trans>}
 
       {isConfirmed && (
         <>
@@ -49,7 +49,7 @@ export default function ClaimingStatus() {
           </Trans>
           <Trans>
             {/* TODO: fix this in new pr */}
-            <p>{/* formatSmartLocationAware(claimedAmount) || 0 */} vCOW</p>
+            <p>{/* formatSmartLocationAware(claimedAmount) || '0' */} vCOW</p>
           </Trans>
           <Trans>
             <span role="img" aria-label="party-hat">

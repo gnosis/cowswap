@@ -169,7 +169,7 @@ export default function InvestOption({ approveData, claim, optionIndex }: Invest
           <span>
             <b>Price</b>{' '}
             <i>
-              {formatSmartLocaleAware(price)} vCoW per {currencyAmount?.currency?.symbol}
+              {formatSmartLocaleAware(price) || '0'} vCoW per {currencyAmount?.currency?.symbol}
             </i>
           </span>
 

@@ -49,7 +49,7 @@ export function ClaimSummaryView({ showClaimText, totalAvailableText, totalAvail
         <div>
           <ClaimTotal>
             {totalAvailableText && <b>{totalAvailableText}</b>}
-            <p> {formatSmartLocaleAware(totalAvailableAmount, AMOUNT_PRECISION)} vCOW</p>
+            <p> {formatSmartLocaleAware(totalAvailableAmount, AMOUNT_PRECISION) || '0'} vCOW</p>
           </ClaimTotal>
         </div>
       )}
