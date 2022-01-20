@@ -186,14 +186,14 @@ export function claimTypeToTokenAmount(type: ClaimType, chainId: SupportedChainI
 export function calculatePercentage<C1 extends Currency, C2 extends Currency>(
   numerator: CurrencyAmount<C1>,
   denominator: CurrencyAmount<C2>
-): string {
+): Percent {
   let percentage = denominator.equalTo(ZERO_PERCENT)
     ? ZERO_PERCENT
     : new Percent(numerator.quotient, denominator.quotient)
   if (percentage.greaterThan(ONE_HUNDRED_PERCENT)) {
     percentage = ONE_HUNDRED_PERCENT
   }
-  return formatSmart(percentage, PERCENTAGE_PRECISION) || '0'
+  return percentage
 }
 
 /**
