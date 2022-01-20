@@ -6,6 +6,7 @@ import { transparentize, darken } from 'polished'
 import LogoETH from 'assets/cow-swap/network-mainnet-logo.svg'
 import LogoGNO from 'assets/cow-swap/gno.png'
 import LogoUSDC from 'assets/cow-swap/usdc.png'
+import LogoXDAI from 'assets/cow-swap/xdai.png'
 
 export const PageWrapper = styled.div`
   --border-radius: 56px;
@@ -202,8 +203,8 @@ function _getLogo(symbol: string) {
       return LogoUSDC
     case 'ETH':
       return LogoETH
-    // TODO: add xDai token logo after merging to develop
-    // case 'XDAI': return LogoXDAI
+    case 'XDAI':
+      return LogoXDAI
     default:
       return undefined
   }
