@@ -4,7 +4,7 @@ import { useActiveWeb3React } from 'hooks/web3'
 import { useUserEnhancedClaimData, useUserUnclaimedAmount, useClaimCallback, ClaimInput } from 'state/claim/hooks'
 import { PageWrapper } from 'pages/Claim/styled'
 import EligibleBanner from './EligibleBanner'
-import { getFreeClaims, hasPaidClaim, getIndexes, hasFreeClaim } from 'state/claim/hooks/utils'
+import { getFreeClaims, hasPaidClaim, hasFreeClaim } from 'state/claim/hooks/utils'
 import { useWalletModalToggle } from 'state/application/hooks'
 import Confetti from 'components/Confetti'
 
@@ -28,7 +28,6 @@ import useTransactionConfirmationModal from 'hooks/useTransactionConfirmationMod
 import { GNO, USDC_BY_CHAIN } from 'constants/tokens'
 import { isSupportedChain } from 'utils/supportedChainId'
 import { useErrorModal } from 'hooks/useErrorMessageAndModal'
-import { EnhancedUserClaimData } from './types'
 import FooterNavButtons from './FooterNavButtons'
 
 const GNO_CLAIM_APPROVE_MESSAGE = 'Approving GNO for investing in vCOW'
@@ -50,6 +49,8 @@ export default function Claim() {
     investFlowStep,
     // table select change
     selected,
+    // investFlowData
+    investFlowData,
   } = useClaimState()
 
   const {
@@ -139,30 +140,22 @@ export default function Claim() {
       sendTransaction(inputData)
     } else if (investFlowStep == 2) {
       // Free claimings + selected investment oportunities
-      const selectedIndex = [...getIndexes(freeClaims), ...selected]
-      inputData = selectedIndex.reduce<EnhancedUserClaimData[]>((acc, idx: number) => {
-        const claim = userClaimData.find(({ index }) => idx === index)
-        if (claim) {
-          // TODO: @nenadV91, here you can modify the amounts to use the partial investments
-          acc.push(claim)
-        }
-        return acc
-      }, [])
-
-      console.log('Starting Investment Flow', inputData)
-      sendTransaction(inputData)
+      inputData = [...freeClaims.map(({ index }) => ({ index })), ...investFlowData]
+      console.log('Starting claiming with', inputData)
+      // sendTransaction(inputData)
     } else {
       setIsInvestFlowActive(true)
     }
   }, [
-    activeClaimAccount,
-    investFlowStep,
-    selected,
-    userClaimData,
-    claimCallback,
     handleCloseError,
-    handleSetError,
+    activeClaimAccount,
+    userClaimData,
+    selected.length,
+    investFlowStep,
     setClaimStatus,
+    claimCallback,
+    handleSetError,
+    investFlowData,
     setIsInvestFlowActive,
   ])
 
