@@ -312,8 +312,6 @@ export const ClaimTable = styled.div`
       align-items: center;
     }
 
-    position: sticky;
-    top: 0;
     background: transparent;
     text-align: left;
     font-weight: normal;
@@ -559,7 +557,6 @@ export const InputField = styled.div`
   > b {
     display: flex;
     margin: 0 0 12px;
-    font-weight: normal;
     align-items: center;
     font-size: 18px;
     font-weight: 500;
@@ -577,8 +574,8 @@ export const InputField = styled.div`
     padding: 0 8px;
     justify-content: space-between;
 
-    :focus,
-    :hover {
+    &:focus,
+    &:hover {
       background-color: ${({ theme }) => darken(0.05, theme.bg5)};
     }
   }
