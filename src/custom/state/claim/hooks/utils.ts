@@ -3,7 +3,6 @@ import { Currency, CurrencyAmount, Percent, Token } from '@uniswap/sdk-core'
 import { SupportedChainId } from 'constants/chains'
 import { GNO, GpEther, USDC_BY_CHAIN, V_COW } from 'constants/tokens'
 import { ONE_HUNDRED_PERCENT, ZERO_PERCENT } from 'constants/misc'
-import { PERCENTAGE_PRECISION } from 'constants/index'
 
 import {
   CLAIMS_REPO,
@@ -17,7 +16,6 @@ import {
   VCowPrices,
 } from 'state/claim/hooks/index'
 
-import { formatSmart } from 'utils/format'
 import { EnhancedUserClaimData, InvestmentAmounts } from 'pages/Claim/types'
 
 /**
