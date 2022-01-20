@@ -56,8 +56,10 @@ export default function InvestmentFlow({ hasClaims, isAirdropOnly, ...tokenAppro
   const { initInvestFlowData } = useClaimDispatchers()
   const claimData = useUserEnhancedClaimData(activeClaimAccount)
 
-  // filtering and splitting claims into free and selected paid claims
-  const [_freeClaims, _selectedClaims] = useMemo(() => {
+  // Filtering and splitting claims into free and selected paid claims
+  // `selectedClaims` are used on step 1
+  // `freeClaims` are used on step 2
+  const [freeClaims, selectedClaims] = useMemo(() => {
     const paid: EnhancedUserClaimData[] = []
     const free: EnhancedUserClaimData[] = []
 
@@ -71,25 +73,18 @@ export default function InvestmentFlow({ hasClaims, isAirdropOnly, ...tokenAppro
     return [free, paid]
   }, [claimData, selected])
 
-  // Adding investment data for free claims
-  const freeClaims = useMemo(
-    () => _freeClaims.map<ClaimWithInvestmentData>((claim) => ({ ...claim, ...calculateInvestmentAmounts(claim) })),
-    [_freeClaims]
-  )
-
-  // Adding investment data for paid claims
-  // It's separated from free claims because this depends on `investmentFlowData`, while free claims do not
-  const selectedClaims = useMemo(
+  // Merge all claims together again, with their investment data for step 2
+  const allClaims: ClaimWithInvestmentData[] = useMemo(
     () =>
-      _selectedClaims.map<ClaimWithInvestmentData>((claim) => {
-        const investmentAmount = investFlowData.find(({ index }) => index === claim.index)?.investedAmount
+      freeClaims.concat(selectedClaims).map((claim) => {
+        const investmentAmount = claim.isFree
+          ? undefined
+          : investFlowData.find(({ index }) => index === claim.index)?.investedAmount
 
         return { ...claim, ...calculateInvestmentAmounts(claim, investmentAmount) }
       }),
-    [_selectedClaims, investFlowData]
+    [freeClaims, investFlowData, selectedClaims]
   )
-
-  const allClaims = useMemo(() => freeClaims.concat(selectedClaims), [freeClaims, selectedClaims])
   useEffect(() => {
     initInvestFlowData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
