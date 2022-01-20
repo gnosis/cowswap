@@ -43,7 +43,7 @@ export function InvestSummaryRow(props: Props): JSX.Element | null {
       </td>
 
       <td>
-        <i>{formatSmartLocaleAware(vCowAmount) || '0'} vCOW</i>
+        <i>{formatSmartLocaleAware(vCowAmount, AMOUNT_PRECISION) || '0'} vCOW</i>
 
         {!isFree && (
           <span>

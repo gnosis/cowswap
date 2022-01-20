@@ -14,6 +14,7 @@ import Circle from 'assets/images/blue-loader.svg'
 import { Countdown } from 'pages/Claim/Countdown'
 import { getPaidClaims, getIndexes } from 'state/claim/hooks/utils'
 import { useEffect } from 'react'
+import { AMOUNT_PRECISION } from 'constants/index'
 
 export type ClaimsTableProps = {
   isAirdropOnly: boolean
@@ -84,7 +85,7 @@ const ClaimsTableRow = ({
           {!isFree && <i>with {currencyAmount?.currency?.symbol}</i>}
         </span>
       </td>
-      <td>{formatSmartLocaleAware(claimAmount) || 0} vCOW</td>
+      <td>{formatSmartLocaleAware(claimAmount, AMOUNT_PRECISION) || 0} vCOW</td>
       <td>
         {!isFree ||
           (price && (
@@ -99,7 +100,7 @@ const ClaimsTableRow = ({
             {isFree ? (
               <span className="green">Free!</span>
             ) : (
-              `${formatSmartLocaleAware(cost) || 0} ${currencyAmount?.currency?.symbol}`
+              `${formatSmartLocaleAware(cost, AMOUNT_PRECISION) || 0} ${currencyAmount?.currency?.symbol}`
             )}
           </b>
         </span>

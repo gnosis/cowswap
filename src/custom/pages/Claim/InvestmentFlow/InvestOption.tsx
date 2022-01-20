@@ -19,7 +19,7 @@ import Loader from 'components/Loader'
 import { useErrorModal } from 'hooks/useErrorMessageAndModal'
 import { tryParseAmount } from 'state/swap/hooks'
 import { calculateInvestmentAmounts, calculatePercentage } from 'state/claim/hooks/utils'
-import { PERCENTAGE_PRECISION } from 'constants/index'
+import { AMOUNT_PRECISION, PERCENTAGE_PRECISION } from 'constants/index'
 
 enum ErrorMsgs {
   InsufficientBalance = 'Insufficient balance to cover investment amount',
@@ -234,7 +234,7 @@ export default function InvestOption({ approveData, claim, optionIndex }: Invest
               <span>
                 <b>Balance:</b>
                 <i>
-                  {formatSmartLocaleAware(balance) || 0} {currencyAmount?.currency?.symbol}
+                  {formatSmartLocaleAware(balance, AMOUNT_PRECISION) || 0} {currencyAmount?.currency?.symbol}
                 </i>
                 {/* Button should use the max possible amount the user can invest, considering their balance + max investment allowed */}
                 {!noBalance && isSelfClaiming && (
@@ -252,7 +252,7 @@ export default function InvestOption({ approveData, claim, optionIndex }: Invest
               />
               <b>{currencyAmount?.currency?.symbol}</b>
             </label>
-            <i>Receive: {formatSmartLocaleAware(vCowAmount) || 0} vCOW</i>
+            <i>Receive: {formatSmartLocaleAware(vCowAmount, AMOUNT_PRECISION) || 0} vCOW</i>
             {/* Insufficient balance validation error */}
             {inputError ? <small>{inputError}</small> : ''}
           </div>
