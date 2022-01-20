@@ -1,4 +1,5 @@
 import { useEffect, useMemo } from 'react'
+
 import {
   InvestFlow,
   InvestContent,
@@ -10,13 +11,17 @@ import {
   AccountClaimSummary,
 } from 'pages/Claim/styled'
 import { InvestSummaryRow } from 'pages/Claim/InvestmentFlow/InvestSummaryRow'
+
 import { ClaimType, useClaimState, useUserEnhancedClaimData, useClaimDispatchers } from 'state/claim/hooks'
-import { ClaimCommonTypes, ClaimWithInvestmentData, EnhancedUserClaimData } from '../types'
 import { ClaimStatus } from 'state/claim/actions'
-import { useActiveWeb3React } from 'hooks/web3'
-import { ApprovalState, OptionalApproveCallbackParams } from 'hooks/useApproveCallback'
-import InvestOption from './InvestOption'
+import { InvestClaim } from 'state/claim/reducer'
 import { calculateInvestmentAmounts } from 'state/claim/hooks/utils'
+
+import { ApprovalState, OptionalApproveCallbackParams } from 'hooks/useApproveCallback'
+import { useActiveWeb3React } from 'hooks/web3'
+
+import InvestOption from './InvestOption'
+import { ClaimCommonTypes, ClaimWithInvestmentData, EnhancedUserClaimData } from '../types'
 
 export type InvestOptionProps = {
   claim: EnhancedUserClaimData
@@ -49,6 +54,31 @@ function _claimToTokenApproveData(claimType: ClaimType, tokenApproveData: TokenA
   }
 }
 
+function _classifyAndFilterClaimData(claimData: EnhancedUserClaimData[], selected: number[]) {
+  const paid: EnhancedUserClaimData[] = []
+  const free: EnhancedUserClaimData[] = []
+
+  claimData.forEach((claim) => {
+    if (claim.isFree) {
+      free.push(claim)
+    } else if (selected.includes(claim.index)) {
+      paid.push(claim)
+    }
+  })
+  return [free, paid]
+}
+
+function _enhancedUserClaimToClaimWithInvestment(
+  claim: EnhancedUserClaimData,
+  investFlowData: InvestClaim[]
+): ClaimWithInvestmentData {
+  const investmentAmount = claim.isFree
+    ? undefined
+    : investFlowData.find(({ index }) => index === claim.index)?.investedAmount
+
+  return { ...claim, ...calculateInvestmentAmounts(claim, investmentAmount) }
+}
+
 export default function InvestmentFlow({ hasClaims, isAirdropOnly, ...tokenApproveData }: InvestmentFlowProps) {
   const { account } = useActiveWeb3React()
   const { selected, activeClaimAccount, claimStatus, isInvestFlowActive, investFlowStep, investFlowData } =
@@ -57,34 +87,20 @@ export default function InvestmentFlow({ hasClaims, isAirdropOnly, ...tokenAppro
   const claimData = useUserEnhancedClaimData(activeClaimAccount)
 
   // Filtering and splitting claims into free and selected paid claims
-  // `selectedClaims` are used on step 1
+  // `selectedClaims` are used on step 1 and 2
   // `freeClaims` are used on step 2
-  const [freeClaims, selectedClaims] = useMemo(() => {
-    const paid: EnhancedUserClaimData[] = []
-    const free: EnhancedUserClaimData[] = []
-
-    claimData.forEach((claim) => {
-      if (claim.isFree) {
-        free.push(claim)
-      } else if (selected.includes(claim.index)) {
-        paid.push(claim)
-      }
-    })
-    return [free, paid]
-  }, [claimData, selected])
+  const [freeClaims, selectedClaims] = useMemo(
+    () => _classifyAndFilterClaimData(claimData, selected),
+    [claimData, selected]
+  )
 
   // Merge all claims together again, with their investment data for step 2
   const allClaims: ClaimWithInvestmentData[] = useMemo(
     () =>
-      freeClaims.concat(selectedClaims).map((claim) => {
-        const investmentAmount = claim.isFree
-          ? undefined
-          : investFlowData.find(({ index }) => index === claim.index)?.investedAmount
-
-        return { ...claim, ...calculateInvestmentAmounts(claim, investmentAmount) }
-      }),
+      freeClaims.concat(selectedClaims).map((claim) => _enhancedUserClaimToClaimWithInvestment(claim, investFlowData)),
     [freeClaims, investFlowData, selectedClaims]
   )
+
   useEffect(() => {
     initInvestFlowData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
