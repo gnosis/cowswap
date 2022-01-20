@@ -5,7 +5,7 @@ import { ClaimWithInvestmentData } from 'pages/Claim/types'
 import CowProtocolLogo from 'components/CowProtocolLogo'
 import { formatSmart } from 'utils/format'
 import { ONE_HUNDRED_PERCENT } from 'constants/misc'
-import { AMOUNT_PRECISION, PERCENTAGE_PRECISION } from 'constants/index'
+import { AMOUNT_PRECISION } from 'constants/index'
 
 export type Props = { claim: ClaimWithInvestmentData }
 
@@ -20,7 +20,6 @@ export function InvestSummaryRow(props: Props): JSX.Element | null {
     formatSmart(investmentCost, AMOUNT_PRECISION, { thousandSeparator: true, isLocaleAware: true }) || '0'
 
   const percentage = investmentCost && cost && calculatePercentage(investmentCost, cost)
-  const remainingPercentage = percentage && ONE_HUNDRED_PERCENT.subtract(percentage)
 
   return (
     <tr>
@@ -56,8 +55,7 @@ export function InvestSummaryRow(props: Props): JSX.Element | null {
             <InvestAvailableBar percentage={Number(percentage?.toFixed(2))} />
             {percentage?.lessThan(ONE_HUNDRED_PERCENT) && (
               <small>
-                Note: You <b>will not be able</b> to invest the remaining{' '}
-                {formatSmart(remainingPercentage, PERCENTAGE_PRECISION) || '0'}% after claiming.
+                Note: You will <b>not be able</b> to invest anymore after claiming.
               </small>
             )}
           </span>
