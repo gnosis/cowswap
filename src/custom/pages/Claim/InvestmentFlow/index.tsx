@@ -12,6 +12,7 @@ import {
   AccountClaimSummary,
 } from 'pages/Claim/styled'
 import { InvestSummaryRow } from 'pages/Claim/InvestmentFlow/InvestSummaryRow'
+import { ClaimSummaryView } from 'pages/Claim/ClaimSummary'
 
 import { ClaimType, useClaimState, useUserEnhancedClaimData, useClaimDispatchers } from 'state/claim/hooks'
 import { ClaimStatus } from 'state/claim/actions'
@@ -173,6 +174,7 @@ export default function InvestmentFlow({ hasClaims, isAirdropOnly, ...tokenAppro
       {/* Invest flow: Step 2 > Review summary */}
       {investFlowStep === 2 ? (
         <InvestContent>
+          <ClaimSummaryView totalAvailableAmount={totalVCow} />
           <ClaimTable>
             <InvestSummaryTable>
               <thead>
