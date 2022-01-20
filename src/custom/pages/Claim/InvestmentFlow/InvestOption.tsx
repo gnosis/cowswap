@@ -6,11 +6,11 @@ import { InvestTokenGroup, TokenLogo, InvestSummary, InvestInput, InvestAvailabl
 import { formatSmart } from 'utils/format'
 import Row from 'components/Row'
 import CheckCircle from 'assets/cow-swap/check.svg'
-import { InvestOptionProps } from '.'
-import { ApprovalState } from 'hooks/useApproveCallback'
+import { InvestmentFlowProps } from '.'
+import { ApprovalState, useApproveCallbackFromClaim } from 'hooks/useApproveCallback'
 import { useCurrencyBalance } from 'state/wallet/hooks'
 import { useActiveWeb3React } from 'hooks/web3'
-import { useClaimDispatchers, useClaimState } from 'state/claim/hooks'
+import { ClaimType, useClaimDispatchers, useClaimState } from 'state/claim/hooks'
 import { StyledNumericalInput } from 'components/CurrencyInputPanel/CurrencyInputPanelMod'
 
 import { ButtonConfirmed } from 'components/Button'
@@ -20,6 +20,8 @@ import { useErrorModal } from 'hooks/useErrorMessageAndModal'
 import { tryParseAmount } from 'state/swap/hooks'
 import { ONE_HUNDRED_PERCENT, ZERO_PERCENT } from 'constants/misc'
 import { PERCENTAGE_PRECISION } from 'constants/index'
+import { EnhancedUserClaimData } from '../types'
+import { OperationType } from 'components/TransactionConfirmationModal'
 
 enum ErrorMsgs {
   Initial = 'Insufficient balance to cover the selected investment amount. Either modify the investment amount or unselect the investment option to move forward',
@@ -27,20 +29,49 @@ enum ErrorMsgs {
   MaxCost = 'Selected amount is higher than available investment amount, please modify the input amount to move forward',
 }
 
-export default function InvestOption({ approveData, claim, optionIndex }: InvestOptionProps) {
+type InvestOptionProps = {
+  claim: EnhancedUserClaimData
+  optionIndex: number
+  openModal: InvestmentFlowProps['modalCbs']['openModal']
+  closeModal: InvestmentFlowProps['modalCbs']['closeModal']
+}
+
+const _claimApproveMessageMap = (type: ClaimType) => {
+  switch (type) {
+    case ClaimType.GnoOption:
+      return 'Approving GNO for investing in vCOW'
+    case ClaimType.Investor:
+      return 'Approving USDC for investing in vCOW'
+    // Shouldn't happen, type safe
+    default:
+      return 'Unknown token approval. Please check configuration.'
+  }
+}
+
+export default function InvestOption({ claim, optionIndex, openModal, closeModal }: InvestOptionProps) {
   const { currencyAmount, price, cost: maxCost } = claim
+
+  const { account } = useActiveWeb3React()
   const { updateInvestAmount } = useClaimDispatchers()
   const { investFlowData, activeClaimAccount } = useClaimState()
 
-  const { handleSetError, handleCloseError, ErrorModal } = useErrorModal()
+  const investmentAmount = investFlowData[optionIndex].investedAmount
 
-  const { account } = useActiveWeb3React()
+  // Approve hooks
+  const [approveState, approveCallback] = useApproveCallbackFromClaim({
+    openTransactionConfirmationModal: () => openModal(_claimApproveMessageMap(claim.type), OperationType.APPROVE_TOKEN),
+    closeModals: closeModal,
+    claimType: claim.type,
+    investmentAmount,
+  })
+
+  const isEtherApproveState = approveState === ApprovalState.UNKNOWN
+
+  const { handleSetError, handleCloseError, ErrorModal } = useErrorModal()
 
   const [percentage, setPercentage] = useState<string>('0')
   const [typedValue, setTypedValue] = useState<string>('0')
   const [inputError, setInputError] = useState<string>('')
-
-  const investedAmount = investFlowData[optionIndex].investedAmount
 
   const token = currencyAmount?.currency
   const balance = useCurrencyBalance(account || undefined, token)
@@ -101,9 +132,6 @@ export default function InvestOption({ approveData, claim, optionIndex }: Invest
     [balance, maxCost, optionIndex, token, updateInvestAmount]
   )
 
-  // Cache approveData methods
-  const approveCallback = approveData?.approveCallback
-  const approveState = approveData?.approveState
   // Save "local" approving state (pre-BC) for rendering spinners etc
   const [approving, setApproving] = useState(false)
   const handleApprove = useCallback(async () => {
@@ -125,13 +153,13 @@ export default function InvestOption({ approveData, claim, optionIndex }: Invest
   }, [approveCallback, handleCloseError, handleSetError, token?.symbol])
 
   const vCowAmount = useMemo(() => {
-    if (!token || !price || !investedAmount) {
+    if (!token || !price || !investmentAmount) {
       return
     }
 
-    const investA = CurrencyAmount.fromRawAmount(token, investedAmount)
+    const investA = CurrencyAmount.fromRawAmount(token, investmentAmount)
     return price.quote(investA)
-  }, [investedAmount, price, token])
+  }, [investmentAmount, price, token])
 
   // if its claiming for someone else we will set values to max
   // if there is not enough balance then we will set an error
@@ -177,9 +205,9 @@ export default function InvestOption({ approveData, claim, optionIndex }: Invest
 
           <span>
             <b>Token approval</b>
-            {approveData ? (
+            {!isEtherApproveState ? (
               <i>
-                {approveData.approveState !== ApprovalState.APPROVED ? (
+                {approveState !== ApprovalState.APPROVED ? (
                   `${currencyAmount?.currency?.symbol} not approved`
                 ) : (
                   <Row>
@@ -196,8 +224,8 @@ export default function InvestOption({ approveData, claim, optionIndex }: Invest
                 </Row>
               </i>
             )}
-            {/* Approve button - @biocom styles for this found in ./styled > InputSummary > ${ButtonPrimary}*/}
-            {approveData && approveState !== ApprovalState.APPROVED && (
+            {/* Token Approve buton - not shown for ETH */}
+            {!isEtherApproveState && approveState !== ApprovalState.APPROVED && (
               <ButtonConfirmed
                 buttonSize={ButtonSize.SMALL}
                 onClick={handleApprove}
@@ -208,9 +236,9 @@ export default function InvestOption({ approveData, claim, optionIndex }: Invest
               >
                 {approving || approveState === ApprovalState.PENDING ? (
                   <Loader stroke="white" />
-                ) : approveData ? (
+                ) : (
                   <span>Approve {currencyAmount?.currency?.symbol}</span>
-                ) : null}
+                )}
               </ButtonConfirmed>
             )}
           </span>

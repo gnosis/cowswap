@@ -10,46 +10,23 @@ import {
   AccountClaimSummary,
   TokenLogo,
 } from 'pages/Claim/styled'
-import { ClaimType, useClaimState, useUserEnhancedClaimData, useClaimDispatchers } from 'state/claim/hooks'
-import { ClaimCommonTypes, EnhancedUserClaimData } from '../types'
+import { useClaimState, useUserEnhancedClaimData, useClaimDispatchers } from 'state/claim/hooks'
+import { ClaimCommonTypes } from '../types'
 import { ClaimStatus } from 'state/claim/actions'
 import { useActiveWeb3React } from 'hooks/web3'
-import { ApprovalState, OptionalApproveCallbackParams } from 'hooks/useApproveCallback'
 import InvestOption from './InvestOption'
 import CowProtocolLogo from 'components/CowProtocolLogo'
+import { OperationType } from 'components/TransactionConfirmationModal'
 
-export type InvestOptionProps = {
-  claim: EnhancedUserClaimData
-  optionIndex: number
-  approveData:
-    | { approveState: ApprovalState; approveCallback: (optionalParams?: OptionalApproveCallbackParams) => void }
-    | undefined
-}
-
-type InvestmentFlowProps = Pick<ClaimCommonTypes, 'hasClaims'> & {
+export type InvestmentFlowProps = Pick<ClaimCommonTypes, 'hasClaims'> & {
   isAirdropOnly: boolean
-  gnoApproveData: InvestOptionProps['approveData']
-  usdcApproveData: InvestOptionProps['approveData']
-}
-
-type TokenApproveName = 'gnoApproveData' | 'usdcApproveData'
-type TokenApproveData = {
-  [key in TokenApproveName]: InvestOptionProps['approveData'] | undefined
-}
-
-// map claim type to token approve data
-function _claimToTokenApproveData(claimType: ClaimType, tokenApproveData: TokenApproveData) {
-  switch (claimType) {
-    case ClaimType.GnoOption:
-      return tokenApproveData.gnoApproveData
-    case ClaimType.Investor:
-      return tokenApproveData.usdcApproveData
-    default:
-      return undefined
+  modalCbs: {
+    openModal: (message: string, operationType: OperationType) => void
+    closeModal: () => void
   }
 }
 
-export default function InvestmentFlow({ hasClaims, isAirdropOnly, ...tokenApproveData }: InvestmentFlowProps) {
+export default function InvestmentFlow({ hasClaims, isAirdropOnly, modalCbs }: InvestmentFlowProps) {
   const { account } = useActiveWeb3React()
   const { selected, activeClaimAccount, claimStatus, isInvestFlowActive, investFlowStep } = useClaimState()
   const { initInvestFlowData } = useClaimDispatchers()
@@ -99,12 +76,7 @@ export default function InvestmentFlow({ hasClaims, isAirdropOnly, ...tokenAppro
           </p>
 
           {selectedClaims.map((claim, index) => (
-            <InvestOption
-              key={claim.index}
-              optionIndex={index}
-              approveData={_claimToTokenApproveData(claim.type, tokenApproveData)}
-              claim={claim}
-            />
+            <InvestOption key={claim.index} optionIndex={index} claim={claim} {...modalCbs} />
           ))}
 
           {/* TODO: Update this with real data */}
