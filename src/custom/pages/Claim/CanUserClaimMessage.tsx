@@ -6,7 +6,7 @@ import { ClaimCommonTypes } from './types'
 import { useClaimState, useClaimTimeInfo } from 'state/claim/hooks'
 import { ClaimStatus } from 'state/claim/actions'
 
-type ClaimIntroductionProps = Pick<ClaimCommonTypes, 'hasClaims', 'handleChangeAccount'> & {
+type ClaimIntroductionProps = Pick<ClaimCommonTypes, 'hasClaims' | 'handleChangeAccount'> & {
   isAirdropOnly: boolean
 }
 
