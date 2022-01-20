@@ -4,7 +4,7 @@ import { ClaimTable, ClaimBreakdown, TokenLogo } from 'pages/Claim/styled'
 import CowProtocolLogo from 'components/CowProtocolLogo'
 import { ClaimStatus } from 'state/claim/actions'
 // import { UserClaimDataDetails } from './types' TODO: fix in another PR
-import { formatSmart } from 'utils/format'
+import { formatSmartLocaleAware } from 'utils/format'
 import { EnhancedUserClaimData } from './types'
 import { useAllClaimingTransactionIndices } from 'state/enhancedTransactions/hooks'
 import { useUserEnhancedClaimData } from 'state/claim/hooks'
@@ -84,12 +84,12 @@ const ClaimsTableRow = ({
           {!isFree && <i>with {currencyAmount?.currency?.symbol}</i>}
         </span>
       </td>
-      <td>{formatSmart(claimAmount) || 0} vCOW</td>
+      <td>{formatSmartLocaleAware(claimAmount) || 0} vCOW</td>
       <td>
         {!isFree ||
           (price && (
             <span>
-              Price: <b>{`${formatSmart(price) || 0} vCoW per ${currencyAmount?.currency?.symbol}`}</b>
+              Price: <b>{`${formatSmartLocaleAware(price) || 0} vCoW per ${currencyAmount?.currency?.symbol}`}</b>
             </span>
           ))}
         <span>
@@ -99,7 +99,7 @@ const ClaimsTableRow = ({
             {isFree ? (
               <span className="green">Free!</span>
             ) : (
-              `${formatSmart(cost) || 0} ${currencyAmount?.currency?.symbol}`
+              `${formatSmartLocaleAware(cost) || 0} ${currencyAmount?.currency?.symbol}`
             )}
           </b>
         </span>
