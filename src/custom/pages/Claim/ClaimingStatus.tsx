@@ -7,7 +7,7 @@ import { useActiveWeb3React } from 'hooks/web3'
 import CowProtocolLogo from 'components/CowProtocolLogo'
 import Circle from 'assets/images/blue-loader.svg'
 import { ExplorerDataType, getExplorerLink } from 'utils/getExplorerLink'
-import { useAllClaimingTransactions } from '@src/custom/state/enhancedTransactions/hooks'
+import { useAllClaimingTransactions } from 'state/enhancedTransactions/hooks'
 import { useMemo } from 'react'
 // import { formatSmart } from 'utils/format'
 
