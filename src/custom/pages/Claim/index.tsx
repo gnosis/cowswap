@@ -4,7 +4,7 @@ import { useActiveWeb3React } from 'hooks/web3'
 import { useUserEnhancedClaimData, useUserUnclaimedAmount, useClaimCallback, ClaimInput } from 'state/claim/hooks'
 import { PageWrapper } from 'pages/Claim/styled'
 import EligibleBanner from './EligibleBanner'
-import { getFreeClaims, hasPaidClaim, hasFreeClaim } from 'state/claim/hooks/utils'
+import { getFreeClaims, hasPaidClaim, hasFreeClaim, prepareInvestClaims } from 'state/claim/hooks/utils'
 import { useWalletModalToggle } from 'state/application/hooks'
 import Confetti from 'components/Confetti'
 
@@ -120,9 +120,7 @@ export default function Claim() {
     const sendTransaction = (inputData: ClaimInput[]) => {
       setClaimStatus(ClaimStatus.ATTEMPTING)
       claimCallback(inputData)
-        // this is not right currently
         .then((/* res */) => {
-          // I don't really understand what to expect or do here ¯\_(ツ)_/¯
           setClaimStatus(ClaimStatus.SUBMITTED)
         })
         .catch((error) => {
@@ -132,15 +130,16 @@ export default function Claim() {
         })
     }
 
+    const inputData = freeClaims.map(({ index }) => ({ index }))
+
     // check if there are any selected (paid) claims
-    let inputData
     if (!selected.length) {
-      inputData = freeClaims.map(({ index }) => ({ index }))
       console.log('Starting claiming with', inputData)
       sendTransaction(inputData)
     } else if (investFlowStep == 2) {
       // Free claimings + selected investment oportunities
-      inputData = [...freeClaims.map(({ index }) => ({ index })), ...investFlowData]
+      const investClaims = prepareInvestClaims(investFlowData, userClaimData)
+      inputData.push(...investClaims)
       console.log('Starting claiming with', inputData)
       sendTransaction(inputData)
     } else {
