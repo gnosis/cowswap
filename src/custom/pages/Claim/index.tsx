@@ -142,7 +142,7 @@ export default function Claim() {
       // Free claimings + selected investment oportunities
       inputData = [...freeClaims.map(({ index }) => ({ index })), ...investFlowData]
       console.log('Starting claiming with', inputData)
-      // sendTransaction(inputData)
+      sendTransaction(inputData)
     } else {
       setIsInvestFlowActive(true)
     }
