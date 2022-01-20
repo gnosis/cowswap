@@ -187,7 +187,7 @@ export default function InvestmentFlow({ hasClaims, isAirdropOnly, ...tokenAppro
           </p>
           <p>
             <b>Can I modify the invested amounts or invest partial amounts later?</b> No. Once you send the transaction,
-            you cannot increase or reduce the investment. Investment oportunities can only be exercised once.
+            you cannot increase or reduce the investment. Investment opportunities can only be exercised once.
           </p>
           <p>
             <b>Important!</b> Please make sure you intend to claim and send vCOW to the mentioned receiving account(s)
