@@ -7,7 +7,6 @@ import { Txt } from 'assets/styles/styled'
 import CowProtocolLogo from 'components/CowProtocolLogo'
 import { formatMax, formatSmart } from 'utils/format'
 import { AMOUNT_PRECISION } from '@src/custom/constants'
-import { FlexWrap } from './styled'
 
 type VCOWDropdownProps = {
   balance?: CurrencyAmount<Token>
@@ -42,7 +41,7 @@ export default function VCOWDropdown({ balance }: VCOWDropdownProps) {
 
       {open && hasBalance && (
         <MenuFlyout>
-          <FlexWrap>
+          <ProfileFlexWrap>
             <ProfileFlexCol>
               <Txt fs={16}>Voting Power</Txt>
               <Txt fs={16}>Vesting</Txt>
@@ -57,7 +56,7 @@ export default function VCOWDropdown({ balance }: VCOWDropdownProps) {
                 <strong>000</strong>
               </Txt>
             </ProfileFlexCol>
-          </FlexWrap>
+          </ProfileFlexWrap>
         </MenuFlyout>
       )}
     </Wrapper>
@@ -94,10 +93,7 @@ const MenuFlyout = styled.span`
   right: 0;
   top: 4.5rem;
   z-index: 200;
-  min-width: 247px;
-  ${({ theme }) => theme.mediaWidth.upToVerySmall`
-    min-width: 100%;
-  `};
+  min-width: 100%;
 `
 
 export const DropdownWrapper = styled.button<{ hasBalance?: boolean }>`
@@ -130,7 +126,6 @@ export const VCOWBalance = styled.div`
   flex-direction: row;
   align-items: center;
   flex-grow: 1;
-  min-width: 215px;
   height: 56px;
   justify-content: center;
   border-radius: 12px;
@@ -140,11 +135,16 @@ export const VCOWBalance = styled.div`
 
 export const ProfileFlexCol = styled.div`
   display: flex;
-  flex-grow: 1;
   align-items: flex-start;
   flex-direction: column;
 
   span {
     padding: 0 8px;
   }
+`
+export const ProfileFlexWrap = styled.div`
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: space-between;
 `
