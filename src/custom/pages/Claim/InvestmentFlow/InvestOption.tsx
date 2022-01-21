@@ -176,7 +176,7 @@ export default function InvestOption({ approveData, claim, optionIndex }: Invest
           <span>
             <b>Max. investment available</b>{' '}
             <i>
-              {maxCost?.toExact() || '0'} {currencyAmount?.currency?.symbol}
+              {formatSmartLocaleAware(maxCost, AMOUNT_PRECISION) || '0'} {currencyAmount?.currency?.symbol}
             </i>
           </span>
 
