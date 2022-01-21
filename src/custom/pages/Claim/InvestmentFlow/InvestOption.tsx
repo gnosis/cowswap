@@ -24,11 +24,12 @@ import { PERCENTAGE_PRECISION } from 'constants/index'
 enum ErrorMsgs {
   InsufficientBalance = 'Insufficient balance to cover investment amount',
   OverMaxInvestment = `Your investment amount can't be above the maximum investment allowed`,
+  InvestmentIsZero = `Your investment amount can't be zero`,
 }
 
 export default function InvestOption({ approveData, claim, optionIndex }: InvestOptionProps) {
   const { currencyAmount, price, cost: maxCost } = claim
-  const { updateInvestAmount, updateInvestError } = useClaimDispatchers()
+  const { updateInvestAmount, updateInvestError, updateInvestApproval } = useClaimDispatchers()
   const { investFlowData, activeClaimAccount } = useClaimState()
 
   const { handleSetError, handleCloseError, ErrorModal } = useErrorModal()
@@ -46,6 +47,9 @@ export default function InvestOption({ approveData, claim, optionIndex }: Invest
 
   const isSelfClaiming = account === activeClaimAccount
   const noBalance = !balance || balance.equalTo('0')
+
+  const isApproved = approveData?.approveState === ApprovalState.APPROVED
+  const isETH = claim?.currencyAmount?.currency.symbol === 'ETH'
 
   // on invest max amount click handler
   const setMaxAmount = useCallback(() => {
@@ -143,6 +147,19 @@ export default function InvestOption({ approveData, claim, optionIndex }: Invest
       }
     }
   }, [balance, isSelfClaiming, maxCost, optionIndex, setMaxAmount, updateInvestError])
+
+  // dispatch if the invest option is approved or not (will update on approve state change)
+  // if the option is ETH then its always true since we ignore it
+  useEffect(() => {
+    updateInvestApproval({ index: optionIndex, approved: !isETH ? isApproved : true })
+  }, [isApproved, isETH, optionIndex, updateInvestApproval])
+
+  // check if the invested amount is zero and show error msg and disable review button (will update on input change)
+  useEffect(() => {
+    if (investedAmount === '0') {
+      updateInvestError({ index: optionIndex, error: ErrorMsgs.InvestmentIsZero })
+    }
+  }, [investedAmount, optionIndex, updateInvestError])
 
   return (
     <InvestTokenGroup>
