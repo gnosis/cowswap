@@ -28,7 +28,7 @@ enum ErrorMsgs {
 
 export default function InvestOption({ approveData, claim, optionIndex }: InvestOptionProps) {
   const { currencyAmount, price, cost: maxCost } = claim
-  const { updateInvestAmount } = useClaimDispatchers()
+  const { updateInvestAmount, updateInvestError } = useClaimDispatchers()
   const { investFlowData, activeClaimAccount } = useClaimState()
 
   const { handleSetError, handleCloseError, ErrorModal } = useErrorModal()
@@ -37,9 +37,9 @@ export default function InvestOption({ approveData, claim, optionIndex }: Invest
 
   const [percentage, setPercentage] = useState<string>('0')
   const [typedValue, setTypedValue] = useState<string>('0')
-  const [inputError, setInputError] = useState<string>('')
 
   const investedAmount = investFlowData[optionIndex].investedAmount
+  const inputError = investFlowData[optionIndex].error
 
   const token = currencyAmount?.currency
   const balance = useCurrencyBalance(account || undefined, token)
@@ -58,16 +58,16 @@ export default function InvestOption({ approveData, claim, optionIndex }: Invest
 
     updateInvestAmount({ index: optionIndex, amount })
     setTypedValue(value.toExact() || '')
-    setInputError('')
+    updateInvestError({ index: optionIndex, error: undefined })
 
     setPercentage(_formatPercentage(calculatePercentage(balance, maxCost)))
-  }, [balance, maxCost, noBalance, optionIndex, updateInvestAmount])
+  }, [balance, maxCost, noBalance, optionIndex, updateInvestAmount, updateInvestError])
 
   // on input field change handler
   const onInputChange = useCallback(
     (value: string) => {
       setTypedValue(value)
-      setInputError('')
+      updateInvestError({ index: optionIndex, error: undefined })
 
       // parse to CurrencyAmount
       const parsedAmount = tryParseAmount(value, token)
@@ -85,7 +85,7 @@ export default function InvestOption({ approveData, claim, optionIndex }: Invest
       else if (parsedAmount.greaterThan(balance)) errorMsg = ErrorMsgs.InsufficientBalance
 
       if (errorMsg) {
-        setInputError(errorMsg)
+        updateInvestError({ index: optionIndex, error: errorMsg })
         updateInvestAmount({ index: optionIndex, amount: '0' })
         setPercentage('0')
         return
@@ -97,7 +97,7 @@ export default function InvestOption({ approveData, claim, optionIndex }: Invest
       // update the local state with percentage value
       setPercentage(_formatPercentage(calculatePercentage(parsedAmount, maxCost)))
     },
-    [balance, maxCost, optionIndex, token, updateInvestAmount]
+    [balance, maxCost, optionIndex, token, updateInvestAmount, updateInvestError]
   )
 
   // Cache approveData methods
@@ -137,12 +137,12 @@ export default function InvestOption({ approveData, claim, optionIndex }: Invest
       }
 
       if (balance.lessThan(maxCost)) {
-        setInputError(ErrorMsgs.InsufficientBalance)
+        updateInvestError({ index: optionIndex, error: ErrorMsgs.InsufficientBalance })
       } else {
         setMaxAmount()
       }
     }
-  }, [balance, isSelfClaiming, maxCost, setMaxAmount])
+  }, [balance, isSelfClaiming, maxCost, optionIndex, setMaxAmount, updateInvestError])
 
   // this will set input and percentage value if you go back from the review page
   useEffect(() => {
