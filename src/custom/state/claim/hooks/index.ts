@@ -15,7 +15,7 @@ import { useTransactionAdder } from 'state/enhancedTransactions/hooks'
 
 import { GpEther, V_COW } from 'constants/tokens'
 
-import { formatSmart } from 'utils/format'
+import { formatSmartLocaleAware } from 'utils/format'
 import { calculateGasMargin } from 'utils/calculateGasMargin'
 import { isAddress } from 'utils'
 
@@ -57,6 +57,7 @@ import {
 } from '../actions'
 import { EnhancedUserClaimData } from 'pages/Claim/types'
 import { supportedChainId } from 'utils/supportedChainId'
+import { AMOUNT_PRECISION } from 'constants/index'
 
 const CLAIMS_REPO_BRANCH = 'main'
 export const CLAIMS_REPO = `https://raw.githubusercontent.com/gnosis/cow-merkle-drop/${CLAIMS_REPO_BRANCH}/`
@@ -476,6 +477,7 @@ export function useClaimCallback(account: string | null | undefined): {
       }
 
       const vCowAmount = CurrencyAmount.fromRawAmount(vCowToken, totalClaimedAmount)
+      const formattedVCowAmount = formatSmartLocaleAware(vCowAmount, AMOUNT_PRECISION) || '0'
 
       return vCowContract.estimateGas.claimMany(...args).then((estimatedGas) => {
         // Last item in the array contains the call overrides
@@ -487,10 +489,10 @@ export function useClaimCallback(account: string | null | undefined): {
         return vCowContract.claimMany(...extendedArgs).then((response: TransactionResponse) => {
           addTransaction({
             hash: response.hash,
-            summary: `Claim ${formatSmart(vCowAmount)} vCOW`,
+            summary: `Claim ${formattedVCowAmount} vCOW`,
             claim: { recipient: account, indices: args[0] as number[] },
           })
-          return response.hash
+          return formattedVCowAmount
         })
       })
     },
