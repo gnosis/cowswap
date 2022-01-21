@@ -15,7 +15,7 @@ import { useActiveWeb3React } from 'hooks/web3'
 import { OptionalApproveCallbackParams } from '.'
 
 // Use a 150K gas as a fallback if there's issue calculating the gas estimation (fixes some issues with some nodes failing to calculate gas costs for SC wallets)
-const APPROVE_GAS_LIMIT_DEFAULT = BigNumber.from('150000')
+export const APPROVE_GAS_LIMIT_DEFAULT = BigNumber.from('150000')
 
 export enum ApprovalState {
   UNKNOWN = 'UNKNOWN',

@@ -25,6 +25,9 @@ import { useGasPrices } from 'state/gas/hooks'
 import { AVG_APPROVE_COST_GWEI } from 'components/swap/EthWethWrap/helpers'
 import { EnhancedUserClaimData } from '../types'
 import { OperationType } from 'components/TransactionConfirmationModal'
+import useRevokeApproveCallback from 'hooks/useRevokeApproveCallback'
+import { V_COW_CONTRACT_ADDRESS } from 'constants/index'
+import styled from 'styled-components/macro'
 
 const ErrorMsgs = {
   InsufficientBalance: (symbol = '') => `Insufficient ${symbol} balance to cover investment amount`,
@@ -54,6 +57,16 @@ const _claimApproveMessageMap = (type: ClaimType) => {
   }
 }
 
+const UnderlineButton = styled.button`
+  background: none;
+  border: 0;
+  cursor: pointer;
+  color: #ff5d25;
+  text-decoration: underline;
+  text-align: left;
+  padding: 0;
+`
+
 export default function InvestOption({ claim, optionIndex, openModal, closeModal }: InvestOptionProps) {
   const { currencyAmount, price, cost: maxCost } = claim
 
@@ -68,6 +81,13 @@ export default function InvestOption({ claim, optionIndex, openModal, closeModal
     openTransactionConfirmationModal: () => openModal(_claimApproveMessageMap(claim.type), OperationType.APPROVE_TOKEN),
     closeModals: closeModal,
     claim,
+  })
+
+  const [isAlreadyApproved, revokeApprovalCallback] = useRevokeApproveCallback({
+    openTransactionConfirmationModal: () => openModal(_claimApproveMessageMap(claim.type), OperationType.APPROVE_TOKEN),
+    closeModals: closeModal,
+    spender: chainId ? V_COW_CONTRACT_ADDRESS[chainId] : undefined,
+    token: claim?.currencyAmount?.currency,
   })
 
   const isEtherApproveState = approveState === ApprovalState.UNKNOWN
@@ -303,6 +323,7 @@ export default function InvestOption({ claim, optionIndex, openModal, closeModal
                 )}
               </ButtonConfirmed>
             )}
+            {isAlreadyApproved && <UnderlineButton onClick={revokeApprovalCallback}>Revoke approval</UnderlineButton>}
           </span>
 
           <span>
