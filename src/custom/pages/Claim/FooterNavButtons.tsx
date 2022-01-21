@@ -83,7 +83,7 @@ export default function FooterNavButtons({
         <>
           {investFlowStep === 0 ? (
             <ButtonPrimary onClick={() => setInvestFlowStep(1)}>
-              <Trans>Approve tokens</Trans>
+              <Trans>Continue</Trans>
             </ButtonPrimary>
           ) : investFlowStep === 1 ? (
             <ButtonPrimary onClick={() => setInvestFlowStep(2)}>
