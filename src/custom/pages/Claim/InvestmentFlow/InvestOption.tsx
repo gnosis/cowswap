@@ -274,7 +274,7 @@ export default function InvestOption({ approveData, claim, optionIndex }: Invest
                 )}
               </span>
               <StyledNumericalInput
-                onUserInput={(value) => setTypedValue(value)}
+                onUserInput={setTypedValue}
                 disabled={noBalance || !isSelfClaiming}
                 placeholder="0"
                 $loading={false}
