@@ -155,6 +155,7 @@ export default function InvestOption({ approveData, claim, optionIndex }: Invest
     if (error) {
       // if there is error set it in redux
       setInputError(error)
+      setPercentage('0')
     } else {
       if (!parsedAmount) {
         return
