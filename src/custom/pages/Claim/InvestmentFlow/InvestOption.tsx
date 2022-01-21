@@ -20,7 +20,6 @@ import { useErrorModal } from 'hooks/useErrorMessageAndModal'
 import { tryParseAmount } from 'state/swap/hooks'
 import { calculateInvestmentAmounts, calculatePercentage } from 'state/claim/hooks/utils'
 import { PERCENTAGE_PRECISION } from 'constants/index'
-import { JSBI } from '@uniswap/sdk'
 
 const ErrorMsgs = {
   InsufficientBalance: (symbol = '') => `Insufficient ${symbol} balance to cover investment amount`,
@@ -51,8 +50,7 @@ export default function InvestOption({ approveData, claim, optionIndex }: Invest
   const noBalance = !balance || balance.equalTo('0')
 
   const isApproved = approveData?.approveState === ApprovalState.APPROVED
-  const symbol = claim?.currencyAmount?.currency.symbol
-  const isETH = symbol === 'ETH'
+  const isNative = token?.isNative
 
   // on invest max amount click handler
   const setMaxAmount = useCallback(() => {
@@ -100,7 +98,7 @@ export default function InvestOption({ approveData, claim, optionIndex }: Invest
       return
     }
 
-    if (!investmentCost?.equalTo(JSBI.BigInt(0))) {
+    if (!investmentCost?.equalTo(0)) {
       setTypedValue(investmentCost?.toExact())
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -129,15 +127,15 @@ export default function InvestOption({ approveData, claim, optionIndex }: Invest
 
     // set different errors in order of importance
     if (balance.lessThan(maxCost) && !isSelfClaiming) {
-      error = ErrorMsgs.InsufficientBalance(symbol)
-    } else if (!isETH && !isApproved) {
-      error = ErrorMsgs.NotApproved(symbol)
+      error = ErrorMsgs.InsufficientBalance(token?.symbol)
+    } else if (!isNative && !isApproved) {
+      error = ErrorMsgs.NotApproved(token?.symbol)
     } else if (!parsedAmount) {
       error = ErrorMsgs.InvestmentIsZero
     } else if (parsedAmount.greaterThan(maxCost)) {
       error = ErrorMsgs.OverMaxInvestment
     } else if (parsedAmount.greaterThan(balance)) {
-      error = ErrorMsgs.InsufficientBalance(symbol)
+      error = ErrorMsgs.InsufficientBalance(token?.symbol)
     }
 
     if (error) {
@@ -147,6 +145,8 @@ export default function InvestOption({ approveData, claim, optionIndex }: Invest
       if (!parsedAmount) {
         return
       }
+      // basically the magic happens in this block
+
       // update redux state to remove errro for this field
       updateInvestError({ index: optionIndex, error: undefined })
 
@@ -157,7 +157,17 @@ export default function InvestOption({ approveData, claim, optionIndex }: Invest
       setPercentage(_formatPercentage(calculatePercentage(parsedAmount, maxCost)))
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [typedValue, optionIndex, updateInvestError, token, isETH, isApproved, symbol, maxCost, updateInvestAmount])
+  }, [
+    typedValue,
+    isSelfClaiming,
+    optionIndex,
+    updateInvestError,
+    token,
+    isNative,
+    isApproved,
+    maxCost,
+    updateInvestAmount,
+  ])
 
   return (
     <InvestTokenGroup>
