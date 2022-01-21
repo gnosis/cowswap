@@ -3,7 +3,6 @@ import CheckCircle from 'assets/cow-swap/check.svg'
 import { transparentize } from 'polished'
 
 export const Wrapper = styled.div`
-  --circleSize: 42px;
   width: 100%;
   display: flex;
   flex-flow: row wrap;
@@ -16,6 +15,7 @@ export const Step = styled.div<{
   completedStep: boolean
   circleSize?: number
 }>`
+  --circleSize: 42px;
   display: flex;
   flex-flow: column wrap;
   align-items: center;
