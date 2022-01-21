@@ -60,9 +60,9 @@ const _claimApproveMessageMap = (type: ClaimType) => {
 const _claimRevokeApprovalMessageMap = (type: ClaimType) => {
   switch (type) {
     case ClaimType.GnoOption:
-      return 'Revoking GNO approval from vCOW contract'
+      return 'Revoking vCOW approval from GNO contract'
     case ClaimType.Investor:
-      return 'Revoking USDC approval from vCOW contract'
+      return 'Revoking vCOW approval from USDC contract'
     // Shouldn't happen, type safe
     default:
       return 'Unknown token. Please check configuration.'
@@ -197,14 +197,16 @@ export default function InvestOption({ claim, optionIndex, openModal, closeModal
     try {
       // for pending state pre-BC
       setApproving(true)
-      await revokeApprovalCallback()
+      await revokeApprovalCallback({
+        transactionSummary: claim.type ? _claimRevokeApprovalMessageMap(claim.type) : undefined,
+      })
     } catch (error) {
       console.error('[InvestOption]: Issue revoking approval.', error)
       handleSetError(error?.message)
     } finally {
       setApproving(false)
     }
-  }, [handleCloseError, handleSetError, revokeApprovalCallback])
+  }, [claim.type, handleCloseError, handleSetError, revokeApprovalCallback])
 
   const vCowAmount = useMemo(
     () => calculateInvestmentAmounts(claim, investmentAmount)?.vCowAmount,
