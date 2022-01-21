@@ -164,8 +164,8 @@ export default function InvestmentFlow({ hasClaims, isAirdropOnly, ...tokenAppro
           For more details around the token, please read{' '}
           <a href="https://cow.fi" target="_blank" rel="noreferrer">
             the blog post
-          </a>
-          <br />. For more details about the claiming process, please read the{' '}
+          </a>.
+          <br /> For more details about the claiming process, please read the{' '}
           <a href="https://cow.fi" target="_blank" rel="noreferrer">
             step by step guide
           </a>
