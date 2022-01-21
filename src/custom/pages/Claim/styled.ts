@@ -152,8 +152,7 @@ p > i {
 }
 
 p > a {
-  display: block;
-  margin: 24px 0 0;
+  display: inline;
 }
 
 ${ButtonPrimary} {

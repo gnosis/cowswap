@@ -23,6 +23,23 @@ import { useActiveWeb3React } from 'hooks/web3'
 import InvestOption from './InvestOption'
 import { ClaimCommonTypes, ClaimWithInvestmentData, EnhancedUserClaimData } from '../types'
 
+const STEPS_DATA = [
+  {
+    id: 0,
+    title: 'Start',
+  },
+  {
+    id: 1,
+    title: 'Set allowances',
+    subtitle: 'Approve all tokens to be used for investment.',
+  },
+  {
+    id: 2,
+    title: 'Submit claim',
+    subtitle: 'Submit and confirm the transaction to claim vCOW.',
+  },
+]
+
 export type InvestOptionProps = {
   claim: EnhancedUserClaimData
   optionIndex: number
@@ -116,34 +133,36 @@ export default function InvestmentFlow({ hasClaims, isAirdropOnly, ...tokenAppro
     return null
   }
 
-  const stepsData = [
-    {
-      id: 0,
-      title: 'Start',
-    },
-    {
-      id: 1,
-      title: 'Set allowances',
-      subtitle: 'Approve all tokens to be used for investment.',
-    },
-    {
-      id: 2,
-      title: 'Submit claim',
-      subtitle: 'Submit and confirm the transaction to claim vCOW.',
-    },
-  ]
-
   return (
     <InvestFlow>
-      <Stepper stepsData={stepsData} activeStep={investFlowStep} />
+      <Stepper steps={STEPS_DATA} activeStep={investFlowStep} />
 
       <h1>
         {investFlowStep === 0
-          ? 'Claiming vCOW is a two step process'
+          ? 'Claim and invest'
           : investFlowStep === 1
           ? 'Set allowance to Buy vCOW'
           : 'Confirm transaction to claim all vCOW'}
       </h1>
+
+      {investFlowStep === 0 && (
+        <p>
+          You have chosen to exercise one or more investment opportunities. Investing will give you the chance to
+          acquire vCOW tokens at at fixed price. This process consists of two steps. <br />
+          <br />
+          The first step allows you to define the investment amounts and set the required allowances for the tokens you
+          will use to invest with. <br />
+          <br />
+          The last step executes all claiming opportunities on-chain. In addition it sends the tokens you will use to
+          invest with, to the smart contract. In return, the smart contract will send the vCOW tokens for both the
+          Airdrop and the selected investment opportunities to the specified claim account. <br />
+          <br />
+          For more details around this process, please read{' '}
+          <a href="https://cow-protocol.medium.com/" target="_blank" rel="noreferrer">
+            the blog post
+          </a>
+        </p>
+      )}
 
       {/* Invest flow: Step 1 > Set allowances and investment amounts */}
       {investFlowStep === 1 ? (
