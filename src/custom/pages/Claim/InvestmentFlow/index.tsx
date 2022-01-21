@@ -174,7 +174,7 @@ export default function InvestmentFlow({ hasClaims, isAirdropOnly, ...tokenAppro
       {/* Invest flow: Step 2 > Review summary */}
       {investFlowStep === 2 ? (
         <InvestContent>
-          <ClaimSummaryView totalAvailableAmount={totalVCow} />
+          <ClaimSummaryView totalAvailableAmount={totalVCow} totalAvailableText={'Total amount to claim'} />
           <ClaimTable>
             <InvestSummaryTable>
               <thead>
