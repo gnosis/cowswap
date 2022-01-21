@@ -23,7 +23,7 @@ export default function VCOWDropdown({ balance }: VCOWDropdownProps) {
 
   return (
     <Wrapper ref={node}>
-      <DropdownWrapper onClick={toggle}>
+      <DropdownWrapper onClick={toggle} hasBalance={hasBalance}>
         <span style={{ marginRight: '2px' }}>
           <VCOWBalance>
             <CowProtocolLogo size={46} />
@@ -100,7 +100,7 @@ const MenuFlyout = styled.span`
   `};
 `
 
-export const DropdownWrapper = styled.button<{ haveBalance?: boolean }>`
+export const DropdownWrapper = styled.button<{ hasBalance?: boolean }>`
   align-items: center;
   background-color: ${({ theme }) => theme.bg4};
   border-radius: 12px;
@@ -115,9 +115,9 @@ export const DropdownWrapper = styled.button<{ haveBalance?: boolean }>`
 
   :hover,
   :focus {
-    cursor: ${({ haveBalance }) => (haveBalance ? 'pointer' : 'inherit')};
+    cursor: ${({ hasBalance }) => (hasBalance ? 'pointer' : 'inherit')};
     outline: none;
-    border: ${({ haveBalance }) => (haveBalance ? '1px solid ${({ theme }) => theme.bg3}' : '1px solid transparent')};
+    border: ${({ hasBalance }) => (hasBalance ? '1px solid ${({ theme }) => theme.bg3}' : '1px solid transparent')};
   }
   ${({ theme }) => theme.mediaWidth.upToVerySmall`
     min-width: 100%;
