@@ -441,21 +441,13 @@ export function useClaimCallback(account: string | null | undefined): {
     },
   })
 
-  /**
-   * Extend the Payable optional param
-   */
-  function _extendFinalArg(args: ClaimManyFnArgs, extendedArg: Record<any, any>) {
-    const lastArg = args.pop()
-    args.push({
-      ...lastArg, // add back whatever is already there
-      ...extendedArg,
-    })
-
-    return args
-  }
-
   const claimCallback = useCallback(
-    async function (claimInput: ClaimInput[]) {
+    /**
+     * Claim callback that sends tx to wallet to claim whatever user selected
+     *
+     * Returns a string with the formatted vCow amount being claimed
+     */
+    async function (claimInput: ClaimInput[]): Promise<string> {
       if (
         claims.length === 0 ||
         claimInput.length === 0 ||
@@ -668,6 +660,19 @@ function _getClaimValue(claim: UserClaimData, vCowAmount: string, nativeTokenPri
   const claimValueInAtomsSquared = JSBI.multiply(JSBI.BigInt(vCowAmount), JSBI.BigInt(nativeTokenPrice))
   // Then it's divided by 10**18 to return the value in the native currency atoms
   return JSBI.divide(claimValueInAtomsSquared, DENOMINATOR).toString()
+}
+
+/**
+ * Extend the Payable optional param
+ */
+function _extendFinalArg(args: ClaimManyFnArgs, extendedArg: Record<any, any>) {
+  const lastArg = args.pop()
+  args.push({
+    ...lastArg, // add back whatever is already there
+    ...extendedArg,
+  })
+
+  return args
 }
 
 type LastAddress = string
