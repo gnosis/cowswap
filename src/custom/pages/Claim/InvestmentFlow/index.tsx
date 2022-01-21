@@ -24,6 +24,7 @@ import { useActiveWeb3React } from 'hooks/web3'
 
 import InvestOption from './InvestOption'
 import { ClaimCommonTypes, ClaimWithInvestmentData, EnhancedUserClaimData } from '../types'
+import { COW_LINKS } from 'pages/Claim'
 
 const STEPS_DATA = [
   {
@@ -177,11 +178,11 @@ export default function InvestmentFlow({ hasClaims, isAirdropOnly, ...tokenAppro
           <br />
           <br />
           For more details around the token, please read{' '}
-          <a href="https://cow.fi" target="_blank" rel="noreferrer">
+          <a href={COW_LINKS.vCowPost} target="_blank" rel="noreferrer">
             the blog post
           </a>
           .<br /> For more details about the claiming process, please read the{' '}
-          <a href="https://cow.fi" target="_blank" rel="noreferrer">
+          <a href={COW_LINKS.stepGuide} target="_blank" rel="noreferrer">
             step by step guide
           </a>
         </p>
