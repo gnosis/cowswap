@@ -281,7 +281,7 @@ SwapModalHeaderProps) {
       </AutoColumn>
       {recipient !== null ? (
         <AutoColumn justify="flex-start" gap="sm">
-          <TYPE.main>
+          <TYPE.main style={{ padding: '0.75rem 1rem' }}>
             <Trans>
               Output will be sent to{' '}
               <b title={recipient}>{isAddress(recipient) ? shortenAddress(recipient) : recipient}</b>
