@@ -3,7 +3,7 @@ import { Percent } from '@uniswap/sdk-core'
 
 import CowProtocolLogo from 'components/CowProtocolLogo'
 import { InvestTokenGroup, TokenLogo, InvestSummary, InvestInput, InvestAvailableBar } from '../styled'
-import { formatSmart } from 'utils/format'
+import { formatSmartLocaleAware } from 'utils/format'
 import Row from 'components/Row'
 import CheckCircle from 'assets/cow-swap/check.svg'
 import { InvestOptionProps } from '.'
@@ -19,7 +19,7 @@ import Loader from 'components/Loader'
 import { useErrorModal } from 'hooks/useErrorMessageAndModal'
 import { tryParseAmount } from 'state/swap/hooks'
 import { calculateInvestmentAmounts, calculatePercentage } from 'state/claim/hooks/utils'
-import { PERCENTAGE_PRECISION } from 'constants/index'
+import { AMOUNT_PRECISION, PERCENTAGE_PRECISION } from 'constants/index'
 
 const ErrorMsgs = {
   InsufficientBalance: (symbol = '') => `Insufficient ${symbol} balance to cover investment amount`,
@@ -42,6 +42,20 @@ export default function InvestOption({ approveData, claim, optionIndex }: Invest
 
   const investedAmount = investFlowData[optionIndex].investedAmount
   const inputError = investFlowData[optionIndex].error
+
+  // Syntactic sugar fns for setting/resetting global state
+  const setInvestedAmount = useCallback(
+    (amount: string) => updateInvestAmount({ index: optionIndex, amount }),
+    [optionIndex, updateInvestAmount]
+  )
+  const setInputError = useCallback(
+    (error: string) => updateInvestError({ index: optionIndex, error }),
+    [optionIndex, updateInvestError]
+  )
+  const resetInputError = useCallback(
+    () => updateInvestError({ index: optionIndex, error: undefined }),
+    [optionIndex, updateInvestError]
+  )
 
   const token = currencyAmount?.currency
   const balance = useCurrencyBalance(account || undefined, token)
@@ -140,7 +154,7 @@ export default function InvestOption({ approveData, claim, optionIndex }: Invest
 
     if (error) {
       // if there is error set it in redux
-      updateInvestError({ index: optionIndex, error })
+      setInputError(error)
     } else {
       if (!parsedAmount) {
         return
@@ -148,25 +162,26 @@ export default function InvestOption({ approveData, claim, optionIndex }: Invest
       // basically the magic happens in this block
 
       // update redux state to remove errro for this field
-      updateInvestError({ index: optionIndex, error: undefined })
+      resetInputError()
 
       // update redux state with new investAmount value
-      updateInvestAmount({ index: optionIndex, amount: parsedAmount.quotient.toString() })
+      setInvestedAmount(parsedAmount.quotient.toString())
 
       // update the local state with percentage value
       setPercentage(_formatPercentage(calculatePercentage(parsedAmount, maxCost)))
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
+    balance,
     typedValue,
     isSelfClaiming,
-    optionIndex,
-    updateInvestError,
     token,
     isNative,
     isApproved,
     maxCost,
-    updateInvestAmount,
+    setInputError,
+    resetInputError,
+    setInvestedAmount,
   ])
 
   return (
@@ -184,14 +199,14 @@ export default function InvestOption({ approveData, claim, optionIndex }: Invest
           <span>
             <b>Price</b>{' '}
             <i>
-              {formatSmart(price)} vCoW per {currencyAmount?.currency?.symbol}
+              {formatSmartLocaleAware(price) || '0'} vCoW per {currencyAmount?.currency?.symbol}
             </i>
           </span>
 
           <span>
             <b>Max. investment available</b>{' '}
             <i>
-              {maxCost?.toExact() || '0'} {currencyAmount?.currency?.symbol}
+              {formatSmartLocaleAware(maxCost, AMOUNT_PRECISION) || '0'} {currencyAmount?.currency?.symbol}
             </i>
           </span>
 
@@ -249,7 +264,7 @@ export default function InvestOption({ approveData, claim, optionIndex }: Invest
               <span>
                 <b>Balance:</b>
                 <i>
-                  {formatSmart(balance) || 0} {currencyAmount?.currency?.symbol}
+                  {formatSmartLocaleAware(balance, AMOUNT_PRECISION) || 0} {currencyAmount?.currency?.symbol}
                 </i>
                 {/* Button should use the max possible amount the user can invest, considering their balance + max investment allowed */}
                 {!noBalance && isSelfClaiming && (
@@ -267,7 +282,7 @@ export default function InvestOption({ approveData, claim, optionIndex }: Invest
               />
               <b>{currencyAmount?.currency?.symbol}</b>
             </label>
-            <i>Receive: {formatSmart(vCowAmount) || 0} vCOW</i>
+            <i>Receive: {formatSmartLocaleAware(vCowAmount, AMOUNT_PRECISION) || 0} vCOW</i>
             {/* Insufficient balance validation error */}
             {inputError ? <small>{inputError}</small> : ''}
           </div>
@@ -278,5 +293,5 @@ export default function InvestOption({ approveData, claim, optionIndex }: Invest
 }
 
 function _formatPercentage(percentage: Percent): string {
-  return formatSmart(percentage, PERCENTAGE_PRECISION) || '0'
+  return formatSmartLocaleAware(percentage, PERCENTAGE_PRECISION) || '0'
 }

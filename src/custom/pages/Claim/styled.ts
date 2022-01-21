@@ -28,163 +28,163 @@ export const PageWrapper = styled.div`
 
   input[type='checkbox'],
   input[type='radio'] {
-      --active: ${({ theme }) => theme.primary1};
-      --active-inner: ${({ theme }) => theme.black};
-      --focus: 2px rgba(39, 94, 254, .3);
-      --border: ${({ theme }) => theme.blueShade3};
-      --border-hover: ${({ theme }) => theme.primary1};
-      --background: ${({ theme }) => theme.white};
-      appearance: none;
-      height: 21px;
-      width: 21px;
-      outline: none;
+    --active: ${({ theme }) => theme.primary1};
+    --active-inner: ${({ theme }) => theme.black};
+    --focus: 2px rgba(39, 94, 254, .3);
+    --border: ${({ theme }) => theme.blueShade3};
+    --border-hover: ${({ theme }) => theme.primary1};
+    --background: ${({ theme }) => theme.white};
+    appearance: none;
+    height: 21px;
+    width: 21px;
+    outline: none;
+    display: inline-block;
+    vertical-align: top;
+    position: relative;
+    margin: 0;
+    cursor: pointer;
+    border: 1px solid var(--bc, var(--border));
+    background: var(--b, var(--background));
+
+    &:after {
+      content: '';
+      display: block;
+      left: 0;
+      top: 0;
+      position: absolute;
+    }
+
+    &:checked {
+      --b: var(--active);
+      --bc: var(--active);
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: .5;
+
+      &:checked {
+      }
+
+      & + label {
+        cursor: not-allowed;
+      }
+    }
+
+    &:hover {
+      &:not(:checked) {
+        &:not(:disabled) {
+          --bc: var(--border-hover);
+        }
+      }
+    }
+
+    &:focus {
+      box-shadow: 0 0 0 var(--focus);
+    }
+
+    &:after {
+      opacity: var(--o, 0);
+    }
+
+    &:checked {
+      --o: 1;
+    }
+
+    & + label {
+      font-size: 14px;
+      line-height: 21px;
       display: inline-block;
       vertical-align: top;
-      position: relative;
-      margin: 0;
       cursor: pointer;
-      border: 1px solid var(--bc, var(--border));
-      background: var(--b, var(--background));
+      margin-left: 4px;
+    }
+  }
 
-      &:after {
-        content: '';
-        display: block;
-        left: 0;
-        top: 0;
-        position: absolute;
-      }
+  input[type='checkbox'] {
+    border-radius: 7px;
 
-      &:checked {
-        --b: var(--active);
-        --bc: var(--active);
-      }
-
-      &:disabled {
-        cursor: not-allowed;
-        opacity: .5;
-
-        &:checked {
-        }
-
-        & + label {
-          cursor: not-allowed;
-        }
-      }
-
-      &:hover {
-        &:not(:checked) {
-          &:not(:disabled) {
-            --bc: var(--border-hover);
-          }
-        }
-      }
-
-      &:focus {
-        box-shadow: 0 0 0 var(--focus);
-      }
-
-      &:after {
-        opacity: var(--o, 0);
-      }
-      &:checked {
-        --o: 1;
-      }
-      
-      & + label {
-        font-size: 14px;
-        line-height: 21px;
-        display: inline-block;
-        vertical-align: top;
-        cursor: pointer;
-        margin-left: 4px;
-      }
+    &:after {
+      width: 5px;
+      height: 9px;
+      border: 2px solid var(--active-inner);
+      border-top: 0;
+      border-left: 0;
+      left: 7px;
+      top: 4px;
+      transform: rotate(var(--r, 20deg));
     }
 
-    input[type='checkbox'] {
-      border-radius: 7px;
-
-        &:after {
-          width: 5px;
-          height: 9px;
-          border: 2px solid var(--active-inner);
-          border-top: 0;
-          border-left: 0;
-          left: 7px;
-          top: 4px;
-          transform: rotate(var(--r, 20deg));
-        }
-
-        &:checked {
-          --r: 43deg;
-        }
+    &:checked {
+      --r: 43deg;
     }
-    
-    input[type='radio'] {
+  }
+
+  input[type='radio'] {
+    border-radius: 50%;
+
+    &:after {
+      width: 19px;
+      height: 19px;
       border-radius: 50%;
-
-      &:after {
-        width: 19px;
-        height: 19px;
-        border-radius: 50%;
-        background: var(--active-inner);
-        opacity: 0;
-        transform: scale(var(--s, .7));
-      }
+      background: var(--active-inner);
+      opacity: 0;
+      transform: scale(var(--s, .7));
     }
   }
+}
 
-  a {
-    color: ${({ theme }) => theme.primary4};
-  }
+a {
+  color: ${({ theme }) => theme.primary4};
+}
 
-  p {
-    font-size: 16px;
-    display: block;
-    line-height: 1.6;
-    font-weight: 300;
-    margin: 0 0 24px;
-    text-align: center;
-  }
+p {
+  font-size: 16px;
+  display: block;
+  line-height: 1.6;
+  font-weight: 300;
+  margin: 0 0 24px;
+  text-align: center;
+}
 
-  p > i {
-    color: ${({ theme }) => theme.primary1};
-  }
+p > i {
+  color: ${({ theme }) => theme.primary1};
+}
 
-  p > a {
-    display: block;
-    margin: 24px 0 0;
-  }
+p > a {
+  display: inline;
+}
 
-  ${ButtonPrimary} {
-    border-radius: var(--border-radius);
-    width: 100%;
-    font-size: 21px;
-    padding: 24px 16px;
+${ButtonPrimary} {
+  border-radius: var(--border-radius);
+  width: 100%;
+  font-size: 21px;
+  padding: 24px 16px;
 
-    ${({ theme }) => theme.mediaWidth.upToSmall`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
       margin: 0 auto 24px;
     `};
 
-    &[disabled] {
-      cursor: not-allowed;
-      pointer-events: all;
-    }
+  &[disabled] {
+    cursor: not-allowed;
+    pointer-events: all;
   }
+}
 
-  ${ButtonSecondary} {
+${ButtonSecondary} {
+  background: 0;
+  color: ${({ theme }) => theme.primary4};
+  border: none;
+
+  &:hover {
+    border: 0;
+    box-shadow: none;
+    transform: none;
     background: 0;
     color: ${({ theme }) => theme.primary4};
-    border: none;
-
-    &:hover {
-      border: 0;
-      box-shadow: none;
-      transform: none;
-      background: 0;
-      color: ${({ theme }) => theme.primary4};
-      text-decoration: underline;
-    }
+    text-decoration: underline;
   }
+}
 `
 
 export const TokenLogo = styled.div<{ symbol: string; size: number }>`
@@ -354,6 +354,7 @@ export const ClaimTable = styled.div`
   }
 
   /* 3rd row - amount */
+
   tr > td:nth-of-type(3) {
     font-size: 18px;
     font-weight: 500;
@@ -396,6 +397,7 @@ export const ClaimRow = styled.tr<{ isPending?: boolean }>`
     &:first-child {
       border-radius: 8px 0 0 8px;
     }
+
     &:last-child {
       border-radius: 0 8px 8px 0;
     }
@@ -502,14 +504,14 @@ export const CheckIcon = styled(CheckCircle)`
   height: 16px;
   width: 16px;
   margin-right: 6px;
-  stroke: color: ${({ theme }) => theme.primary1};
+  stroke: ${({ theme }) => theme.primary1};
 `
 
 export const NegativeIcon = styled(Frown)`
   height: 16px;
   width: 16px;
   margin-right: 6px;
-  stroke: color: ${({ theme }) => theme.primary1};
+  stroke: ${({ theme }) => theme.primary1};
 `
 
 export const EligibleBanner = styled.div`
@@ -526,13 +528,14 @@ export const EligibleBanner = styled.div`
   font-weight: 600;
 
   > img {
-    margin: 0 4px 0 0;
+    margin: 0 6px 0 0;
+    width: 21px;
+    height: 21px;
   }
 `
 
 export const InputField = styled.div`
-  padding: 18px;
-  padding-left: 36px;
+  padding: 18px 18px 18px 36px;
   border-radius: var(--border-radius);
   border: ${({ theme }) => theme.currencyInput?.border};
   color: ${({ theme }) => theme.text1};
@@ -565,7 +568,7 @@ export const InputField = styled.div`
     background-color: ${({ theme }) => theme.bg5};
     color: ${({ theme }) => theme.white};
     border-radius: 16px;
-    box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.075);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.075);
     outline: none;
     cursor: pointer;
     user-select: none;
@@ -814,30 +817,6 @@ export const InvestSummaryTable = styled.table`
   }
 `
 
-export const StepIndicator = styled.div`
-  display: flex;
-  flex-flow: column wrap;
-`
-
-export const Steps = styled.div<{ step: number | 0 }>`
-  list-style-type: decimal;
-  margin: 0 0 12px;
-  padding: 12px;
-  border-radius: 12px;
-  background: ${({ theme }) => theme.blueShade3};
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 34px;
-
-  > li {
-    margin: 0 0 12px;
-  }
-
-  > li:nth-of-type(${({ step }) => step}) {
-    background: ${({ theme }) => transparentize(0.5, theme.primary1)};
-  }
-`
-
 export const InvestTokenGroup = styled.div`
   display: flex;
   flex-flow: row;
@@ -1009,9 +988,7 @@ export const InvestAvailableBar = styled.div<{ percentage?: number }>`
     background: ${({ theme }) =>
       `linear-gradient(to right, ${transparentize(0.2, theme.primary5)}, ${theme.primary4})`};
     height: 100%;
-    border-radius: 24px;
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
+    border-radius: 24px 0 0 24px;
     position: absolute;
     left: 0;
     top: 0;
@@ -1063,6 +1040,8 @@ export const InvestSummary = styled.div`
 
   > span > i > div > img {
     margin: 0 0 0 4px;
+    height: 21px;
+    width: 21px;
   }
 
   > span > b {
@@ -1098,13 +1077,13 @@ export const AccountClaimSummary = styled.div`
   > span {
     display: flex;
     flex-flow: column wrap;
-    white-space: wrap;
+    white-space: pre-wrap;
     gap: 3px;
   }
 
   > span > i {
     font-style: normal;
-    break-word: break-all;
+    word-break: break-all;
   }
 `
 
