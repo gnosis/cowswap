@@ -170,7 +170,6 @@ export default function InvestOption({ approveData, claim, optionIndex }: Invest
       // update the local state with percentage value
       setPercentage(_formatPercentage(calculatePercentage(parsedAmount, maxCost)))
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     balance,
     typedValue,
