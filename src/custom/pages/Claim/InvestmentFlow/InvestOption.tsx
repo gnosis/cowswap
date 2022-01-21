@@ -57,6 +57,18 @@ const _claimApproveMessageMap = (type: ClaimType) => {
   }
 }
 
+const _claimRevokeApprovalMessageMap = (type: ClaimType) => {
+  switch (type) {
+    case ClaimType.GnoOption:
+      return 'Revoking GNO approval from vCOW contract'
+    case ClaimType.Investor:
+      return 'Revoking USDC approval from vCOW contract'
+    // Shouldn't happen, type safe
+    default:
+      return 'Unknown token. Please check configuration.'
+  }
+}
+
 const UnderlineButton = styled.button`
   background: none;
   border: 0;
@@ -65,6 +77,12 @@ const UnderlineButton = styled.button`
   text-decoration: underline;
   text-align: left;
   padding: 0;
+
+  &:disabled {
+    text-decoration: none;
+    color: darkgrey;
+    cursor: auto;
+  }
 `
 
 export default function InvestOption({ claim, optionIndex, openModal, closeModal }: InvestOptionProps) {
@@ -84,7 +102,8 @@ export default function InvestOption({ claim, optionIndex, openModal, closeModal
   })
 
   const [isAlreadyApproved, revokeApprovalCallback] = useRevokeApproveCallback({
-    openTransactionConfirmationModal: () => openModal(_claimApproveMessageMap(claim.type), OperationType.APPROVE_TOKEN),
+    openTransactionConfirmationModal: () =>
+      openModal(_claimRevokeApprovalMessageMap(claim.type), OperationType.APPROVE_TOKEN),
     closeModals: closeModal,
     spender: chainId ? V_COW_CONTRACT_ADDRESS[chainId] : undefined,
     token: claim?.currencyAmount?.currency,
@@ -168,6 +187,24 @@ export default function InvestOption({ claim, optionIndex, openModal, closeModal
       setApproving(false)
     }
   }, [approveCallback, handleCloseError, handleSetError, token?.symbol])
+
+  const handleRevokeApproval = useCallback(async () => {
+    // reset errors and close any modals
+    handleCloseError()
+
+    if (!revokeApprovalCallback) return
+
+    try {
+      // for pending state pre-BC
+      setApproving(true)
+      await revokeApprovalCallback()
+    } catch (error) {
+      console.error('[InvestOption]: Issue revoking approval.', error)
+      handleSetError(error?.message)
+    } finally {
+      setApproving(false)
+    }
+  }, [handleCloseError, handleSetError, revokeApprovalCallback])
 
   const vCowAmount = useMemo(
     () => calculateInvestmentAmounts(claim, investmentAmount)?.vCowAmount,
@@ -323,7 +360,11 @@ export default function InvestOption({ claim, optionIndex, openModal, closeModal
                 )}
               </ButtonConfirmed>
             )}
-            {isAlreadyApproved && <UnderlineButton onClick={revokeApprovalCallback}>Revoke approval</UnderlineButton>}
+            {isAlreadyApproved && (
+              <UnderlineButton disabled={approving || !isAlreadyApproved} onClick={handleRevokeApproval}>
+                Revoke approval
+              </UnderlineButton>
+            )}
           </span>
 
           <span>

@@ -66,7 +66,7 @@ export default function useRevokeApproveCallback({
       })
     })
 
-    openTransactionConfirmationModal(`Revoking approval of ${token.symbol} from contract ${spender}`)
+    openTransactionConfirmationModal(`Revoke ${token.symbol} approval from ${spender}`)
     return (
       tokenContract
         .approve(spender, '0', {
@@ -75,7 +75,7 @@ export default function useRevokeApproveCallback({
         .then((response: TransactionResponse) => {
           addTransaction({
             hash: response.hash,
-            summary: `Revoking approval of ${token.symbol} from contract ${spender}`,
+            summary: `Revoke ${token.symbol} approval from ${spender}`,
             approval: { tokenAddress: token.wrapped.address, spender },
           })
         })
