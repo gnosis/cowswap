@@ -414,7 +414,7 @@ function _validateClaimable(
  * @param account
  */
 export function useClaimCallback(account: string | null | undefined): {
-  claimCallback: (claimInputs: ClaimInput[]) => Promise<string | undefined>
+  claimCallback: (claimInputs: ClaimInput[]) => Promise<string>
 } {
   // get claim data for given account
   const { chainId, account: connectedAccount } = useActiveWeb3React()

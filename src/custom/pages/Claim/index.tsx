@@ -122,7 +122,7 @@ export default function Claim() {
       claimCallback(inputData)
         .then((vCowAmount) => {
           setClaimStatus(ClaimStatus.SUBMITTED)
-          setClaimedAmount(vCowAmount || '')
+          setClaimedAmount(vCowAmount)
         })
         .catch((error) => {
           setClaimStatus(ClaimStatus.DEFAULT)
