@@ -20,6 +20,7 @@ import { useErrorModal } from 'hooks/useErrorMessageAndModal'
 import { tryParseAmount } from 'state/swap/hooks'
 import { calculateInvestmentAmounts, calculatePercentage } from 'state/claim/hooks/utils'
 import { PERCENTAGE_PRECISION } from 'constants/index'
+import { JSBI } from '@uniswap/sdk'
 
 const ErrorMsgs = {
   InsufficientBalance: (symbol = '') => `Insufficient ${symbol} balance to cover investment amount`,
@@ -162,11 +163,14 @@ export default function InvestOption({ approveData, claim, optionIndex }: Invest
     }
   }, [typedValue, optionIndex, updateInvestError, token])
 
-  // this will set input and percentage value if you go back from the review page
+  // this will set input and percentage value if there is investedAmount already
+  // this is important if you go back from review page
   useEffect(() => {
     const { investmentCost } = calculateInvestmentAmounts(claim, investedAmount)
 
-    if (investmentCost) {
+    if (!investmentCost) return
+
+    if (!investmentCost?.equalTo(JSBI.BigInt(0))) {
       onInputChange(investmentCost?.toExact())
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
