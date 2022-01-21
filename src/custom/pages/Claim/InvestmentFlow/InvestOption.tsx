@@ -21,10 +21,10 @@ import { tryParseAmount } from 'state/swap/hooks'
 import { calculateInvestmentAmounts, calculatePercentage } from 'state/claim/hooks/utils'
 import { PERCENTAGE_PRECISION } from 'constants/index'
 
-enum ErrorMsgs {
-  InsufficientBalance = 'Insufficient balance to cover investment amount',
-  OverMaxInvestment = `Your investment amount can't be above the maximum investment allowed`,
-  InvestmentIsZero = `Your investment amount can't be zero`,
+const ErrorMsgs = {
+  InsufficientBalance: (symbol = '') => `Insufficient ${symbol} balance to cover investment amount`,
+  OverMaxInvestment: `Your investment amount can't be above the maximum investment allowed`,
+  InvestmentIsZero: `Your investment amount can't be zero`,
 }
 
 export default function InvestOption({ approveData, claim, optionIndex }: InvestOptionProps) {
@@ -49,7 +49,8 @@ export default function InvestOption({ approveData, claim, optionIndex }: Invest
   const noBalance = !balance || balance.equalTo('0')
 
   const isApproved = approveData?.approveState === ApprovalState.APPROVED
-  const isETH = claim?.currencyAmount?.currency.symbol === 'ETH'
+  const symbol = claim?.currencyAmount?.currency.symbol
+  const isETH = symbol === 'ETH'
 
   // on invest max amount click handler
   const setMaxAmount = useCallback(() => {
@@ -86,7 +87,7 @@ export default function InvestOption({ approveData, claim, optionIndex }: Invest
       let errorMsg = null
 
       if (parsedAmount.greaterThan(maxCost)) errorMsg = ErrorMsgs.OverMaxInvestment
-      else if (parsedAmount.greaterThan(balance)) errorMsg = ErrorMsgs.InsufficientBalance
+      else if (parsedAmount.greaterThan(balance)) errorMsg = ErrorMsgs.InsufficientBalance(symbol)
 
       if (errorMsg) {
         updateInvestError({ index: optionIndex, error: errorMsg })
@@ -101,7 +102,7 @@ export default function InvestOption({ approveData, claim, optionIndex }: Invest
       // update the local state with percentage value
       setPercentage(_formatPercentage(calculatePercentage(parsedAmount, maxCost)))
     },
-    [balance, maxCost, optionIndex, token, updateInvestAmount, updateInvestError]
+    [balance, maxCost, optionIndex, symbol, token, updateInvestAmount, updateInvestError]
   )
 
   // Cache approveData methods
@@ -141,12 +142,12 @@ export default function InvestOption({ approveData, claim, optionIndex }: Invest
       }
 
       if (balance.lessThan(maxCost)) {
-        updateInvestError({ index: optionIndex, error: ErrorMsgs.InsufficientBalance })
+        updateInvestError({ index: optionIndex, error: ErrorMsgs.InsufficientBalance(symbol) })
       } else {
         setMaxAmount()
       }
     }
-  }, [balance, isSelfClaiming, maxCost, optionIndex, setMaxAmount, updateInvestError])
+  }, [balance, isSelfClaiming, maxCost, optionIndex, setMaxAmount, symbol, updateInvestError])
 
   // dispatch if the invest option is approved or not (will update on approve state change)
   // if the option is ETH then its always true since we ignore it
@@ -156,10 +157,10 @@ export default function InvestOption({ approveData, claim, optionIndex }: Invest
 
   // check if the invested amount is zero and show error msg and disable review button (will update on input change)
   useEffect(() => {
-    if (investedAmount === '0') {
+    if (!tryParseAmount(typedValue, token)) {
       updateInvestError({ index: optionIndex, error: ErrorMsgs.InvestmentIsZero })
     }
-  }, [investedAmount, optionIndex, updateInvestError])
+  }, [typedValue, optionIndex, updateInvestError, token])
 
   return (
     <InvestTokenGroup>
