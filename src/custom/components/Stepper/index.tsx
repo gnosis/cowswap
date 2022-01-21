@@ -114,7 +114,6 @@ export function Stepper({ stepsData, activeStep }: StepperProps) {
         const isActiveStep = activeStep === id
         return (
           <Step key={id} totalSteps={stepsData.length} isActiveStep={isActiveStep} completedStep={completedStep}>
-            {/* ID passed as prop to be used as CSS pseudo-element in the <span> */}
             <span>
               <small>{id + 1}</small>
             </span>
