@@ -5,8 +5,6 @@ import {
   InvestContent,
   InvestFlowValidation,
   InvestSummaryTable,
-  StepIndicator,
-  // Steps,
   ClaimTable,
   AccountClaimSummary,
 } from 'pages/Claim/styled'
@@ -138,15 +136,15 @@ export default function InvestmentFlow({ hasClaims, isAirdropOnly, ...tokenAppro
   return (
     <InvestFlow>
       <Stepper stepsData={stepsData} activeStep={investFlowStep} />
-      <StepIndicator>
-        <h1>
-          {investFlowStep === 0
-            ? 'Claiming vCOW is a two step process'
-            : investFlowStep === 1
-            ? 'Set allowance to Buy vCOW'
-            : 'Confirm transaction to claim all vCOW'}
-        </h1>
-      </StepIndicator>
+
+      <h1>
+        {investFlowStep === 0
+          ? 'Claiming vCOW is a two step process'
+          : investFlowStep === 1
+          ? 'Set allowance to Buy vCOW'
+          : 'Confirm transaction to claim all vCOW'}
+      </h1>
+
       {/* Invest flow: Step 1 > Set allowances and investment amounts */}
       {investFlowStep === 1 ? (
         <InvestContent>

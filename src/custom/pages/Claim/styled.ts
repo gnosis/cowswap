@@ -818,30 +818,6 @@ export const InvestSummaryTable = styled.table`
   }
 `
 
-export const StepIndicator = styled.div`
-  display: flex;
-  flex-flow: column wrap;
-`
-
-export const Steps = styled.div<{ step: number | 0 }>`
-  list-style-type: decimal;
-  margin: 0 0 12px;
-  padding: 12px;
-  border-radius: 12px;
-  background: ${({ theme }) => theme.blueShade3};
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 34px;
-
-  > li {
-    margin: 0 0 12px;
-  }
-
-  > li:nth-of-type(${({ step }) => step}) {
-    background: ${({ theme }) => transparentize(0.5, theme.primary1)};
-  }
-`
-
 export const InvestTokenGroup = styled.div`
   display: flex;
   flex-flow: row;

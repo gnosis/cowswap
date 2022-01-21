@@ -80,6 +80,7 @@ export const Step = styled.div<{
   > b {
     color: ${({ isActiveStep, completedStep, theme }) =>
       completedStep ? theme.text1 : isActiveStep ? theme.text1 : transparentize(0.4, theme.text1)};
+    font-weight: ${({ isActiveStep, completedStep }) => (completedStep ? '300' : isActiveStep ? 'bold' : '300')};
   }
 
   > i {
