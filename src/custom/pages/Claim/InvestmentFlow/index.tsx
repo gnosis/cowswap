@@ -25,16 +25,13 @@ import { ClaimCommonTypes, ClaimWithInvestmentData, EnhancedUserClaimData } from
 
 const STEPS_DATA = [
   {
-    id: 0,
     title: 'Start',
   },
   {
-    id: 1,
     title: 'Set allowances',
     subtitle: 'Approve all tokens to be used for investment.',
   },
   {
-    id: 2,
     title: 'Submit claim',
     subtitle: 'Submit and confirm the transaction to claim vCOW.',
   },
@@ -164,8 +161,8 @@ export default function InvestmentFlow({ hasClaims, isAirdropOnly, ...tokenAppro
           For more details around the token, please read{' '}
           <a href="https://cow.fi" target="_blank" rel="noreferrer">
             the blog post
-          </a>.
-          <br /> For more details about the claiming process, please read the{' '}
+          </a>
+          .<br /> For more details about the claiming process, please read the{' '}
           <a href="https://cow.fi" target="_blank" rel="noreferrer">
             step by step guide
           </a>

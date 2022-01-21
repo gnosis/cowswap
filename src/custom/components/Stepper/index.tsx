@@ -101,7 +101,6 @@ export const Step = styled.div<{
 
 interface StepperProps {
   steps: {
-    id: number
     title: string
     subtitle?: string
   }[]
@@ -111,13 +110,13 @@ interface StepperProps {
 export function Stepper({ steps, activeStep }: StepperProps) {
   return (
     <Wrapper>
-      {steps.map(({ id, title, subtitle }) => {
-        const completedStep = activeStep > id
-        const isActiveStep = activeStep === id
+      {steps.map(({ title, subtitle }, index) => {
+        const completedStep = activeStep > index
+        const isActiveStep = activeStep === index
         return (
-          <Step key={id} totalSteps={steps.length} isActiveStep={isActiveStep} completedStep={completedStep}>
+          <Step key={index} totalSteps={steps.length} isActiveStep={isActiveStep} completedStep={completedStep}>
             <span>
-              <small>{id + 1}</small>
+              <small>{index + 1}</small>
             </span>
             <b>{title}</b>
             <i>{subtitle}</i>
