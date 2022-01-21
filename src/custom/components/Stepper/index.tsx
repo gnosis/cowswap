@@ -3,6 +3,7 @@ import CheckCircle from 'assets/cow-swap/check.svg'
 import { transparentize } from 'polished'
 
 export const Wrapper = styled.div`
+  --circleSize: 42px;
   width: 100%;
   display: flex;
   flex-flow: row wrap;
@@ -25,7 +26,7 @@ export const Step = styled.div<{
   &::after {
     content: '';
     position: absolute;
-    top: ${({ circleSize }) => (circleSize ? `calc(${circleSize / 2}px` : '21px')};
+    top: ${({ circleSize }) => (circleSize ? `calc(${circleSize / 2})px` : 'calc(var(--circleSize) / 2)')};
     height: 1px;
     border-top: 1px solid ${({ theme }) => theme.border2};
   }
@@ -33,13 +34,13 @@ export const Step = styled.div<{
   &::before {
     left: 0;
     right: 50%;
-    margin-right: ${({ circleSize }) => (circleSize ? `${circleSize}px` : '42px')};
+    margin-right: ${({ circleSize }) => (circleSize ? `${circleSize}px` : 'var(--circleSize)')};
   }
 
   &::after {
     right: 0;
     left: 50%;
-    margin-left: ${({ circleSize }) => (circleSize ? `${circleSize}px` : '42px')};
+    margin-left: ${({ circleSize }) => (circleSize ? `${circleSize}px` : 'var(--circleSize)')};
   }
 
   &:first-child::before,
@@ -53,10 +54,10 @@ export const Step = styled.div<{
     flex-flow: column wrap;
     align-items: center;
     justify-content: center;
-    width: ${({ circleSize }) => (circleSize ? `${circleSize}px` : '42px')};
-    height: ${({ circleSize }) => (circleSize ? `${circleSize}px` : '42px')};
+    width: ${({ circleSize }) => (circleSize ? `${circleSize}px` : 'var(--circleSize)')};
+    height: ${({ circleSize }) => (circleSize ? `${circleSize}px` : 'var(--circleSize)')};
     margin: 0 auto 12px;
-    border-radius: ${({ circleSize }) => (circleSize ? `${circleSize}px` : '42px')};
+    border-radius: ${({ circleSize }) => (circleSize ? `${circleSize}px` : 'var(--circleSize)')};
     text-align: center;
     line-height: 1;
     font-size: 100%;
@@ -65,7 +66,7 @@ export const Step = styled.div<{
       completedStep ? theme.black : isActiveStep ? theme.black : transparentize(0.4, theme.text1)};
     background: ${({ isActiveStep, completedStep, theme, circleSize }) =>
       completedStep
-        ? `url(${CheckCircle}) no-repeat center/${circleSize ? `${circleSize}px` : '42px'}`
+        ? `url(${CheckCircle}) no-repeat center/${circleSize ? `${circleSize}px` : 'var(--circleSize)'}`
         : isActiveStep
         ? theme.primary1
         : theme.blueShade3};
