@@ -6,11 +6,13 @@ import {
   InvestFlowValidation,
   InvestSummaryTable,
   StepIndicator,
-  Steps,
+  // Steps,
   ClaimTable,
   AccountClaimSummary,
 } from 'pages/Claim/styled'
 import { InvestSummaryRow } from 'pages/Claim/InvestmentFlow/InvestSummaryRow'
+
+import { Stepper } from 'components/Stepper'
 
 import { ClaimType, useClaimState, useUserEnhancedClaimData, useClaimDispatchers } from 'state/claim/hooks'
 import { ClaimStatus } from 'state/claim/actions'
@@ -109,20 +111,34 @@ export default function InvestmentFlow({ hasClaims, isAirdropOnly, ...tokenAppro
   if (
     !activeClaimAccount || // no connected account
     !hasClaims || // no claims
-    !isInvestFlowActive || // not on correct step (account change in mid step)
+    !isInvestFlowActive || // not on correct step (account change in mid-step)
     claimStatus !== ClaimStatus.DEFAULT || // not in default claim state
     isAirdropOnly // is only for airdrop
   ) {
     return null
   }
 
+  const stepsData = [
+    {
+      id: 0,
+      title: 'Start',
+    },
+    {
+      id: 1,
+      title: 'Set allowances',
+      subtitle: 'Approve all tokens to be used for investment.',
+    },
+    {
+      id: 2,
+      title: 'Submit claim',
+      subtitle: 'Submit and confirm the transaction to claim vCOW.',
+    },
+  ]
+
   return (
     <InvestFlow>
+      <Stepper stepsData={stepsData} activeStep={investFlowStep} />
       <StepIndicator>
-        <Steps step={investFlowStep}>
-          <li>Allowances: Approve all tokens to be used for investment.</li>
-          <li>Submit and confirm the transaction to claim vCOW</li>
-        </Steps>
         <h1>
           {investFlowStep === 0
             ? 'Claiming vCOW is a two step process'
@@ -131,7 +147,6 @@ export default function InvestmentFlow({ hasClaims, isAirdropOnly, ...tokenAppro
             : 'Confirm transaction to claim all vCOW'}
         </h1>
       </StepIndicator>
-
       {/* Invest flow: Step 1 > Set allowances and investment amounts */}
       {investFlowStep === 1 ? (
         <InvestContent>
@@ -152,7 +167,6 @@ export default function InvestmentFlow({ hasClaims, isAirdropOnly, ...tokenAppro
           <InvestFlowValidation>Approve all investment tokens before continuing</InvestFlowValidation>
         </InvestContent>
       ) : null}
-
       {/* Invest flow: Step 2 > Review summary */}
       {investFlowStep === 2 ? (
         <InvestContent>
