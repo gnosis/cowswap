@@ -15,7 +15,6 @@ import {
   resetClaimUi,
   ClaimStatus,
   updateInvestError,
-  updateInvestApproval,
 } from './actions'
 
 export const initialState: ClaimState = {
@@ -42,7 +41,6 @@ export type InvestClaim = {
   index: number
   investedAmount: string
   error?: string
-  approved?: boolean
 }
 
 export type ClaimState = {
@@ -107,9 +105,6 @@ export default createReducer(initialState, (builder) =>
     })
     .addCase(updateInvestError, (state, { payload: { index, error } }) => {
       state.investFlowData[index].error = error
-    })
-    .addCase(updateInvestApproval, (state, { payload: { index, approved } }) => {
-      state.investFlowData[index].approved = approved
     })
     .addCase(setSelected, (state, { payload }) => {
       state.selected = payload

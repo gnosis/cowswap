@@ -54,7 +54,6 @@ import {
   ClaimStatus,
   resetClaimUi,
   updateInvestError,
-  updateInvestApproval,
 } from '../actions'
 import { EnhancedUserClaimData } from 'pages/Claim/types'
 import { supportedChainId } from 'utils/supportedChainId'
@@ -772,7 +771,6 @@ export function useClaimDispatchers() {
       updateInvestError: (payload: { index: number; error: string | undefined }) =>
         dispatch(updateInvestError(payload)),
       // claim row selection
-      updateInvestApproval: (payload: { index: number; approved: boolean }) => dispatch(updateInvestApproval(payload)),
       setSelected: (payload: number[]) => dispatch(setSelected(payload)),
       setSelectedAll: (payload: boolean) => dispatch(setSelectedAll(payload)),
       // reset claim ui

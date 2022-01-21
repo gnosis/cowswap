@@ -48,7 +48,7 @@ export default function FooterNavButtons({
   } = useClaimDispatchers()
 
   const hasError = useMemo(() => {
-    return investFlowData.some(({ error, approved }) => Boolean(error) || !approved)
+    return investFlowData.some(({ error }) => Boolean(error))
   }, [investFlowData])
 
   const isInputAddressValid = isAddress(resolvedAddress || '')

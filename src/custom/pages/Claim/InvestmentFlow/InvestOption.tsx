@@ -26,11 +26,12 @@ const ErrorMsgs = {
   InsufficientBalance: (symbol = '') => `Insufficient ${symbol} balance to cover investment amount`,
   OverMaxInvestment: `Your investment amount can't be above the maximum investment allowed`,
   InvestmentIsZero: `Your investment amount can't be zero`,
+  NotApproved: (symbol = '') => `Please approve ${symbol} token`,
 }
 
 export default function InvestOption({ approveData, claim, optionIndex }: InvestOptionProps) {
   const { currencyAmount, price, cost: maxCost } = claim
-  const { updateInvestAmount, updateInvestError, updateInvestApproval } = useClaimDispatchers()
+  const { updateInvestAmount, updateInvestError } = useClaimDispatchers()
   const { investFlowData, activeClaimAccount } = useClaimState()
 
   const { handleSetError, handleCloseError, ErrorModal } = useErrorModal()
@@ -60,51 +61,8 @@ export default function InvestOption({ approveData, claim, optionIndex }: Invest
     }
 
     const value = maxCost.greaterThan(balance) ? balance : maxCost
-    const amount = value.quotient.toString()
-
-    updateInvestAmount({ index: optionIndex, amount })
     setTypedValue(value.toExact() || '')
-    updateInvestError({ index: optionIndex, error: undefined })
-
-    setPercentage(_formatPercentage(calculatePercentage(balance, maxCost)))
-  }, [balance, maxCost, noBalance, optionIndex, updateInvestAmount, updateInvestError])
-
-  // on input field change handler
-  const onInputChange = useCallback(
-    (value: string) => {
-      setTypedValue(value)
-      updateInvestError({ index: optionIndex, error: undefined })
-
-      // parse to CurrencyAmount
-      const parsedAmount = tryParseAmount(value, token)
-
-      // no amount/necessary params, return 0
-      if (!parsedAmount || !maxCost || !balance || !token) {
-        updateInvestAmount({ index: optionIndex, amount: '0' })
-        setPercentage('0')
-        return
-      }
-
-      let errorMsg = null
-
-      if (parsedAmount.greaterThan(maxCost)) errorMsg = ErrorMsgs.OverMaxInvestment
-      else if (parsedAmount.greaterThan(balance)) errorMsg = ErrorMsgs.InsufficientBalance(symbol)
-
-      if (errorMsg) {
-        updateInvestError({ index: optionIndex, error: errorMsg })
-        updateInvestAmount({ index: optionIndex, amount: '0' })
-        setPercentage('0')
-        return
-      }
-
-      // update redux state with new investAmount value
-      updateInvestAmount({ index: optionIndex, amount: parsedAmount.quotient.toString() })
-
-      // update the local state with percentage value
-      setPercentage(_formatPercentage(calculatePercentage(parsedAmount, maxCost)))
-    },
-    [balance, maxCost, optionIndex, symbol, token, updateInvestAmount, updateInvestError]
-  )
+  }, [balance, maxCost, noBalance])
 
   // Cache approveData methods
   const approveCallback = approveData?.approveCallback
@@ -134,47 +92,72 @@ export default function InvestOption({ approveData, claim, optionIndex }: Invest
     [claim, investedAmount]
   )
 
-  // if its claiming for someone else we will set values to max
-  // if there is not enough balance then we will set an error
-  useEffect(() => {
-    if (!isSelfClaiming) {
-      if (!balance || !maxCost) {
-        return
-      }
-
-      if (balance.lessThan(maxCost)) {
-        updateInvestError({ index: optionIndex, error: ErrorMsgs.InsufficientBalance(symbol) })
-      } else {
-        setMaxAmount()
-      }
-    }
-  }, [balance, isSelfClaiming, maxCost, optionIndex, setMaxAmount, symbol, updateInvestError])
-
-  // dispatch if the invest option is approved or not (will update on approve state change)
-  // if the option is ETH then its always true since we ignore it
-  useEffect(() => {
-    updateInvestApproval({ index: optionIndex, approved: !isETH ? isApproved : true })
-  }, [isApproved, isETH, optionIndex, updateInvestApproval])
-
-  // check if the invested amount is zero and show error msg and disable review button (will update on input change)
-  useEffect(() => {
-    if (!tryParseAmount(typedValue, token)) {
-      updateInvestError({ index: optionIndex, error: ErrorMsgs.InvestmentIsZero })
-    }
-  }, [typedValue, optionIndex, updateInvestError, token])
-
-  // this will set input and percentage value if there is investedAmount already
-  // this is important if you go back from review page
+  // if there is investmentAmount in redux state for this option set it as typedValue
   useEffect(() => {
     const { investmentCost } = calculateInvestmentAmounts(claim, investedAmount)
 
-    if (!investmentCost) return
+    if (!investmentCost) {
+      return
+    }
 
     if (!investmentCost?.equalTo(JSBI.BigInt(0))) {
-      onInputChange(investmentCost?.toExact())
+      setTypedValue(investmentCost?.toExact())
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  // if we are claiming for someone else we will set values to max
+  useEffect(() => {
+    if (!balance || !maxCost) {
+      return
+    }
+
+    if (!isSelfClaiming && !balance.lessThan(maxCost)) {
+      setMaxAmount()
+    }
+  }, [balance, isSelfClaiming, maxCost, setMaxAmount])
+
+  // handle input value change
+  useEffect(() => {
+    let error = null
+
+    const parsedAmount = tryParseAmount(typedValue, token)
+
+    if (!maxCost || !balance) {
+      return
+    }
+
+    // set different errors in order of importance
+    if (balance.lessThan(maxCost) && !isSelfClaiming) {
+      error = ErrorMsgs.InsufficientBalance(symbol)
+    } else if (!isETH && !isApproved) {
+      error = ErrorMsgs.NotApproved(symbol)
+    } else if (!parsedAmount) {
+      error = ErrorMsgs.InvestmentIsZero
+    } else if (parsedAmount.greaterThan(maxCost)) {
+      error = ErrorMsgs.OverMaxInvestment
+    } else if (parsedAmount.greaterThan(balance)) {
+      error = ErrorMsgs.InsufficientBalance(symbol)
+    }
+
+    if (error) {
+      // if there is error set it in redux
+      updateInvestError({ index: optionIndex, error })
+    } else {
+      if (!parsedAmount) {
+        return
+      }
+      // update redux state to remove errro for this field
+      updateInvestError({ index: optionIndex, error: undefined })
+
+      // update redux state with new investAmount value
+      updateInvestAmount({ index: optionIndex, amount: parsedAmount.quotient.toString() })
+
+      // update the local state with percentage value
+      setPercentage(_formatPercentage(calculatePercentage(parsedAmount, maxCost)))
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [typedValue, optionIndex, updateInvestError, token, isETH, isApproved, symbol, maxCost, updateInvestAmount])
 
   return (
     <InvestTokenGroup>
@@ -266,7 +249,7 @@ export default function InvestOption({ approveData, claim, optionIndex }: Invest
                 )}
               </span>
               <StyledNumericalInput
-                onUserInput={onInputChange}
+                onUserInput={(value) => setTypedValue(value)}
                 disabled={noBalance || !isSelfClaiming}
                 placeholder="0"
                 $loading={false}
