@@ -25,10 +25,13 @@ const BLOCKS_PER_FETCH = 120 // 30min. It would actually suffice to check once, 
 
 export default function useIsAnySwapAffectedUser() {
   const { chainId, account } = useActiveWeb3React()
-  const result = useMultipleContractSingleData(AFFECTED_TOKENS, ERC20_INTERFACE, 'allowance', [
-    account || ZERO_ADDRESS,
-    ANYSWAP_V4_CONTRACT,
-  ], { blocksPerFetch: BLOCKS_PER_FETCH })
+  const result = useMultipleContractSingleData(
+    AFFECTED_TOKENS,
+    ERC20_INTERFACE,
+    'allowance',
+    [account || ZERO_ADDRESS, ANYSWAP_V4_CONTRACT],
+    { blocksPerFetch: BLOCKS_PER_FETCH }
+  )
 
   const isAffected = useMemo(() => {
     // The error affects Mainnet
@@ -38,7 +41,7 @@ export default function useIsAnySwapAffectedUser() {
 
     // Check if any of the tokens has allowance in the router contract
     const hasAllowance = result.some(({ result, loading, error, valid }) => {
-      const allowance = valid && !loading && !error && result ? result[0] as BigNumber : undefined
+      const allowance = valid && !loading && !error && result ? (result[0] as BigNumber) : undefined
       return allowance ? !allowance.isZero() : false
     })
 
