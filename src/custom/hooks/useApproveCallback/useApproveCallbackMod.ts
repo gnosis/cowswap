@@ -59,6 +59,14 @@ export function useApproveCallback({
     ====
     amountToApprove: ${amountToApprove?.toExact()}
     raw: ${amountToApprove?.quotient.toString()}
+    ====
+    Needs approval?: ${
+      !amountToCheckAgainstAllowance && !amountToApprove
+        ? 'Unknown - no amounts'
+        : currentAllowance && amountToApprove
+        ? currentAllowance.lessThan(amountToCheckAgainstAllowance || amountToApprove)
+        : 'unknown no currentAllowance'
+    }
   `)
   }
   // check the current approval status
@@ -67,20 +75,13 @@ export function useApproveCallback({
     if (amountToApprove.currency.isNative) return ApprovalState.APPROVED
     // we might not have enough data to know whether or not we need to approve
     if (!currentAllowance) return ApprovalState.UNKNOWN
-    // is amountToCheckAgainstAllowance < allowance
-    // if TRUE = need to approve
-    const optionalAmountNeedsApproval = !!amountToCheckAgainstAllowance?.greaterThan(currentAllowance)
-    // is amountToApprove > allowance
-    // if TRUE = need to approve
-    const amountToApproveNeedsApproval = amountToApprove.greaterThan(currentAllowance)
 
-    // Return approval state
-    if (optionalAmountNeedsApproval && amountToApproveNeedsApproval) {
-      return pendingApproval ? ApprovalState.PENDING : ApprovalState.NOT_APPROVED
-    } else {
-      // Enough allowance
-      return ApprovalState.APPROVED
-    }
+    // amountToApprove will be defined if currentAllowance is
+    return currentAllowance.lessThan(amountToCheckAgainstAllowance || amountToApprove)
+      ? pendingApproval
+        ? ApprovalState.PENDING
+        : ApprovalState.NOT_APPROVED
+      : ApprovalState.APPROVED
   }, [amountToApprove, amountToCheckAgainstAllowance, currentAllowance, pendingApproval, spender])
 
   const tokenContract = useTokenContract(token?.address)
