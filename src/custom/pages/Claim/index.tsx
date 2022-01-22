@@ -33,8 +33,8 @@ import FooterNavButtons from './FooterNavButtons'
 const GNO_CLAIM_APPROVE_MESSAGE = 'Approving GNO for investing in vCOW'
 const USDC_CLAIM_APPROVE_MESSAGE = 'Approving USDC for investing in vCOW'
 
+/* TODO: Replace URLs with the actual final URL destinations */
 export const COW_LINKS = {
-  home: 'https://cow.fi/',
   vCowPost: 'https://cow.fi/',
   stepGuide: 'https://cow.fi/',
 }
