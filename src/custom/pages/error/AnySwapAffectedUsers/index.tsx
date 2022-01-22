@@ -2,7 +2,9 @@ import styled from 'styled-components/macro'
 import Page, { Title, Content, GdocsListStyle } from 'components/Page'
 import { ButtonPrimary } from 'custom/components/Button'
 import cow404IMG from 'assets/cow-swap/cow-404.png'
-import { ExternalLink } from '@src/theme'
+import { ExternalLink as ExternalLinkTheme } from 'theme'
+
+const ExternalLink = styled(ExternalLinkTheme)``
 
 const Wrapper = styled(Page)`
   ${GdocsListStyle}
@@ -25,6 +27,12 @@ const Wrapper = styled(Page)`
     pre {
       display: inline;
     }
+  }
+
+  ${ExternalLink} {
+    text-decoration: underline;
+    font-weight: 800;
+    color: ${({ theme }) => theme.primary1};
   }
 `
 
