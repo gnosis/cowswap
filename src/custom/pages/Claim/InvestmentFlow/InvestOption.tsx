@@ -183,7 +183,7 @@ export default function InvestOption({ approveData, claim, optionIndex }: Invest
       }
       // basically the magic happens in this block
 
-      // update redux state to remove errro for this field
+      // update redux state to remove error for this field
       resetInputError()
 
       // update redux state with new investAmount value
