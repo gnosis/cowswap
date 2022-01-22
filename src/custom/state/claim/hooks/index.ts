@@ -727,12 +727,12 @@ function fetchClaims(account: string, chainId: number): Promise<UserClaims> {
     FETCH_CLAIM_PROMISES[claimKey] ??
     (FETCH_CLAIM_PROMISES[claimKey] = fetchClaimsMapping(chainId)
       .then((mapping) => {
-        const sorted = Object.keys(mapping).sort((a, b) => (a.toLowerCase() < b.toLowerCase() ? -1 : 1))
+        const sorted = Object.keys(mapping).sort((a, b) => (a < b ? -1 : 1))
 
         for (const startingAddress of sorted) {
           const lastAddress = mapping[startingAddress]
-          if (startingAddress.toLowerCase() <= lowerCasedAddress) {
-            if (lowerCasedAddress <= lastAddress.toLowerCase()) {
+          if (startingAddress <= lowerCasedAddress) {
+            if (lowerCasedAddress <= lastAddress) {
               return startingAddress
             }
           } else {
