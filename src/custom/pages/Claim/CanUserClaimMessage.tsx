@@ -43,7 +43,7 @@ export default function CanUserClaimMessage({ hasClaims, isAirdropOnly, handleCh
           <ButtonSecondary onClick={handleChangeAccount} padding="0">
             Try another account
           </ButtonSecondary>{' '}
-          or <ExternalLink href={COW_LINKS.vCowPost}>read more about vCOW</ExternalLink>
+          or try in a different network.
         </Trans>
       </IntroDescription>
     )
