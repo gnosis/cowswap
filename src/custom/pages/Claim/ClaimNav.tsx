@@ -1,4 +1,3 @@
-import { useMemo } from 'react'
 import { ButtonSecondary } from 'components/Button'
 import { shortenAddress } from 'utils'
 import { TopNav, ClaimAccount, ClaimAccountButtons } from './styled'
