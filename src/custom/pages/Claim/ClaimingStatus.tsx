@@ -31,6 +31,8 @@ export default function ClaimingStatus() {
 
   if (!account || !chainId || !activeClaimAccount || claimStatus === ClaimStatus.DEFAULT) return null
 
+  const currency = chainId ? V_COW[chainId] : undefined
+
   return (
     <ConfirmOrLoadingWrapper activeBG={true}>
       <ConfirmedIcon>
@@ -62,7 +64,7 @@ export default function ClaimingStatus() {
           {isSelfClaiming ? (
             <Trans>
               You can see your vCOW balance in the <Link to="/profile">Profile</Link>
-              <AddToMetamask currency={V_COW[chainId]} />
+              <AddToMetamask currency={currency} />
             </Trans>
           ) : (
             <Trans>
