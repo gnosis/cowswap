@@ -7,6 +7,7 @@ import { useClaimState, useClaimTimeInfo } from 'state/claim/hooks'
 import { ClaimStatus } from 'state/claim/actions'
 import { formatDateWithTimezone } from 'utils/time'
 import { COW_LINKS } from 'pages/Claim/index'
+import useNetworkName from 'hooks/useNetworkName'
 
 type ClaimIntroductionProps = Pick<ClaimCommonTypes, 'hasClaims' | 'handleChangeAccount'> & {
   isAirdropOnly: boolean
@@ -14,6 +15,7 @@ type ClaimIntroductionProps = Pick<ClaimCommonTypes, 'hasClaims' | 'handleChange
 
 export default function CanUserClaimMessage({ hasClaims, isAirdropOnly, handleChangeAccount }: ClaimIntroductionProps) {
   const { activeClaimAccount, claimStatus } = useClaimState()
+  const network = useNetworkName()
 
   const { airdropDeadline } = useClaimTimeInfo()
 
@@ -39,7 +41,7 @@ export default function CanUserClaimMessage({ hasClaims, isAirdropOnly, handleCh
     return (
       <IntroDescription center>
         <Trans>
-          Unfortunately this account is not eligible for any vCOW claims. <br />
+          Unfortunately this account is not eligible for any vCOW claims in {network}. <br />
           <ButtonSecondary onClick={handleChangeAccount} padding="0">
             Try another account
           </ButtonSecondary>{' '}
