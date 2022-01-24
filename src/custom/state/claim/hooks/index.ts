@@ -480,7 +480,7 @@ export function useClaimCallback(account: string | null | undefined): {
       claimInput: ClaimInput[],
       claimArgs?: GetClaimManyArgsResult['args']
     ): Promise<BigNumber | undefined> {
-      if (!vCowContract || !chainId) {
+      if (!vCowContract) {
         return
       }
 
@@ -496,22 +496,16 @@ export function useClaimCallback(account: string | null | undefined): {
           return
         }
 
-        const estimatedGas = await vCowContract.estimateGas.claimMany(...args)
-
-        const a = calculateGasMargin(chainId, estimatedGas)
-
-        console.table([
-          [`estimated`, estimatedGas.toString()],
-          ['withMargin', a.toString()],
-        ])
-
-        return a
+        // Why unnecessarily awaiting here?
+        // Because I want to handle errors here.
+        // Not awaiting means the caller will have to deal with that, which I don't want in this case
+        return await vCowContract.estimateGas.claimMany(...args)
       } catch (e) {
         console.debug('Failed to estimate gas for claiming:', e.message)
         return
       }
     },
-    [chainId, getClaimArgs, vCowContract]
+    [getClaimArgs, vCowContract]
   )
 
   const claimCallback = useCallback(
@@ -530,6 +524,9 @@ export function useClaimCallback(account: string | null | undefined): {
       if (!connectedAccount) {
         throw new Error('Not connected')
       }
+      if (!chainId) {
+        throw new Error('No chainId')
+      }
       if (!vCowContract) {
         throw new Error('vCOW contract not present')
       }
@@ -545,12 +542,16 @@ export function useClaimCallback(account: string | null | undefined): {
 
       const gasLimit = await estimateGasCallback(claimInput, args)
 
+      if (!gasLimit) {
+        throw new Error('Not able to estimate gasLimit')
+      }
+
       const vCowAmount = CurrencyAmount.fromRawAmount(vCowToken, totalClaimedAmount)
       const formattedVCowAmount = formatSmartLocaleAware(vCowAmount, AMOUNT_PRECISION) || '0'
 
       const extendedArgs = _extendFinalArg(args, {
         from: connectedAccount, // add the `from` as the connected account
-        gasLimit,
+        gasLimit: calculateGasMargin(chainId, gasLimit),
       })
 
       return vCowContract.claimMany(...extendedArgs).then((response: TransactionResponse) => {
@@ -562,7 +563,7 @@ export function useClaimCallback(account: string | null | undefined): {
         return formattedVCowAmount
       })
     },
-    [account, addTransaction, connectedAccount, estimateGasCallback, getClaimArgs, vCowContract, vCowToken]
+    [account, addTransaction, chainId, connectedAccount, estimateGasCallback, getClaimArgs, vCowContract, vCowToken]
   )
 
   return { claimCallback, estimateGasCallback }
