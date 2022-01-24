@@ -774,6 +774,7 @@ export function useClaimDispatchers() {
       // claiming
       setClaimStatus: (payload: ClaimStatus) => dispatch(setClaimStatus(payload)),
       setClaimedAmount: (payload: string) => dispatch(setClaimedAmount(payload)),
+      setEstimatedGas: (payload: string) => dispatch(setEstimatedGas(payload)),
       // investing
       setIsInvestFlowActive: (payload: boolean) => dispatch(setIsInvestFlowActive(payload)),
       setInvestFlowStep: (payload: number) => dispatch(setInvestFlowStep(payload)),
