@@ -29,8 +29,7 @@ const ErrorMsgs = {
   OverMaxInvestment: `Your investment amount can't be above the maximum investment allowed`,
   InvestmentIsZero: `Your investment amount can't be zero`,
   NotApproved: (symbol = '') => `Please approve ${symbol} token`,
-  InsufficientNativeBalance: (symbol = '', action = "won't") =>
-    `You ${action} have enough ${symbol} to pay the network transaction fee`,
+  InsufficientNativeBalance: (symbol = '') => `You might not have enough ${symbol} to pay the network transaction fee`,
 }
 
 export default function InvestOption({ approveData, claim, optionIndex }: InvestOptionProps) {
@@ -165,11 +164,7 @@ export default function InvestOption({ approveData, claim, optionIndex }: Invest
     } else if (parsedAmount.greaterThan(balance)) {
       error = ErrorMsgs.InsufficientBalance(token?.symbol)
     } else if (isNative && parsedAmount && singleTxCost?.add(parsedAmount).greaterThan(balance)) {
-      if (isSmartContractWallet) {
-        warning = ErrorMsgs.InsufficientNativeBalance(token?.symbol, 'might not')
-      } else {
-        error = ErrorMsgs.InsufficientNativeBalance(token?.symbol)
-      }
+      warning = ErrorMsgs.InsufficientNativeBalance(token?.symbol)
     }
     setInputWarning(warning || '')
 
