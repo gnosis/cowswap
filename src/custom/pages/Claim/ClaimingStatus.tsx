@@ -9,6 +9,7 @@ import { ExplorerDataType, getExplorerLink } from 'utils/getExplorerLink'
 import { useAllClaimingTransactions } from 'state/enhancedTransactions/hooks'
 import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
+import { ExplorerLink } from 'components/ExplorerLink'
 // import { formatSmartLocationAware } from 'utils/format'
 
 export default function ClaimingStatus() {
@@ -62,9 +63,14 @@ export default function ClaimingStatus() {
               🐄🎉
             </span>
           </Trans>
-          {isSelfClaiming && (
+          {isSelfClaiming ? (
             <Trans>
-              You can see your balance in the <Link to="/profile">Profile</Link>
+              You can see your vCOW balance in the <Link to="/profile">Profile</Link>
+            </Trans>
+          ) : (
+            <Trans>
+              You have just claimed on behalf of{' '}
+              <ExplorerLink id={activeClaimAccount} type={ExplorerDataType.ADDRESS} />
             </Trans>
           )}
         </>
