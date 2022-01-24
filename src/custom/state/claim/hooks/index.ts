@@ -54,6 +54,7 @@ import {
   ClaimStatus,
   resetClaimUi,
   updateInvestError,
+  setEstimatedGas,
 } from '../actions'
 import { EnhancedUserClaimData } from 'pages/Claim/types'
 import { supportedChainId } from 'utils/supportedChainId'
@@ -415,6 +416,7 @@ function _validateClaimable(
  */
 export function useClaimCallback(account: string | null | undefined): {
   claimCallback: (claimInputs: ClaimInput[]) => Promise<string>
+  estimateGasCallback: (claimInputs: ClaimInput[]) => Promise<BigNumber | undefined>
 } {
   // get claim data for given account
   const { chainId, account: connectedAccount } = useActiveWeb3React()
@@ -442,6 +444,76 @@ export function useClaimCallback(account: string | null | undefined): {
     },
   })
 
+  const getClaimArgs = useCallback(
+    async function (claimInput: ClaimInput[]): Promise<GetClaimManyArgsResult> {
+      if (claims.length === 0) {
+        throw new Error('User has no claims')
+      }
+      if (claimInput.length === 0) {
+        throw new Error('No claims selected')
+      }
+      if (!account) {
+        throw new Error('Claim account not set')
+      }
+      if (!connectedAccount) {
+        throw new Error('Not connected')
+      }
+      if (!nativeTokenPrice) {
+        throw new Error("There's no native token price")
+      }
+
+      _validateClaimable(claims, claimInput, isInvestmentWindowOpen, isAirdropWindowOpen)
+
+      return _getClaimManyArgs({
+        claimInput,
+        claims,
+        account,
+        connectedAccount,
+        nativeTokenPrice,
+      })
+    },
+    [account, claims, connectedAccount, isAirdropWindowOpen, isInvestmentWindowOpen, nativeTokenPrice]
+  )
+
+  const estimateGasCallback = useCallback(
+    async function (
+      claimInput: ClaimInput[],
+      claimArgs?: GetClaimManyArgsResult['args']
+    ): Promise<BigNumber | undefined> {
+      if (!vCowContract || !chainId) {
+        return
+      }
+
+      try {
+        let args = claimArgs
+        if (!claimArgs) {
+          const { args: _args } = await getClaimArgs(claimInput)
+          args = _args
+        }
+
+        if (!args) {
+          console.debug('Failed to estimate gas for claiming: There were no valid claims selected')
+          return
+        }
+
+        const estimatedGas = await vCowContract.estimateGas.claimMany(...args)
+
+        const a = calculateGasMargin(chainId, estimatedGas)
+
+        console.table([
+          [`estimated`, estimatedGas.toString()],
+          ['withMargin', a.toString()],
+        ])
+
+        return a
+      } catch (e) {
+        console.debug('Failed to estimate gas for claiming:', e.message)
+        return
+      }
+    },
+    [chainId, getClaimArgs, vCowContract]
+  )
+
   const claimCallback = useCallback(
     /**
      * Claim callback that sends tx to wallet to claim whatever user selected
@@ -449,68 +521,51 @@ export function useClaimCallback(account: string | null | undefined): {
      * Returns a string with the formatted vCow amount being claimed
      */
     async function (claimInput: ClaimInput[]): Promise<string> {
-      if (
-        claims.length === 0 ||
-        claimInput.length === 0 ||
-        !account ||
-        !connectedAccount ||
-        !chainId ||
-        !vCowContract ||
-        !vCowToken ||
-        !nativeTokenPrice
-      ) {
-        throw new Error("Not initialized, can't claim")
+      if (claimInput.length === 0) {
+        throw new Error('No claims selected')
+      }
+      if (!account) {
+        throw new Error('Claim account not set')
+      }
+      if (!connectedAccount) {
+        throw new Error('Not connected')
+      }
+      if (!vCowContract) {
+        throw new Error('vCOW contract not present')
+      }
+      if (!vCowToken) {
+        throw new Error('vCOW token not present')
       }
 
-      _validateClaimable(claims, claimInput, isInvestmentWindowOpen, isAirdropWindowOpen)
-
-      const { args, totalClaimedAmount } = _getClaimManyArgs({
-        claimInput,
-        claims,
-        account,
-        connectedAccount,
-        nativeTokenPrice,
-      })
+      const { args, totalClaimedAmount } = await getClaimArgs(claimInput)
 
       if (!args) {
-        throw new Error('There were no valid claims selected')
+        throw new Error('No valid claims selected')
       }
+
+      const gasLimit = await estimateGasCallback(claimInput, args)
 
       const vCowAmount = CurrencyAmount.fromRawAmount(vCowToken, totalClaimedAmount)
       const formattedVCowAmount = formatSmartLocaleAware(vCowAmount, AMOUNT_PRECISION) || '0'
 
-      return vCowContract.estimateGas.claimMany(...args).then((estimatedGas) => {
-        // Last item in the array contains the call overrides
-        const extendedArgs = _extendFinalArg(args, {
-          from: connectedAccount, // add the `from` as the connected account
-          gasLimit: calculateGasMargin(chainId, estimatedGas), // add the estimated gas limit
-        })
+      const extendedArgs = _extendFinalArg(args, {
+        from: connectedAccount, // add the `from` as the connected account
+        gasLimit,
+      })
 
-        return vCowContract.claimMany(...extendedArgs).then((response: TransactionResponse) => {
-          addTransaction({
-            hash: response.hash,
-            summary: `Claim ${formattedVCowAmount} vCOW`,
-            claim: { recipient: account, indices: args[0] as number[] },
-          })
-          return formattedVCowAmount
+      return vCowContract.claimMany(...extendedArgs).then((response: TransactionResponse) => {
+        addTransaction({
+          hash: response.hash,
+          summary: `Claim ${formattedVCowAmount} vCOW`,
+          claim: { recipient: account, indices: args[0] as number[] },
         })
+        return formattedVCowAmount
       })
     },
-    [
-      account,
-      addTransaction,
-      chainId,
-      claims,
-      connectedAccount,
-      isAirdropWindowOpen,
-      isInvestmentWindowOpen,
-      nativeTokenPrice,
-      vCowContract,
-      vCowToken,
-    ]
+    [account, addTransaction, connectedAccount, estimateGasCallback, getClaimArgs, vCowContract, vCowToken]
   )
 
-  return { claimCallback }
+  return { claimCallback, estimateGasCallback }
 }
 
 type GetClaimManyArgsParams = {
