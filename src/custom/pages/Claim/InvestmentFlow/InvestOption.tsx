@@ -29,7 +29,8 @@ const ErrorMsgs = {
   OverMaxInvestment: `Your investment amount can't be above the maximum investment allowed`,
   InvestmentIsZero: `Your investment amount can't be zero`,
   NotApproved: (symbol = '') => `Please approve ${symbol} token`,
-  InsufficientNativeBalance: (symbol = '') => `You might not have enough ${symbol} to pay the network transaction fee`,
+  InsufficientNativeBalance: (symbol = '') =>
+    `You might not have enough ${symbol} to pay the for network transaction fee`,
 }
 
 export default function InvestOption({ approveData, claim, optionIndex }: InvestOptionProps) {
