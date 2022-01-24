@@ -1,12 +1,10 @@
 import { Trans } from '@lingui/macro'
 import { ButtonSecondary } from 'components/Button'
-import { ExternalLink } from 'theme'
 import { IntroDescription } from './styled'
 import { ClaimCommonTypes } from './types'
 import { useClaimState, useClaimTimeInfo } from 'state/claim/hooks'
 import { ClaimStatus } from 'state/claim/actions'
 import { formatDateWithTimezone } from 'utils/time'
-import { COW_LINKS } from 'pages/Claim/index'
 import useNetworkName from 'hooks/useNetworkName'
 
 type ClaimIntroductionProps = Pick<ClaimCommonTypes, 'hasClaims' | 'handleChangeAccount'> & {
