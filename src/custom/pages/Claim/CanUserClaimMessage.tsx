@@ -30,7 +30,6 @@ export default function CanUserClaimMessage({ hasClaims, isAirdropOnly, handleCh
             Thank you for being a supporter of CowSwap and the CoW protocol. As an important member of the CowSwap
             Community you may claim vCOW to be used for voting and governance. You can claim your tokens until{' '}
             <i>{formatDateWithTimezone(airdropDeadline)}</i>
-            <ExternalLink href={COW_LINKS.vCowPost}>Read more about vCOW</ExternalLink>
           </Trans>
         </p>
       </IntroDescription>
