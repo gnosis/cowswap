@@ -1,20 +1,19 @@
 import { Trans } from '@lingui/macro'
 import { ConfirmOrLoadingWrapper, ConfirmedIcon, AttemptFooter, CowSpinner } from 'pages/Claim/styled'
-import { ExternalLink } from 'theme'
 import { ClaimStatus } from 'state/claim/actions'
 import { useClaimState } from 'state/claim/hooks'
 import { useActiveWeb3React } from 'hooks/web3'
 import CowProtocolLogo from 'components/CowProtocolLogo'
-import { ExplorerDataType, getExplorerLink } from 'utils/getExplorerLink'
 import { useAllClaimingTransactions } from 'state/enhancedTransactions/hooks'
 import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { ExplorerLink } from 'components/ExplorerLink'
-// import { formatSmartLocationAware } from 'utils/format'
+import { EnhancedTransactionLink } from 'components/EnhancedTransactionLink'
+import { ExplorerDataType } from 'utils/getExplorerLink'
 
 export default function ClaimingStatus() {
   const { chainId, account } = useActiveWeb3React()
-  const { activeClaimAccount, claimStatus /* , claimedAmount */ } = useClaimState()
+  const { activeClaimAccount, claimStatus, claimedAmount } = useClaimState()
 
   const allClaimTxs = useAllClaimingTransactions()
   const lastClaimTx = useMemo(() => {
@@ -42,8 +41,7 @@ export default function ClaimingStatus() {
         )}
       </ConfirmedIcon>
       <h3>{isConfirmed ? 'Claimed!' : 'Claiming'}</h3>
-      {/* TODO: fix this in new pr */}
-      {!isConfirmed && <Trans>{/* formatSmartLocationAware(claimedAmount) || '0' */} vCOW</Trans>}
+      {!isConfirmed && <Trans>{claimedAmount} vCOW</Trans>}
 
       {isConfirmed && (
         <>
@@ -51,8 +49,7 @@ export default function ClaimingStatus() {
             <h3>You have successfully claimed</h3>
           </Trans>
           <Trans>
-            {/* TODO: fix this in new pr */}
-            <p>{/* formatSmartLocationAware(claimedAmount) || '0' */} vCOW</p>
+            <p>{claimedAmount} vCOW</p>
           </Trans>
           <Trans>
             <span role="img" aria-label="party-hat">
@@ -82,14 +79,7 @@ export default function ClaimingStatus() {
           </p>
         </AttemptFooter>
       )}
-      {isSubmitted && chainId && lastClaimTx?.hash && (
-        <ExternalLink
-          href={getExplorerLink(chainId, lastClaimTx.hash, ExplorerDataType.TRANSACTION)}
-          style={{ zIndex: 99, marginTop: '20px' }}
-        >
-          <Trans>View transaction on Explorer</Trans>
-        </ExternalLink>
-      )}
+      {isSubmitted && chainId && lastClaimTx?.hash && <EnhancedTransactionLink tx={lastClaimTx} />}
     </ConfirmOrLoadingWrapper>
   )
 }
