@@ -69,6 +69,7 @@ export default function Claim() {
     // claiming
     setClaimStatus,
     setClaimedAmount,
+    setEstimatedGas,
     // investing
     setIsInvestFlowActive,
     // claim row selection
@@ -96,7 +97,7 @@ export default function Claim() {
   const isPaidClaimsOnly = useMemo(() => hasPaidClaim(userClaimData) && !hasFreeClaim(userClaimData), [userClaimData])
 
   // claim callback
-  const { claimCallback } = useClaimCallback(activeClaimAccount)
+  const { claimCallback, estimateGasCallback } = useClaimCallback(activeClaimAccount)
 
   // handle change account
   const handleChangeAccount = () => {
@@ -121,6 +122,11 @@ export default function Claim() {
     const inputData = freeClaims.map(({ index }) => ({ index }))
     return inputData.concat(paidClaims)
   }, [investFlowData, userClaimData])
+
+  // track gas price estimation for given input data
+  useEffect(() => {
+    estimateGasCallback(claimInputData).then((gas) => setEstimatedGas(gas?.toString() || ''))
+  }, [claimInputData, estimateGasCallback, setEstimatedGas])
 
   // handle submit claim
   const handleSubmitClaim = useCallback(() => {
