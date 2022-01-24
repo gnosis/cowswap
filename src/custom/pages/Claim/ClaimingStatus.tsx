@@ -1,18 +1,21 @@
 import { Trans } from '@lingui/macro'
 import { ConfirmOrLoadingWrapper, ConfirmedIcon, AttemptFooter, CowSpinner } from 'pages/Claim/styled'
-import { ExternalLink } from 'theme'
 import { ClaimStatus } from 'state/claim/actions'
 import { useClaimState } from 'state/claim/hooks'
 import { useActiveWeb3React } from 'hooks/web3'
 import CowProtocolLogo from 'components/CowProtocolLogo'
-import { ExplorerDataType, getExplorerLink } from 'utils/getExplorerLink'
 import { useAllClaimingTransactions } from 'state/enhancedTransactions/hooks'
 import { useMemo } from 'react'
-// import { formatSmartLocationAware } from 'utils/format'
+import { Link } from 'react-router-dom'
+import { ExplorerLink } from 'components/ExplorerLink'
+import { EnhancedTransactionLink } from 'components/EnhancedTransactionLink'
+import { ExplorerDataType } from 'utils/getExplorerLink'
+import { V_COW } from 'constants/tokens'
+import AddToMetamask from 'components/AddToMetamask'
 
 export default function ClaimingStatus() {
-  const { chainId } = useActiveWeb3React()
-  const { activeClaimAccount, claimStatus /* , claimedAmount */ } = useClaimState()
+  const { chainId, account } = useActiveWeb3React()
+  const { activeClaimAccount, claimStatus, claimedAmount } = useClaimState()
 
   const allClaimTxs = useAllClaimingTransactions()
   const lastClaimTx = useMemo(() => {
@@ -24,8 +27,11 @@ export default function ClaimingStatus() {
   const isConfirmed = claimStatus === ClaimStatus.CONFIRMED
   const isAttempting = claimStatus === ClaimStatus.ATTEMPTING
   const isSubmitted = claimStatus === ClaimStatus.SUBMITTED
+  const isSelfClaiming = account === activeClaimAccount
 
-  if (!activeClaimAccount || claimStatus === ClaimStatus.DEFAULT) return null
+  if (!account || !chainId || !activeClaimAccount || claimStatus === ClaimStatus.DEFAULT) return null
+
+  const currency = chainId ? V_COW[chainId] : undefined
 
   return (
     <ConfirmOrLoadingWrapper activeBG={true}>
@@ -39,8 +45,7 @@ export default function ClaimingStatus() {
         )}
       </ConfirmedIcon>
       <h3>{isConfirmed ? 'Claimed!' : 'Claiming'}</h3>
-      {/* TODO: fix this in new pr */}
-      {!isConfirmed && <Trans>{/* formatSmartLocationAware(claimedAmount) || '0' */} vCOW</Trans>}
+      {!isConfirmed && <Trans>{claimedAmount} vCOW</Trans>}
 
       {isConfirmed && (
         <>
@@ -48,18 +53,29 @@ export default function ClaimingStatus() {
             <h3>You have successfully claimed</h3>
           </Trans>
           <Trans>
-            {/* TODO: fix this in new pr */}
-            <p>{/* formatSmartLocationAware(claimedAmount) || '0' */} vCOW</p>
+            <p>{claimedAmount} vCOW</p>
           </Trans>
           <Trans>
             <span role="img" aria-label="party-hat">
               🎉🐮{' '}
             </span>
-            Welcome to the COWmunnity! :){' '}
-            <span role="img" aria-label="party-hat">
-              🐄🎉
-            </span>
+            <p>Welcome to the COWmunnity! :)</p>
           </Trans>
+          {isSelfClaiming ? (
+            <Trans>
+              <p>
+                You can see your vCOW balance in the <Link to="/profile">Profile</Link>
+              </p>
+              <AddToMetamask currency={currency} />
+            </Trans>
+          ) : (
+            <Trans>
+              <p>
+                You have just claimed on behalf of{' '}
+                <ExplorerLink id={activeClaimAccount} type={ExplorerDataType.ADDRESS} />
+              </p>
+            </Trans>
+          )}
         </>
       )}
       {isAttempting && (
@@ -69,14 +85,7 @@ export default function ClaimingStatus() {
           </p>
         </AttemptFooter>
       )}
-      {isSubmitted && chainId && lastClaimTx?.hash && (
-        <ExternalLink
-          href={getExplorerLink(chainId, lastClaimTx.hash, ExplorerDataType.TRANSACTION)}
-          style={{ zIndex: 99, marginTop: '20px' }}
-        >
-          <Trans>View transaction on Explorer</Trans>
-        </ExternalLink>
-      )}
+      {isSubmitted && chainId && lastClaimTx?.hash && <EnhancedTransactionLink tx={lastClaimTx} />}
     </ConfirmOrLoadingWrapper>
   )
 }

@@ -1,5 +1,7 @@
 import styled from 'styled-components/macro'
 import { CheckCircle, Frown } from 'react-feather'
+import BadgeOriginal from 'components/Badge'
+
 import { Icon } from 'components/CowProtocolLogo'
 import { ButtonPrimary, ButtonSecondary } from 'components/Button'
 import { transparentize, darken } from 'polished'
@@ -23,6 +25,7 @@ export const PageWrapper = styled.div`
   background: ${({ theme }) => theme.bg1};
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
+    padding: 16px;
     border-radius: var(--border-radius-small);
   `};
 
@@ -162,8 +165,8 @@ ${ButtonPrimary} {
   padding: 24px 16px;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
-      margin: 0 auto 24px;
-    `};
+    margin: 0 auto 24px;
+  `};
 
   &[disabled] {
     cursor: not-allowed;
@@ -458,6 +461,10 @@ export const ClaimTotal = styled.div`
     margin: 0;
     font-size: 30px;
     font-weight: bold;
+
+    ${({ theme }) => theme.mediaWidth.upToSmall`
+      font-size: 16px;
+    `};
   }
 `
 
@@ -527,10 +534,18 @@ export const EligibleBanner = styled.div`
   margin: 0 auto 16px;
   font-weight: 600;
 
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    text-align: left;
+    padding: 18px;
+  `}
   > img {
     margin: 0 6px 0 0;
     width: 21px;
     height: 21px;
+
+    ${({ theme }) => theme.mediaWidth.upToSmall`
+      margin: 0 12px 0 6px;
+   `}
   }
 `
 
@@ -643,24 +658,26 @@ export const CheckAddress = styled.div`
 
   ${Icon} {
     margin: 0 auto;
-  }
 
-  > h1 {
-    font-size: 32px;
-    font-weight: 300;
-    text-align: center;
-  }
+    ${({ theme }) => theme.mediaWidth.upToSmall`
+      margin: 0 0 0 6px;
+   `}
+    > h1 {
+      font-size: 32px;
+      font-weight: 300;
+      text-align: center;
+    }
 
-  > h1 > b {
-    font-weight: bold;
-  }
+    > h1 > b {
+      font-weight: bold;
+    }
 
-  > p {
-    text-align: center;
-    font-size: 18px;
-    line-height: 1.2;
-    margin: 0 0 24px;
-  }
+    > p {
+      text-align: center;
+      font-size: 18px;
+      line-height: 1.2;
+      margin: 0 0 24px;
+    }
 `
 
 export const ClaimBreakdown = styled.div`
@@ -678,6 +695,7 @@ export const ClaimBreakdown = styled.div`
 `
 
 export const FooterNavButtons = styled.div`
+  margin-top: 20px;
   display: flex;
   width: 100%;
   flex-flow: column wrap;
@@ -696,6 +714,12 @@ export const FooterNavButtons = styled.div`
       margin: 0 6px 0 0;
     }
   }
+`
+
+export const ReadMoreText = styled.div`
+  margin: 18px 0;
+  text-align: center;
+  font-size: 15px;
 `
 
 export const TopNav = styled.div`
@@ -935,6 +959,10 @@ export const InvestInput = styled.span`
     color: red;
     margin: 12px 0;
     font-size: 15px;
+
+    &.warn {
+      color: orange;
+    }
   }
 
   > div > i {
@@ -1085,6 +1113,10 @@ export const AccountClaimSummary = styled.div`
     font-style: normal;
     word-break: break-all;
   }
+`
+
+export const Badge = styled(BadgeOriginal)`
+  font-size: 11px;
 `
 
 export const CowSpinner = styled.div`

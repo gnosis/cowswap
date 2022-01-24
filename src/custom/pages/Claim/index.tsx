@@ -33,6 +33,12 @@ import FooterNavButtons from './FooterNavButtons'
 const GNO_CLAIM_APPROVE_MESSAGE = 'Approving GNO for investing in vCOW'
 const USDC_CLAIM_APPROVE_MESSAGE = 'Approving USDC for investing in vCOW'
 
+/* TODO: Replace URLs with the actual final URL destinations */
+export const COW_LINKS = {
+  vCowPost: 'https://cow.fi/',
+  stepGuide: 'https://cow.fi/',
+}
+
 export default function Claim() {
   const { account, chainId } = useActiveWeb3React()
 
@@ -62,7 +68,7 @@ export default function Claim() {
     setIsSearchUsed,
     // claiming
     setClaimStatus,
-    // setClaimedAmount, // TODO: uncomment when used
+    setClaimedAmount,
     // investing
     setIsInvestFlowActive,
     // claim row selection
@@ -82,7 +88,7 @@ export default function Claim() {
   // get user claim data
   const userClaimData = useUserEnhancedClaimData(activeClaimAccount)
 
-  // get total unclaimed ammount
+  // get total unclaimed amount
   const unclaimedAmount = useUserUnclaimedAmount(activeClaimAccount)
 
   const hasClaims = useMemo(() => userClaimData.length > 0, [userClaimData])
@@ -120,8 +126,9 @@ export default function Claim() {
     const sendTransaction = (inputData: ClaimInput[]) => {
       setClaimStatus(ClaimStatus.ATTEMPTING)
       claimCallback(inputData)
-        .then((/* res */) => {
+        .then((vCowAmount) => {
           setClaimStatus(ClaimStatus.SUBMITTED)
+          setClaimedAmount(vCowAmount)
         })
         .catch((error) => {
           setClaimStatus(ClaimStatus.DEFAULT)
@@ -137,7 +144,7 @@ export default function Claim() {
       console.log('Starting claiming with', inputData)
       sendTransaction(inputData)
     } else if (investFlowStep == 2) {
-      // Free claimings + selected investment oportunities
+      // Free claims + selected investment opportunities
       const investClaims = prepareInvestClaims(investFlowData, userClaimData)
       inputData.push(...investClaims)
       console.log('Starting claiming with', inputData)
@@ -153,6 +160,7 @@ export default function Claim() {
     investFlowStep,
     setClaimStatus,
     claimCallback,
+    setClaimedAmount,
     handleSetError,
     investFlowData,
     setIsInvestFlowActive,
@@ -214,7 +222,7 @@ export default function Claim() {
         handleChangeAccount={handleChangeAccount}
       />
 
-      {/* Try claiming or inform succesfull claim */}
+      {/* Try claiming or inform successful claim */}
       <ClaimingStatus />
       {/* IS Airdrop + investing (advanced) */}
       <ClaimsTable isAirdropOnly={isAirdropOnly} hasClaims={hasClaims} />
