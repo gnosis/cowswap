@@ -23,7 +23,6 @@ import { calculateInvestmentAmounts, calculatePercentage } from 'state/claim/hoo
 import { AMOUNT_PRECISION, PERCENTAGE_PRECISION } from 'constants/index'
 import { useGasPrices } from 'state/gas/hooks'
 import { AVG_APPROVE_COST_GWEI } from 'components/swap/EthWethWrap/helpers'
-import { useWalletInfo } from 'hooks/useWalletInfo'
 
 const ErrorMsgs = {
   InsufficientBalance: (symbol = '') => `Insufficient ${symbol} balance to cover investment amount`,
@@ -42,7 +41,6 @@ export default function InvestOption({ approveData, claim, optionIndex }: Invest
   const { handleSetError, handleCloseError, ErrorModal } = useErrorModal()
 
   const { account, chainId } = useActiveWeb3React()
-  const { isSmartContractWallet } = useWalletInfo()
 
   const [percentage, setPercentage] = useState<string>('0')
   const [typedValue, setTypedValue] = useState<string>('0')
@@ -209,7 +207,6 @@ export default function InvestOption({ approveData, claim, optionIndex }: Invest
     setInputError,
     resetInputError,
     setInvestedAmount,
-    isSmartContractWallet,
     gasCost,
   ])
 
