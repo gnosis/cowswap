@@ -220,7 +220,7 @@ export default function InvestmentFlow({ hasClaims, isAirdropOnly, ...tokenAppro
           For more details around the token, please read{' '}
           <ExternalLink href={COW_LINKS.vCowPost}>the blog post</ExternalLink>
           .<br /> For more details about the claiming process, please read{' '}
-          <ExternalLink href={COW_LINKS.stepGuide}>step by step guide</ExternalLink>
+          <ExternalLink href={COW_LINKS.stepGuide}>step by step guide</ExternalLink>.
         </p>
       )}
 
