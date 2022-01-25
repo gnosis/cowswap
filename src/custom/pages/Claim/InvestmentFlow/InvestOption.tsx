@@ -3,7 +3,7 @@ import { CurrencyAmount, Percent } from '@uniswap/sdk-core'
 import { BigNumber } from '@ethersproject/bignumber'
 
 import CowProtocolLogo from 'components/CowProtocolLogo'
-import { InvestTokenGroup, TokenLogo, InvestSummary, InvestInput, InvestAvailableBar } from '../styled'
+import { InvestTokenGroup, TokenLogo, InvestSummary, InvestInput, InvestAvailableBar, UnderlineButton } from '../styled'
 import { formatSmartLocaleAware } from 'utils/format'
 import Row from 'components/Row'
 import CheckCircle from 'assets/cow-swap/check.svg'
@@ -25,7 +25,6 @@ import { useGasPrices } from 'state/gas/hooks'
 import { AVG_APPROVE_COST_GWEI } from 'components/swap/EthWethWrap/helpers'
 import { EnhancedUserClaimData } from '../types'
 import { OperationType } from 'components/TransactionConfirmationModal'
-import styled from 'styled-components/macro'
 
 const ErrorMsgs = {
   InsufficientBalance: (symbol = '') => `Insufficient ${symbol} balance to cover investment amount`,
@@ -43,26 +42,6 @@ type InvestOptionProps = {
   closeModal: InvestmentFlowProps['modalCbs']['closeModal']
 }
 
-const UnderlineButton = styled.button`
-  display: flex;
-  align-items: center;
-  gap: 0 6px;
-
-  background: none;
-  border: 0;
-  cursor: pointer;
-  color: #ff5d25;
-  text-decoration: underline;
-  text-align: left;
-  padding: 0;
-
-  &:disabled {
-    text-decoration: none;
-    color: darkgrey;
-    cursor: auto;
-  }
-`
-
 export default function InvestOption({ claim, optionIndex, openModal, closeModal }: InvestOptionProps) {
   const { currencyAmount, price, cost: maxCost } = claim
 
@@ -76,8 +55,8 @@ export default function InvestOption({ claim, optionIndex, openModal, closeModal
   const {
     approvalState: approveState,
     approve: approveCallback,
-    revokeApprove: revokeApprovalCallback,
-    isPendingApproval,
+    // revokeApprove: revokeApprovalCallback, // CURRENTLY TEST ONLY
+    // isPendingApproval, // CURRENTLY TEST ONLY
   } = useApproveCallbackFromClaim({
     openTransactionConfirmationModal: (message: string, operationType: OperationType) =>
       openModal(message, operationType),
@@ -164,6 +143,7 @@ export default function InvestOption({ claim, optionIndex, openModal, closeModal
     }
   }, [approveCallback, handleCloseError, handleSetError, token?.symbol])
 
+  /* // CURRENTLY TEST ONLY
   const handleRevokeApproval = useCallback(async () => {
     // reset errors and close any modals
     handleCloseError()
@@ -183,7 +163,8 @@ export default function InvestOption({ claim, optionIndex, openModal, closeModal
     } finally {
       setApproving(false)
     }
-  }, [handleCloseError, handleSetError, revokeApprovalCallback, token?.symbol])
+  }, [handleCloseError, handleSetError, revokeApprovalCallback, token?.symbol]) 
+  */
 
   const vCowAmount = useMemo(
     () => calculateInvestmentAmounts(claim, investmentAmount)?.vCowAmount,
@@ -339,11 +320,14 @@ export default function InvestOption({ claim, optionIndex, openModal, closeModal
                 )}
               </ButtonConfirmed>
             )}
-            {approveState === ApprovalState.APPROVED && (
-              <UnderlineButton disabled={approving || isPendingApproval} onClick={handleRevokeApproval}>
-                Revoke approval {approving || (isPendingApproval && <Loader size="12px" stroke="white" />)}
-              </UnderlineButton>
-            )}
+            {/* 
+              // CURRENTLY TEST ONLY
+              approveState === ApprovalState.APPROVED && (
+                <UnderlineButton disabled={approving || isPendingApproval} onClick={handleRevokeApproval}>
+                  Revoke approval {approving || (isPendingApproval && <Loader size="12px" stroke="white" />)}
+                </UnderlineButton>
+              )
+             */}
           </span>
 
           <span>
@@ -364,9 +348,10 @@ export default function InvestOption({ claim, optionIndex, openModal, closeModal
                 </i>
                 {/* Button should use the max possible amount the user can invest, considering their balance + max investment allowed */}
                 {!noBalance && isSelfClaiming && (
-                  <button disabled={!isSelfClaiming} onClick={setMaxAmount}>
+                  <UnderlineButton disabled={!isSelfClaiming} onClick={setMaxAmount}>
+                    {' '}
                     (invest max. possible)
-                  </button>
+                  </UnderlineButton>
                 )}
               </span>
               <StyledNumericalInput
