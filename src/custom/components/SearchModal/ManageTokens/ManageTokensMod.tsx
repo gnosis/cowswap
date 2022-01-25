@@ -1,23 +1,25 @@
-import { useRef, RefObject, useCallback, useState, useMemo } from 'react'
-import Column from 'components/Column'
-import { ExplorerDataType, getExplorerLink } from 'utils/getExplorerLink'
-import { PaddedColumn, Separator, SearchInput } from 'components/SearchModal/styleds'
-import Row, { RowBetween, RowFixed } from 'components/Row'
-import { TYPE, ExternalLinkIcon, TrashIcon, ButtonText, ExternalLink } from 'theme'
-import { useToken } from 'hooks/Tokens'
-import styled from 'styled-components/macro'
-import { useUserAddedTokens, useRemoveUserAddedToken } from 'state/user/hooks'
-import { Token } from '@uniswap/sdk-core'
-import CurrencyLogo from 'components/CurrencyLogo'
-import { isAddress } from 'utils'
-import { useActiveWeb3React } from 'hooks/web3'
-// import Card from 'components/Card'
-// import ImportRow from 'components/SearchModal/ImportRow'
-import useTheme from 'hooks/useTheme'
 import { Trans } from '@lingui/macro'
+import { Token } from '@uniswap/sdk-core'
+// import Card from 'components/Card'
+import Column from 'components/Column'
+import CurrencyLogo from 'components/CurrencyLogo'
+import Row, { RowBetween, RowFixed } from 'components/Row'
+import { useToken } from 'hooks/Tokens'
+import { useActiveWeb3React } from 'hooks/web3'
+import { RefObject, useCallback, useMemo, useRef, useState } from 'react'
+import { useRemoveUserAddedToken, useUserAddedTokens } from 'state/user/hooks'
+import styled from 'styled-components/macro'
+import { ButtonText, ExternalLink, ExternalLinkIcon, TrashIcon, TYPE } from 'theme'
+import { isAddress } from 'utils'
 
+import useTheme from 'hooks/useTheme'
+import { ExplorerDataType, getExplorerLink } from 'utils/getExplorerLink'
 import { CurrencyModalView } from 'components/SearchModal/CurrencySearchModal'
+// import ImportRow from 'components/SearchModal/ImportRow'
+import { PaddedColumn, Separator, SearchInput } from 'components/SearchModal/styleds'
+
 import { ImportTokensRowProps } from '.' // mod
+import useNetworkName from 'hooks/useNetworkName'
 
 const Wrapper = styled.div`
   width: 100%;
@@ -49,6 +51,8 @@ export default function ManageTokens({ setModalView, setImportToken, ImportToken
 
   const [searchQuery, setSearchQuery] = useState<string>('')
   const theme = useTheme()
+
+  const network = useNetworkName()
 
   // manage focus on modal show
   const inputRef = useRef<HTMLInputElement>()
@@ -114,6 +118,11 @@ export default function ManageTokens({ setModalView, setImportToken, ImportToken
           {searchQuery !== '' && !isAddressSearch && (
             <TYPE.error error={true}>
               <Trans>Enter valid token address</Trans>
+            </TYPE.error>
+          )}
+          {searchQuery !== '' && isAddressSearch && !searchToken && (
+            <TYPE.error error={true}>
+              <Trans>No tokens found with this address in {network} network</Trans>
             </TYPE.error>
           )}
           {searchToken && ( // MOD

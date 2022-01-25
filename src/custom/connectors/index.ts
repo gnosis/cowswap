@@ -87,7 +87,6 @@ export const walletconnect = new WalletConnectConnector({
   rpc: rpcNetworks,
   bridge: WALLET_CONNECT_BRIDGE,
   qrcode: true,
-  pollingInterval: 15000,
 })
 
 // mainnet only
@@ -108,7 +107,7 @@ export const portis = new PortisConnector({
 export const walletlink = new WalletLinkConnector({
   url: rpcNetworks[NETWORK_CHAIN_ID],
   appName: 'CowSwap',
-  appLogoUrl: 'https://raw.githubusercontent.com/gnosis/gp-swap-ui/develop/public/images/logo-square-512.png',
+  appLogoUrl: 'https://raw.githubusercontent.com/gnosis/gp-swap-ui/develop/public/favicon.png',
 })
 
 export enum WalletProvider {

@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/macro'
 import { /* Currency, */ Percent, TradeType } from '@uniswap/sdk-core'
 // import { Trade as V2Trade } from '@uniswap/v2-sdk'
 // import { Trade as V3Trade } from '@uniswap/v3-sdk'
@@ -7,15 +8,14 @@ import { Text } from 'rebass'
 import styled, { ThemeContext } from 'styled-components/macro'
 import { useHigherUSDValue /* , useUSDCValue */ } from 'hooks/useUSDCPrice'
 import { TYPE } from 'theme'
-import { ButtonPrimary } from 'components/Button'
 import { isAddress, shortenAddress } from 'utils'
-import { computeFiatValuePriceImpact } from 'utils/computeFiatValuePriceImpact'
+import { ButtonPrimary } from 'components/Button'
+// import { computeFiatValuePriceImpact } from 'utils/computeFiatValuePriceImpact'
 import { AutoColumn } from 'components/Column'
 import { FiatValue } from 'components/CurrencyInputPanel/FiatValue'
 import CurrencyLogo from 'components/CurrencyLogo'
 import { RowBetween, RowFixed } from 'components/Row'
 import { TruncatedText, SwapShowAcceptChanges } from 'components/swap/styleds'
-import { Trans } from '@lingui/macro'
 
 import { AdvancedSwapDetails } from 'components/swap/AdvancedSwapDetails'
 // import { LightCard } from '../Card'
@@ -33,7 +33,7 @@ import FeeInformationTooltip from '../FeeInformationTooltip'
 import { LightCardType } from '.'
 import { transparentize } from 'polished'
 import { Price } from 'pages/Swap'
-import { HighFeeWarningProps } from 'components/HighFeeWarning'
+import { WarningProps } from 'components/SwapWarnings'
 
 export const ArrowWrapper = styled.div`
   padding: 4px;
@@ -60,9 +60,12 @@ export interface SwapModalHeaderProps {
   recipient: string | null
   showAcceptChanges: boolean
   priceImpactWithoutFee?: Percent
+  priceImpact?: Percent
   onAcceptChanges: () => void
   LightCard: LightCardType
-  HighFeeWarning: React.FC<HighFeeWarningProps>
+  HighFeeWarning: React.FC<WarningProps>
+  NoImpactWarning: React.FC<WarningProps>
+  allowsOffchainSigning: boolean
 }
 
 export default function SwapModalHeader({
@@ -70,9 +73,12 @@ export default function SwapModalHeader({
   allowedSlippage,
   recipient,
   showAcceptChanges,
+  priceImpact,
   onAcceptChanges,
   LightCard,
   HighFeeWarning,
+  NoImpactWarning,
+  allowsOffchainSigning,
 }: /* 
 {
   trade: V2Trade<Currency, Currency, TradeType> | V3Trade<Currency, Currency, TradeType>
@@ -103,13 +109,12 @@ SwapModalHeaderProps) {
     [slippageAdjustedAmounts]
   )
 
-  const [exactInLabel, exactOutLabel] = useMemo(
-    () => [
+  const [exactInLabel, exactOutLabel] = useMemo(() => {
+    return [
       trade?.tradeType === TradeType.EXACT_OUTPUT ? <Trans>From (incl. fee)</Trans> : null,
       trade?.tradeType === TradeType.EXACT_INPUT ? <Trans>Receive (incl. fee)</Trans> : null,
-    ],
-    [trade]
-  )
+    ]
+  }, [trade])
 
   const fullInputWithoutFee = formatMax(trade?.inputAmountWithoutFee, trade?.inputAmount.currency.decimals) || '-'
   const fullOutputWithoutFee = formatMax(trade?.outputAmountWithoutFee, trade?.outputAmount.currency.decimals) || '-'
@@ -150,6 +155,7 @@ SwapModalHeaderProps) {
             amountAfterFees={formatSmart(trade.inputAmountWithFee, AMOUNT_PRECISION)}
             amountBeforeFees={formatSmart(trade.inputAmountWithoutFee, AMOUNT_PRECISION)}
             feeAmount={formatSmart(trade.fee.feeAsCurrency, AMOUNT_PRECISION)}
+            allowsOffchainSigning={allowsOffchainSigning}
             label={exactInLabel}
             showHelper
             trade={trade}
@@ -172,10 +178,7 @@ SwapModalHeaderProps) {
               <Trans>To</Trans>
             </TYPE.body>
             <TYPE.body fontSize={14} color={theme.text3}>
-              <FiatValue
-                fiatValue={fiatValueOutput}
-                priceImpact={computeFiatValuePriceImpact(fiatValueInput, fiatValueOutput)}
-              />
+              <FiatValue fiatValue={fiatValueOutput} priceImpact={priceImpact} />
             </TYPE.body>
           </RowBetween>
           <RowBetween align="flex-end">
@@ -204,6 +207,7 @@ SwapModalHeaderProps) {
             amountBeforeFees={formatSmart(trade.outputAmountWithoutFee, AMOUNT_PRECISION)}
             feeAmount={formatSmart(trade.outputAmountWithoutFee?.subtract(trade.outputAmount), AMOUNT_PRECISION)}
             label={exactOutLabel}
+            allowsOffchainSigning={allowsOffchainSigning}
             showHelper
             trade={trade}
             type="To"
@@ -276,8 +280,8 @@ SwapModalHeaderProps) {
         )}
       </AutoColumn>
       {recipient !== null ? (
-        <AutoColumn justify="flex-start" gap="sm" style={{ padding: '12px 0 0 0px' }}>
-          <TYPE.main>
+        <AutoColumn justify="flex-start" gap="sm">
+          <TYPE.main style={{ padding: '0.75rem 1rem' }}>
             <Trans>
               Output will be sent to{' '}
               <b title={recipient}>{isAddress(recipient) ? shortenAddress(recipient) : recipient}</b>
@@ -286,7 +290,9 @@ SwapModalHeaderProps) {
         </AutoColumn>
       ) : null}
       {/* High Fee Warning */}
-      <HighFeeWarning trade={trade} margin="0" />
+      <HighFeeWarning trade={trade} />
+      {/* No Impact Warning */}
+      {!priceImpact && <NoImpactWarning margin="0" />}
     </AutoColumn>
   )
 }

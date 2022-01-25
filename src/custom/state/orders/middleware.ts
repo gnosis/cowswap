@@ -1,22 +1,12 @@
 import { Middleware, isAnyOf } from '@reduxjs/toolkit'
 
-import { addPopup } from 'state/application/actions'
+import { addPopup } from 'state/application/reducer'
 import { AppState } from 'state'
 import * as OrderActions from './actions'
 
 import { OrderIDWithPopup, OrderTxTypes, PopupPayload, buildCancellationPopupSummary, setPopupData } from './helpers'
 import { registerOnWindow } from 'utils/misc'
-
-type SoundType = 'SEND' | 'SUCCESS' | 'ERROR'
-type Sounds = Record<SoundType, string>
-
-const COW_SOUNDS: Sounds = {
-  SEND: '/audio/mooooo-send__lower-90.mp3',
-  SUCCESS: '/audio/mooooo-success__ben__lower-90.mp3',
-  ERROR: '/audio/mooooo-error__lower-90.mp3',
-}
-
-const SOUND_CACHE: Record<string, HTMLAudioElement | undefined> = {}
+import { getCowSoundError, getCowSoundSend, getCowSoundSuccess } from 'utils/sound'
 
 // action syntactic sugar
 const isSingleOrderChangeAction = isAnyOf(
@@ -26,6 +16,7 @@ const isSingleOrderChangeAction = isAnyOf(
   OrderActions.cancelOrder
 )
 const isPendingOrderAction = isAnyOf(OrderActions.addPendingOrder)
+const isPresignOrders = isAnyOf(OrderActions.preSignOrders)
 const isSingleFulfillOrderAction = isAnyOf(OrderActions.fulfillOrder)
 const isBatchOrderAction = isAnyOf(
   OrderActions.fulfillOrdersBatch,
@@ -53,9 +44,10 @@ export const popupMiddleware: Middleware<Record<string, unknown>, AppState> = (s
 
     if (!orders) return
 
-    const { pending, fulfilled, expired, cancelled } = orders
+    const { pending, presignaturePending, fulfilled, expired, cancelled } = orders
 
-    const orderObject = pending?.[id] || fulfilled?.[id] || expired?.[id] || cancelled?.[id]
+    const orderObject =
+      pending?.[id] || presignaturePending?.[id] || fulfilled?.[id] || expired?.[id] || cancelled?.[id]
 
     // look up Order.summary for Popup
     const summary = orderObject?.order.summary
@@ -64,6 +56,8 @@ export const popupMiddleware: Middleware<Record<string, unknown>, AppState> = (s
     if (isPendingOrderAction(action)) {
       // Pending Order Popup
       popup = setPopupData(OrderTxTypes.METATXN, { summary, status: 'submitted', id })
+    } else if (isPresignOrders(action)) {
+      popup = setPopupData(OrderTxTypes.METATXN, { summary, status: 'presigned', id })
     } else if (isSingleFulfillOrderAction(action)) {
       // it's an OrderTxTypes.TXN, yes, but we still want to point to the explorer
       // because it's nicer there
@@ -167,30 +161,6 @@ export const popupMiddleware: Middleware<Record<string, unknown>, AppState> = (s
   })
 
   return result
-}
-
-function getAudio(type: SoundType): HTMLAudioElement {
-  const soundPath = COW_SOUNDS[type]
-  let sound = SOUND_CACHE[soundPath]
-
-  if (!sound) {
-    sound = new Audio(soundPath)
-    SOUND_CACHE[soundPath] = sound
-  }
-
-  return sound
-}
-
-function getCowSoundSend(): HTMLAudioElement {
-  return getAudio('SEND')
-}
-
-function getCowSoundSuccess(): HTMLAudioElement {
-  return getAudio('SUCCESS')
-}
-
-function getCowSoundError(): HTMLAudioElement {
-  return getAudio('ERROR')
 }
 
 function removeLightningEffect() {

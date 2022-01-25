@@ -1,10 +1,12 @@
+// eslint-disable-next-line no-restricted-imports
+import { t, Trans } from '@lingui/macro'
 import { AbstractConnector } from '@web3-react/abstract-connector'
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
 import { darken, lighten } from 'polished'
 // import { useMemo } from 'react'
 import { Activity } from 'react-feather'
-import { t, Trans } from '@lingui/macro'
 import styled, { css } from 'styled-components/macro'
+
 // import CoinbaseWalletIcon from 'assets/images/coinbaseWalletIcon.svg'
 // import FortmaticIcon from 'assets/images/fortmaticIcon.png'
 // import PortisIcon from 'assets/images/portisIcon.png'
@@ -14,8 +16,8 @@ import styled, { css } from 'styled-components/macro'
 import useENSName from 'hooks/useENSName'
 import { useHasSocks } from 'hooks/useSocksBalance'
 import { useWalletModalToggle } from 'state/application/hooks'
-// import { isTransactionRecent, useAllTransactions } from 'state/transactions/hooks'
-import { TransactionDetails } from 'state/transactions/reducer'
+// import { isTransactionRecent, useAllTransactions } from 'state/enhancedTransactions/hooks'
+import { EnhancedTransactionDetails } from 'state/enhancedTransactions/reducer'
 import { shortenAddress } from 'utils'
 import { ButtonSecondary } from 'components/Button'
 
@@ -120,7 +122,7 @@ const NetworkIcon = styled(Activity)`
 `
 
 // we want the latest one to come first, so return negative if a is after b
-export function newTransactionsFirst(a: TransactionDetails, b: TransactionDetails) {
+export function newTransactionsFirst(a: EnhancedTransactionDetails, b: EnhancedTransactionDetails) {
   return b.addedTime - a.addedTime
 }
 
@@ -254,10 +256,6 @@ export function Web3StatusInner({
 
   const pending = sortedRecentTransactions.filter((tx) => !tx.receipt).map((tx) => tx.hash)
   const confirmed = sortedRecentTransactions.filter((tx) => tx.receipt).map((tx) => tx.hash)
-
-  if (!contextNetwork.active && !active) {
-    return null
-  }
 
   return (
     <>

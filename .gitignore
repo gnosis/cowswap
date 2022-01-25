@@ -18,6 +18,9 @@
 # production
 /build
 
+# bundle
+/dist
+
 # misc
 .DS_Store
 .env.local
@@ -47,3 +50,6 @@ cypress-custom/fixtures/example.json
 
 .yalc*
 yalc.lock
+
+# public
+public/version.json

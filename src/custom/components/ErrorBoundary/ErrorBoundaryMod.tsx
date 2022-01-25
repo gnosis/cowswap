@@ -6,7 +6,7 @@ import Page, { Title } from 'components/Page'
 import { AutoColumn } from 'components/Column'
 import styled from 'styled-components/macro'
 import ReactGA from 'react-ga'
-import { getUserAgent } from 'utils/getUserAgent'
+import { userAgent } from '@src/utils/userAgent'
 import { AutoRow } from 'components/Row'
 import { MEDIA_WIDTHS } from '@src/theme'
 import CowError from 'assets/cow-swap/CowError.png'
@@ -174,7 +174,6 @@ export default class ErrorBoundary extends Component<unknown, ErrorBoundaryState
                     href={`https://github.com/gnosis/cowswap/issues/new?assignees=&labels=🐞 Bug,🔥 Critical&body=${encodedBody}&title=${encodeURIComponent(
                       `Crash report: \`${error.name}${error.message && `: ${truncate(error.message)}`}\``
                     )}`}
-                    target="_blank"
                   >
                     <TYPE.link fontSize={16}>
                       <Trans>Create an issue on GitHub</Trans>
@@ -183,7 +182,7 @@ export default class ErrorBoundary extends Component<unknown, ErrorBoundaryState
                   </ExternalLink>
                 </LinkWrapper>
                 <LinkWrapper>
-                  <ExternalLink id="get-support-on-discord" href="https://chat.cowswap.exchange/" target="_blank">
+                  <ExternalLink id="get-support-on-discord" href="https://chat.cowswap.exchange/">
                     <TYPE.link fontSize={16}>
                       <Trans>Get support on Discord</Trans>
                       <span>↗</span>
@@ -224,7 +223,7 @@ function getRelevantState(): null | keyof AppState {
 
 function issueBody(error: Error): string {
   const relevantState = getRelevantState()
-  const deviceData = getUserAgent()
+  const deviceData = userAgent
   return `## URL
   
 ${window.location.href}

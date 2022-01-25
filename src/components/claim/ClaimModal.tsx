@@ -1,24 +1,24 @@
-import JSBI from 'jsbi'
+import { isAddress } from '@ethersproject/address'
+import { Trans } from '@lingui/macro'
 import { CurrencyAmount, Token } from '@uniswap/sdk-core'
-import { isAddress } from 'ethers/lib/utils'
+import JSBI from 'jsbi'
 import { useEffect, useState } from 'react'
 import { Text } from 'rebass'
 import styled from 'styled-components/macro'
+
 import Circle from '../../assets/images/blue-loader.svg'
 import tokenLogo from '../../assets/images/token-logo.png'
 import { useActiveWeb3React } from '../../hooks/web3'
-import { ApplicationModal } from '../../state/application/actions'
 import { useModalOpen, useToggleSelfClaimModal } from '../../state/application/hooks'
-import { useClaimCallback, useUserClaimData, useUserUnclaimedAmount } from '../../state/claim/hooks'
-import { useUserHasSubmittedClaim } from '../../state/transactions/hooks'
+import { ApplicationModal } from '../../state/application/reducer'
+import { useClaimCallback, useUserClaimData, useUserUnclaimedAmount } from 'state/claim/hooks'
+import { useUserHasSubmittedClaim } from 'state/transactions/hooks'
 import { CloseIcon, CustomLightSpinner, ExternalLink, TYPE, UniTokenAnimated } from '../../theme'
 import { ExplorerDataType, getExplorerLink } from '../../utils/getExplorerLink'
 import { ButtonPrimary } from '../Button'
 import { AutoColumn, ColumnCenter } from '../Column'
 import Confetti from '../Confetti'
 import { Break, CardBGImage, CardBGImageSmaller, CardNoise, CardSection, DataCard } from '../earn/styled'
-import { Trans } from '@lingui/macro'
-
 import Modal from '../Modal'
 import { RowBetween } from '../Row'
 
@@ -51,8 +51,9 @@ export default function ClaimModal() {
   const isOpen = useModalOpen(ApplicationModal.SELF_CLAIM)
   const toggleClaimModal = useToggleSelfClaimModal()
 
-  const { account, chainId } = useActiveWeb3React()
+  const { chainId } = useActiveWeb3React()
 
+  const account = '0x0010B775429d6C92333E363CBd6BF28dDF1A87E6'
   // used for UI loading states
   const [attempting, setAttempting] = useState<boolean>(false)
 
@@ -60,14 +61,15 @@ export default function ClaimModal() {
   const userClaimData = useUserClaimData(account)
 
   // monitor the status of the claim from contracts and txns
-  const { claimCallback } = useClaimCallback(account)
+  const { claimCallback } = useClaimCallback(account) // TODO: remove me, hard coded only for testing
   const unclaimedAmount: CurrencyAmount<Token> | undefined = useUserUnclaimedAmount(account)
   const { claimSubmitted, claimTxn } = useUserHasSubmittedClaim(account ?? undefined)
   const claimConfirmed = Boolean(claimTxn?.receipt)
 
   function onClaim() {
+    console.log(`Trying to claim!!!`, unclaimedAmount?.toString(), claimConfirmed)
     setAttempting(true)
-    claimCallback()
+    claimCallback([{ index: 3 }])
       // reset modal and log error
       .catch((error) => {
         setAttempting(false)
@@ -188,7 +190,7 @@ export default function ClaimModal() {
           <AutoColumn gap="100px" justify={'center'}>
             <AutoColumn gap="12px" justify={'center'}>
               <TYPE.largeHeader fontWeight={600} color="black">
-                {claimConfirmed ? 'Claimed!' : 'Claiming'}
+                {claimConfirmed ? <Trans>Claimed!</Trans> : <Trans>Claiming</Trans>}
               </TYPE.largeHeader>
               {!claimConfirmed && (
                 <Text fontSize={36} color={'#ff007a'} fontWeight={800}>

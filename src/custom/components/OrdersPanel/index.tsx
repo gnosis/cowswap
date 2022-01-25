@@ -6,6 +6,7 @@ import useRecentActivity, { TransactionAndOrder } from 'hooks/useRecentActivity'
 import { useWalletInfo } from 'hooks/useWalletInfo'
 import { OrderStatus } from 'state/orders/actions'
 import { useWalletModalToggle } from 'state/application/hooks'
+import { transparentize } from 'polished'
 
 const SideBar = styled.div`
   display: flex;
@@ -15,25 +16,57 @@ const SideBar = styled.div`
   position: fixed;
   top: 0;
   right: 0;
-  width: 500px;
-  height: 100%;
+  width: 100%;
+  max-width: 750px;
+  height: 80vh;
+  border-radius: 24px;
+  margin: auto;
+  bottom: 0;
+  left: 0;
   z-index: 99;
   padding: 0;
-  background: ${({ theme }) => theme.bg1};
   cursor: default;
-  overflow-y: auto;
+  overflow-y: auto; // fallback for 'overlay'
+  overflow-y: overlay;
+  box-shadow: 0 16px 32px 0 rgb(0 0 0 / 5%);
   animation: slideIn 0.3s cubic-bezier(0.87, 0, 0.13, 1);
+  background: ${({ theme }) => theme.card.background2};
+  scrollbar-color: ${({ theme }) => `${theme.card.border} ${theme.card.background2}`};
 
   ${({ theme }) => theme.mediaWidth.upToMedium`    
     width: 100%;
+    height: 100%;
+    max-width: 100%;
+    border-radius: 0;
   `};
+
+  &::-webkit-scrollbar {
+    width: 16px;
+    border-radius: 16px;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: ${({ theme }) => theme.card.border};
+    border: 4px solid transparent;
+    border-radius: 16px;
+    background-clip: padding-box;
+  }
+
+  &::-webkit-resizer,
+  &::-webkit-scrollbar-button,
+  &::-webkit-scrollbar-corner {
+    height: 6px;
+  }
 
   @keyframes slideIn {
     from {
-      transform: translateX(500px);
+      transform: translateY(-100vh);
     }
     to {
-      transform: translateX(0);
+      transform: translateY(0);
     }
   }
 
@@ -53,45 +86,47 @@ const SidebarBackground = styled.div`
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 0;
+  z-index: 1;
   width: 100%;
   height: 100%;
-  background: rgb(0 0 0 / 25%);
+  background: ${({ theme }) => transparentize(0.4, theme.black)};
+  backdrop-filter: blur(3px);
 
   ${({ theme }) => theme.mediaWidth.upToSmall`    
     display: none;
   `};
 `
 
-const CloseIcon = styled(Close)`
-  z-index: 20;
-  position: sticky;
-  top: 0;
+const Header = styled.div`
   width: 100%;
-  height: 38px;
-  padding: 10px 0;
-  background: ${({ theme }) => theme.bg1};
-  transition: filter 0.2s ease-in-out;
+  display: flex;
+  justify-content: space-between;
+  padding: 20px 30px;
+  align-items: center;
+  transition: opacity 0.2s ease-in-out;
 
   ${({ theme }) => theme.mediaWidth.upToMedium`
     top: 0;
+    padding: 0 16px;
     z-index: 99999;
-    position: fixed;
+    position: sticky;
     left: 0;
-    right: initial;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 42px;
-    backdrop-filter: blur(5px);
+    height: 52px;
+    background: ${({ theme }) => theme.card.background2};
   `};
 
   &:hover {
     cursor: pointer;
-    filter: saturate(0.5);
+    opacity: 1;
   }
 
+  > strong {
+    font-size: 15px;
+    ${({ theme }) => theme.text1};
+  }
+`
+
+const CloseIcon = styled(Close)`
   path {
     stroke: ${({ theme }) => theme.text4};
   }
@@ -101,11 +136,13 @@ const Wrapper = styled.div`
   display: flex;
   flex-flow: row wrap;
   align-items: stretch;
-  height: 100%;
+  height: auto;
   width: 100%;
 `
 
-const isPending = (data: TransactionAndOrder) => data.status === OrderStatus.PENDING
+const isPending = (data: TransactionAndOrder) =>
+  data.status === OrderStatus.PENDING || data.status === OrderStatus.PRESIGNATURE_PENDING
+
 const isConfirmed = (data: TransactionAndOrder) =>
   data.status === OrderStatus.FULFILLED || data.status === OrderStatus.EXPIRED || data.status === OrderStatus.CANCELLED
 
@@ -143,7 +180,11 @@ export default function OrdersPanel({ closeOrdersPanel }: OrdersPanelProps) {
       <SidebarBackground onClick={closeOrdersPanel} />
       <SideBar>
         <Wrapper>
-          <CloseIcon onClick={closeOrdersPanel} />
+          <Header>
+            <strong>Account</strong>
+            <CloseIcon onClick={closeOrdersPanel} />
+          </Header>
+
           <AccountDetails
             ENSName={ENSName}
             pendingTransactions={pendingActivity}

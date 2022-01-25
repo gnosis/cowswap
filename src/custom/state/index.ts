@@ -1,7 +1,7 @@
 import { configureStore, StateFromReducersMapObject } from '@reduxjs/toolkit'
 import { save, load } from 'redux-localstorage-simple'
 
-import application from '@src/state/application/reducer'
+import application from 'state/application/reducer'
 // import { updateVersion } from '@src/state/global/actions'
 import user from '@src/state/user/reducer'
 import swap from '@src/state/swap/reducer'
@@ -22,9 +22,11 @@ import gas from 'state/gas/reducer'
 import profile from 'state/profile/reducer'
 import { updateVersion } from 'state/global/actions'
 import affiliate from 'state/affiliate/reducer'
-import transactions from 'state/enhancedTransactions/reducer'
+import enhancedTransactions from 'state/enhancedTransactions/reducer'
+import claim from 'state/claim/reducer'
 
 import { popupMiddleware, soundMiddleware } from './orders/middleware'
+import { claimMinedMiddleware } from './claim/middleware'
 import { DEFAULT_NETWORK_FOR_LISTS } from 'constants/lists'
 
 const UNISWAP_REDUCERS = {
@@ -44,13 +46,14 @@ const UNISWAP_REDUCERS = {
 
 const reducers = {
   ...UNISWAP_REDUCERS,
-  transactions,
+  transactions: enhancedTransactions, // replace transactions state by "enhancedTransactions"
   lists,
   orders,
   price,
   gas,
   affiliate,
   profile,
+  claim,
 }
 
 const PERSISTED_KEYS: string[] = ['user', 'transactions', 'orders', 'lists', 'gas', 'affiliate', 'profile']
@@ -63,6 +66,7 @@ const store = configureStore({
       .concat(routingApi.middleware)
       .concat(save({ states: PERSISTED_KEYS, debounce: 1000 }))
       .concat(popupMiddleware)
+      .concat(claimMinedMiddleware)
       .concat(soundMiddleware),
   preloadedState: load({ states: PERSISTED_KEYS, disableWarnings: process.env.NODE_ENV === 'test' }),
 })

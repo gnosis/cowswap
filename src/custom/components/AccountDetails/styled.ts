@@ -1,38 +1,32 @@
 import styled from 'styled-components/macro'
 import { CopyIcon, TransactionStatusText } from 'components/Copy'
-import { LinkStyledButton } from 'theme'
+import { LinkStyledButton, StyledLink } from 'theme'
 import {
   WalletName,
   AccountSection as AccountSectionMod,
   AccountGroupingRow as AccountGroupingRowMod,
   UpperSection as UpperSectionMod,
   AddressLink,
+  WalletAction,
   TransactionListWrapper,
   AccountControl,
+  IconWrapper,
 } from './AccountDetailsMod'
 import { YellowCard } from 'components/Card'
 
 export const WalletActions = styled.div`
   display: flex;
+  flex-flow: row wrap;
   margin: 10px 0 0;
 `
 
-export const WalletLowerActions = styled.div`
-  width: 100%;
-  padding: 12px;
-  border-radius: 21px;
-  justify-content: space-evenly;
-  ${({ theme }) => theme.neumorphism.boxShadow}
-  margin: 16px 0 0;
-
-  > a {
-    align-items: center;
-  }
-`
+export const WalletSecondaryActions = styled.div``
 
 export const WalletNameAddress = styled.div`
   width: 100%;
-  font-size: 21px;
+  font-size: 23px;
+  font-weight: 500;
+  margin: 0 0 0 8px;
 `
 
 export const Wrapper = styled.div`
@@ -43,19 +37,34 @@ export const Wrapper = styled.div`
   padding: 0;
   height: 100%;
 
-  ${({ theme }) => theme.mediaWidth.upToMedium`padding: 42px 0 0;`};
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+    padding: 12px 0 0;
+  `};
 
   ${WalletName},
   ${AddressLink},
-  ${CopyIcon} {
+  ${CopyIcon},
+  ${WalletAction} {
     color: ${({ theme }) => theme.text1};
-    opacity: 0.7;
+    opacity: 0.85;
     transition: color 0.2s ease-in-out, opacity 0.2s ease-in-out;
     margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 14px;
+    font-weight: normal;
 
+    &:focus,
     &:hover {
       opacity: 1;
+      transform: none;
+      box-shadow: none;
+      border: 0;
     }
+  }
+
+  ${IconWrapper} {
+    margin: 0;
   }
 
   ${TransactionStatusText} {
@@ -66,14 +75,11 @@ export const Wrapper = styled.div`
   }
 
   ${WalletName} {
-    text-align: right;
-
-    ${({ theme }) => theme.mediaWidth.upToSmall`
-      width: 100%;
-      text-align: center;
-      justify-content: center;
-      margin: 0 auto 12px;
-    `};
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+    margin: 0;
+    font-size: 12px;
   }
 
   ${TransactionListWrapper} {
@@ -82,11 +88,47 @@ export const Wrapper = styled.div`
     flex-flow: column wrap;
   }
 
+  ${AccountControl} {
+    ${({ theme }) => theme.mediaWidth.upToSmall`
+        align-items: center;
+    `};
+  }
+
+  ${AccountControl} ${WalletSecondaryActions} {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 8px;
+    justify-items: flex-end;
+
+    ${({ theme }) => theme.mediaWidth.upToSmall`
+      justify-items: center;
+      margin: 12px auto 0;
+    `};
+
+    > a {
+      align-items: center;
+    }
+
+    > a:not(:last-child) {
+      margin: 0 0 5px;
+    }
+  }
+
   ${AccountControl} ${WalletActions} {
     ${({ theme }) => theme.mediaWidth.upToSmall`
-        flex-flow: column wrap;
         width: 100%;
+        flex-flow: row wrap;
+        justify-content: center;
+        margin: 12px auto;
     `};
+  }
+`
+
+export const WalletWrapper = styled.div`
+  > div > img[alt='Gnosis Safe Multisig logo'] {
+    ${({ theme }) => theme.util.invertImageForDarkMode};
   }
 `
 
@@ -98,13 +140,16 @@ export const UpperSection = styled(UpperSectionMod)`
 export const InfoCard = styled.div`
   width: 100%;
   display: flex;
-  flex-flow: column wrap;
-  margin: 0;
-  border-radius: 0;
-  padding: 16px 16px 24px;
+  flex-flow: row wrap;
+  justify-content: space-between;
+  margin: 0 24px 24px;
+  border-radius: 16px;
+  padding: 24px;
+  ${({ theme }) => theme.card.background3};
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
-  padding: 16px 10px 24px;
+    padding: 16px 10px 24px;
+    margin: 0 16px 16px;
   `};
 `
 
@@ -114,16 +159,22 @@ export const AccountSection = styled(AccountSectionMod)`
 `
 
 export const AccountGroupingRow = styled(AccountGroupingRowMod)`
+  margin: 0;
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    width: 100%;
+  `};
+
   > div {
     flex-flow: column wrap;
     justify-content: flex-start;
-    align-items: center;
+    align-items: flex-start;
   }
 `
 
 export const NoActivityMessage = styled.p`
   font-size: 14px;
-  color: ${({ theme }) => theme.text2};
+  color: ${({ theme }) => theme.text1};
   width: 100%;
   padding: 24px 0 0;
   text-align: center;
@@ -132,23 +183,23 @@ export const NoActivityMessage = styled.p`
 `
 
 export const LowerSection = styled.div`
-  background-color: ${({ theme }) => theme.bg2};
   border-radius: 0;
   height: 100%;
   width: 100%;
   align-items: flex-start;
   justify-content: flex-start;
+  padding: 0 24px;
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    padding: 0 16px;
+  `};
 
   > span {
     display: flex;
+    color: ${({ theme }) => theme.text1};
     justify-content: space-between;
-    padding: 8px 16px;
-    border-bottom: 1px solid #d9e8ef;
-    position: sticky;
-    top: 38px;
-    background: rgb(255 255 255 / 60%);
-    backdrop-filter: blur(5px);
-    z-index: 10;
+    padding: 0 0 12px;
+
     ${({ theme }) => theme.mediaWidth.upToMedium`
       top: 42px;
     `};
@@ -157,16 +208,20 @@ export const LowerSection = styled.div`
   > div {
     display: flex;
     flex-flow: column wrap;
-    padding: 0;
     width: 100%;
-    background-color: ${({ theme }) => theme.bg2};
-    padding: 0 0 100px;
+    background-color: inherit;
+    padding: 0 0 48px;
+
+    ${StyledLink} {
+      align-self: center;
+      margin: 20px 0;
+    }
   }
 
   h5 {
     margin: 0;
     font-weight: 500;
-    color: ${({ theme }) => theme.text2};
+    color: inherit;
     line-height: 1;
     display: flex;
     align-items: center;
@@ -176,9 +231,16 @@ export const LowerSection = styled.div`
     }
   }
 
-  ${LinkStyledButton} {
+  ${LinkStyledButton},${StyledLink} {
+    opacity: 0.7;
+    color: ${({ theme }) => theme.text1};
+
     text-decoration: underline;
-  }
+    font-size: 14px;
+
+    &:hover {
+      opacity: 1;
+    }
 `
 
 const NetworkCardUni = styled(YellowCard)`
@@ -198,13 +260,14 @@ const NetworkCardUni = styled(YellowCard)`
 export const NetworkCard = styled(NetworkCardUni)`
   background-color: ${({ theme }) => theme.networkCard.background};
   color: ${({ theme }) => theme.networkCard.text};
-
   padding: 6px 8px;
   font-size: 13px;
   margin: 0 8px 0 0;
   letter-spacing: 0.7px;
+  min-width: initial;
+  flex: 0 0 fit-content;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
-    flex-shrink: 0;
+    margin: 0 auto 12px;
   `};
 `

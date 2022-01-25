@@ -1,27 +1,27 @@
-import React /* , { useCallback, useContext } */ from 'react'
+// import { Trans } from '@lingui/macro'
+import Activity from 'components/AccountDetails/Transaction'
+// import { fortmatic, injected, portis, walletconnect, walletlink } from 'connectors'
+// import { SUPPORTED_WALLETS } from 'constants/wallet'
+// import { useCallback, useContext } from 'react'
+// import { ExternalLink as LinkIcon } from 'react-feather'
+// import { useAppDispatch } from 'state/hooks'
 import styled /* , { ThemeContext } */ from 'styled-components/macro'
-// import { useActiveWeb3React } from 'hooks/web3'
-// import { clearAllTransactions } from 'state/transactions/actions'
 // import { shortenAddress } from 'utils'
 // import { ExplorerDataType, getExplorerLink } from 'utils/getExplorerLink'
-// import { AutoRow } from 'components/Row'
-// import Copy from 'components/AccountDetails/Copy'
-import Transaction from 'components/AccountDetails/Transaction'
 
-// import { SUPPORTED_WALLETS } from 'constants/index'
+// import CoinbaseWalletIcon from '../../assets/images/coinbaseWalletIcon.svg'
+// import FortmaticIcon from '../../assets/images/fortmaticIcon.png'
+// import PortisIcon from '../../assets/images/portisIcon.png'
+// import WalletConnectIcon from '../../assets/images/walletConnectIcon.svg'
 import { ReactComponent as Close } from 'assets/images/x.svg'
-// import { getEtherscanLink } from 'utils'
-// import { injected, walletconnect, walletlink, fortmatic, portis } from 'connectors'
-// import CoinbaseWalletIcon from 'assets/images/coinbaseWalletIcon.svg'
-// import WalletConnectIcon from 'assets/images/walletConnectIcon.svg'
-// import FortmaticIcon from 'assets/images/fortmaticIcon.png'
-// import PortisIcon from 'assets/images/portisIcon.png'
-// import Identicon from 'components/Identicon'
-import { ButtonSecondary } from 'components/Button'
-// import { ExternalLink as LinkIcon } from 'react-feather'
+// import { useActiveWeb3React } from '../../hooks/web3'
+// import { clearAllTransactions } from '../../state/transactions/actions'
 import { ExternalLink /* , LinkStyledButton, TYPE */ } from 'theme'
-// import { Trans } from '@lingui/macro'
-// import { useAppDispatch } from 'state/hooks'
+import { ButtonSecondary } from 'components/Button'
+// import Identicon from '../Identicon'
+// import { AutoRow } from '../Row'
+// import Copy from './Copy'
+import { ActivityDescriptors } from 'hooks/useRecentActivity'
 
 export const HeaderRow = styled.div`
   ${({ theme }) => theme.flexRowNoWrap};
@@ -206,17 +206,17 @@ export const MainWalletAction = styled(WalletAction)`
   color: ${({ theme }) => theme.primary1};
 `
 
-export function renderTransactions(transactions: string[]) {
+export function renderActivities(activities: ActivityDescriptors[]) {
   return (
     <TransactionListWrapper>
-      {transactions.map((hash, i) => {
-        return <Transaction key={i} hash={hash} />
+      {activities.map((activity) => {
+        return <Activity key={activity.id} activity={activity} />
       })}
     </TransactionListWrapper>
   )
 }
 
-// export interface AccountDetailsProps {
+// interface AccountDetailsProps {
 //   toggleWalletModal: () => void
 //   pendingTransactions: string[]
 //   confirmedTransactions: string[]
@@ -224,13 +224,13 @@ export function renderTransactions(transactions: string[]) {
 //   openOptions: () => void
 // }
 
-/* 
+/*
 export default function AccountDetails({
   toggleWalletModal,
   pendingTransactions,
   confirmedTransactions,
   ENSName,
-  openOptions
+  openOptions,
 }: AccountDetailsProps) {
   const { chainId, account, connector } = useActiveWeb3React()
   const theme = useContext(ThemeContext)
@@ -241,10 +241,10 @@ export default function AccountDetails({
     const isMetaMask = !!(ethereum && ethereum.isMetaMask)
     const name = Object.keys(SUPPORTED_WALLETS)
       .filter(
-        k =>
+        (k) =>
           SUPPORTED_WALLETS[k].connector === connector && (connector !== injected || isMetaMask === (k === 'METAMASK'))
       )
-      .map(k => SUPPORTED_WALLETS[k].name)[0]
+      .map((k) => SUPPORTED_WALLETS[k].name)[0]
     return (
       <WalletName>
         <Trans>Connected with {name}</Trans>
@@ -294,7 +294,7 @@ export default function AccountDetails({
       )
     }
     return null
-  } 
+  }
 
   const clearAllTransactionsCallback = useCallback(() => {
     if (chainId) dispatch(clearAllTransactions({ chainId }))

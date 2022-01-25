@@ -10,6 +10,7 @@ export const INITIAL_ALLOWED_SLIPPAGE_PERCENT = new Percent('5', '1000') // 0.5%
 export const RADIX_DECIMAL = 10
 export const RADIX_HEX = 16
 
+// TODO: remove, this is duplicated with `import { ONE_HUNDRED_PERCENT } from 'constants/misc'`
 export const ONE_HUNDRED_PERCENT = new Percent(1, 1)
 
 export const DEFAULT_DECIMALS = 18
@@ -25,6 +26,7 @@ export const LONG_LOAD_THRESHOLD = 2000
 
 export const APP_DATA_HASH = getAppDataHash()
 export const PRODUCTION_URL = 'cowswap.exchange'
+export const BARN_URL = `barn.${PRODUCTION_URL}`
 
 const DISABLED_WALLETS = /^(?:WALLET_LINK|COINBASE_LINK|FORTMATIC|Portis)$/i
 
@@ -37,9 +39,8 @@ export const SUPPORTED_WALLETS = Object.keys(SUPPORTED_WALLETS_UNISWAP).reduce((
 }, {} as { [key: string]: WalletInfo })
 
 // Smart contract wallets are filtered out by default, no need to add them to this list
-export const UNSUPPORTED_WC_WALLETS = new Set(['DeFi Wallet', '1inch Wallet', 'Pillar Wallet', 'WallETH'])
+export const UNSUPPORTED_WC_WALLETS = new Set(['DeFi Wallet', 'WallETH'])
 
-// TODO: When contracts are deployed, we can load this from the NPM package
 export const GP_SETTLEMENT_CONTRACT_ADDRESS: Partial<Record<number, string>> = {
   [ChainId.MAINNET]: GPv2Settlement[ChainId.MAINNET].address,
   [ChainId.RINKEBY]: GPv2Settlement[ChainId.RINKEBY].address,
@@ -50,6 +51,12 @@ export const GP_VAULT_RELAYER: Partial<Record<number, string>> = {
   [ChainId.MAINNET]: GPv2VaultRelayer[ChainId.MAINNET].address,
   [ChainId.RINKEBY]: GPv2VaultRelayer[ChainId.RINKEBY].address,
   [ChainId.XDAI]: GPv2VaultRelayer[ChainId.XDAI].address,
+}
+
+export const V_COW_CONTRACT_ADDRESS: Partial<Record<number, string>> = {
+  [ChainId.MAINNET]: '0x6d04B3ad33594978D0D4B01CdB7c3bA4a90a7DFe',
+  [ChainId.XDAI]: '0xA3A674a40709A837A5E742C2866eda7d3b35a7c0',
+  [ChainId.RINKEBY]: '0xD7Dd9397Fb942565959c77f8e112ec5aa7D8C92c',
 }
 
 // See https://github.com/gnosis/gp-v2-contracts/commit/821b5a8da213297b0f7f1d8b17c893c5627020af#diff-12bbbe13cd5cf42d639e34a39d8795021ba40d3ee1e1a8282df652eb161a11d6R13
@@ -69,15 +76,15 @@ export const DEFAULT_ORDER_DELAY = 20000 // 20s
 export const PENDING_ORDERS_BUFFER = 60 * 1000 // 60s
 export const CANCELLED_ORDERS_PENDING_TIME = 5 * 60 * 1000 // 5min
 export const PRICE_API_TIMEOUT_MS = 10000 // 10s
+export const GP_ORDER_UPDATE_INTERVAL = 30 * 1000 // 30s
+export const MINIMUM_ORDER_VALID_TO_TIME_SECONDS = 120
 
 export const WETH_LOGO_URI =
   'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2/logo.png'
 export const XDAI_LOGO_URI =
   'https://raw.githubusercontent.com/1Hive/default-token-list/master/src/assets/xdai/0xe91d153e0b41518a2ce8dd3d7944fa863463a97d/logo.png'
 
-// 0.1 balance threshold
-export const LOW_NATIVE_BALANCE_THRESHOLD = new Fraction('1', '10')
-export const DOCS_LINK = 'https://docs.cowswap.exchange'
+export const DOCS_LINK = 'https://docs.cow.fi'
 export const CONTRACTS_CODE_LINK = 'https://github.com/gnosis/gp-v2-contracts'
 export const CODE_LINK = 'https://github.com/gnosis/gp-swap-ui'
 export const DISCORD_LINK = 'https://chat.cowswap.exchange'
@@ -105,3 +112,14 @@ export const FEE_SIZE_THRESHOLD = new Fraction(10, 100) // 30%
 
 // default value provided as userAddress to Paraswap API if the user wallet is not connected
 export const SOLVER_ADDRESS = '0xa6ddbd0de6b310819b49f680f65871bee85f517e'
+
+export const MAXIMUM_ORDERS_TO_DISPLAY = 10
+export const AMOUNT_OF_ORDERS_TO_FETCH = 100
+
+// last wallet provider key used in local storage
+export const STORAGE_KEY_LAST_PROVIDER = 'lastProvider'
+
+// Default price strategy to use for getting app prices
+// COWSWAP = new quote endpoint
+// LEGACY = price racing logic (checking 0x, gp, paraswap, etc)
+export const DEFAULT_GP_PRICE_STRATEGY = 'COWSWAP'

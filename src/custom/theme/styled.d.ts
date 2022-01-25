@@ -10,6 +10,11 @@ export interface Colors extends ColorsUniswap {
   greenShade: Color
   blueShade: Color
   blueShade2: Color
+  blueShade3: Color
+  success: Color
+  danger: Color
+  pending: Color
+  attention: Color
   border: Color
   border2: Color
   disabled: Color
@@ -57,6 +62,9 @@ declare module 'styled-components' {
       srcIcon?: string
       alt?: string
     }
+    util: {
+      invertImageForDarkMode: string | null
+    }
     cursor?: FlattenSimpleInterpolation
     body: {
       background?: FlattenSimpleInterpolation
@@ -72,6 +80,18 @@ declare module 'styled-components' {
       }
     }
     neumorphism: {
+      boxShadow: FlattenSimpleInterpolation
+    }
+    cowToken: {
+      background: FlattenSimpleInterpolation
+      boxShadow: FlattenSimpleInterpolation
+    },
+    iconGradientBorder: FlattenSimpleInterpolation
+    card: {
+      background: FlattenSimpleInterpolation
+      background2: string
+      background3: FlattenSimpleInterpolation
+      border: string
       boxShadow: FlattenSimpleInterpolation
     }
     header: {
