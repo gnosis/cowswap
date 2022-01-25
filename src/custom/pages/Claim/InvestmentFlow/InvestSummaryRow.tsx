@@ -22,7 +22,7 @@ export function InvestSummaryRow(props: Props): JSX.Element | null {
 
   return (
     <tr>
-      <td>
+      <td data-title="Type of Claim">
         {isFree ? (
           <>
             <CowProtocolLogo size={42} />
@@ -42,7 +42,7 @@ export function InvestSummaryRow(props: Props): JSX.Element | null {
         )}
       </td>
 
-      <td>
+      <td data-title="Amount">
         <i>{formatSmartLocaleAware(vCowAmount, AMOUNT_PRECISION) || '0'} vCOW</i>
 
         {!isFree && (
@@ -61,7 +61,7 @@ export function InvestSummaryRow(props: Props): JSX.Element | null {
         )}
       </td>
 
-      <td>
+      <td data-title="Details">
         {!isFree && (
           <span>
             <b>Price:</b>{' '}

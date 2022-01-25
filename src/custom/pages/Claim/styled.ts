@@ -854,12 +854,20 @@ export const InvestContent = styled.div`
       font-size: 14px;
       grid-template-columns: repeat(3, auto);
 
+      ${({ theme }) => theme.mediaWidth.upToSmall`
+        grid-template-columns: 1fr;
+      `}
       tr > td {
         flex-flow: column wrap;
         align-content: center;
         gap: 18px;
         font-weight: 300;
         font-size: 14px;
+
+        ${({ theme }) => theme.mediaWidth.upToSmall`
+          gap: 4px 0;
+          margin: 0;
+        `};
       }
 
       tr > td > span {
@@ -873,6 +881,10 @@ export const InvestContent = styled.div`
 
         &:last-child {
           width: 100%;
+
+          ${({ theme }) => theme.mediaWidth.upToSmall`
+            width: auto;
+          `};
         }
       }
 
@@ -880,6 +892,10 @@ export const InvestContent = styled.div`
         flex-flow: row wrap;
         align-content: center;
         gap: 6px;
+
+        ${({ theme }) => theme.mediaWidth.upToSmall`
+          align-items: center;
+        `};
 
         > span > b,
         > b {
@@ -900,12 +916,21 @@ export const InvestContent = styled.div`
 
         > span {
           margin: 0;
+
+          ${({ theme }) => theme.mediaWidth.upToSmall`
+            margin: 24px 0 0;
+          `};
         }
 
         > i {
           font-style: normal;
           font-size: 18px;
           font-weight: 500;
+
+          ${({ theme }) => theme.mediaWidth.upToSmall`
+            font-size: 16px;
+            font-weight: bold;
+          `};
         }
       }
 
@@ -916,6 +941,11 @@ export const InvestContent = styled.div`
 
         > span {
           width: 100%;
+
+          ${({ theme }) => theme.mediaWidth.upToSmall`
+            flex-flow: row wrap;
+            gap: 0 3px;
+          `};
         }
       }
     }
