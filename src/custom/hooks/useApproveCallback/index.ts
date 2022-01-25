@@ -52,6 +52,7 @@ export function useApproveCallbackFromTrade({
 
 export type OptionalApproveCallbackParams = {
   transactionSummary?: string
+  modalMessage?: string
 }
 
 type ApproveCallbackFromClaimParams = Omit<
