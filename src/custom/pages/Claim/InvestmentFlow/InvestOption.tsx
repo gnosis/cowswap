@@ -11,7 +11,7 @@ import { InvestmentFlowProps } from '.'
 import { ApprovalState, useApproveCallbackFromClaim } from 'hooks/useApproveCallback'
 import { useCurrencyBalance } from 'state/wallet/hooks'
 import { useActiveWeb3React } from 'hooks/web3'
-import { ClaimType, useClaimDispatchers, useClaimState } from 'state/claim/hooks'
+import { useClaimDispatchers, useClaimState } from 'state/claim/hooks'
 import { StyledNumericalInput } from 'components/CurrencyInputPanel/CurrencyInputPanelMod'
 
 import { ButtonConfirmed } from 'components/Button'
@@ -25,8 +25,6 @@ import { useGasPrices } from 'state/gas/hooks'
 import { AVG_APPROVE_COST_GWEI } from 'components/swap/EthWethWrap/helpers'
 import { EnhancedUserClaimData } from '../types'
 import { OperationType } from 'components/TransactionConfirmationModal'
-import useRevokeApproveCallback from 'hooks/useRevokeApproveCallback'
-import { V_COW_CONTRACT_ADDRESS } from 'constants/index'
 import styled from 'styled-components/macro'
 
 const ErrorMsgs = {
@@ -43,30 +41,6 @@ type InvestOptionProps = {
   optionIndex: number
   openModal: InvestmentFlowProps['modalCbs']['openModal']
   closeModal: InvestmentFlowProps['modalCbs']['closeModal']
-}
-
-const _claimApproveMessageMap = (type: ClaimType) => {
-  switch (type) {
-    case ClaimType.GnoOption:
-      return 'Approving GNO for investing in vCOW'
-    case ClaimType.Investor:
-      return 'Approving USDC for investing in vCOW'
-    // Shouldn't happen, type safe
-    default:
-      return 'Unknown token approval. Please check configuration.'
-  }
-}
-
-const _claimRevokeApprovalMessageMap = (type: ClaimType) => {
-  switch (type) {
-    case ClaimType.GnoOption:
-      return 'Revoking vCOW approval from GNO contract'
-    case ClaimType.Investor:
-      return 'Revoking vCOW approval from USDC contract'
-    // Shouldn't happen, type safe
-    default:
-      return 'Unknown token. Please check configuration.'
-  }
 }
 
 const UnderlineButton = styled.button`
@@ -95,18 +69,11 @@ export default function InvestOption({ claim, optionIndex, openModal, closeModal
   const investmentAmount = investFlowData[optionIndex].investedAmount
 
   // Approve hooks
-  const [approveState, approveCallback] = useApproveCallbackFromClaim({
-    openTransactionConfirmationModal: () => openModal(_claimApproveMessageMap(claim.type), OperationType.APPROVE_TOKEN),
+  const [approveState, approveCallback, revokeApprovalCallback] = useApproveCallbackFromClaim({
+    openTransactionConfirmationModal: (message: string, operationType: OperationType) =>
+      openModal(message, operationType),
     closeModals: closeModal,
     claim,
-  })
-
-  const [isAlreadyApproved, revokeApprovalCallback] = useRevokeApproveCallback({
-    openTransactionConfirmationModal: () =>
-      openModal(_claimRevokeApprovalMessageMap(claim.type), OperationType.APPROVE_TOKEN),
-    closeModals: closeModal,
-    spender: chainId ? V_COW_CONTRACT_ADDRESS[chainId] : undefined,
-    token: claim?.currencyAmount?.currency,
   })
 
   const isEtherApproveState = approveState === ApprovalState.UNKNOWN
@@ -177,9 +144,9 @@ export default function InvestOption({ claim, optionIndex, openModal, closeModal
     if (!approveCallback) return
 
     try {
-      // for pending state pre-BC
       setApproving(true)
-      await approveCallback({ transactionSummary: `Approve ${token?.symbol || 'token'} for investing in vCOW` })
+      const summary = `Approve ${token?.symbol || 'token'} for investing in vCOW`
+      await approveCallback({ modalMessage: summary, transactionSummary: summary })
     } catch (error) {
       console.error('[InvestOption]: Issue approving.', error)
       handleSetError(error?.message)
@@ -195,10 +162,11 @@ export default function InvestOption({ claim, optionIndex, openModal, closeModal
     if (!revokeApprovalCallback) return
 
     try {
-      // for pending state pre-BC
       setApproving(true)
+      const summary = `Revoke ${token?.symbol || 'token'} approval for vCOW contract`
       await revokeApprovalCallback({
-        transactionSummary: claim.type ? _claimRevokeApprovalMessageMap(claim.type) : undefined,
+        modalMessage: summary,
+        transactionSummary: summary,
       })
     } catch (error) {
       console.error('[InvestOption]: Issue revoking approval.', error)
@@ -206,7 +174,7 @@ export default function InvestOption({ claim, optionIndex, openModal, closeModal
     } finally {
       setApproving(false)
     }
-  }, [claim.type, handleCloseError, handleSetError, revokeApprovalCallback])
+  }, [handleCloseError, handleSetError, revokeApprovalCallback, token?.symbol])
 
   const vCowAmount = useMemo(
     () => calculateInvestmentAmounts(claim, investmentAmount)?.vCowAmount,
@@ -362,8 +330,11 @@ export default function InvestOption({ claim, optionIndex, openModal, closeModal
                 )}
               </ButtonConfirmed>
             )}
-            {isAlreadyApproved && (
-              <UnderlineButton disabled={approving || !isAlreadyApproved} onClick={handleRevokeApproval}>
+            {(approveState === ApprovalState.APPROVED || approveState === ApprovalState.PENDING) && (
+              <UnderlineButton
+                disabled={approving || approveState === ApprovalState.PENDING}
+                onClick={handleRevokeApproval}
+              >
                 Revoke approval
               </UnderlineButton>
             )}
