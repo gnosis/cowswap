@@ -23,7 +23,7 @@ import SVG from 'react-inlinesvg'
 import twitterImage from 'assets/cow-swap/twitter.svg'
 import discordImage from 'assets/cow-swap/discord.svg'
 import CowProtocolIcon from 'assets/cow-swap/cowprotocol.svg'
-import ExternalLink from 'theme'
+import { ExternalLink } from 'theme'
 
 const COW_TWEET_TEMPLATE =
   'I just joined the 🐮 COWmmunity @MEVprotection and claimed my first vCOW tokens! Join me at https://cowswap.exchange/'
