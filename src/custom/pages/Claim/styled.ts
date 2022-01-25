@@ -501,10 +501,20 @@ export const ConfirmOrLoadingWrapper = styled.div<{ activeBG: boolean }>`
     line-height: 1.5;
     font-weight: normal;
     margin: 0 0 24px;
+    text-align: center;
 
     ${({ theme }) => theme.mediaWidth.upToSmall`
       text-align: center;
     `};
+  }
+
+  > h4 > div > p {
+    margin: 24px auto 0;
+  }
+
+  > h4 > div > p > b {
+    word-break: break-all;
+    display: block;
   }
 
   > h4 > button {

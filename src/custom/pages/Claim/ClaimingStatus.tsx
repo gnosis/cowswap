@@ -66,8 +66,20 @@ export default function ClaimingStatus() {
         <>
           <Trans>
             <h4>
-              Congratulations on claiming <b>{claimedAmount} vCOW!</b>{' '}
-              {isSelfClaiming && <AddToMetamask currency={currency} />}
+              Congratulations on claiming <b>{claimedAmount} vCOW!</b>
+              {isSelfClaiming ? (
+                <AddToMetamask currency={currency} />
+              ) : (
+                <div>
+                  <p>
+                    You have just claimed on behalf of{' '}
+                    <b>
+                      {activeClaimAccount} (
+                      <ExplorerLink id={activeClaimAccount} type={ExplorerDataType.ADDRESS} />)
+                    </b>
+                  </p>
+                </div>
+              )}
             </h4>
             <p>
               <span role="img" aria-label="party-hat">
@@ -79,14 +91,16 @@ export default function ClaimingStatus() {
           </Trans>
 
           <BannersWrapper>
-            <Link to="/profile">
-              <SuccessBanner type={'Profile'}>
-                <span>
-                  <Trans>View vCOW balance</Trans>
-                </span>
-                <SVG src={CowProtocolIcon} description="Profile" />
-              </SuccessBanner>
-            </Link>
+            {isSelfClaiming && (
+              <Link to="/profile">
+                <SuccessBanner type={'Profile'}>
+                  <span>
+                    <Trans>View vCOW balance</Trans>
+                  </span>
+                  <SVG src={CowProtocolIcon} description="Profile" />
+                </SuccessBanner>
+              </Link>
+            )}
             <a
               href={`https://twitter.com/intent/tweet?text=${COW_TWEET_TEMPLATE}`}
               target={'_blank'}
@@ -108,15 +122,6 @@ export default function ClaimingStatus() {
               </SuccessBanner>
             </a>
           </BannersWrapper>
-
-          {!isSelfClaiming && (
-            <Trans>
-              <p>
-                You have just claimed on behalf of{' '}
-                <ExplorerLink id={activeClaimAccount} type={ExplorerDataType.ADDRESS} />
-              </p>
-            </Trans>
-          )}
         </>
       )}
       {isAttempting && (
