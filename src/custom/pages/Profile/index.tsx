@@ -34,7 +34,7 @@ import { useTokenBalance } from 'state/wallet/hooks'
 import { V_COW } from 'constants/tokens'
 import VCOWDropdown from './VCOWDropdown'
 
-import { IS_CLAIMING_ENABLED } from 'pages/Claim'
+import { IS_CLAIMING_ENABLED } from 'pages/Claim/const'
 
 export default function Profile() {
   const referralLink = useReferralLink()

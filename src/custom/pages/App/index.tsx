@@ -20,7 +20,7 @@ import { version } from '@src/../package.json'
 import { environmentName } from 'utils/environments'
 import { useFilterEmptyQueryParams } from 'hooks/useFilterEmptyQueryParams'
 import RedirectAnySwapAffectedUsers from 'pages/error/AnySwapAffectedUsers/RedirectAnySwapAffectedUsers'
-import { IS_CLAIMING_ENABLED } from 'pages/Claim'
+import { IS_CLAIMING_ENABLED } from 'pages/Claim/const'
 
 const SENTRY_DSN = process.env.REACT_APP_SENTRY_DSN
 const SENTRY_TRACES_SAMPLE_RATE = process.env.REACT_APP_SENTRY_TRACES_SAMPLE_RATE

@@ -45,7 +45,7 @@ import Modal from 'components/Modal'
 // import ClaimModal from 'components/claim/ClaimModal'
 import UniBalanceContent from 'components/Header/UniBalanceContent'
 import CowClaimButton from 'components/CowClaimButton'
-import { IS_CLAIMING_ENABLED } from 'pages/Claim'
+import { IS_CLAIMING_ENABLED } from 'pages/Claim/const'
 
 export const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
   [ChainId.RINKEBY]: 'Rinkeby',
