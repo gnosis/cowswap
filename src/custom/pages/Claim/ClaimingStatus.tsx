@@ -26,7 +26,7 @@ import CowProtocolIcon from 'assets/cow-swap/cowprotocol.svg'
 import ExternalLink from 'theme'
 
 const COW_TWEET_TEMPLATE =
-  'I just joined the 🐮 COWmunity @MEVprotection and claimed my first vCOW tokens! Join me at https://cowswap.exchange/'
+  'I just joined the 🐮 COWmmunity @MEVprotection and claimed my first vCOW tokens! Join me at https://cowswap.exchange/'
 
 export default function ClaimingStatus() {
   const { chainId, account } = useActiveWeb3React()
