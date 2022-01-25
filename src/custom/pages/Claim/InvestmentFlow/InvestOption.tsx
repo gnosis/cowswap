@@ -202,16 +202,16 @@ export default function InvestOption({ approveData, claim, optionIndex }: Invest
                   `${currencyAmount?.currency?.symbol} not approved`
                 ) : (
                   <Row>
-                    <span>{currencyAmount?.currency?.symbol} approved</span>
                     <img src={CheckCircle} alt="Approved" />
+                    <span>{currencyAmount?.currency?.symbol} approved</span>
                   </Row>
                 )}
               </i>
             ) : (
               <i>
                 <Row>
-                  <span>Approval not required!</span>
                   <img src={CheckCircle} alt="Approved" />
+                  <span>Approval not required!</span>
                 </Row>
               </i>
             )}

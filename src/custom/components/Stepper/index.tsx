@@ -22,6 +22,9 @@ export const Step = styled.div<{
   position: relative;
   flex: 1 1 ${({ totalSteps }) => `calc(100% / ${totalSteps})`};
 
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    --circleSize: 26px;
+  `}
   &::before,
   &::after {
     content: '';
@@ -82,6 +85,7 @@ export const Step = styled.div<{
     color: ${({ isActiveStep, completedStep, theme }) =>
       completedStep ? theme.text1 : isActiveStep ? theme.text1 : transparentize(0.4, theme.text1)};
     font-weight: ${({ isActiveStep, completedStep }) => (completedStep ? '300' : isActiveStep ? 'bold' : '300')};
+    text-align: center;
   }
 
   > i {
