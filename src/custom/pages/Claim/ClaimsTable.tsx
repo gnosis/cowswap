@@ -82,7 +82,7 @@ const ClaimsTableRow = ({
         {formatSmartLocaleAware(claimAmount, AMOUNT_PRECISION) || 0} vCOW
       </td>
       <td data-title="Details">
-        {!isFree && price && (
+        {price && (
           <span>
             Price:{' '}
             <b title={formatMax(price)}>{`${formatSmartLocaleAware(price) || 0} vCOW per ${
