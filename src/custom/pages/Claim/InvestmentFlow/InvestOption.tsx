@@ -44,6 +44,10 @@ type InvestOptionProps = {
 }
 
 const UnderlineButton = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 0 6px;
+
   background: none;
   border: 0;
   cursor: pointer;
@@ -69,7 +73,12 @@ export default function InvestOption({ claim, optionIndex, openModal, closeModal
   const investmentAmount = investFlowData[optionIndex].investedAmount
 
   // Approve hooks
-  const [approveState, approveCallback, revokeApprovalCallback] = useApproveCallbackFromClaim({
+  const {
+    approvalState: approveState,
+    approve: approveCallback,
+    revokeApprove: revokeApprovalCallback,
+    isPendingApproval,
+  } = useApproveCallbackFromClaim({
     openTransactionConfirmationModal: (message: string, operationType: OperationType) =>
       openModal(message, operationType),
     closeModals: closeModal,
@@ -330,12 +339,9 @@ export default function InvestOption({ claim, optionIndex, openModal, closeModal
                 )}
               </ButtonConfirmed>
             )}
-            {(approveState === ApprovalState.APPROVED || approveState === ApprovalState.PENDING) && (
-              <UnderlineButton
-                disabled={approving || approveState === ApprovalState.PENDING}
-                onClick={handleRevokeApproval}
-              >
-                Revoke approval
+            {approveState === ApprovalState.APPROVED && (
+              <UnderlineButton disabled={approving || isPendingApproval} onClick={handleRevokeApproval}>
+                Revoke approval {approving || (isPendingApproval && <Loader size="12px" stroke="white" />)}
               </UnderlineButton>
             )}
           </span>
