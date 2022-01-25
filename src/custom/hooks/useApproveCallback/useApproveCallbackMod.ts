@@ -41,11 +41,7 @@ export function useApproveCallback({
   amountToApprove,
   spender,
   amountToCheckAgainstAllowance,
-}: ApproveCallbackParams): [
-  ApprovalState,
-  (optionalParams?: OptionalApproveCallbackParams) => Promise<void>,
-  (optionalParams?: OptionalApproveCallbackParams) => Promise<void>
-] {
+}: ApproveCallbackParams) {
   const { account, chainId } = useActiveWeb3React()
   const token = amountToApprove?.currency?.isToken ? amountToApprove.currency : undefined
   const currentAllowance = useTokenAllowance(token, account ?? undefined, spender)
@@ -250,7 +246,7 @@ export function useApproveCallback({
     ]
   )
 
-  return [approvalState, approve, revokeApprove]
+  return { approvalState, approve, revokeApprove, isPendingApproval: pendingApproval }
 }
 
 // wraps useApproveCallback in the context of a swap
