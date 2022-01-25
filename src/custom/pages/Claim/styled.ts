@@ -1002,6 +1002,30 @@ export const InvestTokenGroup = styled.div`
   }
 `
 
+export const UnderlineButton = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 0 6px;
+
+  background: none;
+  border: 0;
+  cursor: pointer;
+  color: ${({ theme }) => theme.primary4};
+  text-decoration: underline;
+  text-align: left;
+  padding: 0;
+
+  &:hover {
+    color: ${({ theme }) => theme.text1};
+  }
+
+  &:disabled {
+    text-decoration: none;
+    color: ${({ theme }) => theme.disabled};
+    cursor: auto;
+  }
+`
+
 export const InvestInput = styled.span`
   display: flex;
   flex-flow: column wrap;
@@ -1137,6 +1161,10 @@ export const InvestInput = styled.span`
     &:hover {
       color: ${({ theme }) => theme.text1};
     }
+
+  > div > label > span > ${UnderlineButton} {
+    margin-left: 4px;
+
   }
 `
 
