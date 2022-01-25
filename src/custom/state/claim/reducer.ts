@@ -36,6 +36,7 @@ export const initialState: ClaimState = {
     // claiming
     claimStatus: ClaimStatus.DEFAULT,
     claimedAmount: '',
+    estimatedGas: '',
     // investment
     isInvestFlowActive: false,
     investFlowStep: 0,
@@ -64,7 +65,7 @@ export type ClaimState = {
   // claiming
   claimStatus: ClaimStatus
   claimedAmount: string
-  estimatedGas?: string
+  estimatedGas: string
   // investment
   isInvestFlowActive: boolean
   investFlowStep: number
