@@ -323,6 +323,25 @@ export const ClaimTable = styled.div`
     ${({ theme }) => theme.mediaWidth.upToSmall`
       display: block;
     `};
+
+    input[type='checkbox'] {
+      ${({ theme }) => theme.mediaWidth.upToSmall`
+      width: 42px;
+      height: 42px;
+      
+      &::after {
+        width: 15px;
+        height: 24px;
+        border: 4px solid var(--active-inner);
+        border-top: 0;
+        border-left: 0;
+        left: 0;
+        right: 0;
+        top: -6px;
+        bottom: 0;
+        margin: auto;
+      `};
+    }
   }
 
   thead,
@@ -419,6 +438,7 @@ export const ClaimTable = styled.div`
 
       ${({ theme }) => theme.mediaWidth.upToSmall`
         margin: 0 4px 0 0;
+        font-size: 20px;
         flex-flow: row wrap;
       `};
     }
@@ -428,7 +448,7 @@ export const ClaimTable = styled.div`
       font-size: 15px;
 
       ${({ theme }) => theme.mediaWidth.upToSmall`
-        font-size: 16px;
+        font-size: 20px;
         margin: 0 0 0 3px;
       `};
     }
@@ -441,7 +461,7 @@ export const ClaimTable = styled.div`
     font-weight: 500;
 
     ${({ theme }) => theme.mediaWidth.upToSmall`
-      font-size: 16px;
+      font-size: 20px;
       font-weight: bold;
     `};
   }
@@ -454,7 +474,7 @@ export const ClaimTable = styled.div`
     gap: 4px;
 
     ${({ theme }) => theme.mediaWidth.upToSmall`
-      font-size: 15px;
+      font-size: 16px;
     `};
 
     > span {
@@ -1162,10 +1182,10 @@ export const InvestInput = styled.span`
       color: ${({ theme }) => theme.text1};
     }
 
-  > div > label > span > ${UnderlineButton} {
-    margin-left: 4px;
+    > div > label > span > ${UnderlineButton} {
+      margin-left: 4px;
 
-  }
+    }
 `
 
 export const InvestAvailableBar = styled.div<{ percentage?: number }>`
