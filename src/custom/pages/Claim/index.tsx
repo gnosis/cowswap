@@ -168,10 +168,7 @@ export default function Claim() {
 
   // on account/activeAccount/non-connected account (if claiming for someone else) change
   useEffect(() => {
-    // disconnected wallet?
-    if (!account) {
-      setActiveClaimAccount('')
-    } else if (!isSearchUsed) {
+    if (!isSearchUsed && account) {
       setActiveClaimAccount(account)
     }
 
