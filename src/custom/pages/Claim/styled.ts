@@ -1,5 +1,7 @@
 import styled from 'styled-components/macro'
 import { CheckCircle, Frown } from 'react-feather'
+import BadgeOriginal from 'components/Badge'
+
 import { Icon } from 'components/CowProtocolLogo'
 import { ButtonPrimary, ButtonSecondary } from 'components/Button'
 import { Step } from 'components/Stepper'
@@ -785,6 +787,7 @@ export const ClaimBreakdown = styled.div`
 `
 
 export const FooterNavButtons = styled.div`
+  margin-top: 20px;
   display: flex;
   width: 100%;
   flex-flow: column wrap;
@@ -803,6 +806,12 @@ export const FooterNavButtons = styled.div`
       margin: 0 6px 0 0;
     }
   }
+`
+
+export const ReadMoreText = styled.div`
+  margin: 18px 0;
+  text-align: center;
+  font-size: 15px;
 `
 
 export const TopNav = styled.div`
@@ -1073,6 +1082,10 @@ export const InvestInput = styled.span`
     color: red;
     margin: 12px 0;
     font-size: 15px;
+
+    &.warn {
+      color: orange;
+    }
   }
 
   > div > i {
@@ -1247,6 +1260,10 @@ export const AccountClaimSummary = styled.div`
     font-style: normal;
     word-break: break-all;
   }
+`
+
+export const Badge = styled(BadgeOriginal)`
+  font-size: 11px;
 `
 
 export const CowSpinner = styled.div`

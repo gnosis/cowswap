@@ -15,7 +15,7 @@ import { useTransactionAdder } from 'state/enhancedTransactions/hooks'
 
 import { GpEther, V_COW } from 'constants/tokens'
 
-import { formatSmart } from 'utils/format'
+import { formatSmartLocaleAware } from 'utils/format'
 import { calculateGasMargin } from 'utils/calculateGasMargin'
 import { isAddress } from 'utils'
 
@@ -54,11 +54,13 @@ import {
   ClaimStatus,
   resetClaimUi,
   updateInvestError,
+  setEstimatedGas,
 } from '../actions'
 import { EnhancedUserClaimData } from 'pages/Claim/types'
 import { supportedChainId } from 'utils/supportedChainId'
+import { AMOUNT_PRECISION } from 'constants/index'
 
-const CLAIMS_REPO_BRANCH = 'main'
+const CLAIMS_REPO_BRANCH = '2022-01-22-test-deployment-all-networks'
 export const CLAIMS_REPO = `https://raw.githubusercontent.com/gnosis/cow-merkle-drop/${CLAIMS_REPO_BRANCH}/`
 
 // Base amount = 1 VCOW
@@ -413,7 +415,8 @@ function _validateClaimable(
  * @param account
  */
 export function useClaimCallback(account: string | null | undefined): {
-  claimCallback: (claimInputs: ClaimInput[]) => Promise<string | undefined>
+  claimCallback: (claimInputs: ClaimInput[]) => Promise<string>
+  estimateGasCallback: (claimInputs: ClaimInput[]) => Promise<BigNumber | undefined>
 } {
   // get claim data for given account
   const { chainId, account: connectedAccount } = useActiveWeb3React()
@@ -441,82 +444,129 @@ export function useClaimCallback(account: string | null | undefined): {
     },
   })
 
-  /**
-   * Extend the Payable optional param
-   */
-  function _extendFinalArg(args: ClaimManyFnArgs, extendedArg: Record<any, any>) {
-    const lastArg = args.pop()
-    args.push({
-      ...lastArg, // add back whatever is already there
-      ...extendedArg,
-    })
-
-    return args
-  }
-
-  const claimCallback = useCallback(
-    async function (claimInput: ClaimInput[]) {
-      if (
-        claims.length === 0 ||
-        claimInput.length === 0 ||
-        !account ||
-        !connectedAccount ||
-        !chainId ||
-        !vCowContract ||
-        !vCowToken ||
-        !nativeTokenPrice
-      ) {
-        throw new Error("Not initialized, can't claim")
+  const getClaimArgs = useCallback(
+    async function (claimInput: ClaimInput[]): Promise<GetClaimManyArgsResult> {
+      if (claims.length === 0) {
+        throw new Error('User has no claims')
+      }
+      if (claimInput.length === 0) {
+        throw new Error('No claims selected')
+      }
+      if (!account) {
+        throw new Error('Claim account not set')
+      }
+      if (!connectedAccount) {
+        throw new Error('Not connected')
+      }
+      if (!nativeTokenPrice) {
+        throw new Error("There's no native token price")
       }
 
       _validateClaimable(claims, claimInput, isInvestmentWindowOpen, isAirdropWindowOpen)
 
-      const { args, totalClaimedAmount } = _getClaimManyArgs({
+      return _getClaimManyArgs({
         claimInput,
         claims,
         account,
         connectedAccount,
         nativeTokenPrice,
       })
+    },
+    [account, claims, connectedAccount, isAirdropWindowOpen, isInvestmentWindowOpen, nativeTokenPrice]
+  )
+
+  const estimateGasCallback = useCallback(
+    async function (
+      claimInput: ClaimInput[],
+      claimArgs?: GetClaimManyArgsResult['args']
+    ): Promise<BigNumber | undefined> {
+      if (!vCowContract) {
+        return
+      }
+
+      try {
+        let args = claimArgs
+        if (!claimArgs) {
+          const { args: _args } = await getClaimArgs(claimInput)
+          args = _args
+        }
+
+        if (!args) {
+          console.debug('Failed to estimate gas for claiming: There were no valid claims selected')
+          return
+        }
+
+        // Why unnecessarily awaiting here?
+        // Because I want to handle errors here.
+        // Not awaiting means the caller will have to deal with that, which I don't want in this case
+        return await vCowContract.estimateGas.claimMany(...args)
+      } catch (e) {
+        console.debug('Failed to estimate gas for claiming:', e.message)
+        return
+      }
+    },
+    [getClaimArgs, vCowContract]
+  )
+
+  const claimCallback = useCallback(
+    /**
+     * Claim callback that sends tx to wallet to claim whatever user selected
+     *
+     * Returns a string with the formatted vCow amount being claimed
+     */
+    async function (claimInput: ClaimInput[]): Promise<string> {
+      if (claimInput.length === 0) {
+        throw new Error('No claims selected')
+      }
+      if (!account) {
+        throw new Error('Claim account not set')
+      }
+      if (!connectedAccount) {
+        throw new Error('Not connected')
+      }
+      if (!chainId) {
+        throw new Error('No chainId')
+      }
+      if (!vCowContract) {
+        throw new Error('vCOW contract not present')
+      }
+      if (!vCowToken) {
+        throw new Error('vCOW token not present')
+      }
+
+      const { args, totalClaimedAmount } = await getClaimArgs(claimInput)
 
       if (!args) {
-        throw new Error('There were no valid claims selected')
+        throw new Error('No valid claims selected')
+      }
+
+      const gasLimit = await estimateGasCallback(claimInput, args)
+
+      if (!gasLimit) {
+        throw new Error('Not able to estimate gasLimit')
       }
 
       const vCowAmount = CurrencyAmount.fromRawAmount(vCowToken, totalClaimedAmount)
+      const formattedVCowAmount = formatSmartLocaleAware(vCowAmount, AMOUNT_PRECISION) || '0'
 
-      return vCowContract.estimateGas.claimMany(...args).then((estimatedGas) => {
-        // Last item in the array contains the call overrides
-        const extendedArgs = _extendFinalArg(args, {
-          from: connectedAccount, // add the `from` as the connected account
-          gasLimit: calculateGasMargin(chainId, estimatedGas), // add the estimated gas limit
-        })
+      const extendedArgs = _extendFinalArg(args, {
+        from: connectedAccount, // add the `from` as the connected account
+        gasLimit: calculateGasMargin(chainId, gasLimit),
+      })
 
-        return vCowContract.claimMany(...extendedArgs).then((response: TransactionResponse) => {
-          addTransaction({
-            hash: response.hash,
-            summary: `Claim ${formatSmart(vCowAmount)} vCOW`,
-            claim: { recipient: account, indices: args[0] as number[] },
-          })
-          return response.hash
+      return vCowContract.claimMany(...extendedArgs).then((response: TransactionResponse) => {
+        addTransaction({
+          hash: response.hash,
+          summary: `Claim ${formattedVCowAmount} vCOW`,
+          claim: { recipient: account, indices: args[0] as number[] },
         })
+        return formattedVCowAmount
       })
     },
-    [
-      account,
-      addTransaction,
-      chainId,
-      claims,
-      connectedAccount,
-      isAirdropWindowOpen,
-      isInvestmentWindowOpen,
-      nativeTokenPrice,
-      vCowContract,
-      vCowToken,
-    ]
+    [account, addTransaction, chainId, connectedAccount, estimateGasCallback, getClaimArgs, vCowContract, vCowToken]
   )
 
-  return { claimCallback }
+  return { claimCallback, estimateGasCallback }
 }
 
 type GetClaimManyArgsParams = {
@@ -670,6 +720,19 @@ function _getClaimValue(claim: UserClaimData, vCowAmount: string, nativeTokenPri
   return JSBI.divide(claimValueInAtomsSquared, DENOMINATOR).toString()
 }
 
+/**
+ * Extend the Payable optional param
+ */
+function _extendFinalArg(args: ClaimManyFnArgs, extendedArg: Record<any, any>) {
+  const lastArg = args.pop()
+  args.push({
+    ...lastArg, // add back whatever is already there
+    ...extendedArg,
+  })
+
+  return args
+}
+
 type LastAddress = string
 type ClaimAddressMapping = { [firstAddress: string]: LastAddress }
 const FETCH_CLAIM_MAPPING_PROMISES: Record<number, Promise<ClaimAddressMapping> | null> = {}
@@ -714,21 +777,25 @@ const FETCH_CLAIM_PROMISES: { [key: string]: Promise<UserClaims> } = {}
  * Returns the claim for the given address, or null if not valid
  */
 function fetchClaims(account: string, chainId: number): Promise<UserClaims> {
+  // Validate it's a, well, valid address
   const formatted = isAddress(account)
   if (!formatted) return Promise.reject(new Error('Invalid address'))
 
-  const claimKey = getClaimKey(formatted, chainId)
+  // To be sure, let's lowercase the hashed address and work with it instead
+  const lowerCasedAddress = formatted.toLowerCase()
+
+  const claimKey = getClaimKey(lowerCasedAddress, chainId)
 
   return (
     FETCH_CLAIM_PROMISES[claimKey] ??
     (FETCH_CLAIM_PROMISES[claimKey] = fetchClaimsMapping(chainId)
       .then((mapping) => {
-        const sorted = Object.keys(mapping).sort((a, b) => (a.toLowerCase() < b.toLowerCase() ? -1 : 1))
+        const sorted = Object.keys(mapping).sort((a, b) => (a < b ? -1 : 1))
 
         for (const startingAddress of sorted) {
           const lastAddress = mapping[startingAddress]
-          if (startingAddress.toLowerCase() <= formatted.toLowerCase()) {
-            if (formatted.toLowerCase() <= lastAddress.toLowerCase()) {
+          if (startingAddress <= lowerCasedAddress) {
+            if (lowerCasedAddress <= lastAddress) {
               return startingAddress
             }
           } else {
@@ -739,7 +806,7 @@ function fetchClaims(account: string, chainId: number): Promise<UserClaims> {
       })
       .then((address) => fetchClaimsFile(address, chainId))
       .then((result) => {
-        if (result[formatted]) return transformRepoClaimsToUserClaims(result[formatted]) // mod
+        if (result[lowerCasedAddress]) return transformRepoClaimsToUserClaims(result[lowerCasedAddress]) // mod
         throw new Error(`Claim for ${claimKey} was not found in claim file!`)
       })
       .catch((error) => {
@@ -762,7 +829,8 @@ export function useClaimDispatchers() {
       setIsSearchUsed: (payload: boolean) => dispatch(setIsSearchUsed(payload)),
       // claiming
       setClaimStatus: (payload: ClaimStatus) => dispatch(setClaimStatus(payload)),
-      setClaimedAmount: (payload: number) => dispatch(setClaimedAmount(payload)),
+      setClaimedAmount: (payload: string) => dispatch(setClaimedAmount(payload)),
+      setEstimatedGas: (payload: string) => dispatch(setEstimatedGas(payload)),
       // investing
       setIsInvestFlowActive: (payload: boolean) => dispatch(setIsInvestFlowActive(payload)),
       setInvestFlowStep: (payload: number) => dispatch(setInvestFlowStep(payload)),
@@ -782,6 +850,17 @@ export function useClaimDispatchers() {
 
 export function useClaimState() {
   return useSelector((state: AppState) => state.claim)
+}
+
+/**
+ * Returns a boolean indicating whehter there's an error on claim investment flow
+ */
+export function useHasClaimInvestmentFlowError(): boolean {
+  const { investFlowData } = useClaimState()
+
+  return useMemo(() => {
+    return investFlowData.some(({ error }) => Boolean(error))
+  }, [investFlowData])
 }
 
 /**

@@ -83,7 +83,7 @@ const ClaimsTableRow = ({
         {!isFree ||
           (price && (
             <span>
-              Price: <b>{`${formatSmartLocaleAware(price) || 0} vCoW per ${currencyAmount?.currency?.symbol}`}</b>
+              Price: <b>{`${formatSmartLocaleAware(price) || 0} vCOW per ${currencyAmount?.currency?.symbol}`}</b>
             </span>
           ))}
         <span>
@@ -147,7 +147,7 @@ export default function ClaimsTable({ isAirdropOnly, hasClaims }: ClaimsTablePro
   return (
     <ClaimBreakdown>
       <p>
-        The table overview below represents your current vCow claiming opportunities. To move forward with one or all of
+        The table overview below represents your current vCOW claiming opportunities. To move forward with one or all of
         the options, simply select the row(s) you would like to engage with and move forward via the &apos;Claim
         vCOW&apos; button.
       </p>

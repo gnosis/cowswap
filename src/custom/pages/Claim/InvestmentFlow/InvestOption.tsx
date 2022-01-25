@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState, useEffect } from 'react'
-import { Percent } from '@uniswap/sdk-core'
+import { CurrencyAmount, Percent } from '@uniswap/sdk-core'
+import { BigNumber } from '@ethersproject/bignumber'
 
 import CowProtocolLogo from 'components/CowProtocolLogo'
 import { InvestTokenGroup, TokenLogo, InvestSummary, InvestInput, InvestAvailableBar } from '../styled'
@@ -20,23 +21,30 @@ import { useErrorModal } from 'hooks/useErrorMessageAndModal'
 import { tryParseAmount } from 'state/swap/hooks'
 import { calculateInvestmentAmounts, calculatePercentage } from 'state/claim/hooks/utils'
 import { AMOUNT_PRECISION, PERCENTAGE_PRECISION } from 'constants/index'
+import { useGasPrices } from 'state/gas/hooks'
+import { AVG_APPROVE_COST_GWEI } from 'components/swap/EthWethWrap/helpers'
 
-enum ErrorMsgs {
-  InsufficientBalance = 'Insufficient balance to cover investment amount',
-  OverMaxInvestment = `Your investment amount can't be above the maximum investment allowed`,
+const ErrorMsgs = {
+  InsufficientBalance: (symbol = '') => `Insufficient ${symbol} balance to cover investment amount`,
+  OverMaxInvestment: `Your investment amount can't be above the maximum investment allowed`,
+  InvestmentIsZero: `Your investment amount can't be zero`,
+  NotApproved: (symbol = '') => `Please approve ${symbol} token`,
+  InsufficientNativeBalance: (symbol = '', amount = '') =>
+    `You might not have enough ${symbol} to pay for the network transaction fee (estimated ${amount} ${symbol})`,
 }
 
 export default function InvestOption({ approveData, claim, optionIndex }: InvestOptionProps) {
   const { currencyAmount, price, cost: maxCost } = claim
   const { updateInvestAmount, updateInvestError } = useClaimDispatchers()
-  const { investFlowData, activeClaimAccount } = useClaimState()
+  const { investFlowData, activeClaimAccount, estimatedGas } = useClaimState()
 
   const { handleSetError, handleCloseError, ErrorModal } = useErrorModal()
 
-  const { account } = useActiveWeb3React()
+  const { account, chainId } = useActiveWeb3React()
 
   const [percentage, setPercentage] = useState<string>('0')
-  const [typedValue, setTypedValue] = useState<string>('0')
+  const [typedValue, setTypedValue] = useState<string>('')
+  const [inputWarning, setInputWarning] = useState<string>('')
 
   const investedAmount = investFlowData[optionIndex].investedAmount
   const inputError = investFlowData[optionIndex].error
@@ -56,10 +64,28 @@ export default function InvestOption({ approveData, claim, optionIndex }: Invest
   )
 
   const token = currencyAmount?.currency
+  const isNative = token?.isNative
   const balance = useCurrencyBalance(account || undefined, token)
+
+  const gasPrice = useGasPrices(isNative ? chainId : undefined)
 
   const isSelfClaiming = account === activeClaimAccount
   const noBalance = !balance || balance.equalTo('0')
+
+  const isApproved = approveData?.approveState === ApprovalState.APPROVED
+
+  const gasCost = useMemo(() => {
+    if (!estimatedGas || !isNative) {
+      return
+    }
+
+    // Based on how much gas will be used (estimatedGas) and current gas prices (if available)
+    // calculate how much that would cost in native currency.
+    // We pick `fast` to be conservative. Also, it's non-blocking, so the user is aware but can proceed
+    const amount = BigNumber.from(estimatedGas).mul(gasPrice?.fast || AVG_APPROVE_COST_GWEI)
+
+    return CurrencyAmount.fromRawAmount(token, amount.toString())
+  }, [estimatedGas, gasPrice?.fast, isNative, token])
 
   // on invest max amount click handler
   const setMaxAmount = useCallback(() => {
@@ -68,51 +94,8 @@ export default function InvestOption({ approveData, claim, optionIndex }: Invest
     }
 
     const value = maxCost.greaterThan(balance) ? balance : maxCost
-    const amount = value.quotient.toString()
-
-    setInvestedAmount(amount)
     setTypedValue(value.toExact() || '')
-    resetInputError()
-
-    setPercentage(_formatPercentage(calculatePercentage(balance, maxCost)))
-  }, [balance, maxCost, noBalance, resetInputError, setInvestedAmount])
-
-  // on input field change handler
-  const onInputChange = useCallback(
-    (value: string) => {
-      setTypedValue(value)
-      resetInputError()
-
-      // parse to CurrencyAmount
-      const parsedAmount = tryParseAmount(value, token)
-
-      // no amount/necessary params, return 0
-      if (!parsedAmount || !maxCost || !balance || !token) {
-        setInvestedAmount('0')
-        setPercentage('0')
-        return
-      }
-
-      let errorMsg = null
-
-      if (parsedAmount.greaterThan(maxCost)) errorMsg = ErrorMsgs.OverMaxInvestment
-      else if (parsedAmount.greaterThan(balance)) errorMsg = ErrorMsgs.InsufficientBalance
-
-      if (errorMsg) {
-        setInputError(errorMsg)
-        setInvestedAmount('0')
-        setPercentage('0')
-        return
-      }
-
-      // update redux state with new investAmount value
-      setInvestedAmount(parsedAmount.quotient.toString())
-
-      // update the local state with percentage value
-      setPercentage(_formatPercentage(calculatePercentage(parsedAmount, maxCost)))
-    },
-    [balance, maxCost, resetInputError, setInputError, setInvestedAmount, token]
-  )
+  }, [balance, maxCost, noBalance])
 
   // Cache approveData methods
   const approveCallback = approveData?.approveCallback
@@ -142,31 +125,90 @@ export default function InvestOption({ approveData, claim, optionIndex }: Invest
     [claim, investedAmount]
   )
 
-  // if its claiming for someone else we will set values to max
-  // if there is not enough balance then we will set an error
-  useEffect(() => {
-    if (!isSelfClaiming) {
-      if (!balance || !maxCost) {
-        return
-      }
-
-      if (balance.lessThan(maxCost)) {
-        setInputError(ErrorMsgs.InsufficientBalance)
-      } else {
-        setMaxAmount()
-      }
-    }
-  }, [balance, isSelfClaiming, maxCost, optionIndex, setInputError, setMaxAmount])
-
-  // this will set input and percentage value if you go back from the review page
+  // if there is investmentAmount in redux state for this option set it as typedValue
   useEffect(() => {
     const { investmentCost } = calculateInvestmentAmounts(claim, investedAmount)
 
-    if (investmentCost) {
-      onInputChange(investmentCost?.toExact())
+    if (!investmentCost) {
+      return
+    }
+
+    if (!investmentCost?.equalTo(0)) {
+      setTypedValue(investmentCost?.toExact())
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  // if we are claiming for someone else we will set values to max
+  useEffect(() => {
+    if (!balance || !maxCost) {
+      return
+    }
+
+    if (!isSelfClaiming && !balance.lessThan(maxCost)) {
+      setMaxAmount()
+    }
+  }, [balance, isSelfClaiming, maxCost, setMaxAmount])
+
+  // handle input value change
+  useEffect(() => {
+    let error = null
+    let warning
+
+    const parsedAmount = tryParseAmount(typedValue, token)
+
+    if (!maxCost || !balance) {
+      return
+    }
+
+    // set different errors in order of importance
+    if (balance.lessThan(maxCost) && !isSelfClaiming) {
+      error = ErrorMsgs.InsufficientBalance(token?.symbol)
+    } else if (!isNative && !isApproved) {
+      error = ErrorMsgs.NotApproved(token?.symbol)
+    } else if (!parsedAmount) {
+      error = ErrorMsgs.InvestmentIsZero
+    } else if (parsedAmount.greaterThan(maxCost)) {
+      error = ErrorMsgs.OverMaxInvestment
+    } else if (parsedAmount.greaterThan(balance)) {
+      error = ErrorMsgs.InsufficientBalance(token?.symbol)
+    } else if (isNative && gasCost && parsedAmount.add(gasCost).greaterThan(balance)) {
+      warning = ErrorMsgs.InsufficientNativeBalance(token?.symbol, formatSmartLocaleAware(gasCost))
+    }
+    setInputWarning(warning || '')
+
+    if (error) {
+      // if there is error set it in redux
+      setInputError(error)
+      setPercentage('0')
+    } else {
+      if (!parsedAmount) {
+        return
+      }
+      // basically the magic happens in this block
+
+      // update redux state to remove error for this field
+      resetInputError()
+
+      // update redux state with new investAmount value
+      setInvestedAmount(parsedAmount.quotient.toString())
+
+      // update the local state with percentage value
+      setPercentage(_formatPercentage(calculatePercentage(parsedAmount, maxCost)))
+    }
+  }, [
+    balance,
+    typedValue,
+    isSelfClaiming,
+    token,
+    isNative,
+    isApproved,
+    maxCost,
+    setInputError,
+    resetInputError,
+    setInvestedAmount,
+    gasCost,
+  ])
 
   return (
     <InvestTokenGroup>
@@ -183,7 +225,7 @@ export default function InvestOption({ approveData, claim, optionIndex }: Invest
           <span>
             <b>Price</b>{' '}
             <i>
-              {formatSmartLocaleAware(price) || '0'} vCoW per {currencyAmount?.currency?.symbol}
+              {formatSmartLocaleAware(price) || '0'} vCOW per {currencyAmount?.currency?.symbol}
             </i>
           </span>
 
@@ -258,7 +300,7 @@ export default function InvestOption({ approveData, claim, optionIndex }: Invest
                 )}
               </span>
               <StyledNumericalInput
-                onUserInput={onInputChange}
+                onUserInput={setTypedValue}
                 disabled={noBalance || !isSelfClaiming}
                 placeholder="0"
                 $loading={false}
@@ -268,7 +310,8 @@ export default function InvestOption({ approveData, claim, optionIndex }: Invest
             </label>
             <i>Receive: {formatSmartLocaleAware(vCowAmount, AMOUNT_PRECISION) || 0} vCOW</i>
             {/* Insufficient balance validation error */}
-            {inputError ? <small>{inputError}</small> : ''}
+            {inputError && <small>{inputError}</small>}
+            {inputWarning && <small className="warn">{inputWarning}</small>}
           </div>
         </InvestInput>
       </span>

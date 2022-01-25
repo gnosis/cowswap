@@ -54,11 +54,9 @@ export const GP_VAULT_RELAYER: Partial<Record<number, string>> = {
 }
 
 export const V_COW_CONTRACT_ADDRESS: Partial<Record<number, string>> = {
-  // TODO: load addresses from contract package when available
-  // [ChainId.MAINNET]: GPv2Settlement[ChainId.MAINNET].address,
-  // [ChainId.RINKEBY]: GPv2Settlement[ChainId.RINKEBY].address,
-  // [ChainId.XDAI]: GPv2Settlement[ChainId.XDAI].address,
-  [ChainId.RINKEBY]: '0xB26D8c5D3d0A67F419F7b314D462C8357Cd4b122',
+  [ChainId.MAINNET]: '0x6d04B3ad33594978D0D4B01CdB7c3bA4a90a7DFe',
+  [ChainId.XDAI]: '0xA3A674a40709A837A5E742C2866eda7d3b35a7c0',
+  [ChainId.RINKEBY]: '0xD7Dd9397Fb942565959c77f8e112ec5aa7D8C92c',
 }
 
 // See https://github.com/gnosis/gp-v2-contracts/commit/821b5a8da213297b0f7f1d8b17c893c5627020af#diff-12bbbe13cd5cf42d639e34a39d8795021ba40d3ee1e1a8282df652eb161a11d6R13
@@ -86,8 +84,6 @@ export const WETH_LOGO_URI =
 export const XDAI_LOGO_URI =
   'https://raw.githubusercontent.com/1Hive/default-token-list/master/src/assets/xdai/0xe91d153e0b41518a2ce8dd3d7944fa863463a97d/logo.png'
 
-// 0.1 balance threshold
-export const LOW_NATIVE_BALANCE_THRESHOLD = new Fraction('1', '10')
 export const DOCS_LINK = 'https://docs.cow.fi'
 export const CONTRACTS_CODE_LINK = 'https://github.com/gnosis/gp-v2-contracts'
 export const CODE_LINK = 'https://github.com/gnosis/gp-swap-ui'
