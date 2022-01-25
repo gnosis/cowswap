@@ -1281,6 +1281,7 @@ export const SuccessBanner = styled.div<{ type: string }>`
     width: 42px;
     height: 42px;
     object-fit: contain;
+    stroke: none;
     fill: ${({ type, theme }) =>
       type === 'Twitter'
         ? SuccessBannerColors.twitter
