@@ -23,6 +23,7 @@ import SVG from 'react-inlinesvg'
 import twitterImage from 'assets/cow-swap/twitter.svg'
 import discordImage from 'assets/cow-swap/discord.svg'
 import CowProtocolIcon from 'assets/cow-swap/cowprotocol.svg'
+import ExternalLink from 'theme'
 
 const COW_TWEET_TEMPLATE =
   'I just joined the 🐮 COWmunity @MEVprotection and claimed my first vCOW tokens! Join me at https://cowswap.exchange/'
@@ -101,26 +102,22 @@ export default function ClaimingStatus() {
                 </SuccessBanner>
               </Link>
             )}
-            <a
-              href={`https://twitter.com/intent/tweet?text=${COW_TWEET_TEMPLATE}`}
-              target={'_blank'}
-              rel={'noreferrer'}
-            >
+            <ExternalLink href={`https://twitter.com/intent/tweet?text=${COW_TWEET_TEMPLATE}`}>
               <SuccessBanner type={'Twitter'}>
                 <span>
                   <Trans>Share on Twitter</Trans>
                 </span>
                 <SVG src={twitterImage} description="Twitter" />
               </SuccessBanner>
-            </a>
-            <a href="https://chat.cowswap.exchange/" target={'_blank'} rel={'noreferrer'}>
+            </ExternalLink>
+            <ExternalLink href="https://chat.cowswap.exchange/">
               <SuccessBanner type={'Discord'}>
                 <span>
                   <Trans>Join Discord</Trans>
                 </span>
                 <SVG src={discordImage} description="Discord" />
               </SuccessBanner>
-            </a>
+            </ExternalLink>
           </BannersWrapper>
         </>
       )}
