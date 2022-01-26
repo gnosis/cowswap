@@ -40,6 +40,7 @@ const ErrorMessages = {
   OverMaxInvestment: `Your investment amount can't be above the maximum investment allowed`,
   InvestmentIsZero: `Your investment amount can't be zero`,
   NotApproved: (symbol = '') => `Please approve ${symbol} token`,
+  WaitForApproval: (symbol = '') => `Approving ${symbol}. Please wait until the transaction is mined`,
 }
 
 const WarningMessages = {
@@ -115,6 +116,7 @@ export default function InvestOption({ claim, optionIndex, openModal, closeModal
   const noBalance = !balance || balance.equalTo('0')
 
   const isApproved = approveState === ApprovalState.APPROVED
+  const isPendingApprove = approveState === ApprovalState.PENDING
 
   const onUserInput = (input: string) => {
     setTypedValue(input)
@@ -185,7 +187,7 @@ export default function InvestOption({ claim, optionIndex, openModal, closeModal
     } finally {
       setApproving(false)
     }
-  }, [handleCloseError, handleSetError, revokeApprovalCallback, token?.symbol])
+  }, [handleCloseError, handleSetError, revokeApprovalCallback, token?.symbol]) 
   */
 
   const vCowAmount = useMemo(
@@ -231,6 +233,8 @@ export default function InvestOption({ claim, optionIndex, openModal, closeModal
     // set different errors in order of importance
     if (balance.lessThan(maxCost) && !isSelfClaiming) {
       error = ErrorMessages.InsufficientBalance(token?.symbol)
+    } else if (isPendingApprove) {
+      error = ErrorMessages.WaitForApproval(token?.symbol)
     } else if (!isNative && !isApproved) {
       error = ErrorMessages.NotApproved(token?.symbol)
     } else if (noBalance) {
@@ -272,6 +276,7 @@ export default function InvestOption({ claim, optionIndex, openModal, closeModal
     token,
     isNative,
     isApproved,
+    isPendingApprove,
     maxCost,
     setInputError,
     resetInputError,
@@ -368,7 +373,7 @@ export default function InvestOption({ claim, optionIndex, openModal, closeModal
                 )}
               </ButtonConfirmed>
             )}
-            {/*
+            {/* 
               // CURRENTLY TEST ONLY
               approveState === ApprovalState.APPROVED && (
                 <UnderlineButton disabled={approving || isPendingApproval} onClick={handleRevokeApproval}>
