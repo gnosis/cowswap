@@ -8,6 +8,7 @@ import {
   InvestSummaryTable,
   ClaimTable,
   AccountClaimSummary,
+  StepExplainer,
   Badge,
 } from 'pages/Claim/styled'
 import { InvestSummaryRow } from 'pages/Claim/InvestmentFlow/InvestSummaryRow'
@@ -16,7 +17,6 @@ import { ClaimSummaryView } from 'pages/Claim/ClaimSummary'
 import { Stepper } from 'components/Stepper'
 
 import {
-  ClaimType,
   useClaimState,
   useUserEnhancedClaimData,
   useClaimDispatchers,
@@ -26,7 +26,6 @@ import { ClaimStatus } from 'state/claim/actions'
 import { InvestClaim } from 'state/claim/reducer'
 import { calculateInvestmentAmounts } from 'state/claim/hooks/utils'
 
-import { ApprovalState, OptionalApproveCallbackParams } from 'hooks/useApproveCallback'
 import { useActiveWeb3React } from 'hooks/web3'
 
 import InvestOption from './InvestOption'
@@ -38,6 +37,7 @@ import { ExplorerDataType } from 'utils/getExplorerLink'
 
 import { BadgeVariant } from 'components/Badge'
 import { DollarSign, Icon, Send } from 'react-feather'
+import { OperationType } from 'components/TransactionConfirmationModal'
 
 const STEPS_DATA = [
   {
@@ -53,34 +53,11 @@ const STEPS_DATA = [
   },
 ]
 
-export type InvestOptionProps = {
-  claim: EnhancedUserClaimData
-  optionIndex: number
-  approveData:
-    | { approveState: ApprovalState; approveCallback: (optionalParams?: OptionalApproveCallbackParams) => void }
-    | undefined
-}
-
-type InvestmentFlowProps = Pick<ClaimCommonTypes, 'hasClaims'> & {
+export type InvestmentFlowProps = Pick<ClaimCommonTypes, 'hasClaims'> & {
   isAirdropOnly: boolean
-  gnoApproveData: InvestOptionProps['approveData']
-  usdcApproveData: InvestOptionProps['approveData']
-}
-
-type TokenApproveName = 'gnoApproveData' | 'usdcApproveData'
-type TokenApproveData = {
-  [key in TokenApproveName]: InvestOptionProps['approveData'] | undefined
-}
-
-// map claim type to token approve data
-function _claimToTokenApproveData(claimType: ClaimType, tokenApproveData: TokenApproveData) {
-  switch (claimType) {
-    case ClaimType.GnoOption:
-      return tokenApproveData.gnoApproveData
-    case ClaimType.Investor:
-      return tokenApproveData.usdcApproveData
-    default:
-      return undefined
+  modalCbs: {
+    openModal: (message: string, operationType: OperationType) => void
+    closeModal: () => void
   }
 }
 
@@ -149,7 +126,7 @@ function AccountDetails({ label, account, connectedAccount, Icon }: AccountDetai
   )
 }
 
-export default function InvestmentFlow({ hasClaims, isAirdropOnly, ...tokenApproveData }: InvestmentFlowProps) {
+export default function InvestmentFlow({ hasClaims, isAirdropOnly, modalCbs }: InvestmentFlowProps) {
   const { account } = useActiveWeb3React()
   const { selected, activeClaimAccount, claimStatus, isInvestFlowActive, investFlowStep, investFlowData } =
     useClaimState()
@@ -203,25 +180,32 @@ export default function InvestmentFlow({ hasClaims, isAirdropOnly, ...tokenAppro
       </h1>
 
       {investFlowStep === 0 && (
-        <p>
-          You have chosen to exercise one or more investment opportunities alongside claiming your airdrop. Exercising
-          your investment options will give you the chance to acquire vCOW tokens at a fixed price. This process
-          consists of two steps:
-          <br />
-          <br />
-          1) Define the amount you would like to invest and set the required allowances for the token you are purchasing
-          vCOW with.
-          <br />
-          <br />
-          2) Claim your vCOW tokens for the Airdrop (available immediately) and for your investment (vesting linearly
-          over 4 years).
-          <br />
-          <br />
-          For more details around the token, please read{' '}
-          <ExternalLink href={COW_LINKS.vCowPost}>the blog post</ExternalLink>
-          .<br /> For more details about the claiming process, please read{' '}
-          <ExternalLink href={COW_LINKS.stepGuide}>step by step guide</ExternalLink>.
-        </p>
+        <>
+          <p>
+            You have chosen to exercise one or more investment opportunities alongside claiming your airdrop. Exercising
+            your investment options will give you the chance to acquire vCOW tokens at a fixed price. This process
+            consists of two steps.
+          </p>
+          <StepExplainer>
+            <span data-step="Step 1">
+              <p>
+                Define the amount you would like to invest and set the required allowances for the token you are
+                purchasing vCOW with.
+              </p>
+            </span>
+            <span data-step="Step 2">
+              <p>
+                Claim your vCOW tokens for the Airdrop (available immediately) and for your investment (vesting linearly
+                over 4 years).
+              </p>
+            </span>
+          </StepExplainer>
+          <p>
+            For more details around the token, please read{' '}
+            <ExternalLink href={COW_LINKS.vCowPost}>the blog post</ExternalLink>. For more details about the claiming
+            process, please read <ExternalLink href={COW_LINKS.stepGuide}>step by step guide</ExternalLink>.
+          </p>
+        </>
       )}
 
       {/* Invest flow: Step 1 > Set allowances and investment amounts */}
@@ -233,12 +217,7 @@ export default function InvestmentFlow({ hasClaims, isAirdropOnly, ...tokenAppro
           </p>
 
           {selectedClaims.map((claim, index) => (
-            <InvestOption
-              key={claim.index}
-              optionIndex={index}
-              approveData={_claimToTokenApproveData(claim.type, tokenApproveData)}
-              claim={claim}
-            />
+            <InvestOption key={claim.index} optionIndex={index} claim={claim} {...modalCbs} />
           ))}
 
           {hasError && <InvestFlowValidation>Fix the errors before continuing</InvestFlowValidation>}

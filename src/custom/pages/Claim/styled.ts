@@ -323,6 +323,25 @@ export const ClaimTable = styled.div`
     ${({ theme }) => theme.mediaWidth.upToSmall`
       display: block;
     `};
+
+    input[type='checkbox'] {
+      ${({ theme }) => theme.mediaWidth.upToSmall`
+      width: 42px;
+      height: 42px;
+      
+      &::after {
+        width: 15px;
+        height: 24px;
+        border: 4px solid var(--active-inner);
+        border-top: 0;
+        border-left: 0;
+        left: 0;
+        right: 0;
+        top: -6px;
+        bottom: 0;
+        margin: auto;
+      `};
+    }
   }
 
   thead,
@@ -419,6 +438,7 @@ export const ClaimTable = styled.div`
 
       ${({ theme }) => theme.mediaWidth.upToSmall`
         margin: 0 4px 0 0;
+        font-size: 20px;
         flex-flow: row wrap;
       `};
     }
@@ -428,7 +448,7 @@ export const ClaimTable = styled.div`
       font-size: 15px;
 
       ${({ theme }) => theme.mediaWidth.upToSmall`
-        font-size: 16px;
+        font-size: 20px;
         margin: 0 0 0 3px;
       `};
     }
@@ -441,7 +461,7 @@ export const ClaimTable = styled.div`
     font-weight: 500;
 
     ${({ theme }) => theme.mediaWidth.upToSmall`
-      font-size: 16px;
+      font-size: 20px;
       font-weight: bold;
     `};
   }
@@ -454,7 +474,7 @@ export const ClaimTable = styled.div`
     gap: 4px;
 
     ${({ theme }) => theme.mediaWidth.upToSmall`
-      font-size: 15px;
+      font-size: 16px;
     `};
 
     > span {
@@ -1032,6 +1052,30 @@ export const InvestTokenGroup = styled.div`
   }
 `
 
+export const UnderlineButton = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 0 6px;
+
+  background: none;
+  border: 0;
+  cursor: pointer;
+  color: ${({ theme }) => theme.primary4};
+  text-decoration: underline;
+  text-align: left;
+  padding: 0;
+
+  &:hover {
+    color: ${({ theme }) => theme.text1};
+  }
+
+  &:disabled {
+    text-decoration: none;
+    color: ${({ theme }) => theme.disabled};
+    cursor: auto;
+  }
+`
+
 export const InvestInput = styled.span`
   display: flex;
   flex-flow: column wrap;
@@ -1167,7 +1211,11 @@ export const InvestInput = styled.span`
     &:hover {
       color: ${({ theme }) => theme.text1};
     }
-  }
+
+    > div > label > span > ${UnderlineButton} {
+      margin-left: 4px;
+
+    }
 `
 
 export const InvestAvailableBar = styled.div<{ percentage?: number }>`
@@ -1354,5 +1402,39 @@ export const CowSpinner = styled.div`
     to {
       transform: rotate(360deg);
     }
+  }
+`
+
+export const StepExplainer = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 16px;
+  margin: 0 0 24px;
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    grid-template-columns: 1fr;
+    gap: 16px 0;
+  `}
+  > span {
+    padding: 24px;
+    background: ${({ theme }) => theme.blueShade3};
+    border-radius: 12px;
+    position: relative;
+  }
+
+  > span::before {
+    content: attr(data-step);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: auto;
+    flex: 1 1 min-content;
+    padding: 0 0 12px;
+    font-size: 22px;
+    font-weight: bold;
+  }
+
+  > span > p {
+    margin: 0;
   }
 `
