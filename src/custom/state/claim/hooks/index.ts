@@ -55,6 +55,7 @@ import {
   resetClaimUi,
   updateInvestError,
   setEstimatedGas,
+  setHasClaimsOnOtherChains,
 } from '../actions'
 import { EnhancedUserClaimData } from 'pages/Claim/types'
 import { supportedChainId } from 'utils/supportedChainId'
@@ -776,7 +777,7 @@ const FETCH_CLAIM_PROMISES: { [key: string]: Promise<UserClaims> } = {}
  * Customized fetchClaim function
  * Returns the claim for the given address, or null if not valid
  */
-function fetchClaims(account: string, chainId: number): Promise<UserClaims> {
+export function fetchClaims(account: string, chainId: number): Promise<UserClaims> {
   // Validate it's a, well, valid address
   const formatted = isAddress(account)
   if (!formatted) return Promise.reject(new Error('Invalid address'))
@@ -843,6 +844,9 @@ export function useClaimDispatchers() {
       setSelectedAll: (payload: boolean) => dispatch(setSelectedAll(payload)),
       // reset claim ui
       resetClaimUi: () => dispatch(resetClaimUi()),
+      // has claims on other chains
+      setHasClaimsOnOtherChains: (payload: { chain: SupportedChainId; hasClaims: boolean }) =>
+        dispatch(setHasClaimsOnOtherChains(payload)),
     }),
     [dispatch]
   )
