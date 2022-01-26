@@ -112,7 +112,7 @@ type AccountDetailsProps = {
 function AccountDetails({ index, label, account, connectedAccount }: AccountDetailsProps) {
   return (
     <div>
-      {index === 0 && (
+      {isClaimer && (
         <div>
           <SVG src={RoundArrow} description="Arrow" />
         </div>
