@@ -25,6 +25,7 @@ import useTransactionConfirmationModal from 'hooks/useTransactionConfirmationMod
 
 import { useErrorModal } from 'hooks/useErrorMessageAndModal'
 import FooterNavButtons from './FooterNavButtons'
+import ClaimsOnOtherChainsBanner from 'pages/Claim/ClaimsOnOtherChainsBanner'
 
 /* TODO: Replace URLs with the actual final URL destinations */
 export const COW_LINKS = {
@@ -189,7 +190,8 @@ export default function Claim() {
       <ErrorModal />
       {/* If claim is confirmed > trigger confetti effect */}
       <Confetti start={claimStatus === ClaimStatus.CONFIRMED} />
-
+      {/* Cross chain claim banner */}
+      <ClaimsOnOtherChainsBanner />
       {/* Top nav buttons */}
       <ClaimNav account={account} handleChangeAccount={handleChangeAccount} />
       {/* Show general title OR total to claim (user has airdrop or airdrop+investment) --------------------------- */}
