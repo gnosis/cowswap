@@ -10,6 +10,7 @@ import LogoETH from 'assets/cow-swap/network-mainnet-logo.svg'
 import LogoGNO from 'assets/cow-swap/gno.png'
 import LogoUSDC from 'assets/cow-swap/usdc.png'
 import LogoXDAI from 'assets/cow-swap/xdai.png'
+import ClaimsOnOtherChainsBanner from './ClaimsOnOtherChainsBanner'
 
 export const PageWrapper = styled.div`
   --border-radius: 56px;
@@ -157,6 +158,13 @@ p > i {
 
 p > a {
   display: inline;
+}
+
+> ${ClaimsOnOtherChainsBanner} {
+  font-size: 16px;
+  margin-bottom: 25px;
+  border-radius: 10px;
+  padding: 6px 12px;
 }
 
 ${ButtonPrimary} {
