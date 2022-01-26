@@ -27,6 +27,7 @@ import { ExternalLink } from 'theme'
 import { formatMax, formatSmartLocaleAware } from 'utils/format'
 import { AMOUNT_PRECISION } from 'constants/index'
 import { shortenAddress } from 'utils'
+import CopyHelper from 'components/Copy'
 
 const COW_TWEET_TEMPLATE =
   'I just joined the 🐮 CoWmunity @MEVprotection and claimed my first vCOW tokens! Join me at https://cowswap.exchange/'
@@ -92,6 +93,7 @@ export default function ClaimingStatus() {
                         label={shortenAddress(activeClaimAccount)}
                         type="token-transfer"
                       />
+                      <CopyHelper toCopy={activeClaimAccount} />
                     </b>
                   </p>
                 </div>
