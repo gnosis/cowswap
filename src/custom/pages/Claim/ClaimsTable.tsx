@@ -78,10 +78,10 @@ const ClaimsTableRow = ({
           {!isFree && <i>with {currencyAmount?.currency?.symbol}</i>}
         </span>
       </td>
-      <td title={`${formatMax(claimAmount, claimAmount.currency.decimals)} vCOW`}>
+      <td data-title="Amount" title={`${formatMax(claimAmount, claimAmount.currency.decimals)} vCOW`}>
         {formatSmartLocaleAware(claimAmount, AMOUNT_PRECISION) || 0} vCOW
       </td>
-      <td>
+      <td data-title="Details">
         {!isFree ||
           (price && (
             <span>
