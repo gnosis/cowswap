@@ -33,7 +33,6 @@ import { ClaimCommonTypes, ClaimWithInvestmentData, EnhancedUserClaimData } from
 import { COW_LINKS } from 'pages/Claim'
 import { ExternalLink } from 'theme'
 import { ExplorerLink } from 'components/ExplorerLink'
-import { ExplorerDataType } from 'utils/getExplorerLink'
 
 import { BadgeVariant } from 'components/Badge'
 import { OperationType } from 'components/TransactionConfirmationModal'
@@ -266,7 +265,7 @@ export default function InvestmentFlow({ hasClaims, isAirdropOnly, modalCbs }: I
             you cannot increase or reduce the investment. Investment opportunities can only be exercised once.
           </p>
           <p>
-            <b>Important!</b> Please make sure you intend to claim and send vCOW to the mentioned receiving account(s)
+            <b>Important!</b> Please make sure you intend to claim and send vCOW to the mentioned receiving account(s).
           </p>
         </InvestContent>
       ) : null}
