@@ -1246,7 +1246,9 @@ export const BannersWrapper = styled.div`
   margin: 12px 0 0;
   flex-flow: column wrap;
 
-  > a {
+  > a,
+  > a:hover,
+  > a:focus {
     text-decoration: none;
   }
 `

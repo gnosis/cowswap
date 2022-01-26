@@ -92,16 +92,6 @@ export default function ClaimingStatus() {
           </Trans>
 
           <BannersWrapper>
-            {isSelfClaiming && (
-              <Link to="/profile">
-                <SuccessBanner type={'Profile'}>
-                  <span>
-                    <Trans>View vCOW balance</Trans>
-                  </span>
-                  <SVG src={CowProtocolIcon} description="Profile" />
-                </SuccessBanner>
-              </Link>
-            )}
             <ExternalLink href={`https://twitter.com/intent/tweet?text=${COW_TWEET_TEMPLATE}`}>
               <SuccessBanner type={'Twitter'}>
                 <span>
@@ -118,6 +108,16 @@ export default function ClaimingStatus() {
                 <SVG src={discordImage} description="Discord" />
               </SuccessBanner>
             </ExternalLink>
+            {isSelfClaiming && (
+              <Link to="/profile">
+                <SuccessBanner type={'Profile'}>
+                  <span>
+                    <Trans>View vCOW balance</Trans>
+                  </span>
+                  <SVG src={CowProtocolIcon} description="Profile" />
+                </SuccessBanner>
+              </Link>
+            )}
           </BannersWrapper>
         </>
       )}
