@@ -1,5 +1,4 @@
 import { useEffect } from 'react'
-import { useBlockNumber } from '../application/hooks'
 import { SupportedChainId } from 'constants/chains'
 import { supportedChainId } from 'utils/supportedChainId'
 import { useActiveWeb3React } from 'hooks/web3'
@@ -9,7 +8,6 @@ const SUPPORTED_CLAIM_CHAINS = [SupportedChainId.MAINNET, SupportedChainId.XDAI]
 
 export default function Updater() {
   const { account, chainId } = useActiveWeb3React()
-  const blockNumber = useBlockNumber()
   const { setHasClaimsOnOtherChains } = useClaimDispatchers()
 
   useEffect(() => {
@@ -29,7 +27,7 @@ export default function Updater() {
           setHasClaimsOnOtherChains({ chain, hasClaims: false })
         })
     })
-  }, [account, blockNumber, chainId, setHasClaimsOnOtherChains])
+  }, [account, chainId, setHasClaimsOnOtherChains])
 
   return null
 }
