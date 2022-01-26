@@ -33,6 +33,7 @@ import { ClaimCommonTypes, ClaimWithInvestmentData, EnhancedUserClaimData } from
 import { COW_LINKS } from 'pages/Claim'
 import { ExternalLink } from 'theme'
 import { ExplorerLink } from 'components/ExplorerLink'
+import { ExplorerDataType } from 'utils/getExplorerLink'
 
 import { BadgeVariant } from 'components/Badge'
 import { OperationType } from 'components/TransactionConfirmationModal'
