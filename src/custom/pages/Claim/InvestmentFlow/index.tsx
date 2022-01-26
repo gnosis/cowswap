@@ -109,7 +109,7 @@ type AccountDetailsProps = {
   connectedAccount: string
 }
 
-function AccountDetails({ index, label, account, connectedAccount }: AccountDetailsProps) {
+function AccountDetails({ isClaimer, label, account, connectedAccount }: AccountDetailsProps) {
   return (
     <div>
       {isClaimer && (
@@ -120,7 +120,7 @@ function AccountDetails({ index, label, account, connectedAccount }: AccountDeta
       <span>
         <b>{label}</b>
         <i>
-          <ExplorerLink id={account} label={account} type={ExplorerDataType.ADDRESS} /> ↗
+          <ExplorerLink id={account} label={account} type={ExplorerDataType.ADDRESS} />
         </i>
         {account === connectedAccount ? (
           <Badge variant={BadgeVariant.POSITIVE}>&nbsp; Connected account</Badge>
@@ -252,12 +252,7 @@ export default function InvestmentFlow({ hasClaims, isAirdropOnly, modalCbs }: I
 
           <AccountClaimSummary>
             <AccountDetails isClaimer label="Claiming with account" account={account} connectedAccount={account} />
-            <AccountDetails
-              index={1}
-              label="Account receiving vCOW"
-              account={activeClaimAccount}
-              connectedAccount={account}
-            />
+            <AccountDetails label="Account receiving vCOW" account={activeClaimAccount} connectedAccount={account} />
           </AccountClaimSummary>
 
           <h4>Ready to claim your vCOW?</h4>

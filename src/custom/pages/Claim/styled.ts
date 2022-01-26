@@ -1366,6 +1366,10 @@ export const AccountClaimSummary = styled.div`
   margin: 0 0 12px;
   position: relative;
 
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    flex-flow: column wrap;
+  `};
+
   > div {
     display: flex;
     white-space: pre-wrap;
@@ -1378,10 +1382,18 @@ export const AccountClaimSummary = styled.div`
 
     &:first-of-type {
       padding-right: 32px;
+
+      ${({ theme }) => theme.mediaWidth.upToSmall`
+        padding: 24px 24px 32px 24px;
+      `};
     }
 
     &:last-of-type {
       padding-left: 32px;
+
+      ${({ theme }) => theme.mediaWidth.upToSmall`
+        padding: 32px 24px 24px 24px;
+      `};
     }
   }
 
@@ -1409,6 +1421,13 @@ export const AccountClaimSummary = styled.div`
     > a {
       color: inherit;
     }
+
+    > a::after {
+      content: '↗';
+      display: inline;
+      margin: 0 0 0 3px;
+      font-size: 14px;
+    }
   }
 
   > div > div {
@@ -1427,8 +1446,14 @@ export const AccountClaimSummary = styled.div`
     height: var(--iconSize);
     background: ${({ theme }) => theme.bg1};
 
+    ${({ theme }) => theme.mediaWidth.upToSmall`
+      transform: rotate(90deg);
+    `};
+
     > svg {
-      object-fit: contain;
+      width: 100%;
+      height: 100%;
+      padding: 8px;
     }
 
     > svg > path {
