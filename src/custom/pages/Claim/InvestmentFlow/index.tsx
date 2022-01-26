@@ -251,7 +251,7 @@ export default function InvestmentFlow({ hasClaims, isAirdropOnly, modalCbs }: I
           </ClaimTable>
 
           <AccountClaimSummary>
-            <AccountDetails index={0} label="Claiming with account" account={account} connectedAccount={account} />
+            <AccountDetails isClaimer label="Claiming with account" account={account} connectedAccount={account} />
             <AccountDetails
               index={1}
               label="Account receiving vCOW"
