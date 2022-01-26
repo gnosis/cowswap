@@ -4,6 +4,7 @@ import { PhishAlert } from 'components/Header/URLWarning'
 import { NETWORK_LABELS, SupportedChainId } from 'constants/chains'
 import { useClaimState } from 'state/claim/hooks'
 import useChangeNetworks from 'hooks/useChangeNetworks'
+import { useActiveWeb3React } from 'hooks/web3'
 
 const ChainSpan = styled.span``
 const Wrapper = styled.div`
@@ -41,6 +42,7 @@ const Wrapper = styled.div`
 `
 
 function ClaimsOnOtherChainsBanner({ className }: { className?: string }) {
+  const { chainId } = useActiveWeb3React()
   const { callback } = useChangeNetworks()
 
   const { hasClaimsOnOtherChains } = useClaimState()
@@ -49,12 +51,12 @@ function ClaimsOnOtherChainsBanner({ className }: { className?: string }) {
       Object.keys(hasClaimsOnOtherChains).reduce((acc, chain) => {
         const checkedChain = chain as unknown as SupportedChainId
         const chainHasClaim = hasClaimsOnOtherChains[checkedChain]
-        if (!chainHasClaim) return acc
+        if (!chainHasClaim || checkedChain == chainId) return acc
 
         acc.push(checkedChain)
         return acc
       }, [] as SupportedChainId[]),
-    [hasClaimsOnOtherChains]
+    [chainId, hasClaimsOnOtherChains]
   )
 
   if (chainsWithClaims.length === 0) {
