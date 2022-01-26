@@ -103,7 +103,7 @@ function _calculateTotalVCow(allClaims: ClaimWithInvestmentData[]) {
 }
 
 type AccountDetailsProps = {
-  index: number
+  isClaimer?: boolean
   label: string
   account: string
   connectedAccount: string
