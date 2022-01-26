@@ -53,7 +53,6 @@ export default function useChangeNetworks({ account, chainId: preChainId, librar
   // if 3085 supported, will connect wallet and change network
   const [queuedNetworkSwitch, setQueuedNetworkSwitch] = useState<null | number>(null)
 
-  // uwc-debug
   const networkCallback = useCallback(
     (supportedChainId) => {
       if (!account) {
