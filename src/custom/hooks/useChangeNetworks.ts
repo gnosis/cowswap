@@ -2,14 +2,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
 import { useOnClickOutside } from 'hooks/useOnClickOutside'
 import { useActiveWeb3React } from 'hooks/web3'
-import {
-  useCloseModals,
-  useModalOpen,
-  useOpenModal,
-  // useToggleModal,
-  useWalletModalToggle,
-} from 'state/application/hooks'
-import { ApplicationModal } from 'state/application/reducer'
 import { useAppSelector } from 'state/hooks'
 import { CHAIN_INFO, SupportedChainId } from 'constants/chains'
 import { switchToNetwork } from 'utils/switchToNetwork'
@@ -20,10 +12,19 @@ type ChangeNetworksParams = Pick<ReturnType<typeof useActiveWeb3React>, 'account
 export default function useChangeNetworks({ account, chainId: preChainId, library }: ChangeNetworksParams) {
   const { error } = useWeb3React() // MOD: check unsupported network
   const nodeRef = useRef<HTMLDivElement>()
-  const isModalOpen = useModalOpen(ApplicationModal.NETWORK_SELECTOR)
-  const closeModal = useCloseModals()
-  const openModal = useOpenModal(ApplicationModal.NETWORK_SELECTOR)
-  const toggleWalletModal = useWalletModalToggle() // MOD
+
+  const [localOpen, setLocalOpen] = useState(false)
+  const isModalOpen = localOpen
+
+  const closeModal = useCallback(() => setLocalOpen(false), [])
+  const openModal = useCallback(() => setLocalOpen(true), [])
+  const toggleWalletModal = useCallback(() => {
+    if (isModalOpen) {
+      closeModal()
+    } else {
+      openModal()
+    }
+  }, [closeModal, isModalOpen, openModal])
 
   useOnClickOutside(nodeRef, isModalOpen ? closeModal : undefined)
 
@@ -43,15 +44,9 @@ export default function useChangeNetworks({ account, chainId: preChainId, librar
 
   const conditionalToggle = useCallback(() => {
     if (showSelector) {
-      if (isModalOpen) {
-        alert('called')
-        closeModal()
-      } else {
-        alert('called close')
-        openModal()
-      }
+      toggleWalletModal()
     }
-  }, [closeModal, isModalOpen, openModal, showSelector])
+  }, [showSelector, toggleWalletModal])
 
   // MOD: checks if a requested network switch was sent
   // used for when user disconnected and selects a network internally
@@ -61,7 +56,6 @@ export default function useChangeNetworks({ account, chainId: preChainId, librar
   // uwc-debug
   const networkCallback = useCallback(
     (supportedChainId) => {
-      console.debug('adasdasdasdasdasd')
       if (!account) {
         toggleWalletModal()
         return setQueuedNetworkSwitch(supportedChainId)

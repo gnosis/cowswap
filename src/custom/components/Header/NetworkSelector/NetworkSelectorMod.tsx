@@ -174,9 +174,9 @@ export default function NetworkSelector() {
     chainInfo: info,
     mainnetInfo,
     isUnsupportedChain,
-    isModalOpen: open,
     showSelector,
     nodeRef: node,
+    isModalOpen: open,
   } = useChangeNetworks({ account, chainId, library })
 
   if (!chainId || !info || !library || isUnsupportedChain) {
