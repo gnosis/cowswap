@@ -2,10 +2,10 @@ import styled from 'styled-components/macro'
 import CheckCircle from 'assets/cow-swap/check.svg'
 import { transparentize } from 'polished'
 
-export const Wrapper = styled.div`
+export const Wrapper = styled.div<{ totalSteps: number }>`
   width: 100%;
-  display: flex;
-  flex-flow: row wrap;
+  display: grid;
+  grid-template-columns: ${({ totalSteps }) => `repeat(${totalSteps}, 1fr)`};
   margin: 12px 0 24px;
 `
 
@@ -86,6 +86,10 @@ export const Step = styled.div<{
       completedStep ? theme.text1 : isActiveStep ? theme.text1 : transparentize(0.4, theme.text1)};
     font-weight: ${({ isActiveStep, completedStep }) => (completedStep ? '300' : isActiveStep ? 'bold' : '300')};
     text-align: center;
+
+    ${({ theme }) => theme.mediaWidth.upToSmall`
+      font-size: 14px;
+    `}
   }
 
   > i {
@@ -100,6 +104,10 @@ export const Step = styled.div<{
     margin: 6px 0 0;
     padding: 0 24px;
     text-align: center;
+
+    ${({ theme }) => theme.mediaWidth.upToSmall`
+      display: none;
+    `}
   }
 `
 
@@ -113,7 +121,7 @@ interface StepperProps {
 
 export function Stepper({ steps, activeStep }: StepperProps) {
   return (
-    <Wrapper>
+    <Wrapper totalSteps={steps.length}>
       {steps.map(({ title, subtitle }, index) => {
         const completedStep = activeStep > index
         const isActiveStep = activeStep === index
