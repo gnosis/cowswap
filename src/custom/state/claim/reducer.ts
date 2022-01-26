@@ -21,7 +21,7 @@ import {
   setHasClaimsOnOtherChains,
 } from './actions'
 
-type ClaimsOnOtherChains = {
+export type ClaimsOnOtherChains = {
   [chain in SupportedChainId]: boolean
 }
 
