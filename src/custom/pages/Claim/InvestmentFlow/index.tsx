@@ -37,6 +37,8 @@ import { ExplorerDataType } from 'utils/getExplorerLink'
 
 import { BadgeVariant } from 'components/Badge'
 import { OperationType } from 'components/TransactionConfirmationModal'
+import RoundArrow from 'assets/cow-swap/round-arrow.svg'
+import SVG from 'react-inlinesvg'
 
 const STEPS_DATA = [
   {
@@ -101,14 +103,20 @@ function _calculateTotalVCow(allClaims: ClaimWithInvestmentData[]) {
 }
 
 type AccountDetailsProps = {
+  index: number
   label: string
   account: string
   connectedAccount: string
 }
 
-function AccountDetails({ label, account, connectedAccount }: AccountDetailsProps) {
+function AccountDetails({ index, label, account, connectedAccount }: AccountDetailsProps) {
   return (
     <div>
+      {index === 0 && (
+        <div>
+          <SVG src={RoundArrow} description="Arrow" />
+        </div>
+      )}
       <span>
         <b>{label}</b>
         <i>
@@ -243,8 +251,13 @@ export default function InvestmentFlow({ hasClaims, isAirdropOnly, modalCbs }: I
           </ClaimTable>
 
           <AccountClaimSummary>
-            <AccountDetails label="Claiming with account" account={account} connectedAccount={account} />
-            <AccountDetails label="Account receiving vCOW" account={activeClaimAccount} connectedAccount={account} />
+            <AccountDetails index={0} label="Claiming with account" account={account} connectedAccount={account} />
+            <AccountDetails
+              index={1}
+              label="Account receiving vCOW"
+              account={activeClaimAccount}
+              connectedAccount={account}
+            />
           </AccountClaimSummary>
 
           <h4>Ready to claim your vCOW?</h4>

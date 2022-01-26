@@ -10,7 +10,6 @@ import LogoETH from 'assets/cow-swap/network-mainnet-logo.svg'
 import LogoGNO from 'assets/cow-swap/gno.png'
 import LogoUSDC from 'assets/cow-swap/usdc.png'
 import LogoXDAI from 'assets/cow-swap/xdai.png'
-import RoundArrow from 'assets/cow-swap/round-arrow.svg'
 
 export const PageWrapper = styled.div`
   --border-radius: 56px;
@@ -1367,22 +1366,6 @@ export const AccountClaimSummary = styled.div`
   margin: 0 0 12px;
   position: relative;
 
-  &::after {
-    --iconSize: 42px;
-    content: '';
-    display: block;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    margin: auto;
-    border-radius: var(--iconSize);
-    width: var(--iconSize);
-    height: var(--iconSize);
-    background: ${({ theme }) => theme.bg1} url(${RoundArrow}) no-repeat center/60%;
-  }
-
   > div {
     display: flex;
     white-space: pre-wrap;
@@ -1425,6 +1408,31 @@ export const AccountClaimSummary = styled.div`
 
     > a {
       color: inherit;
+    }
+  }
+
+  > div > div {
+    --iconSize: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    border-radius: var(--iconSize);
+    width: var(--iconSize);
+    height: var(--iconSize);
+    background: ${({ theme }) => theme.bg1};
+
+    > svg {
+      object-fit: contain;
+    }
+
+    > svg > path {
+      fill: ${({ theme }) => theme.text1};
     }
   }
 `
