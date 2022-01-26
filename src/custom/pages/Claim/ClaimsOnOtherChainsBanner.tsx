@@ -1,16 +1,48 @@
+import { useMemo } from 'react'
+import styled from 'styled-components/macro'
 import { PhishAlert } from 'components/Header/URLWarning'
 import { NETWORK_LABELS, SupportedChainId } from 'constants/chains'
-import { useMemo } from 'react'
 import { useClaimState } from 'state/claim/hooks'
-import styled from 'styled-components/macro'
+import useChangeNetworks from 'hooks/useChangeNetworks'
 
-export const Wrapper = styled.div`
+const ChainSpan = styled.span``
+const Wrapper = styled.div`
   display: flex;
   align-items: center;
-  justify-content: left;
+  justify-content: center;
+  margin: auto;
+  flex-flow: row wrap;
+
+  > div {
+    flex: 1 1 auto;
+  }
+
+  > div:nth-child(2) {
+    > span {
+      margin-left: 4px;
+      font-weight: 600;
+      white-space: nowrap;
+      cursor: pointer;
+      text-decoration: underline;
+
+      &:last-child {
+        &:after {
+          content: '!';
+        }
+      }
+
+      &:not(:last-child) {
+        &:after {
+          content: ',';
+        }
+      }
+    }
+  }
 `
 
-export default function ClaimsOnOtherChainsBanner() {
+function ClaimsOnOtherChainsBanner({ className }: { className?: string }) {
+  const { callback } = useChangeNetworks()
+
   const { hasClaimsOnOtherChains } = useClaimState()
   const chainsWithClaims: SupportedChainId[] = useMemo(
     () =>
@@ -30,13 +62,23 @@ export default function ClaimsOnOtherChainsBanner() {
   }
 
   return (
-    <PhishAlert isActive>
+    <PhishAlert isActive className={className}>
       <Wrapper>
-        You have available claims on{' '}
-        {chainsWithClaims.map((chainId) => (
-          <span key={chainId}>{NETWORK_LABELS[chainId]} </span>
-        ))}
+        <div>You have available claims on</div>
+        <div>
+          {chainsWithClaims.map((chainId, index, array) => {
+            const changeNetworksCallback = () => callback(chainId)
+            const isLastInMultiple = index === array.length - 1 && array.length > 1
+            return (
+              <ChainSpan key={chainId} onClick={changeNetworksCallback}>
+                {`${isLastInMultiple ? 'and ' : ''}${NETWORK_LABELS[chainId]}`}
+              </ChainSpan>
+            )
+          })}
+        </div>
       </Wrapper>
     </PhishAlert>
   )
 }
+
+export default styled(ClaimsOnOtherChainsBanner)``
