@@ -27,6 +27,7 @@ import { useErrorModal } from 'hooks/useErrorMessageAndModal'
 import FooterNavButtons from './FooterNavButtons'
 import ClaimsOnOtherChainsBanner from './ClaimsOnOtherChainsBanner'
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
+import Loader from '@src/components/Loader'
 
 /* TODO: Replace URLs with the actual final URL destinations */
 export const COW_LINKS = {
@@ -83,7 +84,7 @@ export default function Claim() {
   const { handleCloseError, handleSetError, ErrorModal } = useErrorModal()
 
   // get user claim data
-  const userClaimData = useUserEnhancedClaimData(activeClaimAccount)
+  const { claims: userClaimData, isLoading: isClaimDataLoading } = useUserEnhancedClaimData(activeClaimAccount)
 
   // get total unclaimed amount
   const unclaimedAmount = useUserUnclaimedAmount(activeClaimAccount)
@@ -101,7 +102,7 @@ export default function Claim() {
     setActiveClaimAccount('')
     setActiveClaimAccountENS('')
     setSelected([])
-  }, [setActiveClaimAccount, setClaimStatus, setSelected])
+  }, [setActiveClaimAccount, setActiveClaimAccountENS, setClaimStatus, setSelected])
 
   // handle change account
   const handleChangeAccount = () => {
@@ -205,6 +206,10 @@ export default function Claim() {
   const { TransactionConfirmationModal, openModal, closeModal } = useTransactionConfirmationModal(
     OperationType.APPROVE_TOKEN
   )
+
+  if (isClaimDataLoading) {
+    return <Loader />
+  }
 
   return (
     <PageWrapper>
