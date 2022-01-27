@@ -343,7 +343,7 @@ export default function InvestOption({ claim, optionIndex, openModal, closeModal
             {!isNative ? (
               <i>
                 {isPendingApprove ? (
-                  <span style={{ fontStyle: 'italic' }}>{`Approving ${currencyAmount?.currency?.symbol} . . .`}</span>
+                  <span style={{ fontStyle: 'italic' }}>{`Approving ${currencyAmount?.currency?.symbol}...`}</span>
                 ) : notApproved ? (
                   <span>{`${currencyAmount?.currency?.symbol} not approved!`}</span>
                 ) : (
@@ -378,7 +378,7 @@ export default function InvestOption({ claim, optionIndex, openModal, closeModal
               IS_TESTING_ENV && isApproved && (
                 <UnderlineButton disabled={approving || isPendingRevoke} onClick={handleRevokeApproval}>
                   {(approving || isPendingRevoke) && <Loader size="12px" stroke="white" />}
-                  {approving || isPendingRevoke ? 'Revoking approval . . .' : 'Revoke approval'}{' '}
+                  {approving || isPendingRevoke ? 'Revoking approval...' : 'Revoke approval'}{' '}
                 </UnderlineButton>
               )
             }
