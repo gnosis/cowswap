@@ -636,6 +636,10 @@ export const ConfirmOrLoadingWrapper = styled.div<{ activeBG: boolean }>`
   ${CopyIcon} {
     display: inline;
     min-width: 6em;
+
+    ${({ theme }) => theme.mediaWidth.upToSmall`
+      min-width: 0;
+    `};
   }
 `
 
