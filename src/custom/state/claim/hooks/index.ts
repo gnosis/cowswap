@@ -130,15 +130,22 @@ type ClassifiedUserClaims = {
   available: UserClaims
   expired: UserClaims
   claimed: UserClaims
+  isLoading: boolean
 }
 
 /**
  * Gets all user claims, classified
- *
- * @param account
  */
 export function useClassifiedUserClaims(account: Account, optionalChainId?: SupportedChainId): ClassifiedUserClaims {
-  const userClaims = useUserClaims(account, optionalChainId)
+  const { claims: userClaims, isLoading: areClaimsLoading } = useUserClaims(account, optionalChainId)
+
+  const [isLoading, setIsLoading] = useState(false)
+  const [claims, setClaims] = useState<Omit<ClassifiedUserClaims, 'isLoading'>>({
+    available: [],
+    claimed: [],
+    expired: [],
+  })
+
   const contract = useVCowContract()
 
   const { isInvestmentWindowOpen, isAirdropWindowOpen } = useClaimTimeInfo()
@@ -149,17 +156,26 @@ export function useClassifiedUserClaims(account: Account, optionalChainId?: Supp
 
   const results = useSingleContractMultipleData(contract, 'isClaimed', claimIndexes)
 
-  return useMemo(() => {
+  useEffect(() => {
     const available: UserClaims = []
     const expired: UserClaims = []
     const claimed: UserClaims = []
 
+    setClaims({ available, expired, claimed })
+
     if (!userClaims || userClaims.length === 0) {
-      return { available, expired, claimed }
+      return
     }
+
+    let isContractCallLoading = false
 
     results.forEach((result, index) => {
       const claim = userClaims[index]
+
+      // Use the loading state from the multicall results
+      if (!isContractCallLoading && result.loading) {
+        isContractCallLoading = true
+      }
 
       if (
         result.valid && // result is valid
@@ -174,28 +190,27 @@ export function useClassifiedUserClaims(account: Account, optionalChainId?: Supp
       }
     })
 
-    return { available, expired, claimed }
+    setIsLoading(isContractCallLoading)
+    setClaims({ available, expired, claimed })
   }, [isAirdropWindowOpen, isInvestmentWindowOpen, results, userClaims])
+
+  return { ...claims, isLoading: isLoading || areClaimsLoading }
 }
 
 /**
  * Gets an array of available claims
  *
  * Syntactic sugar on top of `useClassifiedUserClaims`
- *
- * @param account
  */
-export function useUserAvailableClaims(account: Account, optionalChainId?: SupportedChainId): UserClaims {
-  const { available } = useClassifiedUserClaims(account, optionalChainId)
+export function useUserAvailableClaims(account: Account, optionalChainId?: SupportedChainId): UserClaimsResult {
+  const { available, isLoading } = useClassifiedUserClaims(account, optionalChainId)
 
-  return available
-}
-
+  return { claims: available, isLoading }
 }
 
 export function useUserUnclaimedAmount(account: string | null | undefined): CurrencyAmount<Token> | undefined {
   const { chainId } = useActiveWeb3React()
-  const claims = useUserAvailableClaims(account)
+  const { claims } = useUserAvailableClaims(account)
   const pendingIndices = useAllClaimingTransactionIndices()
 
   const vCow = chainId ? V_COW[chainId] : undefined
@@ -214,17 +229,21 @@ export function useUserUnclaimedAmount(account: string | null | undefined): Curr
   return CurrencyAmount.fromRawAmount(vCow, JSBI.BigInt(totalAmount))
 }
 
+type UserClaimsResult = {
+  claims: UserClaims | null
+  isLoading: boolean
+}
+
 /**
  * Gets user claims from claim repo
  * Stores fetched claims in local state
- *
- * @param account
  */
-export function useUserClaims(account: Account, optionalChainId?: SupportedChainId): UserClaims | null {
+export function useUserClaims(account: Account, optionalChainId?: SupportedChainId): UserClaimsResult {
   const { chainId: connectedChain } = useActiveWeb3React()
   const chainId = optionalChainId || connectedChain
 
   const [claimInfo, setClaimInfo] = useState<{ [account: string]: UserClaims | null }>({})
+  const [isLoading, setIsLoading] = useState(false)
 
   // We'll have claims on multiple networks
   const claimKey = chainId && account && `${chainId}:${account}`
@@ -233,6 +252,8 @@ export function useUserClaims(account: Account, optionalChainId?: SupportedChain
     if (!claimKey) {
       return
     }
+
+    setIsLoading(true)
 
     fetchClaims(account, chainId)
       .then((accountClaimInfo) =>
@@ -251,9 +272,10 @@ export function useUserClaims(account: Account, optionalChainId?: SupportedChain
           }
         })
       })
+      .finally(() => setIsLoading(false))
   }, [account, chainId, claimKey])
 
-  return claimKey ? claimInfo[claimKey] : null
+  return { claims: claimKey ? claimInfo[claimKey] : null, isLoading }
 }
 
 /**
@@ -404,7 +426,7 @@ export function useClaimCallback(account: string | null | undefined): {
 } {
   // get claim data for given account
   const { chainId, account: connectedAccount } = useActiveWeb3React()
-  const claims = useUserAvailableClaims(account)
+  const { claims } = useUserAvailableClaims(account)
   const vCowContract = useVCowContract()
   const nativeTokenPrice = useNativeTokenPrice()
 
@@ -416,7 +438,7 @@ export function useClaimCallback(account: string | null | undefined): {
 
   const getClaimArgs = useCallback(
     async function (claimInput: ClaimInput[]): Promise<GetClaimManyArgsResult> {
-      if (claims.length === 0) {
+      if (!claims || claims.length === 0) {
         throw new Error('User has no claims')
       }
       if (claimInput.length === 0) {
@@ -859,6 +881,11 @@ export function useHasZeroInvested(): boolean {
   }, [investFlowData])
 }
 
+type UseUserEnhancedClaimDataResult = {
+  claims: EnhancedUserClaimData[]
+  isLoading: boolean
+}
+
 /**
  * Gets an array of available claims parsed and sorted for the UI
  *
@@ -866,21 +893,23 @@ export function useHasZeroInvested(): boolean {
  *
  * @param account
  */
-export function useUserEnhancedClaimData(account: Account): EnhancedUserClaimData[] {
-  const { available } = useClassifiedUserClaims(account)
+export function useUserEnhancedClaimData(account: Account): UseUserEnhancedClaimDataResult {
+  const { available, isLoading } = useClassifiedUserClaims(account)
   const { chainId: preCheckChainId } = useActiveWeb3React()
   const native = useNativeTokenPrice()
   const gno = useGnoPrice()
   const usdc = useUsdcPrice()
 
-  const sorted = useMemo(() => available.sort(_sortTypes), [available])
-
-  return useMemo(() => {
+  const claims = useMemo(() => {
     const chainId = supportedChainId(preCheckChainId)
     if (!chainId || !native || !gno || !usdc) return []
 
+    const sorted = available.sort(_sortTypes)
+
     return sorted.map((claim) => _enhanceClaimData(claim, chainId, { native, gno, usdc }))
-  }, [gno, native, preCheckChainId, sorted, usdc])
+  }, [available, gno, native, preCheckChainId, usdc])
+
+  return { claims, isLoading }
 }
 
 function _sortTypes(a: UserClaimData, b: UserClaimData): number {
