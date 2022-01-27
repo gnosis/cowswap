@@ -139,7 +139,7 @@ type ClassifiedUserClaims = {
  *
  * @param account
  */
-export function useClassifiedUserClaims(account: Account, optionalChainId?: number): ClassifiedUserClaims {
+export function useClassifiedUserClaims(account: Account, optionalChainId?: SupportedChainId): ClassifiedUserClaims {
   const userClaims = useUserClaims(account, optionalChainId)
   const contract = useVCowContract()
 
@@ -187,7 +187,7 @@ export function useClassifiedUserClaims(account: Account, optionalChainId?: numb
  *
  * @param account
  */
-export function useUserAvailableClaims(account: Account, optionalChainId?: number): UserClaims {
+export function useUserAvailableClaims(account: Account, optionalChainId?: SupportedChainId): UserClaims {
   const { available } = useClassifiedUserClaims(account, optionalChainId)
 
   return available
@@ -232,7 +232,7 @@ export function useUserUnclaimedAmount(account: string | null | undefined): Curr
  *
  * @param account
  */
-export function useUserClaims(account: Account, optionalChainId?: number): UserClaims | null {
+export function useUserClaims(account: Account, optionalChainId?: SupportedChainId): UserClaims | null {
   const { chainId: connectedChain } = useActiveWeb3React()
   const chainId = optionalChainId || connectedChain
 
