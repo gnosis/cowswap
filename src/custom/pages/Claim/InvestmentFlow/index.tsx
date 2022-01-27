@@ -252,7 +252,7 @@ export default function InvestmentFlow({ hasClaims, isAirdropOnly, modalCbs }: I
 
           <AccountClaimSummary>
             <AccountDetails isClaimer label="Claiming with account" account={account} connectedAccount={account} />
-            <AccountDetails label="Account receiving vCOW" account={activeClaimAccount} connectedAccount={account} />
+            <AccountDetails label="Receiving on" account={activeClaimAccount} connectedAccount={account} />
           </AccountClaimSummary>
 
           <h4>Ready to claim your vCOW?</h4>
