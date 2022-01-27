@@ -96,6 +96,7 @@ export default function Claim() {
   // handle change account
   const handleChangeAccount = () => {
     setActiveClaimAccount('')
+    setActiveClaimAccountENS('')
     setSelected([])
     setClaimStatus(ClaimStatus.DEFAULT)
     setIsSearchUsed(true)
