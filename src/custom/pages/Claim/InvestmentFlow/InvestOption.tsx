@@ -146,7 +146,7 @@ export default function InvestOption({ claim, optionIndex, openModal, closeModal
   // Save "local" approving state for rendering spinners etc
   const [approving, setApproving] = useState(false)
   const isApproved = approveState === ApprovalState.APPROVED
-  const notApproved = approveState !== ApprovalState.APPROVED
+  const notApproved = !isApproved
   // on chain tx mining pending
   const isPendingOnchainApprove = approveState === ApprovalState.PENDING
   // local pending or on chain mining wait for approval
