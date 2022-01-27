@@ -42,8 +42,8 @@ const Wrapper = styled.div`
 `
 
 function ClaimsOnOtherChainsBanner({ className }: { className?: string }) {
-  const { chainId } = useActiveWeb3React()
-  const { callback } = useChangeNetworks()
+  const { account, library, chainId } = useActiveWeb3React()
+  const { callback } = useChangeNetworks({ account, library, chainId })
 
   const { hasClaimsOnOtherChains } = useClaimState()
   const chainsWithClaims: SupportedChainId[] = useMemo(
