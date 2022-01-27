@@ -41,15 +41,6 @@ export default function ClaimAddress({ account, toggleWalletModal }: ClaimAddres
       <p>
         Enter an address to check for any eligible vCOW claims. <br />
         <i>Note: It is possible to claim for an account, using any wallet/account.</i>
-        {!account && (
-          <ButtonSecondary onClick={toggleWalletModal}>
-            {error instanceof UnsupportedChainIdError ? (
-              <Trans>or connect a wallet in a supported network</Trans>
-            ) : (
-              <Trans>or connect a wallet</Trans>
-            )}
-          </ButtonSecondary>
-        )}
       </p>
 
       <InputField>
@@ -59,6 +50,16 @@ export default function ClaimAddress({ account, toggleWalletModal }: ClaimAddres
         </InputFieldTitle>
         <input placeholder="Address or ENS name" value={inputAddress} onChange={handleInputChange} />
       </InputField>
+
+      {!account && (
+        <ButtonSecondary onClick={toggleWalletModal}>
+          {error instanceof UnsupportedChainIdError ? (
+            <Trans>or connect a wallet in a supported network</Trans>
+          ) : (
+            <Trans>or connect a wallet</Trans>
+          )}
+        </ButtonSecondary>
+      )}
 
       {showInputError && (
         <InputErrorText>
