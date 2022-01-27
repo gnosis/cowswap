@@ -1,33 +1,31 @@
 import { useCallback, useEffect, useMemo } from 'react'
+import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
+
 import { useActiveWeb3React } from 'hooks/web3'
-import { useUserEnhancedClaimData, useUserUnclaimedAmount, useClaimCallback, ClaimInput } from 'state/claim/hooks'
-import { PageWrapper, InnerPageWrapper } from 'pages/Claim/styled'
-import EligibleBanner from './EligibleBanner'
-import { getFreeClaims, hasPaidClaim, hasFreeClaim, prepareInvestClaims } from 'state/claim/hooks/utils'
-import { useWalletModalToggle } from 'state/application/hooks'
-import Confetti from 'components/Confetti'
-
 import useENS from 'hooks/useENS'
-
-import ClaimNav from './ClaimNav'
-import { ClaimSummary } from './ClaimSummary'
-import ClaimAddress from './ClaimAddress'
-import CanUserClaimMessage from './CanUserClaimMessage'
-import ClaimingStatus from './ClaimingStatus'
-import ClaimsTable from './ClaimsTable'
-import InvestmentFlow from './InvestmentFlow'
-
+import useTransactionConfirmationModal from 'hooks/useTransactionConfirmationModal'
+import { useErrorModal } from 'hooks/useErrorMessageAndModal'
+import { useUserEnhancedClaimData, useUserUnclaimedAmount, useClaimCallback, ClaimInput } from 'state/claim/hooks'
+import { useWalletModalToggle } from 'state/application/hooks'
+import { getFreeClaims, hasPaidClaim, hasFreeClaim, prepareInvestClaims } from 'state/claim/hooks/utils'
 import { useClaimDispatchers, useClaimState } from 'state/claim/hooks'
 import { ClaimStatus } from 'state/claim/actions'
 
 import { OperationType } from 'components/TransactionConfirmationModal'
-import useTransactionConfirmationModal from 'hooks/useTransactionConfirmationModal'
+import Confetti from 'components/Confetti'
+import Loader from 'components/Loader'
 
-import { useErrorModal } from 'hooks/useErrorMessageAndModal'
-import FooterNavButtons from './FooterNavButtons'
+import { PageWrapper, InnerPageWrapper } from 'pages/Claim/styled'
+import CanUserClaimMessage from './CanUserClaimMessage'
+import ClaimAddress from './ClaimAddress'
+import ClaimNav from './ClaimNav'
+import ClaimingStatus from './ClaimingStatus'
 import ClaimsOnOtherChainsBanner from './ClaimsOnOtherChainsBanner'
-import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
-import Loader from '@src/components/Loader'
+import ClaimsTable from './ClaimsTable'
+import EligibleBanner from './EligibleBanner'
+import FooterNavButtons from './FooterNavButtons'
+import InvestmentFlow from './InvestmentFlow'
+import { ClaimSummary } from './ClaimSummary'
 
 /* TODO: Replace URLs with the actual final URL destinations */
 export const COW_LINKS = {
