@@ -377,7 +377,7 @@ export default function InvestOption({ claim, optionIndex, openModal, closeModal
               // CURRENTLY TEST ONLY (not on prod, barn or ens)
               IS_TESTING_ENV && isApproved && (
                 <UnderlineButton disabled={approving || isPendingRevoke} onClick={handleRevokeApproval}>
-                  {(approving || isPendingRevoke) && <Loader size="12px" stroke="white" />}
+                  {(approving || isPendingRevoke) && <Loader size="12px" />}
                   {approving || isPendingRevoke ? 'Revoking approval...' : 'Revoke approval'}{' '}
                 </UnderlineButton>
               )

@@ -1111,13 +1111,17 @@ export const UnderlineButton = styled.button`
   text-align: left;
   padding: 0;
 
+  > svg {
+    margin-left: 3px;
+  }
+
   &:hover {
     color: ${({ theme }) => theme.text1};
   }
 
   &:disabled {
     text-decoration: none;
-    color: ${({ theme }) => theme.disabled};
+    color: ${({ theme }) => transparentize(0.35, theme.primary4)};
     cursor: auto;
     font-style: italic;
   }
