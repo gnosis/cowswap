@@ -26,6 +26,8 @@ import useTransactionConfirmationModal from 'hooks/useTransactionConfirmationMod
 import { useErrorModal } from 'hooks/useErrorMessageAndModal'
 import FooterNavButtons from './FooterNavButtons'
 
+import usePrevious from 'hooks/usePrevious'
+
 /* TODO: Replace URLs with the actual final URL destinations */
 export const COW_LINKS = {
   vCowPost: 'https://cow.fi/',
@@ -34,6 +36,9 @@ export const COW_LINKS = {
 
 export default function Claim() {
   const { account } = useActiveWeb3React()
+
+  // get previous account
+  const previousAccount = usePrevious(account)
 
   const {
     // address/ENS address
@@ -93,12 +98,12 @@ export default function Claim() {
   const { claimCallback, estimateGasCallback } = useClaimCallback(activeClaimAccount)
 
   // handle change account
-  const handleChangeAccount = () => {
+  const handleChangeAccount = useCallback(() => {
     setActiveClaimAccount('')
-    setSelected([])
     setClaimStatus(ClaimStatus.DEFAULT)
+    setSelected([])
     setIsSearchUsed(true)
-  }
+  }, [setActiveClaimAccount, setClaimStatus, setIsSearchUsed, setSelected])
 
   // check claim
   const handleCheckClaim = () => {
@@ -174,7 +179,14 @@ export default function Claim() {
 
     // properly reset the user to the claims table and initial investment flow
     resetClaimUi()
-  }, [account, activeClaimAccount, resolvedAddress, isSearchUsed, setActiveClaimAccount, resetClaimUi])
+  }, [account, isSearchUsed, resetClaimUi, setActiveClaimAccount])
+
+  // handle account disconnect or account change after claim is confirmed
+  useEffect(() => {
+    if (!account || (account !== previousAccount && claimStatus === ClaimStatus.CONFIRMED)) {
+      handleChangeAccount()
+    }
+  }, [account, claimStatus, handleChangeAccount, previousAccount])
 
   // Transaction confirmation modal
   const { TransactionConfirmationModal, openModal, closeModal } = useTransactionConfirmationModal(
