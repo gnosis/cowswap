@@ -236,9 +236,14 @@ export default function Claim() {
         {/* Try claiming or inform successful claim */}
         <ClaimingStatus />
         {/* IS Airdrop + investing (advanced) */}
-        <ClaimsTable isAirdropOnly={isAirdropOnly} hasClaims={hasClaims} />
+        <ClaimsTable isAirdropOnly={isAirdropOnly} claims={userClaimData} hasClaims={hasClaims} />
         {/* Investing vCOW flow (advanced) */}
-        <InvestmentFlow isAirdropOnly={isAirdropOnly} hasClaims={hasClaims} modalCbs={{ openModal, closeModal }} />
+        <InvestmentFlow
+          isAirdropOnly={isAirdropOnly}
+          claims={userClaimData}
+          hasClaims={hasClaims}
+          modalCbs={{ openModal, closeModal }}
+        />
 
         <FooterNavButtons
           handleCheckClaim={handleCheckClaim}
