@@ -29,7 +29,7 @@ import {
 import { SupportedChainId } from 'constants/chains'
 import { useAllClaimingTransactionIndices } from 'state/enhancedTransactions/hooks'
 
-export { useUserClaimData } from '@src/state/claim/hooks'
+export { useUserClaimData, useUserHasAvailableClaim } from '@src/state/claim/hooks'
 
 import { AppDispatch } from 'state'
 import { useSelector, useDispatch } from 'react-redux'
@@ -191,16 +191,6 @@ export function useUserAvailableClaims(account: Account, optionalChainId?: Suppo
   return available
 }
 
-/**
- * Returns whether the user has any available claim
- * Syntactic sugar on top of `useUserAvailableClaims`
- *
- * @param account
- */
-export function useUserHasAvailableClaim(account: Account): boolean {
-  const availableClaims = useUserAvailableClaims(account)
-
-  return availableClaims.length > 0
 }
 
 export function useUserUnclaimedAmount(account: string | null | undefined): CurrencyAmount<Token> | undefined {
