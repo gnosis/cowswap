@@ -5,21 +5,20 @@ import BadgeOriginal from 'components/Badge'
 import { Icon } from 'components/CowProtocolLogo'
 import { ButtonPrimary, ButtonSecondary } from 'components/Button'
 import { Step } from 'components/Stepper'
-import { transparentize, darken } from 'polished'
+import { transparentize, darken, lighten } from 'polished'
 import LogoETH from 'assets/cow-swap/network-mainnet-logo.svg'
 import LogoGNO from 'assets/cow-swap/gno.png'
 import LogoUSDC from 'assets/cow-swap/usdc.png'
 import LogoXDAI from 'assets/cow-swap/xdai.png'
+import { CopyIcon } from 'components/Copy'
+import ClaimsOnOtherChainsBanner from './ClaimsOnOtherChainsBanner'
 
-export const PageWrapper = styled.div`
+export const InnerPageWrapper = styled.div`
   --border-radius: 56px;
   --border-radius-small: 16px;
   display: flex;
   flex-flow: column wrap;
-  max-width: 760px;
-  width: 100%;
   color: ${({ theme }) => theme.text1};
-  border-radius: var(--border-radius);
   padding: 30px;
   border: ${({ theme }) => theme.appBody.border};
   box-shadow: ${({ theme }) => theme.appBody.boxShadow};
@@ -29,6 +28,13 @@ export const PageWrapper = styled.div`
     padding: 16px;
     border-radius: var(--border-radius-small);
   `};
+
+  > a,
+  > a:hover,
+  > a:visited,
+  > a:focus {
+    text-decoration: none;
+  }
 
   input[type='checkbox'],
   input[type='radio'] {
@@ -206,6 +212,24 @@ ${Step} {
 }
 `
 
+export const PageWrapper = styled.div`
+  --border-radius: 56px;
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  width: 100%;
+
+  > ${InnerPageWrapper}, > ${ClaimsOnOtherChainsBanner} {
+    max-width: 760px;
+    width: 100%;
+    border-radius: var(--border-radius);
+  }
+
+  > ${ClaimsOnOtherChainsBanner} {
+    padding: 8px 25px;
+  }
+`
+
 export const TokenLogo = styled.div<{ symbol: string; size: number }>`
   --smallSize: ${({ size }) => (size ? `calc(${size}px / 1.5)` : 'calc(var(--defaultSize) / 1.5)')};
   display: flex;
@@ -242,9 +266,8 @@ export const ClaimSummary = styled.div`
   align-items: center;
   justify-content: flex-start;
   padding: 8px;
-  background: ${({ theme }) => (theme.currencyInput?.background ? theme.currencyInput?.background : theme.bg1)};
-  border: ${({ theme }) =>
-    theme.currencyInput?.border ? theme.currencyInput?.border : `border: 1px solid ${theme.bg2}`};
+  background: ${({ theme }) => theme.currencyInput?.background};
+  border: ${({ theme }) => theme.currencyInput?.border};
   border-radius: var(--border-radius);
   margin: 0 auto 24px;
   position: relative;
@@ -533,6 +556,10 @@ export const ClaimAccount = styled.div`
     flex-flow: row nowrap;
     justify-content: center;
     align-items: center;
+
+    button {
+      align-self: center;
+    }
   }
 
   > div > img {
@@ -624,16 +651,20 @@ export const ConfirmOrLoadingWrapper = styled.div<{ activeBG: boolean }>`
     margin: 24px auto 0;
   }
 
-  > h4 > div > p > b {
-    word-break: break-all;
-    display: block;
-  }
-
   > h4 > button {
     margin: 32px auto;
 
     ${({ theme }) => theme.mediaWidth.upToSmall`
       margin: 20px auto;
+    `};
+  }
+
+  ${CopyIcon} {
+    display: inline;
+    min-width: 6em;
+
+    ${({ theme }) => theme.mediaWidth.upToSmall`
+      min-width: 0;
     `};
   }
 `
@@ -841,6 +872,12 @@ export const ClaimBreakdown = styled.div`
     margin: 0 0 24px;
     text-align: center;
   }
+
+  > a,
+  > a:hover,
+  > a:focus {
+    text-decoration: none;
+  }
 `
 
 export const FooterNavButtons = styled.div`
@@ -863,12 +900,6 @@ export const FooterNavButtons = styled.div`
       margin: 0 6px 0 0;
     }
   }
-`
-
-export const ReadMoreText = styled.div`
-  margin: 18px 0;
-  text-align: center;
-  font-size: 15px;
 `
 
 export const TopNav = styled.div`
@@ -896,6 +927,13 @@ export const InvestFlow = styled.div`
     font-size: 28px;
     font-weight: 500;
     text-align: center;
+  }
+
+  > a,
+  > a:hover,
+  > a:visited,
+  > a:focus {
+    text-decoration: none;
   }
 `
 
@@ -1102,14 +1140,19 @@ export const UnderlineButton = styled.button`
   text-align: left;
   padding: 0;
 
+  > svg {
+    margin-left: 3px;
+  }
+
   &:hover {
     color: ${({ theme }) => theme.text1};
   }
 
   &:disabled {
     text-decoration: none;
-    color: ${({ theme }) => theme.disabled};
+    color: ${({ theme }) => transparentize(0.35, theme.primary4)};
     cursor: auto;
+    font-style: italic;
   }
 `
 
@@ -1235,27 +1278,13 @@ export const InvestInput = styled.span<{ disabled: boolean }>`
     `};
   }
 
-  > div > label > span > button {
-    background: none;
-    border: 0;
-    cursor: pointer;
-    color: ${({ theme }) => theme.primary4};
-    text-decoration: underline;
-    margin: 0 0 0 5px;
+  > div > label > span > ${UnderlineButton} {
+    margin-left: 4px;
 
     ${({ theme }) => theme.mediaWidth.upToSmall`
       margin: 0;
       padding: 0;
     `};
-
-    &:hover {
-      color: ${({ theme }) => theme.text1};
-    }
-  }
-
-  > div > label > span > ${UnderlineButton} {
-    margin-left: 4px;
-  }
 `
 
 export const InvestAvailableBar = styled.div<{ percentage?: number }>`
@@ -1332,9 +1361,9 @@ export const InvestSummary = styled.div`
   }
 
   > span > i > div > img {
-    margin: 0 4px 0 0;
-    height: 21px;
-    width: 21px;
+    margin: 0 5px 0 0;
+    height: 19px;
+    width: 19px;
   }
 
   > span > b {
@@ -1662,4 +1691,101 @@ export const StepExplainer = styled.div`
   > span > p {
     margin: 0;
   }
+`
+
+export const BannerExplainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: 130px;
+  border-radius: 12px;
+  padding: 0 24px 0 20%;
+  background: ${({ theme }) => theme.bg8};
+  position: relative;
+  overflow: hidden;
+  border: 4px solid transparent;
+  transition: border 0.2s ease-in-out;
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    padding: 24px;
+    height: auto;
+  `}
+
+  &:hover {
+    border: 4px solid ${({ theme }) => transparentize(0.7, theme.white)};
+  }
+
+  > span {
+    display: flex;
+    flex-flow: column wrap;
+    height: 100%;
+    flex: 1 1 auto;
+    align-items: flex-end;
+    justify-content: center;
+
+    ${({ theme }) => theme.mediaWidth.upToSmall`
+      align-items: center;
+    `}
+  }
+
+  > span > b {
+    @supports (-webkit-background-clip: text) {
+      background: ${({ theme }) =>
+        `linear-gradient(80deg, ${theme.primary1}, ${lighten(0.2, theme.primary1)}, ${theme.white}, #5ea2fb)`};
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    @supports not (-webkit-background-clip: text) {
+      color: ${({ theme }) => theme.white};
+    }
+
+    text-align: right;
+    font-size: 32px;
+    font-weight: 600;
+    margin: 0 0 6px;
+
+    ${({ theme }) => theme.mediaWidth.upToSmall`
+      font-size: 19px;
+      text-align: center;
+    `}
+  }
+
+  > span > small {
+    color: ${({ theme }) => theme.white};
+    font-size: 16px;
+    font-weight: 400;
+    text-align: right;
+    padding: 0 0 0 20%;
+
+    ${({ theme }) => theme.mediaWidth.upToSmall`
+      text-align: center;
+      padding: 0;
+    `}
+  }
+
+  > span > small > a {
+    color: inherit;
+  }
+
+  > svg {
+    width: auto;
+    height: 168%;
+    position: absolute;
+    left: -16%;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    mix-blend-mode: hard-light;
+
+    ${({ theme }) => theme.mediaWidth.upToSmall`
+      display: none;
+    `}
+  }
+
+  > svg {
+    .stop1 { stop-color: ${({ theme }) => theme.white}}
+    .stop2 { stop-color: ${({ theme }) => theme.white}; stop-opacity: 0.8;}
+    .stop3 { stop-color: ${({ theme }) => theme.white}; stop-opacity: 0;}
 `

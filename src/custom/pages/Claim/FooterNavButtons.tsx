@@ -8,13 +8,11 @@ import {
 } from 'state/claim/hooks'
 import { ButtonPrimary, ButtonSecondary } from 'components/Button'
 import { ClaimStatus } from 'state/claim/actions'
-import { FooterNavButtons as FooterNavButtonsWrapper, ReadMoreText } from './styled'
+import { FooterNavButtons as FooterNavButtonsWrapper } from './styled'
 import { useActiveWeb3React } from 'hooks/web3'
 import { ClaimsTableProps } from './ClaimsTable'
 import { ClaimAddressProps } from './ClaimAddress'
 import { ReactNode, useEffect, useRef } from 'react'
-import { ExternalLink } from 'theme/index'
-import { COW_LINKS } from '.'
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
 
 type FooterNavButtonsProps = Pick<ClaimsTableProps, 'hasClaims' | 'isAirdropOnly'> &
@@ -24,14 +22,6 @@ type FooterNavButtonsProps = Pick<ClaimsTableProps, 'hasClaims' | 'isAirdropOnly
     handleSubmitClaim: () => void
     handleCheckClaim: () => void
   }
-
-function ReadMore() {
-  return (
-    <ReadMoreText>
-      <ExternalLink href={COW_LINKS.vCowPost}>Read more about vCOW</ExternalLink>
-    </ReadMoreText>
-  )
-}
 
 export default function FooterNavButtons({
   hasClaims,
@@ -103,7 +93,6 @@ export default function FooterNavButtons({
             <Trans>Check claimable vCOW</Trans>
           )}
         </ButtonPrimary>
-        <ReadMore />
       </>
     )
   }
@@ -116,7 +105,6 @@ export default function FooterNavButtons({
           <ButtonPrimary onClick={handleSubmitClaim} disabled={isPaidClaimsOnly && noPaidClaimsSelected}>
             <Trans>Claim vCOW</Trans>
           </ButtonPrimary>
-          <ReadMore />
         </>
       )
     } else if (!isAirdropOnly) {
