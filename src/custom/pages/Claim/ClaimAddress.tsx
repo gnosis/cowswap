@@ -8,12 +8,14 @@ import { ClaimCommonTypes } from './types'
 import useENS from 'hooks/useENS'
 import { useClaimDispatchers, useClaimState } from 'state/claim/hooks'
 import { ClaimStatus } from 'state/claim/actions'
+import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
 
 export type ClaimAddressProps = Pick<ClaimCommonTypes, 'account'> & {
   toggleWalletModal: () => void
 }
 
 export default function ClaimAddress({ account, toggleWalletModal }: ClaimAddressProps) {
+  const { error } = useWeb3React()
   const { activeClaimAccount, claimStatus, inputAddress } = useClaimState()
   const { setInputAddress } = useClaimDispatchers()
 
@@ -41,7 +43,11 @@ export default function ClaimAddress({ account, toggleWalletModal }: ClaimAddres
         <i>Note: It is possible to claim for an account, using any wallet/account.</i>
         {!account && (
           <ButtonSecondary onClick={toggleWalletModal}>
-            <Trans>or connect a wallet</Trans>
+            {error instanceof UnsupportedChainIdError ? (
+              <Trans>or connect a wallet in a supported network</Trans>
+            ) : (
+              <Trans>or connect a wallet</Trans>
+            )}
           </ButtonSecondary>
         )}
       </p>
