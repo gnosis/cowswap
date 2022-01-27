@@ -19,9 +19,7 @@ import { COW_LINKS } from '.'
 import SVG from 'react-inlinesvg'
 import CowProtocolImage from 'assets/cow-swap/cowprotocol.svg'
 
-export type ClaimsTableProps = Pick<ClaimCommonTypes, 'claims' | 'hasClaims'> & {
-  isAirdropOnly: boolean
-}
+export type ClaimsTableProps = Pick<ClaimCommonTypes, 'claims' | 'hasClaims' | 'isAirdropOnly'>
 
 // TODO: fix in other pr
 type ClaimsTableRowProps = EnhancedUserClaimData & {

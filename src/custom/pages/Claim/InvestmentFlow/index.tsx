@@ -70,8 +70,7 @@ const FAQ_DATA = [
   },
 ]
 
-export type InvestmentFlowProps = Pick<ClaimCommonTypes, 'hasClaims' | 'claims'> & {
-  isAirdropOnly: boolean
+export type InvestmentFlowProps = Pick<ClaimCommonTypes, 'hasClaims' | 'claims' | 'isAirdropOnly'> & {
   modalCbs: {
     openModal: (message: string, operationType: OperationType) => void
     closeModal: () => void
