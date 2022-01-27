@@ -71,16 +71,15 @@ export default function FooterNavButtons({
 
   let buttonContent: ReactNode = null
   // Disconnected, show wallet connect
-  if (!account) {
+  if (!account && activeClaimAccount) {
     buttonContent = (
       <ButtonPrimary onClick={toggleWalletModal}>
         <Trans>Connect a wallet</Trans>
       </ButtonPrimary>
     )
   }
-
   // User has no set active claim account and/or has claims, show claim account search
-  if ((!activeClaimAccount || !hasClaims) && claimStatus === ClaimStatus.DEFAULT) {
+  else if (!hasClaims && claimStatus === ClaimStatus.DEFAULT) {
     buttonContent = (
       <>
         <ButtonPrimary disabled={!isInputAddressValid} type="text" onClick={handleCheckClaim}>
