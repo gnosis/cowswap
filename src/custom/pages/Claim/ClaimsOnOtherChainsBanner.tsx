@@ -1,10 +1,11 @@
 import { useMemo } from 'react'
 import styled from 'styled-components/macro'
-import { PhishAlert } from 'components/Header/URLWarning'
 import { NETWORK_LABELS, SupportedChainId } from 'constants/chains'
 import { useClaimState } from 'state/claim/hooks'
 import useChangeNetworks from 'hooks/useChangeNetworks'
 import { useActiveWeb3React } from 'hooks/web3'
+import NotificationBanner from '@src/custom/components/NotificationBanner'
+import { AlertTriangle } from 'react-feather'
 
 const ChainSpan = styled.span``
 const Wrapper = styled.div`
@@ -14,27 +15,31 @@ const Wrapper = styled.div`
   margin: auto;
   flex-flow: row wrap;
 
-  > div {
-    flex: 1 1 auto;
+  > svg {
+    margin-right: 5px;
   }
 
-  > div:nth-child(2) {
-    > span {
-      margin-left: 4px;
-      font-weight: 600;
-      white-space: nowrap;
-      cursor: pointer;
-      text-decoration: underline;
+  > div {
+    flex: 1 1 auto;
 
-      &:last-child {
-        &:after {
-          content: '!';
+    &:last-child {
+      > span {
+        margin-left: 4px;
+        font-weight: 600;
+        white-space: nowrap;
+        cursor: pointer;
+        text-decoration: underline;
+
+        &:last-child {
+          &:after {
+            content: '!';
+          }
         }
-      }
 
-      &:not(:last-child) {
-        &:after {
-          content: ',';
+        &:not(:last-child) {
+          &:after {
+            content: ',';
+          }
         }
       }
     }
@@ -64,22 +69,26 @@ function ClaimsOnOtherChainsBanner({ className }: { className?: string }) {
   }
 
   return (
-    <PhishAlert isActive className={className}>
+    <NotificationBanner className={className} isVisible id={account ?? undefined} level="info">
       <Wrapper>
-        <div>You have available claims on</div>
+        <AlertTriangle />
+        <div>You have other available claims on</div>
         <div>
           {chainsWithClaims.map((chainId, index, array) => {
             const changeNetworksCallback = () => callback(chainId)
             const isLastInMultiple = index === array.length - 1 && array.length > 1
             return (
-              <ChainSpan key={chainId} onClick={changeNetworksCallback}>
-                {`${isLastInMultiple ? 'and ' : ''}${NETWORK_LABELS[chainId]}`}
-              </ChainSpan>
+              <>
+                {isLastInMultiple && ' and'}
+                <ChainSpan key={chainId} onClick={changeNetworksCallback}>
+                  {NETWORK_LABELS[chainId]}
+                </ChainSpan>
+              </>
             )
           })}
         </div>
       </Wrapper>
-    </PhishAlert>
+    </NotificationBanner>
   )
 }
 
