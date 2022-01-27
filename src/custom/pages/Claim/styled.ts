@@ -30,6 +30,13 @@ export const PageWrapper = styled.div`
     border-radius: var(--border-radius-small);
   `};
 
+  > a,
+  > a:hover,
+  > a:visited,
+  > a:focus {
+    text-decoration: none;
+  }
+
   input[type='checkbox'],
   input[type='radio'] {
     --active: ${({ theme }) => theme.primary1};
