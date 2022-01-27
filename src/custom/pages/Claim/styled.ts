@@ -12,15 +12,12 @@ import LogoUSDC from 'assets/cow-swap/usdc.png'
 import LogoXDAI from 'assets/cow-swap/xdai.png'
 import ClaimsOnOtherChainsBanner from './ClaimsOnOtherChainsBanner'
 
-export const PageWrapper = styled.div`
+export const InnerPageWrapper = styled.div`
   --border-radius: 56px;
   --border-radius-small: 16px;
   display: flex;
   flex-flow: column wrap;
-  max-width: 760px;
-  width: 100%;
   color: ${({ theme }) => theme.text1};
-  border-radius: var(--border-radius);
   padding: 30px;
   border: ${({ theme }) => theme.appBody.border};
   box-shadow: ${({ theme }) => theme.appBody.boxShadow};
@@ -160,13 +157,6 @@ p > a {
   display: inline;
 }
 
-> ${ClaimsOnOtherChainsBanner} {
-  font-size: 16px;
-  margin-bottom: 25px;
-  border-radius: 10px;
-  padding: 6px 12px;
-}
-
 ${ButtonPrimary} {
   border-radius: var(--border-radius);
   width: 100%;
@@ -212,6 +202,24 @@ ${Step} {
   }
 
 }
+`
+
+export const PageWrapper = styled.div`
+  --border-radius: 56px;
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  width: 100%;
+
+  > ${InnerPageWrapper}, > ${ClaimsOnOtherChainsBanner} {
+    max-width: 760px;
+    width: 100%;
+    border-radius: var(--border-radius);
+  }
+
+  > ${ClaimsOnOtherChainsBanner} {
+    padding: 8px 25px;
+  }
 `
 
 export const TokenLogo = styled.div<{ symbol: string; size: number }>`
