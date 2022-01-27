@@ -137,8 +137,8 @@ type ClassifiedUserClaims = {
  *
  * @param account
  */
-export function useClassifiedUserClaims(account: Account): ClassifiedUserClaims {
-  const userClaims = useUserClaims(account)
+export function useClassifiedUserClaims(account: Account, optionalChainId?: SupportedChainId): ClassifiedUserClaims {
+  const userClaims = useUserClaims(account, optionalChainId)
   const contract = useVCowContract()
 
   const { isInvestmentWindowOpen, isAirdropWindowOpen } = useClaimTimeInfo()
@@ -185,8 +185,8 @@ export function useClassifiedUserClaims(account: Account): ClassifiedUserClaims 
  *
  * @param account
  */
-export function useUserAvailableClaims(account: Account): UserClaims {
-  const { available } = useClassifiedUserClaims(account)
+export function useUserAvailableClaims(account: Account, optionalChainId?: SupportedChainId): UserClaims {
+  const { available } = useClassifiedUserClaims(account, optionalChainId)
 
   return available
 }
@@ -230,8 +230,10 @@ export function useUserUnclaimedAmount(account: string | null | undefined): Curr
  *
  * @param account
  */
-export function useUserClaims(account: Account): UserClaims | null {
-  const { chainId } = useActiveWeb3React()
+export function useUserClaims(account: Account, optionalChainId?: SupportedChainId): UserClaims | null {
+  const { chainId: connectedChain } = useActiveWeb3React()
+  const chainId = optionalChainId || connectedChain
+
   const [claimInfo, setClaimInfo] = useState<{ [account: string]: UserClaims | null }>({})
 
   // We'll have claims on multiple networks
