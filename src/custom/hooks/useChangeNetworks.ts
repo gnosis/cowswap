@@ -6,6 +6,7 @@ import { useAppSelector } from 'state/hooks'
 import { CHAIN_INFO, SupportedChainId } from 'constants/chains'
 import { switchToNetwork } from 'utils/switchToNetwork'
 import { supportedChainId } from 'utils/supportedChainId'
+import { useWalletModalToggle } from '../state/application/hooks'
 
 type ChangeNetworksParams = Pick<ReturnType<typeof useActiveWeb3React>, 'account' | 'chainId' | 'library'>
 
@@ -16,9 +17,10 @@ export default function useChangeNetworks({ account, chainId: preChainId, librar
   const [localOpen, setLocalOpen] = useState(false)
   const isModalOpen = localOpen
 
+  const toggleWalletModal = useWalletModalToggle()
   const closeModal = useCallback(() => setLocalOpen(false), [])
   const openModal = useCallback(() => setLocalOpen(true), [])
-  const toggleWalletModal = useCallback(() => {
+  const toggleModal = useCallback(() => {
     if (isModalOpen) {
       closeModal()
     } else {
@@ -44,9 +46,9 @@ export default function useChangeNetworks({ account, chainId: preChainId, librar
 
   const conditionalToggle = useCallback(() => {
     if (showSelector) {
-      toggleWalletModal()
+      toggleModal()
     }
-  }, [showSelector, toggleWalletModal])
+  }, [showSelector, toggleModal])
 
   // MOD: checks if a requested network switch was sent
   // used for when user disconnected and selects a network internally
