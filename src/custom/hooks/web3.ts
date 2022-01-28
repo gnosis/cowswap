@@ -1,7 +1,7 @@
 import { useWeb3React as useWeb3ReactCore } from '@web3-react/core'
 import { useEffect, useState, useCallback } from 'react'
 import { isMobile } from 'react-device-detect'
-import { injected, walletconnect, getProviderType, WalletProvider } from 'connectors'
+import { injected, walletconnect, getProviderType, WalletProvider, walletlink } from 'connectors'
 import { STORAGE_KEY_LAST_PROVIDER } from 'constants/index'
 
 // exports from the original file
@@ -22,22 +22,33 @@ export function useEagerConnect() {
     }
   }, [connector, active])
 
-  const connectInjected = useCallback(() => {
-    // check if the our application is authorized/connected with Metamask
-    injected.isAuthorized().then((isAuthorized) => {
-      if (isAuthorized) {
-        activate(injected, undefined, true).catch(() => {
-          setTried(true)
-        })
-      } else {
-        if (isMobile && window.ethereum) {
+  const connectInjected = useCallback(
+    (providerName = 'Metamask') => {
+      // check if the our application is authorized/connected with Metamask
+      injected.isAuthorized().then((isAuthorized) => {
+        if (isAuthorized) {
+          setDefaultInjected(providerName)
           activate(injected, undefined, true).catch(() => {
             setTried(true)
           })
         } else {
-          setTried(true)
+          if (isMobile && window.ethereum) {
+            setDefaultInjected(providerName)
+            activate(injected, undefined, true).catch(() => {
+              setTried(true)
+            })
+          } else {
+            setTried(true)
+          }
         }
-      }
+      })
+    },
+    [activate, setTried]
+  )
+
+  const connectCoinbaseWallet = useCallback(() => {
+    activate(walletlink, undefined, true).catch(() => {
+      setTried(true)
     })
   }, [activate, setTried])
 
@@ -58,12 +69,15 @@ export function useEagerConnect() {
       } else if (latestProvider === WalletProvider.INJECTED) {
         // MM is last provider
         connectInjected()
+      } else if (latestProvider === WalletProvider.WALLET_LINK) {
+        // CoinbaseWallet is last provider
+        connectCoinbaseWallet()
       } else if (latestProvider === WalletProvider.WALLET_CONNECT) {
         // WC is last provider
         connectWalletConnect()
       }
     }
-  }, [connectInjected, connectWalletConnect, active]) // intentionally only running on mount (make sure it's only mounted once :))
+  }, [connectInjected, connectWalletConnect, active, connectCoinbaseWallet]) // intentionally only running on mount (make sure it's only mounted once :))
 
   // if the connection worked, wait until we get confirmation of that to flip the flag
   useEffect(() => {
@@ -83,4 +97,24 @@ export function useEagerConnect() {
   })
 
   return tried
+}
+
+export function setDefaultInjected(providerName: 'MetaMask' | 'CoinbaseWallet') {
+  const { ethereum } = window
+
+  if (!ethereum?.providers) return
+
+  let provider
+  switch (providerName) {
+    case 'CoinbaseWallet':
+      provider = ethereum.providers.find(({ isCoinbaseWallet }) => isCoinbaseWallet)
+      break
+    case 'MetaMask':
+      provider = ethereum.providers.find(({ isMetaMask }) => isMetaMask)
+      break
+  }
+
+  if (provider) {
+    ethereum.setSelectedProvider(provider)
+  }
 }
