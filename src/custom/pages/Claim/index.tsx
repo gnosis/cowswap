@@ -26,6 +26,7 @@ import useTransactionConfirmationModal from 'hooks/useTransactionConfirmationMod
 import { useErrorModal } from 'hooks/useErrorMessageAndModal'
 import FooterNavButtons from './FooterNavButtons'
 import ClaimsOnOtherChainsBanner from './ClaimsOnOtherChainsBanner'
+import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
 
 import usePrevious from 'hooks/usePrevious'
 
@@ -37,6 +38,7 @@ export const COW_LINKS = {
 
 export default function Claim() {
   const { account, chainId } = useActiveWeb3React()
+  const { error } = useWeb3React()
 
   // get previous account
   const previousAccount = usePrevious(account)
@@ -98,13 +100,18 @@ export default function Claim() {
   // claim callback
   const { claimCallback, estimateGasCallback } = useClaimCallback(activeClaimAccount)
 
+  // reset claim state
+  const resetClaimState = useCallback(() => {
+    setClaimStatus(ClaimStatus.DEFAULT)
+    setActiveClaimAccount('')
+    setSelected([])
+  }, [setActiveClaimAccount, setClaimStatus, setSelected])
+
   // handle change account
   const handleChangeAccount = useCallback(() => {
-    setActiveClaimAccount('')
-    setClaimStatus(ClaimStatus.DEFAULT)
-    setSelected([])
+    resetClaimState()
     setIsSearchUsed(true)
-  }, [setActiveClaimAccount, setClaimStatus, setIsSearchUsed, setSelected])
+  }, [resetClaimState, setIsSearchUsed])
 
   // check claim
   const handleCheckClaim = () => {
@@ -178,10 +185,25 @@ export default function Claim() {
       setActiveClaimAccount(account)
     }
 
+    // handle unsupported network
+    if (error instanceof UnsupportedChainIdError) {
+      resetClaimState()
+    }
+
     // properly reset the user to the claims table and initial investment flow
     resetClaimUi()
     // Depending on chainId even though it's not used because we want to reset the state on network change
-  }, [account, activeClaimAccount, chainId, resolvedAddress, isSearchUsed, setActiveClaimAccount, resetClaimUi])
+  }, [
+    account,
+    activeClaimAccount,
+    chainId,
+    resolvedAddress,
+    isSearchUsed,
+    setActiveClaimAccount,
+    resetClaimUi,
+    error,
+    resetClaimState,
+  ])
 
   // handle account disconnect or account change after claim is confirmed
   useEffect(() => {
