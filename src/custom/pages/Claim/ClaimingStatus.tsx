@@ -46,6 +46,7 @@ export default function ClaimingStatus() {
   const isConfirmed = claimStatus === ClaimStatus.CONFIRMED
   const isAttempting = claimStatus === ClaimStatus.ATTEMPTING
   const isSubmitted = claimStatus === ClaimStatus.SUBMITTED
+  const isFailure = claimStatus === ClaimStatus.FAILED
   const isSelfClaiming = account === activeClaimAccount
 
   if (!account || !chainId || !activeClaimAccount || claimStatus === ClaimStatus.DEFAULT) return null
@@ -60,7 +61,7 @@ export default function ClaimingStatus() {
   return (
     <ConfirmOrLoadingWrapper activeBG={true}>
       <ConfirmedIcon isConfirmed={isConfirmed}>
-        {!isConfirmed ? (
+        {!isConfirmed && !isFailure ? (
           <CowSpinner>
             <CowProtocolLogo />
           </CowSpinner>
@@ -68,7 +69,7 @@ export default function ClaimingStatus() {
           <CowProtocolLogo size={100} />
         )}
       </ConfirmedIcon>
-      <h3>{isConfirmed ? 'Claim successful!' : 'Claiming'}</h3>
+      <h3>{isConfirmed ? 'Claim successful!' : isFailure ? 'Failed to claim' : 'Claiming'}</h3>
       {!isConfirmed && (
         <Trans>
           <span title={formattedMaxVCowAmount && `${formattedMaxVCowAmount} vCOW`}>{formattedVCowAmount} vCOW</span>
@@ -146,6 +147,15 @@ export default function ClaimingStatus() {
         </AttemptFooter>
       )}
       {isSubmitted && chainId && lastClaimTx?.hash && <EnhancedTransactionLink tx={lastClaimTx} />}
+
+      {isFailure && (
+        <>
+          {chainId && lastClaimTx?.hash && <EnhancedTransactionLink tx={lastClaimTx} />}
+          <AttemptFooter>
+            <p>The claim transaction failed. Please check the network parameters and try again.</p>
+          </AttemptFooter>
+        </>
+      )}
     </ConfirmOrLoadingWrapper>
   )
 }
