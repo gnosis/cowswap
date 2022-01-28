@@ -139,7 +139,7 @@ type ClassifiedUserClaims = {
 export function useClassifiedUserClaims(account: Account, optionalChainId?: SupportedChainId): ClassifiedUserClaims {
   const { claims: userClaims, isLoading: areClaimsLoading } = useUserClaims(account, optionalChainId)
 
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
   const [claims, setClaims] = useState<Omit<ClassifiedUserClaims, 'isLoading'>>({
     available: [],
     claimed: [],
@@ -164,6 +164,7 @@ export function useClassifiedUserClaims(account: Account, optionalChainId?: Supp
     setClaims({ available, expired, claimed })
 
     if (!userClaims || userClaims.length === 0) {
+      setIsLoading(false)
       return
     }
 
