@@ -205,58 +205,60 @@ export default function Claim() {
     OperationType.APPROVE_TOKEN
   )
 
-  if (isClaimDataLoading) {
-    return <Loader />
-  }
-
   return (
     <PageWrapper>
       {/* Cross chain claim banner */}
       <ClaimsOnOtherChainsBanner />
       {/* Claiming content */}
       <InnerPageWrapper>
-        {/* Approve confirmation modal */}
-        <TransactionConfirmationModal />
-        {/* Error modal */}
-        <ErrorModal />
-        {/* If claim is confirmed > trigger confetti effect */}
-        <Confetti start={claimStatus === ClaimStatus.CONFIRMED} />
-        {/* Top nav buttons */}
-        <ClaimNav account={account} handleChangeAccount={handleChangeAccount} />
-        {/* Show general title OR total to claim (user has airdrop or airdrop+investment) --------------------------- */}
-        <EligibleBanner hasClaims={hasClaims} />
-        {/* Show total to claim (user has airdrop or airdrop+investment) */}
-        <ClaimSummary hasClaims={hasClaims} unclaimedAmount={unclaimedAmount} />
-        {/* Get address/ENS (user not connected yet or opted for checking 'another' account) */}
-        <ClaimAddress account={account} toggleWalletModal={toggleWalletModal} />
-        {/* Is Airdrop only (simple) - does user have claims? Show messages dependent on claim state */}
-        <CanUserClaimMessage
-          hasClaims={hasClaims}
-          isAirdropOnly={isAirdropOnly}
-          handleChangeAccount={handleChangeAccount}
-        />
+        {isClaimDataLoading ? (
+          <Loader />
+        ) : (
+          <>
+            {/* Approve confirmation modal */}
+            <TransactionConfirmationModal />
+            {/* Error modal */}
+            <ErrorModal />
+            {/* If claim is confirmed > trigger confetti effect */}
+            <Confetti start={claimStatus === ClaimStatus.CONFIRMED} />
+            {/* Top nav buttons */}
+            <ClaimNav account={account} handleChangeAccount={handleChangeAccount} />
+            {/* Show general title OR total to claim (user has airdrop or airdrop+investment) --------------------------- */}
+            <EligibleBanner hasClaims={hasClaims} />
+            {/* Show total to claim (user has airdrop or airdrop+investment) */}
+            <ClaimSummary hasClaims={hasClaims} unclaimedAmount={unclaimedAmount} />
+            {/* Get address/ENS (user not connected yet or opted for checking 'another' account) */}
+            <ClaimAddress account={account} toggleWalletModal={toggleWalletModal} />
+            {/* Is Airdrop only (simple) - does user have claims? Show messages dependent on claim state */}
+            <CanUserClaimMessage
+              hasClaims={hasClaims}
+              isAirdropOnly={isAirdropOnly}
+              handleChangeAccount={handleChangeAccount}
+            />
 
-        {/* Try claiming or inform successful claim */}
-        <ClaimingStatus />
-        {/* IS Airdrop + investing (advanced) */}
-        <ClaimsTable isAirdropOnly={isAirdropOnly} claims={userClaimData} hasClaims={hasClaims} />
-        {/* Investing vCOW flow (advanced) */}
-        <InvestmentFlow
-          isAirdropOnly={isAirdropOnly}
-          claims={userClaimData}
-          hasClaims={hasClaims}
-          modalCbs={{ openModal, closeModal }}
-        />
+            {/* Try claiming or inform successful claim */}
+            <ClaimingStatus />
+            {/* IS Airdrop + investing (advanced) */}
+            <ClaimsTable isAirdropOnly={isAirdropOnly} claims={userClaimData} hasClaims={hasClaims} />
+            {/* Investing vCOW flow (advanced) */}
+            <InvestmentFlow
+              isAirdropOnly={isAirdropOnly}
+              claims={userClaimData}
+              hasClaims={hasClaims}
+              modalCbs={{ openModal, closeModal }}
+            />
 
-        <FooterNavButtons
-          handleCheckClaim={handleCheckClaim}
-          handleSubmitClaim={handleSubmitClaim}
-          toggleWalletModal={toggleWalletModal}
-          isAirdropOnly={isAirdropOnly}
-          isPaidClaimsOnly={isPaidClaimsOnly}
-          hasClaims={hasClaims}
-          resolvedAddress={resolvedAddress}
-        />
+            <FooterNavButtons
+              handleCheckClaim={handleCheckClaim}
+              handleSubmitClaim={handleSubmitClaim}
+              toggleWalletModal={toggleWalletModal}
+              isAirdropOnly={isAirdropOnly}
+              isPaidClaimsOnly={isPaidClaimsOnly}
+              hasClaims={hasClaims}
+              resolvedAddress={resolvedAddress}
+            />
+          </>
+        )}
       </InnerPageWrapper>
     </PageWrapper>
   )
