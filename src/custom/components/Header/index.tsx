@@ -184,10 +184,6 @@ export const LogoImage = styled.div`
   position: relative;
 
   ${({ theme }) => theme.mediaWidth.upToMedium`
-    width: 160px;
-  `}
-
-  ${({ theme }) => theme.mediaWidth.upToVerySmall`
     background: ${({ theme }) => `url(${theme.logo.srcIcon}) no-repeat left/contain`};
     height: 34px;
   `}
