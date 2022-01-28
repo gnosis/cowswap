@@ -101,11 +101,14 @@ export default function Claim() {
   const { claimCallback, estimateGasCallback } = useClaimCallback(activeClaimAccount)
 
   // reset claim state
-  const resetClaimState = useCallback(() => {
-    setClaimStatus(ClaimStatus.DEFAULT)
-    setActiveClaimAccount('')
-    setSelected([])
-  }, [setActiveClaimAccount, setClaimStatus, setSelected])
+  const resetClaimState = useCallback(
+    (account = '') => {
+      setClaimStatus(ClaimStatus.DEFAULT)
+      setActiveClaimAccount(account)
+      setSelected([])
+    },
+    [setActiveClaimAccount, setClaimStatus, setSelected]
+  )
 
   // handle change account
   const handleChangeAccount = useCallback(() => {
@@ -208,9 +211,9 @@ export default function Claim() {
   // handle account disconnect or account change after claim is confirmed
   useEffect(() => {
     if (!account || (account !== previousAccount && claimStatus === ClaimStatus.CONFIRMED)) {
-      handleChangeAccount()
+      resetClaimState(account || '')
     }
-  }, [account, claimStatus, handleChangeAccount, previousAccount])
+  }, [account, claimStatus, previousAccount, resetClaimState])
 
   // Transaction confirmation modal
   const { TransactionConfirmationModal, openModal, closeModal } = useTransactionConfirmationModal(
