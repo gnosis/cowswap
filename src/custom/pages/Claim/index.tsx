@@ -102,12 +102,13 @@ export default function Claim() {
 
   // reset claim state
   const resetClaimState = useCallback(
-    (account = '') => {
+    (account = '', ens = '') => {
       setClaimStatus(ClaimStatus.DEFAULT)
       setActiveClaimAccount(account)
+      setActiveClaimAccountENS(ens)
       setSelected([])
     },
-    [setActiveClaimAccount, setClaimStatus, setSelected]
+    [setActiveClaimAccount, setActiveClaimAccountENS, setClaimStatus, setSelected]
   )
 
   // handle change account
