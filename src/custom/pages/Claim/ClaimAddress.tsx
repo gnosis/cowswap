@@ -34,6 +34,9 @@ export default function ClaimAddress({ account, toggleWalletModal }: ClaimAddres
     setInputAddress(withoutSpaces)
   }
 
+  const buttonLabel =
+    error instanceof UnsupportedChainIdError ? 'or connect a wallet in a supported network' : 'or connect a wallet'
+
   if (activeClaimAccount || claimStatus === ClaimStatus.CONFIRMED) return null
 
   return (
@@ -53,11 +56,7 @@ export default function ClaimAddress({ account, toggleWalletModal }: ClaimAddres
 
       {!account && (
         <ButtonSecondary onClick={toggleWalletModal}>
-          {error instanceof UnsupportedChainIdError ? (
-            <Trans>or connect a wallet in a supported network</Trans>
-          ) : (
-            <Trans>or connect a wallet</Trans>
-          )}
+          <Trans>{buttonLabel}</Trans>
         </ButtonSecondary>
       )}
 
