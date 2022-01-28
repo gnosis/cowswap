@@ -111,13 +111,22 @@ export default function Claim() {
     [setActiveClaimAccount, setActiveClaimAccountENS, setClaimStatus, setSelected]
   )
 
-  // handle change account
-  const handleChangeAccount = useCallback(() => {
+  // handle account change
+  const handleAccountChange = useCallback(
+    (account = '') => {
+      resetClaimState(account)
+      setIsSearchUsed(false)
+    },
+    [resetClaimState, setIsSearchUsed]
+  )
+
+  // handle change account click
+  const handleChangeClick = useCallback(() => {
     resetClaimState()
     setIsSearchUsed(true)
   }, [resetClaimState, setIsSearchUsed])
 
-  // check claim
+  // handle
   const handleCheckClaim = () => {
     setActiveClaimAccount(resolvedAddress || '')
     setActiveClaimAccountENS(resolvedENS || '')
@@ -191,7 +200,7 @@ export default function Claim() {
 
     // handle unsupported network
     if (error instanceof UnsupportedChainIdError) {
-      resetClaimState()
+      handleAccountChange()
     }
 
     // properly reset the user to the claims table and initial investment flow
@@ -206,15 +215,15 @@ export default function Claim() {
     setActiveClaimAccount,
     resetClaimUi,
     error,
-    resetClaimState,
+    handleAccountChange,
   ])
 
   // handle account disconnect or account change after claim is confirmed
   useEffect(() => {
     if (!account || (account !== previousAccount && claimStatus === ClaimStatus.CONFIRMED)) {
-      resetClaimState(account || '')
+      handleAccountChange(account || '')
     }
-  }, [account, claimStatus, previousAccount, resetClaimState])
+  }, [account, claimStatus, previousAccount, handleAccountChange])
 
   // Transaction confirmation modal
   const { TransactionConfirmationModal, openModal, closeModal } = useTransactionConfirmationModal(
@@ -234,7 +243,7 @@ export default function Claim() {
         {/* If claim is confirmed > trigger confetti effect */}
         <Confetti start={claimStatus === ClaimStatus.CONFIRMED} />
         {/* Top nav buttons */}
-        <ClaimNav account={account} handleChangeAccount={handleChangeAccount} />
+        <ClaimNav account={account} handleChangeAccount={handleChangeClick} />
         {/* Show general title OR total to claim (user has airdrop or airdrop+investment) --------------------------- */}
         <EligibleBanner hasClaims={hasClaims} />
         {/* Show total to claim (user has airdrop or airdrop+investment) */}
@@ -245,7 +254,7 @@ export default function Claim() {
         <CanUserClaimMessage
           hasClaims={hasClaims}
           isAirdropOnly={isAirdropOnly}
-          handleChangeAccount={handleChangeAccount}
+          handleChangeAccount={handleChangeClick}
         />
 
         {/* Try claiming or inform successful claim */}
