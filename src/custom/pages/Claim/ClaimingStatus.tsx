@@ -157,10 +157,12 @@ export default function ClaimingStatus() {
           <AttemptFooter>
             <p>The claim transaction failed. Please check the network parameters and try again.</p>
           </AttemptFooter>
-          <ButtonSecondary onClick={() => setClaimStatus(ClaimStatus.DEFAULT)}>
-            <Trans>Go back</Trans>
-          </ButtonSecondary>
         </>
+      )}
+      {(isConfirmed || isFailure) && (
+        <ButtonSecondary onClick={() => setClaimStatus(ClaimStatus.DEFAULT)}>
+          <Trans>Go back</Trans>
+        </ButtonSecondary>
       )}
     </ConfirmOrLoadingWrapper>
   )
