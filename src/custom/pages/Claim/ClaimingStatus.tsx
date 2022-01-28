@@ -9,7 +9,7 @@ import {
   SuccessBanner,
 } from 'pages/Claim/styled'
 import { ClaimStatus } from 'state/claim/actions'
-import { useClaimState } from 'state/claim/hooks'
+import { useClaimDispatchers, useClaimState } from 'state/claim/hooks'
 import { useActiveWeb3React } from 'hooks/web3'
 import CowProtocolLogo from 'components/CowProtocolLogo'
 import { useAllClaimingTransactions } from 'state/enhancedTransactions/hooks'
@@ -28,6 +28,7 @@ import { formatMax, formatSmartLocaleAware } from 'utils/format'
 import { AMOUNT_PRECISION } from 'constants/index'
 import { shortenAddress } from 'utils'
 import CopyHelper from 'components/Copy'
+import { ButtonSecondary } from 'components/Button'
 
 const COW_TWEET_TEMPLATE =
   'I just joined the 🐮 CoWmunity @MEVprotection and claimed my first vCOW tokens! Join me at https://cowswap.exchange/'
@@ -35,6 +36,8 @@ const COW_TWEET_TEMPLATE =
 export default function ClaimingStatus() {
   const { chainId, account } = useActiveWeb3React()
   const { activeClaimAccount, claimStatus, claimedAmount } = useClaimState()
+
+  const { setClaimStatus } = useClaimDispatchers()
 
   const allClaimTxs = useAllClaimingTransactions()
   const lastClaimTx = useMemo(() => {
@@ -154,6 +157,9 @@ export default function ClaimingStatus() {
           <AttemptFooter>
             <p>The claim transaction failed. Please check the network parameters and try again.</p>
           </AttemptFooter>
+          <ButtonSecondary onClick={() => setClaimStatus(ClaimStatus.DEFAULT)}>
+            <Trans>Go back</Trans>
+          </ButtonSecondary>
         </>
       )}
     </ConfirmOrLoadingWrapper>
