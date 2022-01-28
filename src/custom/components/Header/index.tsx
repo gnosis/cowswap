@@ -112,6 +112,11 @@ export const Wrapper = styled.div`
     ${({ theme }) => theme.mediaWidth.upToSmall`
       width: 100%;
     `};
+
+    ${({ theme }) => theme.mediaWidth.upToMedium`
+      flex-direction: initial;
+      align-items: inherit;
+    `};
   }
 
   ${StyledMenuButton} {
