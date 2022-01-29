@@ -3,10 +3,10 @@ import { WETH9, Token } from '@uniswap/sdk-core'
 import { DAI_RINKEBY, USDC_RINKEBY, USDT_RINKEBY, WBTC_RINKEBY } from 'utils/rinkeby/constants'
 import { DAI, USDC as USDC_MAINNET, USDT, WBTC } from '@src/constants/tokens'
 import { USDC_XDAI, /*USDT_XDAI,*/ WBTC_XDAI, WETH_XDAI, WXDAI } from 'utils/xdai/constants'
-import wxDaiLogo from 'assets/images/wxdai.png'
 import { SupportedChainId } from 'constants/chains'
 import { V_COW_CONTRACT_ADDRESS } from 'constants/index'
 
+import wxDaiLogo from 'assets/cow-swap/wxdai.png'
 export * from './tokensMod'
 
 function getTrustImage(mainnetAddress: string): string {
