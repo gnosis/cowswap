@@ -541,10 +541,10 @@ export const UserMessage = styled.div<{ variant?: string }>`
     variant === 'danger'
       ? transparentize(0.9, theme.danger)
       : variant === 'info'
-      ? transparentize(0.9, theme.text1)
+      ? transparentize(0.9, theme.blue2)
       : transparentize(0.9, theme.attention)};
   color: ${({ variant, theme }) =>
-    variant === 'danger' ? theme.danger : variant === 'info' ? theme.text1 : darken(0.1, theme.attention)};
+    variant === 'danger' ? theme.danger : variant === 'info' ? theme.blue2 : darken(0.1, theme.attention)};
   margin: 0 auto;
   align-items: center;
   font-size: 15px;
@@ -567,7 +567,7 @@ export const UserMessage = styled.div<{ variant?: string }>`
 
   > svg > path {
     fill: ${({ variant, theme }) =>
-      variant === 'danger' ? theme.danger : variant === 'info' ? theme.text1 : darken(0.1, theme.attention)};
+      variant === 'danger' ? theme.danger : variant === 'info' ? theme.blue2 : darken(0.1, theme.attention)};
   }
 
   > span {
