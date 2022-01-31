@@ -85,9 +85,9 @@ export function useDerivedMintInfo(
     Boolean(totalSupply && JSBI.equal(totalSupply.quotient, ZERO)) ||
     Boolean(
       pairState === PairState.EXISTS &&
-      pair &&
-      JSBI.equal(pair.reserve0.quotient, ZERO) &&
-      JSBI.equal(pair.reserve1.quotient, ZERO)
+        pair &&
+        JSBI.equal(pair.reserve0.quotient, ZERO) &&
+        JSBI.equal(pair.reserve1.quotient, ZERO)
     )
 
   // balances
