@@ -534,7 +534,7 @@ export function useClaimCallback(account: string | null | undefined): {
       const formattedVCowAmount = formatSmartLocaleAware(vCowAmount, AMOUNT_PRECISION) || '0'
 
       const extendedArgs = _extendFinalArg(args, {
-        // from: connectedAccount, // add the `from` as the connected account
+        from: connectedAccount, // add the `from` as the connected account
         gasLimit: calculateGasMargin(chainId, gasLimit),
       })
 
