@@ -72,7 +72,7 @@ export function colors(darkMode: boolean): Colors {
 
     // states
     success: darkMode ? '#00d897' : '#00815a',
-    danger: '#f1356e',
+    danger: darkMode ? '#f7a7a7' : '#8f0000',
     pending: '#43758C',
     attention: '#ff5722',
 
