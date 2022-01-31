@@ -10,6 +10,7 @@ export interface EnvironmentChecks {
   isPr: boolean
   isDev: boolean
   isLocal: boolean
+  isCi: boolean
 }
 
 export function checkEnvironment(host: string, path: string): EnvironmentChecks {
@@ -33,6 +34,7 @@ export function checkEnvironment(host: string, path: string): EnvironmentChecks 
     isStaging: domainStagingRegex?.test(host) || false,
     isProd: domainProdRegex?.test(host) || false,
     isEns: domainEnsRegex?.test(host) || pathEnsRegex?.test(path) || false,
+    isCi: Boolean(process.env['REACT_APP_CI']),
 
     // Environment used for Backend workflow
     //  Latest stable version pointing to the DEV api
@@ -40,7 +42,7 @@ export function checkEnvironment(host: string, path: string): EnvironmentChecks 
   }
 }
 
-const { isLocal, isDev, isPr, isStaging, isProd, isEns, isBarn } = checkEnvironment(
+const { isLocal, isDev, isPr, isStaging, isProd, isEns, isBarn, isCi } = checkEnvironment(
   window.location.host,
   window.location.pathname
 )
@@ -60,6 +62,8 @@ export const environmentName = (function () {
     return 'development'
   } else if (isLocal) {
     return 'local'
+  } else if (isCi) {
+    return 'ci'
   } else {
     return undefined
   }
@@ -67,4 +71,4 @@ export const environmentName = (function () {
 
 registerOnWindow({ environment: environmentName })
 
-export { isLocal, isDev, isPr, isBarn, isStaging, isProd, isEns }
+export { isLocal, isDev, isPr, isBarn, isStaging, isProd, isEns, isCi }
