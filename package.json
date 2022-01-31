@@ -162,6 +162,7 @@
     "start:default": "craco start",
     "start": "REACT_APP_DISABLE_TOKEN_WARNING=true yarn start:default",
     "start:service-worker": "yarn build && yarn serve",
+    "start:ci": "REACT_APP_CI=true craco start",
     "mock": "REACT_APP_MOCK=true yarn start",
     "build": "yarn i18n:compile && craco build && yarn writeVersion",
     "ipfs:build": "cross-env PUBLIC_URL=\".\" yarn build",
