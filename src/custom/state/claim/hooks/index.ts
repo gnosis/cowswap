@@ -244,7 +244,7 @@ export function useUserClaims(account: Account, optionalChainId?: SupportedChain
   const chainId = optionalChainId || connectedChain
 
   const [claimInfo, setClaimInfo] = useState<{ [account: string]: UserClaims | null }>({})
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
 
   // We'll have claims on multiple networks
   const claimKey = chainId && account && `${chainId}:${account}`
@@ -279,6 +279,17 @@ export function useUserClaims(account: Account, optionalChainId?: SupportedChain
   return { claims: claimKey ? claimInfo[claimKey] : null, isLoading }
 }
 
+let FETCH_DEPLOYMENT_TIMESTAMP_PROMISE: Promise<number> | null = null
+function fetchDeploymentTimestamp(vCowContract: VCowType) {
+  return (
+    FETCH_DEPLOYMENT_TIMESTAMP_PROMISE ??
+    (FETCH_DEPLOYMENT_TIMESTAMP_PROMISE = vCowContract.deploymentTimestamp().then((ts) => {
+      console.log(`Deployment timestamp in seconds: ${ts.toString()}`)
+      return ts.mul('1000').toNumber()
+    }))
+  )
+}
+
 /**
  * Fetches from contract the deployment timestamp in ms
  *
@@ -294,11 +305,19 @@ function useDeploymentTimestamp(): number | null {
       return
     }
 
-    vCowContract.deploymentTimestamp().then((ts) => {
-      console.log(`Deployment timestamp in seconds: ${ts.toString()}`)
-      setTimestamp(ts.mul('1000').toNumber())
-    })
-  }, [chainId, vCowContract])
+    if (timestamp) {
+      return
+    }
+
+    fetchDeploymentTimestamp(vCowContract)
+      .then((timestamp) => {
+        setTimestamp(timestamp)
+      })
+      .catch(() => {
+        setTimestamp(null)
+        console.log('vCowContract Deployment Timestamp fetch failed')
+      })
+  }, [chainId, timestamp, vCowContract])
 
   return timestamp
 }
