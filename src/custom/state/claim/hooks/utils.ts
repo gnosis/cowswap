@@ -66,8 +66,6 @@ export function getFreeClaims(claims: UserClaims): UserClaims {
 
 /**
  * Helper function to check if current type is free claim
- *
- * @param type
  */
 export function isFreeClaim(type: ClaimType): boolean {
   return FREE_CLAIM_TYPES.includes(type)
@@ -75,8 +73,6 @@ export function isFreeClaim(type: ClaimType): boolean {
 
 /**
  * Helper function to return an array of indexes from claim data
- *
- * @param type
  */
 export function getIndexes(data: RepoClaims | UserClaims): number[] {
   return data.map(({ index }) => index)
