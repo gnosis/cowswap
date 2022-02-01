@@ -8,6 +8,7 @@ const DEFAULT_ENVIRONMENTS_CHECKS: EnvironmentChecks = {
   isPr: false,
   isDev: false,
   isLocal: false,
+  isCi: false,
 }
 
 describe('Detect environments using host and path', () => {
