@@ -250,6 +250,10 @@ export function useUserClaims(account: Account, optionalChainId?: SupportedChain
   const claimKey = chainId && account && `${chainId}:${account}`
 
   useEffect(() => {
+    if (chainId && !account) {
+      setIsLoading(false)
+    }
+
     if (!claimKey) {
       return
     }

@@ -23,6 +23,9 @@ export const InnerPageWrapper = styled.div`
   border: ${({ theme }) => theme.appBody.border};
   box-shadow: ${({ theme }) => theme.appBody.boxShadow};
   background: ${({ theme }) => theme.bg1};
+  min-height: 450px;
+  justify-content: center;
+  align-items: center;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
     padding: 16px;
