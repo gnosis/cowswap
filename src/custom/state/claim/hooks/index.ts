@@ -283,15 +283,16 @@ export function useUserClaims(account: Account, optionalChainId?: SupportedChain
   return { claims: claimKey ? claimInfo[claimKey] : null, isLoading }
 }
 
-let FETCH_DEPLOYMENT_TIMESTAMP_PROMISE: Promise<number> | null = null
+let fetch_deployment_timestamp_promise: Promise<number> | null = null
 function fetchDeploymentTimestamp(vCowContract: VCowType) {
-  return (
-    FETCH_DEPLOYMENT_TIMESTAMP_PROMISE ??
-    (FETCH_DEPLOYMENT_TIMESTAMP_PROMISE = vCowContract.deploymentTimestamp().then((ts) => {
+  if (!fetch_deployment_timestamp_promise) {
+    fetch_deployment_timestamp_promise = vCowContract.deploymentTimestamp().then((ts) => {
       console.log(`Deployment timestamp in seconds: ${ts.toString()}`)
       return ts.mul('1000').toNumber()
-    }))
-  )
+    })
+  }
+
+  return fetch_deployment_timestamp_promise
 }
 
 /**
@@ -303,25 +304,28 @@ function useDeploymentTimestamp(): number | null {
   const { chainId } = useActiveWeb3React()
   const vCowContract = useVCowContract()
   const [timestamp, setTimestamp] = useState<number | null>(null)
+  const [isMounted, setIsMounted] = useState(true)
 
   useEffect(() => {
     if (!chainId || !vCowContract) {
       return
     }
 
-    if (timestamp) {
-      return
-    }
-
     fetchDeploymentTimestamp(vCowContract)
       .then((timestamp) => {
-        setTimestamp(timestamp)
+        if (isMounted) {
+          setTimestamp(timestamp)
+        }
       })
       .catch(() => {
-        setTimestamp(null)
-        console.log('vCowContract Deployment Timestamp fetch failed')
+        if (isMounted) {
+          setTimestamp(timestamp)
+          console.log('vCowContract Deployment Timestamp fetch failed')
+        }
       })
-  }, [chainId, timestamp, vCowContract])
+
+    return () => setIsMounted(false)
+  }, [chainId, isMounted, timestamp, vCowContract])
 
   return timestamp
 }
