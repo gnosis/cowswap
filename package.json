@@ -170,7 +170,7 @@
     "test": "NODE_PATH=src/custom craco test --env=jsdom",
     "test:debug": "NODE_PATH=src/custom craco --inspect-brk test --runInBand --no-cache",
     "eject": "react-scripts eject",
-    "integration-test": "start-server-and-test 'serve build -l 3000' http://localhost:3000 'cypress run'",
+    "integration-test": "start-server-and-test 'REACT_APP_CI=true serve build -l 3000' http://localhost:3000 'cypress run'",
     "serve": "serve build -l 3000",
     "serve:ci": "serve website -l 3000",
     "cypress": "cypress open",
