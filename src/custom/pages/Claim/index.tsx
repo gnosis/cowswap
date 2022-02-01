@@ -28,6 +28,7 @@ import InvestmentFlow from './InvestmentFlow'
 import { ClaimSummary } from './ClaimSummary'
 
 import usePrevious from 'hooks/usePrevious'
+import ClaimOnOtherNetworksUpdater from 'state/claim/updater'
 
 /* TODO: Replace URLs with the actual final URL destinations */
 export const COW_LINKS = {
@@ -231,6 +232,7 @@ export default function Claim() {
 
   return (
     <PageWrapper>
+      <ClaimOnOtherNetworksUpdater />
       {/* Cross chain claim banner */}
       <ClaimsOnOtherChainsBanner />
       {/* Claiming content */}

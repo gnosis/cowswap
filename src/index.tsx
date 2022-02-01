@@ -28,14 +28,12 @@ import {
   PendingOrdersUpdater,
   UnfillableOrdersUpdater,
 } from 'state/orders/updaters'
-import ClaimsOnOtherChainsUpdater from 'state/claim/updater'
 // import { EventUpdater } from 'state/orders/mocks'
 import ThemeProvider, { FixedGlobalStyle, ThemedGlobalStyle } from 'theme'
 import getLibrary from 'utils/getLibrary'
 import AppziButton from 'components/AppziButton'
 import RadialGradientByChainUpdater from 'theme/RadialGradientByChainUpdater'
 import { nodeRemoveChildFix } from 'utils/node'
-import { IS_CLAIMING_ENABLED } from 'pages/Claim/const'
 
 // Node removeChild hackaround
 // based on: https://github.com/facebook/react/issues/11538#issuecomment-417504600
@@ -64,7 +62,6 @@ function Updaters() {
       <GpOrdersUpdater />
       <GasUpdater />
       <LogsUpdater />
-      {IS_CLAIMING_ENABLED && <ClaimsOnOtherChainsUpdater />}
     </>
   )
 }
