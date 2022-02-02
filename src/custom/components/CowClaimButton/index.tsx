@@ -26,6 +26,12 @@ export const Wrapper = styled.div<{ isClaimPage?: boolean | null }>`
     font-weight: inherit;
     white-space: nowrap;
 
+    ${({ theme }) => theme.mediaWidth.upToMedium`
+      overflow: hidden;
+      max-width: 100px;
+      text-overflow: ellipsis;
+    `};
+
   &::before,
   &::after {
     content: '';
