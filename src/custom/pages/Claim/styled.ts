@@ -37,6 +37,10 @@ a {
   color: ${({ theme }) => theme.primary4};
 }
 
+> a {
+  width: 100%;
+}
+
 p {
   font-size: 16px;
   display: block;
