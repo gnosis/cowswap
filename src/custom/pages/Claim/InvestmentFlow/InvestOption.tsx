@@ -411,7 +411,7 @@ export default function InvestOption({ claim, optionIndex, openModal, closeModal
               <span>
                 <b>Balance:</b>
                 <i title={balance && `${formatMax(balance, balance.currency.decimals)} ${balance.currency.symbol}`}>
-                  {formatSmartLocaleAware(balance, AMOUNT_PRECISION) || 0} {balance?.currency?.symbol}
+                  {formatSmartLocaleAware(balance, AMOUNT_PRECISION) || 0} {currencyAmount?.currency?.symbol}
                 </i>
                 {/* Button should use the max possible amount the user can invest, considering their balance + max investment allowed */}
                 {!noBalance && isSelfClaiming && (
