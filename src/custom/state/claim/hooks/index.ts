@@ -337,7 +337,7 @@ function useDeploymentTimestamp(): number | null {
       })
       .catch(() => {
         if (isMounted.current) {
-          setTimestamp(timestamp)
+          setTimestamp(null)
           console.log('vCowContract Deployment Timestamp fetch failed')
         }
       })
