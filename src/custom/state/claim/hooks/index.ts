@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState, useRef } from 'react'
 import JSBI from 'jsbi'
 import ms from 'ms.macro'
 import { CurrencyAmount, Price, Token } from '@uniswap/sdk-core'
@@ -296,6 +296,24 @@ function fetchDeploymentTimestamp(vCowContract: VCowType) {
 }
 
 /**
+ * Creates a ref that can be used to solve the issue of
+ * "Can't perform a React state update on an unmounted component."
+ */
+function useIsMounted() {
+  const isMounted = useRef(false)
+
+  useEffect(() => {
+    isMounted.current = true
+
+    return () => {
+      isMounted.current = false
+    }
+  }, [])
+
+  return isMounted
+}
+
+/**
  * Fetches from contract the deployment timestamp in ms
  *
  * Returns null if in there's no network or vCowContract doesn't exist
@@ -304,7 +322,7 @@ function useDeploymentTimestamp(): number | null {
   const { chainId } = useActiveWeb3React()
   const vCowContract = useVCowContract()
   const [timestamp, setTimestamp] = useState<number | null>(null)
-  const [isMounted, setIsMounted] = useState(true)
+  const isMounted = useIsMounted()
 
   useEffect(() => {
     if (!chainId || !vCowContract) {
@@ -313,18 +331,16 @@ function useDeploymentTimestamp(): number | null {
 
     fetchDeploymentTimestamp(vCowContract)
       .then((timestamp) => {
-        if (isMounted) {
+        if (isMounted.current) {
           setTimestamp(timestamp)
         }
       })
       .catch(() => {
-        if (isMounted) {
+        if (isMounted.current) {
           setTimestamp(timestamp)
           console.log('vCowContract Deployment Timestamp fetch failed')
         }
       })
-
-    return () => setIsMounted(false)
   }, [chainId, isMounted, timestamp, vCowContract])
 
   return timestamp
