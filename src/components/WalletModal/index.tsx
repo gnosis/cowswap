@@ -26,6 +26,10 @@ import Card, { LightCard } from '../Card'
 import Modal from '../Modal'
 import Option from './Option'
 import PendingView from './PendingView'
+import uauthLogoDefault from '../../assets/images/uauth-default.png'
+import uauthLogoHover from '../../assets/images/uauth-hover.png'
+import uauthLogoPressed from '../../assets/images/uauth-pressed.png'
+import { UAuthConnector } from '@uauth/web3-react'
 
 const CloseIcon = styled.div`
   position: absolute;
@@ -58,6 +62,22 @@ const HeaderRow = styled.div`
   ${({ theme }) => theme.mediaWidth.upToMedium`
     padding: 1rem;
   `};
+`
+
+const UAuthOption = styled.button`
+  margin-top: 0.5rem;
+  width: 100%;
+  height: 3.4rem;
+  background-image: url(${uauthLogoDefault})
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  &:hover {
+    background-image: url(${uauthLogoHover})
+  }
+  &:active {
+    background-image: url(${uauthLogoPressed})
+  }
 `
 
 const ContentWrapper = styled.div`
@@ -281,6 +301,20 @@ export default function WalletModal({
         else if (option.name === 'Injected' && isMetamask) {
           return null
         }
+      }
+
+      if (option.connector instanceof UAuthConnector) {
+        return (
+          <UAuthOption
+            id={`connect-${key}`}
+            onClick={() => {
+              option.connector === connector
+                ? setWalletView(WALLET_VIEWS.ACCOUNT)
+                : !option.href && tryActivation(option.connector)
+            }}
+            key={key}
+          />
+        )
       }
 
       // return rest of options
