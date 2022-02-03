@@ -25,6 +25,8 @@ import { ButtonSecondary } from 'components/Button'
 import Loader from 'components/Loader'
 
 import { RowBetween } from 'components/Row'
+import { useEffect, useState } from 'react'
+import { UAuthConnector } from '@uauth/web3-react'
 // import WalletModal from 'components/WalletModal'
 
 // const IconWrapper = styled.div<{ size?: number }>`
@@ -135,7 +137,7 @@ function Sock() {
 }
 
 // eslint-disable-next-line react/prop-types
-/* 
+/*
 function StatusIcon({ connector }: { connector: AbstractConnector }) {
   if (connector === injected) {
     return <Identicon />
@@ -181,7 +183,7 @@ export function Web3StatusInner({
 
   const { ENSName } = useENSName(account ?? undefined)
 
-  /* 
+  /*
   const allTransactions = useAllTransactions()
 
   const sortedRecentTransactions = useMemo(() => {
@@ -191,11 +193,22 @@ export function Web3StatusInner({
 
   const pending = sortedRecentTransactions.filter((tx) => !tx.receipt).map((tx) => tx.hash)
 
-  const hasPendingTransactions = !!pending.length 
+  const hasPendingTransactions = !!pending.length
   */
   const hasPendingTransactions = !!pendingCount
   const hasSocks = useHasSocks()
   const toggleWalletModal = useWalletModalToggle()
+
+  const [uDomain, setUDomain] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (connector instanceof UAuthConnector) {
+      const uauth = (connector as UAuthConnector).uauth
+      uauth.user().then(({ sub }) => {
+        setUDomain(sub)
+      })
+    }
+  }, [connector])
 
   if (account) {
     return (
@@ -216,7 +229,7 @@ export function Web3StatusInner({
         ) : (
           <>
             {hasSocks ? <Sock /> : null}
-            <Text>{ENSName || shortenAddress(account)}</Text>
+            <Text>{uDomain || ENSName || shortenAddress(account)}</Text>
           </>
         )}
         {/* {!hasPendingTransactions && connector && <StatusIcon connector={connector} />} */}

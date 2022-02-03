@@ -1,5 +1,6 @@
 import { Web3Provider } from '@ethersproject/providers'
 import { SafeAppConnector } from '@gnosis.pm/safe-apps-web3-react'
+import { UAuthConnector } from '@uauth/web3-react'
 import { InjectedConnector } from '@web3-react/injected-connector'
 import { PortisConnector } from '@web3-react/portis-connector'
 import { WalletConnectConnector } from '@web3-react/walletconnect-connector'
@@ -69,4 +70,13 @@ export const walletlink = new WalletLinkConnector({
   url: NETWORK_URLS[SupportedChainId.MAINNET],
   appName: 'Uniswap',
   appLogoUrl: UNISWAP_LOGO_URL,
+})
+
+export const uauth = new UAuthConnector({
+  clientID: process.env.REACT_APP_CLIENT_ID,
+  clientSecret: process.env.REACT_APP_CLIENT_SECRET,
+  redirectUri: process.env.REACT_APP_REDIRECT_URI,
+  postLogoutRedirectUri: process.env.REACT_APP_POST_LOGOUT_REDIRECT_URI,
+  scope: 'openid wallet',
+  connectors: { injected, walletconnect },
 })

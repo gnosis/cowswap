@@ -5,7 +5,8 @@ import FORTMATIC_ICON_URL from '../assets/images/fortmaticIcon.png'
 import METAMASK_ICON_URL from '../assets/images/metamask.png'
 import PORTIS_ICON_URL from '../assets/images/portisIcon.png'
 import WALLETCONNECT_ICON_URL from '../assets/images/walletConnectIcon.svg'
-import { fortmatic, injected, portis, walletconnect, walletlink } from 'connectors'
+import UAUTH_ICON_URL from '../assets/images/uauth.png'
+import { fortmatic, injected, portis, uauth, walletconnect, walletlink } from 'connectors'
 
 export interface WalletInfo {
   connector?: AbstractConnector
@@ -77,6 +78,15 @@ export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
     name: 'Portis',
     iconURL: PORTIS_ICON_URL,
     description: 'Login using Portis hosted wallet',
+    href: null,
+    color: '#4A6C9B',
+    mobile: true,
+  },
+  UAUTH: {
+    connector: uauth,
+    name: 'Login with Unstoppable',
+    iconURL: UAUTH_ICON_URL,
+    description: 'Login using Unstoppable Domain',
     href: null,
     color: '#4A6C9B',
     mobile: true,
