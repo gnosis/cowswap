@@ -321,8 +321,9 @@ function useIsMounted() {
 function useDeploymentTimestamp(): number | null {
   const { chainId } = useActiveWeb3React()
   const vCowContract = useVCowContract()
-  const [timestamp, setTimestamp] = useState<number | null>(null)
   const isMounted = useIsMounted()
+
+  const [timestamp, setTimestamp] = useState<number | null>(null)
 
   useEffect(() => {
     if (!chainId || !vCowContract) {
@@ -335,13 +336,13 @@ function useDeploymentTimestamp(): number | null {
           setTimestamp(timestamp)
         }
       })
-      .catch(() => {
+      .catch((err) => {
         if (isMounted.current) {
           setTimestamp(null)
-          console.log('vCowContract Deployment Timestamp fetch failed')
+          console.error('vCowContract Deployment Timestamp fetch failed', err)
         }
       })
-  }, [chainId, isMounted, timestamp, vCowContract])
+  }, [chainId, isMounted, vCowContract])
 
   return timestamp
 }
