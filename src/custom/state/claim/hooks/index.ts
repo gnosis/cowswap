@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState, useRef } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import JSBI from 'jsbi'
 import ms from 'ms.macro'
 import { CurrencyAmount, Price, Token } from '@uniswap/sdk-core'
@@ -58,6 +58,7 @@ import {
 import { EnhancedUserClaimData } from 'pages/Claim/types'
 import { supportedChainId } from 'utils/supportedChainId'
 import { AMOUNT_PRECISION } from 'constants/index'
+import useIsMounted from 'hooks/useIsMounted'
 
 const CLAIMS_REPO_BRANCH = '2022-01-22-test-deployment-all-networks'
 export const CLAIMS_REPO = `https://raw.githubusercontent.com/gnosis/cow-merkle-drop/${CLAIMS_REPO_BRANCH}/`
@@ -293,24 +294,6 @@ function fetchDeploymentTimestamp(vCowContract: VCowType) {
   }
 
   return fetch_deployment_timestamp_promise
-}
-
-/**
- * Creates a ref that can be used to solve the issue of
- * "Can't perform a React state update on an unmounted component."
- */
-function useIsMounted() {
-  const isMounted = useRef(false)
-
-  useEffect(() => {
-    isMounted.current = true
-
-    return () => {
-      isMounted.current = false
-    }
-  }, [])
-
-  return isMounted
 }
 
 /**
