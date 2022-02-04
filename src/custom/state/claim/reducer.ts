@@ -18,17 +18,31 @@ import {
   updateInvestError,
   setEstimatedGas,
   setIsTouched,
-  setHasClaimsOnOtherChains,
+  setClaimsCount,
 } from './actions'
 
-export type ClaimsOnOtherChains = {
-  [chain in SupportedChainId]: boolean
+export type ChainClaimsCount = {
+  total: number
+  available: number
+  claimed: number
+  expired: number
 }
 
-const DEFAULT_CLAIMS_ON_OTHER_CHAINS_STATE = {
-  [SupportedChainId.MAINNET]: false,
-  [SupportedChainId.RINKEBY]: false,
-  [SupportedChainId.XDAI]: false,
+export type ClaimsOnOtherChains = {
+  [chain in SupportedChainId]: ChainClaimsCount
+}
+
+const DEFAULT_CHAIN_CLAIMS_COUNT: ChainClaimsCount = {
+  available: 0,
+  claimed: 0,
+  expired: 0,
+  total: 0,
+}
+
+const DEFAULT_CLAIMS_ON_OTHER_CHAINS_STATE: ClaimsOnOtherChains = {
+  [SupportedChainId.MAINNET]: DEFAULT_CHAIN_CLAIMS_COUNT,
+  [SupportedChainId.RINKEBY]: DEFAULT_CHAIN_CLAIMS_COUNT,
+  [SupportedChainId.XDAI]: DEFAULT_CHAIN_CLAIMS_COUNT,
 }
 
 export const initialState: ClaimState = {
@@ -51,7 +65,7 @@ export const initialState: ClaimState = {
   selected: [],
   selectedAll: false,
   // claims on other networks
-  hasClaimsOnOtherChains: DEFAULT_CLAIMS_ON_OTHER_CHAINS_STATE,
+  claimsCount: DEFAULT_CLAIMS_ON_OTHER_CHAINS_STATE,
 }
 
 export type InvestClaim = {
@@ -81,13 +95,16 @@ export type ClaimState = {
   selected: number[]
   selectedAll: boolean
   // claims on other chains
-  hasClaimsOnOtherChains: ClaimsOnOtherChains
+  claimsCount: ClaimsOnOtherChains
 }
 
 export default createReducer(initialState, (builder) =>
   builder
-    .addCase(setHasClaimsOnOtherChains, (state, { payload }) => {
-      state.hasClaimsOnOtherChains[payload.chain] = payload.hasClaims
+    .addCase(setClaimsCount, (state, { payload }) => {
+      state.claimsCount[payload.chain] = {
+        ...state.claimsCount[payload.chain],
+        ...payload.claimsCount,
+      }
     })
     .addCase(setInputAddress, (state, { payload }) => {
       state.inputAddress = payload
