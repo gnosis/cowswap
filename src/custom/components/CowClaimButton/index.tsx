@@ -34,6 +34,7 @@ export const Wrapper = styled.div<{ isClaimPage?: boolean | null }>`
 
     ${({ theme }) => theme.mediaWidth.upToSmall`
       overflow: visible;
+      max-width: initial;
     `};
 
     &::before,
