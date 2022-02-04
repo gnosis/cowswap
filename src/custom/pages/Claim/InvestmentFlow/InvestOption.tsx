@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useState, useEffect } from 'react'
 import { CurrencyAmount, Percent } from '@uniswap/sdk-core'
 import { BigNumber } from '@ethersproject/bignumber'
+import SVG from 'react-inlinesvg'
 
 import CowProtocolLogo from 'components/CowProtocolLogo'
 import {
@@ -17,7 +18,7 @@ import { formatMax, formatSmartLocaleAware } from 'utils/format'
 import { calculateGasMargin } from 'utils/calculateGasMargin'
 import Row from 'components/Row'
 import CheckCircle from 'assets/cow-swap/check.svg'
-import { InvestmentFlowProps } from '.'
+import ImportantIcon from 'assets/cow-swap/important.svg'
 import { ApprovalState, useApproveCallbackFromClaim } from 'hooks/useApproveCallback'
 import { useCurrencyBalance } from 'state/wallet/hooks'
 import { useActiveWeb3React } from 'hooks/web3'
@@ -37,8 +38,7 @@ import { EnhancedUserClaimData } from '../types'
 import { OperationType } from 'components/TransactionConfirmationModal'
 import { ONE_HUNDRED_PERCENT } from 'constants/misc'
 import { IS_TESTING_ENV } from '../const'
-import ImportantIcon from 'assets/cow-swap/important.svg'
-import SVG from 'react-inlinesvg'
+import { InvestmentFlowProps } from '.'
 
 const ErrorMessages = {
   NoBalance: (symbol = '') =>
