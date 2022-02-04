@@ -1,10 +1,10 @@
 import { SupportedChainId as ChainId, SupportedChainId } from 'constants/chains'
 import { OrderKind, QuoteQuery } from '@gnosis.pm/gp-v2-contracts'
 import { stringify } from 'qs'
-import { getSigningSchemeApiValue, OrderCreation, OrderCancellation, SigningSchemeValue } from 'utils/signatures'
-import { APP_DATA_HASH } from 'constants/index'
+import { getSigningSchemeApiValue, OrderCancellation, OrderCreation, SigningSchemeValue } from 'utils/signatures'
+import { APP_DATA_HASH, GAS_FEE_ENDPOINTS } from 'constants/index'
 import { registerOnWindow } from 'utils/misc'
-import { isLocal, isDev, isPr, isBarn } from '../../utils/environments'
+import { isBarn, isDev, isLocal, isPr } from '../../utils/environments'
 import OperatorError, {
   ApiErrorCodeDetails,
   ApiErrorCodes,
@@ -12,15 +12,14 @@ import OperatorError, {
 } from 'api/gnosisProtocol/errors/OperatorError'
 import QuoteError, {
   GpQuoteErrorCodes,
+  GpQuoteErrorDetails,
   GpQuoteErrorObject,
   mapOperatorErrorToQuoteError,
-  GpQuoteErrorDetails,
 } from 'api/gnosisProtocol/errors/QuoteError'
 import { toErc20Address } from 'utils/tokens'
 import { FeeQuoteParams, PriceInformation, PriceQuoteParams, SimpleGetQuoteResponse } from 'utils/price'
 
 import { DEFAULT_NETWORK_FOR_LISTS } from 'constants/lists'
-import { GAS_FEE_ENDPOINTS } from 'constants/index'
 import * as Sentry from '@sentry/browser'
 import { ZERO_ADDRESS } from 'constants/misc'
 import { getAppDataHash } from 'constants/appDataHash'
@@ -481,7 +480,25 @@ export interface GasFeeEndpointResponse {
   fastest: string
 }
 
+// Hardcoding gas prices for XDAI/GCHAIN
+// 1 gwei the lowest to 20 gwei the highest
+const HARDCODED_XDAI_GAS = {
+  lastUpdate: '',
+  lowest: '1000000000',
+  safeLow: '2000000000',
+  standard: '4000000000',
+  fast: '4000000000',
+  fastest: '2000000000',
+}
+
+function _getGChainGasPrices() {
+  return { ...HARDCODED_XDAI_GAS, lastUpdate: new Date().toISOString() }
+}
+
 export async function getGasPrices(chainId: ChainId = DEFAULT_NETWORK_FOR_LISTS): Promise<GasFeeEndpointResponse> {
+  if (chainId === SupportedChainId.XDAI) {
+    return _getGChainGasPrices()
+  }
   const response = await fetch(GAS_FEE_ENDPOINTS[chainId])
   return response.json()
 }
