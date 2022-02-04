@@ -471,36 +471,42 @@ export async function getPriceStrategy(chainId: ChainId): Promise<PriceStrategy>
   }
 }
 
+// Reference https://www.xdaichain.com/for-developers/developer-resources/gas-price-oracle
+export interface GChainFeeEndpointResponse {
+  average: number
+  fast: number
+  slow: number
+}
+// Values are returned as floats in gwei
+const ONE_GWEI = 1_000_000_000
+
 export interface GasFeeEndpointResponse {
   lastUpdate: string
   lowest: string
-  safeLow: string
+  safeLow?: string
   standard: string
   fast: string
-  fastest: string
-}
-
-// Hardcoding gas prices for XDAI/GCHAIN
-// 1 gwei the lowest to 20 gwei the highest
-const HARDCODED_XDAI_GAS = {
-  lastUpdate: '',
-  lowest: '1000000000',
-  safeLow: '2000000000',
-  standard: '4000000000',
-  fast: '4000000000',
-  fastest: '2000000000',
-}
-
-function _getGChainGasPrices() {
-  return { ...HARDCODED_XDAI_GAS, lastUpdate: new Date().toISOString() }
+  fastest?: string
 }
 
 export async function getGasPrices(chainId: ChainId = DEFAULT_NETWORK_FOR_LISTS): Promise<GasFeeEndpointResponse> {
-  if (chainId === SupportedChainId.XDAI) {
-    return _getGChainGasPrices()
-  }
   const response = await fetch(GAS_FEE_ENDPOINTS[chainId])
-  return response.json()
+  const json = await response.json()
+
+  if (chainId === SupportedChainId.XDAI) {
+    // Different endpoint for GChain with a different format. Need to transform it
+    return _transformGChainGasPrices(json)
+  }
+  return json
+}
+
+function _transformGChainGasPrices({ slow, average, fast }: GChainFeeEndpointResponse): GasFeeEndpointResponse {
+  return {
+    lastUpdate: new Date().toISOString(),
+    lowest: Math.floor(slow * ONE_GWEI).toString(),
+    standard: Math.floor(average * ONE_GWEI).toString(),
+    fast: Math.floor(fast * ONE_GWEI).toString(),
+  }
 }
 
 // Register some globals for convenience
