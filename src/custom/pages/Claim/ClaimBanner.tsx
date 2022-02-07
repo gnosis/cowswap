@@ -24,7 +24,7 @@ export default function ClaimBanner({ hasClaims, isClaimed }: ClaimBannerProps) 
       <Trans>
         {hasClaims
           ? 'This account is eligible for vCOW token claims!'
-          : 'This account has claimed available vCOW token claims!'}
+          : 'This account has already claimed vCOW tokens!'}
       </Trans>
     </ClaimBannerWrapper>
   )
