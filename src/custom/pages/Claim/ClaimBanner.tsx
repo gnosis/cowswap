@@ -13,10 +13,10 @@ type ClaimBannerProps = Pick<ClaimCommonTypes, 'hasClaims'> & {
 export default function ClaimBanner({ hasClaims, isClaimed }: ClaimBannerProps) {
   const { claimStatus, activeClaimAccount, isInvestFlowActive } = useClaimState()
 
-  const isEligible =
+  const shouldShowBanner =
     claimStatus === ClaimStatus.DEFAULT && !!activeClaimAccount && !isInvestFlowActive && (hasClaims || isClaimed)
 
-  if (!isEligible) return null
+  if (!shouldShowBanner) return null
 
   return (
     <ClaimBannerWrapper isClaimed={isClaimed}>
