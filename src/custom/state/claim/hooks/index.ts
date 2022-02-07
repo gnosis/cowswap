@@ -801,7 +801,7 @@ export function fetchClaims(account: string, chainId: number): Promise<UserClaim
     FETCH_CLAIM_PROMISES[claimKey] ??
     (FETCH_CLAIM_PROMISES[claimKey] = fetchClaimsMapping(chainId)
       .then((mapping) => {
-        const sorted = Object.keys(mapping).sort((a, b) => (a < b ? -1 : 1))
+        const sorted = Object.keys(mapping).sort((a, b) => (a.toLowerCase() < b.toLowerCase() ? -1 : 1))
 
         for (const startingAddress of sorted) {
           const lastAddress = mapping[startingAddress]
@@ -817,8 +817,12 @@ export function fetchClaims(account: string, chainId: number): Promise<UserClaim
       })
       .then((address) => fetchClaimsFile(address, chainId))
       .then((result) => {
-        if (result[lowerCasedAddress]) return transformRepoClaimsToUserClaims(result[lowerCasedAddress]) // mod
-        throw new Error(`Claim for ${claimKey} was not found in claim file!`)
+        const foundAddress = result[formatted]
+        if (foundAddress) {
+          return transformRepoClaimsToUserClaims(result[formatted]) // mod
+        } else {
+          throw new Error(`Claim for ${claimKey} was not found in claim file!`)
+        }
       })
       .catch((error) => {
         console.debug(`Claim fetch failed for ${claimKey}`, error)
