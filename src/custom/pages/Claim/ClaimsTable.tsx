@@ -1,4 +1,4 @@
-import { ClaimType, useClaimDispatchers, useClaimState, useClaimTimeInfo } from 'state/claim/hooks'
+import { ClaimType, useClaimDispatchers, useClaimState, useClaimTimeInfo, useCowLinks } from 'state/claim/hooks'
 import styled from 'styled-components/macro'
 import { ClaimTable, ClaimBreakdown, TokenLogo, BannerExplainer } from 'pages/Claim/styled'
 import CowProtocolLogo from 'components/CowProtocolLogo'
@@ -15,7 +15,6 @@ import { getPaidClaims, getIndexes } from 'state/claim/hooks/utils'
 import { useEffect } from 'react'
 import { AMOUNT_PRECISION } from 'constants/index'
 import { ExternalLink } from 'theme/index'
-import { COW_LINKS } from '.'
 import SVG from 'react-inlinesvg'
 import CowProtocolImage from 'assets/cow-swap/cowprotocol.svg'
 
@@ -119,6 +118,8 @@ export default function ClaimsTable({ isAirdropOnly, claims, hasClaims }: Claims
 
   const pendingClaimsSet = useAllClaimingTransactionIndices()
 
+  const cowLinks = useCowLinks()
+
   const { deployment: start, investmentDeadline, airdropDeadline } = useClaimTimeInfo()
 
   const handleSelect = (event: React.ChangeEvent<HTMLInputElement>, index: number) => {
@@ -182,7 +183,7 @@ export default function ClaimsTable({ isAirdropOnly, claims, hasClaims }: Claims
           </tbody>
         </table>
       </ClaimTable>
-      <ExternalLink href={COW_LINKS.vCowPost}>
+      <ExternalLink href={cowLinks.vCowPost}>
         <BannerExplainer>
           <SVG src={CowProtocolImage} description="Questions? Read More." />
           <span>
