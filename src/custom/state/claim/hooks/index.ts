@@ -183,6 +183,10 @@ export function useClassifiedUserClaims(account: Account, optionalChainId?: Supp
       }
     })
 
+    console.log('available', available)
+    console.log('expired', expired)
+    console.log('claimed', claimed)
+
     setIsLoading(isContractCallLoading)
     setClaims({ available, expired, claimed })
   }, [isAirdropWindowOpen, isInvestmentWindowOpen, results, userClaims])
@@ -351,6 +355,8 @@ export function useClaimTimeInfo(): ClaimTimeInfo {
   const deployment = useDeploymentTimestamp()
   const investmentDeadline = deployment && deployment + INVESTMENT_TIME
   const airdropDeadline = deployment && deployment + AIRDROP_TIME
+
+  console.log('deployment', deployment)
 
   const isInvestmentWindowOpen = Boolean(investmentDeadline && investmentDeadline > Date.now())
   const isAirdropWindowOpen = Boolean(airdropDeadline && airdropDeadline > Date.now())
