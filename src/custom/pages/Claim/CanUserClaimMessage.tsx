@@ -2,7 +2,7 @@ import { Trans } from '@lingui/macro'
 import { ButtonSecondary } from 'components/Button'
 import { IntroDescription, BannerExplainer } from './styled'
 import { ClaimCommonTypes } from './types'
-import { useClaimState, useClaimTimeInfo, useCowLinks } from 'state/claim/hooks'
+import { useClaimState, useClaimTimeInfo, useClaimLinks } from 'state/claim/hooks'
 import { ClaimStatus } from 'state/claim/actions'
 import { formatDateWithTimezone } from 'utils/time'
 import useNetworkName from 'hooks/useNetworkName'
@@ -16,7 +16,7 @@ export default function CanUserClaimMessage({ hasClaims, isAirdropOnly, handleCh
   const { activeClaimAccount, claimStatus } = useClaimState()
   const network = useNetworkName()
 
-  const cowLinks = useCowLinks()
+  const claimLinks = useClaimLinks()
 
   const { airdropDeadline } = useClaimTimeInfo()
 
@@ -35,7 +35,7 @@ export default function CanUserClaimMessage({ hasClaims, isAirdropOnly, handleCh
             </Trans>
           </p>
         </IntroDescription>
-        <ExternalLink href={cowLinks.vCowPost}>
+        <ExternalLink href={claimLinks.vCowPost}>
           <BannerExplainer>
             <SVG src={CowProtocolImage} description="Questions? Read More." />
             <span>

@@ -23,7 +23,7 @@ import {
   useClaimDispatchers,
   useHasClaimInvestmentFlowError,
   useSomeNotTouched,
-  useCowLinks,
+  useClaimLinks,
 } from 'state/claim/hooks'
 import { ClaimStatus } from 'state/claim/actions'
 import { InvestClaim } from 'state/claim/reducer'
@@ -153,7 +153,7 @@ export default function InvestmentFlow({ claims, hasClaims, isAirdropOnly, modal
   const { selected, activeClaimAccount, claimStatus, isInvestFlowActive, investFlowStep, investFlowData } =
     useClaimState()
   const { initInvestFlowData } = useClaimDispatchers()
-  const cowLinks = useCowLinks()
+  const claimLinks = useClaimLinks()
 
   const hasError = useHasClaimInvestmentFlowError()
   const someNotTouched = useSomeNotTouched()
@@ -204,7 +204,7 @@ export default function InvestmentFlow({ claims, hasClaims, isAirdropOnly, modal
           <p>
             You have chosen to exercise one or more investment opportunities alongside claiming your airdrop. Exercising
             your investment options will give you the chance to acquire vCOW tokens at a fixed price. Read{' '}
-            <ExternalLink href={cowLinks.stepGuide}> the step by step guide</ExternalLink> for more details on the
+            <ExternalLink href={claimLinks.stepGuide}> the step by step guide</ExternalLink> for more details on the
             claiming process.
           </p>
           <StepExplainer>
@@ -221,7 +221,7 @@ export default function InvestmentFlow({ claims, hasClaims, isAirdropOnly, modal
               </p>
             </span>
           </StepExplainer>
-          <ExternalLink href={cowLinks.vCowPost}>
+          <ExternalLink href={claimLinks.vCowPost}>
             <BannerExplainer>
               <SVG src={CowProtocolImage} description="Read more" />
               <span>

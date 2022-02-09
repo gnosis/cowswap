@@ -1,4 +1,4 @@
-import { ClaimType, useClaimDispatchers, useClaimState, useClaimTimeInfo, useCowLinks } from 'state/claim/hooks'
+import { ClaimType, useClaimDispatchers, useClaimState, useClaimTimeInfo, useClaimLinks } from 'state/claim/hooks'
 import styled from 'styled-components/macro'
 import { ClaimTable, ClaimBreakdown, TokenLogo, BannerExplainer } from 'pages/Claim/styled'
 import CowProtocolLogo from 'components/CowProtocolLogo'
@@ -118,7 +118,7 @@ export default function ClaimsTable({ isAirdropOnly, claims, hasClaims }: Claims
 
   const pendingClaimsSet = useAllClaimingTransactionIndices()
 
-  const cowLinks = useCowLinks()
+  const claimLinks = useClaimLinks()
 
   const { deployment: start, investmentDeadline, airdropDeadline } = useClaimTimeInfo()
 
@@ -183,7 +183,7 @@ export default function ClaimsTable({ isAirdropOnly, claims, hasClaims }: Claims
           </tbody>
         </table>
       </ClaimTable>
-      <ExternalLink href={cowLinks.vCowPost}>
+      <ExternalLink href={claimLinks.vCowPost}>
         <BannerExplainer>
           <SVG src={CowProtocolImage} description="Questions? Read More." />
           <span>

@@ -983,7 +983,7 @@ function _getPrice({ token, amount }: { amount: string; token: Token | GpEther }
  * Returns vCow claim blog posts based on chainId
  */
 const COW_BLOG_LINKS_ROOT = 'https://cow-protocol.medium.com'
-export const useCowLinks = () => {
+export const useClaimLinks = () => {
   const { chainId } = useActiveWeb3React()
 
   return useMemo(
