@@ -982,14 +982,14 @@ function _getPrice({ token, amount }: { amount: string; token: Token | GpEther }
 /**
  * Returns vCow claim blog posts based on chainId
  */
-const COW_LINKS_ROOT = 'https://cow-protocol.medium.com'
+const COW_BLOG_LINKS_ROOT = 'https://cow-protocol.medium.com'
 export const useCowLinks = () => {
   const { chainId } = useActiveWeb3React()
 
   return useMemo(
     () => ({
-      vCowPost: `${COW_LINKS_ROOT}/7689c4391373`,
-      stepGuide: `${COW_LINKS_ROOT}/${chainId === SupportedChainId.XDAI ? 'b1a1442a3454' : '33ae0910d53f'}`,
+      vCowPost: `${COW_BLOG_LINKS_ROOT}/7689c4391373`,
+      stepGuide: `${COW_BLOG_LINKS_ROOT}/${chainId === SupportedChainId.XDAI ? 'b1a1442a3454' : '33ae0910d53f'}`,
     }),
     [chainId]
   )
