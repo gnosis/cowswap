@@ -254,6 +254,7 @@ export default function Claim() {
             {/* Is Airdrop only (simple) - does user have claims? Show messages dependent on claim state */}
             <CanUserClaimMessage
               hasClaims={hasClaims}
+              isClaimed={isClaimed}
               isAirdropOnly={isAirdropOnly}
               handleChangeAccount={handleChangeClick}
             />
