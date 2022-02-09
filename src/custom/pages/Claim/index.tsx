@@ -278,6 +278,7 @@ export default function Claim() {
               isAirdropOnly={isAirdropOnly}
               isPaidClaimsOnly={isPaidClaimsOnly}
               hasClaims={hasClaims}
+              isClaimed={isClaimed}
               resolvedAddress={resolvedAddress}
             />
           </>
