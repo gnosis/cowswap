@@ -59,7 +59,7 @@ import { EnhancedUserClaimData } from 'pages/Claim/types'
 import { supportedChainId } from 'utils/supportedChainId'
 import { AMOUNT_PRECISION } from 'constants/index'
 import useIsMounted from 'hooks/useIsMounted'
-import { ChainClaimsCount } from 'state/claim/reducer'
+import { ClaimInfo } from 'state/claim/reducer'
 
 const CLAIMS_REPO_BRANCH = '2022-01-22-test-deployment-all-networks'
 export const CLAIMS_REPO = `https://raw.githubusercontent.com/gnosis/cow-merkle-drop/${CLAIMS_REPO_BRANCH}/`
@@ -857,7 +857,7 @@ export function useClaimDispatchers() {
       // reset claim ui
       resetClaimUi: () => dispatch(resetClaimUi()),
       // has claims on other chains
-      setClaimsCount: (payload: { chain: SupportedChainId; claimsCount: Partial<ChainClaimsCount> }) =>
+      setClaimsCount: (payload: { chain: SupportedChainId; claimInfo: ClaimInfo; account: string }) =>
         dispatch(setClaimsCount(payload)),
     }),
     [dispatch]

@@ -1,33 +1,53 @@
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { SupportedChainId } from 'constants/chains'
 import { ClassifiedUserClaims, useClaimDispatchers, useClaimState, useClassifiedUserClaims } from './hooks'
 import { useActiveWeb3React } from 'hooks'
-import { ChainClaimsCount } from 'state/claim/reducer'
+import { ClaimInfo } from 'state/claim/reducer'
 
 export default function Updater() {
   const { chainId } = useActiveWeb3React()
   const { activeClaimAccount } = useClaimState()
   const { setClaimsCount } = useClaimDispatchers()
 
-  // Fetches all classified claims for mainnet and gchain
+  // --- MAINNET ---
+  // Fetches all classified claims
   const mainnetClaims = useClassifiedUserClaims(activeClaimAccount, SupportedChainId.MAINNET)
-  const gChainClaims = useClassifiedUserClaims(activeClaimAccount, SupportedChainId.XDAI)
-
-  useEffect(() => {
+  // De-normalizing to avoid react hook update nightmare
+  const {
+    total: mTotal,
+    expired: mExpired,
+    claimed: mClaimed,
+    available: mAvailable,
     // Counts the claims, based on which is the current network
-    const mainnetCount = _countClaims(mainnetClaims, chainId, SupportedChainId.MAINNET)
-    const gChainCount = _countClaims(gChainClaims, chainId, SupportedChainId.XDAI)
+  } = useMemo(() => _countClaims(mainnetClaims, chainId, SupportedChainId.MAINNET), [chainId, mainnetClaims])
 
-    // Stores it on redux
+  // Stores it on redux
+  useEffect(() => {
+    if (!activeClaimAccount) return
     setClaimsCount({
       chain: SupportedChainId.MAINNET,
-      claimsCount: mainnetCount,
+      claimInfo: { total: mTotal, expired: mExpired, claimed: mClaimed, available: mAvailable },
+      account: activeClaimAccount,
     })
+  }, [activeClaimAccount, mAvailable, mClaimed, mExpired, mTotal, setClaimsCount])
+
+  // --- GCHAIN ---
+  const gChainClaims = useClassifiedUserClaims(activeClaimAccount, SupportedChainId.XDAI)
+  const {
+    total: gTotal,
+    expired: gExpired,
+    claimed: gClaimed,
+    available: gAvailable,
+  } = useMemo(() => _countClaims(gChainClaims, chainId, SupportedChainId.XDAI), [chainId, gChainClaims])
+
+  useEffect(() => {
+    if (!activeClaimAccount) return
     setClaimsCount({
       chain: SupportedChainId.XDAI,
-      claimsCount: gChainCount,
+      claimInfo: { total: gTotal, expired: gExpired, claimed: gClaimed, available: gAvailable },
+      account: activeClaimAccount,
     })
-  }, [setClaimsCount, chainId, mainnetClaims, gChainClaims])
+  }, [activeClaimAccount, gAvailable, gClaimed, gExpired, gTotal, setClaimsCount])
 
   return null
 }
@@ -42,7 +62,7 @@ function _countClaims(
 ) {
   const { available, claimed, expired } = mainnetClaims
 
-  const count: Partial<ChainClaimsCount> = {
+  const count: ClaimInfo = {
     // Total is easy, just add everything up
     // This will always be accurate.
     // When we only have airdrop repo as reference, everything will be `available`

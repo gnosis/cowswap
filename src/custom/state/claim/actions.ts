@@ -1,6 +1,6 @@
 import { createAction } from '@reduxjs/toolkit'
 import { SupportedChainId } from 'constants/chains'
-import { ChainClaimsCount } from 'state/claim/reducer'
+import { ClaimInfo } from 'state/claim/reducer'
 
 export enum ClaimStatus {
   DEFAULT = 'DEFAULT',
@@ -74,5 +74,6 @@ export const resetClaimUi = createAction('claims/resetClaimUi')
 // Claims on other chains
 export const setClaimsCount = createAction<{
   chain: SupportedChainId
-  claimsCount: Partial<ChainClaimsCount>
+  claimInfo: Partial<ClaimInfo>
+  account: string
 }>('claims/setClaimsCount')

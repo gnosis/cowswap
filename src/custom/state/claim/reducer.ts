@@ -21,29 +21,27 @@ import {
   setClaimsCount,
 } from './actions'
 
-export type ChainClaimsCount = {
+export type ClaimInfo = {
   total: number
-  available: number
-  claimed: number
-  expired: number
+  available?: number | undefined
+  claimed?: number | undefined
+  expired?: number | undefined
 }
-
-export type ClaimsOnOtherChains = {
-  [chain in SupportedChainId]: ChainClaimsCount
-}
-
-const DEFAULT_CHAIN_CLAIMS_COUNT: ChainClaimsCount = {
-  available: 0,
-  claimed: 0,
-  expired: 0,
+const DEFAULT_CLAIM_INFO: ClaimInfo = {
   total: 0,
 }
 
-const DEFAULT_CLAIMS_ON_OTHER_CHAINS_STATE: ClaimsOnOtherChains = {
-  [SupportedChainId.MAINNET]: DEFAULT_CHAIN_CLAIMS_COUNT,
-  [SupportedChainId.RINKEBY]: DEFAULT_CHAIN_CLAIMS_COUNT,
-  [SupportedChainId.XDAI]: DEFAULT_CHAIN_CLAIMS_COUNT,
+type ClaimInfoPerChain = Record<SupportedChainId, ClaimInfo>
+
+const DEFAULT_CLAIM_INFO_PER_CHAIN: ClaimInfoPerChain = {
+  [SupportedChainId.MAINNET]: { ...DEFAULT_CLAIM_INFO },
+  [SupportedChainId.XDAI]: { ...DEFAULT_CLAIM_INFO },
+  [SupportedChainId.RINKEBY]: { ...DEFAULT_CLAIM_INFO },
 }
+
+type ClaimInfoPerAccount = Record<string, ClaimInfoPerChain>
+
+const DEFAULT_CLAIM_INFO_PER_ACCOUNT: ClaimInfoPerAccount = {}
 
 export const initialState: ClaimState = {
   // address/ENS address
@@ -65,7 +63,7 @@ export const initialState: ClaimState = {
   selected: [],
   selectedAll: false,
   // claims on other networks
-  claimsCount: DEFAULT_CLAIMS_ON_OTHER_CHAINS_STATE,
+  claimInfoPerAccount: { ...DEFAULT_CLAIM_INFO_PER_ACCOUNT },
 }
 
 export type InvestClaim = {
@@ -95,15 +93,28 @@ export type ClaimState = {
   selected: number[]
   selectedAll: boolean
   // claims on other chains
-  claimsCount: ClaimsOnOtherChains
+  claimInfoPerAccount: ClaimInfoPerAccount
 }
 
 export default createReducer(initialState, (builder) =>
   builder
     .addCase(setClaimsCount, (state, { payload }) => {
-      state.claimsCount[payload.chain] = {
-        ...state.claimsCount[payload.chain],
-        ...payload.claimsCount,
+      const { chain, claimInfo, account } = payload
+      state.claimInfoPerAccount[account] = state.claimInfoPerAccount[account] || {
+        ...DEFAULT_CLAIM_INFO_PER_CHAIN,
+      }
+
+      const newState: ClaimInfo = { ...DEFAULT_CLAIM_INFO }
+
+      // Only update the value if present to avoid overwriting data fetched on another network
+      if (claimInfo.total !== undefined) newState.total = claimInfo.total
+      if (claimInfo.claimed !== undefined) newState.claimed = claimInfo.claimed
+      if (claimInfo.available !== undefined) newState.available = claimInfo.available
+      if (claimInfo.expired !== undefined) newState.expired = claimInfo.expired
+
+      state.claimInfoPerAccount[account][chain] = {
+        ...state.claimInfoPerAccount[account][chain],
+        ...newState,
       }
     })
     .addCase(setInputAddress, (state, { payload }) => {
