@@ -16,7 +16,7 @@ type AffiliateStatus = 'NOT_CONNECTED' | 'OWN_LINK' | 'ACTIVE' | 'UNSUPPORTED_NE
 const STATUS_TO_MESSAGE_MAPPING: Record<AffiliateStatus, string> = {
   NOT_CONNECTED: 'Affiliate program: Please connect your wallet to participate.',
   OWN_LINK:
-    'Affiliate program: Your affiliate code works! Any new user following this link would credit you their trading volume.',
+    'Affiliate program: Your affiliate code works! By sharing it, others would credit you their trading volume.',
   ACTIVE: 'Valid affiliate code: You can now do your first trade to join the program.',
   UNSUPPORTED_NETWORK: 'Affiliate program: Only Mainnet is supported. Please change the network to participate.',
 }
