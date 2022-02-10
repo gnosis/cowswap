@@ -70,19 +70,20 @@ export default function FooterNavButtons({
   }, [activeClaimAccount])
 
   let buttonContent: ReactNode = null
-  // Already claimed
-  if (isClaimed) {
-    buttonContent = (
-      <ButtonPrimary ref={buttonRef} onClick={toggleWalletModal} disabled>
-        <Trans>Already claimed</Trans>
-      </ButtonPrimary>
-    )
-  }
+
   // Disconnected, show wallet connect
-  else if (!account && activeClaimAccount) {
+  if (!account && activeClaimAccount) {
     buttonContent = (
       <ButtonPrimary ref={buttonRef} onClick={toggleWalletModal}>
         <Trans>Connect a wallet</Trans>
+      </ButtonPrimary>
+    )
+  }
+  // Already claimed
+  else if (isClaimed) {
+    buttonContent = (
+      <ButtonPrimary ref={buttonRef} onClick={toggleWalletModal} disabled>
+        <Trans>Already claimed</Trans>
       </ButtonPrimary>
     )
   }
