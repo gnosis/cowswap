@@ -26,10 +26,10 @@ export class FortmaticConnector extends FortmaticConnectorCore {
 
     const provider = this.fortmatic.getProvider()
 
-    // TODO implements this
+    // It is no longer necessary
     // const pollForOverlayReady = new Promise<void>((resolve) => {
     //   const interval = setInterval(() => {
-    //     if (provider.overlayReady) {
+    //     if (provider.overlay.overlayReady) {
     //       clearInterval(interval)
     //       this.emit(OVERLAY_READY)
     //       resolve()
