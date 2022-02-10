@@ -60,10 +60,13 @@ export default function CanUserClaimMessage({
     return (
       <IntroDescription center>
         <Trans>
-          {isClaimed
-            ? 'This account already claimed vCOW'
-            : 'Unfortunately this account is not eligible for any vCOW claims'}{' '}
-          in {network}. <br />
+          {isClaimed ? (
+            ''
+          ) : (
+            <>
+              Unfortunately this account is not eligible for any vCOW claims in {network}. <br />
+            </>
+          )}
           <ButtonSecondary onClick={handleChangeAccount} padding="0">
             Try another account
           </ButtonSecondary>{' '}
