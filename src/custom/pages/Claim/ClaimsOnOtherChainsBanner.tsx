@@ -75,11 +75,13 @@ function ClaimsOnOtherChainsBanner({ className }: { className?: string }) {
   const { claimInfoPerAccount, activeClaimAccount } = useClaimState()
 
   const chainsWithClaims: SupportedChainId[] = useMemo(() => {
-    if (!activeClaimAccount || !claimInfoPerAccount[activeClaimAccount]) return []
+    const claimInfoPerChain = claimInfoPerAccount[activeClaimAccount]
 
-    return Object.keys(claimInfoPerAccount[activeClaimAccount]).reduce<SupportedChainId[]>((acc, chain) => {
+    if (!claimInfoPerChain) return []
+
+    return Object.keys(claimInfoPerChain).reduce<SupportedChainId[]>((acc, chain) => {
       const checkedChain = chain as unknown as SupportedChainId
-      const claimsCountOnChain = claimInfoPerAccount[activeClaimAccount][checkedChain]
+      const claimsCountOnChain = claimInfoPerChain[checkedChain]
 
       if (_shouldNotDisplayBannerForChain(checkedChain, chainId, claimsCountOnChain)) {
         return acc
