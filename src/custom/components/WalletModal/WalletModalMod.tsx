@@ -10,7 +10,7 @@ import styled from 'styled-components/macro'
 
 import MetamaskIcon from 'assets/images/metamask.png'
 import { ReactComponent as Close } from 'assets/images/x.svg'
-import { fortmatic, injected, portis } from 'connectors'
+import { injected, portis } from 'connectors'
 import { SUPPORTED_WALLETS } from 'constants/index'
 import usePrevious from 'hooks/usePrevious'
 import { useModalOpen, useWalletModalToggle } from 'state/application/hooks'
