@@ -7,7 +7,7 @@ import { ClaimSummary as ClaimSummaryWrapper, ClaimSummaryTitle, ClaimTotal } fr
 import { ClaimCommonTypes } from './types'
 import { ClaimStatus } from 'state/claim/actions'
 import { AMOUNT_PRECISION } from 'constants/index'
-import { useTokenBalance } from '@src/state/wallet/hooks'
+import { useTokenBalance } from 'state/wallet/hooks'
 import { V_COW } from 'constants/tokens'
 import { useActiveWeb3React } from 'hooks'
 
