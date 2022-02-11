@@ -26,20 +26,18 @@ export class FortmaticConnector extends FortmaticConnectorCore {
 
     const provider = this.fortmatic.getProvider()
 
-    const pollForOverlayReady = new Promise<void>((resolve) => {
-      const interval = setInterval(() => {
-        if (provider.overlayReady) {
-          clearInterval(interval)
-          this.emit(OVERLAY_READY)
-          resolve()
-        }
-      }, 200)
-    })
+    // It is no longer necessary
+    // const pollForOverlayReady = new Promise<void>((resolve) => {
+    //   const interval = setInterval(() => {
+    //     if (provider.overlay.overlayReady) {
+    //       clearInterval(interval)
+    //       this.emit(OVERLAY_READY)
+    //       resolve()
+    //     }
+    //   }, 200)
+    // })
 
-    const [account] = await Promise.all([
-      provider.enable().then((accounts: string[]) => accounts[0]),
-      pollForOverlayReady,
-    ])
+    const account = await provider.enable().then((accounts: string[]) => accounts[0])
 
     return { provider: this.fortmatic.getProvider(), chainId: (this as any).chainId, account }
   }
