@@ -5,7 +5,9 @@ import NotificationBanner from 'components/NotificationBanner'
 import { useReferralAddress, useResetReferralAddress } from 'state/affiliate/hooks'
 import { updateAppDataHash } from 'state/affiliate/actions'
 import { useAppDispatch } from 'state/hooks'
+import { hasTrades } from 'utils/trade'
 import { generateReferralMetadataDoc, uploadMetadataDocToIpfs } from 'utils/metadata'
+import { retry, RetryOptions } from 'utils/retry'
 import { SupportedChainId } from 'constants/chains'
 import useParseReferralQueryParam from 'hooks/useParseReferralQueryParam'
 import useRecentActivity from 'hooks/useRecentActivity'
@@ -20,6 +22,8 @@ const STATUS_TO_MESSAGE_MAPPING: Record<AffiliateStatus, string> = {
   ACTIVE: 'Valid affiliate code: You can now do your first trade to join the program.',
   UNSUPPORTED_NETWORK: 'Affiliate program: Only Mainnet is supported. Please change the network to participate.',
 }
+
+const DEFAULT_RETRY_OPTIONS: RetryOptions = { n: 3, minWait: 1000, maxWait: 3000 }
 
 export default function AffiliateStatusCheck() {
   const appDispatch = useAppDispatch()
@@ -62,6 +66,18 @@ export default function AffiliateStatusCheck() {
       isFirstTrade.current = false
       history.replace({ search: '' })
       resetReferralAddress()
+      return
+    }
+
+    try {
+      // we first validate that the user hasn't already traded
+      const userHasTrades = await retry(() => hasTrades(chainId, account), DEFAULT_RETRY_OPTIONS).promise
+      if (userHasTrades) {
+        return
+      }
+    } catch (error) {
+      console.error(error)
+      setError('There was an error validating existing trades. Please try again later.')
       return
     }
 
