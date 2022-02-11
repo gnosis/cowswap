@@ -19,8 +19,8 @@ const STATUS_TO_MESSAGE_MAPPING: Record<AffiliateStatus, string> = {
   NOT_CONNECTED: 'Affiliate program: Please connect your wallet to participate.',
   OWN_LINK:
     'Affiliate program: Your affiliate code works! By sharing it, others would credit you their trading volume.',
-  ACTIVE: 'Valid affiliate code: You can now do your first trade to join the program.',
-  UNSUPPORTED_NETWORK: 'Affiliate program: Only Mainnet is supported. Please change the network to participate.',
+  ACTIVE: 'Valid affiliate code: Please do your first trade to join the program!',
+  UNSUPPORTED_NETWORK: 'Affiliate program works in Ethereum only. Please change the network to participate.',
 }
 
 const DEFAULT_RETRY_OPTIONS: RetryOptions = { n: 3, minWait: 1000, maxWait: 3000 }
@@ -57,7 +57,7 @@ export default function AffiliateStatusCheck() {
     }
 
     if (!referralAddress.isValid) {
-      setError('The referral address is invalid.')
+      setError('Affiliate program: The referral address is invalid.')
       return
     }
 
@@ -77,7 +77,7 @@ export default function AffiliateStatusCheck() {
       }
     } catch (error) {
       console.error(error)
-      setError('There was an error validating existing trades. Please try again later.')
+      setError('Affiliate program: There was an error loading trades. Please try again later.')
       return
     }
 
@@ -93,7 +93,7 @@ export default function AffiliateStatusCheck() {
         appDispatch(updateAppDataHash(appDataHash))
       } catch (e) {
         console.error(e)
-        setError('There was an error while uploading the referral document to IPFS. Please try again later.')
+        setError('Affiliate program: There was an error with uploading your referral data. Please try again later.')
       }
     }
     if (affiliateState === 'ACTIVE') handleReferralAddress(referralAddress)
