@@ -1,8 +1,11 @@
-import { useCallback } from 'react'
+import { useCallback, useState, useEffect } from 'react'
+import { useActiveWeb3React } from 'hooks/web3'
 import { useSelector } from 'react-redux'
 import { AppState } from 'state'
 import { useAppDispatch } from 'state/hooks'
+import { getTrades, getOrder } from 'api/gnosisProtocol/api'
 import { updateReferralAddress } from 'state/affiliate/actions'
+import { decodeAppData } from 'utils/metadata'
 import { APP_DATA_HASH } from 'constants/index'
 
 export function useAppDataHash() {
@@ -34,4 +37,27 @@ export function useIsNotificationClosed(id?: string): boolean | null {
   return useSelector<AppState, boolean | null>((state) => {
     return id ? state.affiliate.isNotificationClosed?.[id] ?? false : null
   })
+}
+
+export function useReferredByAddress() {
+  const [referredAddress, setReferredAddress] = useState<string>('')
+  const { account, chainId } = useActiveWeb3React()
+
+  useEffect(() => {
+    const fetchReferredAddress = async () => {
+      if (!chainId || !account) return
+      try {
+        const trades = await getTrades({ chainId, owner: account, limit: 1 })
+        const order = await getOrder(chainId, trades[0]?.orderUid)
+
+        const appDataDecoded = order?.appData && (await decodeAppData(order?.appData.toString()))
+        setReferredAddress(appDataDecoded.metadata.referrer.address)
+      } catch {
+        setReferredAddress('')
+      }
+    }
+    fetchReferredAddress()
+  }, [account, chainId])
+
+  return { value: referredAddress }
 }

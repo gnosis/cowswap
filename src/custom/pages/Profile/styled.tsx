@@ -42,6 +42,10 @@ export const ExtLink = styled(ExternalLink)`
   }
 `
 
+export const AffiliateTitle = styled(Title)`
+  margin-top: 0;
+`
+
 export const ChildWrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -79,28 +83,17 @@ export const GridWrap = styled.div<Partial<CSS.Properties & { horizontal?: boole
       grid-column-start: 1;
       grid-column-end: 2;
     }
-  `};
+  `}
 `
 
 export const CardHead = styled.div`
   display: flex;
   flex-grow: 1;
   flex-wrap: wrap;
+  flex-direction: column;
   ${({ theme }) => theme.mediaWidth.upToSmall`
     flex-direction: column;
     flex-wrap: nowrap;
-  `}
-`
-
-export const StyledTitle = styled(Title)`
-  display: flex;
-  justify-content: flex-start;
-  margin: 0;
-  line-height: 1.21;
-  font-size: 26px;
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    justify-content: center;
-    font-size: 24px;
   `}
 `
 
@@ -124,7 +117,7 @@ export const ItemTitle = styled.h3`
 export const FlexRow = styled.div`
   display: inline-flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
 `
 
 export const FlexWrap = styled.div<Partial<CSS.Properties & { xAlign?: string; yAlign?: string; col?: boolean }>>`
@@ -157,6 +150,29 @@ export const StyledContainer = styled.div`
     flex-wrap: wrap;
     flex-direction: column;
   `}
+`
+
+export const FlexCol = styled.div`
+  display: flex;
+  flex-grow: 1;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  strong {
+    font-size: 21px;
+    margin-top: 6px;
+    ${({ theme }) => theme.mediaWidth.upToSmall`
+    font-size: 14px;
+  `}
+  }
+  span:not([role='img']) {
+    font-size: 14px;
+    color: ${({ theme }) => theme.text6};
+    text-align: center;
+    display: flex;
+    align-items: center;
+    padding: 8px 0 0 0;
+  }
 `
 
 export const Loader = styled.div<{ isLoading: boolean }>`
@@ -193,4 +209,34 @@ export const Loader = styled.div<{ isLoading: boolean }>`
         }
       }
     `}
+`
+
+export const ProfileWrapper = styled(Wrapper)`
+  margin: 16px 0 16px 0;
+  padding: 16px 24px;
+  z-index: 2;
+  ${({ theme }) => theme.mediaWidth.upToVerySmall`
+    padding: 0 16px 16px;
+  `};
+`
+
+export const ProfileGridWrap = styled(GridWrap)`
+  grid-template-columns: 1fr auto;
+  justify-content: space-between;
+  align-items: center;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    > :first-child,
+    > :nth-child(2) {
+      grid-column-start: auto;
+      grid-column-end: auto;
+    }
+  `};
+  ${({ theme }) => theme.mediaWidth.upToVerySmall`
+    > :first-child,
+    > :nth-child(2) {
+      grid-column-start: 1;
+      grid-column-end: 1;
+    }
+    grid-row-gap: 0px;
+  `};
 `

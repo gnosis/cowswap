@@ -1,10 +1,10 @@
 import { SupportedChainId as ChainId, SupportedChainId } from 'constants/chains'
 import { OrderKind, QuoteQuery } from '@gnosis.pm/gp-v2-contracts'
 import { stringify } from 'qs'
-import { getSigningSchemeApiValue, OrderCreation, OrderCancellation, SigningSchemeValue } from 'utils/signatures'
-import { APP_DATA_HASH } from 'constants/index'
+import { getSigningSchemeApiValue, OrderCancellation, OrderCreation, SigningSchemeValue } from 'utils/signatures'
+import { APP_DATA_HASH, GAS_FEE_ENDPOINTS } from 'constants/index'
 import { registerOnWindow } from 'utils/misc'
-import { isLocal, isDev, isPr, isBarn } from '../../utils/environments'
+import { isBarn, isDev, isLocal, isPr } from '../../utils/environments'
 import OperatorError, {
   ApiErrorCodeDetails,
   ApiErrorCodes,
@@ -12,15 +12,14 @@ import OperatorError, {
 } from 'api/gnosisProtocol/errors/OperatorError'
 import QuoteError, {
   GpQuoteErrorCodes,
+  GpQuoteErrorDetails,
   GpQuoteErrorObject,
   mapOperatorErrorToQuoteError,
-  GpQuoteErrorDetails,
 } from 'api/gnosisProtocol/errors/QuoteError'
 import { toErc20Address } from 'utils/tokens'
 import { FeeQuoteParams, PriceInformation, PriceQuoteParams, SimpleGetQuoteResponse } from 'utils/price'
 
 import { DEFAULT_NETWORK_FOR_LISTS } from 'constants/lists'
-import { GAS_FEE_ENDPOINTS } from 'constants/index'
 import * as Sentry from '@sentry/browser'
 import { ZERO_ADDRESS } from 'constants/misc'
 import { getAppDataHash } from 'constants/appDataHash'
@@ -29,19 +28,17 @@ import { GpPriceStrategy } from 'hooks/useGetGpPriceStrategy'
 function getGnosisProtocolUrl(): Partial<Record<ChainId, string>> {
   if (isLocal || isDev || isPr || isBarn) {
     return {
-      [ChainId.MAINNET]:
-        process.env.REACT_APP_API_URL_STAGING_MAINNET || 'https://protocol-mainnet.dev.gnosisdev.com/api',
-      [ChainId.RINKEBY]:
-        process.env.REACT_APP_API_URL_STAGING_RINKEBY || 'https://protocol-rinkeby.dev.gnosisdev.com/api',
-      [ChainId.XDAI]: process.env.REACT_APP_API_URL_STAGING_XDAI || 'https://protocol-xdai.dev.gnosisdev.com/api',
+      [ChainId.MAINNET]: process.env.REACT_APP_API_URL_STAGING_MAINNET || 'https://barn.api.cow.fi/mainnet/api',
+      [ChainId.RINKEBY]: process.env.REACT_APP_API_URL_STAGING_RINKEBY || 'https://barn.api.cow.fi/rinkeby/api',
+      [ChainId.XDAI]: process.env.REACT_APP_API_URL_STAGING_XDAI || 'https://barn.api.cow.fi/xdai/api',
     }
   }
 
   // Production, staging, ens, ...
   return {
-    [ChainId.MAINNET]: process.env.REACT_APP_API_URL_PROD_MAINNET || 'https://protocol-mainnet.gnosis.io/api',
-    [ChainId.RINKEBY]: process.env.REACT_APP_API_URL_PROD_RINKEBY || 'https://protocol-rinkeby.gnosis.io/api',
-    [ChainId.XDAI]: process.env.REACT_APP_API_URL_PROD_XDAI || 'https://protocol-xdai.gnosis.io/api',
+    [ChainId.MAINNET]: process.env.REACT_APP_API_URL_PROD_MAINNET || 'https://api.cow.fi/mainnet/api',
+    [ChainId.RINKEBY]: process.env.REACT_APP_API_URL_PROD_RINKEBY || 'https://api.cow.fi/rinkeby/api',
+    [ChainId.XDAI]: process.env.REACT_APP_API_URL_PROD_XDAI || 'https://api.cow.fi/xdai/api',
   }
 }
 
@@ -49,14 +46,13 @@ function getProfileUrl(): Partial<Record<ChainId, string>> {
   if (isLocal || isDev || isPr || isBarn) {
     return {
       [ChainId.MAINNET]:
-        process.env.REACT_APP_PROFILE_API_URL_STAGING_MAINNET || 'https://protocol-affiliate.dev.gnosisdev.com/api',
+        process.env.REACT_APP_PROFILE_API_URL_STAGING_MAINNET || 'https://barn.api.cow.fi/affiliate/api',
     }
   }
 
   // Production, staging, ens, ...
   return {
-    [ChainId.MAINNET]:
-      process.env.REACT_APP_PROFILE_API_URL_STAGING_MAINNET || 'https://protocol-affiliate.gnosis.io/api',
+    [ChainId.MAINNET]: process.env.REACT_APP_PROFILE_API_URL_STAGING_MAINNET || 'https://api.cow.fi/affiliate/api',
   }
 }
 const STRATEGY_URL_BASE = 'https://raw.githubusercontent.com/gnosis/cowswap/configuration/config/strategies'
@@ -76,7 +72,7 @@ const DEFAULT_HEADERS = {
   'Content-Type': 'application/json',
   'X-AppId': APP_DATA_HASH.toString(),
 }
-const API_NAME = 'Gnosis Protocol'
+const API_NAME = 'CoW Protocol'
 const ENABLED = process.env.REACT_APP_PRICE_FEED_GP_ENABLED !== 'false'
 /**
  * Unique identifier for the order, calculated by keccak256(orderDigest, ownerAddress, validTo),
@@ -475,18 +471,42 @@ export async function getPriceStrategy(chainId: ChainId): Promise<PriceStrategy>
   }
 }
 
+// Reference https://www.xdaichain.com/for-developers/developer-resources/gas-price-oracle
+export interface GChainFeeEndpointResponse {
+  average: number
+  fast: number
+  slow: number
+}
+// Values are returned as floats in gwei
+const ONE_GWEI = 1_000_000_000
+
 export interface GasFeeEndpointResponse {
   lastUpdate: string
   lowest: string
-  safeLow: string
+  safeLow?: string
   standard: string
   fast: string
-  fastest: string
+  fastest?: string
 }
 
 export async function getGasPrices(chainId: ChainId = DEFAULT_NETWORK_FOR_LISTS): Promise<GasFeeEndpointResponse> {
   const response = await fetch(GAS_FEE_ENDPOINTS[chainId])
-  return response.json()
+  const json = await response.json()
+
+  if (chainId === SupportedChainId.XDAI) {
+    // Different endpoint for GChain with a different format. Need to transform it
+    return _transformGChainGasPrices(json)
+  }
+  return json
+}
+
+function _transformGChainGasPrices({ slow, average, fast }: GChainFeeEndpointResponse): GasFeeEndpointResponse {
+  return {
+    lastUpdate: new Date().toISOString(),
+    lowest: Math.floor(slow * ONE_GWEI).toString(),
+    standard: Math.floor(average * ONE_GWEI).toString(),
+    fast: Math.floor(fast * ONE_GWEI).toString(),
+  }
 }
 
 // Register some globals for convenience

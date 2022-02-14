@@ -5,7 +5,6 @@ import {
   Container,
   GridWrap,
   CardHead,
-  StyledTitle,
   StyledContainer,
   StyledTime,
   ItemTitle,
@@ -13,6 +12,10 @@ import {
   Loader,
   ExtLink as ExternalLink,
   FlexRow,
+  ExtLink,
+  AffiliateTitle,
+  ProfileWrapper,
+  ProfileGridWrap,
 } from 'pages/Profile/styled'
 import { useActiveWeb3React } from 'hooks/web3'
 import Copy from 'components/Copy/CopyMod'
@@ -25,20 +28,28 @@ import { getExplorerAddressLink } from 'utils/explorer'
 import useTimeAgo from 'hooks/useTimeAgo'
 import { MouseoverTooltipContent } from 'components/Tooltip'
 import NotificationBanner from 'components/NotificationBanner'
+import { Title } from 'components/Page'
 import { SupportedChainId as ChainId } from 'constants/chains'
 import AffiliateStatusCheck from 'components/AffiliateStatusCheck'
 import { useHasOrders } from 'api/gnosisProtocol/hooks'
-import { useReferralAddress } from 'state/affiliate/hooks'
+import { useReferredByAddress } from 'state/affiliate/hooks'
 import { shortenAddress } from 'utils'
+import { useTokenBalance } from 'state/wallet/hooks'
+import { V_COW } from 'constants/tokens'
+import VCOWDropdown from './VCOWDropdown'
+
+import { IS_CLAIMING_ENABLED } from 'pages/Claim/const'
 
 export default function Profile() {
   const referralLink = useReferralLink()
-  const refAddress = useReferralAddress()
+  const refAddress = useReferredByAddress()
   const { account, chainId } = useActiveWeb3React()
   const { profileData, isLoading, error } = useFetchProfile()
   const lastUpdated = useTimeAgo(profileData?.lastUpdated)
   const isTradesTooltipVisible = account && chainId == 1 && !!profileData?.totalTrades
   const hasOrders = useHasOrders(account)
+
+  const vCowBalance = useTokenBalance(account || undefined, chainId ? V_COW[chainId] : undefined)
 
   const renderNotificationMessages = (
     <>
@@ -58,47 +69,58 @@ export default function Profile() {
   return (
     <Container>
       {chainId && chainId === ChainId.MAINNET && <AffiliateStatusCheck />}
+      <ProfileWrapper>
+        <ProfileGridWrap horizontal>
+          <CardHead>
+            <Title>Profile</Title>
+          </CardHead>
+          {IS_CLAIMING_ENABLED && vCowBalance && <VCOWDropdown balance={vCowBalance} />}
+        </ProfileGridWrap>
+      </ProfileWrapper>
       <Wrapper>
         <GridWrap>
           <CardHead>
-            <FlexWrap col>
-              <StyledTitle>Profile overview</StyledTitle>
-              {account && (
-                <Loader isLoading={isLoading}>
-                  <StyledContainer>
-                    <Txt>
-                      <RefreshCcw size={16} />
-                      &nbsp;&nbsp;
-                      <Txt fs={14} secondary>
-                        Last updated
-                        <MouseoverTooltipContent content="Data is updated on the background periodically.">
-                          <HelpCircle size={14} />
-                        </MouseoverTooltipContent>
-                        :&nbsp;
-                      </Txt>
-                      {!lastUpdated ? (
-                        '-'
-                      ) : (
-                        <MouseoverTooltipContent content={<TimeFormatted date={profileData?.lastUpdated} />}>
-                          <strong>{lastUpdated}</strong>
-                        </MouseoverTooltipContent>
-                      )}
+            {account && refAddress.value && (
+              <FlexRow>
+                <Txt fs={14}>
+                  Referred by:&nbsp;<strong>{refAddress.value && shortenAddress(refAddress.value)}</strong>
+                </Txt>
+                <span style={{ display: 'inline-block', verticalAlign: 'middle', marginLeft: 8 }}>
+                  <Copy toCopy={refAddress.value} />
+                </span>
+              </FlexRow>
+            )}
+            <AffiliateTitle>Affiliate Program</AffiliateTitle>
+            {account && (
+              <Loader isLoading={isLoading}>
+                <StyledContainer>
+                  <Txt>
+                    <RefreshCcw size={16} />
+                    &nbsp;&nbsp;
+                    <Txt secondary>
+                      Last updated
+                      <MouseoverTooltipContent content="Data is updated on the background periodically.">
+                        <HelpCircle size={14} />
+                      </MouseoverTooltipContent>
+                      :&nbsp;
                     </Txt>
-                  </StyledContainer>
-                </Loader>
-              )}
-            </FlexWrap>
-            <FlexWrap col yAlign={'flex-end'}>
-              {account && refAddress && (
-                <FlexRow>
-                  <Txt fs={14}>
-                    Referred by:&nbsp;<strong>{shortenAddress(refAddress.value)}</strong>
+                    {!lastUpdated ? (
+                      '-'
+                    ) : (
+                      <MouseoverTooltipContent content={<TimeFormatted date={profileData?.lastUpdated} />}>
+                        <strong>{lastUpdated}</strong>
+                      </MouseoverTooltipContent>
+                    )}
                   </Txt>
-                  <span style={{ display: 'inline-block', verticalAlign: 'middle', marginLeft: 8 }}>
-                    <Copy toCopy={refAddress.value} />
-                  </span>
-                </FlexRow>
-              )}
+                  {hasOrders && (
+                    <ExtLink href={getExplorerAddressLink(chainId || 1, account)}>
+                      <Txt secondary>View all orders ↗</Txt>
+                    </ExtLink>
+                  )}
+                </StyledContainer>
+              </Loader>
+            )}
+            <FlexWrap col yAlign={'flex-end'}>
               <FlexWrap yAlign={'flex-end'}>
                 {referralLink && hasOrders && account && (
                   <ExternalLink href={getExplorerAddressLink(chainId || 1, account)}>
