@@ -1,7 +1,8 @@
 import { useWeb3React as useWeb3ReactCore } from '@web3-react/core'
+import { AbstractConnector } from '@web3-react/abstract-connector'
 import { useEffect, useState, useCallback } from 'react'
 import { isMobile } from 'react-device-detect'
-import { injected, walletconnect, getProviderType, WalletProvider, walletlink } from 'connectors'
+import { injected, walletconnect, getProviderType, WalletProvider, fortmatic, walletlink } from 'connectors'
 import { STORAGE_KEY_LAST_PROVIDER } from 'constants/index'
 
 // exports from the original file
@@ -46,17 +47,14 @@ export function useEagerConnect() {
     [activate, setTried]
   )
 
-  const connectCoinbaseWallet = useCallback(() => {
-    activate(walletlink, undefined, true).catch(() => {
-      setTried(true)
-    })
-  }, [activate, setTried])
-
-  const connectWalletConnect = useCallback(() => {
-    activate(walletconnect, undefined, true).catch(() => {
-      setTried(true)
-    })
-  }, [activate, setTried])
+  const reconnectUninjectedProvider = useCallback(
+    (provider: AbstractConnector): void => {
+      activate(provider, undefined, true).catch(() => {
+        setTried(true)
+      })
+    },
+    [activate, setTried]
+  )
 
   useEffect(() => {
     if (!active) {
@@ -69,15 +67,16 @@ export function useEagerConnect() {
       } else if (latestProvider === WalletProvider.INJECTED) {
         // MM is last provider
         connectInjected()
-      } else if (latestProvider === WalletProvider.WALLET_LINK) {
-        // CoinbaseWallet is last provider
-        connectCoinbaseWallet()
       } else if (latestProvider === WalletProvider.WALLET_CONNECT) {
         // WC is last provider
-        connectWalletConnect()
+        reconnectUninjectedProvider(walletconnect)
+      } else if (latestProvider === WalletProvider.WALLET_LINK) {
+        reconnectUninjectedProvider(walletlink)
+      } else if (latestProvider === WalletProvider.FORMATIC) {
+        reconnectUninjectedProvider(fortmatic)
       }
     }
-  }, [connectInjected, connectWalletConnect, active, connectCoinbaseWallet]) // intentionally only running on mount (make sure it's only mounted once :))
+  }, [connectInjected, active, reconnectUninjectedProvider]) // intentionally only running on mount (make sure it's only mounted once :))
 
   // if the connection worked, wait until we get confirmation of that to flip the flag
   useEffect(() => {
