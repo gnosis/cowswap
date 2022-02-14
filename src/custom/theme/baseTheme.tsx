@@ -335,6 +335,21 @@ export const UniThemedGlobalStyle = css`
         1,
         theme.bg1
       )} 100%)`};
+    scrollbar-color: ${({ theme }) => `${theme.card.border} ${theme.card.background2}`};
+    scroll-behavior: smooth;
+
+    &::-webkit-scrollbar {
+      width: 14px;
+      height: 6px !important;
+      background: ${({ theme }) => `${theme.card.background2}`};
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: ${({ theme }) => `${theme.card.border}`};
+      border: 3px solid transparent;
+      border-radius: 14px;
+      background-clip: padding-box;
+    }
   }
 `
 
