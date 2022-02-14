@@ -340,7 +340,6 @@ export const UniThemedGlobalStyle = css`
 
     &::-webkit-scrollbar {
       width: 14px;
-      height: 6px !important;
       background: ${({ theme }) => `${theme.card.background2}`};
     }
 
