@@ -133,7 +133,7 @@ export default function AffiliateStatusCheck() {
   if (error) {
     return (
       <NotificationBanner isVisible level="error">
-        Affiliate program error: {error}
+        {error}
       </NotificationBanner>
     )
   }
