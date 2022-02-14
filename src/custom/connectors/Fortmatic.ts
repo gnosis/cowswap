@@ -1,4 +1,5 @@
 import { FortmaticConnector as FortmaticConnectorCore } from '@web3-react/fortmatic-connector'
+import { isProd, isBarn } from 'utils/environments'
 
 export const OVERLAY_READY = 'OVERLAY_READY'
 
@@ -41,4 +42,16 @@ export class FortmaticConnector extends FortmaticConnectorCore {
 
     return { provider: this.fortmatic.getProvider(), chainId: (this as any).chainId, account }
   }
+}
+
+// Allows to select fortmatic envvar according to prod, barn or test environment
+export function getFortmaticApiKey(): string | undefined {
+  let apiKey = process.env.REACT_APP_FORTMATIC_KEY
+  if (isProd) {
+    apiKey = process.env.REACT_APP_FORTMATIC_KEY_PROD
+  } else if (isBarn) {
+    apiKey = process.env.REACT_APP_FORTMATIC_KEY_BARN
+  }
+
+  return apiKey
 }
