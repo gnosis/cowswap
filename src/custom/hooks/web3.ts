@@ -67,18 +67,16 @@ export function useEagerConnect() {
       } else if (latestProvider === WalletProvider.INJECTED) {
         // MM is last provider
         connectInjected()
-       else if (latestProvider === WalletProvider.WALLET_CONNECT) {
+      } else if (latestProvider === WalletProvider.WALLET_CONNECT) {
         // WC is last provider
         reconnectUninjectedProvider(walletconnect)
-       } else if (latestProvider === WalletProvider.WALLET_LINK) {
+      } else if (latestProvider === WalletProvider.WALLET_LINK) {
         reconnectUninjectedProvider(walletlink)
-      }
-       } else if (latestProvider === WalletProvider.FORMATIC) {
+      } else if (latestProvider === WalletProvider.FORMATIC) {
         reconnectUninjectedProvider(fortmatic)
       }
     }
   }, [connectInjected, active, reconnectUninjectedProvider]) // intentionally only running on mount (make sure it's only mounted once :))
-
 
   // if the connection worked, wait until we get confirmation of that to flip the flag
   useEffect(() => {
