@@ -10,7 +10,6 @@ import {
   ItemTitle,
   ChildWrapper,
   Loader,
-  FlexRow,
   ExtLink,
   AffiliateTitle,
   ProfileWrapper,
@@ -79,17 +78,20 @@ export default function Profile() {
       <Wrapper>
         <GridWrap>
           <CardHead>
-            {account && refAddress.value && (
-              <FlexRow>
-                <Txt fs={14}>
-                  Referred by:&nbsp;<strong>{refAddress.value && shortenAddress(refAddress.value)}</strong>
-                </Txt>
-                <span style={{ display: 'inline-block', verticalAlign: 'middle', marginLeft: 8 }}>
-                  <Copy toCopy={refAddress.value} />
-                </span>
-              </FlexRow>
-            )}
-            <AffiliateTitle>Affiliate Program</AffiliateTitle>
+            <StyledContainer>
+              <AffiliateTitle>Affiliate Program</AffiliateTitle>
+              {account && refAddress.value && (
+                <div>
+                  <Txt fs={14}>
+                    Referred by:&nbsp;<strong>{refAddress.value && shortenAddress(refAddress.value)}</strong>
+                  </Txt>
+                  <span style={{ display: 'inline-block', verticalAlign: 'middle', marginLeft: 8 }}>
+                    <Copy toCopy={refAddress.value} />
+                  </span>
+                </div>
+              )}
+            </StyledContainer>
+
             {account && (
               <Loader isLoading={isLoading}>
                 <StyledContainer>
