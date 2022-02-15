@@ -10,7 +10,6 @@ import {
   ItemTitle,
   ChildWrapper,
   Loader,
-  ExtLink as ExternalLink,
   FlexRow,
   ExtLink,
   AffiliateTitle,
@@ -19,7 +18,7 @@ import {
 } from 'pages/Profile/styled'
 import { useActiveWeb3React } from 'hooks/web3'
 import Copy from 'components/Copy/CopyMod'
-import { ArrowUpRight, HelpCircle, RefreshCcw } from 'react-feather'
+import { HelpCircle, RefreshCcw } from 'react-feather'
 import Web3Status from 'components/Web3Status'
 import useReferralLink from 'hooks/useReferralLink'
 import useFetchProfile from 'hooks/useFetchProfile'
@@ -114,24 +113,12 @@ export default function Profile() {
                   </Txt>
                   {hasOrders && (
                     <ExtLink href={getExplorerAddressLink(chainId || 1, account)}>
-                      <Txt secondary>View all orders ↗</Txt>
+                      <Txt fs={14}>View all orders ↗</Txt>
                     </ExtLink>
                   )}
                 </StyledContainer>
               </Loader>
             )}
-            <FlexWrap col yAlign={'flex-end'}>
-              <FlexWrap yAlign={'flex-end'}>
-                {referralLink && hasOrders && account && (
-                  <ExternalLink href={getExplorerAddressLink(chainId || 1, account)}>
-                    <Txt fs={14}>View all orders </Txt>
-                    <span style={{ lineHeight: 1, verticalAlign: 'middle', marginLeft: 8 }}>
-                      <ArrowUpRight width={'16px'} height={'16px'} />
-                    </span>
-                  </ExternalLink>
-                )}
-              </FlexWrap>
-            </FlexWrap>
           </CardHead>
           {renderNotificationMessages}
           <ChildWrapper>
