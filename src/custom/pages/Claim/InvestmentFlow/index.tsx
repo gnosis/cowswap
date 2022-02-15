@@ -242,8 +242,8 @@ export default function InvestmentFlow({ claims, hasClaims, isAirdropOnly, modal
             up to a predefined maximum amount of tokens{' '}
           </p>
 
-          {selectedClaims.map((claim, index) => (
-            <InvestOption key={claim.index} optionIndex={index} claim={claim} {...modalCbs} />
+          {selectedClaims.map((claim) => (
+            <InvestOption key={claim.index} claim={claim} {...modalCbs} />
           ))}
 
           {hasError && (
