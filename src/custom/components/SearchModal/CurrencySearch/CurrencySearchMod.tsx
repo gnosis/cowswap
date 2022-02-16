@@ -35,23 +35,6 @@ import { ContentWrapper } from '.' //mod
 //   position: relative;
 // `
 
-const StyledContainer = styled.div`
-  overflow-y: auto;
-  scrollbar-color: ${({ theme }) => `${theme.card.border} ${theme.card.background2}`};
-  scroll-behavior: smooth;
-
-  &::-webkit-scrollbar {
-    width: 14px;
-    background: ${({ theme }) => `${theme.card.background2}`} !important;
-  }
-  &::-webkit-scrollbar-thumb {
-    background: ${({ theme }) => `${theme.card.border}`} !important;
-    border: 3px solid transparent;
-    border-radius: 14px;
-    background-clip: padding-box;
-  }
-`
-
 export const Footer = styled.div`
   width: 100%;
   border-radius: 20px;
@@ -227,7 +210,7 @@ export function CurrencySearch({
           <ImportRow token={searchToken} showImportView={showImportView} setImportToken={setImportToken} />
         </Column>
       ) : filteredSortedTokens?.length > 0 || filteredInactiveTokens?.length > 0 ? (
-        <StyledContainer style={{ flex: '1' }}>
+        <div style={{ flex: '1' }}>
           <AutoSizer disableWidth>
             {({ height }) => (
               <CurrencyList
@@ -244,7 +227,7 @@ export function CurrencySearch({
               />
             )}
           </AutoSizer>
-        </StyledContainer>
+        </div>
       ) : isAddressSearch ? (
         <Column style={{ padding: '20px', height: '100%' }}>
           <TYPE.main color={theme.text3} textAlign="center" mb="20px">
