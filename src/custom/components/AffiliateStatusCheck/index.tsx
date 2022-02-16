@@ -93,7 +93,7 @@ export default function AffiliateStatusCheck() {
         appDispatch(updateAppDataHash(appDataHash))
       } catch (e) {
         console.error(e)
-        setError('Affiliate program: There was an error with uploading your referral data. Please try again later.')
+        setError('Affiliate program: There was an error while uploading your referral data. Please try again later.')
       }
     }
     if (affiliateState === 'ACTIVE') handleReferralAddress(referralAddress)
