@@ -23,6 +23,7 @@ import {
   useClaimDispatchers,
   useHasClaimInvestmentFlowError,
   useSomeNotTouched,
+  useClaimLinks,
 } from 'state/claim/hooks'
 import { ClaimStatus } from 'state/claim/actions'
 import { InvestClaim } from 'state/claim/reducer'
@@ -32,7 +33,6 @@ import { useActiveWeb3React } from 'hooks/web3'
 
 import InvestOption from './InvestOption'
 import { ClaimCommonTypes, ClaimWithInvestmentData, EnhancedUserClaimData } from '../types'
-import { COW_LINKS } from 'pages/Claim'
 import { ExternalLink } from 'theme'
 import { ExplorerLink } from 'components/ExplorerLink'
 import { ExplorerDataType } from 'utils/getExplorerLink'
@@ -94,11 +94,9 @@ function _classifyAndFilterClaimData(claimData: EnhancedUserClaimData[], selecte
 
 function _enhancedUserClaimToClaimWithInvestment(
   claim: EnhancedUserClaimData,
-  investFlowData: InvestClaim[]
+  investFlowData: Record<number, InvestClaim>
 ): ClaimWithInvestmentData {
-  const investmentAmount = claim.isFree
-    ? undefined
-    : investFlowData.find(({ index }) => index === claim.index)?.investedAmount
+  const investmentAmount = claim.isFree ? undefined : investFlowData[claim.index]?.investedAmount
 
   return { ...claim, ...calculateInvestmentAmounts(claim, investmentAmount) }
 }
@@ -153,6 +151,7 @@ export default function InvestmentFlow({ claims, hasClaims, isAirdropOnly, modal
   const { selected, activeClaimAccount, claimStatus, isInvestFlowActive, investFlowStep, investFlowData } =
     useClaimState()
   const { initInvestFlowData } = useClaimDispatchers()
+  const claimLinks = useClaimLinks()
 
   const hasError = useHasClaimInvestmentFlowError()
   const someNotTouched = useSomeNotTouched()
@@ -203,7 +202,7 @@ export default function InvestmentFlow({ claims, hasClaims, isAirdropOnly, modal
           <p>
             You have chosen to exercise one or more investment opportunities alongside claiming your airdrop. Exercising
             your investment options will give you the chance to acquire vCOW tokens at a fixed price. Read{' '}
-            <ExternalLink href={COW_LINKS.stepGuide}> the step by step guide</ExternalLink> for more details on the
+            <ExternalLink href={claimLinks.stepGuide}> the step by step guide</ExternalLink> for more details on the
             claiming process.
           </p>
           <StepExplainer>
@@ -220,7 +219,7 @@ export default function InvestmentFlow({ claims, hasClaims, isAirdropOnly, modal
               </p>
             </span>
           </StepExplainer>
-          <ExternalLink href={COW_LINKS.vCowPost}>
+          <ExternalLink href={claimLinks.vCowPost}>
             <BannerExplainer>
               <SVG src={CowProtocolImage} description="Read more" />
               <span>
@@ -243,8 +242,8 @@ export default function InvestmentFlow({ claims, hasClaims, isAirdropOnly, modal
             up to a predefined maximum amount of tokens{' '}
           </p>
 
-          {selectedClaims.map((claim, index) => (
-            <InvestOption key={claim.index} optionIndex={index} claim={claim} {...modalCbs} />
+          {selectedClaims.map((claim) => (
+            <InvestOption key={claim.index} claim={claim} {...modalCbs} />
           ))}
 
           {hasError && (

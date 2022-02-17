@@ -18,18 +18,30 @@ import {
   updateInvestError,
   setEstimatedGas,
   setIsTouched,
-  setHasClaimsOnOtherChains,
+  setClaimsCount,
 } from './actions'
 
-export type ClaimsOnOtherChains = {
-  [chain in SupportedChainId]: boolean
+export type ClaimInfo = {
+  total: number
+  available?: number | undefined
+  claimed?: number | undefined
+  expired?: number | undefined
+}
+const DEFAULT_CLAIM_INFO: ClaimInfo = {
+  total: 0,
 }
 
-const DEFAULT_CLAIMS_ON_OTHER_CHAINS_STATE = {
-  [SupportedChainId.MAINNET]: false,
-  [SupportedChainId.RINKEBY]: false,
-  [SupportedChainId.XDAI]: false,
+type ClaimInfoPerChain = Record<SupportedChainId, ClaimInfo>
+
+const DEFAULT_CLAIM_INFO_PER_CHAIN: ClaimInfoPerChain = {
+  [SupportedChainId.MAINNET]: { ...DEFAULT_CLAIM_INFO },
+  [SupportedChainId.XDAI]: { ...DEFAULT_CLAIM_INFO },
+  [SupportedChainId.RINKEBY]: { ...DEFAULT_CLAIM_INFO },
 }
+
+type ClaimInfoPerAccount = Record<string, ClaimInfoPerChain>
+
+const DEFAULT_CLAIM_INFO_PER_ACCOUNT: ClaimInfoPerAccount = {}
 
 export const initialState: ClaimState = {
   // address/ENS address
@@ -46,12 +58,12 @@ export const initialState: ClaimState = {
   // investment
   isInvestFlowActive: false,
   investFlowStep: 0,
-  investFlowData: [],
+  investFlowData: {},
   // table select change
   selected: [],
   selectedAll: false,
   // claims on other networks
-  hasClaimsOnOtherChains: DEFAULT_CLAIMS_ON_OTHER_CHAINS_STATE,
+  claimInfoPerAccount: { ...DEFAULT_CLAIM_INFO_PER_ACCOUNT },
 }
 
 export type InvestClaim = {
@@ -76,18 +88,34 @@ export type ClaimState = {
   // investment
   isInvestFlowActive: boolean
   investFlowStep: number
-  investFlowData: InvestClaim[]
+  investFlowData: Record<number, InvestClaim>
   // table select change
   selected: number[]
   selectedAll: boolean
   // claims on other chains
-  hasClaimsOnOtherChains: ClaimsOnOtherChains
+  claimInfoPerAccount: ClaimInfoPerAccount
 }
 
 export default createReducer(initialState, (builder) =>
   builder
-    .addCase(setHasClaimsOnOtherChains, (state, { payload }) => {
-      state.hasClaimsOnOtherChains[payload.chain] = payload.hasClaims
+    .addCase(setClaimsCount, (state, { payload }) => {
+      const { chain, claimInfo, account } = payload
+      state.claimInfoPerAccount[account] = state.claimInfoPerAccount[account] || {
+        ...DEFAULT_CLAIM_INFO_PER_CHAIN,
+      }
+
+      const newState: ClaimInfo = { ...DEFAULT_CLAIM_INFO }
+
+      // Only update the value if present to avoid overwriting data fetched on another network
+      if (claimInfo.total !== undefined) newState.total = claimInfo.total
+      if (claimInfo.claimed !== undefined) newState.claimed = claimInfo.claimed
+      if (claimInfo.available !== undefined) newState.available = claimInfo.available
+      if (claimInfo.expired !== undefined) newState.expired = claimInfo.expired
+
+      state.claimInfoPerAccount[account][chain] = {
+        ...state.claimInfoPerAccount[account][chain],
+        ...newState,
+      }
     })
     .addCase(setInputAddress, (state, { payload }) => {
       state.inputAddress = payload
@@ -119,12 +147,13 @@ export default createReducer(initialState, (builder) =>
     .addCase(initInvestFlowData, (state) => {
       const { selected, isInvestFlowActive } = current(state)
 
-      const data = selected.map((index) => ({ index, investedAmount: '0' }))
-
       if (isInvestFlowActive) {
-        state.investFlowData.push(...data)
+        state.investFlowData = selected.reduce<Record<number, InvestClaim>>((acc, index) => {
+          acc[index] = { index, investedAmount: '0' }
+          return acc
+        }, {})
       } else {
-        state.investFlowData.length = 0
+        state.investFlowData = {}
       }
     })
     .addCase(updateInvestAmount, (state, { payload: { index, amount } }) => {
