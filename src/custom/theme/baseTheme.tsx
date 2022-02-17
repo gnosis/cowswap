@@ -89,6 +89,8 @@ export function colors(darkMode: boolean): Colors {
     textLink: darkMode ? '#ffffff' : '#AE2C00',
     shimmer1: darkMode ? 'rgb(22 56 97 / 20%)' : 'rgb(175 203 218 / 20%)',
     shimmer2: darkMode ? 'rgb(22 56 97 / 50%)' : 'rgb(175 203 218 / 40%)',
+    scrollbarBg: darkMode ? '#01182a' : '#d5e8f0',
+    scrollbarThumb: darkMode ? '#152c3e' : '#adc2ce',
 
     // table styles
     tableHeadBG: darkMode ? '#021E34' : 'rgb(2 30 52 / 15%)',
@@ -115,6 +117,7 @@ export function themeVariables(darkMode: boolean, colorsTheme: Colors) {
             : 'linear-gradient(180deg,rgba(164, 211, 227, 1) 5%, rgba(255, 255, 255, 1) 40%)'};
         background-attachment: fixed;
         backdrop-filter: blur(40px);
+        scrollbar-color: ${colorsTheme.scrollbarThumb} ${colorsTheme.scrollbarBg};
       `,
     },
     logo: {
