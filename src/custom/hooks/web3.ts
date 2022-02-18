@@ -8,6 +8,11 @@ import { STORAGE_KEY_LAST_PROVIDER } from 'constants/index'
 // exports from the original file
 export { useActiveWeb3React, useInactiveListener } from '@src/hooks/web3'
 
+enum DefaultProvidersInjected {
+  METAMASK = WalletProvider.INJECTED,
+  COINBASE_WALLET = WalletProvider.WALLET_LINK,
+}
+
 export function useEagerConnect() {
   const { activate, active, connector } = useWeb3ReactCore()
   const [tried, setTried] = useState(false)
@@ -24,7 +29,7 @@ export function useEagerConnect() {
   }, [connector, active])
 
   const connectInjected = useCallback(
-    (providerName = 'Metamask') => {
+    (providerName = DefaultProvidersInjected.METAMASK) => {
       // check if the our application is authorized/connected with Metamask
       injected.isAuthorized().then((isAuthorized) => {
         if (isAuthorized) {
@@ -98,17 +103,22 @@ export function useEagerConnect() {
   return tried
 }
 
-export function setDefaultInjected(providerName: 'MetaMask' | 'CoinbaseWallet') {
+/**
+ * Allows to select the default injected ethereum provider.
+ *
+ * It is assumed that metamask is the default injected Provider, however coinbaseWallet overrides this.
+ */
+export function setDefaultInjected(providerName: DefaultProvidersInjected) {
   const { ethereum } = window
 
   if (!ethereum?.providers) return
 
   let provider
   switch (providerName) {
-    case 'CoinbaseWallet':
+    case DefaultProvidersInjected.COINBASE_WALLET:
       provider = ethereum.providers.find(({ isCoinbaseWallet }) => isCoinbaseWallet)
       break
-    case 'MetaMask':
+    case DefaultProvidersInjected.METAMASK:
       provider = ethereum.providers.find(({ isMetaMask }) => isMetaMask)
       break
   }

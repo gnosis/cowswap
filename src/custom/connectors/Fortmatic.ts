@@ -1,15 +1,14 @@
 import { FortmaticConnector as FortmaticConnectorCore } from '@web3-react/fortmatic-connector'
 import { isProd, isBarn } from 'utils/environments'
+import { SupportedChainId } from 'constants/chains'
 
 export const OVERLAY_READY = 'OVERLAY_READY'
 
-type FormaticSupportedChains = 1 | 3 | 4 | 42
+type FormaticSupportedChains = SupportedChainId.MAINNET | SupportedChainId.RINKEBY
 
-const CHAIN_ID_NETWORK_ARGUMENT: { readonly [chainId in FormaticSupportedChains]: string | undefined } = {
-  [1]: undefined,
-  [3]: 'ropsten',
-  [4]: 'rinkeby',
-  [42]: 'kovan',
+const CHAIN_ID_NETWORK_ARGUMENT: Partial<Record<SupportedChainId, string | undefined>> = {
+  [SupportedChainId.MAINNET]: undefined,
+  [SupportedChainId.RINKEBY]: 'rinkeby',
 }
 
 export class FortmaticConnector extends FortmaticConnectorCore {

@@ -88,20 +88,20 @@ const Web3StatusConnect = styled(Web3StatusGeneric)<{ faded?: boolean }>`
     `}
 `
 
-export const Web3StatusConnected = styled(Web3StatusGeneric)<{ pending?: boolean; clickable?: boolean }>`
+export const Web3StatusConnected = styled(Web3StatusGeneric)<{ pending?: boolean; clickDisabled?: boolean }>`
   background-color: ${({ pending, theme }) => (pending ? theme.primary1 : theme.bg2)};
   border: 1px solid ${({ pending, theme }) => (pending ? theme.primary1 : theme.bg3)};
   color: ${({ pending, theme }) => (pending ? theme.white : theme.text1)};
   font-weight: 500;
 
-  ${({ clickable }) =>
-    clickable === false &&
+  ${({ clickDisabled }) =>
+    clickDisabled &&
     css`
       cursor: not-allowed;
     `}
 
-  ${({ clickable, pending }) =>
-    clickable !== false &&
+  ${({ clickDisabled, pending }) =>
+    !clickDisabled &&
     css`
       :hover,
       :focus {
@@ -245,7 +245,7 @@ export function Web3StatusInner({
     )
   } else if (thereWasAProvider) {
     return (
-      <Web3StatusConnected pending={true} clickable={false}>
+      <Web3StatusConnected pending clickDisabled={true}>
         <RowBetween>
           <Text>
             <Trans>Connecting</Trans>...
