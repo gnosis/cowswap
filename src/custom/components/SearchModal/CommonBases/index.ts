@@ -30,7 +30,7 @@ export const AutoColumn = styled(AutoColumnUni)`
 
 export const MobileWrapper = styled(AutoColumn)`
   ${({ theme }) => theme.mediaWidth.upToSmall`
-    isplay: none;
+    /* isplay: none; */
   `};
 `
 
