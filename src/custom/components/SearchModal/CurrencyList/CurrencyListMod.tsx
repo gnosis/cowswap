@@ -79,20 +79,20 @@ export const TokenListLogoWrapper = styled.img`
 `
 
 export const StyledScrollarea = styled.div`
-  div {
-  overflow-y: auto;
-  scrollbar-color: ${({ theme }) => `${theme.card.border} ${theme.card.background2}`};
-  scroll-behavior: smooth;
+  div:first-of-type {
+    overflow-y: auto;
+    scrollbar-color: ${({ theme }) => `${theme.card.border} ${theme.card.background2}`};
+    scroll-behavior: smooth;
 
-  &::-webkit-scrollbar {
-    width: 10px;
-    background: ${({ theme }) => `${theme.card.background2}`} !important;
-  }
-  &::-webkit-scrollbar-thumb {
-    background: ${({ theme }) => `${theme.card.border}`} !important;
-    border: 3px solid transparent;
-    border-radius: 14px;
-    background-clip: padding-box;
+    &::-webkit-scrollbar {
+      width: 10px;
+      background: ${({ theme }) => `${theme.card.background2}`} !important;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: ${({ theme }) => `${theme.card.border}`} !important;
+      border: 3px solid transparent;
+      border-radius: 14px;
+      background-clip: padding-box;
   }
 `
 
