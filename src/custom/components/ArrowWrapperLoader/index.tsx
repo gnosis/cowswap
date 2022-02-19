@@ -9,6 +9,7 @@ import { LONG_LOAD_THRESHOLD, SHORT_LOAD_THRESHOLD } from 'constants/index'
 
 interface ShowLoaderProp {
   showloader: boolean
+  noPadding?: boolean
 }
 
 const ArrowDownIcon = styled(ArrowDown)`
@@ -65,7 +66,7 @@ export const Wrapper = styled.div<ShowLoaderProp>`
   > div > img {
     height: 100%;
     width: 100%;
-    padding: 2px 2px 0;
+    padding: ${({ noPadding }) => (noPadding ? `0px` : `2px 2px 0`)};
     object-fit: contain;
     object-position: bottom;
   }
@@ -135,10 +136,10 @@ export function ArrowWrapperLoader({ onSwitchTokens, setApprovalSubmitted }: Arr
   const loaderGif = useMemo(() => {
     let loaderGif = ''
 
-    if (showCowLoader) {
-      loaderGif = loadingCowGif
-    } else if (showQuoteLoader) {
+    if (showQuoteLoader) {
       loaderGif = loadingQuoteGif
+    } else if (showCowLoader) {
+      loaderGif = loadingCowGif
     }
 
     return loaderGif
@@ -150,7 +151,7 @@ export function ArrowWrapperLoader({ onSwitchTokens, setApprovalSubmitted }: Arr
   )
 
   return (
-    <Wrapper showloader={showLoader} onClick={handleClick}>
+    <Wrapper noPadding={showQuoteLoader} showloader={showLoader} onClick={handleClick}>
       <ArrowDownIcon />
       {showLoader && (
         <div>
