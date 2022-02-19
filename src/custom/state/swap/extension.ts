@@ -9,10 +9,17 @@ interface TradeParams {
   inputCurrency?: Currency | null
   outputCurrency?: Currency | null
   quote?: QuoteInformationObject
+  isWrapping: boolean
 }
 
 export const stringToCurrency = (amount: string, currency: Currency) =>
   CurrencyAmount.fromRawAmount(currency, JSBI.BigInt(amount))
+
+export const tryAtomsToCurrency = (atoms: string | undefined, currency: Currency | undefined) => {
+  if (!atoms || !currency) return undefined
+
+  return stringToCurrency(atoms, currency)
+}
 
 /**
  * useTradeExactInWithFee
@@ -22,10 +29,11 @@ export function useTradeExactInWithFee({
   parsedAmount: parsedInputAmount,
   outputCurrency,
   quote,
+  isWrapping,
 }: Omit<TradeParams, 'inputCurrency'>) {
   // make sure we have a typed in amount, a fee, and a price
   // else we can assume the trade will be null
-  if (!parsedInputAmount || !outputCurrency || !quote?.fee || !quote?.price?.amount) return null
+  if (!parsedInputAmount || !outputCurrency || isWrapping || !quote?.fee || !quote?.price?.amount) return null
 
   const feeAsCurrency = stringToCurrency(quote.fee.amount, parsedInputAmount.currency)
   // Check that fee amount is not greater than the user's input amt
@@ -80,8 +88,9 @@ export function useTradeExactOutWithFee({
   parsedAmount: parsedOutputAmount,
   inputCurrency,
   quote,
+  isWrapping,
 }: Omit<TradeParams, 'outputCurrency'>) {
-  if (!parsedOutputAmount || !inputCurrency || !quote?.fee || !quote?.price?.amount) return null
+  if (!parsedOutputAmount || !inputCurrency || isWrapping || !quote?.fee || !quote?.price?.amount) return null
 
   const feeAsCurrency = stringToCurrency(quote.fee.amount, inputCurrency)
   // set final fee object
