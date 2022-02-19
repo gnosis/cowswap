@@ -1,9 +1,11 @@
+import { useMemo } from 'react'
 import styled from 'styled-components/macro'
 import loadingCowGif from 'assets/cow-swap/cow-load.gif'
+import loadingQuoteGif from 'assets/cow-swap/quote-load.gif'
 import { ArrowDown } from 'react-feather'
 import useLoadingWithTimeout from 'hooks/useLoadingWithTimeout'
-import { useIsQuoteRefreshing } from 'state/price/hooks'
-import { LONG_LOAD_THRESHOLD } from 'constants/index'
+import { useIsQuoteRefreshing, useIsBestQuoteLoading } from 'state/price/hooks'
+import { LONG_LOAD_THRESHOLD, SHORT_LOAD_THRESHOLD } from 'constants/index'
 
 interface ShowLoaderProp {
   showloader: boolean
@@ -120,18 +122,39 @@ export interface ArrowWrapperLoaderProps {
 
 export function ArrowWrapperLoader({ onSwitchTokens, setApprovalSubmitted }: ArrowWrapperLoaderProps) {
   const isRefreshingQuote = useIsQuoteRefreshing()
-  const showLoader = useLoadingWithTimeout(isRefreshingQuote, LONG_LOAD_THRESHOLD)
+  const isBestQuoteLoading = useIsBestQuoteLoading()
+
+  const showCowLoader = useLoadingWithTimeout(isRefreshingQuote, LONG_LOAD_THRESHOLD)
+  const showQuoteLoader = useLoadingWithTimeout(isBestQuoteLoading, SHORT_LOAD_THRESHOLD)
+
   const handleClick = () => {
     setApprovalSubmitted(false) // reset 2 step UI for approvals
     onSwitchTokens()
   }
+
+  const loaderGif = useMemo(() => {
+    let loaderGif = ''
+
+    if (showCowLoader) {
+      loaderGif = loadingCowGif
+    } else if (showQuoteLoader) {
+      loaderGif = loadingQuoteGif
+    }
+
+    return loaderGif
+  }, [showCowLoader, showQuoteLoader])
+
+  const showLoader = useMemo(
+    () => Boolean(loaderGif) && (showCowLoader || showQuoteLoader),
+    [loaderGif, showCowLoader, showQuoteLoader]
+  )
 
   return (
     <Wrapper showloader={showLoader} onClick={handleClick}>
       <ArrowDownIcon />
       {showLoader && (
         <div>
-          <img src={loadingCowGif} alt="Loading prices..." />
+          <img src={loaderGif} alt="Loading prices..." />
         </div>
       )}
     </Wrapper>

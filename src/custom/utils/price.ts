@@ -78,6 +78,7 @@ export type FeeQuoteParams = Pick<OrderMetaData, 'sellToken' | 'buyToken' | 'kin
   receiver?: string | null
   validTo: number
   priceQuality?: string
+  isBestQuote?: boolean
 }
 
 export type PriceQuoteParams = Omit<FeeQuoteParams, 'sellToken' | 'buyToken'> & {

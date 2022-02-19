@@ -142,7 +142,7 @@ export function useRefetchQuoteCallback() {
       let quoteData: FeeQuoteParams | QuoteInformationObject = quoteParams
 
       // price can be null if fee > price
-      const handleResponse = (response: CancelableResult<QuoteResult>) => {
+      const handleResponse = (response: CancelableResult<QuoteResult>, isBestQuote: boolean) => {
         const { cancelled, data } = response
 
         if (cancelled) {
@@ -157,6 +157,7 @@ export function useRefetchQuoteCallback() {
           ...quoteParams,
           fee: getPromiseFulfilledValue(fee, undefined),
           price: getPromiseFulfilledValue(price, undefined),
+          isBestQuote,
         }
         // check the promise fulfilled values
         // handle if rejected
@@ -229,11 +230,15 @@ export function useRefetchQuoteCallback() {
 
       // Get the fast quote
       if (!isPriceRefresh) {
-        getFastQuoteResolveOnlyLastCall(fastQuoteParams).then(handleResponse).catch(handleError)
+        getFastQuoteResolveOnlyLastCall(fastQuoteParams)
+          .then((res) => handleResponse(res, false))
+          .catch(handleError)
       }
 
       // Get the best quote
-      getBestQuoteResolveOnlyLastCall(bestQuoteParams).then(handleResponse).catch(handleError)
+      getBestQuoteResolveOnlyLastCall(bestQuoteParams)
+        .then((res) => handleResponse(res, true))
+        .catch(handleError)
     },
     [
       deadline,
