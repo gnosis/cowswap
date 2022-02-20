@@ -150,6 +150,7 @@
     "use-count-up": "^2.2.5",
     "wcag-contrast": "^3.0.0",
     "web-vitals": "^2.1.0",
+    "webpack-bundle-analyzer": "^4.5.0",
     "workbox-core": "^6.1.0",
     "workbox-precaching": "^6.1.0",
     "workbox-routing": "^6.1.0"
@@ -164,6 +165,7 @@
     "start:service-worker": "yarn build && yarn serve",
     "mock": "REACT_APP_MOCK=true yarn start",
     "build": "yarn i18n:compile && craco build && yarn writeVersion",
+    "build:analyze": "cross-env REACT_APP_ANALYZE_BUNDLE=true yarn craco build && yarn writeVersion",
     "ipfs:build": "cross-env PUBLIC_URL=\".\" yarn build",
     "ipfs:publish": "ipfs-deploy build -p infura -O",
     "test": "NODE_PATH=src/custom craco test --env=jsdom",
