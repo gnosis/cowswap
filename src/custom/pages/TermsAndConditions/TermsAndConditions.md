@@ -303,7 +303,7 @@ professional advisors.
     arises out of or in connection with
     the present Terms between you and us (a “**Dispute**”),
     you agree to seek to resolve the matter with us amicably by
-    referring the matter to GnosisDAO subcategory of gnosis.forum.io
+    referring the matter to GnosisDAO subcategory of <a href="https://forum.gnosis.io/" target="_blank" rel="noopener nofollow">forum.gnosis.io</a>
     with a detailed description, the date and time the issue arose, your
     handle to contact you on and the outcome you are seeking.
 2.  Your right to take legal action remains unaffected by the existence
