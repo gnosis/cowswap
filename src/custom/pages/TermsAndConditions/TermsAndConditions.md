@@ -74,7 +74,7 @@ Please read these Terms carefully before using our Platform. By using our Platfo
        with any other wallet.
     2. An ERC 20 token to trade
     3. Depending on whether you interact with the Protocol on Ethereum
-       mainnet or an Ethereum Virtual Machine compatible validation
+       Mainnet or an Ethereum Virtual Machine compatible validation
        mechanism, sufficient ETH or the networks native crypto asset in
        your Wallet, respectively, to pay for transactions fees, which are
        incurred through the Protocol on Ethereum or the Ethereum Virtual
@@ -225,7 +225,7 @@ professional advisors.
        mechanisms and intricacies associated with cryptographic assets,
        token storage facilities (including wallets), blockchain technology
        and blockchain-based software systems;
-    6. you understand that transactions on the Ethereum mainnet and
+    6. you understand that transactions on the Ethereum Mainnet and
        Ethereum Virtual Machine compatible validation mechanisms are
        irreversible and may not be erased and that your wallet address and
        any transaction is displayed permanently and publicly and that you
