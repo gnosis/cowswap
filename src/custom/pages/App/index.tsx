@@ -45,9 +45,9 @@ export const BodyWrapper = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  padding-top: 120px;
   align-items: center;
-  flex: 1;
+  justify-content: center;
+  flex: auto;
   overflow-y: auto;
   overflow-x: hidden;
   z-index: 1;
