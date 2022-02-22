@@ -180,6 +180,21 @@ function _fetch(chainId: ChainId, url: string, method: 'GET' | 'POST' | 'DELETE'
   })
 }
 
+function _fetchAllTrades(
+  chainId: ChainId,
+  url: string,
+  method: 'GET' | 'POST' | 'DELETE',
+  baseUrl?: string,
+  data?: any
+): Promise<Response> {
+  const baseUri = baseUrl ? baseUrl + '/v1' : _getApiBaseUrl(chainId)
+  return fetch(baseUri + url, {
+    headers: DEFAULT_HEADERS,
+    method,
+    body: data !== undefined ? JSON.stringify(data) : data,
+  })
+}
+
 function _fetchProfile(
   chainId: ChainId,
   url: string,
@@ -205,6 +220,10 @@ function _post(chainId: ChainId, url: string, data: any): Promise<Response> {
 
 function _get(chainId: ChainId, url: string): Promise<Response> {
   return _fetch(chainId, url, 'GET')
+}
+
+function _getAllTrades(chainId: ChainId, url: string, baseurl: string): Promise<Response> {
+  return _fetchAllTrades(chainId, url, 'GET', baseurl)
 }
 
 function _getProfile(chainId: ChainId, url: string): Promise<Response> {
@@ -425,6 +444,45 @@ export async function getTrades(params: GetTradesParams): Promise<TradeMetaData[
   }
 }
 
+export async function getAllTrades(params: GetTradesParams): Promise<any> {
+  const { chainId, owner, limit, offset } = params
+  const qsParams = stringify({ owner, limit, offset })
+  const stagingUrl =
+    process.env[`REACT_APP_API_URL_STAGING_${ChainId[chainId]}`] ||
+    `https://barn.api.cow.fi/${ChainId[chainId].toLowerCase()}/api`
+  const prodUrl =
+    process.env[`REACT_APP_API_URL_PROD_${ChainId[chainId]}`] ||
+    `https://api.cow.fi/${ChainId[chainId].toLowerCase()}/api`
+
+  console.log('[util:operator] Get all trades for', chainId, owner, { limit, offset })
+  try {
+    const results = await Promise.allSettled([
+      await _getAllTrades(chainId, `/trades?${qsParams}`, stagingUrl),
+      await _getAllTrades(chainId, `/trades?${qsParams}`, prodUrl),
+    ])
+
+    const response = results
+      .filter(({ status }) => status === 'fulfilled')
+      .filter((res) => (res as PromiseFulfilledResult<any>).value.ok)
+      .map((p) => (p as PromiseFulfilledResult<any>).value)
+
+    const [stgResponse, prodResponse] = response
+
+    if (!response.length) {
+      const [stgErrResponse, prodErrResponse] = results as PromiseFulfilledResult<any>[]
+      const errorResponse = (await stgErrResponse.value.json()) || (await prodErrResponse.value.json())
+      throw new Error(errorResponse.description)
+    } else {
+      return Promise.allSettled([stgResponse.json(), prodResponse.json()]).then((r) =>
+        r.map((t: any) => t.value).flat()
+      )
+    }
+  } catch (error) {
+    console.error('Error getting all trades:', error)
+    throw new Error('Error getting all trades: ' + error)
+  }
+}
+
 export type ProfileData = {
   totalTrades: number
   totalReferrals: number
@@ -514,6 +572,7 @@ registerOnWindow({
   operator: {
     getQuote,
     getTrades,
+    getAllTrades,
     getOrder,
     sendSignedOrder: sendOrder,
     apiGet: _get,
