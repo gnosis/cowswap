@@ -43,8 +43,9 @@ export const Wrapper = styled(AppMod)``
 
 export const BodyWrapper = styled.div`
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   width: 100%;
+  padding-top: 10vh;
   align-items: center;
   justify-content: center;
   flex: auto;
