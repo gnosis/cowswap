@@ -48,6 +48,7 @@ module.exports = {
     plugins,
     alias: {
       '@src': path.resolve(__dirname, 'src'),
+      'bn.js': path.resolve(__dirname, 'node_modules/bn.js/lib/bn.js'),
     },
     // https://webpack.js.org/configuration
     configure: (webpackConfig) => ({
