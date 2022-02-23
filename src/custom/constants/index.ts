@@ -25,9 +25,6 @@ export const APP_DATA_HASH = getAppDataHash()
 export const PRODUCTION_URL = 'cowswap.exchange'
 export const BARN_URL = `barn.${PRODUCTION_URL}`
 
-// Change the generated CoinbaseWallet link by going to the DApp on mobile via deeplink
-SUPPORTED_WALLETS_UNISWAP.COINBASE_LINK.href = 'https://go.cb-w.com/o0KpAwewQnb'
-
 const DISABLED_WALLETS = /^(?:Portis)$/i
 
 // Re-export only the supported wallets
