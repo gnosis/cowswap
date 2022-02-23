@@ -3,7 +3,7 @@ import { useActiveWeb3React } from 'hooks/web3'
 import { useSelector } from 'react-redux'
 import { AppState } from 'state'
 import { useAppDispatch } from 'state/hooks'
-import { getAllTrades, getOrder } from 'api/gnosisProtocol/api'
+import { getAllTrades, getAllOrder } from 'api/gnosisProtocol/api'
 import { updateReferralAddress } from 'state/affiliate/actions'
 import { decodeAppData } from 'utils/metadata'
 import { APP_DATA_HASH } from 'constants/index'
@@ -48,7 +48,7 @@ export function useReferredByAddress() {
       if (!chainId || !account) return
       try {
         const allTrades = await getAllTrades({ chainId, owner: account, limit: 1 })
-        const order = await getOrder(chainId, allTrades[0]?.orderUid)
+        const order = await getAllOrder(chainId, allTrades[0]?.orderUid)
         const appDataDecoded = order?.appData && (await decodeAppData(order?.appData.toString()))
         setReferredAddress(appDataDecoded.metadata.referrer.address)
       } catch {

@@ -180,7 +180,7 @@ function _fetch(chainId: ChainId, url: string, method: 'GET' | 'POST' | 'DELETE'
   })
 }
 
-function _fetchAllTrades(
+function _fetchAll(
   chainId: ChainId,
   url: string,
   method: 'GET' | 'POST' | 'DELETE',
@@ -222,8 +222,12 @@ function _get(chainId: ChainId, url: string): Promise<Response> {
   return _fetch(chainId, url, 'GET')
 }
 
+function _getAllOrder(chainId: ChainId, url: string, baseurl: string): Promise<Response> {
+  return _fetchAll(chainId, url, 'GET', baseurl)
+}
+
 function _getAllTrades(chainId: ChainId, url: string, baseurl: string): Promise<Response> {
-  return _fetchAllTrades(chainId, url, 'GET', baseurl)
+  return _fetchAll(chainId, url, 'GET', baseurl)
 }
 
 function _getProfile(chainId: ChainId, url: string): Promise<Response> {
@@ -400,6 +404,42 @@ export async function getOrder(chainId: ChainId, orderId: string): Promise<Order
   }
 }
 
+export async function getAllOrder(chainId: ChainId, orderId: string): Promise<OrderMetaData | null> {
+  console.log(`[api:${API_NAME}] Get All order for `, chainId, orderId)
+  const stagingUrl =
+    process.env[`REACT_APP_API_URL_STAGING_${ChainId[chainId]}`] ||
+    `https://barn.api.cow.fi/${ChainId[chainId].toLowerCase()}/api`
+  const prodUrl =
+    process.env[`REACT_APP_API_URL_PROD_${ChainId[chainId]}`] ||
+    `https://api.cow.fi/${ChainId[chainId].toLowerCase()}/api`
+  try {
+    const results = await Promise.allSettled([
+      await _getAllOrder(chainId, `/orders/${orderId}`, stagingUrl),
+      await _getAllOrder(chainId, `/orders/${orderId}`, prodUrl),
+    ])
+
+    const response = results
+      .filter(({ status }) => status === 'fulfilled')
+      .filter((res) => (res as PromiseFulfilledResult<any>).value.ok)
+      .map((p) => (p as PromiseFulfilledResult<any>).value)
+
+    const [stgResponse, prodResponse] = response
+
+    if (!response.length) {
+      const [stgErrResponse, prodErrResponse] = results as PromiseFulfilledResult<any>[]
+      const errorResponse: ApiErrorObject = (await stgErrResponse.value.json()) || (await prodErrResponse.value.json())
+      throw new OperatorError(errorResponse)
+    } else {
+      return Promise.allSettled([stgResponse?.json(), prodResponse?.json()]).then(
+        (r: any) => r.find((t: any) => t.value)?.value as OrderMetaData
+      )
+    }
+  } catch (error) {
+    console.error('Error getting all order information:', error)
+    throw new OperatorError(UNHANDLED_ORDER_ERROR)
+  }
+}
+
 export async function getOrders(chainId: ChainId, owner: string, limit = 1000, offset = 0): Promise<OrderMetaData[]> {
   console.log(`[api:${API_NAME}] Get orders for `, chainId, owner, limit, offset)
 
@@ -444,7 +484,7 @@ export async function getTrades(params: GetTradesParams): Promise<TradeMetaData[
   }
 }
 
-export async function getAllTrades(params: GetTradesParams): Promise<any> {
+export async function getAllTrades(params: GetTradesParams): Promise<TradeMetaData[]> {
   const { chainId, owner, limit, offset } = params
   const qsParams = stringify({ owner, limit, offset })
   const stagingUrl =
@@ -574,6 +614,7 @@ registerOnWindow({
     getTrades,
     getAllTrades,
     getOrder,
+    getAllOrder,
     sendSignedOrder: sendOrder,
     apiGet: _get,
     apiPost: _post,
