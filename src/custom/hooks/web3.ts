@@ -1,15 +1,26 @@
-import { useWeb3React as useWeb3ReactCore } from '@web3-react/core'
+import { Web3Provider } from '@ethersproject/providers'
+import { useWeb3React } from '@web3-react/core'
 import { useEffect, useState, useCallback } from 'react'
-import { isMobile } from 'react-device-detect'
-import { injected, walletconnect, getProviderType, WalletProvider } from 'connectors'
+
+import { gnosisSafe, injected, walletconnect, getProviderType, WalletProvider } from 'connectors'
+import { IS_IN_IFRAME, NetworkContextName } from 'constants/misc'
+import { isMobile } from 'utils/userAgent'
+
 import { STORAGE_KEY_LAST_PROVIDER } from 'constants/index'
 
-// exports from the original file
-export { useActiveWeb3React, useInactiveListener } from '@src/hooks/web3'
+export function useActiveWeb3React() {
+  const context = useWeb3React<Web3Provider>()
+  const contextNetwork = useWeb3React<Web3Provider>(NetworkContextName)
+  return context.active ? context : contextNetwork
+}
 
 export function useEagerConnect() {
-  const { activate, active, connector } = useWeb3ReactCore()
+  const { activate, active, connector } = useWeb3React()
   const [tried, setTried] = useState(false)
+
+  // gnosisSafe.isSafeApp() races a timeout against postMessage, so it delays pageload if we are not in a safe app;
+  // if we are not embedded in an iframe, it is not worth checking
+  const [triedSafe, setTriedSafe] = useState(!IS_IN_IFRAME)
 
   // handle setting/removing wallet provider in local storage
   const handleBeforeUnload = useCallback(() => {
@@ -47,14 +58,33 @@ export function useEagerConnect() {
     })
   }, [activate, setTried])
 
+  const connectSafe = useCallback(() => {
+    gnosisSafe.isSafeApp().then((loadedInSafe) => {
+      if (loadedInSafe) {
+        activate(gnosisSafe, undefined, true).catch(() => {
+          setTriedSafe(true)
+        })
+      } else {
+        setTriedSafe(true)
+      }
+    })
+  }, [activate, setTriedSafe])
+
   useEffect(() => {
     if (!active) {
       const latestProvider = localStorage.getItem(STORAGE_KEY_LAST_PROVIDER)
 
       // if there is no last saved provider set tried state to true
       if (!latestProvider) {
-        // Try to auto-connect to the injected wallet
-        connectInjected()
+        if (!triedSafe) {
+          // First try to connect using Gnosis Safe
+          connectSafe()
+        } else {
+          // Then try to connect using the injected wallet
+          connectInjected()
+        }
+      } else if (latestProvider === WalletProvider.GNOSIS_SAFE) {
+        connectSafe()
       } else if (latestProvider === WalletProvider.INJECTED) {
         // MM is last provider
         connectInjected()
@@ -63,14 +93,7 @@ export function useEagerConnect() {
         connectWalletConnect()
       }
     }
-  }, [connectInjected, connectWalletConnect, active]) // intentionally only running on mount (make sure it's only mounted once :))
-
-  // if the connection worked, wait until we get confirmation of that to flip the flag
-  useEffect(() => {
-    if (active) {
-      setTried(true)
-    }
-  }, [active])
+  }, [connectInjected, connectSafe, connectWalletConnect, active, triedSafe]) // intentionally only running on mount (make sure it's only mounted once :))
 
   useEffect(() => {
     // add beforeunload event listener on initial component mount
@@ -83,4 +106,45 @@ export function useEagerConnect() {
   })
 
   return tried
+}
+
+/**
+ * Use for network and injected - logs user in
+ * and out after checking what network theyre on
+ */
+export function useInactiveListener(suppress = false) {
+  const { active, error, activate } = useWeb3React()
+
+  useEffect(() => {
+    const { ethereum } = window
+
+    if (ethereum && ethereum.on && !active && !error && !suppress) {
+      const handleChainChanged = () => {
+        // eat errors
+        activate(injected, undefined, true).catch((error) => {
+          console.error('Failed to activate after chain changed', error)
+        })
+      }
+
+      const handleAccountsChanged = (accounts: string[]) => {
+        if (accounts.length > 0) {
+          // eat errors
+          activate(injected, undefined, true).catch((error) => {
+            console.error('Failed to activate after accounts changed', error)
+          })
+        }
+      }
+
+      ethereum.on('chainChanged', handleChainChanged)
+      ethereum.on('accountsChanged', handleAccountsChanged)
+
+      return () => {
+        if (ethereum.removeListener) {
+          ethereum.removeListener('chainChanged', handleChainChanged)
+          ethereum.removeListener('accountsChanged', handleAccountsChanged)
+        }
+      }
+    }
+    return undefined
+  }, [active, error, suppress, activate])
 }
