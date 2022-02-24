@@ -95,6 +95,13 @@ export function useEagerConnect() {
     }
   }, [connectInjected, connectSafe, connectWalletConnect, active, triedSafe]) // intentionally only running on mount (make sure it's only mounted once :))
 
+  // if the connection worked, wait until we get confirmation of that to flip the flag
+  useEffect(() => {
+    if (active) {
+      setTried(true)
+    }
+  }, [active])
+
   useEffect(() => {
     // add beforeunload event listener on initial component mount
     window.addEventListener('beforeunload', handleBeforeUnload)
