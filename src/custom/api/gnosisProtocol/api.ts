@@ -1,4 +1,9 @@
-import { SupportedChainId as ChainId, SupportedChainId } from 'constants/chains'
+import {
+  SupportedChainId as ChainId,
+  SupportedChainId,
+  BARN_API_ENDPOINTS_PER_NETWORK,
+  PROD_API_ENDPOINTS_PER_NETWORK,
+} from 'constants/chains'
 import { OrderKind, QuoteQuery } from '@gnosis.pm/gp-v2-contracts'
 import { stringify } from 'qs'
 import { getSigningSchemeApiValue, OrderCancellation, OrderCreation, SigningSchemeValue } from 'utils/signatures'
@@ -26,20 +31,10 @@ import { getAppDataHash } from 'constants/appDataHash'
 import { GpPriceStrategy } from 'hooks/useGetGpPriceStrategy'
 
 function getGnosisProtocolUrl(): Partial<Record<ChainId, string>> {
-  if (isLocal || isDev || isPr || isBarn) {
-    return {
-      [ChainId.MAINNET]: process.env.REACT_APP_API_URL_STAGING_MAINNET || 'https://barn.api.cow.fi/mainnet/api',
-      [ChainId.RINKEBY]: process.env.REACT_APP_API_URL_STAGING_RINKEBY || 'https://barn.api.cow.fi/rinkeby/api',
-      [ChainId.XDAI]: process.env.REACT_APP_API_URL_STAGING_XDAI || 'https://barn.api.cow.fi/xdai/api',
-    }
-  }
+  if (isLocal || isDev || isPr || isBarn) return BARN_API_ENDPOINTS_PER_NETWORK
 
   // Production, staging, ens, ...
-  return {
-    [ChainId.MAINNET]: process.env.REACT_APP_API_URL_PROD_MAINNET || 'https://api.cow.fi/mainnet/api',
-    [ChainId.RINKEBY]: process.env.REACT_APP_API_URL_PROD_RINKEBY || 'https://api.cow.fi/rinkeby/api',
-    [ChainId.XDAI]: process.env.REACT_APP_API_URL_PROD_XDAI || 'https://api.cow.fi/xdai/api',
-  }
+  return PROD_API_ENDPOINTS_PER_NETWORK
 }
 
 function getProfileUrl(): Partial<Record<ChainId, string>> {
@@ -171,16 +166,7 @@ export function getOrderLink(chainId: ChainId, orderId: OrderID): string {
   return baseUrl + `/orders/${orderId}`
 }
 
-function _fetch(chainId: ChainId, url: string, method: 'GET' | 'POST' | 'DELETE', data?: any): Promise<Response> {
-  const baseUrl = _getApiBaseUrl(chainId)
-  return fetch(baseUrl + url, {
-    headers: DEFAULT_HEADERS,
-    method,
-    body: data !== undefined ? JSON.stringify(data) : data,
-  })
-}
-
-function _fetchAll(
+function _fetch(
   chainId: ChainId,
   url: string,
   method: 'GET' | 'POST' | 'DELETE',
@@ -218,16 +204,8 @@ function _post(chainId: ChainId, url: string, data: any): Promise<Response> {
   return _fetch(chainId, url, 'POST', data)
 }
 
-function _get(chainId: ChainId, url: string): Promise<Response> {
-  return _fetch(chainId, url, 'GET')
-}
-
-function _getAllOrder(chainId: ChainId, url: string, baseurl: string): Promise<Response> {
-  return _fetchAll(chainId, url, 'GET', baseurl)
-}
-
-function _getAllTrades(chainId: ChainId, url: string, baseurl: string): Promise<Response> {
-  return _fetchAll(chainId, url, 'GET', baseurl)
+function _get(chainId: ChainId, url: string, baseurl?: string): Promise<Response> {
+  return _fetch(chainId, url, 'GET', baseurl)
 }
 
 function _getProfile(chainId: ChainId, url: string): Promise<Response> {
@@ -404,18 +382,12 @@ export async function getOrder(chainId: ChainId, orderId: string): Promise<Order
   }
 }
 
-export async function getAllOrder(chainId: ChainId, orderId: string): Promise<OrderMetaData | null> {
-  console.log(`[api:${API_NAME}] Get All order for `, chainId, orderId)
-  const stagingUrl =
-    process.env[`REACT_APP_API_URL_STAGING_${ChainId[chainId]}`] ||
-    `https://barn.api.cow.fi/${ChainId[chainId].toLowerCase()}/api`
-  const prodUrl =
-    process.env[`REACT_APP_API_URL_PROD_${ChainId[chainId]}`] ||
-    `https://api.cow.fi/${ChainId[chainId].toLowerCase()}/api`
+export async function getOrderFromAllEnvs(chainId: ChainId, orderId: string): Promise<OrderMetaData | null> {
+  console.log(`[api:${API_NAME}] Get order from all envs for `, chainId, orderId)
   try {
     const results = await Promise.allSettled([
-      await _getAllOrder(chainId, `/orders/${orderId}`, stagingUrl),
-      await _getAllOrder(chainId, `/orders/${orderId}`, prodUrl),
+      await _get(chainId, `/orders/${orderId}`, BARN_API_ENDPOINTS_PER_NETWORK[chainId]),
+      await _get(chainId, `/orders/${orderId}`, PROD_API_ENDPOINTS_PER_NETWORK[chainId]),
     ])
 
     const response = results
@@ -484,21 +456,14 @@ export async function getTrades(params: GetTradesParams): Promise<TradeMetaData[
   }
 }
 
-export async function getAllTrades(params: GetTradesParams): Promise<TradeMetaData[]> {
+export async function getTradesFromAllEnvs(params: GetTradesParams): Promise<TradeMetaData[]> {
   const { chainId, owner, limit, offset } = params
   const qsParams = stringify({ owner, limit, offset })
-  const stagingUrl =
-    process.env[`REACT_APP_API_URL_STAGING_${ChainId[chainId]}`] ||
-    `https://barn.api.cow.fi/${ChainId[chainId].toLowerCase()}/api`
-  const prodUrl =
-    process.env[`REACT_APP_API_URL_PROD_${ChainId[chainId]}`] ||
-    `https://api.cow.fi/${ChainId[chainId].toLowerCase()}/api`
-
   console.log('[util:operator] Get all trades for', chainId, owner, { limit, offset })
   try {
     const results = await Promise.allSettled([
-      await _getAllTrades(chainId, `/trades?${qsParams}`, stagingUrl),
-      await _getAllTrades(chainId, `/trades?${qsParams}`, prodUrl),
+      await _get(chainId, `/trades?${qsParams}`, BARN_API_ENDPOINTS_PER_NETWORK[chainId]),
+      await _get(chainId, `/trades?${qsParams}`, PROD_API_ENDPOINTS_PER_NETWORK[chainId]),
     ])
 
     const response = results
@@ -514,7 +479,10 @@ export async function getAllTrades(params: GetTradesParams): Promise<TradeMetaDa
       throw new Error(errorResponse.description)
     } else {
       return Promise.allSettled([stgResponse.json(), prodResponse.json()]).then((r) =>
-        r.map((t: any) => t.value).flat()
+        r
+          .map((t: any) => t.value)
+          .flat()
+          .sort((a, b) => a.blockNumber - b.blockNumber)
       )
     }
   } catch (error) {
@@ -612,9 +580,9 @@ registerOnWindow({
   operator: {
     getQuote,
     getTrades,
-    getAllTrades,
+    getTradesFromAllEnvs,
     getOrder,
-    getAllOrder,
+    getOrderFromAllEnvs,
     sendSignedOrder: sendOrder,
     apiGet: _get,
     apiPost: _post,

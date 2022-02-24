@@ -96,26 +96,30 @@ export default function Profile() {
               <Loader isLoading={isLoading}>
                 <StyledContainer>
                   <Txt>
-                    <RefreshCcw size={16} />
+                    <RefreshCcw color="rgba(0,0,0,0.7)" size={14} />
                     &nbsp;&nbsp;
-                    <Txt secondary>
+                    <Txt fs={14}>
                       Last updated
                       <MouseoverTooltipContent content="Data is updated on the background periodically.">
                         <HelpCircle size={14} />
                       </MouseoverTooltipContent>
-                      :&nbsp;
+                      :
                     </Txt>
                     {!lastUpdated ? (
                       '-'
                     ) : (
                       <MouseoverTooltipContent content={<TimeFormatted date={profileData?.lastUpdated} />}>
-                        <strong>{lastUpdated}</strong>
+                        <Txt fs={14}>
+                          <strong>{lastUpdated}</strong>
+                        </Txt>
                       </MouseoverTooltipContent>
                     )}
                   </Txt>
                   {hasOrders && (
                     <ExtLink href={getExplorerAddressLink(chainId || 1, account)}>
-                      <Txt fs={14}>View all orders ↗</Txt>
+                      <Txt style={{ fontWeight: 500 }} fs={14}>
+                        View all orders ↗
+                      </Txt>
                     </ExtLink>
                   )}
                 </StyledContainer>
