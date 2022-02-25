@@ -1,4 +1,7 @@
+import { useContext } from 'react'
+import { ThemeContext } from 'styled-components/macro'
 import { Txt } from 'assets/styles/styled'
+
 import {
   FlexWrap,
   Wrapper,
@@ -46,6 +49,7 @@ export default function Profile() {
   const lastUpdated = useTimeAgo(profileData?.lastUpdated)
   const isTradesTooltipVisible = account && chainId == 1 && !!profileData?.totalTrades
   const hasOrders = useHasOrders(account)
+  const theme = useContext(ThemeContext)
 
   const vCowBalance = useTokenBalance(account || undefined, chainId ? V_COW[chainId] : undefined)
 
@@ -96,7 +100,7 @@ export default function Profile() {
               <Loader isLoading={isLoading}>
                 <StyledContainer>
                   <Txt>
-                    <RefreshCcw color="rgba(0,0,0,0.7)" size={14} />
+                    <RefreshCcw color={theme.text1} size={14} />
                     &nbsp;&nbsp;
                     <Txt fs={14}>
                       Last updated

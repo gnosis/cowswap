@@ -48,7 +48,10 @@ export function useReferredByAddress() {
       if (!chainId || !account) return
       try {
         const allTrades = await getTradesFromAllEnvs({ chainId, owner: account, limit: 1 })
-        if (!allTrades[0]?.orderUid) return
+        if (!allTrades[0]?.orderUid) {
+          setReferredAddress('')
+          return
+        }
         const order = await getOrderFromAllEnvs(chainId, allTrades[0].orderUid)
         const appDataDecoded = order?.appData && (await decodeAppData(order?.appData.toString()))
         setReferredAddress(appDataDecoded.metadata.referrer.address)
