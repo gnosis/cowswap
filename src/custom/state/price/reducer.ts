@@ -1,4 +1,4 @@
-import { createReducer, PayloadAction } from '@reduxjs/toolkit'
+import { createReducer, PayloadAction, current } from '@reduxjs/toolkit'
 import { SupportedChainId as ChainId } from 'constants/chains'
 import { OrderKind } from '@gnosis.pm/gp-v2-contracts'
 import { updateQuote, setQuoteError, getNewQuote, refreshQuote, QuoteError } from './actions'
@@ -121,7 +121,14 @@ export default createReducer(initialState, (builder) =>
 
       // Updates the new price
       const quoteInformation = quotes[chainId][sellToken]
-      if (quoteInformation) {
+      const quote = current(state).quotes[chainId]
+
+      // Flag to not update the quote when the there is already a quote price and the
+      // current quote in action is not the best quote, meaning the best quote for
+      // some reason was already loaded before fast quote and we want to keep best quote data
+      const shouldNotUpdate = quote && quote[sellToken]?.price?.amount && !isBestQuote
+
+      if (quoteInformation && !shouldNotUpdate) {
         quotes[chainId][sellToken] = { ...quoteInformation, ...payload }
       }
 

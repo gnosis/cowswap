@@ -157,7 +157,6 @@ export function useRefetchQuoteCallback() {
           ...quoteParams,
           fee: getPromiseFulfilledValue(fee, undefined),
           price: getPromiseFulfilledValue(price, undefined),
-          isBestQuote,
         }
         // check the promise fulfilled values
         // handle if rejected
@@ -189,7 +188,7 @@ export function useRefetchQuoteCallback() {
         }
 
         // Update quote
-        updateQuote(quoteData)
+        updateQuote({ ...quoteData, isBestQuote })
       }
 
       const handleError = (error: Error) => {
