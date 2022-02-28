@@ -126,9 +126,10 @@ export default createReducer(initialState, (builder) =>
       // Flag to not update the quote when the there is already a quote price and the
       // current quote in action is not the best quote, meaning the best quote for
       // some reason was already loaded before fast quote and we want to keep best quote data
-      const shouldNotUpdate = quote && quote[sellToken]?.price?.amount && !isBestQuote
+      const hasPrice = !!quote && !!quote[sellToken]?.price?.amount
+      const shouldUpdate = !(!isBestQuote && hasPrice)
 
-      if (quoteInformation && !shouldNotUpdate) {
+      if (quoteInformation && shouldUpdate) {
         quotes[chainId][sellToken] = { ...quoteInformation, ...payload }
       }
 
