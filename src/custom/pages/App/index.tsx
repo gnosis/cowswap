@@ -16,17 +16,17 @@ import { IS_CLAIMING_ENABLED } from 'pages/Claim/const'
 const SENTRY_DSN = process.env.REACT_APP_SENTRY_DSN
 const SENTRY_TRACES_SAMPLE_RATE = process.env.REACT_APP_SENTRY_TRACES_SAMPLE_RATE
 
-const Swap = lazy(() => import(/* webpackPrefetch: true */ 'pages/Swap'))
-const Claim = lazy(() => import('pages/Claim'))
-const PrivacyPolicy = lazy(() => import('pages/PrivacyPolicy'))
-const CookiePolicy = lazy(() => import('pages/CookiePolicy'))
-const TermsAndConditions = lazy(() => import('pages/TermsAndConditions'))
-const About = lazy(() => import('pages/About'))
-const Profile = lazy(() => import('pages/Profile'))
-const Faq = lazy(() => import('pages/Faq'))
-const NotFound = lazy(() => import('pages/error/NotFound'))
-const CowRunner = lazy(() => import('pages/games/CowRunner'))
-const MevSlicer = lazy(() => import('pages/games/MevSlicer'))
+const Swap = lazy(() => import(/* webpackPrefetch: true,  webpackChunkName: "swap" */ 'pages/Swap'))
+const Claim = lazy(() => import(/* webpackChunkName: "claim" */ 'pages/Claim'))
+const PrivacyPolicy = lazy(() => import(/* webpackChunkName: "privacy_policy" */ 'pages/PrivacyPolicy'))
+const CookiePolicy = lazy(() => import(/* webpackChunkName: "cookie_policy" */ 'pages/CookiePolicy'))
+const TermsAndConditions = lazy(() => import(/* webpackChunkName: "terms" */ 'pages/TermsAndConditions'))
+const About = lazy(() => import(/* webpackChunkName: "about" */ 'pages/About'))
+const Profile = lazy(() => import(/* webpackChunkName: "profile" */ 'pages/Profile'))
+const Faq = lazy(() => import(/* webpackChunkName: "faq" */ 'pages/Faq'))
+const NotFound = lazy(() => import(/* webpackChunkName: "not_found" */ 'pages/error/NotFound'))
+const CowRunner = lazy(() => import(/* webpackChunkName: "cow_runner" */ 'pages/games/CowRunner'))
+const MevSlicer = lazy(() => import(/* webpackChunkName: "mev_slicer" */ 'pages/games/MevSlicer'))
 
 if (SENTRY_DSN) {
   Sentry.init({
