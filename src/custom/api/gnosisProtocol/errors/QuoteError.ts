@@ -7,7 +7,7 @@ export interface GpQuoteErrorObject {
 }
 
 // Conforms to backend API
-// https://github.com/gnosis/gp-v2-services/blob/0bd5f7743bebaa5acd3be13e35ede2326a096f14/orderbook/openapi.yml#L562
+// https://github.com/gnosis/gp-v2-services/blob/main/crates/orderbook/openapi.yml
 export enum GpQuoteErrorCodes {
   UnsupportedToken = 'UnsupportedToken',
   InsufficientLiquidity = 'InsufficientLiquidity',
