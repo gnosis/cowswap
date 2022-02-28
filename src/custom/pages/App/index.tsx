@@ -16,7 +16,7 @@ import { IS_CLAIMING_ENABLED } from 'pages/Claim/const'
 const SENTRY_DSN = process.env.REACT_APP_SENTRY_DSN
 const SENTRY_TRACES_SAMPLE_RATE = process.env.REACT_APP_SENTRY_TRACES_SAMPLE_RATE
 
-const Swap = lazy(() => import('pages/Swap'))
+const Swap = lazy(() => import(/* webpackPrefetch: true */ 'pages/Swap'))
 const Claim = lazy(() => import('pages/Claim'))
 const PrivacyPolicy = lazy(() => import('pages/PrivacyPolicy'))
 const CookiePolicy = lazy(() => import('pages/CookiePolicy'))
