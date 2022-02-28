@@ -19,11 +19,11 @@ export enum GpQuoteErrorCodes {
 
 export enum GpQuoteErrorDetails {
   UnsupportedToken = 'One of the tokens you are trading is unsupported. Please read the FAQ for more info.',
-  InsufficientLiquidity = 'Token pair selected has insufficient liquidity',
-  FeeExceedsFrom = 'Current fee exceeds entered "from" amount',
-  ZeroPrice = 'Quoted price is zero. This is likely due to a significant price difference between the two tokens. Please try increasing amounts',
-  TransferEthToContract = 'Buying native currencies using smart contract wallets is not currently supported',
-  UNHANDLED_ERROR = 'Quote fetch failed. This may be due to a server or network connectivity issue. Please try again later',
+  InsufficientLiquidity = 'Token pair selected has insufficient liquidity.',
+  FeeExceedsFrom = 'Current fee exceeds entered "from" amount.',
+  ZeroPrice = 'Quoted price is zero. This is likely due to a significant price difference between the two tokens. Please try increasing amounts.',
+  TransferEthToContract = 'Buying native currencies using smart contract wallets is not currently supported.',
+  UNHANDLED_ERROR = 'Quote fetch failed. This may be due to a server or network connectivity issue. Please try again later.',
 }
 
 export function mapOperatorErrorToQuoteError(error?: ApiErrorObject): GpQuoteErrorObject {
