@@ -60,7 +60,7 @@ export enum ApiErrorCodeDetails {
   SellAmountDoesNotCoverFee = 'Sell amount does not sufficiently cover the current fee.',
   TransferEthToContract = 'Sending native currency to smart contract wallets is not currently supported.',
   TransferSimulationFailed = 'Transfer simulation of native currency failed. This is likely due to the current unsupported state of smart contract wallets.',
-  SameBuyAndSellToken = 'Sell and buy tokens cannot be the same.',
+  SameBuyAndSellToken = 'Sell and buy token can not be the same.',
   ZeroAmount = 'Order amount cannot be zero.',
   UnsupportedBuyTokenDestination = 'Buy token destination is unsupported. Please try again with a different destination.',
   UnsupportedSellTokenSource = 'Sell token source is unsupported. Please try again with a different source.',
