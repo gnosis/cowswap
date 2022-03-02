@@ -279,7 +279,18 @@ async function _handleQuoteResponse<T = any, P extends QuoteQuery = QuoteQuery>(
   params?: P
 ): Promise<T> {
   if (!response.ok) {
-    const errorObj: ApiErrorObject = await response.json()
+    const errorObj: ApiErrorObject = await response.json().catch((error) => {
+      const sentryError = new Error()
+      Object.assign(sentryError, error, {
+        message: `Potential backend error detected - status code: ${response.status}`,
+        name: 'HandleQuoteResponseJsonParse',
+      })
+      // report to sentry
+      Sentry.captureException(error, {
+        tags: { errorType: 'handleQuoteResponse', backendErrorCode: response.status },
+        contexts: { params: { ...params } },
+      })
+    })
 
     // we need to map the backend error codes to match our own for quotes
     const mappedError = mapOperatorErrorToQuoteError(errorObj)
@@ -291,12 +302,12 @@ async function _handleQuoteResponse<T = any, P extends QuoteQuery = QuoteQuery>(
       const sentryError = new Error()
       Object.assign(sentryError, quoteError, {
         message: `Error querying fee from API - sellToken: ${sellToken}, buyToken: ${buyToken}`,
-        name: 'FeeErrorObject',
+        name: 'HandleQuoteResponse',
       })
 
       // report to sentry
       Sentry.captureException(sentryError, {
-        tags: { errorType: 'getFeeQuote' },
+        tags: { errorType: 'handleQuoteResponse' },
         contexts: { params: { ...params } },
       })
     }
@@ -344,7 +355,7 @@ export async function getQuote(params: FeeQuoteParams) {
   const quoteParams = _mapNewToLegacyParams(params)
   const response = await _post(chainId, '/quote', quoteParams)
 
-  return _handleQuoteResponse<SimpleGetQuoteResponse>(response)
+  return _handleQuoteResponse<SimpleGetQuoteResponse>(response, quoteParams)
 }
 
 export async function getPriceQuoteLegacy(params: PriceQuoteParams): Promise<PriceInformation | null> {
@@ -363,7 +374,14 @@ export async function getPriceQuoteLegacy(params: PriceQuoteParams): Promise<Pri
     throw new QuoteError(UNHANDLED_QUOTE_ERROR)
   })
 
-  return _handleQuoteResponse<PriceInformation | null>(response)
+  return _handleQuoteResponse<PriceInformation | null>(response, {
+    ...params,
+    buyToken: baseToken,
+    sellToken: quoteToken,
+    from: params.userAddress || 'DEFAULT_TEST_USER',
+    appData: 'any_crap_in_there',
+    partiallyFillable: false,
+  } as unknown as QuoteQuery)
 }
 
 export async function getOrder(chainId: ChainId, orderId: string): Promise<OrderMetaData | null> {
