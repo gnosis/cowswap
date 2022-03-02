@@ -126,6 +126,9 @@ export interface UnsupportedToken {
   }
 }
 
+// for sentry reporting
+type MinimumSentryQuoteData = FeeQuoteParams
+
 type PaginationParams = {
   limit?: number
   offset?: number
@@ -274,7 +277,7 @@ const UNHANDLED_ORDER_ERROR: ApiErrorObject = {
   description: ApiErrorCodeDetails.UNHANDLED_CREATE_ERROR,
 }
 
-async function _handleQuoteResponse<T = any, P extends QuoteQuery = QuoteQuery>(
+async function _handleQuoteResponse<T = any, P extends MinimumSentryQuoteData = MinimumSentryQuoteData>(
   response: Response,
   params?: P
 ): Promise<T> {
@@ -355,7 +358,7 @@ export async function getQuote(params: FeeQuoteParams) {
   const quoteParams = _mapNewToLegacyParams(params)
   const response = await _post(chainId, '/quote', quoteParams)
 
-  return _handleQuoteResponse<SimpleGetQuoteResponse>(response, quoteParams)
+  return _handleQuoteResponse<SimpleGetQuoteResponse>(response, params)
 }
 
 export async function getPriceQuoteLegacy(params: PriceQuoteParams): Promise<PriceInformation | null> {
@@ -378,10 +381,7 @@ export async function getPriceQuoteLegacy(params: PriceQuoteParams): Promise<Pri
     ...params,
     buyToken: baseToken,
     sellToken: quoteToken,
-    from: params.userAddress || 'DEFAULT_TEST_USER',
-    appData: 'any_crap_in_there',
-    partiallyFillable: false,
-  } as unknown as QuoteQuery)
+  })
 }
 
 export async function getOrder(chainId: ChainId, orderId: string): Promise<OrderMetaData | null> {
