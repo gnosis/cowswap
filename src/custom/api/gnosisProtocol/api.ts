@@ -304,13 +304,13 @@ async function _handleQuoteResponse<T = any, P extends MinimumSentryQuoteData = 
 
       const sentryError = new Error()
       Object.assign(sentryError, quoteError, {
-        message: `Error querying fee from API - sellToken: ${sellToken}, buyToken: ${buyToken}`,
+        message: `Error querying fee from API - sellToken: ${sellToken}, buyToken: ${buyToken}, status code: ${response.status}`,
         name: 'HandleQuoteResponse',
       })
 
       // report to sentry
       Sentry.captureException(sentryError, {
-        tags: { errorType: 'handleQuoteResponse' },
+        tags: { errorType: 'handleQuoteResponse', backendErrorCode: response.status },
         contexts: { params: { ...params } },
       })
     }
