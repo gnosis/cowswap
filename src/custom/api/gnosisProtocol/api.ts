@@ -306,12 +306,15 @@ async function _handleQuoteResponse<T = any, P extends MinimumSentryQuoteData = 
       return response.json()
     }
   } catch (error) {
+    // Create a new sentry error OR
+    // use the previously created and rethrown error from the try block
     const sentryError =
       error?.sentryError ||
       constructSentryError(error, response, {
         message: `Potential backend error detected - status code: ${response.status}`,
         name: '[HandleQuoteResponse] - Unmapped Quote Error',
       })
+    // Create the error tags or use the previously constructed ones from the try block
     const tags = error?.tags || { errorType: 'handleQuoteResponse', backendErrorCode: response.status }
 
     // report to sentry
