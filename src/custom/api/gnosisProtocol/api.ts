@@ -127,9 +127,6 @@ export interface UnsupportedToken {
   }
 }
 
-// for sentry reporting
-type MinimumSentryQuoteData = FeeQuoteParams
-
 type PaginationParams = {
   limit?: number
   offset?: number
@@ -278,7 +275,7 @@ const UNHANDLED_ORDER_ERROR: ApiErrorObject = {
   description: ApiErrorCodeDetails.UNHANDLED_CREATE_ERROR,
 }
 
-async function _handleQuoteResponse<T = any, P extends MinimumSentryQuoteData = MinimumSentryQuoteData>(
+async function _handleQuoteResponse<T = any, P extends FeeQuoteParams = FeeQuoteParams>(
   response: Response,
   params: P
 ): Promise<T> {
