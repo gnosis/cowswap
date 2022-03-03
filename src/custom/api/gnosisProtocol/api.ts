@@ -21,7 +21,7 @@ import { FeeQuoteParams, PriceInformation, PriceQuoteParams, SimpleGetQuoteRespo
 
 import { DEFAULT_NETWORK_FOR_LISTS } from 'constants/lists'
 import * as Sentry from '@sentry/browser'
-import { constructSentryError } from 'utils/sentry'
+import { constructSentryError } from 'utils/logging'
 import { ZERO_ADDRESS } from 'constants/misc'
 import { getAppDataHash } from 'constants/appDataHash'
 import { GpPriceStrategy } from 'hooks/useGetGpPriceStrategy'
