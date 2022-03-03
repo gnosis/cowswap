@@ -21,6 +21,7 @@ import { FeeQuoteParams, PriceInformation, PriceQuoteParams, SimpleGetQuoteRespo
 
 import { DEFAULT_NETWORK_FOR_LISTS } from 'constants/lists'
 import * as Sentry from '@sentry/browser'
+import { constructSentryError } from 'utils/sentry'
 import { ZERO_ADDRESS } from 'constants/misc'
 import { getAppDataHash } from 'constants/appDataHash'
 import { GpPriceStrategy } from 'hooks/useGetGpPriceStrategy'
@@ -279,45 +280,47 @@ const UNHANDLED_ORDER_ERROR: ApiErrorObject = {
 
 async function _handleQuoteResponse<T = any, P extends MinimumSentryQuoteData = MinimumSentryQuoteData>(
   response: Response,
-  params?: P
+  params: P
 ): Promise<T> {
-  if (!response.ok) {
-    const errorObj: ApiErrorObject = await response.json().catch((error) => {
-      const sentryError = new Error()
-      Object.assign(sentryError, error, {
+  try {
+    if (!response.ok) {
+      // don't attempt json parse if not json response...
+      if (response.headers.get('Content-Type') !== 'application/json') {
+        throw new Error(`${response.status} error occurred. ${response.statusText}`)
+      }
+      const errorObj: ApiErrorObject = await response.json()
+
+      // we need to map the backend error codes to match our own for quotes
+      const mappedError = mapOperatorErrorToQuoteError(errorObj)
+      const quoteError = new QuoteError(mappedError)
+
+      // we need to create a sentry error and keep the original mapped quote error
+      throw constructSentryError(quoteError, response, {
+        message: `${quoteError.description} [sellToken: ${params.sellToken}]//[buyToken: ${params.buyToken}]`,
+        name: `[${quoteError.name}] - ${quoteError.type}`,
+        optionalTags: {
+          quoteErrorType: quoteError.type,
+        },
+      })
+    } else {
+      return response.json()
+    }
+  } catch (error) {
+    const sentryError =
+      error?.sentryError ||
+      constructSentryError(error, response, {
         message: `Potential backend error detected - status code: ${response.status}`,
-        name: 'HandleQuoteResponseJsonParse',
+        name: '[HandleQuoteResponse] - Unmapped Quote Error',
       })
-      // report to sentry
-      Sentry.captureException(error, {
-        tags: { errorType: 'handleQuoteResponse', backendErrorCode: response.status },
-        contexts: { params: { ...params } },
-      })
+    const tags = error?.tags || { errorType: 'handleQuoteResponse', backendErrorCode: response.status }
+
+    // report to sentry
+    Sentry.captureException(sentryError, {
+      tags,
+      contexts: { params: { ...params } },
     })
 
-    // we need to map the backend error codes to match our own for quotes
-    const mappedError = mapOperatorErrorToQuoteError(errorObj)
-    const quoteError = new QuoteError(mappedError)
-
-    if (params) {
-      const { sellToken, buyToken } = params
-
-      const sentryError = new Error()
-      Object.assign(sentryError, quoteError, {
-        message: `Error querying fee from API - sellToken: ${sellToken}, buyToken: ${buyToken}, status code: ${response.status}`,
-        name: 'HandleQuoteResponse',
-      })
-
-      // report to sentry
-      Sentry.captureException(sentryError, {
-        tags: { errorType: 'handleQuoteResponse', backendErrorCode: response.status },
-        contexts: { params: { ...params } },
-      })
-    }
-
-    throw quoteError
-  } else {
-    return response.json()
+    throw error?.baseError || error
   }
 }
 
