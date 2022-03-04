@@ -25,8 +25,6 @@ import { ButtonSecondary } from 'components/Button'
 import Loader from 'components/Loader'
 
 import { RowBetween } from 'components/Row'
-import { useEffect, useState } from 'react'
-import { WAITING_TIME_RECONNECT_LAST_PROVIDER } from '@src/custom/constants'
 // import WalletModal from 'components/WalletModal'
 
 // const IconWrapper = styled.div<{ size?: number }>`
@@ -246,7 +244,16 @@ export function Web3StatusInner({
       </Web3StatusError>
     )
   } else if (thereWasAProvider) {
-    return <ConnectingLabel pending />
+    return (
+      <Web3StatusConnected pending clickDisabled={true}>
+        <RowBetween>
+          <Text>
+            <Trans>Connecting</Trans>...
+          </Text>{' '}
+          <Loader stroke="white" />
+        </RowBetween>
+      </Web3StatusConnected>
+    )
   } else {
     return (
       <Web3StatusConnect id="connect-wallet" onClick={toggleWalletModal} faded={!account}>
@@ -256,30 +263,6 @@ export function Web3StatusInner({
       </Web3StatusConnect>
     )
   }
-}
-
-function ConnectingLabel({ pending }: { pending?: boolean }) {
-  const [timeLeft, setTimeLeft] = useState(WAITING_TIME_RECONNECT_LAST_PROVIDER)
-  const oneSec = 1000
-
-  useEffect(() => {
-    const id = setInterval(() => {
-      setTimeLeft(timeLeft - oneSec)
-    }, oneSec)
-
-    return () => clearInterval(id)
-  })
-
-  return (
-    <Web3StatusConnected pending={pending} clickDisabled={true}>
-      <RowBetween>
-        <Text>
-          <Trans>Trying to connect</Trans>...{timeLeft / 1000}
-        </Text>{' '}
-        <Loader stroke="white" />
-      </RowBetween>
-    </Web3StatusConnected>
-  )
 }
 
 /* export default function Web3Status() {
