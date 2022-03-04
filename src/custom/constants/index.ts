@@ -115,6 +115,7 @@ export const AMOUNT_OF_ORDERS_TO_FETCH = 100
 
 // last wallet provider key used in local storage
 export const STORAGE_KEY_LAST_PROVIDER = 'lastProvider'
+export const WAITING_TIME_RECONNECT_LAST_PROVIDER = 15000
 
 // Default price strategy to use for getting app prices
 // COWSWAP = new quote endpoint
