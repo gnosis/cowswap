@@ -26,7 +26,12 @@ export const APP_DATA_HASH = getAppDataHash()
 export const PRODUCTION_URL = 'cowswap.exchange'
 export const BARN_URL = `barn.${PRODUCTION_URL}`
 
-const DISABLED_WALLETS = /^(?:Portis)$/i
+// Allow WALLET_LINK to be activated on mobile
+SUPPORTED_WALLETS_UNISWAP.WALLET_LINK = {
+  ...SUPPORTED_WALLETS_UNISWAP.WALLET_LINK,
+  mobile: true,
+}
+const DISABLED_WALLETS = /^(?:Portis|COINBASE_LINK)$/i
 
 // Re-export only the supported wallets
 export const SUPPORTED_WALLETS = Object.keys(SUPPORTED_WALLETS_UNISWAP).reduce((acc, key) => {
