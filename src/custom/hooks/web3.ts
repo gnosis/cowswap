@@ -1,17 +1,25 @@
+import { IS_IN_IFRAME, NetworkContextName } from 'constants/misc'
 import { Web3Provider } from '@ethersproject/providers'
 import { useWeb3React } from '@web3-react/core'
+import { AbstractConnector } from '@web3-react/abstract-connector'
 import { useEffect, useState, useCallback } from 'react'
 
-import { gnosisSafe, injected, walletconnect, getProviderType, WalletProvider } from 'connectors'
-import { IS_IN_IFRAME, NetworkContextName } from 'constants/misc'
+import { injected, gnosisSafe, walletconnect, getProviderType, WalletProvider, fortmatic, walletlink } from 'connectors'
+import { STORAGE_KEY_LAST_PROVIDER } from 'constants/index'
 import { isMobile } from 'utils/userAgent'
 
-import { STORAGE_KEY_LAST_PROVIDER } from 'constants/index'
+// exports from the original file
+export { useInactiveListener } from '@src/hooks/web3'
 
 export function useActiveWeb3React() {
   const context = useWeb3React<Web3Provider>()
   const contextNetwork = useWeb3React<Web3Provider>(NetworkContextName)
   return context.active ? context : contextNetwork
+}
+
+enum DefaultProvidersInjected {
+  METAMASK = WalletProvider.INJECTED,
+  COINBASE_WALLET = WalletProvider.WALLET_LINK,
 }
 
 export function useEagerConnect() {
@@ -33,30 +41,38 @@ export function useEagerConnect() {
     }
   }, [connector, active])
 
-  const connectInjected = useCallback(() => {
-    // check if the our application is authorized/connected with Metamask
-    injected.isAuthorized().then((isAuthorized) => {
-      if (isAuthorized) {
-        activate(injected, undefined, true).catch(() => {
-          setTried(true)
-        })
-      } else {
-        if (isMobile && window.ethereum) {
+  const connectInjected = useCallback(
+    (providerName = DefaultProvidersInjected.METAMASK) => {
+      // check if the our application is authorized/connected with Metamask
+      injected.isAuthorized().then((isAuthorized) => {
+        if (isAuthorized) {
+          setDefaultInjected(providerName)
           activate(injected, undefined, true).catch(() => {
             setTried(true)
           })
         } else {
-          setTried(true)
+          if (isMobile && window.ethereum) {
+            setDefaultInjected(providerName)
+            activate(injected, undefined, true).catch(() => {
+              setTried(true)
+            })
+          } else {
+            setTried(true)
+          }
         }
-      }
-    })
-  }, [activate, setTried])
+      })
+    },
+    [activate, setTried]
+  )
 
-  const connectWalletConnect = useCallback(() => {
-    activate(walletconnect, undefined, true).catch(() => {
-      setTried(true)
-    })
-  }, [activate, setTried])
+  const reconnectUninjectedProvider = useCallback(
+    (provider: AbstractConnector): void => {
+      activate(provider, undefined, true).catch(() => {
+        setTried(true)
+      })
+    },
+    [activate, setTried]
+  )
 
   const connectSafe = useCallback(() => {
     gnosisSafe.isSafeApp().then((loadedInSafe) => {
@@ -90,10 +106,14 @@ export function useEagerConnect() {
         connectInjected()
       } else if (latestProvider === WalletProvider.WALLET_CONNECT) {
         // WC is last provider
-        connectWalletConnect()
+        reconnectUninjectedProvider(walletconnect)
+      } else if (latestProvider === WalletProvider.WALLET_LINK) {
+        reconnectUninjectedProvider(walletlink)
+      } else if (latestProvider === WalletProvider.FORMATIC) {
+        reconnectUninjectedProvider(fortmatic)
       }
     }
-  }, [connectInjected, connectSafe, connectWalletConnect, active, triedSafe]) // intentionally only running on mount (make sure it's only mounted once :))
+  }, [connectInjected, active, connectSafe, triedSafe, reconnectUninjectedProvider]) // intentionally only running on mount (make sure it's only mounted once :))
 
   // if the connection worked, wait until we get confirmation of that to flip the flag
   useEffect(() => {
@@ -116,42 +136,26 @@ export function useEagerConnect() {
 }
 
 /**
- * Use for network and injected - logs user in
- * and out after checking what network theyre on
+ * Allows to select the default injected ethereum provider.
+ *
+ * It is assumed that metamask is the default injected Provider, however coinbaseWallet overrides this.
  */
-export function useInactiveListener(suppress = false) {
-  const { active, error, activate } = useWeb3React()
+export function setDefaultInjected(providerName: DefaultProvidersInjected) {
+  const { ethereum } = window
 
-  useEffect(() => {
-    const { ethereum } = window
+  if (!ethereum?.providers) return
 
-    if (ethereum && ethereum.on && !active && !error && !suppress) {
-      const handleChainChanged = () => {
-        // eat errors
-        activate(injected, undefined, true).catch((error) => {
-          console.error('Failed to activate after chain changed', error)
-        })
-      }
+  let provider
+  switch (providerName) {
+    case DefaultProvidersInjected.COINBASE_WALLET:
+      provider = ethereum.providers.find(({ isCoinbaseWallet }) => isCoinbaseWallet)
+      break
+    case DefaultProvidersInjected.METAMASK:
+      provider = ethereum.providers.find(({ isMetaMask }) => isMetaMask)
+      break
+  }
 
-      const handleAccountsChanged = (accounts: string[]) => {
-        if (accounts.length > 0) {
-          // eat errors
-          activate(injected, undefined, true).catch((error) => {
-            console.error('Failed to activate after accounts changed', error)
-          })
-        }
-      }
-
-      ethereum.on('chainChanged', handleChainChanged)
-      ethereum.on('accountsChanged', handleAccountsChanged)
-
-      return () => {
-        if (ethereum.removeListener) {
-          ethereum.removeListener('chainChanged', handleChainChanged)
-          ethereum.removeListener('accountsChanged', handleAccountsChanged)
-        }
-      }
-    }
-    return undefined
-  }, [active, error, suppress, activate])
+  if (provider) {
+    ethereum.setSelectedProvider(provider)
+  }
 }
