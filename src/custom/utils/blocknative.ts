@@ -1,5 +1,6 @@
 import BlocknativeSdk from 'bnc-sdk'
 import { getSupportedChainIds } from 'connectors'
+import { devInfo, devLog } from './logging'
 
 const BLOCKNATIVE_API_KEY = process.env.REACT_APP_BLOCKNATIVE_API_KEY
 
@@ -19,14 +20,14 @@ export const sdk = !BLOCKNATIVE_API_KEY
           networkId,
           name: 'bnc_' + networkId,
           onerror: (error: SDKError) => {
-            console.log(error)
+            devLog(error)
           },
         })
       } catch (error) {
         console.error('Instantiating BlocknativeSdk failed', error)
       }
 
-      console.info(`BlocknativeSdk initialized on chain ${networkId}`)
+      devInfo(`BlocknativeSdk initialized on chain ${networkId}`)
 
       return acc
     }, {})

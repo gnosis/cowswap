@@ -2,6 +2,7 @@ import { SupportedChainId } from 'constants/chains'
 import { Currency, Percent, TradeType } from '@uniswap/sdk-core'
 import TradeGp from './TradeGp'
 import { WETH9_EXTENDED } from 'constants/tokens'
+import { devDebug } from 'utils/logging'
 
 export function isWrappingTrade(
   sellCurrency: Currency | null | undefined,
@@ -23,7 +24,7 @@ export function logTradeDetails(trade: TradeGp | undefined, allowedSlippage: Per
 
   // Log Exact In Trade info
   if (exactIn) {
-    console.debug(
+    devDebug(
       `[SwapMod::[SELL] Trade Constructed]`,
       `
       Type: SELL
@@ -41,7 +42,7 @@ export function logTradeDetails(trade: TradeGp | undefined, allowedSlippage: Per
     )
   } else {
     // Log Exact Out Trade info
-    console.debug(
+    devDebug(
       `[SwapMod::[BUY] Trade Constructed]`,
       `
       Type: BUY

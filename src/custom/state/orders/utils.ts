@@ -9,6 +9,7 @@ import { PriceInformation } from 'utils/price'
 import { OUT_OF_MARKET_PRICE_DELTA_PERCENTAGE } from 'state/orders/consts'
 import { calculatePrice, invertPrice, ZERO_BIG_NUMBER } from '@gnosis.pm/dex-js'
 import { BigNumber } from 'bignumber.js'
+import { devDebug } from 'utils/logging'
 
 export type OrderTransitionStatus =
   | 'unknown'
@@ -76,33 +77,30 @@ export function classifyOrder(
   > | null
 ): OrderTransitionStatus {
   if (!order) {
-    console.debug(`[state::orders::classifyOrder] unknown order`)
+    devDebug(`[state::orders::classifyOrder] unknown order`)
     return 'unknown'
   } else if (isOrderFulfilled(order)) {
-    console.debug(
+    devDebug(
       `[state::orders::classifyOrder] fulfilled order ${order.uid.slice(0, 10)} ${order.executedBuyAmount} | ${
         order.executedSellAmount
       }`
     )
     return 'fulfilled'
   } else if (isOrderCancelled(order)) {
-    console.debug(`[state::orders::classifyOrder] cancelled order ${order.uid.slice(0, 10)}`)
+    devDebug(`[state::orders::classifyOrder] cancelled order ${order.uid.slice(0, 10)}`)
     return 'cancelled'
   } else if (isOrderExpired(order)) {
-    console.debug(
-      `[state::orders::classifyOrder] expired order ${order.uid.slice(0, 10)}`,
-      new Date(order.validTo * 1000)
-    )
+    devDebug(`[state::orders::classifyOrder] expired order ${order.uid.slice(0, 10)}`, new Date(order.validTo * 1000))
     return 'expired'
   } else if (isPresignPending(order)) {
-    console.debug(`[state::orders::classifyOrder] presignPending order ${order.uid.slice(0, 10)}`)
+    devDebug(`[state::orders::classifyOrder] presignPending order ${order.uid.slice(0, 10)}`)
     return 'presignaturePending'
   } else if (isOrderPresigned(order)) {
-    console.debug(`[state::orders::classifyOrder] presigned order ${order.uid.slice(0, 10)}`)
+    devDebug(`[state::orders::classifyOrder] presigned order ${order.uid.slice(0, 10)}`)
     return 'presigned'
   }
 
-  console.debug(`[state::orders::classifyOrder] pending order ${order.uid.slice(0, 10)}`)
+  devDebug(`[state::orders::classifyOrder] pending order ${order.uid.slice(0, 10)}`)
   return 'pending'
 }
 
@@ -227,7 +225,7 @@ export function isOrderUnfillable(order: Order, price: Required<PriceInformation
   // Calculate the percentage of the current price in regards to the order price
   const percentageDifference = ONE_HUNDRED_PERCENT.subtract(currentPrice.divide(orderPrice))
 
-  console.debug(
+  devDebug(
     `[UnfillableOrdersUpdater::isOrderUnfillable] ${order.kind} [${order.id.slice(0, 8)}]:`,
     orderPrice.toSignificant(10),
     currentPrice.toSignificant(10),

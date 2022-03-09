@@ -1,3 +1,4 @@
+import { devLog } from 'utils/logging'
 import { SupportedChainId as ChainId } from 'constants/chains'
 import { PriceInformation } from 'utils/price'
 
@@ -77,7 +78,7 @@ export async function getUSDPriceQuote(params: CoinGeckoUsdPriceParams): Promise
     return null
   }
 
-  console.log(`[api:${API_NAME}] Get USD price from ${API_NAME}`, params)
+  devLog(`[api:${API_NAME}] Get USD price from ${API_NAME}`, params)
 
   const response = await _get(
     chainId,

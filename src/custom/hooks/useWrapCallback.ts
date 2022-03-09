@@ -18,6 +18,7 @@ import { useWalletInfo } from './useWalletInfo'
 import { SafeInfoResponse } from '@gnosis.pm/safe-service-client'
 import { OperationType } from '../components/TransactionConfirmationModal'
 import { calculateGasMargin } from '@src/utils/calculateGasMargin'
+import { devLog } from 'utils/logging'
 
 // Use a 180K gas as a fallback if there's issue calculating the gas estimation (fixes some issues with some nodes failing to calculate gas costs for SC wallets)
 const WRAP_UNWRAP_GAS_LIMIT_DEFAULT = BigNumber.from('180000')
@@ -51,7 +52,7 @@ interface GetWrapUnwrapCallback {
 const NOT_APPLICABLE = { wrapType: WrapType.NOT_APPLICABLE }
 
 function _handleGasEstimateError(error: any) {
-  console.log(
+  devLog(
     '[useWrapCallback] Error estimating gas for wrap/unwrap. Using default gas limit ' +
       WRAP_UNWRAP_GAS_LIMIT_DEFAULT.toString(),
     error

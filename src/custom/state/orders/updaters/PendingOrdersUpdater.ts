@@ -25,6 +25,7 @@ import { OrderID } from 'api/gnosisProtocol'
 
 import { fetchOrderPopupData, OrderLogPopupMixData } from 'state/orders/updaters/utils'
 import { GetSafeInfo, useGetSafeInfo } from 'hooks/useGetSafeInfo'
+import { devLog } from 'utils/logging'
 
 /**
  * Return the ids of the orders that we are not yet aware that are signed.
@@ -62,14 +63,14 @@ async function _updatePresignGnosisSafeTx(
     .map((order): Promise<void> => {
       // Get safe info and receipt
       const presignGnosisSafeTxHash = order.presignGnosisSafeTxHash as string
-      console.log('[PendingOrdersUpdater] Get Gnosis Transaction info for tx:', presignGnosisSafeTxHash)
+      devLog('[PendingOrdersUpdater] Get Gnosis Transaction info for tx:', presignGnosisSafeTxHash)
 
       const { promise: safeTransactionPromise } = getSafeInfo(presignGnosisSafeTxHash)
 
       // Get safe info
       return safeTransactionPromise
         .then((safeTransaction) => {
-          console.log('[PendingOrdersUpdater] Update Gnosis Safe transaction info: ', safeTransaction)
+          devLog('[PendingOrdersUpdater] Update Gnosis Safe transaction info: ', safeTransaction)
           updatePresignGnosisSafeTx({ orderId: order.id, chainId, safeTransaction })
         })
         .catch((error) => {
@@ -118,10 +119,10 @@ async function _updateOrders({
 
   // Exit early when there are no pending orders
   if (pending.length === 0) {
-    // console.debug('[PendingOrdersUpdater] No orders to update')
+    // devDebug('[PendingOrdersUpdater] No orders to update')
     return
   } /* else {
-    console.debug(
+    devDebug(
       `[PendingOrdersUpdater] Update ${pending.length} orders for account ${account} and network ${chainId}`
     )
   }*/
@@ -207,7 +208,7 @@ export function PendingOrdersUpdater(): null {
       if (!isUpdating.current) {
         isUpdating.current = true
         // const startTime = Date.now()
-        // console.debug('[PendingOrdersUpdater] Updating orders....')
+        // devDebug('[PendingOrdersUpdater] Updating orders....')
         return _updateOrders({
           account,
           chainId,
@@ -220,7 +221,7 @@ export function PendingOrdersUpdater(): null {
           getSafeInfo,
         }).finally(() => {
           isUpdating.current = false
-          // console.debug(`[PendingOrdersUpdater] Updated orders in ${Date.now() - startTime}ms`)
+          // devDebug(`[PendingOrdersUpdater] Updated orders in ${Date.now() - startTime}ms`)
         })
       }
     },

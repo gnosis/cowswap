@@ -8,6 +8,7 @@ import { fetchTokenList } from 'state/lists/actions'
 import getTokenList from 'utils/getTokenList'
 import resolveENSContentHash from 'utils/resolveENSContentHash'
 import { useActiveWeb3React } from 'hooks/web3'
+import { devDebug } from 'utils/logging'
 
 export function useFetchListCallback(): (listUrl: string, sendDispatch?: boolean) => Promise<TokenList> {
   const { chainId, library } = useActiveWeb3React()
@@ -41,7 +42,7 @@ export function useFetchListCallback(): (listUrl: string, sendDispatch?: boolean
           return tokenList
         })
         .catch((error) => {
-          console.debug(`Failed to get list at url ${listUrl}`, error)
+          devDebug(`Failed to get list at url ${listUrl}`, error)
           sendDispatch &&
             // Mod: add chainId
             dispatch(fetchTokenList.rejected({ url: listUrl, requestId, errorMessage: error.message, chainId }))

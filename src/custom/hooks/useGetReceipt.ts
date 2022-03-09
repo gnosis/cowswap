@@ -3,6 +3,7 @@ import { useActiveWeb3React } from 'hooks/web3'
 import { retry, RetryableError, RetryOptions } from 'utils/retry'
 import { TransactionReceipt } from '@ethersproject/abstract-provider'
 import { RetryResult } from 'types/index'
+import { devDebug } from 'utils/logging'
 
 const DEFAULT_RETRY_OPTIONS: RetryOptions = { n: 3, minWait: 1000, maxWait: 3000 }
 const RETRY_OPTIONS_BY_CHAIN_ID: { [chainId: number]: RetryOptions } = {
@@ -24,7 +25,7 @@ export function useGetReceipt(): GetReceipt {
 
         return library.getTransactionReceipt(hash).then((receipt) => {
           if (receipt === null) {
-            console.debug('[useGetReceipt] Retrying for hash', hash)
+            devDebug('[useGetReceipt] Retrying for hash', hash)
             throw new RetryableError()
           }
           return receipt

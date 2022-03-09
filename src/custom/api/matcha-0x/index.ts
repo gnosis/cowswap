@@ -4,6 +4,7 @@ import { NetworkID } from 'paraswap'
 import { SupportedChainId as ChainId } from 'constants/chains'
 import { getTokensFromMarket } from 'utils/misc'
 import { getValidParams, PriceInformation, PriceQuoteParams } from 'utils/price'
+import { devLog } from 'utils/logging'
 
 // copy/pasting as the library types correspond to the internal types, not API response
 // e.g "price: BigNumber" when we want the API response type: "price: string"
@@ -113,7 +114,7 @@ export async function getPriceQuote(params: PriceQuoteParams): Promise<MatchaPri
     return null
   }
 
-  console.log(`[pricesApi:${API_NAME}] Get price from ${API_NAME}`, params)
+  devLog(`[pricesApi:${API_NAME}] Get price from ${API_NAME}`, params)
 
   // Buy/sell token and side (sell/buy)
   const { sellToken, buyToken } = getTokensFromMarket({ baseToken, quoteToken, kind })

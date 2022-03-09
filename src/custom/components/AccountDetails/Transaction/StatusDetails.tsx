@@ -14,6 +14,7 @@ import { ActivityDerivedState, determinePillColour } from './index'
 import { CancellationModal } from './CancelationModal'
 import { getSafeWebUrl } from 'api/gnosisSafe'
 import { SafeMultisigTransactionResponse } from '@gnosis.pm/safe-service-client'
+import { devLog } from 'utils/logging'
 
 export function GnosisSafeLink(props: {
   chainId: number
@@ -49,7 +50,7 @@ function _getStateLabel({
 }: ActivityDerivedState) {
   if (isPending) {
     if (enhancedTransaction) {
-      console.log('enhancedTransaction', enhancedTransaction)
+      devLog('enhancedTransaction', enhancedTransaction)
       const { safeTransaction, transactionHash } = enhancedTransaction
       if (safeTransaction && !transactionHash) {
         return 'Signing...'

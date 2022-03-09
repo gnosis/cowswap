@@ -14,6 +14,7 @@ import { classifyOrder, OrderTransitionStatus } from 'state/orders/utils'
 import { computeOrderSummary } from 'state/orders/updaters/utils'
 import { useTokenLazy } from 'hooks/useTokenLazy'
 import { useGpOrders } from 'api/gnosisProtocol/hooks'
+import { devDebug } from 'utils/logging'
 
 function _getTokenFromMapping(
   address: string,
@@ -155,7 +156,7 @@ export function GpOrdersUpdater(): null {
   const updateOrders = useCallback(
     async (chainId: ChainId, account: string): Promise<void> => {
       const tokens = allTokensRef.current
-      console.debug(
+      devDebug(
         `GpOrdersUpdater:: updating orders. Network ${chainId}, account ${account}, loaded tokens count ${
           Object.keys(tokens).length
         }`
@@ -166,11 +167,11 @@ export function GpOrdersUpdater(): null {
         }
 
         const tokensToFetch = _getMissingTokensAddresses(gpOrders, tokens, chainId)
-        console.debug(`GpOrdersUpdater::will try to fetch ${tokensToFetch.length} tokens`)
+        devDebug(`GpOrdersUpdater::will try to fetch ${tokensToFetch.length} tokens`)
 
         // Fetch them from the chain
         const fetchedTokens = await _fetchTokens(tokensToFetch, getToken)
-        console.debug(
+        devDebug(
           `GpOrdersUpdater::fetched ${Object.keys(fetchedTokens).filter(Boolean).length} out of ${
             tokensToFetch.length
           } tokens`
@@ -182,7 +183,7 @@ export function GpOrdersUpdater(): null {
         // Build store order objects, for all orders which we found both input/output tokens
         // Don't add order for those we didn't
         const orders = _filterOrders(gpOrders, reallyAllTokens, chainId)
-        console.debug(`GpOrdersUpdater::will add/update ${orders.length} out of ${gpOrders.length}`)
+        devDebug(`GpOrdersUpdater::will add/update ${orders.length} out of ${gpOrders.length}`)
 
         // Add orders to redux state
         orders.length && addOrUpdateOrders({ orders, chainId })

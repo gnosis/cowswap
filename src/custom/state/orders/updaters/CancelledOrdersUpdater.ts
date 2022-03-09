@@ -48,7 +48,7 @@ export function CancelledOrdersUpdater(): null {
       }
 
       // const startTime = Date.now()
-      // console.debug('[CancelledOrdersUpdater] Checking recently canceled orders....')
+      // devDebug('[CancelledOrdersUpdater] Checking recently canceled orders....')
       try {
         isUpdating.current = true
 
@@ -62,10 +62,10 @@ export function CancelledOrdersUpdater(): null {
         })
 
         if (pending.length === 0) {
-          // console.debug(`[CancelledOrdersUpdater] No orders are being cancelled`)
+          // devDebug(`[CancelledOrdersUpdater] No orders are being cancelled`)
           return
         } /* else {
-          console.debug(`[CancelledOrdersUpdater] Checking ${pending.length} recently canceled orders...`)
+          devDebug(`[CancelledOrdersUpdater] Checking ${pending.length} recently canceled orders...`)
         }*/
 
         // Iterate over pending orders fetching operator order data, async
@@ -99,7 +99,7 @@ export function CancelledOrdersUpdater(): null {
           })
       } finally {
         isUpdating.current = false
-        // console.debug(`[CancelledOrdersUpdater] Checked recently canceled orders in ${Date.now() - startTime}ms`)
+        // devDebug(`[CancelledOrdersUpdater] Checked recently canceled orders in ${Date.now() - startTime}ms`)
       }
     },
     [fulfillOrdersBatch]

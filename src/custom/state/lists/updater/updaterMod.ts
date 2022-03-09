@@ -14,6 +14,7 @@ import { useActiveListUrls } from 'state/lists/hooks'
 
 // MOD: add updateVersion for chainId change init
 import { updateVersion } from 'state/global/actions'
+import { devDebug } from 'utils/logging'
 
 export default function Updater(): null {
   const { chainId: connectedChainId, library } = useActiveWeb3React() // MOD: chainId
@@ -31,7 +32,7 @@ export default function Updater(): null {
   const fetchAllListsCallback = useCallback(() => {
     if (!isWindowVisible) return
     Object.keys(lists).forEach((url) =>
-      fetchList(url).catch((error) => console.debug('interval list fetching error', error))
+      fetchList(url).catch((error) => devDebug('interval list fetching error', error))
     )
   }, [fetchList, isWindowVisible, lists])
 
@@ -53,7 +54,7 @@ export default function Updater(): null {
     Object.keys(lists).forEach((listUrl) => {
       const list = lists[listUrl]
       if (!list.current && !list.loadingRequestId && !list.error) {
-        fetchList(listUrl).catch((error) => console.debug('list added fetching error', error))
+        fetchList(listUrl).catch((error) => devDebug('list added fetching error', error))
       }
     })
   }, [dispatch, fetchList, library, lists])
@@ -63,7 +64,7 @@ export default function Updater(): null {
     Object.keys(UNSUPPORTED_LIST_URLS[chainId]).forEach((listUrl) => {
       const list = lists[listUrl]
       if (!list || (!list.current && !list.loadingRequestId && !list.error)) {
-        fetchList(listUrl).catch((error) => console.debug('list added fetching error', error))
+        fetchList(listUrl).catch((error) => devDebug('list added fetching error', error))
       }
     })
   }, [chainId, dispatch, fetchList, library, lists])

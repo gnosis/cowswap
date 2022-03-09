@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { devLog } from 'utils/logging'
 
 export default function useMarkdown(file: string) {
   const [content, setContent] = useState('')
@@ -11,7 +12,7 @@ export default function useMarkdown(file: string) {
           setContent(text)
         })
         .catch((error) => {
-          console.log(`Error fetching markdown content file ${file}: `, error)
+          devLog(`Error fetching markdown content file ${file}: `, error)
           return null
         })
     }

@@ -5,6 +5,7 @@ import { formatSmart } from 'utils/format'
 import { AMOUNT_PRECISION } from 'constants/index'
 import { OrderTransitionStatus, classifyOrder } from 'state/orders/utils'
 import { SupportedChainId as ChainId } from 'constants/chains'
+import { devLog } from 'utils/logging'
 
 export type OrderLogPopupMixData = OrderFulfillmentData | OrderID
 
@@ -42,7 +43,7 @@ export function computeOrderSummary({
       summary = `Swap ${sellToken} for ${buyToken}`
     }
   } else {
-    console.log(`[state:orders:updater] computeFulfilledSummary::API data not yet in sync with blockchain`)
+    devLog(`[state:orders:updater] computeFulfilledSummary::API data not yet in sync with blockchain`)
   }
 
   return summary

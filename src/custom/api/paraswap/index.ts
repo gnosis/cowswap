@@ -7,6 +7,7 @@ import { SupportedChainId as ChainId } from 'constants/chains'
 import { getTokensFromMarket } from 'utils/misc'
 import { getValidParams, PriceInformation, PriceQuoteParams } from 'utils/price'
 import { SOLVER_ADDRESS as defaultUserAddress } from 'constants/index'
+import { devLog } from 'utils/logging'
 
 type ParaSwapPriceQuote = OptimalRate
 
@@ -81,7 +82,7 @@ export async function getPriceQuote(params: PriceQuoteParams): Promise<ParaSwapP
     paraSwapLibs.set(chainId, paraSwap)
   }
 
-  console.log(`[pricesApi:${API_NAME}] Get price from Paraswap`, params)
+  devLog(`[pricesApi:${API_NAME}] Get price from Paraswap`, params)
 
   // Buy/sell token and side (sell/buy)
   const { sellToken, buyToken } = getTokensFromMarket({ baseToken, quoteToken, kind })

@@ -1,6 +1,7 @@
 import SafeServiceClient, { SafeInfoResponse, SafeMultisigTransactionResponse } from '@gnosis.pm/safe-service-client'
 import { registerOnWindow } from 'utils/misc'
 import { ChainId } from '@uniswap/sdk'
+import { devLog } from 'utils/logging'
 
 const SAFE_TRANSACTION_SERVICE_URL: Partial<Record<number, string>> = {
   [ChainId.MAINNET]: 'https://safe-transaction.gnosis.io',
@@ -54,13 +55,13 @@ export function getSafeWebUrl(chaindId: number, safeAddress: string): string | n
 }
 
 export function getSafeTransaction(chainId: number, safeTxHash: string): Promise<SafeMultisigTransactionResponse> {
-  console.log('[api/gnosisSafe] getSafeTransaction', chainId, safeTxHash)
+  devLog('[api/gnosisSafe] getSafeTransaction', chainId, safeTxHash)
   const client = _getClientOrThrow(chainId)
   return client.getTransaction(safeTxHash)
 }
 
 export function getSafeInfo(chainId: number, safeAddress: string): Promise<SafeInfoResponse> {
-  console.log('[api/gnosisSafe] getSafeInfo', chainId, safeAddress)
+  devLog('[api/gnosisSafe] getSafeInfo', chainId, safeAddress)
   const client = _getClientOrThrow(chainId)
 
   return client.getSafeInfo(safeAddress)

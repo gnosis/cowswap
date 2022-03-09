@@ -10,6 +10,7 @@ import { parseStringOrBytes32 } from 'hooks/Tokens'
 import { useAddUserToken } from 'state/user/hooks'
 import { Erc20 } from 'abis/types'
 import { retry } from 'utils/retry'
+import { devDebug } from 'utils/logging'
 
 const contractsCache: Record<string, Erc20> = {}
 const bytes32ContractsCache: Record<string, Contract> = {}
@@ -50,7 +51,7 @@ async function _getBytes32NameAndSymbol(
   symbolSettled: PromiseFulfilledResult<string> | PromiseRejectedResult,
   params: GetTokenInfoParams
 ) {
-  console.debug(
+  devDebug(
     `[useTokenLazy::callback] name or symbol failed, trying bytes32`,
     address,
     account,
@@ -109,7 +110,7 @@ async function _getNameAndSymbol(
 
 async function _getTokenInfo(params: GetTokenInfoParams): Promise<TokenInfo | null> {
   const { address, account, chainId } = params
-  console.debug(`[useTokenLazy::callback] input is valid`, address, account, chainId)
+  devDebug(`[useTokenLazy::callback] input is valid`, address, account, chainId)
 
   const contract = await _getTokenContract(params)
 
@@ -124,7 +125,7 @@ async function _getTokenInfo(params: GetTokenInfoParams): Promise<TokenInfo | nu
     // If no decimals, stop here
     decimals = await decimalsPromise
   } catch (e) {
-    console.debug(`[useTokenLazy::callback] no decimals, stopping`, address, account, chainId, e)
+    devDebug(`[useTokenLazy::callback] no decimals, stopping`, address, account, chainId, e)
 
     cancelNamePromise()
     cancelSymbolPromise()
@@ -147,7 +148,7 @@ export function useTokenLazy() {
 
   return useCallback(
     async (address: string): Promise<Token | null> => {
-      console.debug(`[useTokenLazy::callback] callback called`, address, account, chainId)
+      devDebug(`[useTokenLazy::callback] callback called`, address, account, chainId)
 
       if (!account || !chainId || !address || !library) {
         return null
@@ -162,7 +163,7 @@ export function useTokenLazy() {
       const { decimals, symbol, name } = tokenInfo
       const token = new Token(chainId, address, decimals, symbol, name)
 
-      console.debug(`[useTokenLazy::callback] loaded token`, address, account, chainId, token)
+      devDebug(`[useTokenLazy::callback] loaded token`, address, account, chainId, token)
 
       addUserToken(token)
 

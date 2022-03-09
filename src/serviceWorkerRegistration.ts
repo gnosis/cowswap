@@ -1,6 +1,8 @@
 // This optional code is used to register a service worker.
 // register() is not called by default.
 
+import { devLog } from 'utils/logging'
+
 // This lets the app load faster on subsequent visits in production, and gives
 // it offline capabilities. However, it also means that developers (and users)
 // will only see deployed updates on subsequent visits to a page, after all the
@@ -41,7 +43,7 @@ const SWHelper = {
   },
 
   async prepareCachesForUpdate() {
-    console.log('[worker] prepareCachesForUpdate')
+    devLog('[worker] prepareCachesForUpdate')
     return (await SWHelper.getWaitingWorker())?.postMessage({ type: 'PREPARE_CACHES_FOR_UPDATE' })
   },
 }
@@ -51,7 +53,7 @@ function registerValidSW(swUrl: string, config?: Config) {
     .register(swUrl)
     .then((registration) => {
       if (registration.waiting && registration.active) {
-        console.log('[worker] Needs update (waiting & active)')
+        devLog('[worker] Needs update (waiting & active)')
         window.swNeedUpdate = true
       }
 
@@ -63,7 +65,7 @@ function registerValidSW(swUrl: string, config?: Config) {
         installingWorker.onstatechange = () => {
           if (installingWorker.state === 'installed') {
             if (navigator.serviceWorker.controller) {
-              console.log('[worker] Needs update (installed)')
+              devLog('[worker] Needs update (installed)')
               window.swNeedUpdate = true
 
               SWHelper.prepareCachesForUpdate().then()
@@ -71,7 +73,7 @@ function registerValidSW(swUrl: string, config?: Config) {
               // At this point, the updated precached content has been fetched,
               // but the previous service worker will still serve the older
               // content until all client tabs are closed.
-              console.log(
+              devLog(
                 '[worker] New content is available and will be used when all tabs for this page are closed. See https://cra.link/PWA.'
               )
 
@@ -83,7 +85,7 @@ function registerValidSW(swUrl: string, config?: Config) {
               // At this point, everything has been precached.
               // It's the perfect time to display a
               // "Content is cached for offline use." message.
-              console.log('[worker] Content is cached for offline use.')
+              devLog('[worker] Content is cached for offline use.')
 
               // Execute callback
               if (config && config.onSuccess) {
@@ -120,7 +122,7 @@ function checkValidServiceWorker(swUrl: string, config?: Config) {
       }
     })
     .catch(() => {
-      console.log('No internet connection found. App is running in offline mode.')
+      devLog('No internet connection found. App is running in offline mode.')
     })
 }
 
@@ -145,7 +147,7 @@ export function register(config?: Config) {
         // Add some additional logging to localhost, pointing developers to the
         // service worker/PWA documentation.
         navigator.serviceWorker.ready.then(() => {
-          console.log(
+          devLog(
             '[worker] This web app is being served cache-first by a service worker. To learn more, visit https://cra.link/PWA'
           )
         })

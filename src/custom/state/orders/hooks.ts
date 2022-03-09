@@ -41,6 +41,7 @@ import { isTruthy } from 'utils/misc'
 import { OrderID } from 'api/gnosisProtocol'
 import { ContractDeploymentBlocks } from './consts'
 import { deserializeToken, serializeToken } from '@src/state/user/hooks'
+import { devDebug } from 'utils/logging'
 
 export interface AddOrUpdateUnserialisedOrdersParams extends Omit<AddOrUpdateOrdersParams, 'orders'> {
   orders: Order[]
@@ -135,8 +136,7 @@ function _deserializeOrder(orderObject: OrderObject | V2OrderObject | undefined)
       outputToken: deserialisedOutputToken,
     }
   } else {
-    orderObject?.order &&
-      console.debug('[Order::hooks] - V2 Order detected, skipping serialisation.', orderObject.order)
+    orderObject?.order && devDebug('[Order::hooks] - V2 Order detected, skipping serialisation.', orderObject.order)
   }
 
   return order

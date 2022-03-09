@@ -27,7 +27,7 @@ import { FeeQuoteParams, PriceInformation, PriceQuoteParams, SimpleGetQuoteRespo
 
 import { DEFAULT_NETWORK_FOR_LISTS } from 'constants/lists'
 import * as Sentry from '@sentry/browser'
-import { checkAndThrowIfJsonSerialisableError, constructSentryError } from 'utils/logging'
+import { checkAndThrowIfJsonSerialisableError, constructSentryError, devInfo, devLog } from 'utils/logging'
 import { ZERO_ADDRESS } from 'constants/misc'
 import { getAppDataHash } from 'constants/appDataHash'
 import { GpPriceStrategy } from 'hooks/useGetGpPriceStrategy'
@@ -224,7 +224,7 @@ function _delete(chainId: ChainId, url: string, data: any): Promise<Response> {
 
 export async function sendOrder(params: { chainId: ChainId; order: OrderCreation; owner: string }): Promise<OrderID> {
   const { chainId, order, owner } = params
-  console.log(`[api:${API_NAME}] Post signed order for network`, chainId, order)
+  devLog(`[api:${API_NAME}] Post signed order for network`, chainId, order)
 
   const orderParams = {
     ...order,
@@ -246,7 +246,7 @@ type OrderCancellationParams = {
 export async function sendSignedOrderCancellation(params: OrderCancellationParams): Promise<void> {
   const { chainId, cancellation, owner: from } = params
 
-  console.log(`[api:${API_NAME}] Delete signed order for network`, chainId, cancellation)
+  devLog(`[api:${API_NAME}] Delete signed order for network`, chainId, cancellation)
 
   const response = await _delete(chainId, `/orders/${cancellation.orderUid}`, {
     signature: cancellation.signature,
@@ -260,7 +260,7 @@ export async function sendSignedOrderCancellation(params: OrderCancellationParam
     throw new Error(errorMessage)
   }
 
-  console.log(`[api:${API_NAME}] Cancelled order`, cancellation.orderUid, chainId)
+  devLog(`[api:${API_NAME}] Cancelled order`, cancellation.orderUid, chainId)
 }
 
 const UNHANDLED_QUOTE_ERROR: GpQuoteErrorObject = {
@@ -298,7 +298,7 @@ async function _handleOrderResponse<T = any, P extends UnsignedOrder = UnsignedO
       })
     } else {
       const uid = await response.json()
-      console.log(`[api:${API_NAME}] Success posting the signed order`, JSON.stringify(uid))
+      devLog(`[api:${API_NAME}] Success posting the signed order`, JSON.stringify(uid))
       return uid
     }
   } catch (error) {
@@ -413,7 +413,7 @@ export async function getQuote(params: FeeQuoteParams) {
 
 export async function getPriceQuoteLegacy(params: PriceQuoteParams): Promise<PriceInformation | null> {
   const { baseToken, quoteToken, amount, kind, chainId } = params
-  console.log(`[api:${API_NAME}] Get price from API`, params)
+  devLog(`[api:${API_NAME}] Get price from API`, params)
 
   if (!ENABLED) {
     return null
@@ -435,7 +435,7 @@ export async function getPriceQuoteLegacy(params: PriceQuoteParams): Promise<Pri
 }
 
 export async function getOrder(chainId: ChainId, orderId: string): Promise<OrderMetaData | null> {
-  console.log(`[api:${API_NAME}] Get order for `, chainId, orderId)
+  devLog(`[api:${API_NAME}] Get order for `, chainId, orderId)
   try {
     const response = await _get(chainId, `/orders/${orderId}`)
 
@@ -452,7 +452,7 @@ export async function getOrder(chainId: ChainId, orderId: string): Promise<Order
 }
 
 export async function getOrders(chainId: ChainId, owner: string, limit = 1000, offset = 0): Promise<OrderMetaData[]> {
-  console.log(`[api:${API_NAME}] Get orders for `, chainId, owner, limit, offset)
+  devLog(`[api:${API_NAME}] Get orders for `, chainId, owner, limit, offset)
 
   const queryString = stringify({ limit, offset }, { addQueryPrefix: true })
 
@@ -479,7 +479,7 @@ type GetTradesParams = {
 export async function getTrades(params: GetTradesParams): Promise<TradeMetaData[]> {
   const { chainId, owner, limit, offset } = params
   const qsParams = stringify({ owner, limit, offset })
-  console.log('[util:operator] Get trades for', chainId, owner, { limit, offset })
+  devLog('[util:operator] Get trades for', chainId, owner, { limit, offset })
   try {
     const response = await _get(chainId, `/trades?${qsParams}`)
 
@@ -504,9 +504,9 @@ export type ProfileData = {
 }
 
 export async function getProfileData(chainId: ChainId, address: string): Promise<ProfileData | null> {
-  console.log(`[api:${API_NAME}] Get profile data for`, chainId, address)
+  devLog(`[api:${API_NAME}] Get profile data for`, chainId, address)
   if (chainId !== ChainId.MAINNET) {
-    console.info('Profile data is only available for mainnet')
+    devInfo('Profile data is only available for mainnet')
     return null
   }
 
@@ -515,7 +515,7 @@ export async function getProfileData(chainId: ChainId, address: string): Promise
   // TODO: Update the error handler when the openAPI profile spec is defined
   if (!response.ok) {
     const errorResponse = await response.json()
-    console.log(errorResponse)
+    devLog(errorResponse)
     throw new Error(errorResponse?.description)
   } else {
     return response.json()
@@ -528,13 +528,13 @@ export type PriceStrategy = {
 }
 
 export async function getPriceStrategy(chainId: ChainId): Promise<PriceStrategy> {
-  console.log(`[api:${API_NAME}] Get GP price strategy for`, chainId)
+  devLog(`[api:${API_NAME}] Get GP price strategy for`, chainId)
 
   const response = await _fetchPriceStrategy(chainId)
 
   if (!response.ok) {
     const errorResponse = await response.json()
-    console.log(errorResponse)
+    devLog(errorResponse)
     throw new Error(errorResponse?.description)
   } else {
     return response.json()

@@ -35,6 +35,7 @@ import { V_COW } from 'constants/tokens'
 import VCOWDropdown from './VCOWDropdown'
 
 import { IS_CLAIMING_ENABLED } from 'pages/Claim/const'
+import { devLog } from 'utils/logging'
 
 export default function Profile() {
   const referralLink = useReferralLink()
@@ -200,7 +201,7 @@ export default function Profile() {
               </FlexWrap>
             </ChildWrapper>
           </GridWrap>
-          {!account && <Web3Status openOrdersPanel={() => console.log('TODO')} />}
+          {!account && <Web3Status openOrdersPanel={() => devLog('TODO')} />}
         </GridWrap>
       </Wrapper>
     </Container>

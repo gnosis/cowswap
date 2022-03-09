@@ -29,6 +29,7 @@ import InvestmentFlow from './InvestmentFlow'
 import { ClaimSummary } from './ClaimSummary'
 
 import usePrevious from 'hooks/usePrevious'
+import { devLog } from 'utils/logging'
 
 export default function Claim() {
   const { account, chainId } = useActiveWeb3React()
@@ -169,10 +170,10 @@ export default function Claim() {
 
     // check if there are any selected (paid) claims
     if (!selected.length) {
-      console.log('Starting claiming with', claimInputData)
+      devLog('Starting claiming with', claimInputData)
       sendTransaction(claimInputData)
     } else if (investFlowStep == 2) {
-      console.log('Starting claiming with', claimInputData)
+      devLog('Starting claiming with', claimInputData)
       sendTransaction(claimInputData)
     } else {
       setIsInvestFlowActive(true)

@@ -15,6 +15,7 @@ import { SupportedChainId as ChainId } from 'constants/chains'
 import { GP_SETTLEMENT_CONTRACT_ADDRESS } from 'constants/index'
 import { TypedDataDomain, Signer } from '@ethersproject/abstract-signer'
 import { registerOnWindow } from 'utils/misc'
+import { devLog } from './logging'
 
 // For error codes, see:
 // - https://eth.wiki/json-rpc/json-rpc-error-codes-improvement-proposal
@@ -105,7 +106,7 @@ async function _signOrder(params: SignOrderParams): Promise<Signature> {
   const { chainId, signer, order, signingScheme } = params
 
   const domain = _getDomain(chainId)
-  console.log('[utils:signature] signOrder', {
+  devLog('[utils:signature] signOrder', {
     domain,
     order,
     signer,
@@ -119,7 +120,7 @@ async function _signOrderCancellation(params: SingOrderCancellationParams): Prom
 
   const domain = _getDomain(chainId)
 
-  console.log('[utils:signature] signOrderCancellation', {
+  devLog('[utils:signature] signOrderCancellation', {
     domain,
     orderId,
     signer,

@@ -1,7 +1,8 @@
+import { devLog } from 'utils/logging'
 import { ProfileData } from './api'
 
 export async function getProfileData(): Promise<ProfileData | null> {
-  console.log('[utils:operatorMock] Get profile data')
+  devLog('[utils:operatorMock] Get profile data')
   return {
     lastUpdated: new Date(2021, 9, 4, 7).toUTCString(),
     referralVolumeUsd: 250_000,

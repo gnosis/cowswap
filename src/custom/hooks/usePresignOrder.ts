@@ -5,6 +5,7 @@ import { ContractTransaction } from '@ethersproject/contracts'
 import { BigNumber } from '@ethersproject/bignumber'
 import { calculateGasMargin } from 'utils/calculateGasMargin'
 import { useActiveWeb3React } from 'hooks/web3'
+import { devLog } from 'utils/logging'
 
 // Use a 150K gas as a fallback if there's issue calculating the gas estimation (fixes some issues with some nodes failing to calculate gas costs for SC wallets)
 const PRESIGN_GAS_LIMIT_DEFAULT = BigNumber.from('150000')
@@ -17,7 +18,7 @@ export function usePresignOrder(): PresignOrder | null {
 
   const presignOrder = useCallback<PresignOrder>(
     async (orderId) => {
-      console.log('Pre-signing order', orderId)
+      devLog('Pre-signing order', orderId)
       if (!chainId) {
         throw Error('Not connected to any chain')
       }
@@ -38,7 +39,7 @@ export function usePresignOrder(): PresignOrder | null {
         gasLimit: calculateGasMargin(chainId, estimatedGas),
       })
 
-      console.log('Sent transaction for presigning', orderId, txReceipt)
+      devLog('Sent transaction for presigning', orderId, txReceipt)
 
       return txReceipt
     },

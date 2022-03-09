@@ -9,6 +9,7 @@ import { Markdown } from 'components/Markdown'
 import { useActiveWeb3React } from '@src/hooks/web3'
 import { ChainId } from '@uniswap/sdk'
 import { isBarn } from 'utils/environments'
+import { devDebug } from 'utils/logging'
 
 export * from './URLWarningMod'
 
@@ -69,7 +70,7 @@ export default function URLWarning() {
   if (error) {
     console.error('[URLWarning] Error getting the announcement text: ', error)
   } else {
-    console.debug('[URLWarning] Announcement text', announcementText, contentHash)
+    devDebug('[URLWarning] Announcement text', announcementText, contentHash)
   }
 
   const announcementVisible = useAnnouncementVisible(contentHash)

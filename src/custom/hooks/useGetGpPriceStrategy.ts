@@ -5,6 +5,7 @@ import { getPriceStrategy, PriceStrategy } from 'api/gnosisProtocol/api'
 import { useActiveWeb3React } from 'hooks'
 import { supportedChainId } from 'utils/supportedChainId'
 import { SupportedChainId } from 'constants/chains'
+import { devDebug } from 'utils/logging'
 
 export type GpPriceStrategy = 'COWSWAP' | 'LEGACY'
 
@@ -19,7 +20,7 @@ export default function useGetGpPriceStrategy(): GpPriceStrategy {
 
   useEffect(() => {
     const chainId = supportedChainId(preChainId)
-    console.debug('[useGetGpPriceStrategy::GP Price Strategy]::', gpPriceStrategy)
+    devDebug('[useGetGpPriceStrategy::GP Price Strategy]::', gpPriceStrategy)
 
     const getStrategy = () => {
       // default to MAINNET if not connected, or incorrect network

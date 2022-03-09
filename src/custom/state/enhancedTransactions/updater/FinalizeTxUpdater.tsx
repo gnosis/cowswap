@@ -15,6 +15,7 @@ import { useAllTransactionsDetails } from 'state/enhancedTransactions/hooks'
 import { Dispatch } from 'redux'
 import { TransactionReceipt } from '@ethersproject/abstract-provider'
 import { GetSafeInfo, useGetSafeInfo } from 'hooks/useGetSafeInfo'
+import { devLog } from 'utils/logging'
 
 type TxInterface = Pick<
   EnhancedTransactionDetails,
@@ -61,7 +62,7 @@ function finalizeEthereumTransaction(
   const { chainId, lastBlockNumber, addPopup, dispatch } = params
   const { hash } = transaction
 
-  console.log(`[FinalizeTxUpdater] Transaction ${receipt.transactionHash} has been mined`, receipt)
+  devLog(`[FinalizeTxUpdater] Transaction ${receipt.transactionHash} has been mined`, receipt)
 
   dispatch(
     finalizeTransaction({
@@ -115,7 +116,7 @@ function checkEthereumTransactions(params: CheckEthereumTransactions): Cancel[] 
           // If the safe transaction is executed, but we don't have a tx receipt yet
           if (isExecuted && !receipt) {
             // Get the ethereum tx receipt
-            console.log(
+            devLog(
               '[FinalizeTxUpdater] Safe transaction is executed, but we have not fetched the receipt yet. Tx: ',
               transactionHash
             )

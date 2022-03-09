@@ -21,6 +21,7 @@ import { ChainId } from 'state/lists/actions'
 import { toErc20Address } from 'utils/tokens'
 import { GpPriceStrategy } from 'hooks/useGetGpPriceStrategy'
 import { MAX_VALID_TO_EPOCH } from 'hooks/useSwapCallback'
+import { devDebug, devLog } from './logging'
 
 const FEE_EXCEEDS_FROM_ERROR = new GpQuoteError({
   errorType: GpQuoteErrorCodes.FeeExceedsFrom,
@@ -114,7 +115,7 @@ function _filterWinningPrice(params: FilterWinningPriceParams) {
     .filter((quote) => quote.amount === amount)
     .map((p) => p.source)
     .join(', ')
-  console.debug('[util::filterWinningPrice] Winning price: ' + winningPrices + ' for token ' + token + ' @', amount)
+  devDebug('[util::filterWinningPrice] Winning price: ' + winningPrices + ' for token ' + token + ' @', amount)
 
   return { token, amount }
 }
@@ -224,7 +225,7 @@ export async function getBestPrice(params: PriceQuoteParams, options?: GetBestPr
   if (priceQuotes.length > 0) {
     // At least we have one successful price
     const sourceNames = priceQuotes.map((p) => p.source).join(', ')
-    console.log('[utils::useRefetchPriceCallback] Get best price succeeded for ' + sourceNames, priceQuotes)
+    devLog('[utils::useRefetchPriceCallback] Get best price succeeded for ' + sourceNames, priceQuotes)
     const amounts = priceQuotes.map((quote) => quote.amount).filter(Boolean) as string[]
 
     return _filterWinningPrice({ ...options, kind: params.kind, amounts, priceQuotes })
@@ -317,8 +318,8 @@ export async function getBestQuoteLegacy({
     // we need to check for 0/negative exchangeAmount should fee >= amount
     const { amount: fee } = await feePromise
     const result = BigNumber.from(amount).sub(fee)
-    console.log(`Sell amount before fee: ${formatAtoms(amount, fromDecimals)}  (in atoms ${amount})`)
-    console.log(`Sell amount after fee: ${formatAtoms(result.toString(), fromDecimals)}  (in atoms ${result})`)
+    devLog(`Sell amount before fee: ${formatAtoms(amount, fromDecimals)}  (in atoms ${amount})`)
+    devLog(`Sell amount after fee: ${formatAtoms(result.toString(), fromDecimals)}  (in atoms ${result})`)
 
     feeExceedsPrice = result.lte('0')
 
@@ -355,7 +356,7 @@ export async function getBestQuote({
   strategy,
 }: QuoteParams): Promise<QuoteResult> {
   if (strategy === 'COWSWAP') {
-    console.debug('[GP PRICE::API] getBestQuote - Attempting best quote retrieval using COWSWAP strategy, hang tight.')
+    devDebug('[GP PRICE::API] getBestQuote - Attempting best quote retrieval using COWSWAP strategy, hang tight.')
 
     return getFullQuote({ quoteParams }).catch((err) => {
       console.warn(
@@ -367,14 +368,14 @@ export async function getBestQuote({
       return getBestQuote({ strategy: 'LEGACY', quoteParams, fetchFee, previousFee, isPriceRefresh: false })
     })
   } else {
-    console.debug('[GP PRICE::API] getBestQuote - Attempting best quote retrieval using LEGACY strategy, hang tight.')
+    devDebug('[GP PRICE::API] getBestQuote - Attempting best quote retrieval using LEGACY strategy, hang tight.')
 
     return getBestQuoteLegacy({ quoteParams, fetchFee, previousFee, isPriceRefresh: false })
   }
 }
 
 export async function getFastQuote({ quoteParams }: QuoteParams): Promise<QuoteResult> {
-  console.debug('[GP PRICE::API] getFastQuote - Attempting fast quote retrieval, hang tight.')
+  devDebug('[GP PRICE::API] getFastQuote - Attempting fast quote retrieval, hang tight.')
 
   return getFullQuote({ quoteParams })
 }
@@ -401,14 +402,14 @@ export function calculateFallbackPriceImpact(initialValue: string, finalValue: s
   // see FiatValue: line 38
   const impact = isPositive ? percentage.multiply('-1') : percentage
 
-  console.debug(`[calculateFallbackPriceImpact]::${impact.toSignificant(2)}%`)
+  devDebug(`[calculateFallbackPriceImpact]::${impact.toSignificant(2)}%`)
 
   return impact
 }
 
 export async function getGpUsdcPrice({ strategy, quoteParams }: Pick<QuoteParams, 'strategy' | 'quoteParams'>) {
   if (strategy === 'COWSWAP') {
-    console.debug(
+    devDebug(
       '[GP PRICE::API] getGpUsdcPrice - Attempting best USDC quote retrieval using COWSWAP strategy, hang tight.'
     )
     quoteParams.validTo = MAX_VALID_TO_EPOCH
@@ -418,9 +419,7 @@ export async function getGpUsdcPrice({ strategy, quoteParams }: Pick<QuoteParams
     const amountWithoutFee = new BigNumberJs(quote.feeAmount).plus(new BigNumberJs(quote.sellAmount))
     return amountWithoutFee.toString(10)
   } else {
-    console.debug(
-      '[GP PRICE::API] getGpUsdcPrice - Attempting best USDC quote retrieval using LEGACY strategy, hang tight.'
-    )
+    devDebug('[GP PRICE::API] getGpUsdcPrice - Attempting best USDC quote retrieval using LEGACY strategy, hang tight.')
     // legacy
     const legacyParams = {
       ...quoteParams,

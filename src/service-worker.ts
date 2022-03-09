@@ -5,13 +5,14 @@ import { clientsClaim, setCacheNameDetails } from 'workbox-core'
 import { createHandlerBoundToURL, precacheAndRoute } from 'workbox-precaching'
 import { registerRoute } from 'workbox-routing'
 import { version as WEB_VERSION } from '@src/../package.json'
+import { devLog } from 'utils/logging'
 
 declare const self: ServiceWorkerGlobalScope
 
 const DNS_DOMAINS = ['cowswap.exchange', 'barn.cowswap.exchange']
 const DEV_DOMAINS_SUFFIX = '.gnosisdev.com'
 
-console.log(`[worker] registerRoutes for v${WEB_VERSION}`)
+devLog(`[worker] registerRoutes for v${WEB_VERSION}`)
 
 // Set Cache name
 //  See https://dev.to/atonchev/flawless-and-silent-upgrade-of-the-service-worker-2o95
@@ -25,13 +26,13 @@ setCacheNameDetails({
 self.addEventListener('message', (event) => {
   // Regular skip waiting
   if (event.data && event.data.type === 'SKIP_WAITING') {
-    console.log('[worker] Skip waiting')
+    devLog('[worker] Skip waiting')
     self.skipWaiting()
   }
 
   // Our special skip waiting function!
   if (event.data && event.data.type === 'SKIP_WAITING_WHEN_SOLO') {
-    console.log('[worker] Skip waiting when solo')
+    devLog('[worker] Skip waiting when solo')
     self.clients
       .matchAll({
         includeUncontrolled: true,
@@ -44,7 +45,7 @@ self.addEventListener('message', (event) => {
   }
 
   if (event.data && event.data.type === 'PREPARE_CACHES_FOR_UPDATE') {
-    console.log('[worker] Prepare cache for update')
+    devLog('[worker] Prepare cache for update')
     prepareCachesForUpdate().then()
   }
 })
@@ -53,7 +54,7 @@ self.addEventListener('activate', (event) => {
   event.waitUntil(
     getCacheStorageNames().then(({ outdatedCacheNames }) =>
       outdatedCacheNames.map((cacheName) => {
-        console.log('[worker] Delete cache', cacheName)
+        devLog('[worker] Delete cache', cacheName)
         // Delete old caches
         // https://developers.google.com/web/ilt/pwa/caching-files-with-service-worker#removing_outdated_caches
         return caches.delete(cacheName)
@@ -138,28 +139,28 @@ type IndexRegisterParams = { request: Request; url: URL }
 registerRoute((params: IndexRegisterParams) => {
   const { request, url } = params
 
-  // console.log('[worker] Index.html', request, url, params)
+  // devLog('[worker] Index.html', request, url, params)
   // return false
   // If this isn't a DNS domain skip. IPFS gateways may not have domain
   // separation, so they cannot use App Shell-style routing.
   const hostName = url.hostname
   if (!DNS_DOMAINS.includes(hostName) && !hostName.endsWith(DEV_DOMAINS_SUFFIX)) {
-    // console.log('[worker] FALSE. hostname', hostName)
+    // devLog('[worker] FALSE. hostname', hostName)
     return false
   }
 
   // If this isn't a navigation, skip.
   if (request.mode !== 'navigate') {
-    // console.log('[worker] FALSE. No navigate', request.mode)
+    // devLog('[worker] FALSE. No navigate', request.mode)
     return false
   }
 
   // If this looks like a URL for a resource, skip.
   if (url.pathname.match(fileExtensionRegexp)) {
-    // console.log('[worker] FALSE. If this looks like a URL for a resource, skip.', request.mode)
+    // devLog('[worker] FALSE. If this looks like a URL for a resource, skip.', request.mode)
     return false
   }
 
-  // console.log('[worker] TRUE!')
+  // devLog('[worker] TRUE!')
   return true
 }, createHandlerBoundToURL(process.env.PUBLIC_URL + '/index.html'))

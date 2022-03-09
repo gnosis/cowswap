@@ -15,6 +15,7 @@ import { useActiveWeb3React } from 'hooks/web3'
 import { OptionalApproveCallbackParams } from '.'
 import { useCurrency } from 'hooks/Tokens'
 import { OperationType } from 'components/TransactionConfirmationModal'
+import { devDebug, devLog } from 'utils/logging'
 
 // Use a 150K gas as a fallback if there's issue calculating the gas estimation (fixes some issues with some nodes failing to calculate gas costs for SC wallets)
 export const APPROVE_GAS_LIMIT_DEFAULT = BigNumber.from('150000')
@@ -51,7 +52,7 @@ export function useApproveCallback({
   // TODO: Nice to have, can be deleted
   {
     process.env.NODE_ENV !== 'production' &&
-      console.debug(`
+      devDebug(`
     $$$$Approval metrics:
     ====
     CurrentAllowance: ${currentAllowance?.toExact()}
@@ -126,7 +127,7 @@ export function useApproveCallback({
         // general fallback for tokens who restrict approval amounts
         useExact = true
         return tokenContract.estimateGas.approve(spender, amountToApprove.quotient.toString()).catch((error) => {
-          console.log(
+          devLog(
             '[useApproveCallbackMod] Error estimating gas for approval. Using default gas limit ' +
               APPROVE_GAS_LIMIT_DEFAULT.toString(),
             error
@@ -153,7 +154,7 @@ export function useApproveCallback({
             })
           })
           // .catch((error: Error) => {
-          //   console.debug('Failed to approve token', error)
+          //   devDebug('Failed to approve token', error)
           //   throw error
           // })
           .finally(closeModals)
@@ -201,7 +202,7 @@ export function useApproveCallback({
       const estimatedGas = await tokenContract.estimateGas.approve(spender, MaxUint256).catch(() => {
         // general fallback for tokens who restrict approval amounts
         return tokenContract.estimateGas.approve(spender, '0').catch((error) => {
-          console.log(
+          devLog(
             '[useApproveCallbackMod] Error estimating gas for revoking approval. Using default gas limit ' +
               APPROVE_GAS_LIMIT_DEFAULT.toString(),
             error
@@ -227,7 +228,7 @@ export function useApproveCallback({
             })
           })
           // .catch((error: Error) => {
-          //   console.debug('Failed to approve token', error)
+          //   devDebug('Failed to approve token', error)
           //   throw error
           // })
           .finally(closeModals)

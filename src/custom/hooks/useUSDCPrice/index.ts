@@ -23,6 +23,7 @@ import { MAX_VALID_TO_EPOCH } from 'hooks/useSwapCallback'
 import { useIsQuoteLoading } from 'state/price/hooks'
 import { onlyResolvesLast } from 'utils/async'
 import { getGpUsdcPrice } from 'utils/price'
+import { devDebug } from 'utils/logging'
 
 export * from '@src/hooks/useUSDCPrice'
 
@@ -123,7 +124,7 @@ export default function useUSDCPrice(currency?: Currency) {
               baseAmount,
               quoteAmount: stringToCurrency(quote, stablecoin),
             })
-            console.debug(
+            devDebug(
               '[useBestUSDCPrice] Best USDC price amount',
               price.toSignificant(12),
               price.invert().toSignificant(12)
@@ -224,7 +225,7 @@ export function useCoingeckoUsdPrice(currency?: Currency) {
           quoteAmount,
         }).invert()
 
-        console.debug(
+        devDebug(
           '[useCoingeckoUsdPrice] Best Coingecko USD price amount',
           usdPrice.toSignificant(12),
           usdPrice.invert().toSignificant(12)

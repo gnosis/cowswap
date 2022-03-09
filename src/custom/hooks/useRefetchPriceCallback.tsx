@@ -23,6 +23,7 @@ import { CancelableResult, onlyResolvesLast } from 'utils/async'
 import useGetGpPriceStrategy from 'hooks/useGetGpPriceStrategy'
 import { calculateValidTo } from 'hooks/useSwapCallback'
 import { useUserTransactionTTL } from 'state/user/hooks'
+import { devDebug } from 'utils/logging'
 
 interface HandleQuoteErrorParams {
   quoteData: QuoteInformationObject | FeeQuoteParams
@@ -151,7 +152,7 @@ export function useRefetchQuoteCallback() {
 
         if (cancelled) {
           // Cancellation can happen if a new request is made, then any ongoing query is canceled
-          console.debug('[useRefetchPriceCallback] Canceled get quote price for', params)
+          devDebug('[useRefetchPriceCallback] Canceled get quote price for', params)
           return
         }
 
@@ -183,7 +184,7 @@ export function useRefetchQuoteCallback() {
         // can be a previously unsupported token which is now valid
         // so we check against map and remove it
         if (previouslyUnsupportedToken) {
-          console.debug('[useRefetchPriceCallback]::Previously unsupported token now supported - re-enabling.')
+          devDebug('[useRefetchPriceCallback]::Previously unsupported token now supported - re-enabling.')
 
           removeGpUnsupportedToken({
             chainId,

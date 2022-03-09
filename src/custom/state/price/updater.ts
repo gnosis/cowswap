@@ -43,7 +43,7 @@ function isExpiringSoon(quoteExpirationIsoDate: string, threshold: number): bool
   const needRefetch = feeExpirationDate <= Date.now() + threshold
 
   // const secondsLeft = (feeExpirationDate.valueOf() - Date.now()) / 1000
-  // console.log(`[state:price:updater] Fee isExpiring in ${secondsLeft}. Refetch?`, needRefetch)
+  // devLog(`[state:price:updater] Fee isExpiring in ${secondsLeft}. Refetch?`, needRefetch)
 
   return needRefetch
 }

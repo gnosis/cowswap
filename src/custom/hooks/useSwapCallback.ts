@@ -22,6 +22,7 @@ import { useWalletInfo } from './useWalletInfo'
 import { usePresignOrder, PresignOrder } from 'hooks/usePresignOrder'
 import { Web3Provider } from '@ethersproject/providers'
 import { useAppDataHash } from 'state/affiliate/hooks'
+import { devLog } from 'utils/logging'
 
 export const MAX_VALID_TO_EPOCH = BigNumber.from('0xFFFFFFFF').toNumber() // Max uint32 (Feb 07 2106 07:28:15 GMT+0100)
 
@@ -211,7 +212,7 @@ async function _swap(params: SwapParams): Promise<string> {
     if (wrapPromise) {
       // Wait for order and the wrap
       const [orderAux, wrapTx] = await Promise.all([postOrderPromise, wrapPromise])
-      console.log('[useSwapCallback] Wrapped ETH successfully. Tx: ', wrapTx)
+      devLog('[useSwapCallback] Wrapped ETH successfully. Tx: ', wrapTx)
       pendingOrderParams = orderAux
     } else {
       // Wait just for the order
@@ -227,7 +228,7 @@ async function _swap(params: SwapParams): Promise<string> {
   let presignGnosisSafeTxHash: string | undefined
   if (!allowsOffchainSigning) {
     const presignTx = await presignOrder(orderId)
-    console.log('Pre-sign order has been sent with: ', pendingOrderParams, presignTx)
+    devLog('Pre-sign order has been sent with: ', pendingOrderParams, presignTx)
 
     if (isGnosisSafeWallet) {
       presignGnosisSafeTxHash = presignTx.hash

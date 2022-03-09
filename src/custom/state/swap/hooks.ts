@@ -41,6 +41,7 @@ import { WETH9_EXTENDED as WETH, GpEther as ETHER } from 'constants/tokens'
 import { useIsExpertMode, useUserSlippageToleranceWithDefault } from '@src/state/user/hooks'
 import { PriceImpact } from 'hooks/usePriceImpact'
 import { isWrappingTrade } from './utils'
+import { devDebug } from 'utils/logging'
 
 export * from '@src/state/swap/hooks'
 
@@ -113,7 +114,7 @@ interface DerivedSwapInfo {
     }
   } catch (error) {
     // should fail if the user specifies too many decimal places of precision (or maybe exceed max uint?)
-    console.debug(`Failed to parse input amount: "${value}"`, error)
+    devDebug(`Failed to parse input amount: "${value}"`, error)
   }
   // necessary for all paths to return a value
   return undefined
@@ -297,8 +298,8 @@ export function useDerivedSwapInfo(): /* {
 
   // purely for debugging
   useEffect(() => {
-    console.debug('[useDerivedSwapInfo] Price quote: ', quote?.price?.amount)
-    console.debug('[useDerivedSwapInfo] Fee quote: ', quote?.fee?.amount)
+    devDebug('[useDerivedSwapInfo] Price quote: ', quote?.price?.amount)
+    devDebug('[useDerivedSwapInfo] Fee quote: ', quote?.fee?.amount)
   }, [quote])
 
   const isWrapping = isWrappingTrade(inputCurrency, outputCurrency, chainId)

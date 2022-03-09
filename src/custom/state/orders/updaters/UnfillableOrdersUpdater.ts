@@ -13,6 +13,7 @@ import { getBestQuote, PriceInformation } from 'utils/price'
 import { isOrderUnfillable } from 'state/orders/utils'
 import useGetGpPriceStrategy, { GpPriceStrategy } from 'hooks/useGetGpPriceStrategy'
 import { getPromiseFulfilledValue } from 'utils/misc'
+import { devDebug } from 'utils/logging'
 
 /**
  * Thin wrapper around `getBestPrice` that builds the params and returns null on failure
@@ -84,7 +85,7 @@ export function UnfillableOrdersUpdater(): null {
     }
 
     const startTime = Date.now()
-    console.debug('[UnfillableOrdersUpdater] Checking new market price for orders....')
+    devDebug('[UnfillableOrdersUpdater] Checking new market price for orders....')
     try {
       isUpdating.current = true
 
@@ -93,10 +94,10 @@ export function UnfillableOrdersUpdater(): null {
       const pending = pendingRef.current.filter(({ owner }) => owner.toLowerCase() === lowerCaseAccount)
 
       if (pending.length === 0) {
-        // console.debug('[UnfillableOrdersUpdater] No orders to update')
+        // devDebug('[UnfillableOrdersUpdater] No orders to update')
         return
       } else {
-        console.debug(
+        devDebug(
           `[UnfillableOrdersUpdater] Checking new market price for ${pending.length} orders, account ${account} and network ${chainId}`
         )
       }
@@ -106,19 +107,19 @@ export function UnfillableOrdersUpdater(): null {
           if (quote) {
             const [promisedPrice] = quote
             const price = getPromiseFulfilledValue(promisedPrice, null)
-            console.debug(
+            devDebug(
               `[UnfillableOrdersUpdater::updateUnfillable] did we get any price? ${order.id.slice(0, 8)}|${index}`,
               price ? price.amount : 'no :('
             )
             price?.amount && updateIsUnfillableFlag(chainId, order, price)
           } else {
-            console.debug('[UnfillableOrdersUpdater::updateUnfillable] No price quote for', order.id.slice(0, 8))
+            devDebug('[UnfillableOrdersUpdater::updateUnfillable] No price quote for', order.id.slice(0, 8))
           }
         })
       )
     } finally {
       isUpdating.current = false
-      console.debug(`[UnfillableOrdersUpdater] Checked canceled orders in ${Date.now() - startTime}ms`)
+      devDebug(`[UnfillableOrdersUpdater] Checked canceled orders in ${Date.now() - startTime}ms`)
     }
   }, [account, chainId, strategy, updateIsUnfillableFlag])
 

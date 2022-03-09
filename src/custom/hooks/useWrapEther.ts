@@ -7,6 +7,7 @@ import { useWETHContract } from 'hooks/useContract'
 import { ContractTransaction } from '@ethersproject/contracts'
 import { formatSmart } from '../utils/format'
 import { AMOUNT_PRECISION } from 'constants/index'
+import { devLog } from 'utils/logging'
 
 export type Wrap = (amount: CurrencyAmount<Currency>) => Promise<ContractTransaction | string>
 
@@ -16,7 +17,7 @@ export function useWrapEther() {
 
   const wrapCallback = useCallback<Wrap>(
     async (amount) => {
-      console.log('Wrapping ETH!', amount.quotient.toString(), weth)
+      devLog('Wrapping ETH!', amount.quotient.toString(), weth)
 
       if (!weth) {
         // callback not reachable anyway when `weth` is not set
@@ -30,7 +31,7 @@ export function useWrapEther() {
           hash: txReceipt.hash,
           summary: `Wrap ${formatSmart(amount, AMOUNT_PRECISION)} ETH to WETH`,
         })
-        console.log('Wrapped!', amount)
+        devLog('Wrapped!', amount)
         return txReceipt
       } catch (error) {
         console.error('Could not WRAP', error)

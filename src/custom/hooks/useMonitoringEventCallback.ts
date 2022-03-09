@@ -3,6 +3,7 @@ import { initializeApp } from 'firebase/app'
 // import { getDatabase, push, ref } from 'firebase/database'
 import { useCallback } from 'react'
 import { TransactionInfo, TransactionType } from 'state/transactions/actions'
+import { devDebug } from 'utils/logging'
 
 import { useActiveWeb3React } from './web3'
 
@@ -37,7 +38,7 @@ function useMonitoringEventCallback() {
       // const db = getDatabase()
 
       if (!walletAddress) {
-        console.debug('Wallet address required to log monitoring events.')
+        devDebug('Wallet address required to log monitoring events.')
         return
       }
       try {
@@ -50,7 +51,7 @@ function useMonitoringEventCallback() {
         //   walletAddress,
         // })
       } catch (e) {
-        console.debug('Error adding document: ', e)
+        devDebug('Error adding document: ', e)
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps

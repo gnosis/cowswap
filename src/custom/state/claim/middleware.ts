@@ -3,6 +3,7 @@ import { getCowSoundSend, getCowSoundSuccessClaim } from 'utils/sound'
 import { AppState } from 'state'
 import { addTransaction, finalizeTransaction } from '../enhancedTransactions/actions'
 import { ClaimStatus, setClaimStatus } from './actions'
+import { devDebug } from 'utils/logging'
 
 const isFinalizeTransaction = isAnyOf(finalizeTransaction)
 const isAddTransaction = isAnyOf(addTransaction)
@@ -17,7 +18,7 @@ export const claimMinedMiddleware: Middleware<Record<string, unknown>, AppState>
     const transaction = store.getState().transactions[chainId][hash]
 
     if (transaction.claim) {
-      console.debug('[stat:claim:middleware] Claim transaction sent', transaction.hash, transaction.claim)
+      devDebug('[stat:claim:middleware] Claim transaction sent', transaction.hash, transaction.claim)
       cowSound = getCowSoundSend()
     }
   } else if (isFinalizeTransaction(action)) {
@@ -26,7 +27,7 @@ export const claimMinedMiddleware: Middleware<Record<string, unknown>, AppState>
 
     if (transaction.claim) {
       const status = transaction.receipt?.status
-      console.debug(
+      devDebug(
         `[stat:claim:middleware] Claim transaction finalized withs status ${status}`,
         transaction.hash,
         transaction.claim

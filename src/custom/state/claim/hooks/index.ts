@@ -61,6 +61,7 @@ import { AMOUNT_PRECISION } from 'constants/index'
 import useIsMounted from 'hooks/useIsMounted'
 import { ChainId } from '@uniswap/sdk'
 import { ClaimInfo } from 'state/claim/reducer'
+import { devLog, devDebug } from 'utils/logging'
 
 const CLAIMS_REPO_BRANCH = 'gip-13'
 export const CLAIMS_REPO = `https://raw.githubusercontent.com/gnosis/cow-merkle-drop/${CLAIMS_REPO_BRANCH}/`
@@ -283,7 +284,7 @@ function fetchDeploymentTimestamp(vCowContract: VCowType, chainId: ChainId): Pro
 
   if (!deploymentTimePromise) {
     deploymentTimePromise = vCowContract.deploymentTimestamp().then((ts) => {
-      console.log(`Deployment timestamp in seconds: ${ts.toString()}`)
+      devLog(`Deployment timestamp in seconds: ${ts.toString()}`)
       return ts.mul('1000').toNumber()
     })
     FETCH_DEPLOYMENT_TIME_PROMISES.set(chainId, deploymentTimePromise)
@@ -398,7 +399,7 @@ function _useVCowPriceForToken(priceFnName: VCowPriceFnNames): string | null {
     if (!chainId || !vCowContract) {
       return
     }
-    console.debug(`_useVCowPriceForToken::fetching price for `, priceFnName)
+    devDebug(`_useVCowPriceForToken::fetching price for `, priceFnName)
 
     vCowContract[priceFnName]().then((price: BigNumber) => setPrice(price.toString()))
   }, [chainId, priceFnName, vCowContract])
@@ -516,7 +517,7 @@ export function useClaimCallback(account: string | null | undefined): {
         }
 
         if (!args) {
-          console.debug('Failed to estimate gas for claiming: There were no valid claims selected')
+          devDebug('Failed to estimate gas for claiming: There were no valid claims selected')
           return
         }
 
@@ -525,7 +526,7 @@ export function useClaimCallback(account: string | null | undefined): {
         // Not awaiting means the caller will have to deal with that, which I don't want in this case
         return await vCowContract.estimateGas.claimMany(...args)
       } catch (e) {
-        console.debug('Failed to estimate gas for claiming:', e.message)
+        devDebug('Failed to estimate gas for claiming:', e.message)
         return
       }
     },
@@ -834,7 +835,7 @@ export function fetchClaims(account: string, chainId: number): Promise<UserClaim
         throw new Error(`Claim for ${claimKey} was not found in claim file!`)
       })
       .catch((error) => {
-        console.debug(`Claim fetch failed for ${claimKey}`, error)
+        devDebug(`Claim fetch failed for ${claimKey}`, error)
         throw error
       }))
   )
