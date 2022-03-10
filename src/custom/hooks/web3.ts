@@ -1,5 +1,4 @@
-import { IS_IN_IFRAME, NetworkContextName } from 'constants/misc'
-import { Web3Provider } from '@ethersproject/providers'
+import { IS_IN_IFRAME } from 'constants/misc'
 import { useWeb3React } from '@web3-react/core'
 import { AbstractConnector } from '@web3-react/abstract-connector'
 import { useEffect, useState, useCallback } from 'react'
@@ -9,13 +8,7 @@ import { STORAGE_KEY_LAST_PROVIDER } from 'constants/index'
 import { isMobile } from 'utils/userAgent'
 
 // exports from the original file
-export { useInactiveListener } from '@src/hooks/web3'
-
-export function useActiveWeb3React() {
-  const context = useWeb3React<Web3Provider>()
-  const contextNetwork = useWeb3React<Web3Provider>(NetworkContextName)
-  return context.active ? context : contextNetwork
-}
+export { useInactiveListener, useActiveWeb3React } from '@src/hooks/web3'
 
 enum DefaultProvidersInjected {
   METAMASK = WalletProvider.INJECTED,
