@@ -7,9 +7,9 @@ import { registerOnWindow } from 'utils/misc'
 import { isBarn, isDev, isLocal, isPr } from '../../utils/environments'
 import OperatorError, { ApiErrorCodeDetails, ApiErrorCodes, ApiErrorObject } from 'api/cow/errors/OperatorError'
 import QuoteError, {
-  GpQuoteErrorCodes,
-  GpQuoteErrorDetails,
-  GpQuoteErrorObject,
+  CowQuoteErrorCodes,
+  CowQuoteErrorDetails,
+  CowQuoteErrorObject,
   mapOperatorErrorToQuoteError,
 } from 'api/cow/errors/QuoteError'
 import { toErc20Address, toNativeBuyAddress } from 'utils/tokens'
@@ -261,9 +261,9 @@ export async function sendSignedOrderCancellation(params: OrderCancellationParam
   console.log(`[api:${API_NAME}] Cancelled order`, cancellation.orderUid, chainId)
 }
 
-const UNHANDLED_QUOTE_ERROR: GpQuoteErrorObject = {
-  errorType: GpQuoteErrorCodes.UNHANDLED_ERROR,
-  description: GpQuoteErrorDetails.UNHANDLED_ERROR,
+const UNHANDLED_QUOTE_ERROR: CowQuoteErrorObject = {
+  errorType: CowQuoteErrorCodes.UNHANDLED_ERROR,
+  description: CowQuoteErrorDetails.UNHANDLED_ERROR,
 }
 
 const UNHANDLED_ORDER_ERROR: ApiErrorObject = {
