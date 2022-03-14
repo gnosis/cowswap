@@ -1,7 +1,7 @@
 import { useCallback } from 'react'
 
 import { FeeQuoteParams, getBestQuote, getFastQuote, QuoteParams, QuoteResult } from 'utils/price'
-import { isValidOperatorError, ApiErrorCodes } from 'api/cow/errors/OperatorError'
+import { isValidOperatorError, CowApiErrorCodes } from 'api/cow/errors/ApiError'
 import CowQuoteError, { CowQuoteErrorCodes, CowQuoteErrorDetails, isValidQuoteError } from 'api/cow/errors/QuoteError'
 import { registerOnWindow, getPromiseFulfilledValue, isPromiseFulfilled } from 'utils/misc'
 
@@ -31,7 +31,7 @@ type QuoteParamsForFetching = Omit<QuoteParams, 'strategy'>
 export function handleQuoteError({ quoteData, error, addUnsupportedToken }: HandleQuoteErrorParams): QuoteError {
   if (isValidOperatorError(error)) {
     switch (error.type) {
-      case ApiErrorCodes.UnsupportedToken: {
+      case CowApiErrorCodes.UnsupportedToken: {
         // TODO: will change with introduction of data prop in error responses
         const unsupportedTokenAddress = error.description.split(' ')[2]
         console.error(`${error.message}: ${error.description} - disabling.`)

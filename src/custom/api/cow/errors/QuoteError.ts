@@ -1,4 +1,4 @@
-import { ApiErrorCodes, ApiErrorObject } from './OperatorError'
+import { CowApiErrorCodes, CowApiErrorObject } from './ApiError'
 
 export interface CowQuoteErrorObject {
   errorType: CowQuoteErrorCodes
@@ -26,34 +26,34 @@ export enum CowQuoteErrorDetails {
   UNHANDLED_ERROR = 'Quote fetch failed. This may be due to a server or network connectivity issue. Please try again later.',
 }
 
-export function mapOperatorErrorToQuoteError(error?: ApiErrorObject): CowQuoteErrorObject {
+export function mapOperatorErrorToQuoteError(error?: CowApiErrorObject): CowQuoteErrorObject {
   switch (error?.errorType) {
-    case ApiErrorCodes.NotFound:
-    case ApiErrorCodes.NoLiquidity:
+    case CowApiErrorCodes.NotFound:
+    case CowApiErrorCodes.NoLiquidity:
       return {
         errorType: CowQuoteErrorCodes.InsufficientLiquidity,
         description: CowQuoteErrorDetails.InsufficientLiquidity,
       }
 
-    case ApiErrorCodes.SellAmountDoesNotCoverFee:
+    case CowApiErrorCodes.SellAmountDoesNotCoverFee:
       return {
         errorType: CowQuoteErrorCodes.FeeExceedsFrom,
         description: CowQuoteErrorDetails.FeeExceedsFrom,
         data: error?.data,
       }
 
-    case ApiErrorCodes.UnsupportedToken:
+    case CowApiErrorCodes.UnsupportedToken:
       return {
         errorType: CowQuoteErrorCodes.UnsupportedToken,
         description: error.description,
       }
-    case ApiErrorCodes.SellAmountDoesNotCoverFee:
+    case CowApiErrorCodes.SellAmountDoesNotCoverFee:
       return {
         errorType: CowQuoteErrorCodes.FeeExceedsFrom,
         description: error.description,
       }
 
-    case ApiErrorCodes.TransferEthToContract:
+    case CowApiErrorCodes.TransferEthToContract:
       return {
         errorType: CowQuoteErrorCodes.TransferEthToContract,
         description: error.description,
