@@ -6,36 +6,17 @@ import flatMap from 'array.prototype.flatmap'
 flat.shim()
 flatMap.shim()
 
+const originalConsole = window.console
 // define a new console
-const console = (function (originalConsole) {
-  return {
-    log(...args: any[]) {
-      if (process.env.NODE_ENV !== 'production') {
-        originalConsole.log(...args)
-      }
-    },
-    debug(...args: any[]) {
-      if (process.env.NODE_ENV !== 'production') {
-        originalConsole.debug(...args)
-      }
-    },
-    info(...args: any[]) {
-      if (process.env.NODE_ENV !== 'production') {
-        originalConsole.info(...args)
-      }
-    },
-    warn(...args: any[]) {
-      if (process.env.NODE_ENV !== 'production') {
-        originalConsole.warn(...args)
-      }
-    },
-    error(...args: any[]) {
-      if (process.env.NODE_ENV !== 'production') {
-        originalConsole.error(...args)
-      }
-    },
-  }
-})(window.console)
+const proxiedConsole = new Proxy(window.console, {
+  get(obj, prop: keyof Console) {
+    if (process.env.NODE_ENV !== 'production') {
+      return obj[prop]
+    } else {
+      return () => undefined
+    }
+  },
+})
 
-//Then redefine the old console
-window.console = { ...window.console, ...console }
+window.console = Object.assign({}, proxiedConsole, { force: originalConsole })
+console = window.console
