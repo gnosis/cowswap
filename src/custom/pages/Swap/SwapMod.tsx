@@ -122,6 +122,7 @@ export default function Swap({
   const { account, chainId } = useActiveWeb3React()
   const { isSupportedWallet } = useWalletInfo()
   const loadedUrlParams = useDefaultsFromURLSearch()
+  console.log('test')
 
   // token warning stuff
   const [loadedInputCurrency, loadedOutputCurrency] = [
