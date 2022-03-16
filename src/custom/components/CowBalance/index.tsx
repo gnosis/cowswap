@@ -12,7 +12,7 @@ const Wrapper = styled(ClaimSummaryWrapper)`
 `
 
 export interface CowBalanceProps {
-  account: string
+  account?: string
   balance?: CurrencyAmount<Currency>
   title?: string
 }

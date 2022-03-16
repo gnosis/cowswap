@@ -1,5 +1,4 @@
 import { useCallback } from 'react'
-import { CurrencyAmount } from '@uniswap/sdk-core'
 import {
   ConfirmationModalContent,
   ConfirmationModalContentProps,
@@ -10,27 +9,20 @@ import { GpModal } from 'components/Modal'
 import { AutoColumn } from 'components/SearchModal/CommonBases'
 import { Text } from 'rebass'
 
-import { useClaimState } from 'state/claim/hooks'
 import { useTokenBalance } from 'state/wallet/hooks'
-import { V_COW, WETH9_EXTENDED } from 'constants/tokens'
+import { V_COW } from 'constants/tokens'
 
-import { SupportedChainId } from 'constants/chains'
 import Row from 'components/Row'
 import { ExternalLink } from 'components/Link'
 
-import { COW_SUBSIDY } from 'constants/subsidy'
+import { COW_SUBSIDY, SUBSIDY_INFO_MESSAGE } from 'constants/subsidy'
 import CowBalance, { CowBalanceProps } from '../CowBalance'
 import SubsidyTable from './SubsidyTable'
 
-// TODO: remove this
-const MOCK_BALANCE = CurrencyAmount.fromRawAmount(
-  WETH9_EXTENDED[SupportedChainId.MAINNET].wrapped,
-  '123123123123123123123'
-)
-const CowSubsidyInfo = ({ account, balance = MOCK_BALANCE }: CowBalanceProps) => (
+const CowSubsidyInfo = ({ account, balance }: CowBalanceProps) => (
   <AutoColumn style={{ marginTop: 20, padding: '2rem 0' }} gap="24px" justify="center">
     <Text fontWeight={500} fontSize={16} style={{ textAlign: 'center', width: '85%', wordBreak: 'break-word' }}>
-      As a (v)COW token holder you will be eligbible for a fee discount.
+      {SUBSIDY_INFO_MESSAGE}
     </Text>
     {/* VCOW LOGO */}
     <CowBalance account={account} balance={balance} />
@@ -43,15 +35,15 @@ export default function CowSubsidyModal({
   onDismiss,
   ...restProps
 }: Pick<ConfirmationModalProps, 'isOpen'> & Omit<ConfirmationModalContentProps, 'title' | 'topContent'>) {
-  const { chainId } = useActiveWeb3React()
+  const { account, chainId } = useActiveWeb3React()
 
-  const { activeClaimAccount } = useClaimState()
   const vCow = chainId ? V_COW[chainId] : undefined
-  const vCowBalance = useTokenBalance(activeClaimAccount || undefined, vCow)
+  // TODO: vcow and cow balance from @nenadV91
+  const vCowBalance = useTokenBalance(account || undefined, vCow)
 
   const TopContent = useCallback(
-    () => <CowSubsidyInfo account={activeClaimAccount} balance={vCowBalance} />,
-    [activeClaimAccount, vCowBalance]
+    () => <CowSubsidyInfo account={account ?? undefined} balance={vCowBalance} />,
+    [account, vCowBalance]
   )
 
   const BottomContent = useCallback(

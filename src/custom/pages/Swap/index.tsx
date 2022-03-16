@@ -35,6 +35,10 @@ import { HighFeeWarning, WarningProps, NoImpactWarning } from 'components/SwapWa
 import { useHigherUSDValue } from 'hooks/useUSDCPrice'
 import { useWalletInfo } from 'hooks/useWalletInfo'
 
+import { MouseoverTooltipContent } from 'components/Tooltip'
+import { StyledInfo } from './styleds'
+import { SUBSIDY_INFO_MESSAGE } from 'constants/subsidy'
+
 interface TradeBasicDetailsProp extends BoxProps {
   trade?: TradeGp
   fee: CurrencyAmount<Currency>
@@ -134,21 +138,6 @@ const SwapModWrapper = styled(SwapMod)`
     }
   }
 `
-export interface SwapProps extends RouteComponentProps {
-  TradeBasicDetails: React.FC<TradeBasicDetailsProp>
-  EthWethWrapMessage: React.FC<EthWethWrapProps>
-  SwitchToWethBtn: React.FC<SwitchToWethBtnProps>
-  FeesExceedFromAmountMessage: React.FC
-  BottomGrouping: React.FC
-  TradeLoading: React.FC<TradeLoadingProps>
-  SwapButton: React.FC<SwapButtonProps>
-  ArrowWrapperLoader: React.FC<ArrowWrapperLoaderProps>
-  Price: React.FC<PriceProps>
-  HighFeeWarning: React.FC<WarningProps>
-  NoImpactWarning: React.FC<WarningProps>
-  className?: string
-  allowsOffchainSigning: boolean
-}
 
 const LowerSectionWrapper = styled(RowBetween).attrs((props) => ({
   ...props,
@@ -204,6 +193,42 @@ export const Price: React.FC<PriceProps> = ({
     </LowerSectionWrapper>
   )
 }
+interface FeesDiscountProps extends BoxProps {
+  cowBalance?: CurrencyAmount<Currency>
+  theme: DefaultTheme
+}
+
+const DarkSpan = styled.span`
+  padding: 2px 8px;
+  background-color: ${({ theme }) => theme.bg4};
+  border-radius: 5px;
+  color: ${({ theme }) => theme.text1};
+`
+
+export const FeesDiscount: React.FC<FeesDiscountProps> = ({
+  cowBalance,
+  onClick,
+  theme,
+  ...boxProps
+}: FeesDiscountProps) => (
+  <LowerSectionWrapper {...boxProps} onClick={onClick} style={{ cursor: 'pointer' }}>
+    <TYPE.black fontSize={14} color={theme.text2} alignItems={'center'}>
+      <PriceSwitcher>
+        <Trans>Fees discount</Trans>{' '}
+        <MouseoverTooltipContent
+          content={SUBSIDY_INFO_MESSAGE + ' Click for more info.'}
+          bgColor={theme.bg1}
+          color={theme.text1}
+        >
+          <StyledInfo />
+        </MouseoverTooltipContent>
+      </PriceSwitcher>
+    </TYPE.black>
+    <div className="price-container">
+      <DarkSpan>{cowBalance || '25% discount'}</DarkSpan>
+    </div>
+  </LowerSectionWrapper>
+)
 
 export const LightGreyText = styled.span`
   font-weight: 400;
@@ -384,8 +409,26 @@ export default function Swap(props: RouteComponentProps) {
         HighFeeWarning={HighFeeWarning}
         NoImpactWarning={NoImpactWarning}
         allowsOffchainSigning={allowsOffchainSigning}
+        FeesDiscount={FeesDiscount}
         {...props}
       />
     </Container>
   )
+}
+
+export interface SwapProps extends RouteComponentProps {
+  TradeBasicDetails: React.FC<TradeBasicDetailsProp>
+  EthWethWrapMessage: React.FC<EthWethWrapProps>
+  SwitchToWethBtn: React.FC<SwitchToWethBtnProps>
+  FeesExceedFromAmountMessage: React.FC
+  BottomGrouping: React.FC
+  TradeLoading: React.FC<TradeLoadingProps>
+  SwapButton: React.FC<SwapButtonProps>
+  ArrowWrapperLoader: React.FC<ArrowWrapperLoaderProps>
+  Price: React.FC<PriceProps>
+  HighFeeWarning: React.FC<WarningProps>
+  NoImpactWarning: React.FC<WarningProps>
+  FeesDiscount: React.FC<FeesDiscountProps>
+  className?: string
+  allowsOffchainSigning: boolean
 }
