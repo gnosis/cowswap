@@ -92,6 +92,7 @@ import usePriceImpact from 'hooks/usePriceImpact'
 import { useErrorMessage } from 'hooks/useErrorMessageAndModal'
 import { GpEther } from 'constants/tokens'
 import { SupportedChainId } from 'constants/chains'
+import CowSubsidyModal from 'components/CowSubsidyModal'
 
 // MOD - exported in ./styleds to avoid circ dep
 // export const StyledInfo = styled(Info)`
@@ -530,6 +531,8 @@ export default function Swap({
         onDismiss={closeModals}
         operationType={operationType}
       />
+      {/* CoWmunity Fees Discount Modal */}
+      <CowSubsidyModal isOpen onDismiss={console.debug} />
 
       <NetworkAlert />
       <AffiliateStatusCheck />
