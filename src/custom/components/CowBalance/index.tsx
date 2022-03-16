@@ -28,7 +28,7 @@ const CowBalance = ({ account, balance, title }: CowBalanceProps) => {
         </ClaimSummaryTitle>
       )}
 
-      {balance && !account && (
+      {balance && account && (
         <div>
           <ClaimTotal>
             <b>Your combined balance</b>
