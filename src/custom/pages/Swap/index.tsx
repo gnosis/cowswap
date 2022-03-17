@@ -37,7 +37,7 @@ import { useWalletInfo } from 'hooks/useWalletInfo'
 
 import { MouseoverTooltipContent } from 'components/Tooltip'
 import { StyledInfo } from './styleds'
-import { SUBSIDY_INFO_MESSAGE } from 'constants/subsidy'
+import { SUBSIDY_INFO_MESSAGE } from 'components/CowSubsidyModal/constants'
 
 interface TradeBasicDetailsProp extends BoxProps {
   trade?: TradeGp
