@@ -117,6 +117,7 @@ export default function Swap({
   Price,
   HighFeeWarning,
   NoImpactWarning,
+  FeesDiscount,
   className,
   allowsOffchainSigning,
 }: SwapProps) {
@@ -170,6 +171,9 @@ export default function Swap({
     [setTransactionConfirmationModalMsg, openTransactionConfirmationModalAux]
   )
 
+  // Cow subsidy modal
+  const openCowSubsidyModal = useOpenModal(ApplicationModal.COW_SUBSIDY)
+  const showCowSubsidyModal = useModalOpen(ApplicationModal.COW_SUBSIDY)
   // for expert mode
   const [isExpertMode] = useExpertModeManager()
 
@@ -532,7 +536,7 @@ export default function Swap({
         operationType={operationType}
       />
       {/* CoWmunity Fees Discount Modal */}
-      <CowSubsidyModal isOpen onDismiss={console.debug} />
+      <CowSubsidyModal isOpen={showCowSubsidyModal} onDismiss={closeModals} />
 
       <NetworkAlert />
       <AffiliateStatusCheck />
@@ -757,6 +761,9 @@ export default function Swap({
                     <RowSlippage allowedSlippage={allowedSlippage} fontSize={12} fontWeight={400} rowHeight={24} />
                   )}
                   {(isFeeGreater || trade) && fee && <TradeBasicDetails trade={trade} fee={fee} />}
+                  {/* FEES DISCOUNT */}
+                  {/* TODO: check cow balance and set here, else don't show */}
+                  <FeesDiscount cowBalance={undefined} theme={theme} onClick={openCowSubsidyModal} />
                 </AutoColumn>
                 {/* ETH exactIn && wrapCallback returned us cb */}
                 {isNativeIn && isSupportedWallet && onWrap && (
