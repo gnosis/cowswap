@@ -67,6 +67,7 @@ export default class ErrorBoundary extends React.Component<unknown, ErrorBoundar
 
   render() {
     const { error } = this.state
+    console.error('error', error)
     if (error !== null) {
       const encodedBody = encodeURIComponent(issueBody(error))
       return (
@@ -142,42 +143,38 @@ function issueBody(error: Error): string {
   
 ${window.location.href}
 
-${
-  relevantState
-    ? `## \`${relevantState}\` state
+${relevantState
+      ? `## \`${relevantState}\` state
     
 \`\`\`json
 ${JSON.stringify(store.getState()[relevantState], null, 2)}
 \`\`\`
 `
-    : ''
-}
-${
-  error.name &&
-  `## Error
+      : ''
+    }
+${error.name &&
+    `## Error
 
 \`\`\`
 ${error.name}${error.message && `: ${error.message}`}
 \`\`\`
 `
-}
-${
-  error.stack &&
-  `## Stacktrace
+    }
+${error.stack &&
+    `## Stacktrace
 
 \`\`\`
 ${error.stack}
 \`\`\`
 `
-}
-${
-  deviceData &&
-  `## Device data
+    }
+${deviceData &&
+    `## Device data
 
 \`\`\`json
 ${JSON.stringify(deviceData, null, 2)}
 \`\`\`
 `
-}
+    }
 `
 }
