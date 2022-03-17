@@ -2,6 +2,7 @@ import styled from 'styled-components/macro'
 import { formatSmartLocaleAware } from 'utils/format'
 import { ClaimTr } from 'pages/Claim/ClaimsTable'
 import { BigNumber } from 'bignumber.js'
+import { COW_SUBSIDY_DATA } from './constants'
 
 const StyledSubsidyTable = styled.table`
   width: 100%;
@@ -18,23 +19,23 @@ const SubsidyTr = styled(ClaimTr)`
   }
 `
 
-function SubsidyTable({ data }: { data: (string | number)[][] }) {
-  const headers = data[0]
-  const body = data.slice(1)
+const TABLE_HEADERS = ['(v)COW balance', 'Fee discount']
 
+function SubsidyTable() {
   return (
     <StyledSubsidyTable>
       <thead>
         <SubsidyTr>
-          {headers.map((header, i) => (
+          {TABLE_HEADERS.map((header, i) => (
             <th key={header + '_' + i}>{header}</th>
           ))}
         </SubsidyTr>
       </thead>
       <tbody>
-        {body.map(([threshold, discount], i) => (
+        {Object.entries(COW_SUBSIDY_DATA).map(([threshold, discount], i) => (
           <SubsidyTr key={discount + '_' + i}>
-            <td>&gt;{formatSmartLocaleAware(new BigNumber(threshold))}</td>
+            {/* if index != 0, show prefix '>' */}
+            <td>{i && '>' + formatSmartLocaleAware(new BigNumber(threshold))}</td>
             <td>{discount}%</td>
           </SubsidyTr>
         ))}

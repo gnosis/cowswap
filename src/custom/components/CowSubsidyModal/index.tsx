@@ -15,9 +15,9 @@ import { V_COW } from 'constants/tokens'
 import Row from 'components/Row'
 import { ExternalLink } from 'components/Link'
 
-import { COW_SUBSIDY, SUBSIDY_INFO_MESSAGE } from 'constants/subsidy'
 import CowBalance, { CowBalanceProps } from '../CowBalance'
 import SubsidyTable from './SubsidyTable'
+import { SUBSIDY_INFO_MESSAGE } from './constants'
 
 const CowSubsidyInfo = ({ account, balance }: CowBalanceProps) => (
   <AutoColumn style={{ marginTop: 20, padding: '2rem 0' }} gap="24px" justify="center">
@@ -26,7 +26,7 @@ const CowSubsidyInfo = ({ account, balance }: CowBalanceProps) => (
     </Text>
     {/* VCOW LOGO */}
     <CowBalance account={account} balance={balance} />
-    <SubsidyTable data={COW_SUBSIDY} />
+    <SubsidyTable />
   </AutoColumn>
 )
 
