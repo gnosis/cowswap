@@ -22,7 +22,7 @@ describe('FEE DISCOUNT TIERS', () => {
         i ? '>' : ''
       }${threshold}] => ${discount}% DISCOUNT`, () => {
         const BALANCE_BN = new BigNumber(MOCK_BALANCES[i])
-        expect(getDiscountFromBalance(BALANCE_BN)).toEqual(discount)
+        expect(getDiscountFromBalance(BALANCE_BN).discount).toEqual(discount)
       })
     })
   })
@@ -32,7 +32,7 @@ describe('FEE DISCOUNT TIERS', () => {
         i ? '>' : ''
       }${threshold}] => ${discount}% DISCOUNT`, () => {
         const BALANCE_BN = new BigNumber(FALSE_MOCK_BALANCES[i])
-        expect(getDiscountFromBalance(BALANCE_BN)).not.toEqual(discount)
+        expect(getDiscountFromBalance(BALANCE_BN).discount).not.toEqual(discount)
       })
     })
   })
