@@ -15,6 +15,7 @@ export interface CowBalanceProps {
   account?: string
   balance?: CurrencyAmount<Currency>
   title?: string
+  tier: { tier: number; discount: number }
 }
 
 const CowBalance = ({ account, balance, title }: CowBalanceProps) => {
