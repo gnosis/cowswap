@@ -69,7 +69,7 @@ function SubsidyTable({ subsidy }: Pick<CowBalanceProps, 'subsidy'>) {
       </thead>
       <tbody>
         {COW_SUBSIDY_DATA.map(([threshold, discount], i) => {
-          const selected = subsidy.tier === i
+          const selected = subsidy.discount === discount
           return (
             <SubsidyTr key={discount + '_' + i} selected={selected}>
               {/* if index != 0, show prefix '>' */}

@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react'
+import { useCallback } from 'react'
 import {
   ConfirmationModalContent,
   ConfirmationModalContentProps,
@@ -9,8 +9,6 @@ import { GpModal } from 'components/Modal'
 import { AutoColumn } from 'components/SearchModal/CommonBases'
 import { Text } from 'rebass'
 
-import { V_COW } from 'constants/tokens'
-
 import Row from 'components/Row'
 import { ExternalLink } from 'components/Link'
 
@@ -19,26 +17,17 @@ import SubsidyTable from './SubsidyTable'
 import { SUBSIDY_INFO_MESSAGE } from './constants'
 
 // TODO: remove, testing imports
-import { SupportedChainId } from '@src/custom/constants/chains'
-import { CurrencyAmount } from '@uniswap/sdk-core'
-import { parseUnits } from '@ethersproject/units'
-import { getDiscountFromBalance } from './utils'
-import { BigNumber } from 'bignumber.js'
+import useCowBalanceAndSubsidy from 'hooks/useCowBalanceAndSubsidy'
 
-const CowSubsidyInfo = ({ account, balance, tier }: CowBalanceProps) => (
+const CowSubsidyInfo = ({ account, balance, subsidy }: CowBalanceProps) => (
   <AutoColumn style={{ marginTop: 20, padding: '2rem 0' }} gap="24px" justify="center">
     <Text fontWeight={500} fontSize={16} style={{ textAlign: 'center', width: '85%', wordBreak: 'break-word' }}>
       {SUBSIDY_INFO_MESSAGE}
     </Text>
     {/* VCOW LOGO */}
-    <CowBalance account={account} balance={balance} tier={tier} />
-    <SubsidyTable tier={tier} />
+    <CowBalance account={account} balance={balance} subsidy={subsidy} />
+    <SubsidyTable subsidy={subsidy} />
   </AutoColumn>
-)
-
-const MOCK_BALANCE = CurrencyAmount.fromRawAmount(
-  V_COW[SupportedChainId.RINKEBY],
-  parseUnits('1000', V_COW[SupportedChainId.MAINNET].decimals).toString()
 )
 
 export default function CowSubsidyModal({
@@ -48,18 +37,12 @@ export default function CowSubsidyModal({
 }: Pick<ConfirmationModalProps, 'isOpen'> & Omit<ConfirmationModalContentProps, 'title' | 'topContent'>) {
   const { account, chainId } = useActiveWeb3React()
 
-  // TODO: vcow and cow balance from @nenadV91
-  /* const vCow =  */ chainId ? V_COW[chainId] : undefined
-  const balance = MOCK_BALANCE // useTotalCowBalance(account || undefined, vCow)
-
-  const tier = useMemo(() => {
-    const balanceBn = new BigNumber(balance.toExact())
-    return getDiscountFromBalance(balanceBn)
-  }, [balance])
+  // TODO: update with latest code
+  const { subsidy, balance } = useCowBalanceAndSubsidy()
 
   const TopContent = useCallback(
-    () => <CowSubsidyInfo account={account ?? undefined} balance={balance} tier={tier} />,
-    [account, balance, tier]
+    () => <CowSubsidyInfo account={account ?? undefined} balance={balance} subsidy={subsidy} />,
+    [account, balance, subsidy]
   )
 
   const BottomContent = useCallback(
