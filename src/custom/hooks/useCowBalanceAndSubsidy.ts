@@ -11,7 +11,7 @@ import { useActiveWeb3React } from '.'
 // TODO: get real balance
 const MOCK_BALANCE = CurrencyAmount.fromRawAmount(
   V_COW[SupportedChainId.RINKEBY],
-  parseUnits('1000', V_COW[SupportedChainId.MAINNET].decimals).toString()
+  parseUnits('99999.999999999999999', V_COW[SupportedChainId.MAINNET].decimals).toString()
 )
 export default function useCowBalanceAndSubsidy() {
   const { chainId } = useActiveWeb3React()
@@ -21,7 +21,7 @@ export default function useCowBalanceAndSubsidy() {
   const balance = MOCK_BALANCE // useTotalCowBalance(account || undefined, vCow)
 
   return useMemo(() => {
-    const balanceBn = new BigNumber(balance.toExact())
+    const balanceBn = new BigNumber(balance.quotient.toString())
     return { subsidy: getDiscountFromBalance(balanceBn), balance }
   }, [balance])
 }

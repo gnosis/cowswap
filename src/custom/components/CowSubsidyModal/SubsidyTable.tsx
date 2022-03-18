@@ -1,11 +1,15 @@
 import styled from 'styled-components/macro'
 import { formatSmartLocaleAware } from 'utils/format'
 import { ClaimTr } from 'pages/Claim/ClaimsTable'
-import { BigNumber } from 'bignumber.js'
 import { COW_SUBSIDY_DATA } from './constants'
 import { CowBalanceProps } from '../CowBalance'
 import { transparentize } from 'polished'
 import { FlyoutRowActiveIndicator } from '../Header/NetworkSelector'
+
+import { BigNumber } from 'bignumber.js'
+import { formatUnits } from '@ethersproject/units'
+import { V_COW } from 'constants/tokens'
+import { SupportedChainId } from 'constants/chains'
 
 const StyledSubsidyTable = styled.table`
   width: 100%;
@@ -55,6 +59,7 @@ const SubsidyTr = styled(ClaimTr)<{ selected?: boolean }>`
   }
 `
 
+const COW_DECIMALS = V_COW[SupportedChainId.MAINNET].decimals
 const TABLE_HEADERS = ['(v)COW balance', 'Fee discount']
 
 function SubsidyTable({ subsidy }: Pick<CowBalanceProps, 'subsidy'>) {
@@ -68,14 +73,17 @@ function SubsidyTable({ subsidy }: Pick<CowBalanceProps, 'subsidy'>) {
         </SubsidyTr>
       </thead>
       <tbody>
+        {/* DATA IS IN ATOMS */}
         {COW_SUBSIDY_DATA.map(([threshold, discount], i) => {
           const selected = subsidy.discount === discount
+          const formattedThreshold = new BigNumber(formatUnits(threshold, COW_DECIMALS))
+
           return (
             <SubsidyTr key={discount + '_' + i} selected={selected}>
-              {/* if index != 0, show prefix '>' */}
               <td>
                 {selected && <FlyoutRowActiveIndicator active />}
-                <span>{i && '>' + formatSmartLocaleAware(new BigNumber(threshold))}</span>
+                {/* if index != 0, show prefix '>' */}
+                <span>{i && '>' + formatSmartLocaleAware(formattedThreshold)}</span>
               </td>
               <td>{discount}%</td>
             </SubsidyTr>
