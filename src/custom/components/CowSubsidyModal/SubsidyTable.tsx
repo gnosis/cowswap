@@ -2,7 +2,7 @@ import styled from 'styled-components/macro'
 import { formatSmartLocaleAware } from 'utils/format'
 import { ClaimTr } from 'pages/Claim/ClaimsTable'
 import { COW_SUBSIDY_DATA } from './constants'
-import { CowBalanceProps } from '../CowBalance'
+import { CowSubsidy } from '.'
 import { transparentize } from 'polished'
 import { FlyoutRowActiveIndicator } from '../Header/NetworkSelector'
 
@@ -60,32 +60,29 @@ const SubsidyTr = styled(ClaimTr)<{ selected?: boolean }>`
 `
 
 const COW_DECIMALS = V_COW[SupportedChainId.MAINNET].decimals
-const TABLE_HEADERS = ['(v)COW balance', 'Fee discount']
 
-function SubsidyTable({ subsidy }: Pick<CowBalanceProps, 'subsidy'>) {
+function SubsidyTable({ discount }: CowSubsidy) {
   return (
     <StyledSubsidyTable>
       <thead>
         <SubsidyTr>
-          {TABLE_HEADERS.map((header, i) => (
-            <th key={header + '_' + i}>{header}</th>
-          ))}
+          <th>(v)COW balance</th>
+          <th>Fee discount</th>
         </SubsidyTr>
       </thead>
       <tbody>
         {/* DATA IS IN ATOMS */}
-        {COW_SUBSIDY_DATA.map(([threshold, discount], i) => {
-          const selected = subsidy.discount === discount
+        {COW_SUBSIDY_DATA.map(([threshold, thresholdDiscount], i) => {
+          const selected = discount === thresholdDiscount
           const formattedThreshold = new BigNumber(formatUnits(threshold, COW_DECIMALS))
 
           return (
-            <SubsidyTr key={discount + '_' + i} selected={selected}>
+            <SubsidyTr key={i} selected={selected}>
               <td>
                 {selected && <FlyoutRowActiveIndicator active />}
-                {/* if index != 0, show prefix '>' */}
                 <span>{i && '>' + formatSmartLocaleAware(formattedThreshold)}</span>
               </td>
-              <td>{discount}%</td>
+              <td>{thresholdDiscount}%</td>
             </SubsidyTr>
           )
         })}
