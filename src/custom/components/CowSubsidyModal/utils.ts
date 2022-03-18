@@ -1,17 +1,24 @@
 import { BigNumber } from 'bignumber.js'
 import { COW_SUBSIDY_DATA } from './constants'
 
-export function getDiscountFromBalance(balance: BigNumber) {
-  const [, firstDiscount] = COW_SUBSIDY_DATA[0]
+const SLICED_DATA = COW_SUBSIDY_DATA.slice(1)
 
-  let eligibleDiscount = firstDiscount
-  for (const [threshold, discount] of COW_SUBSIDY_DATA) {
-    // is balance < current threshold?
-    // e.g 2443 < TIER 3: >1000? FALSE
-    if (balance.lt(new BigNumber(threshold))) break
+export function getDiscountFromBalance(balanceAtomsBn: BigNumber) {
+  let tier = 0
+  let [, discount] = COW_SUBSIDY_DATA[tier]
+  // Here we use a sliced verison of our data without index 0 (0 amt tier)
+  // because loop-wise a balance less than or equal to 0 and 100 (indices 0 and 1, respectively) are the same
+  for (const [threshold, thresholdDiscount] of SLICED_DATA) {
+    // Increase our tier number only if we're not at the end of our list
+    // Is balance less than or equal to threshold?
+    // return our subsidy information
+    const thresholdBn = new BigNumber(threshold)
+    if (balanceAtomsBn.lt(thresholdBn)) return { discount, tier }
 
-    eligibleDiscount = discount
+    // Else assign the current discount as the threshold and iterate one tier
+    discount = thresholdDiscount
+    tier++
   }
 
-  return eligibleDiscount
+  return { discount, tier }
 }

@@ -39,6 +39,8 @@ import { MouseoverTooltipContent } from 'components/Tooltip'
 import { StyledInfo } from './styleds'
 import { SUBSIDY_INFO_MESSAGE } from 'components/CowSubsidyModal/constants'
 
+import useCowBalanceAndSubsidy from 'hooks/useCowBalanceAndSubsidy'
+
 interface TradeBasicDetailsProp extends BoxProps {
   trade?: TradeGp
   fee: CurrencyAmount<Currency>
@@ -194,7 +196,6 @@ export const Price: React.FC<PriceProps> = ({
   )
 }
 interface FeesDiscountProps extends BoxProps {
-  cowBalance?: CurrencyAmount<Currency>
   theme: DefaultTheme
 }
 
@@ -205,30 +206,30 @@ const DarkSpan = styled.span`
   color: ${({ theme }) => theme.text1};
 `
 
-export const FeesDiscount: React.FC<FeesDiscountProps> = ({
-  cowBalance,
-  onClick,
-  theme,
-  ...boxProps
-}: FeesDiscountProps) => (
-  <LowerSectionWrapper {...boxProps} onClick={onClick} style={{ cursor: 'pointer' }}>
-    <TYPE.black fontSize={14} color={theme.text2} alignItems={'center'}>
-      <AutoRow>
-        <Trans>Fees discount</Trans>{' '}
-        <MouseoverTooltipContent
-          content={SUBSIDY_INFO_MESSAGE + ' Click for more info.'}
-          bgColor={theme.bg1}
-          color={theme.text1}
-        >
-          <StyledInfo />
-        </MouseoverTooltipContent>
-      </AutoRow>
-    </TYPE.black>
-    <div className="price-container">
-      <DarkSpan>{cowBalance || '25% discount'}</DarkSpan>
-    </div>
-  </LowerSectionWrapper>
-)
+export const FeesDiscount: React.FC<FeesDiscountProps> = ({ onClick, theme, ...boxProps }: FeesDiscountProps) => {
+  const { subsidy } = useCowBalanceAndSubsidy()
+
+  return (
+    <LowerSectionWrapper {...boxProps} onClick={onClick} style={{ cursor: 'pointer' }}>
+      <TYPE.black fontSize={14} color={theme.text2} alignItems={'center'}>
+        <AutoRow>
+          <Trans>Fees discount</Trans>{' '}
+          <MouseoverTooltipContent
+            content={SUBSIDY_INFO_MESSAGE + ' Click for more info.'}
+            bgColor={theme.bg1}
+            color={theme.text1}
+          >
+            <StyledInfo />
+          </MouseoverTooltipContent>
+        </AutoRow>
+      </TYPE.black>
+
+      <div className="price-container">
+        <DarkSpan>{subsidy?.discount || 0}% discount</DarkSpan>
+      </div>
+    </LowerSectionWrapper>
+  )
+}
 
 export const LightGreyText = styled.span`
   font-weight: 400;

@@ -763,7 +763,7 @@ export default function Swap({
                   {(isFeeGreater || trade) && fee && <TradeBasicDetails trade={trade} fee={fee} />}
                   {/* FEES DISCOUNT */}
                   {/* TODO: check cow balance and set here, else don't show */}
-                  <FeesDiscount cowBalance={undefined} theme={theme} onClick={openCowSubsidyModal} />
+                  <FeesDiscount theme={theme} onClick={openCowSubsidyModal} />
                 </AutoColumn>
                 {/* ETH exactIn && wrapCallback returned us cb */}
                 {isNativeIn && isSupportedWallet && onWrap && (

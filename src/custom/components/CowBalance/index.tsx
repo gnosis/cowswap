@@ -1,19 +1,17 @@
 import styled from 'styled-components/macro'
 import { Trans } from '@lingui/macro'
-import { CurrencyAmount, Currency } from '@uniswap/sdk-core'
 
 import { AMOUNT_PRECISION } from 'constants/index'
 import { ClaimSummaryTitle, ClaimTotal, ClaimSummary as ClaimSummaryWrapper } from 'pages/Claim/styled'
 import { formatMax, formatSmartLocaleAware } from 'utils/format'
 import CowProtocolLogo from 'components/CowProtocolLogo'
+import { CowSubsidyInfoProps } from 'components/CowSubsidyModal'
 
 const Wrapper = styled(ClaimSummaryWrapper)`
   border-radius: 100px;
 `
 
-export interface CowBalanceProps {
-  account?: string
-  balance?: CurrencyAmount<Currency>
+type CowBalanceProps = Omit<CowSubsidyInfoProps, 'subsidy'> & {
   title?: string
 }
 
