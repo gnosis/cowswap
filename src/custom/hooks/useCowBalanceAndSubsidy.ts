@@ -11,7 +11,7 @@ import { useActiveWeb3React } from '.'
 // TODO: get real balance
 const MOCK_BALANCE = CurrencyAmount.fromRawAmount(
   V_COW[SupportedChainId.RINKEBY],
-  parseUnits('99999.999999999999999', V_COW[SupportedChainId.MAINNET].decimals).toString()
+  parseUnits('111100.97', V_COW[SupportedChainId.MAINNET].decimals).toString()
 )
 export default function useCowBalanceAndSubsidy() {
   const { chainId } = useActiveWeb3React()

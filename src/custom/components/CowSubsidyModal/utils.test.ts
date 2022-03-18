@@ -2,37 +2,45 @@
  * @jest-environment ./custom-test-env.js
  */
 import { BigNumber } from 'bignumber.js'
+import { formatUnits } from '@ethersproject/units'
 import { getDiscountFromBalance } from './utils'
 
-const MOCK_TIER_DATA = [
-  ['0', 0],
-  ['100', 10],
-  ['1000', 15],
-  ['10000', 25],
-  ['100000', 35],
+const BALANCES_IN_TIER = [
+  { balance: '0', tier: 0 },
+  { balance: '100000000000000000', tier: 0 }, // 0.1
+  { balance: '99990000000000000000', tier: 0 }, // 99.99
+  { balance: '100000000000000000000', tier: 0 }, // 100
+  { balance: '100001000000000000000', tier: 1 }, // 100.001
+  { balance: '1500000000000000000000', tier: 2 }, // 1500
+  { balance: '11000000000000000000000', tier: 3 }, // 11000
+  { balance: '174330000000000000000000', tier: 4 }, // 174330
 ]
 
-const MOCK_BALANCES = [0, 150, 3512, 64884, 5501230]
-const FALSE_MOCK_BALANCES = [100, 99, 10002, 12, 0]
+const INCORRECT_BALANCES_IN_TIER = [
+  { balance: '0', tier: 2 },
+  { balance: '100000000000000000', tier: 4 }, // 0.1
+  { balance: '99990000000000000000', tier: 2 }, // 99.99
+  { balance: '100000000000000000000', tier: 2 }, // 100
+  { balance: '150000000000000000000', tier: 0 }, // 150
+  { balance: '1500000000000000000000', tier: 4 }, // 1500
+  { balance: '174330000000000000000000', tier: 3 }, // 174330
+]
 
 describe('FEE DISCOUNT TIERS', () => {
   describe('CORRECT DISCOUNTS', () => {
-    MOCK_TIER_DATA.forEach(([threshold, discount], i) => {
-      it(`USER BALANCE: [${MOCK_BALANCES[i]}] === TIER ${i}: [${
-        i ? '>' : ''
-      }${threshold}] => ${discount}% DISCOUNT`, () => {
-        const BALANCE_BN = new BigNumber(MOCK_BALANCES[i])
-        expect(getDiscountFromBalance(BALANCE_BN).discount).toEqual(discount)
+    BALANCES_IN_TIER.forEach(({ balance, tier }) => {
+      it(`USER BALANCE: [${formatUnits(balance, 18)}] equals TIER ${tier}`, () => {
+        const BALANCE_BN = new BigNumber(balance)
+
+        expect(getDiscountFromBalance(BALANCE_BN).tier).toEqual(tier)
       })
     })
   })
   describe('INCORRECT DISCOUNTS', () => {
-    MOCK_TIER_DATA.forEach(([threshold, discount], i) => {
-      it(`USER BALANCE: [${FALSE_MOCK_BALANCES[i]}] !== TIER ${i}: [${
-        i ? '>' : ''
-      }${threshold}] => ${discount}% DISCOUNT`, () => {
-        const BALANCE_BN = new BigNumber(FALSE_MOCK_BALANCES[i])
-        expect(getDiscountFromBalance(BALANCE_BN).discount).not.toEqual(discount)
+    INCORRECT_BALANCES_IN_TIER.forEach(({ balance, tier }) => {
+      it(`USER BALANCE: [${formatUnits(balance, 18)}] does NOT equal TIER ${tier}`, () => {
+        const BALANCE_BN = new BigNumber(balance)
+        expect(getDiscountFromBalance(BALANCE_BN).tier).not.toEqual(tier)
       })
     })
   })
