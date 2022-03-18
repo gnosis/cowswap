@@ -32,7 +32,7 @@ const CowSubsidyInfo = ({ account, balance, subsidy }: CowSubsidyInfoProps) => (
       {SUBSIDY_INFO_MESSAGE}
     </Text>
     {/* VCOW LOGO */}
-    <CowBalance account={account} balance={balance} />
+    {account && <CowBalance account={account} balance={balance} />}
     <SubsidyTable {...subsidy} />
   </AutoColumn>
 )
