@@ -32,7 +32,7 @@ function SubsidyTable() {
         </SubsidyTr>
       </thead>
       <tbody>
-        {Object.entries(COW_SUBSIDY_DATA).map(([threshold, discount], i) => (
+        {COW_SUBSIDY_DATA.map(([threshold, discount], i) => (
           <SubsidyTr key={discount + '_' + i}>
             {/* if index != 0, show prefix '>' */}
             <td>{i && '>' + formatSmartLocaleAware(new BigNumber(threshold))}</td>
