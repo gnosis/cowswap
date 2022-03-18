@@ -1032,18 +1032,12 @@ export function useVCowData(): VCowData {
   const vCowContract = useVCowContract()
   const { account } = useActiveWeb3React()
 
-  const singleCallInput = useMemo(() => [account ?? undefined], [account])
-
-  const { loading: isVestedLoading, result: vestedResult } = useSingleCallResult(
-    vCowContract,
-    'swappableBalanceOf',
-    singleCallInput
-  )
-  const { loading: isTotalLoading, result: totalResult } = useSingleCallResult(
-    vCowContract,
-    'balanceOf',
-    singleCallInput
-  )
+  const { loading: isVestedLoading, result: vestedResult } = useSingleCallResult(vCowContract, 'swappableBalanceOf', [
+    account ?? undefined,
+  ])
+  const { loading: isTotalLoading, result: totalResult } = useSingleCallResult(vCowContract, 'balanceOf', [
+    account ?? undefined,
+  ])
 
   const vested = useParseVCowResult(vestedResult)
   const total = useParseVCowResult(totalResult)
@@ -1058,12 +1052,10 @@ export function useVCowData(): VCowData {
       return null
     }
 
-    return total?.subtract(vested)
+    return total.subtract(vested)
   }, [total, vested])
 
-  const isLoading = useMemo(() => {
-    return isVestedLoading || isTotalLoading
-  }, [isTotalLoading, isVestedLoading])
+  const isLoading = isVestedLoading || isTotalLoading
 
   return { isLoading, vested, unvested, total }
 }
