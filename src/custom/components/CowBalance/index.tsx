@@ -15,7 +15,7 @@ type CowBalanceProps = Omit<CowSubsidyInfoProps, 'subsidy'> & {
   title?: string
 }
 
-const CowBalance = ({ account, balance, title }: CowBalanceProps) => {
+const CowBalance = ({ balance, title }: CowBalanceProps) => {
   return (
     <Wrapper>
       <CowProtocolLogo size={100} />
@@ -26,17 +26,15 @@ const CowBalance = ({ account, balance, title }: CowBalanceProps) => {
         </ClaimSummaryTitle>
       )}
 
-      {balance && account && (
-        <div>
-          <ClaimTotal>
-            <b>Your combined balance</b>
-            <p title={`${formatMax(balance, balance.currency.decimals)} vCOW`}>
-              {' '}
-              {formatSmartLocaleAware(balance, AMOUNT_PRECISION) || '0'} (v)COW
-            </p>
-          </ClaimTotal>
-        </div>
-      )}
+      <div>
+        <ClaimTotal>
+          <b>Your combined balance</b>
+          <p title={`${balance ? formatMax(balance, balance.currency.decimals) : '0'} vCOW`}>
+            {' '}
+            {formatSmartLocaleAware(balance, AMOUNT_PRECISION) || '0'} (v)COW
+          </p>
+        </ClaimTotal>
+      </div>
     </Wrapper>
   )
 }
