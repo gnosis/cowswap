@@ -102,6 +102,7 @@ export const ItemTitle = styled.h3`
   font-size: 18px;
   line-height: 1.21;
   color: ${({ theme }) => theme.text1};
+
   ${({ theme }) => theme.mediaWidth.upToSmall`
     margin: 0 0 10px 0;
     font-size: 16px;
@@ -132,11 +133,12 @@ export const FlexWrap = styled.div`
 `
 
 export const StyledContainer = styled.div`
-  display: flex;
-  flex:1;
-  align-items:center;
-  justify-content: space-between;
+    display: flex;
+    flex:1;
+    align-items:center;
+    justify-content: space-between;
   }
+
   ${({ theme }) => theme.mediaWidth.upToSmall`
     flex-wrap: wrap;
     flex-direction: column;
@@ -418,22 +420,14 @@ export const BalanceDisplay = styled.div<{ titleSize?: number; altColor?: boolea
       padding: 0 !important;
     }
   }
-
-  svg {
-    opacity: 0.4;
-    transition: opacity 0.2s ease-in-out;
-
-    &:hover {
-      opacity: 1;
-    }
-  }
 `
 
 export const ConvertWrapper = styled.div`
   display: grid;
   grid-template-columns: 1fr 200px;
   align-items: center;
-  background: ${({ theme }) => theme.blueShade4};
+  ${({ theme }) => theme.neumorphism.boxShadow};
+  background: ${({ theme }) => theme.bg7};
   border-radius: 16px;
   padding: 16px;
   width: 100%;
