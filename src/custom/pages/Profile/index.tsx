@@ -24,7 +24,7 @@ import { RefreshCcw } from 'react-feather'
 import Web3Status from 'components/Web3Status'
 import useReferralLink from 'hooks/useReferralLink'
 import useFetchProfile from 'hooks/useFetchProfile'
-import { numberFormatter } from 'utils/format'
+import { formatSmartLocaleAware, numberFormatter } from 'utils/format'
 import { getExplorerAddressLink } from 'utils/explorer'
 import useTimeAgo from 'hooks/useTimeAgo'
 import { MouseoverTooltipContent } from 'components/Tooltip'
@@ -39,8 +39,10 @@ import SVG from 'react-inlinesvg'
 import ArrowIcon from 'assets/cow-swap/arrow.svg'
 import CowImage from 'assets/cow-swap/cow_v2.svg'
 import CowProtocolImage from 'assets/cow-swap/cowprotocol.svg'
-// import { useTokenBalance } from 'state/wallet/hooks'
-// import { V_COW } from 'constants/tokens'
+import { useTokenBalance } from 'state/wallet/hooks'
+import { useVCowData } from 'state/claim/hooks'
+import { V_COW, COW } from 'constants/tokens'
+import { isPr, isLocal } from 'utils/environments'
 
 export default function Profile() {
   const referralLink = useReferralLink()
@@ -49,17 +51,22 @@ export default function Profile() {
   const lastUpdated = useTimeAgo(profileData?.lastUpdated)
   const isTradesTooltipVisible = account && chainId == 1 && !!profileData?.totalTrades
   const hasOrders = useHasOrders(account)
+  const vCowBalance = useTokenBalance(account || undefined, chainId ? V_COW[chainId] : undefined)
+  const cowBalance = useTokenBalance(account || undefined, chainId ? COW[chainId] : undefined)
+  const { vested, total, unvested } = useVCowData()
 
-  // const vCowBalance = useTokenBalance(account || undefined, chainId ? V_COW[chainId] : undefined)
-  const cowBalance = '10,240,800.32'
-  const vCowBalance = '10,240,800.32'
-  const vCowBalanceUnvested = '9,240,800.32'
-  const vCowBalanceVested = '1,240,800.32'
+  // TODO: remove once this is not needed anymore
+  if (isPr || isLocal) {
+    console.force.log('vested', formatSmartLocaleAware(vested, vested?.currency.decimals))
+    console.force.log('total', formatSmartLocaleAware(total, total?.currency.decimals))
+    console.force.log('unvested', formatSmartLocaleAware(unvested, unvested?.currency.decimals))
+    console.force.log('cowBalance', formatSmartLocaleAware(cowBalance, cowBalance?.currency.decimals))
+  }
 
   const tooltipText = {
     balanceBreakdown: (
       <div>
-        Unvested {vCowBalanceUnvested} vCOW Vested {vCowBalanceVested} vCOW
+        Unvested {unvested} vCOW Vested {vested} vCOW
       </div>
     ),
     vested: (
@@ -85,7 +92,7 @@ export default function Profile() {
       )}
       {chainId && chainId !== ChainId.MAINNET && (
         <NotificationBanner isVisible level="info" canClose={false}>
-          Profile data is only available for mainnet. Please change the network to see it.
+          Affiliate data is only available for Ethereum. Please change the network to see it.
         </NotificationBanner>
       )}
     </>
@@ -119,7 +126,7 @@ export default function Profile() {
                     <HelpCircle size={14} />
                   </MouseoverTooltipContent>
                 </i>
-                <b>{vCowBalanceVested}</b>
+                <b>{vested}</b>
               </BalanceDisplay>
               <ButtonPrimary>
                 Convert to COW <SVG src={ArrowIcon} />
