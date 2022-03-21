@@ -340,9 +340,14 @@ export const BannerCard = styled(BannerExplainer)`
       `}
     }
 
-    > span > a {
+    > span > a,
+    > span > a:link {
       font-size: 15px;
       color: ${({ theme }) => theme.white};
+
+      &:hover {
+        color: ${({ theme }) => theme.primary1};
+      }
     }
   }
 
@@ -351,6 +356,7 @@ export const BannerCard = styled(BannerExplainer)`
     right: -190px;
     transform: scale(-1, 1); // flip mirror
     opacity: 0.25;
+    mix-blend-mode: initial;
   }
 `
 
