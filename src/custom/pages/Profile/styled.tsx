@@ -373,6 +373,11 @@ export const BalanceDisplay = styled.div<{ titleSize?: number; altColor?: boolea
   font-size: 14px;
   color: ${({ theme }) => transparentize(0.3, theme.text1)};
 
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+    gap: 12px;
+    flex-flow: column wrap;
+  `};
+
   ${({ theme }) => theme.mediaWidth.upToSmall`
     justify-content: center;
   `};
@@ -397,6 +402,10 @@ export const BalanceDisplay = styled.div<{ titleSize?: number; altColor?: boolea
     gap: 0 3px;
     width: 100%;
     font-style: normal;
+
+    ${({ theme }) => theme.mediaWidth.upToMedium`
+      justify-content: center;
+    `};
   }
 
   b {
@@ -406,6 +415,10 @@ export const BalanceDisplay = styled.div<{ titleSize?: number; altColor?: boolea
     gap: 0 6px;
     color: ${({ theme, altColor }) => (altColor ? theme.primary1 : theme.text1)};
     font-size: ${({ titleSize }) => (titleSize ? `${titleSize}px` : '21px')};
+
+    ${({ theme }) => theme.mediaWidth.upToMedium`
+      justify-content: center;
+    `};
 
     ${({ theme }) => theme.mediaWidth.upToSmall`
       font-size: 18px;
@@ -436,5 +449,7 @@ export const ConvertWrapper = styled.div`
     display: flex;
     flex-flow: column wrap;
     gap: 16px 0;
+
+    > div { gap: 6px 12px; }
   `};
 `
