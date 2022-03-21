@@ -51,17 +51,23 @@ export default function Profile() {
   const lastUpdated = useTimeAgo(profileData?.lastUpdated)
   const isTradesTooltipVisible = account && chainId == 1 && !!profileData?.totalTrades
   const hasOrders = useHasOrders(account)
-  const vCowBalance = useTokenBalance(account || undefined, chainId ? V_COW[chainId] : undefined)
-  const cowBalance = useTokenBalance(account || undefined, chainId ? COW[chainId] : undefined)
-  const { vested, total, unvested } = useVCowData()
+
+  // const vCowBalance = useTokenBalance(account || undefined, chainId ? V_COW[chainId] : undefined)
+  const vCowBalance = '10,240,800.32'
+  // const cowBalance = useTokenBalance(account || undefined, chainId ? COW[chainId] : undefined)
+  const cowBalance = '0'
+
+  // const { vested, total, unvested } = useVCowData()
+  const unvested = '9,240,800.32'
+  const vested = '1,240,800.32'
 
   // TODO: remove once this is not needed anymore
-  if (isPr || isLocal) {
-    console.force.log('vested', formatSmartLocaleAware(vested, vested?.currency.decimals))
-    console.force.log('total', formatSmartLocaleAware(total, total?.currency.decimals))
-    console.force.log('unvested', formatSmartLocaleAware(unvested, unvested?.currency.decimals))
-    console.force.log('cowBalance', formatSmartLocaleAware(cowBalance, cowBalance?.currency.decimals))
-  }
+  // if (isPr || isLocal) {
+  //   console.force.log('vested', formatSmartLocaleAware(vested, vested?.currency.decimals))
+  //   console.force.log('total', formatSmartLocaleAware(total, total?.currency.decimals))
+  //   console.force.log('unvested', formatSmartLocaleAware(unvested, unvested?.currency.decimals))
+  //   console.force.log('cowBalance', formatSmartLocaleAware(cowBalance, cowBalance?.currency.decimals))
+  // }
 
   const tooltipText = {
     balanceBreakdown: (
