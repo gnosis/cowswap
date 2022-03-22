@@ -24,7 +24,10 @@ import { RefreshCcw } from 'react-feather'
 import Web3Status from 'components/Web3Status'
 import useReferralLink from 'hooks/useReferralLink'
 import useFetchProfile from 'hooks/useFetchProfile'
-import { formatSmartLocaleAware, numberFormatter } from 'utils/format'
+import {
+  // formatSmartLocaleAware,
+  numberFormatter,
+} from 'utils/format'
 import { getExplorerAddressLink } from 'utils/explorer'
 import useTimeAgo from 'hooks/useTimeAgo'
 import { MouseoverTooltipContent } from 'components/Tooltip'
@@ -39,10 +42,10 @@ import SVG from 'react-inlinesvg'
 import ArrowIcon from 'assets/cow-swap/arrow.svg'
 import CowImage from 'assets/cow-swap/cow_v2.svg'
 import CowProtocolImage from 'assets/cow-swap/cowprotocol.svg'
-import { useTokenBalance } from 'state/wallet/hooks'
-import { useVCowData } from 'state/claim/hooks'
-import { V_COW, COW } from 'constants/tokens'
-import { isPr, isLocal } from 'utils/environments'
+// import { useTokenBalance } from 'state/wallet/hooks'
+// import { useVCowData } from 'state/claim/hooks'
+// import { V_COW, COW } from 'constants/tokens'
+// import { isPr, isLocal } from 'utils/environments'
 
 export default function Profile() {
   const referralLink = useReferralLink()
