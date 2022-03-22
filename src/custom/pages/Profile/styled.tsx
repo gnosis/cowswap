@@ -318,7 +318,7 @@ export const BannerCard = styled(BannerExplainer)`
 
     > b {
       font-size: 24px;
-      
+
       @supports (-webkit-background-clip: text) {
         background: ${({ theme }) => `linear-gradient(80deg, ${theme.primary1}, ${theme.primary1}, #5ea2fb)`};
         -webkit-background-clip: text;
