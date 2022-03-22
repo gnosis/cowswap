@@ -2,7 +2,7 @@ import 'polyfill-object.fromentries'
 
 import flat from 'array.prototype.flat'
 import flatMap from 'array.prototype.flatmap'
-import { isEns, isProd } from './custom/utils/environments'
+import { isEns, isProd } from 'utils/environments'
 
 flat.shim()
 flatMap.shim()
