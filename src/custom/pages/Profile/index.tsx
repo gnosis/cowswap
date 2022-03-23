@@ -122,7 +122,7 @@ export default function Profile() {
           <i>Unvested</i> <p>{vCowBalanceUnvested} vCOW</p>
         </span>
         <span>
-          <i>Vested</i> <p>{vCowBalanceVested} vCOW</p>
+          <i>Vested</i> <p>{!isSwapPending ? vCowBalanceVested : '0'} vCOW</p>
         </span>
       </VestingBreakdown>
     ),
@@ -186,7 +186,7 @@ export default function Profile() {
                     <HelpCircle size={14} />
                   </MouseoverTooltipContent>
                 </i>
-                <b>{vCowBalanceVested}</b>
+                <b>{!isSwapPending ? vCowBalanceVested : '0'}</b>
               </BalanceDisplay>
               <ButtonPrimary onClick={handleVCowSwap} disabled={isSwapDisabled}>
                 {isSwapPending ? (
