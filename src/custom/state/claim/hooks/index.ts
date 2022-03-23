@@ -1109,8 +1109,8 @@ export function useSwapVCowCallback({ openModal, closeModal }: SwapVCowCallbackP
       })
     })
 
-    const summary = `Convert vCOW to COW`
-    openModal(summary, OperationType.ORDER_SIGN)
+    const summary = `Converting vCOW to COW`
+    openModal(summary, OperationType.CONVERT_VCOW)
 
     return vCowContract
       .swapAll({ from: account, gasLimit: estimatedGas })

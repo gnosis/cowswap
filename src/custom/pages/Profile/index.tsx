@@ -81,7 +81,7 @@ export default function Profile() {
   // Init modal hooks
   const { handleSetError, handleCloseError, ErrorModal } = useErrorModal()
   const { TransactionConfirmationModal, openModal, closeModal } = useTransactionConfirmationModal(
-    OperationType.ORDER_SIGN
+    OperationType.CONVERT_VCOW
   )
 
   // Boolean flags
