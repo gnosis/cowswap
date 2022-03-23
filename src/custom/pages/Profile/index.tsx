@@ -190,7 +190,7 @@ export default function Profile() {
               </BalanceDisplay>
               <ButtonPrimary onClick={handleVCowSwap} disabled={isSwapDisabled}>
                 {isSwapPending ? (
-                  'Swapping vCow...'
+                  'Converting vCOW...'
                 ) : (
                   <>
                     Convert to COW <SVG src={ArrowIcon} />

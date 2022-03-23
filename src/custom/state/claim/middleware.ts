@@ -41,13 +41,13 @@ export const claimMinedMiddleware: Middleware<Record<string, unknown>, AppState>
       }
     } else if (transaction.swapVCow) {
       const status = transaction.receipt?.status
+
       console.debug(
-        `[stat:claim:middleware] Swap vCow for Cow transaction finalized with status ${status}`,
+        `[stat:claim:middleware] Convert vCOW to COW transaction finalized with status ${status}`,
         transaction.hash
       )
-      if (status === 1) {
-        store.dispatch(setSwapVCowStatus(SwapVCowStatus.INITIAL))
-      }
+
+      store.dispatch(setSwapVCowStatus(SwapVCowStatus.INITIAL))
     }
   }
 
