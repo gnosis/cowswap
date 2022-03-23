@@ -2,7 +2,7 @@ import 'polyfill-object.fromentries'
 
 import flat from 'array.prototype.flat'
 import flatMap from 'array.prototype.flatmap'
-import { isEns, isProd } from 'utils/environments'
+import { isEns, isProd, isStaging } from 'utils/environments'
 
 flat.shim()
 flatMap.shim()
@@ -12,7 +12,7 @@ const originalConsole = window.console
 const proxiedConsole = new Proxy(window.console, {
   get(obj, prop: keyof Console) {
     // show logs in all environments EXCEPT production & ens
-    if (!isProd || !isEns) {
+    if (!isProd || !isEns || !isStaging) {
       return obj[prop]
     } else {
       return () => undefined
