@@ -3,7 +3,7 @@ import { BigNumber } from 'bignumber.js'
 
 import { getDiscountFromBalance } from 'components/CowSubsidyModal/utils'
 import { useVCowData } from 'state/claim/hooks'
-import { COW_SUBSIDY_DATA } from '../components/CowSubsidyModal/constants'
+import { COW_SUBSIDY_DATA } from 'components/CowSubsidyModal/constants'
 
 const ZERO_BALANCE_SUBSIDY = { subsidy: { tier: 0, discount: COW_SUBSIDY_DATA[0][1] }, balance: undefined }
 
