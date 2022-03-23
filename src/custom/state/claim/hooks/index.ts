@@ -1097,11 +1097,7 @@ export function useSwapVCowCallback({ openModal, closeModal }: SwapVCowCallbackP
       throw new Error('vCOW token not present')
     }
 
-    const args: { from: string; gasLimit?: BigNumber } = {
-      from: account,
-    }
-
-    const estimatedGas = await vCowContract.estimateGas.swapAll(args).catch(() => {
+    const estimatedGas = await vCowContract.estimateGas.swapAll({ from: account }).catch(() => {
       // general fallback for tokens who restrict approval amounts
       return vCowContract.estimateGas.swapAll().catch((error) => {
         console.log(
@@ -1113,13 +1109,11 @@ export function useSwapVCowCallback({ openModal, closeModal }: SwapVCowCallbackP
       })
     })
 
-    args.gasLimit = estimatedGas
-
     const summary = `Convert vCOW for COW`
     openModal(summary, OperationType.ORDER_SIGN)
 
     return vCowContract
-      .swapAll(args)
+      .swapAll({ from: account, gasLimit: estimatedGas })
       .then((tx: TransactionResponse) => {
         addTransaction({
           swapVCow: true,
