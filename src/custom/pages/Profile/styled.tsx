@@ -510,8 +510,8 @@ export const VestingBreakdown = styled.div`
   }
 
   > span > p {
-    margin: 0;
     font-weight: 500;
+    margin: 0;
   }
 
   > span:last-of-type > p {
