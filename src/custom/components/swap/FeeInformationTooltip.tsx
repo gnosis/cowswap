@@ -80,19 +80,19 @@ const FeeInnerWrapper = styled.div`
   gap: 2px;
 `
 
-const FeeBreakdownLine = ({
-  feeAmount,
-  discount,
-  type,
-  symbol,
-}: FeeInformationTooltipProps & { symbol: string | undefined; discount: number }) => {
+type FeeBreakdownProps = FeeInformationTooltipProps & {
+  symbol: string | undefined
+  discount: number
+  fullFeeAmount: string | undefined
+}
+const FeeBreakdownLine = ({ feeAmount, discount, type, symbol, fullFeeAmount }: FeeBreakdownProps) => {
   const typeString = type === 'From' ? '+' : '-'
 
   const FeeAmount = useCallback(() => {
     // 1 + DISCOUNT/100 e.g 1 + 0.15 = 1.15
     const discountBn = ONE_BIG_NUMBER.plus(new BigNumber(discount).div(new BigNumber('100')))
     // we need the fee BEFORE the discount as the backend will return us the adjusted fee with discount
-    const adjustedFee = feeAmount ? new BigNumber(feeAmount).times(discountBn).toString(10) : undefined
+    const adjustedFee = fullFeeAmount ? new BigNumber(fullFeeAmount).times(discountBn).toString(10) : undefined
 
     return (
       <>
@@ -107,7 +107,7 @@ const FeeBreakdownLine = ({
         )}
       </>
     )
-  }, [discount, feeAmount, symbol, typeString])
+  }, [discount, fullFeeAmount, symbol, typeString])
 
   const FeeDiscountedAmount = useCallback(
     () => (
@@ -124,10 +124,10 @@ const FeeBreakdownLine = ({
 
   return (
     <>
-      <FeeTooltipLine discount={!!discount}>
+      <FeeTooltipLine discount={!!fullFeeAmount && !!discount}>
         <FeeAmount />
       </FeeTooltipLine>
-      {!!discount && (
+      {!!fullFeeAmount && !!discount && (
         <FeeTooltipLine>
           <FeeDiscountedAmount />
         </FeeTooltipLine>
@@ -175,8 +175,7 @@ export default function FeeInformationTooltip(props: FeeInformationTooltipProps)
                   {amountBeforeFees} {symbol}
                 </span>{' '}
               </FeeTooltipLine>
-              <FeeBreakdownLine {...props} discount={subsidy.discount} symbol={symbol} />
-              {/* TODO: Add gas costs when available (wait for design) */}
+              <FeeBreakdownLine {...props} fullFeeAmount={fullFeeAmount} discount={subsidy.discount} symbol={symbol} />
               {allowsOffchainSigning && (
                 <FeeTooltipLine>
                   <span>Gas costs</span>
