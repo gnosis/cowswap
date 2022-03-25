@@ -1,14 +1,12 @@
 import React, { useCallback, useMemo } from 'react'
+import { Currency, CurrencyAmount, Fraction, Percent, Token } from '@uniswap/sdk-core'
 import TradeGp from 'state/swap/TradeGp'
 import QuestionHelper from 'components/QuestionHelper'
 import styled from 'styled-components/macro'
 import { formatMax, formatSmart } from 'utils/format'
 import useTheme from 'hooks/useTheme'
-import { FIAT_PRECISION } from 'constants/index'
-import { CurrencyAmount, Token } from '@uniswap/sdk-core'
+import { AMOUNT_PRECISION, FIAT_PRECISION } from 'constants/index'
 import useCowBalanceAndSubsidy from 'hooks/useCowBalanceAndSubsidy'
-import { BigNumber } from 'bignumber.js'
-import { ONE_BIG_NUMBER } from '@gnosis.pm/dex-js'
 
 interface FeeInformationTooltipProps {
   trade?: TradeGp
@@ -16,7 +14,7 @@ interface FeeInformationTooltipProps {
   showHelper: boolean
   amountBeforeFees?: string
   amountAfterFees?: string
-  feeAmount?: string
+  feeAmount?: CurrencyAmount<Currency>
   type: 'From' | 'To'
   fiatValue: CurrencyAmount<Token> | null
   showFiat?: boolean
@@ -83,16 +81,17 @@ const FeeInnerWrapper = styled.div`
 type FeeBreakdownProps = FeeInformationTooltipProps & {
   symbol: string | undefined
   discount: number
-  fullFeeAmount: string | undefined
 }
-const FeeBreakdownLine = ({ feeAmount, discount, type, symbol, fullFeeAmount }: FeeBreakdownProps) => {
+const ONE = new Fraction(1, 1)
+const FeeBreakdownLine = ({ feeAmount, discount, type, symbol }: FeeBreakdownProps) => {
   const typeString = type === 'From' ? '+' : '-'
 
   const FeeAmount = useCallback(() => {
-    // 1 + DISCOUNT/100 e.g 1 + 0.15 = 1.15
-    const discountBn = ONE_BIG_NUMBER.plus(new BigNumber(discount).div(new BigNumber('100')))
+    const discountAsPercent = new Percent(discount, 100)
     // we need the fee BEFORE the discount as the backend will return us the adjusted fee with discount
-    const adjustedFee = fullFeeAmount ? new BigNumber(fullFeeAmount).times(discountBn).toString(10) : undefined
+    const adjustedFee = feeAmount
+      ? formatSmart(feeAmount.multiply(ONE.add(discountAsPercent)), AMOUNT_PRECISION)
+      : undefined
 
     return (
       <>
@@ -107,27 +106,27 @@ const FeeBreakdownLine = ({ feeAmount, discount, type, symbol, fullFeeAmount }: 
         )}
       </>
     )
-  }, [discount, fullFeeAmount, symbol, typeString])
+  }, [discount, feeAmount, symbol, typeString])
 
-  const FeeDiscountedAmount = useCallback(
-    () => (
+  const FeeDiscountedAmount = useCallback(() => {
+    const smartFee = formatSmart(feeAmount, AMOUNT_PRECISION)
+    return (
       <>
         <strong className="green">Fee [-{discount}%]</strong>
         <span>
           {typeString}
-          {feeAmount} {symbol}
+          {smartFee} {symbol}
         </span>
       </>
-    ),
-    [discount, feeAmount, symbol, typeString]
-  )
+    )
+  }, [discount, feeAmount, symbol, typeString])
 
   return (
     <>
-      <FeeTooltipLine discount={!!fullFeeAmount && !!discount}>
+      <FeeTooltipLine discount={!!feeAmount && !!discount}>
         <FeeAmount />
       </FeeTooltipLine>
-      {!!fullFeeAmount && !!discount && (
+      {!!feeAmount && !!discount && (
         <FeeTooltipLine>
           <FeeDiscountedAmount />
         </FeeTooltipLine>
@@ -175,7 +174,7 @@ export default function FeeInformationTooltip(props: FeeInformationTooltipProps)
                   {amountBeforeFees} {symbol}
                 </span>{' '}
               </FeeTooltipLine>
-              <FeeBreakdownLine {...props} fullFeeAmount={fullFeeAmount} discount={subsidy.discount} symbol={symbol} />
+              <FeeBreakdownLine {...props} discount={subsidy.discount} symbol={symbol} />
               {allowsOffchainSigning && (
                 <FeeTooltipLine>
                   <span>Gas costs</span>
