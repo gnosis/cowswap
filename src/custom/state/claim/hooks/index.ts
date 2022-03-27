@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import JSBI from 'jsbi'
 import ms from 'ms.macro'
-import { CurrencyAmount, Price, Token } from '@uniswap/sdk-core'
+import { Currency, CurrencyAmount, Price, Token } from '@uniswap/sdk-core'
 import { TransactionResponse } from '@ethersproject/providers'
 import { parseUnits } from '@ethersproject/units'
 import { BigNumber } from '@ethersproject/bignumber'
@@ -10,7 +10,7 @@ import { VCow as VCowType } from 'abis/types'
 
 import { useVCowContract } from 'hooks/useContract'
 import { useActiveWeb3React } from 'hooks/web3'
-import { useSingleContractMultipleData } from 'state/multicall/hooks'
+import { useSingleContractMultipleData, useSingleCallResult, Result } from 'state/multicall/hooks'
 import { useTransactionAdder } from 'state/enhancedTransactions/hooks'
 
 import { GpEther, V_COW } from 'constants/tokens'
@@ -966,7 +966,7 @@ function _enhanceClaimData(claim: UserClaimData, chainId: SupportedChainId, pric
 
   // Free claims will have tokenAndAmount === undefined
   // If it's not a free claim, store the price and calculate cost in investment token
-  if (tokenAndAmount?.amount) {
+  if (tokenAndAmount?.amount && Number(tokenAndAmount.amount) > 0) {
     data.price = _getPrice(tokenAndAmount)
     // get the currency amount using the price base currency (remember price was inverted)
     data.currencyAmount = CurrencyAmount.fromRawAmount(data.price.baseCurrency, claim.amount)
@@ -999,4 +999,63 @@ export const useClaimLinks = () => {
     }),
     [chainId]
   )
+}
+
+/**
+ * Hook that parses the result input with BigNumber value to CurrencyAmount
+ */
+function useParseVCowResult(result: Result | undefined) {
+  const { chainId } = useActiveWeb3React()
+
+  const vCowToken = chainId ? V_COW[chainId] : undefined
+
+  return useMemo(() => {
+    if (!chainId || !vCowToken || !result) {
+      return
+    }
+
+    return CurrencyAmount.fromRawAmount(vCowToken, result[0].toString())
+  }, [chainId, result, vCowToken])
+}
+
+/**
+ * Hook that fetches the needed vCow data and returns it in VCowData type
+ */
+type VCowData = {
+  isLoading: boolean
+  total: CurrencyAmount<Currency> | undefined | null
+  unvested: CurrencyAmount<Currency> | undefined | null
+  vested: CurrencyAmount<Currency> | undefined | null
+}
+
+export function useVCowData(): VCowData {
+  const vCowContract = useVCowContract()
+  const { account } = useActiveWeb3React()
+
+  const { loading: isVestedLoading, result: vestedResult } = useSingleCallResult(vCowContract, 'swappableBalanceOf', [
+    account ?? undefined,
+  ])
+  const { loading: isTotalLoading, result: totalResult } = useSingleCallResult(vCowContract, 'balanceOf', [
+    account ?? undefined,
+  ])
+
+  const vested = useParseVCowResult(vestedResult)
+  const total = useParseVCowResult(totalResult)
+
+  const unvested = useMemo(() => {
+    if (!total || !vested) {
+      return null
+    }
+
+    // Check if total < vested, if it is something is probably wrong and we return null
+    if (total.lessThan(vested)) {
+      return null
+    }
+
+    return total.subtract(vested)
+  }, [total, vested])
+
+  const isLoading = isVestedLoading || isTotalLoading
+
+  return { isLoading, vested, unvested, total }
 }

@@ -21,13 +21,20 @@ export const FULL_PRICE_PRECISION = 20
 export const FIAT_PRECISION = 2
 export const PERCENTAGE_PRECISION = 2
 
+export const SHORT_LOAD_THRESHOLD = 500
 export const LONG_LOAD_THRESHOLD = 2000
 
 export const APP_DATA_HASH = getAppDataHash()
 export const PRODUCTION_URL = 'cowswap.exchange'
 export const BARN_URL = `barn.${PRODUCTION_URL}`
 
-const DISABLED_WALLETS = /^(?:WALLET_LINK|COINBASE_LINK|FORTMATIC|Portis)$/i
+// Allow WALLET_LINK to be activated on mobile
+// since COINBASE_LINK is limited to use only 1 deeplink on mobile
+SUPPORTED_WALLETS_UNISWAP.WALLET_LINK = {
+  ...SUPPORTED_WALLETS_UNISWAP.WALLET_LINK,
+  mobile: true,
+}
+const DISABLED_WALLETS = /^(?:Portis|COINBASE_LINK)$/i
 
 const ADDED_WALLETS: { [key: string]: WalletInfo } = {
   TALLY: {
@@ -70,6 +77,12 @@ export const V_COW_CONTRACT_ADDRESS: Record<number, string> = {
   [ChainId.MAINNET]: '0xd057b63f5e69cf1b929b356b579cba08d7688048',
   [ChainId.XDAI]: '0xc20C9C13E853fc64d054b73fF21d3636B2d97eaB',
   [ChainId.RINKEBY]: '0x5Bf4d1f8d1cB35E0aeA69B220beb97b8807504eA',
+}
+
+export const COW_CONTRACT_ADDRESS: Record<number, string> = {
+  [ChainId.MAINNET]: '0xDEf1CA1fb7FBcDC777520aa7f396b4E015F497aB',
+  [ChainId.XDAI]: '0x177127622c4A00F3d409B75571e12cB3c8973d3c',
+  [ChainId.RINKEBY]: '0x263D0C7a63D25564cFDc299C97Fd92A61B5fc7d1',
 }
 
 // See https://github.com/gnosis/gp-v2-contracts/commit/821b5a8da213297b0f7f1d8b17c893c5627020af#diff-12bbbe13cd5cf42d639e34a39d8795021ba40d3ee1e1a8282df652eb161a11d6R13
@@ -130,6 +143,7 @@ export const AMOUNT_OF_ORDERS_TO_FETCH = 100
 
 // last wallet provider key used in local storage
 export const STORAGE_KEY_LAST_PROVIDER = 'lastProvider'
+export const WAITING_TIME_RECONNECT_LAST_PROVIDER = 15000 // 15s
 
 // Default price strategy to use for getting app prices
 // COWSWAP = new quote endpoint

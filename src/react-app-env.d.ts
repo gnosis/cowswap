@@ -7,17 +7,25 @@ declare module '@metamask/jazzicon' {
 declare module 'fortmatic'
 
 interface Window {
+  console: Console & { force: Console }
+  walletLinkExtension?: any
   ethereum?: {
     isMetaMask?: true
     isTally?: true
     on?: (...args: any[]) => void
     removeListener?: (...args: any[]) => void
     autoRefreshOnNetworkChange?: boolean
+    setSelectedProvider: (any) => void
+    providers: [any]
   }
   tally?: {
     isTally?: true
   }
   web3?: Record<string, unknown>
+}
+
+interface Console extends Node.Console {
+  force: Node.Console
 }
 
 declare module 'content-hash' {

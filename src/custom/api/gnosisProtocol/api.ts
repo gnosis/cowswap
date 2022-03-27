@@ -16,11 +16,12 @@ import QuoteError, {
   GpQuoteErrorObject,
   mapOperatorErrorToQuoteError,
 } from 'api/gnosisProtocol/errors/QuoteError'
-import { toErc20Address } from 'utils/tokens'
+import { toErc20Address, toNativeBuyAddress } from 'utils/tokens'
 import { FeeQuoteParams, PriceInformation, PriceQuoteParams, SimpleGetQuoteResponse } from 'utils/price'
 
 import { DEFAULT_NETWORK_FOR_LISTS } from 'constants/lists'
 import * as Sentry from '@sentry/browser'
+import { constructSentryError } from 'utils/logging'
 import { ZERO_ADDRESS } from 'constants/misc'
 import { getAppDataHash } from 'constants/appDataHash'
 import { GpPriceStrategy } from 'hooks/useGetGpPriceStrategy'
@@ -274,51 +275,69 @@ const UNHANDLED_ORDER_ERROR: ApiErrorObject = {
   description: ApiErrorCodeDetails.UNHANDLED_CREATE_ERROR,
 }
 
-async function _handleQuoteResponse<T = any, P extends QuoteQuery = QuoteQuery>(
+async function _handleQuoteResponse<T = any, P extends FeeQuoteParams = FeeQuoteParams>(
   response: Response,
-  params?: P
+  params: P
 ): Promise<T> {
-  if (!response.ok) {
-    const errorObj: ApiErrorObject = await response.json()
+  try {
+    if (!response.ok) {
+      // don't attempt json parse if not json response...
+      if (response.headers.get('Content-Type') !== 'application/json') {
+        throw new Error(`${response.status} error occurred. ${response.statusText}`)
+      }
+      const errorObj: ApiErrorObject = await response.json()
 
-    // we need to map the backend error codes to match our own for quotes
-    const mappedError = mapOperatorErrorToQuoteError(errorObj)
-    const quoteError = new QuoteError(mappedError)
+      // we need to map the backend error codes to match our own for quotes
+      const mappedError = mapOperatorErrorToQuoteError(errorObj)
+      const quoteError = new QuoteError(mappedError)
 
-    if (params) {
-      const { sellToken, buyToken } = params
-
-      const sentryError = new Error()
-      Object.assign(sentryError, quoteError, {
-        message: `Error querying fee from API - sellToken: ${sellToken}, buyToken: ${buyToken}`,
-        name: 'FeeErrorObject',
+      // we need to create a sentry error and keep the original mapped quote error
+      throw constructSentryError(quoteError, response, {
+        message: `${quoteError.description} [sellToken: ${params.sellToken}]//[buyToken: ${params.buyToken}]`,
+        name: `[${quoteError.name}] - ${quoteError.type}`,
+        optionalTags: {
+          quoteErrorType: quoteError.type,
+        },
       })
-
-      // report to sentry
-      Sentry.captureException(sentryError, {
-        tags: { errorType: 'getFeeQuote' },
-        contexts: { params: { ...params } },
-      })
+    } else {
+      return response.json()
     }
+  } catch (error) {
+    // Create a new sentry error OR
+    // use the previously created and rethrown error from the try block
+    const sentryError =
+      error?.sentryError ||
+      constructSentryError(error, response, {
+        message: `Potential backend error detected - status code: ${response.status}`,
+        name: '[HandleQuoteResponse] - Unmapped Quote Error',
+      })
+    // Create the error tags or use the previously constructed ones from the try block
+    const tags = error?.tags || { errorType: 'handleQuoteResponse', backendErrorCode: response.status }
 
-    throw quoteError
-  } else {
-    return response.json()
+    // report to sentry
+    Sentry.captureException(sentryError, {
+      tags,
+      contexts: { params: { ...params } },
+    })
+
+    throw error?.baseError || error
   }
 }
 
 function _mapNewToLegacyParams(params: FeeQuoteParams): QuoteQuery {
-  const { amount, kind, userAddress, receiver, validTo, sellToken, buyToken, chainId } = params
+  const { amount, kind, userAddress, receiver, validTo, sellToken, buyToken, chainId, priceQuality } = params
   const fallbackAddress = userAddress || ZERO_ADDRESS
 
   const baseParams = {
     sellToken: toErc20Address(sellToken, chainId),
-    buyToken: toErc20Address(buyToken, chainId),
+    // check buy token, if native, use native address
+    buyToken: toNativeBuyAddress(buyToken, chainId),
     from: fallbackAddress,
     receiver: receiver || fallbackAddress,
     appData: getAppDataHash(),
     validTo,
     partiallyFillable: false,
+    priceQuality,
   }
 
   const finalParams: QuoteQuery =
@@ -342,7 +361,7 @@ export async function getQuote(params: FeeQuoteParams) {
   const quoteParams = _mapNewToLegacyParams(params)
   const response = await _post(chainId, '/quote', quoteParams)
 
-  return _handleQuoteResponse<SimpleGetQuoteResponse>(response)
+  return _handleQuoteResponse<SimpleGetQuoteResponse>(response, params)
 }
 
 export async function getPriceQuoteLegacy(params: PriceQuoteParams): Promise<PriceInformation | null> {
@@ -361,7 +380,11 @@ export async function getPriceQuoteLegacy(params: PriceQuoteParams): Promise<Pri
     throw new QuoteError(UNHANDLED_QUOTE_ERROR)
   })
 
-  return _handleQuoteResponse<PriceInformation | null>(response)
+  return _handleQuoteResponse<PriceInformation | null>(response, {
+    ...params,
+    buyToken: baseToken,
+    sellToken: quoteToken,
+  })
 }
 
 export async function getOrder(chainId: ChainId, orderId: string): Promise<OrderMetaData | null> {
