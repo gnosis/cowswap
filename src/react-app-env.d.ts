@@ -14,6 +14,9 @@ interface Window {
     removeListener?: (...args: any[]) => void
     autoRefreshOnNetworkChange?: boolean
   }
+  tally?: {
+    isTally?: true
+  }
   web3?: Record<string, unknown>
 }
 
