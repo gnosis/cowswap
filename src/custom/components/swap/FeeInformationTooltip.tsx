@@ -87,7 +87,7 @@ const FeeBreakdownLine = ({ feeAmount, discount, type, symbol }: FeeBreakdownPro
 
   return (
     <FeeTooltipLine>
-      <span>Fee{smartFee && discount ? ` [-${discount}%]` : ''}</span>
+      <span className={discount ? 'green' : ''}>Fee{smartFee && discount ? ` [-${discount}%]` : ''}</span>
       {smartFee ? (
         <span>
           {typeString}
