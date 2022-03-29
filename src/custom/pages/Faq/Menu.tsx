@@ -18,8 +18,6 @@ export function FaqMenu() {
     const element = event.target as HTMLElement
     const isActive = element.classList.contains('active')
     isMobile && isActive && setisExpanded(true)
-    console.log(isActive)
-    console.log('isExpanded' + isExpanded)
   }
 
   return (
