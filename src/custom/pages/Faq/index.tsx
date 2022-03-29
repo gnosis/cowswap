@@ -22,7 +22,8 @@ export function BackButton() {
   return <Link to="/faq">Go back</Link>
 }
 
-export function Footer() {
+export function Footer(props: { back?: boolean }) {
+  const { back = true } = props
   return (
     <>
       <hr />
@@ -39,9 +40,11 @@ export function Footer() {
           🥛
         </span>
       </p>
-      <p>
-        <BackButton />
-      </p>
+      {back && (
+        <p>
+          <BackButton />
+        </p>
+      )}
     </>
   )
 }
@@ -69,7 +72,7 @@ export default function Faq() {
             </li>
           </Sections>
           <p>
-            <Footer />
+            <Footer back={false} />
           </p>
         </Content>
       </Page>
