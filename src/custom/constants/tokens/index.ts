@@ -8,7 +8,7 @@ import { V_COW_CONTRACT_ADDRESS, COW_CONTRACT_ADDRESS } from 'constants/index'
 
 import wxDaiLogo from 'assets/cow-swap/wxdai.png'
 // TODO: these are the same? why?
-import vCowLogo from 'assets/cow-swap/cow.svg'
+import vCowLogo from 'assets/cow-swap/vCOW.png'
 import cowLogo from 'assets/cow-swap/cow.svg'
 import gnoLogo from 'assets/cow-swap/gno.png'
 import usdcLogo from 'assets/cow-swap/usdc.png'
