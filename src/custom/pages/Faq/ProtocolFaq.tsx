@@ -81,7 +81,7 @@ export default function ProtocolFaq() {
             method called pre-sign.
           </p>
           <p>
-            pre-sign is a protocol operation that can be invoked by any contract. The operation has a single parameter
+            Pre-sign is a protocol operation that can be invoked by any contract. The operation has a single parameter
             that is the &quot;orderId&quot; which identifies the order being approved. Pre-signing your order in the
             settlement contract is equivalent to providing an off-chain signature for the orderId.
           </p>
@@ -213,7 +213,7 @@ export default function ProtocolFaq() {
                 Signature of a gasless off-chain cancellation request. This cancellation is considered
                 &ldquo;soft&rdquo; as it might not be placed with enough time for the solvers to take into
                 consideration. See more via{' '}
-                <LinkScrollable href={'/faq/protocol#can-i-cancel-an-order'}>this FAQ entry</LinkScrollable>.
+                <LinkScrollable href={'/faq/trading#can-i-cancel-an-order'}>this FAQ entry</LinkScrollable>.
               </p>
             </li>
           </ul>
