@@ -280,7 +280,7 @@ function _handleError<P extends Context>(error: any, response: Response, params:
   const sentryError =
     error?.sentryError ||
     constructSentryError(error, response, {
-      message: `Potential backend error detected - status code: ${response.status}`,
+      message: error?.message || error,
       name: `[${operation}-ERROR] - Unmapped ${operation} Error`,
     })
   // Create the error tags or use the previously constructed ones from the try block
