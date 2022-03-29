@@ -4,14 +4,16 @@ import { ExternalLinkFaq, Wrapper } from './styled'
 import { Footer } from '.'
 import { useToC } from './hooks'
 import ToC from './ToC'
+import { FaqMenu } from './Menu'
 
 export default function TokenFaq() {
   const { toc, faqRef } = useToC()
 
   return (
     <Wrapper ref={faqRef}>
-      <ToC toc={toc} name="Token FAQ" />
+      <FaqMenu />
       <Page>
+        <ToC toc={toc} name="Token FAQ" />
         <Content>
           <h2 id="Token">Token</h2>
           <h3 id="does-cowswap-have-a-token">Does CowSwap have a token?</h3>
