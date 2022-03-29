@@ -6,6 +6,7 @@ import { WithClassName } from 'types'
 import { useIsDarkMode } from 'state/user/hooks'
 import SVG from 'react-inlinesvg'
 import { questionIcon } from 'assets/cow-swap/question'
+import { transparentize } from 'polished'
 
 const HelpCircleWrapper = styled.div`
   > svg {
