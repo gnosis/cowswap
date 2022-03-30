@@ -111,9 +111,10 @@ export default function TokenFaq() {
               <li>
                 <strong>GNO Holders</strong>: A GNO holder is someone who held at least 0.1 GNO on either Ethereum
                 mainnet (before block 13974427) or Gnosis Chain (block 20024195). They were eligible for holding GNO on
-                Ethereum mainnet and/or Gnosis Chain, and for running GBC validators. In addition, all the following LP token
-                holders were accounted for: Balancer v2 (Ethereum mainnet), Uniswap v3 (Ethereum mainnet), Honeyswap (Gnosis Chain),
-                Symetric (Gnosis Chain), Sushiswap (Gnosis Chain), Elk (Gnosis Chain), Swapr (Gnosis Chain).
+                Ethereum mainnet and/or Gnosis Chain, and for running GBC validators. In addition, all the following LP
+                token holders were accounted for: Balancer v2 (Ethereum mainnet), Uniswap v3 (Ethereum mainnet),
+                Honeyswap (Gnosis Chain), Symetric (Gnosis Chain), Sushiswap (Gnosis Chain), Elk (Gnosis Chain), Swapr
+                (Gnosis Chain).
               </li>
             </ul>
           </p>
