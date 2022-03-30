@@ -28,6 +28,7 @@ export function Footer() {
           community on Discord
         </ExternalLinkFaq>{' '}
         <br />
+        <br />
         We really hope you like CowSwap. If you do,&nbsp;<Link to="/">Milk it!</Link>
         <span role="img" aria-label="glass of milk">
           🥛

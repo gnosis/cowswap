@@ -141,8 +141,11 @@ export const Menu = styled.div`
     padding: 0;
     font-size: inherit;
 
-    &.expanded {
-    }
+    ${({ theme }) => theme.mediaWidth.upToSmall`
+      background: ${({ theme }) => transparentize(0.9, theme.text1)};
+      border-radius: 16px;
+      padding: 12px;
+    `}
   }
 
   > ul > li {
@@ -160,50 +163,20 @@ export const Menu = styled.div`
     transition: opacity 0.2s ease-in-out;
     display: block;
 
+    ${({ theme }) => theme.mediaWidth.upToSmall`
+      margin: 0;
+    `}
+
     &:hover,
     &.active {
       opacity: 1;
     }
+
+    &.active {
+      ${({ theme }) => theme.mediaWidth.upToSmall`
+        background: ${({ theme }) => transparentize(0.9, theme.text1)};
+        border-radius: 16px;
+      `}
+    }
   }
-
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    > ul.expanded {
-      background: ${({ theme }) => transparentize(0.9, theme.text1)};
-      border-radius: 16px;
-      padding: 24px 48px 24px 24px;
-    }
-
-    > ul:not(.expanded) > li > a:not(.active) {
-      display: none;
-    }
-
-    > ul:not(.expanded) > li > a.active {
-      display: flex;
-      font-size: 18px;
-      flex-flow: column wrap;
-      justify-content: center;
-      align-items: flex-start;
-      background: ${({ theme }) => transparentize(0.9, theme.text1)};
-      border-radius: 16px;
-      padding: 24px 48px 24px 24px;
-      position: relative;
-
-      &::before {
-        content: "FAQ";
-        display: block;
-        font-size: 14px;
-        text-transform: uppercase;
-        margin: 0 0 4px;
-        font-weight: normal;
-        opacity: 0.65;
-      }
-
-      &::after {
-        content: "+";
-        position: absolute;
-        right: 24px;
-        font-size: 32px;
-      }
-    }
-  `}
 `

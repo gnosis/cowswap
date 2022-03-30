@@ -1,7 +1,5 @@
-import { useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import { Menu } from './styled'
-import { isMobile } from 'react-device-detect'
 
 const LINKS = [
   { title: 'General', url: '/faq' },
@@ -12,25 +10,12 @@ const LINKS = [
 ]
 
 export function FaqMenu() {
-  const [isExpanded, setisExpanded] = useState(false)
-
-  const handleClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
-    const element = event.target as HTMLElement
-    const isActive = element.classList.contains('active')
-    isMobile && isActive && setisExpanded(true)
-  }
-
   return (
     <Menu>
-      <ul className={isExpanded ? 'expanded' : ''}>
+      <ul>
         {LINKS.map(({ title, url }, i) => (
           <li key={i}>
-            <NavLink
-              exact
-              to={url}
-              activeClassName={'active'}
-              onClick={(event: React.MouseEvent<HTMLAnchorElement>) => handleClick(event)}
-            >
+            <NavLink exact to={url} activeClassName={'active'}>
               {title}
             </NavLink>
           </li>
