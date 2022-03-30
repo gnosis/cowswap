@@ -1,9 +1,8 @@
-import styled from 'styled-components/macro'
 import { Link } from 'react-router-dom'
 
 import { DISCORD_LINK } from 'constants/index'
 import Page, { Content } from 'components/Page'
-import { ExternalLinkFaq, Wrapper } from './styled'
+import { ExternalLinkFaq, Wrapper, ButtonNav, FooterWrapper } from './styled'
 import { FaqMenu } from './Menu'
 import { StyledInternalLink } from 'theme'
 
@@ -22,23 +21,20 @@ export interface TocItem {
 
 export function Footer() {
   return (
-    <>
-      <hr />
-
+    <FooterWrapper>
       <p>
         Didn&#39;t find an answer? Join the{' '}
         <ExternalLinkFaq href={DISCORD_LINK} target="_blank" rel="noopener noreferrer">
           community on Discord
-        </ExternalLinkFaq>
-      </p>
-      <p>
+        </ExternalLinkFaq>{' '}
+        <br />
         We really hope you like CowSwap. If you do,&nbsp;<Link to="/">Milk it!</Link>
         <span role="img" aria-label="glass of milk">
           🥛
         </span>
       </p>
-      <button onClick={() => window.scrollTo(0, 0)}>Scroll up</button>
-    </>
+      <ButtonNav onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>Back to top ↑</ButtonNav>
+    </FooterWrapper>
   )
 }
 

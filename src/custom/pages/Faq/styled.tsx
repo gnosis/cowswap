@@ -1,6 +1,7 @@
 import { ExternalLink as ExternalLinkTheme } from 'theme'
 import styled from 'styled-components/macro'
 import { Content } from 'components/Page'
+import { ButtonPrimary } from 'components/Button'
 import { transparentize } from 'polished'
 
 export const ExternalLinkFaq = styled(ExternalLinkTheme)`
@@ -95,10 +96,22 @@ export const Wrapper = styled.div`
   }
 `
 
+export const FooterWrapper = styled.div`
+  display: block;
+  margin: 34px 0 0;
+  padding: 14px 0 0;
+  border-top: 1px solid ${({ theme }) => theme.text1};
+`
+
 export const PageIndex = styled.div`
   display: flex;
   flex-flow: column wrap;
   border-bottom: 1px solid ${({ theme }) => theme.text1};
+`
+
+export const ButtonNav = styled(ButtonPrimary)`
+  width: min-content;
+  white-space: nowrap;
 `
 
 export const Menu = styled.div`

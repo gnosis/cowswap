@@ -104,8 +104,7 @@ export default function App() {
             <Route exact strict path="/about" component={About} />
             <Route exact strict path="/profile" component={Profile} />
 
-            <Route exact strict path="/faq" component={Faq} />
-            <Route exact strict path="/faq/" component={Faq} />
+            <Route exact path="/faq" component={Faq} />
             <Route exact strict path="/faq/protocol" component={ProtocolFaq} />
             <Route exact strict path="/faq/token" component={TokenFaq} />
             <Route exact strict path="/faq/trading" component={TradingFaq} />
