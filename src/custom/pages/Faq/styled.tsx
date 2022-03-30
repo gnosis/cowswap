@@ -24,7 +24,7 @@ export const Wrapper = styled.div`
     display: flex;
     flex-flow: column wrap;
   `}
-  
+
   #table-container {
     margin: auto;
     max-width: 100%;
