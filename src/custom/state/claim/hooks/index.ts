@@ -65,6 +65,7 @@ import { ChainId } from '@uniswap/sdk'
 import { ClaimInfo } from 'state/claim/reducer'
 import { OperationType } from '@src/custom/components/TransactionConfirmationModal'
 import { APPROVE_GAS_LIMIT_DEFAULT } from 'hooks/useApproveCallback/useApproveCallbackMod'
+import usePreviousIfUndefined from 'state/hooks/usePreviousIfUndefined'
 
 const CLAIMS_REPO_BRANCH = 'gip-13'
 export const CLAIMS_REPO = `https://raw.githubusercontent.com/gnosis/cow-merkle-drop/${CLAIMS_REPO_BRANCH}/`
@@ -1044,8 +1045,16 @@ export function useVCowData(): VCowData {
     account ?? undefined,
   ])
 
-  const vested = useParseVCowResult(vestedResult)
-  const total = useParseVCowResult(totalResult)
+  let vested = useParseVCowResult(vestedResult)
+  let total = useParseVCowResult(totalResult)
+
+  const previousVested = usePreviousIfUndefined(vested)
+  const previousTotal = usePreviousIfUndefined(total)
+
+  if ((vested === undefined || total === undefined) && previousVested && previousTotal) {
+    vested = previousVested
+    total = previousTotal
+  }
 
   const unvested = useMemo(() => {
     if (!total || !vested) {
