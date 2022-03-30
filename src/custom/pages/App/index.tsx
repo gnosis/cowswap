@@ -11,7 +11,6 @@ import { version } from '@src/../package.json'
 import { environmentName } from 'utils/environments'
 import { useFilterEmptyQueryParams } from 'hooks/useFilterEmptyQueryParams'
 import RedirectAnySwapAffectedUsers from 'pages/error/AnySwapAffectedUsers/RedirectAnySwapAffectedUsers'
-import { IS_CLAIMING_ENABLED } from 'pages/Claim/const'
 import { SENTRY_IGNORED_GP_QUOTE_ERRORS } from 'api/gnosisProtocol/errors/QuoteError'
 
 const SENTRY_DSN = process.env.REACT_APP_SENTRY_DSN
